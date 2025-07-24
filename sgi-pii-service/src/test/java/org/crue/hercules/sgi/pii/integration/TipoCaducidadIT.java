@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.controller.TipoCaducidadController;
 import org.crue.hercules.sgi.pii.model.TipoCaducidad;
 import org.junit.jupiter.api.Test;
@@ -54,7 +56,7 @@ class TipoCaducidadIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false)
@@ -72,12 +74,12 @@ class TipoCaducidadIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");
 
-    Assertions.assertThat(tipoCaducidad.get(0).getDescripcion()).as("descripcion")
-        .isEqualTo("descripcion-003");
-    Assertions.assertThat(tipoCaducidad.get(1).getDescripcion()).as("descripcion")
-        .isEqualTo("descripcion-002");
-    Assertions.assertThat(tipoCaducidad.get(2).getDescripcion()).as("descripcion")
-        .isEqualTo("descripcion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoCaducidad.get(0).getDescripcion(), Language.ES))
+        .as("descripcion[0].value").isEqualTo("descripcion-003");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoCaducidad.get(1).getDescripcion(), Language.ES))
+        .as("descripcion[0].value").isEqualTo("descripcion-002");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoCaducidad.get(2).getDescripcion(), Language.ES))
+        .as("descripcion[0].value").isEqualTo("descripcion-001");
 
   }
 

@@ -1,0 +1,82 @@
+[
+  {
+    "key": "ap4_2_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1.2 Unibertsitatetik kanpoko beste zentro edo leku bat"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Agente biologiko edo/eta genetikoki eraldatutako organismo lotutako zereginak edo horietako batzuk beste zentro bateko geletan edo beste leku batean egiten dira?</p>"
+      },
+      {
+        "key": "tareasAgentesBiologicos",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarAgenteBiologico",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "name": "Zehaztu",
+          "required": true
+        }
+      },
+      {
+        "template": "Justifikatu zergatik egin behar diren zereginak leku horretan",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'"
+      },
+      {
+        "key": "justificarTareas",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "name": "Justifikatu",
+          "required": true
+        }
+      },
+      {
+        "template": "Akreditaziorik badu, adierazi agentzia eta erantsi kopia.",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'"
+      },
+      {
+        "key": "disponeAcreditacion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "name": "Adierazi:",
+          "required": true
+        }
+      },
+      {
+        "key": "fechaAcreditacion",
+        "type": "datepicker",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Akreditazio data:"
+        }
+      },
+      {
+        "template": "<p>Gogoratu beharra dago EBBren txostenak Unibertsitateko instalazioetan garatutako lanetarako bakarrik balio duela, Unibertsitateko langileek edo indarreko araudia betez beren lana Unibertsitatean gauzatzen duten beste batzuek garatutako lanetarako. OHARRA: instalazioak AB edo/eta GEO eusteko baldintzak bete beharko ditu, eta, hala badagokio, dagokion baimena / komunikazioa izan beharko du. </p>"
+      }
+    ]
+  }
+]

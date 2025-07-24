@@ -18,6 +18,7 @@ import { switchMap } from 'rxjs/operators';
 import { PartidaGastoDataModal, PartidaGastoModalComponent } from '../../../shared/partida-gasto-modal/partida-gasto-modal.component';
 import { SolicitudProyectoPresupuestoActionService } from '../../solicitud-proyecto-presupuesto.action.service';
 import { SolicitudProyectoPresupuestoListado, SolicitudProyectoPresupuestoPartidasGastoFragment } from './solicitud-proyecto-presupuesto-partidas-gasto.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const SOLICITUD_PROYECTO_PRESUPUESTP_PARTIDA_GASTO_KEY = marker('csp.solicitud-proyecto-presupuesto.partida-gasto');
@@ -57,9 +58,10 @@ export class SolicitudProyectoPresupuestoPartidasGastoComponent extends Fragment
     protected actionService: SolicitudProyectoPresupuestoActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.PARTIDAS_GASTO, actionService);
+    super(actionService.FRAGMENT.PARTIDAS_GASTO, actionService, translate);
     this.formPart = this.fragment as SolicitudProyectoPresupuestoPartidasGastoFragment;
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(36%-10px)';
@@ -76,7 +78,7 @@ export class SolicitudProyectoPresupuestoPartidasGastoComponent extends Fragment
   ngOnInit(): void {
     super.ngOnInit();
 
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -84,7 +86,7 @@ export class SolicitudProyectoPresupuestoPartidasGastoComponent extends Fragment
       (element: SolicitudProyectoPresupuestoListado, property: string) => {
         switch (property) {
           case 'conceptoGasto':
-            return element.partidaGasto.value.conceptoGasto?.nombre;
+            return element.partidaGasto.value.conceptoGasto?.nombre ? this.languageService.getFieldValue(element.partidaGasto.value.conceptoGasto.nombre) : '';
           case 'anualidad':
             return element.partidaGasto.value.anualidad;
           case 'importePresupuestado':
@@ -96,7 +98,8 @@ export class SolicitudProyectoPresupuestoPartidasGastoComponent extends Fragment
           case 'importeTotalSolicitado':
             return element.importeTotalSolicitadoConceptoGasto;
           case 'observaciones':
-            return element.partidaGasto.value.observaciones;
+            return this.languageService.getFieldValue(element.partidaGasto.value.observaciones);
+
           default:
             return element[property];
         }
@@ -109,7 +112,7 @@ export class SolicitudProyectoPresupuestoPartidasGastoComponent extends Fragment
     this.subscriptions.push(subcription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_PROYECTO_PRESUPUESTP_PARTIDA_GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

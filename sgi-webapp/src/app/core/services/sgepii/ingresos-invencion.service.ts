@@ -6,6 +6,7 @@ import { environment } from '@env';
 import { RSQLSgiRestFilter, SgiRestBaseService, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IColumnDefinition } from 'src/app/module/csp/ejecucion-economica/ejecucion-economica-formulario/desglose-economico.fragment';
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +48,7 @@ export class IngresosInvencionService extends SgiRestBaseService {
    * @param proyectoId Id del proyecto asociado a la Invención.
    * @returns Lista de las columnas.
    */
-  getColumnas(proyectoId?: string): Observable<IColumna[]> {
+  getColumnas(proyectoId?: string): Observable<IColumnDefinition[]> {
     const filter = new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoId);
     const options: SgiRestFindOptions = {
       filter
@@ -56,7 +57,15 @@ export class IngresosInvencionService extends SgiRestBaseService {
       `${this.endpointUrl}/columnas`,
       options
     ).pipe(
-      map(response => response.items)
+      map(response => response.items ?? []),
+      map(columnas => columnas.map(columna => {
+        return {
+          id: columna.id,
+          name: columna.nombre,
+          compute: columna.acumulable,
+          importeReparto: columna.importeReparto
+        };
+      }))
     );
   }
 }

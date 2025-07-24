@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.eti.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,8 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,8 +32,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EstadoMemoria extends BaseEntity {
-
-  public static final int COMENTARIO_MAX_LENGTH = 2000;
 
   /**
    * Serial version
@@ -59,9 +62,10 @@ public class EstadoMemoria extends BaseEntity {
   private Instant fechaEstado;
 
   /** Comentario. */
-  @Column(name = "comentario", length = EstadoMemoria.COMENTARIO_MAX_LENGTH, nullable = true)
-  @Size(max = EstadoMemoria.COMENTARIO_MAX_LENGTH)
-  private String comentario;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "estado_memoria_comentario", joinColumns = @JoinColumn(name = "estado_memoria_id"))
+  @Valid
+  private Set<EstadoMemoriaComentario> comentario = new HashSet<>();
 
   public EstadoMemoria(Long id, @NotNull Instant fechaEstado) {
     this.id = id;

@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { SelectValue } from '@core/component/select-common/select-common.component';
@@ -12,6 +12,7 @@ import { NotificacionProyectoExternoCvnService } from '@core/services/csp/notifi
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -125,7 +126,7 @@ export class NotificacionCvnAsociarProyectoModalComponent extends DialogActionCo
     this.subscriptions.push(
       form.controls.crearProyecto.valueChanges.subscribe(value => {
         if (value) {
-          form.controls.titulo.setValidators([Validators.required, Validators.maxLength(250)]);
+          form.controls.titulo.setValidators([I18nValidators.required, I18nValidators.maxLength(250)]);
           form.controls.fechaInicio.setValidators([Validators.required]);
           form.controls.fechaFin.setValidators([Validators.required]);
           form.controls.unidadGestion.setValidators([Validators.required]);

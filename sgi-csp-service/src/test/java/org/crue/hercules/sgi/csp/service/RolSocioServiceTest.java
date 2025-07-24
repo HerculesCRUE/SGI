@@ -2,11 +2,18 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.RolSocioNotFoundException;
 import org.crue.hercules.sgi.csp.model.RolSocio;
+import org.crue.hercules.sgi.csp.model.RolSocioAbreviatura;
+import org.crue.hercules.sgi.csp.model.RolSocioDescripcion;
+import org.crue.hercules.sgi.csp.model.RolSocioNombre;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.csp.repository.RolSocioRepository;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -105,7 +112,7 @@ class RolSocioServiceTest extends BaseServiceTest {
 
     for (int i = 0, j = 62; i < 10; i++, j += 2) {
       RolSocio item = page.getContent().get(i);
-      Assertions.assertThat(item.getAbreviatura()).isEqualTo(String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getAbreviatura(), Language.ES)).isEqualTo(String.format("%03d", j));
       Assertions.assertThat(item.getActivo()).isEqualTo(Boolean.TRUE);
     }
   }
@@ -147,7 +154,7 @@ class RolSocioServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       RolSocio item = page.getContent().get(i);
-      Assertions.assertThat(item.getAbreviatura()).isEqualTo(String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getAbreviatura(), Language.ES)).isEqualTo(String.format("%03d", j));
       Assertions.assertThat(item.getActivo()).isEqualTo((j % 2 == 0 ? Boolean.TRUE : Boolean.FALSE));
     }
   }
@@ -162,12 +169,21 @@ class RolSocioServiceTest extends BaseServiceTest {
 
     String suffix = String.format("%03d", rolSocioId);
 
+    Set<RolSocioAbreviatura> abreviatura = new HashSet<>();
+    abreviatura.add(new RolSocioAbreviatura(Language.ES, suffix));
+    
+    Set<RolSocioNombre> nombre = new HashSet<>();
+    nombre.add(new RolSocioNombre(Language.ES, "nombre-" + suffix));
+    
+    Set<RolSocioDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new RolSocioDescripcion(Language.ES, "descripcion-" + suffix));
+    
     // @formatter:off
     RolSocio rolSocio = RolSocio.builder()
         .id(rolSocioId)
-        .abreviatura(suffix)
-        .nombre("nombre-" + suffix)
-        .descripcion("descripcion-" + suffix)
+        .abreviatura(abreviatura)
+        .nombre(nombre)
+        .descripcion(descripcion)
         .coordinador(Boolean.FALSE)
         .activo(Boolean.TRUE)
         .build();

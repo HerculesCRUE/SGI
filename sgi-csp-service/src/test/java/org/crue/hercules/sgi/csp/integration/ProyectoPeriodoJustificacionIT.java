@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -10,9 +11,12 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ProyectoPeriodoJustificacionController;
 import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionIdentificadorJustificacionInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionInput;
-import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionInput.EstadoProyectoPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionOutput;
 import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -70,9 +74,17 @@ class ProyectoPeriodoJustificacionIT extends BaseIT {
     ProyectoPeriodoJustificacionInput periodo2 = buildMockProyectoPeriodoJusitificacionInput(2L);
     ProyectoPeriodoJustificacionInput periodo3 = buildMockProyectoPeriodoJusitificacionInput(3L);
 
-    periodo1.setObservaciones("Actualizado perido 1");
-    periodo2.setObservaciones("Actualizado perido 2");
-    periodo3.setObservaciones("Actualizado perido 3");
+    List<I18nFieldValueDto> observaciones1 = new ArrayList<I18nFieldValueDto>();
+    observaciones1.add(new I18nFieldValueDto(Language.ES, "Actualizado perido 1"));
+    periodo1.setObservaciones(observaciones1);
+
+    List<I18nFieldValueDto> observaciones2 = new ArrayList<I18nFieldValueDto>();
+    observaciones2.add(new I18nFieldValueDto(Language.ES, "Actualizado perido 2"));
+    periodo2.setObservaciones(observaciones2);
+
+    List<I18nFieldValueDto> observaciones3 = new ArrayList<I18nFieldValueDto>();
+    observaciones3.add(new I18nFieldValueDto(Language.ES, "Actualizado perido 3"));
+    periodo3.setObservaciones(observaciones3);
 
     periodo1.setNumPeriodo(1L);
     periodo2.setNumPeriodo(2L);
@@ -104,9 +116,12 @@ class ProyectoPeriodoJustificacionIT extends BaseIT {
     ProyectoPeriodoJustificacionOutput updatedPeriodo2 = response.getBody().get(1);
     ProyectoPeriodoJustificacionOutput updatedPeriodo3 = response.getBody().get(2);
 
-    Assertions.assertThat(updatedPeriodo1.getObservaciones()).isEqualTo(periodo1.getObservaciones());
-    Assertions.assertThat(updatedPeriodo2.getObservaciones()).isEqualTo(periodo2.getObservaciones());
-    Assertions.assertThat(updatedPeriodo3.getObservaciones()).isEqualTo(periodo3.getObservaciones());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updatedPeriodo1.getObservaciones(), Language.ES))
+        .isEqualTo(periodo1.getObservaciones().get(0).getValue());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updatedPeriodo2.getObservaciones(), Language.ES))
+        .isEqualTo(periodo2.getObservaciones().get(0).getValue());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updatedPeriodo3.getObservaciones(), Language.ES))
+        .isEqualTo(periodo3.getObservaciones().get(0).getValue());
 
     Assertions.assertThat(updatedPeriodo1.getFechaInicio()).isEqualTo(periodo1.getFechaInicio());
     Assertions.assertThat(updatedPeriodo2.getFechaInicio()).isEqualTo(periodo2.getFechaInicio());
@@ -355,13 +370,15 @@ class ProyectoPeriodoJustificacionIT extends BaseIT {
   }
 
   private ProyectoPeriodoJustificacionInput buildMockProyectoPeriodoJusitificacionInput(Long id) {
+    List<I18nFieldValueDto> observaciones = new ArrayList<I18nFieldValueDto>();
+    observaciones.add(new I18nFieldValueDto(Language.ES, "testing ProyectoPeriodoJusitificacion"));
     return ProyectoPeriodoJustificacionInput.builder()
         .id(id)
         .convocatoriaPeriodoJustificacionId(1L)
         .fechaFin(Instant.now().plusSeconds(36000 * 10000))
         .fechaInicio(Instant.now())
         .numPeriodo(1L)
-        .observaciones("testing ProyectoPeriodoJusitificacion")
+        .observaciones(observaciones)
         .proyectoId(1L)
         .tipoJustificacion(TipoJustificacion.PERIODICO)
         .estado(EstadoProyectoPeriodoJustificacion.builder()

@@ -12,6 +12,8 @@ import org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoPago;
 import org.crue.hercules.sgi.csp.model.RolSocio;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -371,7 +373,7 @@ class ProyectoSocioIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "observaciones=ke=observ";
+    String filter = "observaciones.value=ke=observ";
 
     Long convocatoriaId = 1L;
 
@@ -384,19 +386,25 @@ class ProyectoSocioIT extends BaseIT {
         });
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    final List<ProyectoSocioPeriodoJustificacion> convocatoriaPeriodoJustificaciones = response.getBody();
-    Assertions.assertThat(convocatoriaPeriodoJustificaciones).hasSize(3);
+    final List<ProyectoSocioPeriodoJustificacion> proyectoPeriodoJustificaciones = response.getBody();
+    Assertions.assertThat(proyectoPeriodoJustificaciones).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(convocatoriaPeriodoJustificaciones.get(0).getObservaciones()).as("get(0).getObservaciones()")
-        .isEqualTo("observaciones " + 3);
-    Assertions.assertThat(convocatoriaPeriodoJustificaciones.get(1).getObservaciones()).as("get(1).getObservaciones())")
-        .isEqualTo("observaciones " + 2);
-    Assertions.assertThat(convocatoriaPeriodoJustificaciones.get(2).getObservaciones()).as("get(2).getObservaciones()")
-        .isEqualTo("observaciones " + 1);
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(proyectoPeriodoJustificaciones.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()").isEqualTo("observaciones " + 3);
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(proyectoPeriodoJustificaciones.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())").isEqualTo("observaciones " + 2);
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(proyectoPeriodoJustificaciones.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones()").isEqualTo("observaciones " + 1);
   }
 
   @Test
@@ -407,7 +415,7 @@ class ProyectoSocioIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "observaciones=ke=observ";
+    String filter = "observaciones.value=ke=observ";
 
     Long convocatoriaId = 1L;
 

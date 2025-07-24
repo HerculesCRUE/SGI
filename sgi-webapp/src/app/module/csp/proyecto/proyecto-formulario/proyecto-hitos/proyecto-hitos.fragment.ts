@@ -121,6 +121,7 @@ export class ProyectoHitosFragment extends Fragment {
           map((updatedHitos) => {
             const index = this.hitos$.value.findIndex((currenthitos) => currenthitos === wrappedHitos);
             this.hitos$.value[index] = new StatusWrapper<IProyectoHito>(updatedHitos);
+            this.hitos$.next(this.hitos$.value);
           })
         );
       })

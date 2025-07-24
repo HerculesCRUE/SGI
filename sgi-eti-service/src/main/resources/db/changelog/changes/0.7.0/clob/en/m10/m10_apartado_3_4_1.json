@@ -1,0 +1,62 @@
+[
+  {
+    "key": "ap3_4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.4.1 Recruitment process"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Please describe the recruitment process: submission of the project and obtaining consent from the source subject and/or their legal representative according to the following scheme:</p><ul><li>who (person/s in charge)</li><li>how (conversation, video, brochure...)</li><li>where (place of information and document signing)</li><li>when they are going to be carried out (time at which they are carried out; for example: when the participating person attends).</li></ul>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>'Recruitment process' is understood as all those actions aimed at recruiting people who will participate in the study as research subjects.</p><p>This process includes informing the potential participant, convincing them and subsequently obtaining and signing consent.</p><p>The recruitment process follows the definition of the sample with the inclusion and exclusion criteria when making the methodological design.</p><p>The recruitment process is an essential part of research because it directly affects ethical aspects such as voluntary nature, equity and respect.</p>"
+      },
+      {
+        "key": "descripcionProcesoReclutamiento",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Recruitment process",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Expected start date of recruitment</p>"
+      },
+      {
+        "key": "fechaReclutamiento",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Expected date"
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "date-is-after",
+              "options": {
+                "compareTo": "formStateProperty",
+                "formStateProperty": "memoria.peticionEvaluacion.fechaInicio",
+                "message": "This must be later than the project start date (assessment application general details)"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: Add in section '5.7 Additional documentation' all the documents that will be used to recruit study subjects (for example advertisements, brochures, etc., with the full text).</p><p>If the process is going to be carried out outside the university facilities, add in section '5.3' the Authorisation Document of the centre or premises (hospitals, educational centres, health centres, etc.).</p><p>Please remember that the project <strong>cannot be started without having obtained a favourable report</strong> of the committee; therefore, the dates should be consistent. The start date of recruitment cannot be earlier than the date when favourable report is issued.</p></div>"
+      }
+    ]
+  }
+]

@@ -3,10 +3,6 @@ package org.crue.hercules.sgi.eti.service.sgi;
 import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-
 import org.crue.hercules.sgi.eti.config.RestApiProperties;
 import org.crue.hercules.sgi.eti.dto.cnf.ConfigOutput;
 import org.crue.hercules.sgi.eti.enums.ServiceType;
@@ -17,6 +13,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -80,7 +80,7 @@ public class SgiApiCnfService extends SgiApiBaseService {
     return valueList;
   }
 
-  public Boolean isBlockchainEnable() throws JsonProcessingException {
+  public Boolean isBlockchainEnable() {
     log.debug("isBlockchainEnable() - start");
     String value = findByName(CONFIG_ETI_BLOCKCHAIN_ENABLE);
     Boolean valueBoolean = false;

@@ -11,6 +11,7 @@ import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { AreaTematicaActionService } from '../../area-tematica.action.service';
 
+import { I18nComponentsModule } from '@components/i18n/i18n-components.module';
 import { AreaTematicaDatosGeneralesComponent } from './area-tematica-datos-generales.component';
 
 describe('AreaTematicaDatosGeneralesComponent', () => {
@@ -32,7 +33,8 @@ describe('AreaTematicaDatosGeneralesComponent', () => {
         ReactiveFormsModule,
         RouterTestingModule,
         SgiAuthModule,
-        LoggerTestingModule
+        LoggerTestingModule,
+        I18nComponentsModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

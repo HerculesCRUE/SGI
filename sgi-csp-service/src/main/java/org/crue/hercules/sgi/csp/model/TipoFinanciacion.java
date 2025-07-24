@@ -1,14 +1,24 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity.OnActivar;
+import org.crue.hercules.sgi.csp.validation.UniqueNombreTipoFinanciacionActivo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,6 +33,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@UniqueNombreTipoFinanciacionActivo(groups = { BaseEntity.Create.class, BaseEntity.Update.class, OnActivar.class })
 public class TipoFinanciacion extends BaseEntity {
 
   /**
@@ -36,14 +47,18 @@ public class TipoFinanciacion extends BaseEntity {
   @SequenceGenerator(name = "tipo_financiacion_seq", sequenceName = "tipo_financiacion_seq", allocationSize = 1)
   private Long id;
 
-  @Column(name = "nombre", length = 50, nullable = false)
+  /** Nombre */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tipo_financiacion_nombre", joinColumns = @JoinColumn(name = "tipo_financiacion_id"))
   @NotEmpty
-  @Size(max = 50)
-  private String nombre;
+  @Valid
+  private Set<TipoFinanciacionNombre> nombre = new HashSet<>();
 
-  @Column(name = "descripcion", length = 250)
-  @Size(max = 250)
-  private String descripcion;
+  /** Descripcion */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tipo_financiacion_descripcion", joinColumns = @JoinColumn(name = "tipo_financiacion_id"))
+  @Valid
+  private Set<TipoFinanciacionDescripcion> descripcion = new HashSet<>();
 
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   private Boolean activo;

@@ -65,7 +65,7 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
     private actionService: PeticionEvaluacionActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.EQUIPO_INVESTIGADOR, actionService);
+    super(actionService.FRAGMENT.EQUIPO_INVESTIGADOR, actionService, translate);
     this.listadoFragment = this.fragment as EquipoInvestigadorListadoFragment;
 
     this.displayedColumns = ['persona', 'nombreCompleto', 'vinculacion', 'nivelAcademico', 'acciones'];
@@ -73,7 +73,7 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.actionService.initializeMemorias();
 
     this.datasource.paginator = this.paginator;
@@ -95,7 +95,7 @@ export class EquipoInvestigadorListadoComponent extends FragmentComponent implem
       };
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PETICION_EVALUACION_EQUIPO_INVESTIGADOR_PERSONA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

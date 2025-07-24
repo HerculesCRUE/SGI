@@ -6,6 +6,7 @@ server:
       enabled: false
 sgi:
   time-zone: "Europe/Madrid"
+  web-url: "http://sgi.crue.com"
   rest:
     api:
       cnf-url: "http://sgi-cnf-service:4288"
@@ -24,10 +25,8 @@ spring:
     # Set spring-profile using maven
     active: @spring.profiles.active@
   datasource:
-    # Make sure database schema is created (schema.sql is executed): always/never
-    initialization-mode: always
     # We use a H2 in file database with PostgreSQL compatibility mode
-    url: "jdbc:h2:./target/db/prc;MODE=PostgreSQL;DB_CLOSE_ON_EXIT=FALSE"
+    url: "jdbc:h2:./target/db/prc;MODE=PostgreSQL;NON_KEYWORDS=VALUE;DB_CLOSE_ON_EXIT=FALSE"
     driver-class-name: org.h2.Driver
     username: prc
     password: prc
@@ -65,11 +64,11 @@ spring:
     parameters:
       schemaPrefix: ${spring.jpa.properties.hibernate.[default_schema]}.
   mvc:
+    # Retain ant path controller definitions
+    pathmatch:
+      matching-strategy: ant-path-matcher
     # Whether a "NoHandlerFoundException" should be thrown if no Handler was found to process a request
     throw-exception-if-no-handler-found: true
-  resources:
-    # Disable the static resource handling
-    add-mappings: false
   security:
     oauth2:
       client:
@@ -98,9 +97,19 @@ spring:
           # JSON Web Key endpoint (with the cryptographic key to validate JSON Web Signature)
           jwk-set-uri: ${spring.security.oauth2.client.provider.keycloak.issuer-uri}/protocol/openid-connect/certs
           user-name-claim: user_ref_id
+  web:
+    resources:
+      # Disable the static resource handling
+      add-mappings: false
+
+preliquibase:
+  enabled: false
 ---
 spring:
-  profiles: dev
+  config:
+    activate:
+      on-profile:
+      - dev
   liquibase:
     # Set Liquibase contexts same as spring profiles
     contexts: dev  
@@ -121,6 +130,8 @@ spring:
 #    # Disable X-Frame-Options (disable only for development)
 #    frameoptions:
 #      enable: false
+preliquibase:
+  enabled: true
 logging:
   level:
     org:
@@ -140,10 +151,11 @@ logging:
             StatementCreatorUtils: TRACE
 ---
 spring:
-  profiles: dev-oracle
+  config:
+    activate:
+      on-profile:
+      - dev-oracle
   datasource:
-    # Make sure database schema is not created (schema.sql is not executed): always/never
-    initialization-mode: never
     # We use Oracle database
     url: jdbc:oracle:thin:@oracle12c:1521/ORCLPDB1.localdomain
     driver-class-name: oracle.jdbc.OracleDriver
@@ -180,10 +192,11 @@ logging:
             StatementCreatorUtils: TRACE
 ---
 spring:
-  profiles: dev-sqlserver
+  config:
+    activate:
+      on-profile:
+      - dev-sqlserver
   datasource:
-    # Make sure database schema is not created (schema.sql is not executed): always/never
-    initialization-mode: never
     # We use SQL Server database
     url: jdbc:sqlserver://sqlserver:1433;databaseName=SGI
     driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
@@ -197,7 +210,7 @@ spring:
     properties:
       hibernate:
         # We use SQL Server database
-        dialect: org.hibernate.dialect.SQLServer2012Dialect
+        dialect: org.hibernate.dialect.SQLServer2016Dialect
   liquibase:
     # Set Liquibase contexts same as spring profiles
     contexts: dev
@@ -234,7 +247,10 @@ sgi:
       tp-url:  "http://sgi-tp-service:8080"
 
 spring:
-  profiles: prod
+  config:
+    activate:
+      on-profile:
+      - prod
   datasource:
     # We use PostgreSQL database
     url: "jdbc:postgresql://postgres:5432/prc"
@@ -245,7 +261,7 @@ spring:
     properties:
       hibernate:
         # We use a PostgreSQL database
-        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
         # Set default Hibernate Schema
         '[default_schema]': prc
   security:
@@ -254,56 +270,3 @@ spring:
         provider:
           keycloak:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
----
-spring:
-  # Set spring-profile
-  profiles: test
-  datasource:
-    # We use a H2 in memory database
-    url: "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
-  jpa:
-    properties:
-      hibernate:
-        # Set default Hibernate Schema
-        '[default_schema]': test
-  liquibase:
-    # Set Liquibase contexts
-    contexts: test
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          user-name-claim: preferred_username
-  test:
-    database:
-      # By default, tests annotated with @DataJpaTest will use an embedded in-memory database (replacing any explicit or usually auto-configured DataSource).
-      replace: none
----
-spring:
-  # Set spring-profile
-  profiles: test-postgres
-  datasource:
-    # We use PostgreSQL database
-    url: "jdbc:postgresql://postgres:5432/db"
-    driver-class-name: org.postgresql.Driver
-    username: postgres
-    password: admin
-  jpa:
-    properties:
-      hibernate:
-        # We use a PostgreSQL database
-        dialect: org.hibernate.dialect.PostgreSQL95Dialect
-        # Set default Hibernate Schema
-        '[default_schema]': test
-  liquibase:
-    # Set Liquibase contexts
-    contexts: test
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          user-name-claim: preferred_username
-  test:
-    database:
-      # By default, tests annotated with @DataJpaTest will use an embedded in-memory database (replacing any explicit or usually auto-configured DataSource).
-      replace: none

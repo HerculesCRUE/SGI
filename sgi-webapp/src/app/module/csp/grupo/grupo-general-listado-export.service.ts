@@ -3,6 +3,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { TIPO_MAP } from '@core/models/csp/grupo-tipo';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -29,7 +30,8 @@ export class GrupoGeneralListadoExportService extends AbstractTableExportFillSer
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     private grupoService: GrupoService,
-    private personaService: PersonaService
+    private personaService: PersonaService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -118,7 +120,7 @@ export class GrupoGeneralListadoExportService extends AbstractTableExportFillSer
     const grupo = resultados[index];
 
     const elementsRow: any[] = [];
-    elementsRow.push(grupo.nombre);
+    elementsRow.push(this.languageService.getFieldValue(grupo.nombre));
     elementsRow.push(grupo.investigadoresPrincipales);
     elementsRow.push(grupo.codigo);
     elementsRow.push(grupo.proyectoSge ? grupo.proyectoSge.id : '');

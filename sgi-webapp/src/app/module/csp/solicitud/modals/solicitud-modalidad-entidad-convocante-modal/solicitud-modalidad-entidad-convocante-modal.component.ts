@@ -110,7 +110,7 @@ export class SolicitudModalidadEntidadConvocanteModalComponent
 
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      entidadConvocante: new FormControl({ value: this.data.entidad?.nombre, disabled: true }),
+      entidadConvocante: new FormControl({ value: this.data.entidad, disabled: true }),
       plan: new FormControl({ value: this.data.plan?.nombre, disabled: true }),
       modalidad: new FormControl(this.data.modalidad?.programa)
     });

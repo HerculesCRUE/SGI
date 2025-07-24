@@ -7,8 +7,8 @@
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field>
         <mat-label>{{'label.eti.comite' | translate}}</mat-label>
-        <input type="text" placeholder="{{'label.eti.comite' | translate}}" arial-label="Number" matInput
-          formControlName="comite">
+        <sgi-select-comite placeholder="{{'label.eti.comite' | translate}}"
+          formControlName="comite"></sgi-select-comite>
       </mat-form-field>
     </div>
 
@@ -17,7 +17,8 @@
       [fxFlexOrder]="fxFlexProperties.order">
       <mat-form-field>
         <mat-label>{{'eti.solicitante' | translate}}</mat-label>
-        <input matInput formControlName="solicitante" placeholder="{{'eti.solicitante' | translate}}">
+        <sgi-select-persona placeholder="{{'eti.solicitante' | translate}}"
+          formControlName="solicitante"></sgi-select-persona>
       </mat-form-field>
     </div>
 
@@ -56,8 +57,8 @@
       <div fxLayout="row">
         <mat-form-field class="input-form">
           <mat-label>{{'eti.dictamen' | translate}}</mat-label>
-          <sgi-select-entity formControlName="dictamen" [options]="dictamenes$ | async" required>
-          </sgi-select-entity>
+          <sgi-select-dictamen formControlName="dictamen" [evaluacionId]="this.actionService.getEvaluacion().id"
+            required></sgi-select-dictamen>
         </mat-form-field>
         <div fxLayoutAlign="center center">
           <button mat-icon-button color="primary" (click)="visualizarInforme(this.formPart.evaluacion?.id)"

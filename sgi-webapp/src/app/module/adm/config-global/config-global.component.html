@@ -31,6 +31,11 @@
           (selectionChange)="selectChange(config.key,$event)">
         </sgi-config-select-cnf>
       </ng-container>
+      <ng-container *ngSwitchCase="ConfigType.SELECT_MULTIPLE">
+        <sgi-config-select-multiple-cnf [key]="config.key" [label]="config.value.label" [asJSON]="true"
+          [required]="config.value.required" [options$]="config.value.options" (error)="handleErrors($event)">
+        </sgi-config-select-multiple-cnf>
+      </ng-container>
       <ng-container *ngSwitchCase="ConfigType.CONFIG_GROUP_TITLE">
         <h3 class="config-group-title">
           {{config.value.label | translate:config.value.labelParams}}

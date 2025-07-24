@@ -31,7 +31,7 @@ export class BaremoPuntosComponent implements OnInit, BaremoComponent {
 
   ngOnInit(): void {
     this.initFormGroup();
-    this.setupI18N();
+
   }
 
   private initFormGroup(): void {
@@ -44,7 +44,7 @@ export class BaremoPuntosComponent implements OnInit, BaremoComponent {
     }
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       BAREMO_PUNTOS_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

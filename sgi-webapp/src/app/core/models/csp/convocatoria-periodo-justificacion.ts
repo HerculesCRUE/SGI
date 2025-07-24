@@ -1,4 +1,5 @@
 import { TipoJustificacion } from '@core/enums/tipo-justificacion';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 
 export interface IConvocatoriaPeriodoJustificacion {
@@ -17,7 +18,7 @@ export interface IConvocatoriaPeriodoJustificacion {
   /** Fecha fin */
   fechaFinPresentacion: DateTime;
   /** Observaciones */
-  observaciones: string;
+  observaciones: I18nFieldValue[];
   /** Tipo justificacion */
   tipo: TipoJustificacion;
 }

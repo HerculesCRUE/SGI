@@ -1,0 +1,23 @@
+[
+  {
+    "key": "ap5_8",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.8 Batzordearentzako azalpenak"
+    },
+    "fieldGroup": [
+      {
+        "template": "Idatzi hemen Batzordearentzat beharrezkoa iruditzen zaizun beste edozein azalpen."
+      },
+      {
+        "key": "aclaracionesComite",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Azalpenak"
+        }
+      }
+    ]
+  }
+]

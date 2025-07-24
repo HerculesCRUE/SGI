@@ -198,4 +198,6 @@ export class PublicacionDatosGeneralesComponent extends FragmentComponent implem
       }
     ));
   }
+
+  protected setupI18N(): void { }
 }

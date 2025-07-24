@@ -2,10 +2,14 @@ package org.crue.hercules.sgi.pii.integration;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.dto.PaisValidadoOutput;
 import org.crue.hercules.sgi.pii.dto.ProcedimientoOutput;
 import org.crue.hercules.sgi.pii.dto.SolicitudProteccionInput;
@@ -90,7 +94,7 @@ class SolicitudProteccionControllerIT extends BaseIT {
         .isEqualTo("EP123456");
     Assertions.assertThat(founded.getPaisProteccionRef()).as("getPaisProteccionRef()")
         .isNull();
-    Assertions.assertThat(founded.getTitulo()).as("getTitulo()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(founded.getTitulo(), Language.ES)).as("getTitulo()")
         .isEqualTo("Solicitud Proteccion Test 2");
     Assertions.assertThat(founded.getInvencion()).as("getInvencion()")
         .isNotNull();
@@ -158,13 +162,15 @@ class SolicitudProteccionControllerIT extends BaseIT {
     Assertions.assertThat(output.getFechaPrioridadSolicitud()).isEqualTo(input.getFechaPrioridadSolicitud());
     Assertions.assertThat(output.getFechaPublicacion()).isEqualTo(input.getFechaPublicacion());
     Assertions.assertThat(output.getAgentePropiedadRef()).isEqualTo(input.getAgentePropiedadRef());
-    Assertions.assertThat(output.getComentarios()).isEqualTo(input.getComentarios());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getComentarios(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getComentarios(), Language.ES));
     Assertions.assertThat(output.getNumeroConcesion()).isEqualTo(input.getNumeroConcesion());
     Assertions.assertThat(output.getNumeroPublicacion()).isEqualTo(input.getNumeroPublicacion());
     Assertions.assertThat(output.getNumeroRegistro()).isEqualTo(input.getNumeroRegistro());
     Assertions.assertThat(output.getNumeroSolicitud()).isEqualTo(input.getNumeroSolicitud());
     Assertions.assertThat(output.getPaisProteccionRef()).isEqualTo(input.getPaisProteccionRef());
-    Assertions.assertThat(output.getTitulo()).isEqualTo(input.getTitulo());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getTitulo(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getTitulo(), Language.ES));
     Assertions.assertThat(output.getEstado()).isEqualTo(input.getEstado());
     Assertions.assertThat(output.getInvencion()).isNotNull();
     Assertions.assertThat(output.getInvencion().getId()).isEqualTo(input.getInvencionId());
@@ -208,13 +214,15 @@ class SolicitudProteccionControllerIT extends BaseIT {
     Assertions.assertThat(output.getFechaPrioridadSolicitud()).isEqualTo(input.getFechaPrioridadSolicitud());
     Assertions.assertThat(output.getFechaPublicacion()).isEqualTo(input.getFechaPublicacion());
     Assertions.assertThat(output.getAgentePropiedadRef()).isEqualTo(input.getAgentePropiedadRef());
-    Assertions.assertThat(output.getComentarios()).isEqualTo(input.getComentarios());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getComentarios(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getComentarios(), Language.ES));
     Assertions.assertThat(output.getNumeroConcesion()).isEqualTo(input.getNumeroConcesion());
     Assertions.assertThat(output.getNumeroPublicacion()).isEqualTo(input.getNumeroPublicacion());
     Assertions.assertThat(output.getNumeroRegistro()).isEqualTo(input.getNumeroRegistro());
     Assertions.assertThat(output.getNumeroSolicitud()).isEqualTo(input.getNumeroSolicitud());
     Assertions.assertThat(output.getPaisProteccionRef()).isEqualTo(input.getPaisProteccionRef());
-    Assertions.assertThat(output.getTitulo()).isEqualTo(input.getTitulo());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getTitulo(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getTitulo(), Language.ES));
     Assertions.assertThat(output.getEstado()).isEqualTo(input.getEstado());
     Assertions.assertThat(output.getInvencion()).isNotNull();
     Assertions.assertThat(output.getInvencion().getId()).isEqualTo(1L);
@@ -359,14 +367,21 @@ class SolicitudProteccionControllerIT extends BaseIT {
   }
 
   private SolicitudProteccionInput buildMockSolicitudProteccionInput() {
+
+    List<I18nFieldValueDto> tituloSolicitudProteccion = new ArrayList<>();
+    tituloSolicitudProteccion.add(new I18nFieldValueDto(Language.ES, "Testing Solicitud"));
+
+    List<I18nFieldValueDto> comentariosSolicitudProteccion = new ArrayList<>();
+    comentariosSolicitudProteccion.add(new I18nFieldValueDto(Language.ES, "comentarios"));
+
     return SolicitudProteccionInput.builder()
         .agentePropiedadRef("agentePropiedadRef")
-        .comentarios("comentarios")
+        .comentarios(comentariosSolicitudProteccion)
         .estado(SolicitudProteccion.EstadoSolicitudProteccion.SOLICITADA)
         .fechaPrioridadSolicitud(Instant.now())
         .invencionId(3L)
         .numeroSolicitud("1")
-        .titulo("Testing Solicitud")
+        .titulo(tituloSolicitudProteccion)
         .tipoCaducidadId(1L)
         .viaProteccionId(4L)
         .build();

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { Estado, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
 import { ISolicitud } from '@core/models/csp/solicitud';
@@ -102,7 +103,7 @@ export class SolicitudPublicActionService extends ActionService {
     return this.convocatoria?.modeloEjecucion?.id;
   }
 
-  get convocatoriaTitulo(): string {
+  get convocatoriaTitulo(): I18nFieldValue[] {
     return this.convocatoria?.titulo;
   }
 

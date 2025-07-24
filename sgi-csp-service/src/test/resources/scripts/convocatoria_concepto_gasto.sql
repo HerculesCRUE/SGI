@@ -20,12 +20,12 @@ scripts = {
 */
 
 INSERT INTO test.convocatoria_concepto_gasto
-(id, convocatoria_id, importe_maximo, mes_final, mes_inicial, observaciones, permitido, concepto_gasto_id)
+(id, convocatoria_id, importe_maximo, mes_final, mes_inicial, permitido, concepto_gasto_id)
 VALUES
-(1, 1, 10000.0, 3, 1, NULL, true, 1),
-(2, 1, NULL, 5, 2, NULL, true, 2),
-(3, 1, NULL, 10, 7, NULL, false, 3),
-(4, 2, NULL, NULL, NULL, NULL, false, 1),
-(5, 2, 20000.0, 12, 1, NULL, true, 1),
-(6, 2, 30000.0, 24, 13, NULL, true, 3),
-(7, 2, NULL, NULL, NULL, NULL, false, 11);
+(1, 1, 10000.0, 3, 1, true, 1),
+(2, 1, NULL, 5, 2, true, 2),
+(3, 1, NULL, 10, 7, false, 3),
+(4, 2, NULL, NULL, NULL, false, 1),
+(5, 2, 20000.0, 12, 1, true, 1),
+(6, 2, 30000.0, 24, 13, true, 3),
+(7, 2, NULL, NULL, NULL, false, 11);

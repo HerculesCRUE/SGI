@@ -18,7 +18,7 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { concat, EMPTY, from, Observable, of, zip } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { IProyectoPeriodoJustificacionWithTituloProyecto, IProyectoPeriodoSeguimientoWithTituloProyecto } from './ejecucion-economica-formulario/seguimiento-justificacion-resumen/seguimiento-justificacion-resumen.fragment';
 import { IRelacionEjecucionEconomicaWithResponsables } from './ejecucion-economica.action.service';
 import { RequerimientoJustificacionGeneralListadoExportService } from './requerimiento-justificacion-general-listado-export.service';
@@ -110,20 +110,25 @@ export class RequerimientoJustificacionListadoExportService
         from(response.items).pipe(
           mergeMap(relacion => {
             return this.proyectoService.findInvestigadoresPrincipalesActuales(relacion.id).pipe(
-              filter(personaRefs => !!personaRefs),
               map(investigadoresPrincipales => investigadoresPrincipales.map(investigador => investigador.persona.id)),
-              switchMap(personaRefs => this.personaService.findAllByIdIn(personaRefs).pipe(
-                catchError((error) => {
-                  this.logger.error(error);
-                  return EMPTY;
-                })
-              )),
+              switchMap(personaRefs => {
+                if (!personaRefs?.length) {
+                  return of([]);
+                }
+                return this.personaService.findAllByIdIn(personaRefs).pipe(
+                  map(response => response.items),
+                  catchError((error) => {
+                    this.logger.error(error);
+                    return EMPTY;
+                  })
+                )
+              }),
               map(responsables => {
-                relacion.responsables = responsables.items;
+                relacion.responsables = responsables;
                 return relacion;
               }),
             );
-          }),
+          }, this.DEFAULT_CONCURRENT),
           toArray(),
           map(() => {
             return response;

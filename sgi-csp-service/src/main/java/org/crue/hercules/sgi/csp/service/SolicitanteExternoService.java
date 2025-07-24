@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -21,6 +25,9 @@ import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -239,14 +246,20 @@ public class SolicitanteExternoService {
   private void enviarComunicadoSolicitudExterna(Long solicitudId, UUID uuid) {
     log.debug("enviarComunicadoSolicitudExterna(Solicitud solicitud) - start");
     try {
-
-      String tituloConvocatoria = this.convocatoriaRepository
+      Collection<? extends I18nFieldValue> i18nTituloConvocatoria = this.convocatoriaRepository
           .findOne(ConvocatoriaSpecifications.bySolicitudId(solicitudId)).map(Convocatoria::getTitulo)
-          .orElseGet(() -> this.solicitudRepository.findById(solicitudId).map(Solicitud::getConvocatoriaExterna)
-              .orElse(StringUtils.EMPTY));
-
-      this.solicitudComService.enviarComunicadoSolicitudUsuarioExterno(solicitudId, tituloConvocatoria,
-          uuid.toString());
+          .orElse(Collections.emptySet());
+      if (i18nTituloConvocatoria.isEmpty()) {
+        List<I18nFieldValueDto> i18nTituloConvocatoriaDto = new ArrayList<>();
+        i18nTituloConvocatoriaDto.add(new I18nFieldValueDto(Language.ES,
+            this.solicitudRepository.findById(solicitudId).map(Solicitud::getConvocatoriaExterna)
+                .orElse(StringUtils.EMPTY)));
+        this.solicitudComService.enviarComunicadoSolicitudUsuarioExterno(solicitudId, i18nTituloConvocatoriaDto,
+            uuid.toString());
+      } else {
+        this.solicitudComService.enviarComunicadoSolicitudUsuarioExterno(solicitudId, i18nTituloConvocatoria,
+            uuid.toString());
+      }
 
       log.debug("enviarComunicadoSolicitudExterna(Solicitud solicitud) - end");
     } catch (Exception e) {

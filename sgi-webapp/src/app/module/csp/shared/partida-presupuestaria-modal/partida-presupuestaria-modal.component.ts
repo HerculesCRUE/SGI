@@ -8,6 +8,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { IPartidaPresupuestaria } from '@core/models/csp/partida-presupuestaria';
 import { ConfigService } from '@core/services/csp/configuracion/config.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 import { comparePartidaPresupuestaria } from '../../proyecto/proyecto-formulario/proyecto-partidas-presupuestarias/proyecto-partida-presupuestaria.utils';
@@ -155,7 +156,7 @@ export class PartidaPresupuestariaModalComponent extends DialogFormComponent<IPa
         Validators.required
       ]),
       descripcion: new FormControl(this.data?.partidaPresupuestaria?.descripcion, [
-        Validators.maxLength(250)
+        I18nValidators.maxLength(250)
       ]),
       codigoConvocatoria: new FormControl({ value: codigoConvocatoria, disabled: true }),
       tipoConvocatoria: new FormControl({ value: this.data?.convocatoriaPartidaPresupuestaria?.tipoPartida, disabled: true }),

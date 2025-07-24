@@ -4,6 +4,7 @@ import { MatSelect } from '@angular/material/select';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { SgeEjecucionEconomicaFiltros } from '@core/models/csp/configuracion';
 import { IFacturaEmitida } from '@core/models/sge/factura-emitida';
 import { IFacturaEmitidaDetalle } from '@core/models/sge/factura-emitida-detalle';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -25,6 +26,8 @@ import { FacturasEmitidasFragment } from './facturas-emitidas.fragment';
   styleUrls: ['./facturas-emitidas.component.scss']
 })
 export class FacturasEmitidasComponent extends FragmentComponent implements OnInit, OnDestroy {
+  SGE_EJECUCION_ECONOMICA_FILTROS = SgeEjecucionEconomicaFiltros;
+
   private subscriptions: Subscription[] = [];
   formPart: FacturasEmitidasFragment;
 
@@ -46,7 +49,7 @@ export class FacturasEmitidasComponent extends FragmentComponent implements OnIn
   }
 
   constructor(
-    actionService: EjecucionEconomicaActionService,
+    private actionService: EjecucionEconomicaActionService,
     private calendarioFacturacionService: CalendarioFacturacionService,
     private matDialog: MatDialog,
     private readonly cnfService: ConfigService
@@ -119,4 +122,9 @@ export class FacturasEmitidasComponent extends FragmentComponent implements OnIn
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  protected setupI18N(): void { }
+
+  isSgeEjecucionEconomicaFiltroEnabled(opcion: SgeEjecucionEconomicaFiltros): boolean {
+    return this.actionService.isSgeEjecucionEconomicaFiltroEnabled(opcion);
+  }
 }

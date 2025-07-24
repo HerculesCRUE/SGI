@@ -1,0 +1,108 @@
+[
+  {
+    "key": "ap4_2_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1.1 Unibertsitateko laborategia"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Jarraian, zehaztu Unibertsitateko zer gelatan lan egingo den agente edo material biologikoarekin edo/eta genetikoki eraldatutako organismoekin.</p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "laboratorioLocalTable",
+        "templateOptions": {
+          "entity": "gela",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Gela"
+          },
+          "fieldGroup": [
+            {
+              "key": "codPatrimonial",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Lokalaren kodea",
+                "order": 10
+              }
+            },
+            {
+              "key": "nivelContencion",
+              "type": "select",
+              "templateOptions": {
+                "label": "Euste maila",
+                "order": 20,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "E1"
+                  },
+                  {
+                    "value": "2",
+                    "label": "E2"
+                  },
+                  {
+                    "value": "3",
+                    "label": "E3"
+                  },
+                  {
+                    "value": "4",
+                    "label": "E4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "ubicacion",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Kokapena",
+                "order": 30
+              }
+            },
+            {
+              "key": "certificadoIdoneidad",
+              "type": "select",
+              "templateOptions": {
+                "label": "Egokitasun ziurtagiria",
+                "order": 40,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Bai"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Ez"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "numeroRegistroServicioPrevencion",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Ez. Erreg. Prebentzio Zerbitzuan",
+                "order": 50
+              }
+            },
+            {
+              "key": "fecha",
+              "type": "datepicker",
+              "templateOptions": {
+                "label": "Data",
+                "luxonFormat": "shortDate",
+                "order": 60
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

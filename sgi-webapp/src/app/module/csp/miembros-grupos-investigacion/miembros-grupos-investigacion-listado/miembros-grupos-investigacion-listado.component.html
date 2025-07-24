@@ -124,7 +124,7 @@
           {{'csp.miembros-grupos-investigacion.rol' | translate}}
         </th>
         <td mat-cell *matCellDef="let miembroGrupoInvestigacion">
-          {{miembroGrupoInvestigacion.rol?.nombre}}
+          <sgi-i18n-table-field [field]="miembroGrupoInvestigacion.rol?.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -185,7 +185,7 @@
           {{'csp.miembros-grupos-investigacion.grupo.nombre' | translate}}
         </th>
         <td mat-cell *matCellDef="let miembroGrupoInvestigacion">
-          {{miembroGrupoInvestigacion.grupo?.nombre}}
+          <sgi-i18n-table-field [field]="miembroGrupoInvestigacion.grupo?.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

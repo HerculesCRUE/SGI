@@ -1,10 +1,14 @@
 package org.crue.hercules.sgi.pii.service.sgi;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.config.RestApiProperties;
 import org.crue.hercules.sgi.pii.dto.com.EmailOutput;
 import org.crue.hercules.sgi.pii.dto.com.PiiComFechaLimiteProcedimientoData;
@@ -117,10 +121,15 @@ class SgiApiComServiceTest extends BaseServiceTest {
 
   @Test
   void createComunicadoFechaLimiteProcedimiento_ReturnsEmailOutput() throws Exception {
+    List<I18nFieldValue> i18nAccionAtomarFieldValue = new ArrayList();
+    i18nAccionAtomarFieldValue.add(new I18nFieldValueDto(Language.ES, "testing"));
+
+    List<I18nFieldValue> i18nTipoProcedimientoFieldValue = new ArrayList();
+    i18nTipoProcedimientoFieldValue.add(new I18nFieldValueDto(Language.ES, "tipo procedimiento"));
     PiiComFechaLimiteProcedimientoData data = PiiComFechaLimiteProcedimientoData.builder()
-        .accionATomar("testing")
+        .accionATomar(i18nAccionAtomarFieldValue)
         .fechaLimite(Instant.now())
-        .tipoProcedimiento("tipo procedimiento")
+        .tipoProcedimiento(i18nTipoProcedimientoFieldValue)
         .build();
     List<Recipient> recipients = this.buildMockRecipients();
     EmailOutput emailOutput = this.buildMockEmailOutput(1L);

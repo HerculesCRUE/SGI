@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_MAP, IInvencionGasto } from '@core/models/pii/invencion-gasto';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
 import { InvencionActionService } from '../../invencion.action.service';
@@ -38,7 +39,8 @@ export class InvencionGastosComponent extends FragmentComponent implements OnIni
 
   constructor(
     public actionService: InvencionActionService,
-    private readonly matDialog: MatDialog
+    private readonly matDialog: MatDialog,
+    private readonly languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.GASTOS, actionService);
     this.formPart = this.fragment as InvencionGastosFragment;
@@ -55,7 +57,7 @@ export class InvencionGastosComponent extends FragmentComponent implements OnIni
     this.dataSource.sortingDataAccessor = (wrapper: StatusWrapper<IInvencionGasto>, property: string) => {
       switch (property) {
         case 'solicitudProteccion':
-          return wrapper.value.solicitudProteccion?.titulo;
+          return this.languageService.getFieldValue(wrapper.value.solicitudProteccion?.titulo);
         default:
           const gastoColumn = this.formPart.columns.find(column => column.id === property);
           return gastoColumn ? wrapper.value.gasto.columnas[gastoColumn.id] : wrapper.value[property];
@@ -92,4 +94,6 @@ export class InvencionGastosComponent extends FragmentComponent implements OnIni
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
+
+  protected setupI18N(): void { }
 }

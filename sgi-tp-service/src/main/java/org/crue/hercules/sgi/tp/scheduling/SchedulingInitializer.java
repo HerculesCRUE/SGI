@@ -2,18 +2,6 @@ package org.crue.hercules.sgi.tp.scheduling;
 
 import java.util.Optional;
 
-import com.hazelcast.core.EntryEvent;
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.MapEvent;
-import com.hazelcast.core.MemberAttributeEvent;
-import com.hazelcast.core.MembershipEvent;
-import com.hazelcast.core.MembershipListener;
-import com.hazelcast.map.listener.EntryAddedListener;
-import com.hazelcast.map.listener.EntryEvictedListener;
-import com.hazelcast.map.listener.EntryRemovedListener;
-import com.hazelcast.map.listener.EntryUpdatedListener;
-import com.hazelcast.map.listener.MapEvictedListener;
-
 import org.crue.hercules.sgi.tp.model.BeanMethodTask;
 import org.crue.hercules.sgi.tp.service.BeanMethodTaskService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -21,6 +9,17 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import com.hazelcast.cluster.MembershipEvent;
+import com.hazelcast.cluster.MembershipListener;
+import com.hazelcast.core.EntryEvent;
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.map.MapEvent;
+import com.hazelcast.map.listener.EntryAddedListener;
+import com.hazelcast.map.listener.EntryEvictedListener;
+import com.hazelcast.map.listener.EntryRemovedListener;
+import com.hazelcast.map.listener.EntryUpdatedListener;
+import com.hazelcast.map.listener.MapEvictedListener;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -83,11 +82,6 @@ public class SchedulingInitializer implements ApplicationListener<ApplicationRea
     @Override
     public void memberAdded(MembershipEvent arg0) {
       updateScheduling();
-    }
-
-    @Override
-    public void memberAttributeChanged(MemberAttributeEvent arg0) {
-      // Do nothing
     }
 
     @Override

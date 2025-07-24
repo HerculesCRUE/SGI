@@ -1,0 +1,141 @@
+[
+  {
+    "key": "ap1_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Severity",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>How many animals have been used in total?</p>"
+      },
+      {
+        "key": "numAnimalesUtilizados",
+        "type": "i18n-input",
+        "templateOptions": {
+          "label": "Number of animals used",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>How many animals have made it to the end of the experiment?</p>"
+      },
+      {
+        "key": "numAnimalesFinal",
+        "type": "i18n-input",
+        "templateOptions": {
+          "label": "Final number of animals",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>What level of actual severity have the animals suffered, differentiating between animals if necessary (e.g. control specimens)?</p>"
+      },
+      {
+        "key": "nivelSeveridadSufrido",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Description",
+          "label": "Description",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>How many animals have been removed from the experiment because the technical process did not go well and had to be discarded?</p>"
+      },
+      {
+        "key": "numAnimalesRetirados",
+        "type": "i18n-input",
+        "templateOptions": {
+          "label": "Number of animals removed",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Please describe the reasons, timing and level of severity reached:</p>"
+      },
+      {
+        "key": "nivelSeveridadAlcanzado",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Description",
+          "label": "Description",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>To how many animals has the endpoint criterion been applied?</p>"
+      },
+      {
+        "key": "numAnimalesPuntoFinal",
+        "type": "i18n-input",
+        "templateOptions": {
+          "label": "Number of endpoint animals",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Please indicate the time of application:</p>"
+      },
+      {
+        "key": "aplicacion",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Description",
+          "label": "Description",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Please describe any other issue that you consider of interest about the animals and the development of your research experiments.</p>"
+      },
+      {
+        "key": "descripcion",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Description",
+          "label": "Description",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Please indicate the measures taken to comply with ethical requirements in the research.</p>"
+      },
+      {
+        "key": "medidas",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Description",
+          "label": "Description",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

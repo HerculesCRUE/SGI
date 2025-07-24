@@ -10,6 +10,8 @@ import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -94,5 +96,15 @@ public interface CustomProyectoRepository {
    */
   Long countProyectosClasificacionCvnPersonas(List<String> personasRef, ClasificacionCVN clasificacionCvn,
       boolean rolPrincipal, Long exludedProyectoId, Instant fecha);
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link Proyecto} sin duplicados y
+   * ordenable por el titulo.
+   * 
+   * @param specs    condiciones que deben cumplir.
+   * @param pageable la información de la paginación.
+   * @return la lista de {@link Proyecto} paginadas y/o filtradas.
+   */
+  Page<Proyecto> findAllDistinct(Specification<Proyecto> specs, Pageable pageable);
 
 }

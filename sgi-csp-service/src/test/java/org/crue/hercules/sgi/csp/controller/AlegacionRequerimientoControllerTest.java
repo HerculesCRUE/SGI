@@ -1,10 +1,19 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.crue.hercules.sgi.csp.converter.AlegacionRequerimientoConverter;
 import org.crue.hercules.sgi.csp.dto.AlegacionRequerimientoInput;
 import org.crue.hercules.sgi.csp.dto.AlegacionRequerimientoOutput;
 import org.crue.hercules.sgi.csp.model.AlegacionRequerimiento;
+import org.crue.hercules.sgi.csp.model.AlegacionRequerimientoObservaciones;
 import org.crue.hercules.sgi.csp.service.AlegacionRequerimientoService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -23,7 +32,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
  * AlegacionRequerimientoControllerTest
  */
 @WebMvcTest(AlegacionRequerimientoController.class)
-public class AlegacionRequerimientoControllerTest extends BaseControllerTest {
+class AlegacionRequerimientoControllerTest extends BaseControllerTest {
 
   @MockBean
   private AlegacionRequerimientoService service;
@@ -78,7 +87,7 @@ public class AlegacionRequerimientoControllerTest extends BaseControllerTest {
         .andExpect(
             MockMvcResultMatchers.jsonPath("justificanteReintegro").value("Justificante-" + suffix))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("observaciones").value("Observacion-" + suffix));
+            MockMvcResultMatchers.jsonPath("observaciones[0].value").value("Observacion-" + suffix));
   }
 
   @Test
@@ -104,10 +113,7 @@ public class AlegacionRequerimientoControllerTest extends BaseControllerTest {
           }
         });
     BDDMockito.given(service.update(ArgumentMatchers.<AlegacionRequerimiento>any()))
-        .willAnswer((InvocationOnMock invocation) -> {
-          AlegacionRequerimiento input = invocation.getArgument(0);
-          return input;
-        });
+        .willAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
     BDDMockito.given(converter.convert(ArgumentMatchers.<AlegacionRequerimiento>any()))
         .willAnswer(new Answer<AlegacionRequerimientoOutput>() {
           @Override
@@ -133,55 +139,71 @@ public class AlegacionRequerimientoControllerTest extends BaseControllerTest {
         .andExpect(
             MockMvcResultMatchers.jsonPath("justificanteReintegro").value("Justificante-" + suffix))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("observaciones").value("Observacion-" + suffix));
+            MockMvcResultMatchers.jsonPath("observaciones[0].value").value("Observacion-" + suffix));
   }
 
   private AlegacionRequerimiento generarMockAlegacionRequerimiento(AlegacionRequerimientoInput input) {
-    return generarMockAlegacionRequerimiento(null,
-        input.getJustificanteReintegro(), input.getObservaciones(), input.getRequerimientoJustificacionId());
+    return generarMockAlegacionRequerimiento(input, null);
   }
 
   private AlegacionRequerimiento generarMockAlegacionRequerimiento(AlegacionRequerimientoInput input, Long id) {
-    return generarMockAlegacionRequerimiento(id,
-        input.getJustificanteReintegro(), input.getObservaciones(), input.getRequerimientoJustificacionId());
+    return generarMockAlegacionRequerimiento(
+        id,
+        input.getJustificanteReintegro(),
+        I18nHelper.getValueForLanguage(input.getObservaciones(), Language.ES),
+        input.getRequerimientoJustificacionId());
   }
 
   private AlegacionRequerimiento generarMockAlegacionRequerimiento(Long id,
       String justificanteReintegro, String observaciones, Long requerimientoJustificacionId) {
+    Set<AlegacionRequerimientoObservaciones> observacionesAlegacionRequerimiento = new HashSet<>();
+    observacionesAlegacionRequerimiento.add(new AlegacionRequerimientoObservaciones(Language.ES, observaciones));
+
     return AlegacionRequerimiento.builder()
         .id(id)
         .justificanteReintegro(justificanteReintegro)
-        .observaciones(observaciones)
+        .observaciones(observacionesAlegacionRequerimiento)
         .requerimientoJustificacionId(requerimientoJustificacionId)
         .build();
   }
 
   private AlegacionRequerimientoInput generarMockAlegacionRequerimientoInput(String suffix,
       Long requerimientoJustificacionId) {
-    return generarMockAlegacionRequerimientoInput("Justificante-" + suffix, "Observacion-" + suffix,
+    return generarMockAlegacionRequerimientoInput(
+        "Justificante-" + suffix,
+        "Observacion-" + suffix,
         requerimientoJustificacionId);
   }
 
   private AlegacionRequerimientoInput generarMockAlegacionRequerimientoInput(String justificanteReintegro,
       String observaciones, Long requerimientoJustificacionId) {
+    List<I18nFieldValueDto> observacionesAlegacionRequerimiento = new ArrayList<>();
+    observacionesAlegacionRequerimiento.add(new I18nFieldValueDto(Language.ES, observaciones));
+
     return AlegacionRequerimientoInput.builder()
         .justificanteReintegro(justificanteReintegro)
-        .observaciones(observaciones)
+        .observaciones(observacionesAlegacionRequerimiento)
         .requerimientoJustificacionId(requerimientoJustificacionId)
         .build();
   }
 
   private AlegacionRequerimientoOutput generarMockAlegacionRequerimientoOutput(AlegacionRequerimiento input) {
-    return generarMockAlegacionRequerimientoOutput(input.getId(), input.getJustificanteReintegro(),
-        input.getObservaciones(), input.getRequerimientoJustificacionId());
+    return generarMockAlegacionRequerimientoOutput(
+        input.getId(),
+        input.getJustificanteReintegro(),
+        I18nHelper.getValueForLanguage(input.getObservaciones(), Language.ES),
+        input.getRequerimientoJustificacionId());
   }
 
   private AlegacionRequerimientoOutput generarMockAlegacionRequerimientoOutput(Long id,
       String justificanteReintegro, String observaciones, Long requerimientoJustificacionId) {
+    Set<AlegacionRequerimientoObservaciones> observacionesAlegacionRequerimiento = new HashSet<>();
+    observacionesAlegacionRequerimiento.add(new AlegacionRequerimientoObservaciones(Language.ES, observaciones));
+
     return AlegacionRequerimientoOutput.builder()
         .id(id)
         .justificanteReintegro(justificanteReintegro)
-        .observaciones(observaciones)
+        .observaciones(observacionesAlegacionRequerimiento)
         .requerimientoJustificacionId(requerimientoJustificacionId)
         .build();
   }

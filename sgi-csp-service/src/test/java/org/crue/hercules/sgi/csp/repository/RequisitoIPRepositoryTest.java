@@ -1,11 +1,15 @@
 package org.crue.hercules.sgi.csp.repository;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,7 +24,7 @@ class RequisitoIPRepositoryTest extends BaseRepositoryTest {
   private RequisitoIPRepository repository;
 
   @Test
-  void findByConvocatoriaId_ReturnsRequisitoIP() throws Exception {
+  void findByConvocatoriaId_ReturnsRequisitoIP() {
 
     // given: 2 RequisitoIP de los que 1 coincide con el idConvocatoria buscado
     Convocatoria convocatoria = entityManager.persistAndFlush(generarMockConvocatoria(1L));
@@ -41,7 +45,7 @@ class RequisitoIPRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  void findByConvocatoriaNoExiste_ReturnsNull() throws Exception {
+  void findByConvocatoriaNoExiste_ReturnsNull() {
 
     // given: 2 RequisitoIP que no coinciden con el idConvocatoria buscado
     Convocatoria convocatoria = entityManager.persistAndFlush(generarMockConvocatoria(1L));
@@ -60,17 +64,17 @@ class RequisitoIPRepositoryTest extends BaseRepositoryTest {
   }
 
   private Convocatoria generarMockConvocatoria(Long index) {
-    // @formatter:off
-    Convocatoria convocatoria = Convocatoria.builder()
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
+    return Convocatoria.builder()
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo-00" + index)
         .unidadGestionRef("2")
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo)
         .activo(Boolean.TRUE)
         .build();
-    // @formatter:on
-    return convocatoria;
   }
 
   /**

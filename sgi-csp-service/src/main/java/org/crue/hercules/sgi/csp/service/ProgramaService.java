@@ -1,8 +1,12 @@
 package org.crue.hercules.sgi.csp.service;
 
+import javax.validation.Valid;
+
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Service Interface para gestionar {@link Programa}.
@@ -15,7 +19,8 @@ public interface ProgramaService {
    * @param programa la entidad {@link Programa} a guardar.
    * @return la entidad {@link Programa} persistida.
    */
-  Programa create(Programa programa);
+  @Validated({ BaseEntity.Create.class })
+  Programa create(@Valid Programa programa);
 
   /**
    * Actualizar {@link Programa}.
@@ -23,7 +28,8 @@ public interface ProgramaService {
    * @param programaActualizar la entidad {@link Programa} a actualizar.
    * @return la entidad {@link Programa} persistida.
    */
-  Programa update(Programa programaActualizar);
+  @Validated({ BaseEntity.Update.class })
+  Programa update(@Valid Programa programaActualizar);
 
   /**
    * Reactiva el {@link Programa}.

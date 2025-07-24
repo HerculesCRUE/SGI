@@ -4,14 +4,14 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.io.StringWriter;
 
+import org.crue.hercules.sgi.rep.dto.BaseRestDto;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRawValue;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.crue.hercules.sgi.rep.dto.BaseRestDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,9 +27,9 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class RespuestaDto extends BaseRestDto {
 
-  private MemoriaDto memoria;
+  private Long memoriaId;
 
-  private ApartadoDto apartado;
+  private Long apartadoId;
 
   private TipoDocumentoRespuestaDto tipoDocumento;
 

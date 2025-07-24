@@ -5,7 +5,6 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
-import { COMITE } from '@core/models/eti/comite';
 import { ESTADO_MEMORIA } from '@core/models/eti/tipo-estado-memoria';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -49,10 +48,6 @@ export class MemoriaEditarComponent extends ActionComponent implements OnInit {
     return MSG_PARAMS;
   }
 
-  get COMITE() {
-    return COMITE;
-  }
-
   constructor(
     private readonly logger: NGXLogger,
     protected readonly snackBarService: SnackBarService,
@@ -63,17 +58,17 @@ export class MemoriaEditarComponent extends ActionComponent implements OnInit {
     private matDialog: MatDialog,
     private readonly translate: TranslateService
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
     this.from = history.state.from;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.showIndicarSubsanacionBtn = this.estadosEnableIndicarSubsanacion.includes(this.actionService.getEstadoMemoria().id) && !this.actionService.isModuleInv();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MEMORIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

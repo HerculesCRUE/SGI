@@ -2,11 +2,17 @@ package org.crue.hercules.sgi.pii.integration;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.controller.ResultadoInformePatentabilidadController;
 import org.crue.hercules.sgi.pii.model.ResultadoInformePatentabilidad;
+import org.crue.hercules.sgi.pii.model.ResultadoInformePatentabilidadDescripcion;
+import org.crue.hercules.sgi.pii.model.ResultadoInformePatentabilidadNombre;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -63,8 +69,8 @@ class ResultadoInformePatentabilidadIT extends BaseIT {
 
     final ResultadoInformePatentabilidad resultado = response.getBody();
     Assertions.assertThat(resultado.getId()).as("id").isEqualTo(5L);
-    Assertions.assertThat(resultado.getNombre()).as("nombre")
-        .isEqualTo(nuevoResultadoInformePatentabilidad.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(resultado.getNombre(), Language.ES)).as("nombre[0].value")
+        .isEqualTo(I18nHelper.getValueForLanguage(nuevoResultadoInformePatentabilidad.getNombre(), Language.ES));
     Assertions.assertThat(resultado.getDescripcion()).as("descripcion")
         .isEqualTo(nuevoResultadoInformePatentabilidad.getDescripcion());
   }
@@ -83,7 +89,11 @@ class ResultadoInformePatentabilidadIT extends BaseIT {
 
     ResultadoInformePatentabilidad resultadoInformePatentabilidad = generarMockResultadoInformePatentabilidad(
         idResultadoInformePatentabilidad);
-    resultadoInformePatentabilidad.setDescripcion("descripcion-modificada");
+
+    Set<ResultadoInformePatentabilidadDescripcion> descripcionResultadoInformePatentabilidad = new HashSet<>();
+    descripcionResultadoInformePatentabilidad
+        .add(new ResultadoInformePatentabilidadDescripcion(Language.ES, "descripcion-modificada"));
+    resultadoInformePatentabilidad.setDescripcion(descripcionResultadoInformePatentabilidad);
 
     final ResponseEntity<ResultadoInformePatentabilidad> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.PUT,
@@ -96,7 +106,8 @@ class ResultadoInformePatentabilidadIT extends BaseIT {
 
     final ResultadoInformePatentabilidad resultado = response.getBody();
     Assertions.assertThat(resultado.getId()).as("id").isEqualTo(1L);
-    Assertions.assertThat(resultado.getNombre()).as("nombre").isEqualTo(resultadoInformePatentabilidad.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(resultado.getNombre(), Language.ES)).as("nombre[0].value")
+        .isEqualTo(I18nHelper.getValueForLanguage(resultadoInformePatentabilidad.getNombre(), Language.ES));
     Assertions.assertThat(resultado.getDescripcion()).as("descripcion")
         .isEqualTo(resultadoInformePatentabilidad.getDescripcion());
   }
@@ -117,7 +128,7 @@ class ResultadoInformePatentabilidadIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_TODOS).queryParam("s", sort)
         .queryParam("q", filter).build(false)
@@ -135,13 +146,17 @@ class ResultadoInformePatentabilidadIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("4");
 
-    Assertions.assertThat(resultadoInformePatentabilidad.get(0).getNombre())
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(resultadoInformePatentabilidad.get(0).getNombre(), Language.ES))
         .isEqualTo("nombre-resultado-informe-" + String.format("%03d", 4));
-    Assertions.assertThat(resultadoInformePatentabilidad.get(1).getNombre())
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(resultadoInformePatentabilidad.get(1).getNombre(), Language.ES))
         .isEqualTo("nombre-resultado-informe-" + String.format("%03d", 3));
-    Assertions.assertThat(resultadoInformePatentabilidad.get(2).getNombre())
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(resultadoInformePatentabilidad.get(2).getNombre(), Language.ES))
         .isEqualTo("nombre-resultado-informe-" + String.format("%03d", 2));
-    Assertions.assertThat(resultadoInformePatentabilidad.get(3).getNombre())
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(resultadoInformePatentabilidad.get(3).getNombre(), Language.ES))
         .isEqualTo("nombre-resultado-informe-" + String.format("%03d", 1));
   }
 
@@ -161,7 +176,7 @@ class ResultadoInformePatentabilidadIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false)
@@ -207,8 +222,8 @@ class ResultadoInformePatentabilidadIT extends BaseIT {
     Assertions.assertThat(resultadoInformePatentabilidad).isNotNull();
     Assertions.assertThat(resultadoInformePatentabilidad.getId()).as("id")
         .isEqualTo(1);
-    Assertions.assertThat(resultadoInformePatentabilidad.getNombre()).as("nombre")
-        .isEqualTo("nombre-resultado-informe-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(resultadoInformePatentabilidad.getNombre(), Language.ES))
+        .as("nombre[0].value").isEqualTo("nombre-resultado-informe-001");
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -272,10 +287,18 @@ class ResultadoInformePatentabilidadIT extends BaseIT {
    * @return el objeto ResultadoInformePatentabilidad
    */
   private ResultadoInformePatentabilidad generarMockResultadoInformePatentabilidad(Long id) {
+    Set<ResultadoInformePatentabilidadNombre> nombreResultadoInformePatentabilidad = new HashSet<>();
+    nombreResultadoInformePatentabilidad.add(new ResultadoInformePatentabilidadNombre(Language.ES,
+        "nombre-resultado-" + String.format("%03d", id)));
+
+    Set<ResultadoInformePatentabilidadDescripcion> descripcionResultadoInformePatentabilidad = new HashSet<>();
+    descripcionResultadoInformePatentabilidad.add(new ResultadoInformePatentabilidadDescripcion(Language.ES,
+        "descripcion-resultado-" + String.format("%03d", id)));
+
     ResultadoInformePatentabilidad resultadoInformePatentabilidad = new ResultadoInformePatentabilidad();
     resultadoInformePatentabilidad.setId(id);
-    resultadoInformePatentabilidad.setNombre("nombre-resultado-" + String.format("%03d", id));
-    resultadoInformePatentabilidad.setDescripcion("descripcion-resultado-" + String.format("%03d", id));
+    resultadoInformePatentabilidad.setNombre(nombreResultadoInformePatentabilidad);
+    resultadoInformePatentabilidad.setDescripcion(descripcionResultadoInformePatentabilidad);
 
     return resultadoInformePatentabilidad;
   }

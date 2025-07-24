@@ -1,0 +1,22 @@
+[
+  {
+    "key": "ap3_6_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.4 Erabiliko den animalia kopurua"
+    },
+    "fieldGroup": [
+      {
+        "key": "totalAnimalesUtilizar",
+        "type": "i18n-input",
+        "templateOptions": {
+          "required": true,
+          "label": "Guztira",
+          "placeholder": "Guztira"
+        }
+      }
+    ]
+  }
+]

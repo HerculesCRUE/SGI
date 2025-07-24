@@ -2,21 +2,30 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.AreaTematicaNotFoundException;
 import org.crue.hercules.sgi.csp.model.AreaTematica;
+import org.crue.hercules.sgi.csp.model.AreaTematicaDescripcion;
+import org.crue.hercules.sgi.csp.model.AreaTematicaNombre;
 import org.crue.hercules.sgi.csp.repository.AreaTematicaRepository;
 import org.crue.hercules.sgi.csp.service.impl.AreaTematicaServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,17 +35,14 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * AreaTematicaServiceTest
  */
+@Import({ AreaTematicaServiceImpl.class })
 class AreaTematicaServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private AreaTematicaRepository repository;
 
+  @Autowired
   private AreaTematicaService service;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    service = new AreaTematicaServiceImpl(repository);
-  }
 
   @Test
   void create_ReturnsAreaTematica() {
@@ -106,7 +112,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // when: Creamos el AreaTematica
     // then: Lanza una excepcion porque el AreaTematica ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(areaTematica)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("AreaTematica id tiene que ser null para crear un nuevo AreaTematica");
+        .hasMessage("Identificador de Área Temática debe ser nulo");
   }
 
   @Test
@@ -127,20 +133,14 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // grupo
     AreaTematica areaTematicaNew = generarMockAreaTematica(null, "nombreRepetido", "descripcion-2", null);
     AreaTematica areaTematica = generarMockAreaTematica(1L, "nombreRepetido", "descripcion-1", null);
-
-    BDDMockito
-        .given(
-            repository.findAll(ArgumentMatchers.<Specification<AreaTematica>>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer((InvocationOnMock invocation) -> {
-          Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<AreaTematica> page = new PageImpl<>(Arrays.asList(areaTematica), pageable, 0);
-          return page;
-        });
+    BDDMockito.given(repository.findAll(ArgumentMatchers.<Specification<AreaTematica>>any()))
+        .willReturn(Arrays.asList(areaTematica));
 
     // when: Creamos el AreaTematica
     // then: Lanza una excepcion porque hay otro grupo AreaTematica con ese nombre
-    Assertions.assertThatThrownBy(() -> service.create(areaTematicaNew)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un grupo con el mismo nombre");
+    Assertions.assertThatThrownBy(() -> service.create(areaTematicaNew))
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessage("create.areaTematica.Nombre: Ya existe un area tematica con el nombre 'nombreRepetido'");
   }
 
   @Test
@@ -156,7 +156,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // when: Creamos el AreaTematica
     // then: Lanza una excepcion porque el padre no está activo
     Assertions.assertThatThrownBy(() -> service.create(areaTematicaNew)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("AreaTematica padre '%s' está desactivada", areaTematica.getNombre());
+        .hasMessage("%s de Área Temática padre no está activo", areaTematica.getNombre());
   }
 
   @Test
@@ -171,7 +171,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // when: Creamos el AreaTematica
     // then: Lanza una excepcion porque excede la longitud máxima permitida
     Assertions.assertThatThrownBy(() -> service.create(areaTematicaNew)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Se ha superado la longitud máxima permitida para la abreviatura de AreaTematica (5)");
+        .hasMessage("Se ha superado la longitud máxima permitida para Abreviatura de Área Temática (5)");
   }
 
   @Test
@@ -187,7 +187,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // when: Creamos el AreaTematica
     // then: Lanza una excepcion porque excede la longitud máxima permitida
     Assertions.assertThatThrownBy(() -> service.create(areaTematicaNew)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Se ha superado la longitud máxima permitida para el nombre de AreaTematica (50)");
+        .hasMessage("Se ha superado la longitud máxima permitida para Descripción de Área Temática (50)");
   }
 
   @Test
@@ -202,7 +202,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // when: Creamos el AreaTematica
     // then: Lanza una excepcion porque descripcion es obligatoria
     Assertions.assertThatThrownBy(() -> service.create(areaTematicaNew)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El nombre de AreaTematica es un campo obligatorio");
+        .hasMessage("Descripción de Área Temática no puede ser nulo");
   }
 
   @Test
@@ -213,13 +213,14 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     AreaTematica areaTematicaHijo = generarMockAreaTematica(2L, "A-002", "descripcion-2", 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(areaTematica));
-    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(ArgumentMatchers.<Long>anyList()))
+    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(Arrays.asList(1L)))
         .willReturn(Arrays.asList(areaTematicaHijo));
 
     // when: Creamos el AreaTematica
     // then: Lanza una excepcion porque hay otro AreaTematica con ese nombre
-    Assertions.assertThatThrownBy(() -> service.create(areaTematicaNew)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un AreaTematica con la misma abreviatura en el grupo");
+    Assertions.assertThatThrownBy(() -> service.create(areaTematicaNew)).isInstanceOf(
+        ConstraintViolationException.class)
+        .hasMessage("create.areaTematica.Nombre: Ya existe un area tematica con el nombre 'A-002'");
   }
 
   @Test
@@ -229,15 +230,18 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     AreaTematica areaTematica = generarMockAreaTematica(1L, "nombrePadre", "descripcionPadre", null);
     AreaTematica areaTematicaHijo = generarMockAreaTematica(2L, "A-002", "descripcionRepetida", 1L);
 
-    BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(areaTematica));
+    BDDMockito.given(repository.findById(1L)).willReturn(Optional.of(areaTematica));
+    BDDMockito.given(repository.findById(2L)).willReturn(Optional.of(areaTematicaHijo));
     // se llama dos veces, primero para el nombre y luego la descripción
-    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(ArgumentMatchers.<Long>anyList()))
-        .willReturn(new ArrayList<>()).willReturn(Arrays.asList(areaTematicaHijo));
+    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(Arrays.asList(1L)))
+        .willReturn(Arrays.asList(areaTematicaHijo));
 
     // when: Creamos el AreaTematica
     // then: Lanza una excepcion porque hay otro AreaTematica con ese nombre
-    Assertions.assertThatThrownBy(() -> service.create(areaTematicaNew)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un AreaTematica con el mismo nombre en el grupo");
+    Assertions.assertThatThrownBy(() -> service.create(areaTematicaNew))
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessage(
+            "create.areaTematica.Descripción: Ya existe un area tematica con la descripcion 'descripcionRepetida'");
   }
 
   @Test
@@ -308,19 +312,14 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     AreaTematica areaTematica = generarMockAreaTematica(2L, "nombreRepetido", "Descripcion-2", null);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(areaTematicaActualizado));
-    BDDMockito
-        .given(
-            repository.findAll(ArgumentMatchers.<Specification<AreaTematica>>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer((InvocationOnMock invocation) -> {
-          Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<AreaTematica> page = new PageImpl<>(Arrays.asList(areaTematica), pageable, 0);
-          return page;
-        });
+    BDDMockito.given(repository.findAll(ArgumentMatchers.<Specification<AreaTematica>>any()))
+        .willReturn(Arrays.asList(areaTematica));
 
     // when: Actualizamos el AreaTematica
     // then: Lanza una excepcion porque hay otro grupo AreaTematica con ese nombre
     Assertions.assertThatThrownBy(() -> service.update(areaTematicaActualizado))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Ya existe un grupo con el mismo nombre");
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessage("update.areaTematicaActualizar.Nombre: Ya existe un area tematica con el nombre 'nombreRepetido'");
   }
 
   @Test
@@ -328,7 +327,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // given: AreaTematica modificada cuyo padre está desactivado
     // nombre(back) ==> abreviatura(front)
     AreaTematica areaTematicaOriginal = generarMockAreaTematica(3L, "A-003", "descripcion-3", 1L);
-    AreaTematica areaTematicaPadreActualizado = generarMockAreaTematica(2L, "nombrePadre2", "descripcionPadre2", null);
+    AreaTematica areaTematicaPadreActualizado = generarMockAreaTematica(2L, "nombre-1", "descripcionPadre2", null);
     AreaTematica areaTematicaActualizado = generarMockAreaTematica(3L, "A-003", "descripcion-3", 2L);
     areaTematicaPadreActualizado.setActivo(Boolean.FALSE);
 
@@ -339,7 +338,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque el padre no está activo
     Assertions.assertThatThrownBy(() -> service.update(areaTematicaActualizado))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("AreaTematica padre '%s' está desactivada", areaTematicaPadreActualizado.getNombre());
+        .hasMessage("%s de Área Temática padre no está activo", areaTematicaPadreActualizado.getNombre());
   }
 
   @Test
@@ -356,7 +355,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque excede la longitud máxima permitida
     Assertions.assertThatThrownBy(() -> service.update(areaTematicaActualizado))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Se ha superado la longitud máxima permitida para la abreviatura de AreaTematica (5)");
+        .hasMessage("Se ha superado la longitud máxima permitida para Abreviatura de Área Temática (5)");
   }
 
   @Test
@@ -374,7 +373,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque excede la longitud máxima permitida
     Assertions.assertThatThrownBy(() -> service.update(areaTematicaActualizado))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Se ha superado la longitud máxima permitida para el nombre de AreaTematica (50)");
+        .hasMessage("Se ha superado la longitud máxima permitida para Descripción de Área Temática (50)");
   }
 
   @Test
@@ -390,7 +389,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // when: Actualizamos el AreaTematica
     // then: Lanza una excepcion porque descripcion es obligatoria
     Assertions.assertThatThrownBy(() -> service.update(areaTematicaActualizado))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El nombre de AreaTematica es un campo obligatorio");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Descripción de Área Temática no puede ser nulo");
   }
 
   @Test
@@ -403,14 +402,14 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     BDDMockito.given(repository.findById(3L)).willReturn(Optional.of(areaTematicaActualizado));
     BDDMockito.given(repository.findById(1L)).willReturn(Optional.of(areaTematica));
 
-    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(ArgumentMatchers.<Long>anyList()))
+    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(Arrays.asList(1L)))
         .willReturn(Arrays.asList(areaTematicaHijo));
 
     // when: Actualizamos el AreaTematica
     // then: Lanza una excepcion porque hay otro AreaTematica con ese nombre
     Assertions.assertThatThrownBy(() -> service.update(areaTematicaActualizado))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un AreaTematica con la misma abreviatura en el grupo");
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessage("update.areaTematicaActualizar.Nombre: Ya existe un area tematica con el nombre 'A-002'");
   }
 
   @Test
@@ -423,14 +422,15 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     BDDMockito.given(repository.findById(3L)).willReturn(Optional.of(areaTematicaActualizado));
     BDDMockito.given(repository.findById(1L)).willReturn(Optional.of(areaTematica));
 
-    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(ArgumentMatchers.<Long>anyList()))
-        .willReturn(new ArrayList<>()).willReturn(Arrays.asList(areaTematicaHijo));
+    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(Arrays.asList(1L)))
+        .willReturn(Arrays.asList(areaTematicaHijo));
 
     // when: Actualizamos el AreaTematica
     // then: Lanza una excepcion porque hay otro AreaTematica con esa descripcion
     Assertions.assertThatThrownBy(() -> service.update(areaTematicaActualizado))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un AreaTematica con el mismo nombre en el grupo");
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessage(
+            "update.areaTematicaActualizar.Descripción: Ya existe un area tematica con la descripcion 'DescripcionRepetida'");
   }
 
   @Test
@@ -495,19 +495,13 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     AreaTematica areaTematicaRepetido = generarMockAreaTematica(2L, "nombreRepetido", "descripcion-2", null);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(areaTematica));
-    BDDMockito
-        .given(
-            repository.findAll(ArgumentMatchers.<Specification<AreaTematica>>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer((InvocationOnMock invocation) -> {
-          Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<AreaTematica> page = new PageImpl<>(Arrays.asList(areaTematicaRepetido), pageable, 0);
-          return page;
-        });
+    BDDMockito.given(repository.findAll(ArgumentMatchers.<Specification<AreaTematica>>any()))
+        .willReturn(Arrays.asList(areaTematicaRepetido));
 
     // when: Activamos el AreaTematica
     // then: Lanza una excepcion porque hay otro AreaTematica con ese nombre
-    Assertions.assertThatThrownBy(() -> service.update(areaTematica)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un grupo con el mismo nombre");
+    Assertions.assertThatThrownBy(() -> service.update(areaTematica)).isInstanceOf(ConstraintViolationException.class)
+        .hasMessage("update.areaTematicaActualizar.Nombre: Ya existe un area tematica con el nombre 'nombreRepetido'");
   }
 
   @Test
@@ -530,7 +524,7 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque el AreaTematica tiene padre (no es grupo)
     Assertions.assertThatThrownBy(() -> service.enable(areaTematica.getId()))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Solo se puede reactivar si es un grupo (AreaTematica sin padre)");
+        .hasMessage("Padre de Área Temática debe ser nulo");
   }
 
   @Test
@@ -577,7 +571,8 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     // then: el AreaTematica
     Assertions.assertThat(areaTematica).as("isNotNull()").isNotNull();
     Assertions.assertThat(areaTematica.getId()).as("getId()").isEqualTo(idBuscado);
-    Assertions.assertThat(areaTematica.getNombre()).as("getNombre()").isEqualTo("nombre-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematica.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-1");
     Assertions.assertThat(areaTematica.getActivo()).as("getActivo()").isTrue();
   }
 
@@ -629,7 +624,8 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       AreaTematica areaTematica = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(areaTematica.getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematica.getNombre(), Language.ES))
+          .isEqualTo("nombre-" + i);
     }
   }
 
@@ -670,7 +666,8 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       AreaTematica areaTematica = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(areaTematica.getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematica.getNombre(), Language.ES))
+          .isEqualTo("nombre-" + i);
     }
   }
 
@@ -711,7 +708,8 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       AreaTematica areaTematica = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(areaTematica.getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematica.getNombre(), Language.ES))
+          .isEqualTo("nombre-" + i);
     }
   }
 
@@ -753,7 +751,8 @@ class AreaTematicaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       AreaTematica areaTematica = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(areaTematica.getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematica.getNombre(), Language.ES))
+          .isEqualTo("nombre-" + i);
     }
   }
 
@@ -776,10 +775,16 @@ class AreaTematicaServiceTest extends BaseServiceTest {
    * @return el objeto AreaTematica
    */
   private AreaTematica generarMockAreaTematica(Long id, String nombre, String descripcion, Long idAreaTematicaPadre) {
+    Set<AreaTematicaNombre> nombreAreaTematica = new HashSet<>();
+    nombreAreaTematica.add(new AreaTematicaNombre(Language.ES, nombre));
+
+    Set<AreaTematicaDescripcion> descripcionAreaTematica = new HashSet<>();
+    descripcionAreaTematica.add(new AreaTematicaDescripcion(Language.ES, descripcion));
+
     AreaTematica areaTematica = new AreaTematica();
     areaTematica.setId(id);
-    areaTematica.setNombre(nombre);
-    areaTematica.setDescripcion(descripcion);
+    areaTematica.setNombre(nombreAreaTematica);
+    areaTematica.setDescripcion(descripcionAreaTematica);
 
     if (idAreaTematicaPadre != null) {
       areaTematica.setPadre(generarMockAreaTematica(idAreaTematicaPadre));

@@ -5,8 +5,8 @@
     <div fxFlex="100" fxLayout="row" fxLayoutGap="10px">
       <mat-form-field fxFlex="70%">
         <mat-label>{{'csp.rol-equipo.nombre' | translate}}</mat-label>
-        <input matInput formControlName="nombre" type="text" id="nombre"
-          placeholder="{{'csp.rol-equipo.nombre' | translate}}" required>
+        <sgi-i18n-input formControlName="nombre" id="nombre" placeholder="{{'csp.rol-equipo.nombre' | translate}}"
+          required></sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>
@@ -14,8 +14,8 @@
       <!-- Abreviatura -->
       <mat-form-field fxFlex="30%">
         <mat-label>{{'csp.rol-equipo.abreviatura' | translate}}</mat-label>
-        <input matInput formControlName="abreviatura" type="text" id="abreviatura"
-          placeholder="{{'csp.rol-equipo.abreviatura' | translate}}" maxLength="5" required>
+        <sgi-i18n-input matInput formControlName="abreviatura" type="text" id="abreviatura"
+          placeholder="{{'csp.rol-equipo.abreviatura' | translate}}" maxlength="5" required></sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.abreviatura.errors?.required">
           {{'error.required.entity' | translate:msgParamAbreviaturaEntity}}
         </mat-error>
@@ -60,9 +60,9 @@
     <div fxFlex="100" fxLayout="row" fxLayoutGap="10px">
       <mat-form-field fxFlex="100%">
         <mat-label>{{'csp.rol-equipo.descripcion' | translate}}</mat-label>
-        <textarea matInput #descripcion formControlName="descripcion" id="descripcion"
-          placeholder="{{'csp.rol-equipo.descripcion' | translate}}" maxLength="250"></textarea>
-        <mat-hint align="right">{{descripcion.value.length}} / 250</mat-hint>
+        <sgi-i18n-textarea #descripcion formControlName="descripcion" id="descripcion"
+          placeholder="{{'csp.rol-equipo.descripcion' | translate}}" maxlength="250"></sgi-i18n-textarea>
+        <mat-hint align="right">{{descripcion.editingValue.length}} / 250</mat-hint>
         <mat-error *ngIf="formGroup.controls.descripcion.errors?.maxlength">
           {{ 'error.maxlength.entity' | translate:msgParamDescripcionEntity }}
         </mat-error>

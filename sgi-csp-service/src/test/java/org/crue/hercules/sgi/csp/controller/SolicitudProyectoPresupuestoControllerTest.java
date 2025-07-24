@@ -1,12 +1,17 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoPresupuestoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuestoObservaciones;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoPresupuestoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -65,8 +70,9 @@ class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("anualidad").value(solicitudProyectoPresupuesto.getAnualidad()))
         .andExpect(MockMvcResultMatchers.jsonPath("importeSolicitado")
             .value(solicitudProyectoPresupuesto.getImporteSolicitado()))
-        .andExpect(
-            MockMvcResultMatchers.jsonPath("observaciones").value(solicitudProyectoPresupuesto.getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(solicitudProyectoPresupuesto.getObservaciones(),
+                Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("solicitudProyectoEntidadId").isEmpty());
   }
 
@@ -120,8 +126,9 @@ class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTest {
             MockMvcResultMatchers.jsonPath("anualidad").value(updatedSolicitudProyectoPresupuesto.getAnualidad()))
         .andExpect(MockMvcResultMatchers.jsonPath("importeSolicitado")
             .value(updatedSolicitudProyectoPresupuesto.getImporteSolicitado()))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones")
-            .value(updatedSolicitudProyectoPresupuesto.getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(updatedSolicitudProyectoPresupuesto.getObservaciones(),
+                Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("solicitudProyectoEntidadId").isEmpty());
     ;
   }
@@ -239,6 +246,10 @@ class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTest {
 
     String suffix = String.format("%03d", id);
 
+    Set<SolicitudProyectoPresupuestoObservaciones> solicitudProyectoPresupuestoObservaciones = new HashSet<>();
+    solicitudProyectoPresupuestoObservaciones.add(
+        new SolicitudProyectoPresupuestoObservaciones(Language.ES, "observaciones-" + suffix));
+
     SolicitudProyectoPresupuesto solicitudProyectoPresupuesto = SolicitudProyectoPresupuesto
         .builder()// @formatter:off
         .id(id)
@@ -246,7 +257,7 @@ class SolicitudProyectoPresupuestoControllerTest extends BaseControllerTest {
         .conceptoGasto(ConceptoGasto.builder().id(conceptoGastoId).build())
         .anualidad(1000)
         .importeSolicitado(new BigDecimal("335"))
-        .observaciones("observaciones-" + suffix)
+        .observaciones(solicitudProyectoPresupuestoObservaciones)
         .solicitudProyectoEntidadId(null)
         .build();// @formatter:on
 

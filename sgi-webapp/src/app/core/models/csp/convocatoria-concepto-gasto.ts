@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConceptoGasto } from './concepto-gasto';
 
 export interface IConvocatoriaConceptoGasto {
@@ -8,7 +9,7 @@ export interface IConvocatoriaConceptoGasto {
   /** Id de Convocatoria */
   convocatoriaId: number;
   /** Observaciones */
-  observaciones: string;
+  observaciones: I18nFieldValue[];
   /** Importe máximo */
   importeMaximo: number;
   /** Porcentaje máximo */

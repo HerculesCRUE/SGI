@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -17,9 +18,10 @@ public interface ModeloEjecucionRepository
   /**
    * Busca un {@link ModeloEjecucion} activo por nombre.
    * 
+   * @param lang   el language sobre el que buscar
    * @param nombre Nombre del {@link ModeloEjecucion}.
    * @return un {@link ModeloEjecucion} si tiene el nombre buscado.
    */
-  Optional<ModeloEjecucion> findByNombreAndActivoIsTrue(String nombre);
+  Optional<ModeloEjecucion> findByNombreLangAndNombreValueAndActivoIsTrue(Language lang, String nombre);
 
 }

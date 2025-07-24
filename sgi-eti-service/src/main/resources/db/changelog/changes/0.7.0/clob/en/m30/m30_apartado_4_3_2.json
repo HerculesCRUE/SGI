@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_3_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.2 Special protective measures"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Are special protective measures contemplated for vulnerable exposed people who require it? (e.g. pregnant women, chronically ill people, etc.)</p>"
+      },
+      {
+        "key": "medidasEspeciales",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please specify special protective measures or justify if none"
+      },
+      {
+        "key": "especificar",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Please specify:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

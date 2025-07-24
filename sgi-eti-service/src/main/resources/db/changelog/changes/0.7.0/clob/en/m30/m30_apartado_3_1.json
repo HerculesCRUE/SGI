@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap3_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.1 Scientific objectives of the project"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Briefly describe the main objectives to be achieved by this experimentation with biological agents, genetically modified organisms, hazardous chemicals, radioactive substances and/or nanoparticles</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "This section is completed automatically based on the data entered in the field <b>Scientific objectives</b> of the section <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/datos-generales' target='_blank'><b>General data</b></a> of the <b>Evaluation Request</b>. Access this menu item to make the necessary modifications.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "key": "objetivosCientificos",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Description of the scientific objectives of the project",
+          "disabled": true,
+          "required": true,
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.objetivos"
+        }
+      }
+    ]
+  }
+]

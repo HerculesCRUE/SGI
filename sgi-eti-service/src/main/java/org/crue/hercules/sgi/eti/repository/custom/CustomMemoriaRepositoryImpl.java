@@ -30,6 +30,7 @@ import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva_;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluacion_;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.MemoriaTitulo_;
 import org.crue.hercules.sgi.eti.model.Memoria_;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
@@ -173,8 +174,10 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
                 .in(Arrays.asList(PeticionEvaluacion.EstadoFinanciacion.CONCEDIDO,
                     PeticionEvaluacion.EstadoFinanciacion.SOLICITADO)),
             cb.and(
-                cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.estadoFinanciacion),
-                    PeticionEvaluacion.EstadoFinanciacion.DENEGADO),
+                cb.or(
+                    cb.isNull(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.estadoFinanciacion)),
+                    cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.estadoFinanciacion),
+                        PeticionEvaluacion.EstadoFinanciacion.DENEGADO)),
                 cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.tieneFondosPropios),
                     Boolean.TRUE))));
 
@@ -187,9 +190,6 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
     cq.where(cb.and(predicates.toArray(new Predicate[] {})));
 
     // Execute query
-    List<Order> orders = QueryUtils.toOrders(Sort.by(Sort.Direction.ASC, Memoria_.TITULO), root, cb);
-    cq.orderBy(orders);
-
     TypedQuery<Memoria> typedQuery = entityManager.createQuery(cq);
 
     List<Memoria> result = typedQuery.getResultList();
@@ -253,9 +253,6 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
     cq.where(cb.and(predicates.toArray(new Predicate[] {})));
 
     // Execute query
-    List<Order> orders = QueryUtils.toOrders(Sort.by(Sort.Direction.ASC, Memoria_.TITULO), root, cb);
-    cq.orderBy(orders);
-
     TypedQuery<Memoria> typedQuery = entityManager.createQuery(cq);
 
     List<Memoria> result = typedQuery.getResultList();
@@ -284,19 +281,22 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
 
     Expression<Instant> defaultDate = cb.nullLiteral(Instant.class);
 
-    cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.personaRef), root.get(Memoria_.numReferencia),
-        root.get(Memoria_.titulo),
-        root.get(Memoria_.comite), root.get(Memoria_.estadoActual), defaultDate, defaultDate,
+    cq.multiselect(root, defaultDate, defaultDate,
         cb.selectCase().when(cb.isNotNull(isResponsable(root, cb, cq, personaRefConsulta)), true).otherwise(false)
             .alias("isResponsable"),
-        root.get(Memoria_.activo),
-        root.get(Memoria_.requiereRetrospectiva), joinMemoriaRetrospectiva.alias("retrospectiva"),
+        joinMemoriaRetrospectiva.alias("retrospectiva"),
         root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef),
-        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.tutorRef),
-        root.get(Memoria_.version)).distinct(true);
+        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.tutorRef));
 
     cq.where(cb.equal(root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id), idPeticionEvaluacion),
         cb.isTrue(root.get(Memoria_.activo)));
+
+    // Alternativa al distinct
+    // TODO: No tengo claro que sea necesario mantener el distinct y da problemas.
+    // Se deja comentado temporalmente
+    // cq.groupBy(root, joinMemoriaRetrospectiva,
+    // root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef),
+    // root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.tutorRef));
 
     TypedQuery<MemoriaPeticionEvaluacion> typedQuery = entityManager.createQuery(cq);
 
@@ -362,16 +362,12 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
 
     Expression<Instant> defaultDate = cb.nullLiteral(Instant.class);
 
-    cq.multiselect(root.get(Memoria_.id), root.get(Memoria_.personaRef), root.get(Memoria_.numReferencia),
-        root.get(Memoria_.titulo),
-        root.get(Memoria_.comite), root.get(Memoria_.estadoActual), defaultDate, defaultDate,
+    cq.multiselect(root, defaultDate, defaultDate,
         cb.selectCase().when(cb.isNotNull(isResponsable(root, cb, cq, personaRefConsulta)), true).otherwise(false)
             .alias("isResponsable"),
-        root.get(Memoria_.activo),
-        root.get(Memoria_.requiereRetrospectiva), joinMemoriaRetrospectiva.alias("retrospectiva"),
+        joinMemoriaRetrospectiva.alias("retrospectiva"),
         root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef),
-        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.tutorRef),
-        root.get(Memoria_.version)).distinct(true);
+        root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.tutorRef));
 
     cq.where(predicates.toArray(new Predicate[] {}));
 
@@ -379,6 +375,13 @@ public class CustomMemoriaRepositoryImpl implements CustomMemoriaRepository {
 
     List<Order> orders = QueryUtils.toOrders(pageable.getSort(), root, cb);
     cq.orderBy(orders);
+    // Alternativa al distinct, con el distinct no permitia la aplicación de filtros
+    // al intentar obtener en la query final únicamente el id de la memoria
+    // TODO: No tengo claro que sea necesario mantener el distinct y da problemas.
+    // Se deja comentado temporalmente
+    // cq.groupBy(root, joinMemoriaRetrospectiva,
+    // root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.personaRef),
+    // root.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.tutorRef));
 
     // Número de registros totales para la paginación
     Long count = entityManager.createQuery(countQuery).getSingleResult();

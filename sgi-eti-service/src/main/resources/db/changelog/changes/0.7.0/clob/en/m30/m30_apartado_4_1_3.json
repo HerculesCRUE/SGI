@@ -1,0 +1,52 @@
+[
+  {
+    "key": "ap4_1_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.3 Risk characteristics of genetically modified organisms"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4 || !formState.mainModel.ap3_4.ap3_4_3 || !formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio || formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Do the genetically modified organisms used imply any type of potentially harmful effects?</p>"
+      },
+      {
+        "key": "agentesBiologicos",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "niguno",
+              "label": "None or insignificant."
+            },
+            {
+              "value": "afectenPersonas",
+              "label": "Diseases affecting people, including allergic or toxic effects."
+            },
+            {
+              "value": "afectecAnimales",
+              "label": "Diseases that affect animals or plants."
+            },
+            {
+              "value": "imposibilidad",
+              "label": "Deleterious effects due to the impossibility of treating a disease or providing effective prophylaxis."
+            },
+            {
+              "value": "diseminacion",
+              "label": "Deleterious effects due to establishment or dissemination in the environment."
+            },
+            {
+              "value": "transferenciaNatural",
+              "label": "Deleterious effects due to the natural transfer of inserted genetic material to other organisms."
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

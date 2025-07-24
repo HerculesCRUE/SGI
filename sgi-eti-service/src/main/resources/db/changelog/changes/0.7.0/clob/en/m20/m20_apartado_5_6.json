@@ -1,0 +1,46 @@
+[
+  {
+    "key": "ap5_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.6 Additional documentation"
+    },
+    "fieldGroup": [
+      {
+        "template": "Do you have any additional documentation for your project (e.g. bibliographical references etc.)?"
+      },
+      {
+        "key": "documentacionAdicional",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": "ADICIONAL",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "key": "documentacionAdicionalDescripcion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.documentacionAdicional || model.documentacionAdicional === 0",
+        "templateOptions": {
+          "label": "Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

@@ -6,7 +6,6 @@ import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
-import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
@@ -14,7 +13,6 @@ import org.crue.hercules.sgi.csp.repository.ProyectoEntidadConvocanteRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoEntidadConvocanteServiceImpl;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
-import org.crue.hercules.sgi.framework.exception.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -95,114 +93,6 @@ class ProyectoEntidadConvocanteServiceTest extends BaseServiceTest {
         () -> service.create(proyectoEntidadConvocante))
         // then: throw exception as id can't be provided
         .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  @WithMockUser(authorities = { "CSP-PRO-E" })
-  void setPrograma_WithExistingId_And_ProgramActive_ReturnsProyectoEntidadConvocante() {
-    // given: existing ProyectoEntidadConvocante and active Programa
-    Long proyectoId = 1L;
-    Long proyectoEntidadConvocanteId = 1L;
-    Programa programa = Programa.builder().id(1L).id(1L).nombre("p1").activo(Boolean.TRUE).build();
-
-    BDDMockito.given(programaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(programa));
-    BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(ProyectoEntidadConvocante
-        .builder().id(proyectoEntidadConvocanteId).proyectoId(proyectoId).entidadRef("Entidad").build()));
-    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(Proyecto.builder().id(proyectoId).activo(Boolean.TRUE).unidadGestionRef("2")
-            .estado(EstadoProyecto.builder().estado(EstadoProyecto.Estado.BORRADOR).build()).build()));
-
-    BDDMockito.given(repository.save(ArgumentMatchers.<ProyectoEntidadConvocante>any()))
-        .willAnswer(new Answer<ProyectoEntidadConvocante>() {
-          @Override
-          public ProyectoEntidadConvocante answer(InvocationOnMock invocation) throws Throwable {
-            ProyectoEntidadConvocante givenProyectoEntidadConvocante = invocation.getArgument(0,
-                ProyectoEntidadConvocante.class);
-            return givenProyectoEntidadConvocante;
-          }
-        });
-
-    // when: update ProyectoEntidadConvocante
-    ProyectoEntidadConvocante updated = service.setPrograma(proyectoEntidadConvocanteId, programa);
-
-    // then: ProyectoEntidadConvocante Programa is updated
-    Assertions.assertThat(updated).isNotNull();
-    Assertions.assertThat(updated.getId()).isEqualTo(proyectoEntidadConvocanteId);
-    Assertions.assertThat(updated.getPrograma()).isNotNull();
-    Programa returnProgrma = updated.getPrograma();
-    Assertions.assertThat(returnProgrma.getId()).isEqualTo(programa.getId());
-  }
-
-  @Test
-  @WithMockUser(authorities = { "CSP-PRO-E" })
-  void setPrograma_WithNoExistingId_ThrowsNotFoundException() throws Exception {
-    // given: a ProyectoEntidadConvocante with non existing id
-    Long proyectoEntidadConvocanteId = 1L;
-
-    BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
-
-    Assertions.assertThatThrownBy(
-        // when: update non existing ProyectoEntidadConvocante
-        () -> service.setPrograma(proyectoEntidadConvocanteId, null))
-        // then: NotFoundException is thrown
-        .isInstanceOf(NotFoundException.class);
-  }
-
-  @Test
-  @WithMockUser(authorities = { "CSP-PRO-E" })
-  void setPrograma_WithoutId_ThrowsIllegalArgumentException() {
-    // given: no ProyectoEntidadConvocante id
-    Long proyectoEntidadConvocanteId = null;
-
-    Assertions.assertThatThrownBy(
-        // when: update ProyectoEntidadConvocante
-        () -> service.setPrograma(proyectoEntidadConvocanteId, null))
-        // then: throw exception as id must be provided
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  @WithMockUser(authorities = { "CSP-PRO-E" })
-  void delete_WithoutId_ThrowsIllegalArgumentException() {
-    // given: no id
-    Assertions.assertThatThrownBy(
-        // when: delete by no id
-        () -> service.delete(null))
-        // then: throw exception as id must be provided
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  @WithMockUser(authorities = { "CSP-PRO-E" })
-  void delete_NonExistingId_ThrowsNotFoundException() {
-    // given: a non existing id
-    BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
-
-    Assertions.assertThatThrownBy(
-        // when: delete by non existing id
-        () -> service.delete(1L))
-        // then: throw NotFoundException as id must exist
-        .isInstanceOf(NotFoundException.class);
-  }
-
-  @Test
-  @WithMockUser(authorities = { "CSP-PRO-E" })
-  void delete_WithExistingId_DeletesProyectoEntidadConvocante() {
-    // given: existing id
-    Long proyectoEntidadConvocanteId = 1L;
-    Long proyectoId = 1L;
-    BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(ProyectoEntidadConvocante
-        .builder().id(proyectoEntidadConvocanteId).proyectoId(proyectoId).entidadRef("Entidad").build()));
-    BDDMockito.doNothing().when(repository).deleteById(ArgumentMatchers.anyLong());
-    BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(Proyecto.builder().id(proyectoId).activo(Boolean.TRUE).unidadGestionRef("2")
-            .estado(EstadoProyecto.builder().estado(EstadoProyecto.Estado.BORRADOR).build()).build()));
-
-    Assertions.assertThatCode(
-        // when: delete by existing id
-        () -> service.delete(1L))
-        // then: no exception is thrown
-        .doesNotThrowAnyException();
   }
 
   @Test

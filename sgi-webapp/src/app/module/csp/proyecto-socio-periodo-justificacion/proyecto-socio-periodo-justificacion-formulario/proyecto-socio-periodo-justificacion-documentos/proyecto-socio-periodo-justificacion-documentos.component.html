@@ -5,18 +5,18 @@
       <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
           <button mat-button *ngIf="viewMode === VIEW_MODE.NEW">
-            {{node.title | translate}}
+            <sgi-i18n-tree-field [field]="node.title"></sgi-i18n-tree-field>
           </button>
           <button color="primary" mat-button *ngIf="(viewMode !== VIEW_MODE.NEW && node !== viewingNode)"
             (click)="showNodeDetails(node)">
-            {{node.title}}
+            <sgi-i18n-tree-field [field]="node.title"></sgi-i18n-tree-field>
             <mat-icon class="mat-icon-rtl-mirror">
               {{ 'visibility'}}
             </mat-icon>
           </button>
           <button color="primary" mat-button *ngIf="(viewMode !== VIEW_MODE.NEW && node === viewingNode)"
             (click)="hideNodeDetails()">
-            {{node.title}}
+            <sgi-i18n-tree-field [field]="node.title"></sgi-i18n-tree-field>
             <mat-icon class="mat-icon-rtl-mirror">
               {{ 'visibility_off'}}
             </mat-icon>
@@ -24,11 +24,12 @@
         </mat-tree-node>
         <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
           <button color="primary" mat-button matTreeNodeToggle
-            [attr.aria-label]="'Toggle ' + node.documento?.value?.nombre">
+            [attr.aria-label]="'Toggle ' + getI18nValue(node.documento?.value?.nombre)">
             <mat-icon class="mat-icon-rtl-mirror">
               {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
-            {{node.title | translate}}{{node.childs.length > 0 ? '' : '\*'}}
+            <sgi-i18n-tree-field [field]="node.title"
+              [appendText]="node.childs.length > 0 ? '' : '\*'"></sgi-i18n-tree-field>
           </button>
         </mat-tree-node>
       </mat-tree>
@@ -46,10 +47,13 @@
       <div fxLayout="column" fxLayout.xs="column" fxLayoutGap="10px">
         <mat-form-field class="input-form">
           <mat-label>{{'csp.documento.nombre' | translate}}</mat-label>
-          <input matInput type="text" placeholder="{{'csp.documento.nombre' | translate}}" formControlName="nombre"
-            required>
+          <sgi-i18n-input placeholder="{{'csp.documento.nombre' | translate}}" formControlName="nombre"
+            required></sgi-i18n-input>
           <mat-error *ngIf="formGroup.get('nombre').errors?.required">
             {{'error.required.entity' | translate:msgParamNombreEntity}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.get('nombre').errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamNombreEntity}}
           </mat-error>
         </mat-form-field>
         <mat-form-field class="input-form">
@@ -65,11 +69,8 @@
         <mat-form-field class="input-form">
           <mat-label>{{'csp.documento.tipo' | translate}}
           </mat-label>
-          <mat-select placeholder="{{'csp.documento.tipo' | translate}}" formControlName="tipoDocumento"
-            [compareWith]="compareTipoDocumento">
-            <mat-option [value]="null"></mat-option>
-            <mat-option *ngFor="let tipo of tiposDocumento$ | async" [value]="tipo">{{tipo.nombre}}</mat-option>
-          </mat-select>
+          <sgi-select-tipo-documento placeholder="{{'csp.documento.tipo' | translate}}" formControlName="tipoDocumento">
+          </sgi-select-tipo-documento>
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.proyecto-socio-periodo-justificacion.documento.visible' | translate}}</mat-label>
@@ -81,8 +82,8 @@
         <mat-form-field class="input-form">
           <mat-label>{{'csp.documento.comentarios' | translate}}
           </mat-label>
-          <textarea matInput type="text" placeholder="{{'csp.documento.comentarios' | translate}}"
-            formControlName="comentarios"></textarea>
+          <sgi-i18n-textarea placeholder="{{'csp.documento.comentarios' | translate}}"
+            formControlName="comentarios"></sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
             {{'error.maxlength.entity' | translate:msgParamComentarioEntity}}
           </mat-error>

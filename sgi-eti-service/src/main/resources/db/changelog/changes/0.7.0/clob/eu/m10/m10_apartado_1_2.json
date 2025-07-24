@@ -1,0 +1,26 @@
+[
+  {
+    "key": "ap1_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "1.2 Gizakien erabilera justifikatzea"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Azaldu labur-labur zergatik den beharrezkoa gizakiak, haien laginak edo haien datuak erabiltzea, eta erlazionatu behar hori ezagutza areagotzeari edo bizi baldintzak hobetzeari lotuta espero diren onurekin.</p><p>Aztertutako populazioari mesede egitea ere espero bada, azaldu nola.</p>"
+      },
+      {
+        "key": "justificacion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Justifikazioa",
+          "required": true
+        }
+      }
+    ]
+  }
+]

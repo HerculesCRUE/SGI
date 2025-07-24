@@ -1,0 +1,241 @@
+[
+  {
+    "key": "ap3_6_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.1 Definition"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Only animals of the species listed in <a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#ani'>Annex I of Royal Decree 53/13</a> if they have been bred expressly for that purpose.</p><p>In exceptional cases, and provided there is scientific justification, the competent bodies may authorise the use of animals that have not been bred for experimentation (<a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a19'>Art. 19 Royal Decree 53/13</a>).</p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "animalesExperimentacionTable",
+        "templateOptions": {
+          "entity": "animal species",
+          "gender": "female"
+        },
+        "validators": {
+          "validation": [
+            "oneRowRequired"
+          ]
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Animal experimentation"
+          },
+          "fieldGroup": [
+            {
+              "key": "especie",
+              "type": "select",
+              "templateOptions": {
+                "label": "Species",
+                "required": true,
+                "order": 10,
+                "options": [
+                  {
+                    "label": "[1] Mouse",
+                    "value": "1"
+                  },
+                  {
+                    "label": "[2] Rat",
+                    "value": "2"
+                  },
+                  {
+                    "label": "[3] Guinea pig",
+                    "value": "3"
+                  },
+                  {
+                    "label": "[4] Hamster",
+                    "value": "4"
+                  },
+                  {
+                    "label": "[5] Other rodents",
+                    "value": "5"
+                  },
+                  {
+                    "label": "[6] Rabbit",
+                    "value": "6"
+                  },
+                  {
+                    "label": "[7] Cat",
+                    "value": "7"
+                  },
+                  {
+                    "label": "[8] Dog",
+                    "value": "8"
+                  },
+                  {
+                    "label": "[9] Ferret",
+                    "value": "9"
+                  },
+                  {
+                    "label": "[10] Other carnivores",
+                    "value": "10"
+                  },
+                  {
+                    "label": "[11] Horse, donkey, hybrid",
+                    "value": "11"
+                  },
+                  {
+                    "label": "[12] Pig",
+                    "value": "12"
+                  },
+                  {
+                    "label": "[13] Goat",
+                    "value": "13"
+                  },
+                  {
+                    "label": "[14] Sheep",
+                    "value": "14"
+                  },
+                  {
+                    "label": "[15] Cow",
+                    "value": "15"
+                  },
+                  {
+                    "label": "[16] Prosimians",
+                    "value": "16"
+                  },
+                  {
+                    "label": "[17] Old world primates",
+                    "value": "17"
+                  },
+                  {
+                    "label": "[18] New world primates",
+                    "value": "18"
+                  },
+                  {
+                    "label": "[19] Hominid primates",
+                    "value": "19"
+                  },
+                  {
+                    "label": "[20] Other mammals",
+                    "value": "20"
+                  },
+                  {
+                    "label": "[21] Quail",
+                    "value": "21"
+                  },
+                  {
+                    "label": "[22] Other birds",
+                    "value": "22"
+                  },
+                  {
+                    "label": "[23] Reptiles",
+                    "value": "23"
+                  },
+                  {
+                    "label": "[24] Amphibians",
+                    "value": "24"
+                  },
+                  {
+                    "label": "[25] Fish",
+                    "value": "25"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "nombreCientifico",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Scientific name",
+                "required": true,
+                "placeholder": "Name",
+                "order": 20
+              }
+            },
+            {
+              "key": "cepa",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Strain/s",
+                "placeholder": "Strain/s",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10",
+                "order": 30
+              }
+            },
+            {
+              "key": "sexo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Sex",
+                "required": true,
+                "order": 40,
+                "options": [
+                  {
+                    "label": "Male",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Female",
+                    "value": "2"
+                  },
+                  {
+                    "label": "Male and female",
+                    "value": "3"
+                  },
+                  {
+                    "label": "Indifferent",
+                    "value": "4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "edadPeso",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Age or weight",
+                "order": 50,
+                "required": true,
+                "placeholder": "Age or weight"
+              }
+            },
+            {
+              "key": "procedencia",
+              "type": "select",
+              "templateOptions": {
+                "label": "Origin",
+                "required": true,
+                "order": 60,
+                "options": [
+                  {
+                    "label": "Own production",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Registered breeding or supply centres in the country",
+                    "value": "2"
+                  },
+                  {
+                    "label": "Provided by another user centre/scientific exchange",
+                    "value": "3"
+                  },
+                  {
+                    "label": "Legally imported",
+                    "value": "4"
+                  },
+                  {
+                    "label": "Wild-caught or vagrants",
+                    "value": "5"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

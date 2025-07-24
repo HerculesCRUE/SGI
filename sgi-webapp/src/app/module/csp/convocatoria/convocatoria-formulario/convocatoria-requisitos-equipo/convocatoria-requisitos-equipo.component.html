@@ -304,9 +304,10 @@
       [fxFlex.gt-md]="fxFlexPropertiesInline.gtMd" [fxFlexOrder]="fxFlexPropertiesInline.order">
       <mat-form-field>
         <mat-label>{{'csp.convocatoria-requisito-equipo.otros-requisitos' | translate}}</mat-label>
-        <textarea #resumen matInput formControlName="otrosRequisitos" id="otrosRequisitos"
-          placeholder="{{'csp.convocatoria-requisito-equipo.otros-requisitos' | translate}}" maxlength="250"></textarea>
-        <mat-hint>{{resumen.value.length}} / 250</mat-hint>
+        <sgi-i18n-textarea #otrosRequisitos formControlName="otrosRequisitos"
+          placeholder="{{'csp.convocatoria-requisito-equipo.otros-requisitos' | translate}}"
+          maxlength="2000"></sgi-i18n-textarea>
+        <mat-hint>{{otrosRequisitos.editingValue.length}} / 2000</mat-hint>
       </mat-form-field>
     </div>
   </form>

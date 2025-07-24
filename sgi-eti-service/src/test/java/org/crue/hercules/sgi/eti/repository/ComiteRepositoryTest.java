@@ -1,11 +1,14 @@
 package org.crue.hercules.sgi.eti.repository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.ComiteNombre;
 import org.crue.hercules.sgi.eti.model.Formulario;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,7 +23,6 @@ public class ComiteRepositoryTest extends BaseRepositoryTest {
   public void findByIdAndActivoTrue_ReturnsData() throws Exception {
 
     // given: Datos existentes para el comité activo
-
     Formulario formulario = entityManager.persistFlushFind(generarMockFormulario());
     Comite comite = entityManager.persistFlushFind(generarMockComite(formulario));
 
@@ -37,8 +39,10 @@ public class ComiteRepositoryTest extends BaseRepositoryTest {
    * 
    * @return el objeto Formulario
    */
-  public Formulario generarMockFormulario() {
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
+  private Formulario generarMockFormulario() {
+    Formulario formulario = new Formulario();
+    formulario.setCodigo("M10/2020/001");
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
     return formulario;
   }
 
@@ -48,8 +52,26 @@ public class ComiteRepositoryTest extends BaseRepositoryTest {
    * @param formulario el formulario
    * @return el objeto Comite
    */
-  public Comite generarMockComite(Formulario formulario) {
-    return new Comite(null, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+  private Comite generarMockComite(Formulario formulario) {
+    Set<ComiteNombre> nombre = new HashSet<>();
+    nombre.add(new ComiteNombre(Language.ES, "NombreComite1", ComiteNombre.Genero.M));
+    Comite comite = new Comite();
+    comite.setCodigo("Comite1");
+    comite.setNombre(nombre);
+    comite.setFormularioMemoriaId(formulario.getId());
+    comite.setFormularioSeguimientoAnualId(formulario.getId());
+    comite.setFormularioSeguimientoFinalId(formulario.getId());
+    comite.setPrefijoReferencia("M10");
+    comite.setRequiereRetrospectiva(Boolean.FALSE);
+    comite.setPermitirRatificacion(Boolean.FALSE);
+    comite.setPrefijoReferencia("M10");
+    comite.setTareaNombreLibre(Boolean.TRUE);
+    comite.setTareaExperienciaLibre(Boolean.TRUE);
+    comite.setTareaExperienciaDetalle(Boolean.TRUE);
+    comite.setMemoriaTituloLibre(Boolean.TRUE);
+    comite.setActivo(Boolean.TRUE);
+
+    return comite;
   }
 
 }

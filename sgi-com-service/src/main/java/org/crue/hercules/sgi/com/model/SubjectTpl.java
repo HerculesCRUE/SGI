@@ -64,6 +64,10 @@ public class SubjectTpl extends BaseEntity {
   @Column(name = "tpl", nullable = false, columnDefinition = "clob")
   private String tpl;
 
+  /** Template */
+  @Column(name = "default_tpl", nullable = false, columnDefinition = "clob")
+  private String defaultTpl;
+
   @ManyToMany
   @JoinTable(name = "subjecttpl_param", joinColumns = {
       @JoinColumn(name = "subjecttpl_id", referencedColumnName = "id", foreignKey = @ForeignKey(name = "FK_SUBJECTTPLPARAM_SUBJECTTPL"))

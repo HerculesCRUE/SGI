@@ -2,8 +2,10 @@ package org.crue.hercules.sgi.eti.service;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.ComentarioNotFoundException;
@@ -13,8 +15,8 @@ import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.Comentario;
 import org.crue.hercules.sgi.eti.model.Comentario.TipoEstadoComentario;
+import org.crue.hercules.sgi.eti.model.ComentarioTexto;
 import org.crue.hercules.sgi.eti.model.Comite;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
@@ -29,17 +31,13 @@ import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluadorRepository;
 import org.crue.hercules.sgi.eti.service.impl.ComentarioServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.security.test.context.support.WithMockUser;
 
 /**
@@ -81,7 +79,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     Assertions.assertThat(comentario.getEvaluacion().getId()).as("evaluacion.id").isEqualTo(200L);
     Assertions.assertThat(comentario.getTipoComentario()).as("tipoComentario").isNotNull();
     Assertions.assertThat(comentario.getTipoComentario().getId()).as("tipoComentario.id").isEqualTo(1L);
-    Assertions.assertThat(comentario.getTexto()).as("texto").isEqualTo("Comentario1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(comentario.getTexto(), Language.ES)).as("texto")
+        .isEqualTo("Comentario1");
   }
 
   @Test
@@ -115,7 +114,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     for (int i = 0; i < numeroComentario; i++) {
       final Comentario comentario = resultList.get(i);
-      Assertions.assertThat(comentario.getTexto()).isEqualTo("Comentario" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(comentario.getTexto(), Language.ES))
+          .isEqualTo("Comentario" + String.format("%03d", i));
     }
   }
 
@@ -142,7 +142,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     Assertions.assertThat(listResult.size()).isEqualTo(numeroComentario);
     for (int i = 0; i < 9; i++) {
       final Comentario comentario = listResult.get(i);
-      Assertions.assertThat(comentario.getTexto()).isEqualTo("Comentario00" + (i + 1));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(comentario.getTexto(), Language.ES))
+          .isEqualTo("Comentario00" + (i + 1));
     }
   }
 
@@ -153,11 +154,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera listar sus comentarios
       comentarioService.findByEvaluacionIdGestor(evaluacionId);
-      Assertions.fail("El id no puede ser nulo");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("El id de la evaluación no puede ser nulo para listar sus comentarios");
+          .isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -191,56 +192,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     Assertions.assertThat(listResult.size()).isEqualTo(numeroComentario * 2);
     for (int i = 0; i < numeroComentario; i++) {
       final Comentario comentario = listResult.get(i);
-      Assertions.assertThat(comentario.getTexto()).isEqualTo("Comentario" + String.format("%03d", i));
-    }
-  }
-
-  public void findByEvaluacionEvaluadorWithPagingValidId() {
-    // given: EL id de la evaluación sea valido
-    final Long evaluacionId = 1L;
-    final int numeroComentario = 100;
-    final String personaRef = "user-002";
-
-    BDDMockito.given(evaluacionRepository.findById(1L)).willReturn(Optional.of(generarMockEvaluacion(evaluacionId)));
-
-    final List<Comentario> comentarios = new ArrayList<>();
-    for (int i = 1; i <= numeroComentario; i++) {
-      comentarios.add(generarMockComentario(Long.valueOf(i), "Comentario" + String.format("%03d", i), 1L));
-    }
-
-    final int numPagina = 7;
-    final int numElementos = 10;
-    final Pageable paging = PageRequest.of(numPagina, numElementos);
-    BDDMockito
-        .given(comentarioRepository.findByEvaluacionIdAndTipoComentarioIdAndCreatedBy(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any()))
-        .willReturn(comentarios);
-
-    BDDMockito
-        .given(comentarioRepository.findByEvaluacionIdAndTipoComentarioIdAndCreatedByNotAndEstado(
-            ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<Long>any(), ArgumentMatchers.<String>any(), ArgumentMatchers.<TipoEstadoComentario>any()))
-        .willAnswer(new Answer<Page<Comentario>>() {
-          @Override
-          public Page<Comentario> answer(final InvocationOnMock invocation) throws Throwable {
-            final Pageable pageable = invocation.getArgument(2, Pageable.class);
-            final int size = pageable.getPageSize();
-            final int index = pageable.getPageNumber();
-            final int fromIndex = size * index;
-            final int toIndex = fromIndex + size;
-            final List<Comentario> content = comentarios.subList(fromIndex, toIndex);
-            final Page<Comentario> page = new PageImpl<>(content, pageable, comentarios.size());
-            return page;
-          }
-        });
-    // when: se listen sus comentarios
-    final List<Comentario> resultList = comentarioService.findByEvaluacionIdEvaluador(evaluacionId, personaRef);
-
-    // then: se debe devolver una lista de comentarios
-    Assertions.assertThat(resultList.size()).isEqualTo(numElementos);
-    for (int i = 0, j = (numPagina * 10) + 1; i < 10; i++, j++) {
-      final Comentario comentario = resultList.get(i);
-      Assertions.assertThat(comentario.getTexto()).isEqualTo("Comentario" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(comentario.getTexto(), Language.ES))
+          .isEqualTo("Comentario" + String.format("%03d", i));
     }
   }
 
@@ -255,7 +208,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
       Assertions.fail("El id no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final EvaluacionNotFoundException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluacion " + evaluacionId + " does not exist.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación " + evaluacionId + " no existe");
     }
   }
 
@@ -282,7 +235,8 @@ public class ComentarioServiceTest extends BaseServiceTest {
     Assertions.assertThat(resultList.size()).isEqualTo(numeroComentario);
     for (int i = 0; i < numeroComentario; i++) {
       final Comentario comentario = resultList.get(i);
-      Assertions.assertThat(comentario.getTexto()).isEqualTo("Comentario" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(comentario.getTexto(), Language.ES))
+          .isEqualTo("Comentario" + String.format("%03d", i));
     }
   }
 
@@ -314,11 +268,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera listar sus comentarios
       comentarioService.findByEvaluacionIdActaGestor(evaluacionId);
-      Assertions.fail("El id no puede ser nulo");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("El id de la evaluación no puede ser nulo para listar sus comentarios");
+          .isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -330,11 +284,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera añadir comentario
       comentarioService.createComentarioGestor(evaluacionId, new Comentario());
-      Assertions.fail("Evaluación id no puede ser null para crear un nuevo comentario.");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("Evaluación id no puede ser null para crear un nuevo comentario.");
+          .isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -351,10 +305,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera añadir comentarios
       comentarioService.createComentarioGestor(evaluacionId, comentario);
-      Assertions.fail("El id de la evaluación no puede ser nulo");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final EvaluacionNotFoundException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluacion " + evaluacionId + " does not exist.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación " + evaluacionId + " no existe");
     }
   }
 
@@ -370,11 +324,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     try {
       comentarioService.createComentarioGestor(evaluacionId, comentario);
-      Assertions.fail("La evaluación no debe estar rellena para crear un nuevo comentario");
+      Assertions.fail("Comentario de Evaluación debe ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("La evaluación no debe estar rellena para crear un nuevo comentario");
+          .isEqualTo("Comentario de Evaluación debe ser nulo");
     }
   }
 
@@ -389,11 +343,13 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId))
         .willReturn(Optional.of(generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId,
-            comiteId, estadoRetrospectivaId)));
+            comiteId, estadoRetrospectivaId, formularioId)));
 
     final Comentario comentario = new Comentario();
-    Formulario formulario = new Formulario(formularioId, "Nombre", "Descripcion");
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.RETROSPECTIVA);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
     Apartado apartado = new Apartado();
     apartado.setId(1L);
     apartado.setBloque(bloque);
@@ -421,11 +377,13 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId))
         .willReturn(Optional.of(generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId,
-            comiteId, estadoRetrospectivaId)));
+            comiteId, estadoRetrospectivaId, formularioId)));
 
     final Comentario comentario = new Comentario();
-    Formulario formulario = new Formulario(formularioId, "Nombre", "Descripcion");
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
     Apartado apartado = new Apartado();
     apartado.setId(1L);
     apartado.setBloque(bloque);
@@ -453,11 +411,13 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId))
         .willReturn(Optional.of(generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId,
-            comiteId, estadoRetrospectivaId)));
+            comiteId, estadoRetrospectivaId, formularioId)));
 
     final Comentario comentario = new Comentario();
-    Formulario formulario = new Formulario(formularioId, "Nombre", "Descripcion");
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
     Apartado apartado = new Apartado();
     apartado.setId(1L);
     apartado.setBloque(bloque);
@@ -485,11 +445,13 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId))
         .willReturn(Optional.of(generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId,
-            comiteId, estadoRetrospectivaId)));
+            comiteId, estadoRetrospectivaId, formularioId)));
 
     final Comentario comentario = new Comentario();
-    Formulario formulario = new Formulario(formularioId, "Nombre", "Descripcion");
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.SEGUIMIENTO_ANUAL);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
     Apartado apartado = new Apartado();
     apartado.setId(1L);
     apartado.setBloque(bloque);
@@ -517,11 +479,13 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId))
         .willReturn(Optional.of(generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId,
-            comiteId, estadoRetrospectivaId)));
+            comiteId, estadoRetrospectivaId, formularioId)));
 
     final Comentario comentario = new Comentario();
-    Formulario formulario = new Formulario(formularioId, "Nombre", "Descripcion");
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.SEGUIMIENTO_FINAL);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
     Apartado apartado = new Apartado();
     apartado.setId(1L);
     apartado.setBloque(bloque);
@@ -626,11 +590,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera añadir comentario
       comentarioService.createComentarioEvaluador(evaluacionId, new Comentario(), personaRef);
-      Assertions.fail("Evaluación id no puede ser null para crear un nuevo comentario.");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("Evaluación id no puede ser null para crear un nuevo comentario.");
+          .isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -646,10 +610,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiere añadir comentario
       comentarioService.createComentarioEvaluador(evaluacionId, comentario, personaRef);
-      Assertions.fail("El id de la evaluación no puede ser nulo");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final EvaluacionNotFoundException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluacion " + evaluacionId + " does not exist.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación " + evaluacionId + " no existe");
     }
   }
 
@@ -666,11 +630,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
     // id indicado
     try {
       comentarioService.createComentarioEvaluador(evaluacionId, comentario, personaRef);
-      Assertions.fail("La evaluación no debe estar rellena para crear un nuevo comentario");
+      Assertions.fail("Comentario de Evaluación debe ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("La evaluación no debe estar rellena para crear un nuevo comentario");
+          .isEqualTo("Comentario de Evaluación debe ser nulo");
     }
   }
 
@@ -702,11 +666,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera añadir comentario
       comentarioService.createComentarioActaGestor(evaluacionId, new Comentario());
-      Assertions.fail("Evaluación id no puede ser null para crear un nuevo comentario.");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("Evaluación id no puede ser null para crear un nuevo comentario.");
+          .isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -724,10 +688,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera añadir comentarios
       comentarioService.createComentarioActaGestor(evaluacionId, comentario);
-      Assertions.fail("El id de la evaluación no puede ser nulo");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final EvaluacionNotFoundException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluacion " + evaluacionId + " does not exist.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación " + evaluacionId + " no existe");
     }
   }
 
@@ -744,11 +708,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     try {
       comentarioService.createComentarioActaGestor(evaluacionId, comentario);
-      Assertions.fail("La evaluación no debe estar rellena para crear un nuevo comentario");
+      Assertions.fail("Comentario de Evaluación debe ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("La evaluación no debe estar rellena para crear un nuevo comentario");
+          .isEqualTo("Comentario de Evaluación debe ser nulo");
     }
   }
 
@@ -762,20 +726,16 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
-    Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
-    Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
     estadoMemoria.setId(estadoMemoriaId);
-    memoria.setEstadoActual(estadoMemoria);
-    memoria.setComite(comite);
-    evaluacion.setMemoria(memoria);
+    evaluacion.getMemoria().setEstadoActual(estadoMemoria);
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId)).willReturn(Optional.of(evaluacion));
 
     final Comentario comentario = generarMockComentario(null, "texto", 1L);
-    comentario.getApartado().getBloque().getFormulario().setId(5L);
+    comentario.getApartado().getBloque().getFormulario()
+        .setId(evaluacion.getMemoria().getFormularioSeguimientoFinal().getId());
     comentario.setEvaluacion(null);
     final Comentario comentarioNew = generarMockComentario(12L, "texto", 1L);
     BDDMockito.given(comentarioRepository.save(comentario)).willReturn(comentarioNew);
@@ -797,20 +757,16 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
-    Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
-    Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
     estadoMemoria.setId(estadoMemoriaId);
-    memoria.setEstadoActual(estadoMemoria);
-    memoria.setComite(comite);
-    evaluacion.setMemoria(memoria);
+    evaluacion.getMemoria().setEstadoActual(estadoMemoria);
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId)).willReturn(Optional.of(evaluacion));
 
     final Comentario comentario = generarMockComentario(null, "texto", 1L);
-    comentario.getApartado().getBloque().getFormulario().setId(5L);
+    comentario.getApartado().getBloque().getFormulario().setId(
+        evaluacion.getMemoria().getFormularioSeguimientoFinal().getId());
     comentario.setEvaluacion(null);
     final Comentario comentarioNew = generarMockComentario(12L, "texto", 1L);
     BDDMockito.given(comentarioRepository.save(comentario)).willReturn(comentarioNew);
@@ -832,20 +788,16 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
-    Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
-    Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
     estadoMemoria.setId(estadoMemoriaId);
-    memoria.setEstadoActual(estadoMemoria);
-    memoria.setComite(comite);
-    evaluacion.setMemoria(memoria);
+    evaluacion.getMemoria().setEstadoActual(estadoMemoria);
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId)).willReturn(Optional.of(evaluacion));
 
     final Comentario comentario = generarMockComentario(null, "texto", 1L);
-    comentario.getApartado().getBloque().getFormulario().setId(5L);
+    comentario.getApartado().getBloque().getFormulario().setId(
+        evaluacion.getMemoria().getFormularioSeguimientoFinal().getId());
     comentario.setEvaluacion(null);
     final Comentario comentarioNew = generarMockComentario(12L, "texto", 1L);
     BDDMockito.given(comentarioRepository.save(comentario)).willReturn(comentarioNew);
@@ -867,20 +819,16 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
-    Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
-    Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
     estadoMemoria.setId(estadoMemoriaId);
-    memoria.setEstadoActual(estadoMemoria);
-    memoria.setComite(comite);
-    evaluacion.setMemoria(memoria);
+    evaluacion.getMemoria().setEstadoActual(estadoMemoria);
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId)).willReturn(Optional.of(evaluacion));
 
     final Comentario comentario = generarMockComentario(null, "texto", 1L);
-    comentario.getApartado().getBloque().getFormulario().setId(5L);
+    comentario.getApartado().getBloque().getFormulario().setId(
+        evaluacion.getMemoria().getFormularioSeguimientoFinal().getId());
     comentario.setEvaluacion(null);
     final Comentario comentarioNew = generarMockComentario(12L, "texto", 1L);
     BDDMockito.given(comentarioRepository.save(comentario)).willReturn(comentarioNew);
@@ -902,20 +850,16 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
-    Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
-    Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
     estadoMemoria.setId(estadoMemoriaId);
-    memoria.setEstadoActual(estadoMemoria);
-    memoria.setComite(comite);
-    evaluacion.setMemoria(memoria);
+    evaluacion.getMemoria().setEstadoActual(estadoMemoria);
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId)).willReturn(Optional.of(evaluacion));
 
     final Comentario comentario = generarMockComentario(null, "texto", 1L);
-    comentario.getApartado().getBloque().getFormulario().setId(5L);
+    comentario.getApartado().getBloque().getFormulario().setId(
+        evaluacion.getMemoria().getFormularioSeguimientoFinal().getId());
     comentario.setEvaluacion(null);
     final Comentario comentarioNew = generarMockComentario(12L, "texto", 1L);
     BDDMockito.given(comentarioRepository.save(comentario)).willReturn(comentarioNew);
@@ -936,27 +880,24 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final Long evaluacionId = 12L;
     Evaluacion evaluacion = generarMockEvaluacion(evaluacionId);
 
-    TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(4L, "Seguimiento Final", Boolean.TRUE);
+    TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(1L, "Retrospectiva", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);
-    Formulario formulario = new Formulario(5L, "Formulario", "Descripcion");
-    Comite comite = new Comite(1L, "CEISH", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
 
-    Memoria memoria = new Memoria();
     TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
     estadoMemoria.setId(estadoMemoriaId);
     Retrospectiva retrospectiva = new Retrospectiva();
     EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
     estadoRetrospectiva.setId(estadoRetrospectivaId);
     retrospectiva.setEstadoRetrospectiva(estadoRetrospectiva);
-    memoria.setEstadoActual(estadoMemoria);
-    memoria.setComite(comite);
-    memoria.setRetrospectiva(retrospectiva);
-    evaluacion.setMemoria(memoria);
+
+    evaluacion.getMemoria().setRetrospectiva(retrospectiva);
+    evaluacion.getMemoria().setEstadoActual(estadoMemoria);
 
     BDDMockito.given(evaluacionRepository.findById(evaluacionId)).willReturn(Optional.of(evaluacion));
 
     final Comentario comentario = generarMockComentario(null, "texto", 1L);
-    comentario.getApartado().getBloque().getFormulario().setId(5L);
+    comentario.getApartado().getBloque().getFormulario().setId(
+        evaluacion.getMemoria().getFormularioRetrospectiva().getId());
     comentario.setEvaluacion(null);
     final Comentario comentarioNew = generarMockComentario(12L, "texto", 1L);
     BDDMockito.given(comentarioRepository.save(comentario)).willReturn(comentarioNew);
@@ -975,11 +916,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera añadir comentarios
       comentarioService.updateComentarioGestor(evaluacionId, generarMockComentario(1L, "comentario1", 1L));
-      Assertions.fail("Evaluación id no puede ser null  para actualizar un comentario.");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("Evaluación id no puede ser null  para actualizar un comentario.");
+          .isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -1013,11 +954,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
       comentarioService.updateComentarioGestor(evaluacionId, comentarioActualizado);
 
-      Assertions.fail("El comentario no pertenece a la evaluación recibida.");
+      Assertions.fail("Comentario no pertenece a Evaluación");
     } catch (
 
     final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1040,7 +981,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
       comentarioService.updateComentarioGestor(evaluacionId, comentarioActualizado);
     } catch (final NoRelatedEntitiesException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("Not all provided Comment are related with Evaluation Type");
+          .isEqualTo("No todos/as los/as Comentario proporcionados/as están relacionados/as con el/la Tipo Evaluación");
     }
   }
 
@@ -1056,11 +997,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
     // coincide con el id indicado
     try {
       comentarioService.updateComentarioGestor(evaluacionId, comentario);
-      Assertions.fail("No se puede actualizar un tipo de comentario que no sea del tipo Gestor.");
+      Assertions.fail("No se puede Modificar Tipo Comentario Tipo Gestor para Tipo Comentario");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("No se puede actualizar un tipo de comentario que no sea del tipo Gestor.");
+          .isEqualTo("No se puede Modificar Tipo Comentario Tipo Gestor para Tipo Comentario");
     }
   }
 
@@ -1074,11 +1015,13 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final Long formularioId = 6L;
 
     Evaluacion evaluacion = generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId, comiteId,
-        estadoRetrospectivaId);
+        estadoRetrospectivaId, formularioId);
 
     final Comentario comentario = new Comentario();
-    Formulario formulario = new Formulario(formularioId, "Nombre", "Descripcion");
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.RETROSPECTIVA);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
     Apartado apartado = new Apartado();
     TipoComentario tipoComentario = new TipoComentario(1L, "GESTOR", Boolean.TRUE);
     apartado.setId(1L);
@@ -1107,11 +1050,13 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final Long formularioId = 2L;
 
     Evaluacion evaluacion = generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId, comiteId,
-        estadoRetrospectivaId);
+        estadoRetrospectivaId, formularioId);
 
     final Comentario comentario = new Comentario();
-    Formulario formulario = new Formulario(formularioId, "Nombre", "Descripcion");
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
     Apartado apartado = new Apartado();
     TipoComentario tipoComentario = new TipoComentario(1L, "GESTOR", Boolean.TRUE);
     apartado.setId(1L);
@@ -1140,11 +1085,13 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final Long formularioId = 3L;
 
     Evaluacion evaluacion = generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId, comiteId,
-        estadoRetrospectivaId);
+        estadoRetrospectivaId, formularioId);
 
     final Comentario comentario = new Comentario();
-    Formulario formulario = new Formulario(formularioId, "Nombre", "Descripcion");
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
     Apartado apartado = new Apartado();
     TipoComentario tipoComentario = new TipoComentario(1L, "GESTOR", Boolean.TRUE);
     apartado.setId(1L);
@@ -1173,11 +1120,13 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final Long formularioId = 4L;
 
     Evaluacion evaluacion = generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId, comiteId,
-        estadoRetrospectivaId);
+        estadoRetrospectivaId, formularioId);
 
     final Comentario comentario = new Comentario();
-    Formulario formulario = new Formulario(formularioId, "Nombre", "Descripcion");
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.SEGUIMIENTO_ANUAL);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
     Apartado apartado = new Apartado();
     TipoComentario tipoComentario = new TipoComentario(1L, "GESTOR", Boolean.TRUE);
     apartado.setId(1L);
@@ -1206,11 +1155,13 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final Long formularioId = 5L;
 
     Evaluacion evaluacion = generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId, comiteId,
-        estadoRetrospectivaId);
+        estadoRetrospectivaId, formularioId);
 
     final Comentario comentario = new Comentario();
-    Formulario formulario = new Formulario(formularioId, "Nombre", "Descripcion");
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.SEGUIMIENTO_FINAL);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
     Apartado apartado = new Apartado();
     TipoComentario tipoComentario = new TipoComentario(1L, "GESTOR", Boolean.TRUE);
     apartado.setId(1L);
@@ -1258,11 +1209,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
       // when: se quiera añadir comentarios
       comentarioService.updateComentarioEvaluador(evaluacionId, generarMockComentario(1L, "comentario1", 2L),
           personaRef);
-      Assertions.fail("Evaluación id no puede ser null  para actualizar un comentario.");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("Evaluación id no puede ser null  para actualizar un comentario.");
+          .isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -1296,11 +1247,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
       // la recibida
       comentarioService.updateComentarioEvaluador(evaluacionId, comentarioActualizado, personaRef);
 
-      Assertions.fail("El comentario no pertenece a la evaluación recibida.");
+      Assertions.fail("Comentario no pertenece a Evaluación");
     } catch (
 
     final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1317,11 +1268,11 @@ public class ComentarioServiceTest extends BaseServiceTest {
     // coincide con el id indicado
     try {
       comentarioService.updateComentarioEvaluador(evaluacionId, comentario, personaRef);
-      Assertions.fail("No se puede actualizar un tipo de comentario que no sea del tipo Evaluador.");
+      Assertions.fail("No se puede Modificar Tipo Comentario Tipo Evaluador para Tipo Comentario");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("No se puede actualizar un tipo de comentario que no sea del tipo Evaluador.");
+          .isEqualTo("No se puede Modificar Tipo Comentario Tipo Evaluador para Tipo Comentario");
     }
   }
 
@@ -1409,10 +1360,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera eliminar comentario
       comentarioService.deleteComentarioGestor(evaluacionId, comentarioId);
-      Assertions.fail("Evaluación id no puede ser null para eliminar un comentario.");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación id no puede ser null para eliminar un comentario.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -1428,7 +1379,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
       Assertions.fail("El id de la Evaluación debe existir para eliminar un comentario.");
       // then: se debe lanzar una excepción
     } catch (final EvaluacionNotFoundException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluacion " + evaluacionId + " does not exist.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación " + evaluacionId + " no existe");
     }
   }
 
@@ -1439,10 +1390,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera eliminar comentario
       comentarioService.deleteComentarioGestor(evaluacionId, null);
-      Assertions.fail("Comentario id no puede ser null para eliminar un comentario.");
+      Assertions.fail("Identificador de Comentario no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario id no puede ser null para eliminar un comentario.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Identificador de Comentario no puede ser nulo");
     }
   }
 
@@ -1460,10 +1411,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     // con el id indicado
     try {
       comentarioService.deleteComentarioGestor(evaluacionId, comentarioId);
-      Assertions.fail("El comentario no pertenece a la evaluación recibida");
+      Assertions.fail("Comentario no pertenece a Evaluación");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1482,10 +1433,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     // con el id indicado
     try {
       comentarioService.deleteComentarioGestor(evaluacionId, comentarioId);
-      Assertions.fail("El comentario no pertenece a la evaluación recibida");
+      Assertions.fail("Comentario no pertenece a Evaluación");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1514,17 +1465,17 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     BDDMockito.given(evaluacionRepository.findById(12L))
         .willReturn(Optional.of(generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId,
-            comiteId, estadoRetrospectivaId)));
+            comiteId, estadoRetrospectivaId, 1L)));
 
     BDDMockito.given(comentarioRepository.findById(comentarioId))
         .willReturn(Optional.of(generarMockComentario(comentarioId, "", 1L)));
 
     try {
       comentarioService.deleteComentarioGestor(evaluacionId, comentarioId);
-      Assertions.fail("El comentario no pertenece a la evaluación recibida");
+      Assertions.fail("Comentario no pertenece a Evaluación");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1539,17 +1490,17 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     BDDMockito.given(evaluacionRepository.findById(12L))
         .willReturn(Optional.of(generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId,
-            comiteId, estadoRetrospectivaId)));
+            comiteId, estadoRetrospectivaId, 1L)));
 
     BDDMockito.given(comentarioRepository.findById(comentarioId))
         .willReturn(Optional.of(generarMockComentario(comentarioId, "", 1L)));
 
     try {
       comentarioService.deleteComentarioGestor(evaluacionId, comentarioId);
-      Assertions.fail("El comentario no pertenece a la evaluación recibida");
+      Assertions.fail("Comentario no pertenece a Evaluación");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1564,17 +1515,17 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     BDDMockito.given(evaluacionRepository.findById(12L))
         .willReturn(Optional.of(generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId,
-            comiteId, estadoRetrospectivaId)));
+            comiteId, estadoRetrospectivaId, 1L)));
 
     BDDMockito.given(comentarioRepository.findById(comentarioId))
         .willReturn(Optional.of(generarMockComentario(comentarioId, "", 1L)));
 
     try {
       comentarioService.deleteComentarioGestor(evaluacionId, comentarioId);
-      Assertions.fail("El comentario no pertenece a la evaluación recibida");
+      Assertions.fail("Comentario no pertenece a Evaluación");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1589,17 +1540,17 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     BDDMockito.given(evaluacionRepository.findById(12L))
         .willReturn(Optional.of(generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId,
-            comiteId, estadoRetrospectivaId)));
+            comiteId, estadoRetrospectivaId, 1L)));
 
     BDDMockito.given(comentarioRepository.findById(comentarioId))
         .willReturn(Optional.of(generarMockComentario(comentarioId, "", 1L)));
 
     try {
       comentarioService.deleteComentarioGestor(evaluacionId, comentarioId);
-      Assertions.fail("El comentario no pertenece a la evaluación recibida");
+      Assertions.fail("Comentario no pertenece a Evaluación");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1614,17 +1565,17 @@ public class ComentarioServiceTest extends BaseServiceTest {
 
     BDDMockito.given(evaluacionRepository.findById(12L))
         .willReturn(Optional.of(generarMockEvaluacionVariable(evaluacionId, tipoEvaluacionId, estadoMemoriaId,
-            comiteId, estadoRetrospectivaId)));
+            comiteId, estadoRetrospectivaId, 1L)));
 
     BDDMockito.given(comentarioRepository.findById(comentarioId))
         .willReturn(Optional.of(generarMockComentario(comentarioId, "", 1L)));
 
     try {
       comentarioService.deleteComentarioGestor(evaluacionId, comentarioId);
-      Assertions.fail("El comentario no pertenece a la evaluación recibida");
+      Assertions.fail("Comentario no pertenece a Evaluación");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1638,10 +1589,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera eliminar comentario
       comentarioService.deleteComentarioEvaluador(evaluacionId, comentarioId, personaRef);
-      Assertions.fail("Evaluación id no puede ser null para eliminar un comentario.");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación id no puede ser null para eliminar un comentario.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -1658,7 +1609,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
       Assertions.fail("El id de la Evaluación debe existir para eliminar un comentario.");
       // then: se debe lanzar una excepción
     } catch (final EvaluacionNotFoundException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluacion " + evaluacionId + " does not exist.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación " + evaluacionId + " no existe");
     }
   }
 
@@ -1671,10 +1622,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera eliminar comentario
       comentarioService.deleteComentarioEvaluador(evaluacionId, null, personaRef);
-      Assertions.fail("Comentario id no puede ser null para eliminar un comentario.");
+      Assertions.fail("Identificador de Comentario no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario id no puede ser null para eliminar un comentario.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Identificador de Comentario no puede ser nulo");
     }
   }
 
@@ -1694,10 +1645,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     // con el id indicado
     try {
       comentarioService.deleteComentarioEvaluador(evaluacionId, comentarioId, personaRef);
-      Assertions.fail("El comentario no pertenece a la evaluación recibida");
+      Assertions.fail("Comentario no pertenece a Evaluación");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1717,10 +1668,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     // con el id indicado
     try {
       comentarioService.deleteComentarioEvaluador(evaluacionId, comentarioId, personaRef);
-      Assertions.fail("No se puede eliminar el comentario debido a su tipo");
+      Assertions.fail("No se puede Eliminar Tipo Comentario para Comentario");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("No se puede eliminar el comentario debido a su tipo");
+      Assertions.assertThat(e.getMessage()).isEqualTo("No se puede Eliminar Tipo Comentario para Comentario");
     }
   }
 
@@ -1781,10 +1732,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera eliminar comentario
       comentarioService.deleteComentarioActaGestor(evaluacionId, comentarioId);
-      Assertions.fail("Evaluación id no puede ser null para eliminar un comentario.");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación id no puede ser null para eliminar un comentario.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -1800,7 +1751,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
       Assertions.fail("El id de la Evaluación debe existir para eliminar un comentario.");
       // then: se debe lanzar una excepción
     } catch (final EvaluacionNotFoundException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluacion " + evaluacionId + " does not exist.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación " + evaluacionId + " no existe");
     }
   }
 
@@ -1813,10 +1764,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     try {
       // when: se quiera eliminar comentario
       comentarioService.deleteComentarioActaGestor(evaluacionId, comentarioId);
-      Assertions.fail("Comentario id no puede ser null para eliminar un comentario.");
+      Assertions.fail("Identificador de Comentario no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario id no puede ser null para eliminar un comentario.");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Identificador de Comentario no puede ser nulo");
     }
   }
 
@@ -1835,10 +1786,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     // con el id indicado
     try {
       comentarioService.deleteComentarioActaGestor(evaluacionId, comentarioId);
-      Assertions.fail("El comentario no pertenece a la evaluación recibida");
+      Assertions.fail("Comentario no pertenece a Evaluación");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("El comentario no pertenece a la evaluación recibida");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Comentario no pertenece a Evaluación");
     }
   }
 
@@ -1856,10 +1807,10 @@ public class ComentarioServiceTest extends BaseServiceTest {
     // when: se quiera eliminar un comentario
     try {
       comentarioService.deleteComentarioActaGestor(evaluacionId, comentarioId);
-      Assertions.fail("No se puede eliminar el comentario debido a su tipo");
+      Assertions.fail("No se puede Eliminar Tipo Comentario para Comentario");
       // then: se debe lanzar una excepción
     } catch (final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("No se puede eliminar el comentario debido a su tipo");
+      Assertions.assertThat(e.getMessage()).isEqualTo("No se puede Eliminar Tipo Comentario para Comentario");
     }
   }
 
@@ -1885,14 +1836,16 @@ public class ComentarioServiceTest extends BaseServiceTest {
    * @param texto texto del comentario
    * @return el objeto Comentario
    */
-  public Comentario generarMockComentario(final Long id, final String texto, Long tipoComentarioId) {
+  private Comentario generarMockComentario(final Long id, final String texto, Long tipoComentarioId) {
     final Apartado apartado = new Apartado();
     apartado.setId(100L);
 
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
 
-    Bloque Bloque = new Bloque(1L, formulario, "Bloque 1", 1);
-    apartado.setBloque(Bloque);
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
+    apartado.setBloque(bloque);
 
     final Evaluacion evaluacion = new Evaluacion();
     evaluacion.setId(200L);
@@ -1900,26 +1853,47 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final TipoComentario tipoComentario = new TipoComentario();
     tipoComentario.setId(tipoComentarioId);
 
+    Set<ComentarioTexto> txt = new HashSet<>();
+    txt.add(new ComentarioTexto(Language.ES, texto));
     final Comentario comentario = new Comentario();
     comentario.setId(id);
     comentario.setApartado(apartado);
     comentario.setEvaluacion(evaluacion);
     comentario.setTipoComentario(tipoComentario);
-    comentario.setTexto(texto);
+    comentario.setTexto(txt);
 
     return comentario;
   }
 
   private Evaluacion generarMockEvaluacion(final Long id) {
     final Memoria memoria = new Memoria();
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+    Formulario formularioSeguimientoAnual = new Formulario();
+    formularioSeguimientoAnual.setId(4L);
+    formularioSeguimientoAnual.setTipo(Formulario.Tipo.MEMORIA);
+    Formulario formularioSeguimientoFinal = new Formulario();
+    formularioSeguimientoFinal.setId(5L);
+    formularioSeguimientoFinal.setTipo(Formulario.Tipo.MEMORIA);
+    Formulario formularioRetrospectiva = new Formulario();
+    formularioRetrospectiva.setId(6L);
+    formularioRetrospectiva.setTipo(Formulario.Tipo.MEMORIA);
+
     final TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
     final Evaluador evaluador = new Evaluador();
     evaluador.setPersonaRef("user-002");
     estadoMemoria.setId(TipoEstadoMemoria.Tipo.EN_EVALUACION.getId());
     memoria.setEstadoActual(estadoMemoria);
+    memoria.setFormulario(formulario);
+    memoria.setFormularioSeguimientoAnual(formularioSeguimientoAnual);
+    memoria.setFormularioSeguimientoFinal(formularioSeguimientoFinal);
+    memoria.setFormularioRetrospectiva(formularioRetrospectiva);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "CEI", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("CEI");
+    comite.setActivo(Boolean.TRUE);
     memoria.setComite(comite);
 
     final Evaluacion evaluacion = new Evaluacion();
@@ -1935,7 +1909,7 @@ public class ComentarioServiceTest extends BaseServiceTest {
   }
 
   private Evaluacion generarMockEvaluacionVariable(final Long id, final Long tipoEvaluacionId,
-      final Long estadoMemoriaId, final Long comiteId, final Long estadoRetrospectivaId) {
+      final Long estadoMemoriaId, final Long comiteId, final Long estadoRetrospectivaId, Long formularioId) {
 
     final Memoria memoria = new Memoria();
     final TipoEstadoMemoria estadoMemoria = new TipoEstadoMemoria();
@@ -1949,24 +1923,24 @@ public class ComentarioServiceTest extends BaseServiceTest {
     final Retrospectiva retrospectiva = new Retrospectiva(1L, estadoRetrospectiva, Instant.now());
     memoria.setRetrospectiva(retrospectiva);
 
-    Formulario formulario = new Formulario(1L, "Nombre", "Descripcion");
-    Comite comite = new Comite(comiteId, "nombreComite", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
-    Bloque bloque = new Bloque(1L, formulario, "Bloque1", 1);
-    Apartado apartado = new Apartado();
-    apartado.setId(1L);
-    apartado.setBloque(bloque);
+    Formulario formulario = new Formulario();
+    formulario.setId(formularioId);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+    Comite comite = new Comite();
+    comite.setId(comiteId);
+    comite.setCodigo("nombreComite");
+    comite.setActivo(Boolean.TRUE);
 
-    Comentario comentario = new Comentario();
-    comentario.setId(null);
-    comentario.setApartado(apartado);
-
+    memoria.setFormulario(formulario);
+    memoria.setFormularioSeguimientoAnual(formulario);
+    memoria.setFormularioSeguimientoFinal(formulario);
+    memoria.setFormularioRetrospectiva(formulario);
     memoria.setComite(comite);
 
     final Evaluacion evaluacion = new Evaluacion();
     evaluacion.setId(id);
     evaluacion.setMemoria(memoria);
     evaluacion.setEvaluador1(evaluador);
-    // comentario.setEvaluacion(evaluacion);
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion(tipoEvaluacionId, "Nombre", Boolean.TRUE);
     evaluacion.setTipoEvaluacion(tipoEvaluacion);

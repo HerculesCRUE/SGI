@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.csp.model.LineaInvestigacionNombre;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +18,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class LineaInvestigacionOutput implements Serializable {
   private Long id;
-  private String nombre;
+  private Collection<LineaInvestigacionNombre> nombre;
   private Boolean activo;
 }

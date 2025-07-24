@@ -80,7 +80,7 @@ public class ConvocatoriaPeriodoSeguimientoCientificoServiceImpl
 
     if (periodos.isEmpty()) {
       // Fast check
-      repository.deleteInBulkByConvocatoriaId(convocatoriaId);
+      repository.deleteByConvocatoriaId(convocatoriaId);
       return new ArrayList<>();
     }
 

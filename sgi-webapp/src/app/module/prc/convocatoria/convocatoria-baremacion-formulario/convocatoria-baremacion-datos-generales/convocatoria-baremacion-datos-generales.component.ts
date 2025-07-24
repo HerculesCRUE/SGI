@@ -37,14 +37,14 @@ export class ConvocatoriaBaremacionDatosGeneralesComponent
     public readonly actionService: ConvocatoriaBaremacionActionService,
     private readonly translate: TranslateService,
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaBaremacionDatosGeneralesFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
     this.initFlexProperties();
-    this.setupI18N();
+
   }
 
   private initFlexProperties(): void {
@@ -54,7 +54,7 @@ export class ConvocatoriaBaremacionDatosGeneralesComponent
     this.fxLayoutProperties.xs = 'column';
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_BAREMACION_NOMBRE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

@@ -6,13 +6,13 @@ import org.crue.hercules.sgi.csp.model.SolicitudModalidad;
 import org.crue.hercules.sgi.csp.repository.EstadoSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.EstadoSolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.EstadoSolicitudService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,9 +43,8 @@ public class EstadoSolicitudServiceImpl implements EstadoSolicitudService {
   public EstadoSolicitud create(EstadoSolicitud estadoSolicitud) {
     log.debug("create(EstadoSolicitud solicitudModalidad) - start");
 
-    Assert.isNull(estadoSolicitud.getId(), "EstadoSolicitud id tiene que ser null para crear un EstadoSolicitud");
-
-    Assert.notNull(estadoSolicitud.getSolicitudId(), "idSolicitud no puede ser null para crear un EstadoSolicitud");
+    AssertHelper.idIsNull(estadoSolicitud.getId(), EstadoSolicitud.class);
+    AssertHelper.idNotNull(estadoSolicitud.getSolicitudId(), Solicitud.class);
 
     EstadoSolicitud returnValue = repository.save(estadoSolicitud);
 

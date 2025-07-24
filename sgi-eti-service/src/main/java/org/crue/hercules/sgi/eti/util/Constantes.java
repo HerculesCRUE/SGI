@@ -48,17 +48,4 @@ public class Constantes {
   public static final int ESTADO_MEMORIA_PENDIENTE_CORRECCIONES = 7;
   public static final int ESTADO_MEMORIA_FAVORABLE_PENDIENTE_MOD_MINIMAS = 6;
 
-  // Formularios
-  public static final Long FORMULARIO_M10 = 1L;
-  public static final Long FORMULARIO_M20 = 2L;
-  public static final Long FORMULARIO_M30 = 3L;
-  public static final Long FORMULARIO_ANUAL = 4L;
-  public static final Long FORMULARIO_FINAL = 5L;
-  public static final Long FORMULARIO_RETROSPECTIVA = 6L;
-
-  // Comites
-  public static final Long COMITE_CEI = 1L;
-  public static final Long COMITE_CEEA = 2L;
-  public static final Long COMITE_CBE = 3L;
-
 }

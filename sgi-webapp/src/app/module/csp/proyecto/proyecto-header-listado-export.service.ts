@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -9,11 +10,12 @@ import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-
 
 @Injectable()
 export class ProyectoHeaderListadoExportService
-  extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions>{
+  extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
-    protected readonly translate: TranslateService
+    protected readonly translate: TranslateService,
+    protected readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -39,7 +41,7 @@ export class ProyectoHeaderListadoExportService
     const proyecto = resultados[index];
     const elementsRow: any[] = [];
 
-    elementsRow.push('Proyecto: ' + proyecto.titulo ?? '');
+    elementsRow.push('Proyecto: ' + this.languageService.getFieldValue(proyecto.titulo));
 
     return elementsRow;
   }

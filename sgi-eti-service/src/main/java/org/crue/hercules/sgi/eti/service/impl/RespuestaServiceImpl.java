@@ -7,23 +7,22 @@ import org.crue.hercules.sgi.eti.dto.RespuestaRetrospectivaFormulario;
 import org.crue.hercules.sgi.eti.exceptions.RespuestaNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.RespuestaRetrospectivaFormularioNotValidException;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
-import org.crue.hercules.sgi.eti.model.Formulario;
-import org.crue.hercules.sgi.eti.model.Formulario.Tipo;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Respuesta;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
+import org.crue.hercules.sgi.eti.repository.FormularioRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
 import org.crue.hercules.sgi.eti.service.RespuestaService;
 import org.crue.hercules.sgi.eti.service.RetrospectivaService;
 import org.crue.hercules.sgi.eti.util.Constantes;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -42,12 +41,15 @@ public class RespuestaServiceImpl implements RespuestaService {
   private final RespuestaRepository respuestaRepository;
   private final MemoriaService memoriaService;
   private final RetrospectivaService retrospectivaService;
+  private final FormularioRepository formularioRepository;
 
   public RespuestaServiceImpl(RespuestaRepository respuestaRepository,
-      MemoriaService memoriaService, RetrospectivaService retrospectivaService) {
+      MemoriaService memoriaService, RetrospectivaService retrospectivaService,
+      FormularioRepository formularioRepository) {
     this.respuestaRepository = respuestaRepository;
     this.memoriaService = memoriaService;
     this.retrospectivaService = retrospectivaService;
+    this.formularioRepository = formularioRepository;
   }
 
   /**
@@ -60,7 +62,7 @@ public class RespuestaServiceImpl implements RespuestaService {
   @Transactional
   public Respuesta create(Respuesta respuesta) {
     log.debug("Petición a create Respuesta : {} - start", respuesta);
-    Assert.isNull(respuesta.getId(), "Respuesta id tiene que ser null para crear un nuevo Respuesta");
+    AssertHelper.idIsNull(respuesta.getId(), Respuesta.class);
 
     Respuesta respuestaNew = respuestaRepository.save(respuesta);
 
@@ -112,7 +114,7 @@ public class RespuestaServiceImpl implements RespuestaService {
   @Transactional
   public void delete(Long id) throws RespuestaNotFoundException {
     log.debug("Petición a delete Respuesta : {}  - start", id);
-    Assert.notNull(id, "El id de Respuesta no puede ser null.");
+    AssertHelper.idNotNull(id, Respuesta.class);
     if (!respuestaRepository.existsById(id)) {
       throw new RespuestaNotFoundException(id);
     }
@@ -146,11 +148,11 @@ public class RespuestaServiceImpl implements RespuestaService {
   public Respuesta update(final Respuesta respuestaActualizar) {
     log.debug("update(Respuesta RespuestaActualizar) - start");
 
-    Assert.notNull(respuestaActualizar.getId(), "Respuesta id no puede ser null para actualizar un Respuesta");
+    AssertHelper.idNotNull(respuestaActualizar.getId(), Respuesta.class);
 
     return respuestaRepository.findById(respuestaActualizar.getId()).map(respuesta -> {
-      respuesta.setMemoria(respuestaActualizar.getMemoria());
-      respuesta.setApartado(respuestaActualizar.getApartado());
+      respuesta.setMemoriaId(respuestaActualizar.getMemoriaId());
+      respuesta.setApartadoId(respuestaActualizar.getApartadoId());
       respuesta.setValor(respuestaActualizar.getValor());
       respuesta.setTipoDocumento(respuestaActualizar.getTipoDocumento());
 
@@ -184,10 +186,9 @@ public class RespuestaServiceImpl implements RespuestaService {
   public void updateDatosRetrospectiva(Long id)
       throws RespuestaNotFoundException, RespuestaRetrospectivaFormularioNotValidException {
     Respuesta respuesta = respuestaRepository.findById(id).orElseThrow(() -> new RespuestaNotFoundException(id));
-    Formulario formulario = respuesta.getApartado().getBloque().getFormulario();
-    Memoria memoria = respuesta.getMemoria();
+    Memoria memoria = memoriaService.findById(respuesta.getMemoriaId());
 
-    if (!formulario.getTipo().equals(Tipo.M20)) {
+    if (!memoria.getComite().getRequiereRetrospectiva().equals(Boolean.TRUE)) {
       return;
     }
 
@@ -233,7 +234,7 @@ public class RespuestaServiceImpl implements RespuestaService {
       requiereRetrospectivaUpdated = false;
     }
 
-    memoriaService.updateDatosRetrospectiva(respuesta.getMemoria().getId(), requiereRetrospectivaUpdated,
+    memoriaService.updateDatosRetrospectiva(respuesta.getMemoriaId(), requiereRetrospectivaUpdated,
         retrospectivaUpdated);
 
   }

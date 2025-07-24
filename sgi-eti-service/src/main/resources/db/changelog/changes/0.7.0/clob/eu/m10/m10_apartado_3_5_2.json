@@ -1,0 +1,94 @@
+[
+  {
+    "key": "ap3_5_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.5.2 Zer egingo den giza jatorriko laginekin"
+    },
+    "hideExpression": "!formState.mainModel.ap3_5.muestrasBiologicasRadio || formState.mainModel.ap3_5.muestrasBiologicasRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "Zer egingo duzu giza jatorriko laginekin, behin proiekturako beharrezkoak ez direnean?"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "destinoMuestrasCheck",
+        "templateOptions": {
+          "label": "Zer egin?",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "destruccion",
+              "label": "Suntsitu"
+            },
+            {
+              "value": "conservacion",
+              "label": "Modu anonimoan gorde, aurrerago erabiltzeko"
+            },
+            {
+              "value": "cesionBiobanco",
+              "label": "Biobancori doan eman"
+            },
+            {
+              "value": "usoColeccionMuestras",
+              "label": "Modu integratuan erabili laginen bilduman"
+            },
+            {
+              "value": "incorporacionColeccionMuestras",
+              "label": "Lagin bilduma batean sartu"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarCesionBiobanco",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'cesionBiobanco')",
+        "templateOptions": {
+          "label": "Zehaztu Biobancori egingo zaion lagapena",
+          "placeholder": "Zehaztu Biobancori egingo zaion lagapena",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarUsoColeccionMuestras",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'usoColeccionMuestras')",
+        "templateOptions": {
+          "label": "Zehaztu bilduma eta erregistroa",
+          "placeholder": "Zehaztu bilduma eta erregistroa",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarIncorporacionColeccionMuestras",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'incorporacionColeccionMuestras')",
+        "templateOptions": {
+          "label": "Zehaztu zer bildumatan sartuko den",
+          "placeholder": "Zehaztu zer bildumatan sartuko den",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: gogoratu parte hartzailearen eskubidea dela bere laginekin zer egingo den jakin eta erabakitzea, eta horren berri jaso behar duela <strong>baimen dokumentuan</strong> (‘4.4.8 Laginekin zer egingo den erabakitzeko eskubidea' atala). </p><p>Nahitaez eman behar den gutxieneko informazioari buruz gehiago jakiteko, kontsultatu <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a59' target='_blank'>14/2007 IBLren 59. artikulua</a>. </p>"
+      }
+    ]
+  }
+]

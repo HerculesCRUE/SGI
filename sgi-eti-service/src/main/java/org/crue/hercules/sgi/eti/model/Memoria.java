@@ -1,9 +1,16 @@
 package org.crue.hercules.sgi.eti.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
@@ -34,6 +42,15 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Memoria extends BaseEntity {
+
+  public enum Tipo {
+    /** Nueva */
+    NUEVA,
+    /** Modificacion */
+    MODIFICACION,
+    /** Ratificacion */
+    RATIFICACION;
+  }
 
   /**
    * Serial version
@@ -65,19 +82,44 @@ public class Memoria extends BaseEntity {
   @NotNull
   private Comite comite;
 
+  /** Formulario */
+  @ManyToOne
+  @JoinColumn(name = "formulario_id", nullable = false, foreignKey = @ForeignKey(name = "FK_MEMORIA_FORMULARIO"))
+  @NotNull
+  private Formulario formulario;
+
+  /** Formulario Seguimiento Anual */
+  @ManyToOne
+  @JoinColumn(name = "formulario_seguimiento_anual_id", nullable = false, foreignKey = @ForeignKey(name = "FK_MEMORIA_FORMULARIOSEGUIMIENTOANUAL"))
+  @NotNull
+  private Formulario formularioSeguimientoAnual;
+
+  /** Formulario Seguimiento Final */
+  @ManyToOne
+  @JoinColumn(name = "formulario_seguimiento_final_id", nullable = false, foreignKey = @ForeignKey(name = "FK_MEMORIA_FORMULARIOSEGUIMIENTOFINAL"))
+  @NotNull
+  private Formulario formularioSeguimientoFinal;
+
+  /** Formulario Retrospectiva */
+  @ManyToOne
+  @JoinColumn(name = "formulario_retrospectiva_id", nullable = true, foreignKey = @ForeignKey(name = "FK_MEMORIA_FORMULARIORETROSPECTIVA"))
+  private Formulario formularioRetrospectiva;
+
   /** Título */
-  @Column(name = "titulo", length = 2000, nullable = true)
-  private String titulo;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "memoria_titulo", joinColumns = @JoinColumn(name = "memoria_id"))
+  @Valid
+  private Set<MemoriaTitulo> titulo = new HashSet<>();
 
   /** Referencia usuario */
   @Column(name = "persona_ref", length = 250, nullable = true)
   private String personaRef;
 
   /** Tipo Memoria */
-  @ManyToOne
-  @JoinColumn(name = "tipo_memoria_id", nullable = false, foreignKey = @ForeignKey(name = "FK_MEMORIA_TIPOMEMORIA"))
+  @Column(name = "tipo", nullable = false)
+  @Enumerated(EnumType.STRING)
   @NotNull
-  private TipoMemoria tipoMemoria;
+  private Tipo tipo;
 
   /** Estado Memoria Actual */
   @OneToOne

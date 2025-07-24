@@ -1,0 +1,24 @@
+[
+  {
+    "key": "ap4_1_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.3 Choice of species"
+    },
+    "fieldGroup": [
+      {
+        "template": "Explain the reasons for choosing the species, including the reasons why its replacement by another species with a lesser capacity to feel pain, suffering, anguish or lasting damage is not considered (art. 24 Royal Decree 53/2013)"
+      },
+      {
+        "key": "motivosEleccion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Reasons for choice",
+          "required": true
+        }
+      }
+    ]
+  }
+]

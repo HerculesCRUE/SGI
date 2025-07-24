@@ -71,19 +71,19 @@ public interface EvaluadorService {
   /**
    * Devuelve los evaluadores activos del comité indicado
    * 
-   * @param comite Nombre del {@link Comite}
+   * @param comiteId Id del {@link Comite}
    * @return lista de evaluadores
    */
-  List<Evaluador> findAllByComite(String comite);
+  List<Evaluador> findAllByComiteId(Long comiteId);
 
   /**
    * Busca un secretario {@link Evaluador} activo dentro de la fecha indicada
    *
-   * @param fecha  la fecha de actividad del secretario.
-   * @param comite el nombre del {@link Comite} al que pertenece
+   * @param fecha    la fecha de actividad del secretario.
+   * @param comiteId Id del {@link Comite} al que pertenece
    * @return el secretario {@link Evaluador}
    */
-  Evaluador findSecretarioInFechaAndComite(Instant fecha, String comite);
+  Evaluador findSecretarioInFechaAndComiteId(Instant fecha, Long comiteId);
 
   /**
    * Comprueba si la persona es evaluador activo en algun {@link Comite}

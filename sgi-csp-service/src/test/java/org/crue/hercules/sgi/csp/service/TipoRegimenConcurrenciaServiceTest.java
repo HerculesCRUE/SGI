@@ -1,13 +1,18 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoRegimenConcurrenciaNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
 import org.crue.hercules.sgi.csp.repository.TipoRegimenConcurrenciaRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -97,7 +102,7 @@ class TipoRegimenConcurrenciaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoRegimenConcurrencia item = page.getContent().get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + j);
     }
   }
 
@@ -109,7 +114,10 @@ class TipoRegimenConcurrenciaServiceTest extends BaseServiceTest {
    * @return TipoRegimenConcurrencia
    */
   private TipoRegimenConcurrencia generarMockTipoRegimenConcurrencia(Long id, Boolean activo) {
-    return TipoRegimenConcurrencia.builder().id(id).nombre("nombre-" + id).activo(activo).build();
+    Set<TipoRegimenConcurrenciaNombre> nombre = new HashSet<>();
+    nombre.add(new TipoRegimenConcurrenciaNombre(Language.ES, "nombre-" + id));
+
+    return TipoRegimenConcurrencia.builder().id(id).nombre(nombre).activo(activo).build();
   }
 
 }

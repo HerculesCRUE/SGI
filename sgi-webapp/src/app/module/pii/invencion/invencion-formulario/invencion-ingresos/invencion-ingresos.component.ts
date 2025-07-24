@@ -59,4 +59,6 @@ export class InvencionIngresosComponent extends FragmentComponent implements OnI
     );
   }
 
+  protected setupI18N(): void { }
+
 }

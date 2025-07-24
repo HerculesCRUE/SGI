@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap1_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Specific ethical aspects",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>The description with regard to specific ethical issues will depend on the committee to which the annual report is addressed and will reflect progress in the reporting year. <ul><li>For the #nombre_comite_M10_en#, progress and issues arising with regard to risk/benefit aspects, information and consent, confidentiality, etc.</li><li>For the #nombre_comite_M20_en#, progress and issues arising with regard to replacement, refinement and reduction.</li><li>For #nombre_comite_M30_en#, progress and issues arising from the prevention of health or environmental risks related to biological agents or genetically modified organisms under research.</li></ul></p>"
+      },
+      {
+        "template": "Briefly describe how the ethical aspects of the project are progressing and point out any issues encountered and solutions, if any."
+      },
+      {
+        "key": "aspectosEticos",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Description",
+          "label": "Description",
+          "required": false,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

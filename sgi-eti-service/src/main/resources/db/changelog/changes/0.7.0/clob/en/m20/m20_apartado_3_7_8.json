@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap3_7_8",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.8 Administration of radioactive isotopes"
+    },
+    "fieldGroup": [
+      {
+        "template": "Does the experimental process include the administration of radioactive isotopes to the animal?"
+      },
+      {
+        "key": "administracionIsotoposRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "key": "tipoIsotopo",
+        "type": "i18n-input",
+        "hideExpression": "!model.administracionIsotoposRadio || model.administracionIsotoposRadio === 'no'",
+        "templateOptions": {
+          "label": "Type of isotope",
+          "required": true,
+          "placeholder": "Type"
+        }
+      },
+      {
+        "key": "administracionIsotopo",
+        "type": "i18n-input",
+        "hideExpression": "!model.administracionIsotoposRadio || model.administracionIsotoposRadio === 'no'",
+        "templateOptions": {
+          "label": "Dosage and route of administration",
+          "required": true,
+          "placeholder": "Dose"
+        }
+      }
+    ]
+  }
+]

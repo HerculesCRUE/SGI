@@ -49,4 +49,9 @@ public class RestApiProperties {
    * URL base de los end-points del módulo de REP.
    */
   private String repUrl;
+
+  /**
+   * URL base de los end-points del módulo de SGE.
+   */
+  private String sgeUrl;
 }

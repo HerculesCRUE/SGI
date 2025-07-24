@@ -2,12 +2,14 @@ package org.crue.hercules.sgi.csp.service.impl;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -29,16 +31,24 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoIVAException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.model.ContextoProyecto;
+import org.crue.hercules.sgi.csp.model.ContextoProyectoIntereses;
+import org.crue.hercules.sgi.csp.model.ContextoProyectoObjetivos;
+import org.crue.hercules.sgi.csp.model.ContextoProyectoResultadosPrevistos;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaAreaTematica;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEcObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPartidaDescripcion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientificoObservaciones;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto.Estado;
 import org.crue.hercules.sgi.csp.model.EstadoProyectoPeriodoJustificacion;
@@ -46,10 +56,13 @@ import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.Proyecto.CausaExencion;
 import org.crue.hercules.sgi.csp.model.ProyectoAreaConocimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoClasificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoCodigoEc;
+import org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoCodigoEcObservaciones;
+import org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
@@ -57,8 +70,11 @@ import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.model.ProyectoIVA;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
+import org.crue.hercules.sgi.csp.model.ProyectoPartidaDescripcion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga.Tipo;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
@@ -66,7 +82,9 @@ import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoPago;
+import org.crue.hercules.sgi.csp.model.RolSocio;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudModalidad;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
@@ -74,11 +92,17 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyectoAreaConocimiento;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoClasificacion;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoIntereses;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoObjetivos;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoResponsableEconomico;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoResultadosPrevistos;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioEquipo;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoPago;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadConvocanteRepository;
@@ -136,8 +160,10 @@ import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgempService;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.PeriodDateUtil;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -147,6 +173,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -164,6 +191,20 @@ public class ProyectoServiceImpl implements ProyectoService {
    * Valor por defecto del atributo ajena en la copia de entidades financiadoras
    */
   private static final Boolean DEFAULT_COPY_ENTIDAD_FINANCIADORA_AJENA_VALUE = Boolean.FALSE;
+  private static final String MSG_MODEL_PROYECTO = "org.crue.hercules.sgi.csp.model.Proyecto.message";
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_MODELO = "modelo";
+  private static final String MSG_KEY_TIPO = "tipo";
+  private static final String MSG_KEY_UNIDAD_GESTION = "unidadGestion";
+  private static final String MSG_FIELD_CONFIDENCIAL = "confidencial";
+  private static final String MSG_FIELD_COORDINADO = "coordinado";
+  private static final String MSG_FIELD_PERMITE_PAQUETES_TRABAJO = "permitePaquetesTrabajo";
+  private static final String MSG_FIELD_FECHA_FIN_ULTIMA_PRORROGA = "fechaFinUltimaProrroga";
+  private static final String MSG_FIELD_FECHA_FIN_DEFINITIVA = "fechaFinDefinitiva";
+  private static final String MSG_CAMPOS_NO_ELIMINABLES = "proyecto.camposNoEliminables";
+  private static final String MSG_PROBLEM_UNIDAD_GESTION_NO_GESTIONABLE = "org.springframework.util.Assert.entity.unidadGestion.noGestionable.message";
+  private static final String MSG_NO_DISPONIBLE_UNIDAD_GESTION = "org.crue.hercules.sgi.csp.exceptions.ModeloEjecucion.noDisponible.unidadGestion.message";
+  private static final String MSG_PROBLEM_PROYECTO_FORMULARIO_SOLICITUD_TIPO = "org.crue.hercules.sgi.csp.exceptions.Proyecto.FormularioSolicitud.tipo.message";
 
   private static final String MSG_FIELD_FECHA_INICIO = "fechaInicio";
   private static final String MSG_FIELD_FECHA_FIN = "fechaFin";
@@ -230,10 +271,15 @@ public class ProyectoServiceImpl implements ProyectoService {
   @Transactional
   public Proyecto create(Proyecto proyecto) {
     log.debug("create(Proyecto proyecto) - start");
-    Assert.isNull(proyecto.getId(), "Proyecto id tiene que ser null para crear un Proyecto");
+    AssertHelper.idIsNull(proyecto.getId(), Proyecto.class);
 
-    Assert.isTrue(SgiSecurityContextHolder.hasAuthorityForUO("CSP-PRO-C", proyecto.getUnidadGestionRef()),
-        "La Unidad de Gestión no es gestionable por el usuario");
+    Assert.isTrue(
+        SgiSecurityContextHolder.hasAuthorityForUO("CSP-PRO-C", proyecto.getUnidadGestionRef()),
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_UNIDAD_GESTION_NO_GESTIONABLE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_PROYECTO))
+            .build());
 
     proyecto.setFechaInicioStarted(proyecto.getFechaInicio() != null);
     proyecto.setActivo(Boolean.TRUE);
@@ -244,7 +290,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     repository.save(proyecto);
 
     // Crea el estado inicial del proyecto
-    EstadoProyecto estadoProyecto = addEstadoProyecto(proyecto, EstadoProyecto.Estado.BORRADOR, null);
+    EstadoProyecto estadoProyecto = addEstadoProyecto(proyecto, EstadoProyecto.Estado.BORRADOR);
 
     proyecto.setEstado(estadoProyecto);
 
@@ -337,7 +383,7 @@ public class ProyectoServiceImpl implements ProyectoService {
               && ((proyectoActualizar.getSolicitudId() == null && data.getSolicitudId() == null)
                   || (proyectoActualizar.getSolicitudId() != null && data.getSolicitudId() != null
                       && proyectoActualizar.getSolicitudId().equals(data.getSolicitudId()))),
-          "Existen campos del proyecto modificados que no se pueden modificar");
+          ApplicationContextSupport.getMessage(MSG_CAMPOS_NO_ELIMINABLES));
 
       data.setAcronimo(proyectoActualizar.getAcronimo());
       data.setAmbitoGeografico(proyectoActualizar.getAmbitoGeografico());
@@ -356,6 +402,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       data.setImportePresupuestoCostesIndirectos(proyectoActualizar.getImportePresupuestoCostesIndirectos());
       data.setImporteConcedidoCostesIndirectos(proyectoActualizar.getImporteConcedidoCostesIndirectos());
       data.setIvaDeducible(proyectoActualizar.getIvaDeducible());
+      data.setAnio(proyectoActualizar.getAnio());
 
       // Crea o actualiza el proyecto iva del proyecto si el porcentaje de IVA es cero
       // o superior
@@ -448,7 +495,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       }
 
       return miembroEquipo;
-    }).collect(Collectors.toList());
+    }).toList();
   }
 
   /**
@@ -462,11 +509,15 @@ public class ProyectoServiceImpl implements ProyectoService {
   public Proyecto enable(Long id) {
     log.debug("enable(Long id) - start");
 
-    Assert.notNull(id, "Proyecto id no puede ser null para reactivar un Proyecto");
+    AssertHelper.idNotNull(id, Proyecto.class);
 
     return repository.findById(id).map(proyecto -> {
       Assert.isTrue(SgiSecurityContextHolder.hasAuthorityForUO("CSP-PRO-R", proyecto.getUnidadGestionRef()),
-          "El proyecto pertenece a una Unidad de Gestión no gestionable por el usuario");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_UNIDAD_GESTION_NO_GESTIONABLE)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_PROYECTO))
+              .build());
 
       if (proyecto.getActivo().booleanValue()) {
         // Si esta activo no se hace nada
@@ -492,11 +543,15 @@ public class ProyectoServiceImpl implements ProyectoService {
   public Proyecto disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "Proyecto id no puede ser null para desactivar un Proyecto");
+    AssertHelper.idNotNull(id, Proyecto.class);
 
     return repository.findById(id).map(proyecto -> {
       Assert.isTrue(SgiSecurityContextHolder.hasAuthorityForUO("CSP-PRO-B", proyecto.getUnidadGestionRef()),
-          "El proyecto pertenece a una Unidad de Gestión no gestionable por el usuario");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_UNIDAD_GESTION_NO_GESTIONABLE)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_PROYECTO))
+              .build());
 
       if (!proyecto.getActivo().booleanValue()) {
         // Si no esta activo no se hace nada
@@ -564,7 +619,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       specs = specs.and(specByUnidadGestionRefIn);
     }
 
-    Page<Proyecto> returnValue = repository.findAll(specs, paging);
+    Page<Proyecto> returnValue = repository.findAllDistinct(specs, paging);
     log.debug("findAllRestringidos(String query, Pageable paging) - end");
     return returnValue;
   }
@@ -586,14 +641,14 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    Specification<Proyecto> specs = ProyectoSpecifications.distinct().and(ProyectoSpecifications.activos()
+    Specification<Proyecto> specs = ProyectoSpecifications.activos()
         .and((ProyectoSpecifications.byInvestigadorId(authentication.getName()))
             .or(ProyectoSpecifications.byResponsableEconomicoId(authentication.getName())))
         .and(ProyectoSpecifications.byEstadoNotBorrador())
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ProyectoPredicateResolver.getInstance(programaRepository, sgiApiSgempService, sgiConfigProperties))));
+            ProyectoPredicateResolver.getInstance(programaRepository, sgiApiSgempService, sgiConfigProperties)));
 
-    Page<Proyecto> returnValue = repository.findAll(specs, paging);
+    Page<Proyecto> returnValue = repository.findAllDistinct(specs, paging);
     log.debug("findAllActivosInvestigador(String query, Pageable paging) - end");
     return returnValue;
   }
@@ -609,9 +664,8 @@ public class ProyectoServiceImpl implements ProyectoService {
   public Page<Proyecto> findAllTodosRestringidos(String query, Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
 
-    Specification<Proyecto> specs = ProyectoSpecifications.distinct()
-        .and(SgiRSQLJPASupport.toSpecification(query,
-            ProyectoPredicateResolver.getInstance(programaRepository, sgiApiSgempService, sgiConfigProperties)));
+    Specification<Proyecto> specs = SgiRSQLJPASupport.toSpecification(query,
+        ProyectoPredicateResolver.getInstance(programaRepository, sgiApiSgempService, sgiConfigProperties));
 
     List<String> unidadesGestion = SgiSecurityContextHolder
         .getUOsForAnyAuthority(new String[] { "CSP-PRO-V", "CSP-PRO-C", "CSP-PRO-E", "CSP-PRO-B", "CSP-PRO-R" });
@@ -621,7 +675,7 @@ public class ProyectoServiceImpl implements ProyectoService {
       specs = specs.and(specByUnidadGestionRefIn);
     }
 
-    Page<Proyecto> returnValue = repository.findAll(specs, paging);
+    Page<Proyecto> returnValue = repository.findAllDistinct(specs, paging);
     log.debug("findAll(String query, Pageable paging) - end");
     return returnValue;
   }
@@ -636,21 +690,17 @@ public class ProyectoServiceImpl implements ProyectoService {
    *                           {@link Proyecto}.
    * @return la {@link Proyecto} con el estado actualizado.
    */
-  private EstadoProyecto addEstadoProyecto(Proyecto proyecto, EstadoProyecto.Estado tipoEstadoProyecto,
-      String comentario) {
-    log.debug(
-        "addEstadoProyecto(Proyecto proyecto, TipoEstadoProyectoEnum tipoEstadoProyecto, String comentario) - start");
+  private EstadoProyecto addEstadoProyecto(Proyecto proyecto, EstadoProyecto.Estado tipoEstadoProyecto) {
+    log.debug("addEstadoProyecto(Proyecto proyecto, TipoEstadoProyectoEnum tipoEstadoProyecto) - start");
 
     EstadoProyecto estadoProyecto = new EstadoProyecto();
     estadoProyecto.setEstado(tipoEstadoProyecto);
     estadoProyecto.setProyectoId(proyecto.getId());
-    estadoProyecto.setComentario(comentario);
     estadoProyecto.setFechaEstado(Instant.now());
 
     EstadoProyecto returnValue = estadoProyectoRepository.save(estadoProyecto);
 
-    log.debug(
-        "addEstadoProyecto(Proyecto proyecto, TipoEstadoProyectoEnum tipoEstadoProyecto, String comentario) - end");
+    log.debug("addEstadoProyecto(Proyecto proyecto, TipoEstadoProyectoEnum tipoEstadoProyecto) - end");
     return returnValue;
   }
 
@@ -747,21 +797,24 @@ public class ProyectoServiceImpl implements ProyectoService {
    */
   private void validarDatos(Proyecto proyecto, Estado estado) {
     if (proyecto.getConvocatoriaId() != null) {
-      Assert.isTrue(convocatoriaRepository.existsById(proyecto.getConvocatoriaId()),
-          "La convocatoria con id '" + proyecto.getConvocatoriaId() + "' no existe");
+      AssertHelper.entityNotExists(convocatoriaRepository.existsById(proyecto.getConvocatoriaId()), Proyecto.class,
+          Convocatoria.class);
     }
 
     if (proyecto.getFechaInicio() != null && proyecto.getFechaFin() != null) {
-      Assert.isTrue(proyecto.getFechaFin().isAfter(proyecto.getFechaInicio()),
-          "La fecha de fin debe ser posterior a la fecha de inicio");
+      AssertHelper.isBefore(proyecto.getFechaFin().isAfter(proyecto.getFechaInicio()));
     }
 
     // ModeloEjecucion correcto
     Optional<ModeloUnidad> modeloUnidad = modeloUnidadRepository.findByModeloEjecucionIdAndUnidadGestionRef(
         proyecto.getModeloEjecucion().getId(), proyecto.getUnidadGestionRef());
 
-    Assert.isTrue(modeloUnidad.isPresent(), "ModeloEjecucion '" + proyecto.getModeloEjecucion().getNombre()
-        + "' no disponible para la UnidadGestion " + proyecto.getUnidadGestionRef());
+    Assert.isTrue(modeloUnidad.isPresent(),
+        () -> ProblemMessage.builder()
+            .key(MSG_NO_DISPONIBLE_UNIDAD_GESTION)
+            .parameter(MSG_KEY_MODELO, proyecto.getModeloEjecucion().getNombre())
+            .parameter(MSG_KEY_UNIDAD_GESTION, proyecto.getUnidadGestionRef())
+            .build());
 
     // FechasFin after than última prórroga
     Optional<ProyectoProrroga> prorroga = proyectoProrrogaRepository
@@ -769,10 +822,10 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     if (prorroga.isPresent() && !Tipo.IMPORTE.equals(prorroga.get().getTipo())
         && proyecto.getFechaFinDefinitiva() != null && prorroga.get().getFechaFin() != null) {
-      Assert.isTrue(
+      AssertHelper.fieldBefore(
           proyecto.getFechaFinDefinitiva().isAfter(prorroga.get().getFechaFin())
               || proyecto.getFechaFinDefinitiva().equals(prorroga.get().getFechaFin()),
-          "La fecha de fin definitiva debe ser posterior a la fecha de fin de la última prórroga");
+          MSG_FIELD_FECHA_FIN_ULTIMA_PRORROGA, MSG_FIELD_FECHA_FIN_DEFINITIVA);
     }
 
     // Validación de campos obligatorios según estados. Solo aplicaría en el
@@ -781,8 +834,7 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     // Validación de datos IVA
     if (proyecto.getIva() != null && proyecto.getIva().getIva() != null && proyecto.getCausaExencion() != null) {
-      Assert.isTrue(proyecto.getCausaExencion() != null,
-          "El campo causa exención no puede tener valor si el porcentaje de IVA no es '0'");
+      AssertHelper.entityNotNull(proyecto.getCausaExencion(), Proyecto.class, CausaExencion.class);
     }
   }
 
@@ -892,7 +944,9 @@ public class ProyectoServiceImpl implements ProyectoService {
           if (convocatoriaSeguimiento.getFechaFinPresentacion() != null) {
             projectBuilder.fechaFinPresentacion(convocatoriaSeguimiento.getFechaFinPresentacion());
           }
-          projectBuilder.observaciones(convocatoriaSeguimiento.getObservaciones());
+          projectBuilder
+              .observaciones(convertObservacionesFromConvocatoriaProyectoSeguimientoToProyectoPeriodoSeguimiento(
+                  convocatoriaSeguimiento.getObservaciones()));
 
           projectBuilder.convocatoriaPeriodoSeguimientoId(convocatoriaSeguimiento.getId());
           ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = projectBuilder.build();
@@ -961,13 +1015,21 @@ public class ProyectoServiceImpl implements ProyectoService {
     proyecto.setSolicitudId(solicitud.getId());
     proyecto.setConvocatoriaId(solicitud.getConvocatoriaId());
     proyecto.setUnidadGestionRef(solicitud.getUnidadGestionRef());
+    proyecto.setAnio(solicitud.getAnio());
+
+    if (solicitud.getTipoFinalidadId() != null) {
+      proyecto.setFinalidad(TipoFinalidad.builder().id(solicitud.getTipoFinalidadId()).build());
+    }
+
     if (solicitud.getConvocatoriaId() != null) {
       Convocatoria convocatoria = convocatoriaRepository.findById(solicitud.getConvocatoriaId())
           .orElseThrow(() -> new ConvocatoriaNotFoundException(solicitud.getConvocatoriaId()));
-      proyecto.setFinalidad(convocatoria.getFinalidad());
       proyecto.setAmbitoGeografico(convocatoria.getAmbitoGeografico());
       proyecto.setClasificacionCVN(convocatoria.getClasificacionCVN());
       proyecto.setExcelencia(convocatoria.getExcelencia());
+      if (ObjectUtils.isEmpty(proyecto.getAnio())) {
+        proyecto.setAnio(convocatoria.getAnio());
+      }
     } else {
       proyecto.setConvocatoriaExterna(solicitud.getConvocatoriaExterna());
     }
@@ -988,9 +1050,10 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("copyContexto(Proyecto proyecto, SolicitudProyecto solicitudProyecto) - start");
     ContextoProyecto contextoProyectoNew = new ContextoProyecto();
     contextoProyectoNew.setProyectoId(proyectoId);
-    contextoProyectoNew.setObjetivos(solicitudProyecto.getObjetivos());
-    contextoProyectoNew.setResultadosPrevistos(solicitudProyecto.getResultadosPrevistos());
-    contextoProyectoNew.setIntereses(solicitudProyecto.getIntereses());
+    contextoProyectoNew.setObjetivos(convertObjetivosFromSolicitudToProyecto(solicitudProyecto.getObjetivos()));
+    contextoProyectoNew.setResultadosPrevistos(
+        convertResultadosPrevistosFromSolicitudToProyecto(solicitudProyecto.getResultadosPrevistos()));
+    contextoProyectoNew.setIntereses(convertInteresesFromSolicitudToProyecto(solicitudProyecto.getIntereses()));
     contextoProyectoNew.setAreaTematica(solicitudProyecto.getAreaTematica());
 
     contextoProyectoService.create(contextoProyectoNew);
@@ -1151,7 +1214,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     miembrosEquipoProyectoUpdated.addAll(
         miembrosEquipoProyecto.stream()
             .filter(p -> !idsUpdated.contains(p.getId()))
-            .collect(Collectors.toList()));
+            .toList());
 
     miembrosEquipoProyectoUpdated.sort(Comparator.comparing(ProyectoEquipo::getPersonaRef)
         .thenComparing(
@@ -1161,14 +1224,14 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     List<ProyectoEquipo> miembrosEquipoNoSolapados = new ArrayList<>();
     List<String> personasRef = miembrosEquipoProyectoUpdated.stream().map(ProyectoEquipo::getPersonaRef).distinct()
-        .collect(Collectors.toList());
+        .toList();
 
     for (String personaRef : personasRef) {
       ProyectoEquipo miembroEquipoAnterior = null;
 
       List<ProyectoEquipo> miembrosPersonaRef = miembrosEquipoProyectoUpdated.stream()
           .filter(miembroEquipo -> miembroEquipo.getPersonaRef().equals(personaRef))
-          .collect(Collectors.toList());
+          .toList();
 
       for (ProyectoEquipo miembroEquipo : miembrosPersonaRef) {
         if (miembroEquipoAnterior == null
@@ -1251,7 +1314,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     responsablesEconomicosProyectoUpdated.addAll(
         responsablesEconomicosProyecto.stream()
             .filter(p -> !idsUpdated.contains(p.getId()))
-            .collect(Collectors.toList()));
+            .toList());
 
     responsablesEconomicosProyectoUpdated
         .sort(Comparator.comparing(ProyectoResponsableEconomico::getId, Comparator.nullsLast(Comparator.naturalOrder()))
@@ -1434,7 +1497,9 @@ public class ProyectoServiceImpl implements ProyectoService {
                   entidadPeriodoJustificacionSolicitud.getMesFinal(), fechaFinProyecto,
                   sgiConfigProperties.getTimeZone()))
               .numPeriodo(entidadPeriodoJustificacionSolicitud.getNumPeriodo())
-              .observaciones(entidadPeriodoJustificacionSolicitud.getObservaciones())
+              .observaciones(
+                  convertObservacionesFromSolicitudProyectoSocioPeriodoJustificacionToProyectoSocioPeriodoJustificacion(
+                      entidadPeriodoJustificacionSolicitud.getObservaciones()))
               .fechaInicioPresentacion(entidadPeriodoJustificacionSolicitud.getFechaInicio())
               .fechaFinPresentacion(entidadPeriodoJustificacionSolicitud.getFechaFin()).build();
 
@@ -1536,7 +1601,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     miembrosEquipoSocioProyectoUpdated.addAll(
         miembrosEquipoSocioProyecto.stream()
             .filter(p -> !idsUpdated.contains(p.getId()))
-            .collect(Collectors.toList()));
+            .toList());
 
     miembrosEquipoSocioProyectoUpdated.sort(Comparator.comparing(ProyectoSocioEquipo::getPersonaRef)
         .thenComparing(
@@ -1547,14 +1612,14 @@ public class ProyectoServiceImpl implements ProyectoService {
     List<ProyectoSocioEquipo> miembrosEquipoNoSolapados = new ArrayList<>();
     List<String> personasRef = miembrosEquipoSocioProyectoUpdated.stream().map(ProyectoSocioEquipo::getPersonaRef)
         .distinct()
-        .collect(Collectors.toList());
+        .toList();
 
     for (String personaRef : personasRef) {
       ProyectoSocioEquipo miembroEquipoAnterior = null;
 
       List<ProyectoSocioEquipo> miembrosPersonaRef = miembrosEquipoSocioProyectoUpdated.stream()
           .filter(miembroEquipo -> miembroEquipo.getPersonaRef().equals(personaRef))
-          .collect(Collectors.toList());
+          .toList();
 
       for (ProyectoSocioEquipo miembroEquipo : miembrosPersonaRef) {
         if (miembroEquipoAnterior == null
@@ -1655,7 +1720,8 @@ public class ProyectoServiceImpl implements ProyectoService {
       conceptoGastoProyecto.setConceptoGasto(conceptoGastoConvocatoria.getConceptoGasto());
       conceptoGastoProyecto.setImporteMaximo(conceptoGastoConvocatoria.getImporteMaximo());
       conceptoGastoProyecto.setPermitido(conceptoGastoConvocatoria.getPermitido());
-      conceptoGastoProyecto.setObservaciones(conceptoGastoConvocatoria.getObservaciones());
+      conceptoGastoProyecto.setObservaciones(
+          convertConceptoGastoObservacionesFromConvocatoriaToProyecto(conceptoGastoConvocatoria.getObservaciones()));
       conceptoGastoProyecto.setConvocatoriaConceptoGastoId(conceptoGastoConvocatoria.getId());
 
       proyectoConceptoGastos.stream()
@@ -1743,7 +1809,8 @@ public class ProyectoServiceImpl implements ProyectoService {
           ProyectoConceptoGastoCodigoEc codigoEconomicoProyecto = new ProyectoConceptoGastoCodigoEc();
           codigoEconomicoProyecto.setProyectoConceptoGastoId(proyectoConceptoGasto.getId());
           codigoEconomicoProyecto.setCodigoEconomicoRef(codigoEconomicoConvocatoria.getCodigoEconomicoRef());
-          codigoEconomicoProyecto.setObservaciones(codigoEconomicoConvocatoria.getObservaciones());
+          codigoEconomicoProyecto.setObservaciones(convertConceptoGastoCodigoEcObservacionesFromConvocatoriaToProyecto(
+              codigoEconomicoConvocatoria.getObservaciones()));
           codigoEconomicoProyecto.setConvocatoriaConceptoGastoCodigoEcId(codigoEconomicoConvocatoria.getId());
 
           proyectoCodigosEconomicos.stream()
@@ -1792,7 +1859,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     proyectoConceptoGastoCodigoEcs.addAll(
         proyectoCodigosEconomicos.stream()
             .filter(p -> !idsUpdated.contains(p.getId()))
-            .collect(Collectors.toList()));
+            .toList());
 
     proyectoConceptoGastoCodigoEcs
         .sort(Comparator.comparing(ProyectoConceptoGastoCodigoEc::getId,
@@ -1821,7 +1888,8 @@ public class ProyectoServiceImpl implements ProyectoService {
         partidaProyecto.setCodigo(partidaConvocatoria.getCodigo());
         partidaProyecto.setPartidaRef(partidaConvocatoria.getPartidaRef());
         partidaProyecto.setConvocatoriaPartidaId(partidaConvocatoria.getId());
-        partidaProyecto.setDescripcion(partidaConvocatoria.getDescripcion());
+        partidaProyecto.setDescripcion(
+            convertDescripcionFromConvocatoriaPartidaToProyectoPartida(partidaConvocatoria.getDescripcion()));
         partidaProyecto.setTipoPartida(partidaConvocatoria.getTipoPartida());
 
         this.proyectoPartidaService.create(partidaProyecto);
@@ -1848,8 +1916,10 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     Assert.isTrue(solicitud.getFormularioSolicitud().equals(FormularioSolicitud.PROYECTO)
         || solicitud.getFormularioSolicitud().equals(FormularioSolicitud.RRHH),
-        "El formulario de la solicitud debe ser de tipo " + FormularioSolicitud.PROYECTO + " o "
-            + FormularioSolicitud.RRHH);
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_PROYECTO_FORMULARIO_SOLICITUD_TIPO)
+            .parameter(MSG_KEY_TIPO, FormularioSolicitud.PROYECTO + ", " + FormularioSolicitud.RRHH)
+            .build());
   }
 
   /**
@@ -1906,7 +1976,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     repository.save(proyecto);
 
     // Crea el estado inicial del proyecto
-    EstadoProyecto estadoProyecto = addEstadoProyecto(proyecto, EstadoProyecto.Estado.BORRADOR, null);
+    EstadoProyecto estadoProyecto = addEstadoProyecto(proyecto, EstadoProyecto.Estado.BORRADOR);
 
     proyecto.setEstado(estadoProyecto);
     // Actualiza el estado actual del proyecto con el nuevo estado
@@ -2109,7 +2179,7 @@ public class ProyectoServiceImpl implements ProyectoService {
     repository.save(proyecto);
 
     // Crea el estado inicial del proyecto
-    EstadoProyecto estadoProyecto = addEstadoProyecto(proyecto, EstadoProyecto.Estado.BORRADOR, null);
+    EstadoProyecto estadoProyecto = addEstadoProyecto(proyecto, EstadoProyecto.Estado.BORRADOR);
 
     proyecto.setEstado(estadoProyecto);
     // Actualiza el estado actual del proyecto con el nuevo estado
@@ -2240,26 +2310,17 @@ public class ProyectoServiceImpl implements ProyectoService {
 
       AssertHelper.fieldNotNull(proyecto.getFechaInicio(), Proyecto.class, MSG_FIELD_FECHA_INICIO);
       AssertHelper.fieldNotNull(proyecto.getFechaFin(), Proyecto.class, MSG_FIELD_FECHA_FIN);
-
-      Assert.isTrue(proyecto.getFinalidad() != null,
-          "El campo finalidad debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
-      Assert.isTrue(proyecto.getAmbitoGeografico() != null,
-          "El campo ambitoGeografico debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
-      Assert.isTrue(proyecto.getConfidencial() != null,
-          "El campo confidencial debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
-
-      Assert.isTrue(proyecto.getCoordinado() != null,
-          "El campo Proyecto coordinado debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
+      AssertHelper.entityNotNull(proyecto.getFinalidad(), Proyecto.class, TipoFinalidad.class);
+      AssertHelper.entityNotNull(proyecto.getAmbitoGeografico(), Proyecto.class, TipoAmbitoGeografico.class);
+      AssertHelper.fieldNotNull(proyecto.getConfidencial(), Proyecto.class, MSG_FIELD_CONFIDENCIAL);
+      AssertHelper.fieldNotNull(proyecto.getCoordinado(), Proyecto.class, MSG_FIELD_COORDINADO);
 
       if (proyecto.getCoordinado() != null && proyecto.getCoordinado().booleanValue()) {
-        Assert.isTrue(proyecto.getRolUniversidadId() != null,
-            "El campo rolUniversidad debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
+        AssertHelper.idNotNull(proyecto.getRolUniversidadId(), RolSocio.class);
       }
 
-      Assert.isTrue(proyecto.getPermitePaquetesTrabajo() != null,
-          "El campo permitePaquetesTrabajo debe ser obligatorio para el proyecto en estado 'CONCEDIDO'");
+      AssertHelper.fieldNotNull(proyecto.getPermitePaquetesTrabajo(), Proyecto.class,
+          MSG_FIELD_PERMITE_PAQUETES_TRABAJO);
 
       if (proyecto.getSolicitudId() != null) {
         Solicitud solicitud = solicitudRepository.findById(proyecto.getSolicitudId())
@@ -2360,48 +2421,52 @@ public class ProyectoServiceImpl implements ProyectoService {
   }
 
   private void copyPeriodosJustificacionFromConvocatoria(Proyecto proyecto, Long convocatoriaId) {
-    // @formatter:off
-    List<ProyectoPeriodoJustificacion> proyectosPeriodosJustificacionSinEstado = this.proyectoPeriodoJustificacionRepository.saveAll(
-      this.convocatoriaPeriodoJustificacionRepository.findAllByConvocatoriaId(convocatoriaId).stream()
-        .filter(periodo -> checkIfFechaInicioIsInsideProyectoRange(proyecto, periodo))
-        .map(periodo -> ProyectoPeriodoJustificacion.builder()
-          .proyectoId(proyecto.getId())
-          .numPeriodo(periodo.getNumPeriodo())
-          .fechaInicioPresentacion(periodo.getFechaInicioPresentacion())
-          .fechaFinPresentacion(periodo.getFechaFinPresentacion())
-          .tipoJustificacion(periodo.getTipo())
-          .observaciones(periodo.getObservaciones())
-          .convocatoriaPeriodoJustificacionId(periodo.getId())
-          .fechaInicio(PeriodDateUtil.calculateFechaInicioPeriodo(proyecto.getFechaInicio(),
-              periodo.getMesInicial(), sgiConfigProperties.getTimeZone()))
-          .fechaFin(resolveFechaFinFromPeriodoJustificacionConvocatoria(proyecto, periodo))
-          .build()
-        ).collect(Collectors.toList())
-    );
+    List<ProyectoPeriodoJustificacion> proyectosPeriodosJustificacionSinEstado = this.proyectoPeriodoJustificacionRepository
+        .saveAll(
+            this.convocatoriaPeriodoJustificacionRepository.findAllByConvocatoriaId(convocatoriaId).stream()
+                .filter(periodo -> checkIfFechaInicioIsInsideProyectoRange(proyecto, periodo))
+                .map(periodo -> ProyectoPeriodoJustificacion.builder()
+                    .proyectoId(proyecto.getId())
+                    .numPeriodo(periodo.getNumPeriodo())
+                    .fechaInicioPresentacion(periodo.getFechaInicioPresentacion())
+                    .fechaFinPresentacion(periodo.getFechaFinPresentacion())
+                    .tipoJustificacion(periodo.getTipo())
+                    .observaciones(
+                        convertObservacionesFromConvocatoriaProyectoJustificacionToProyectoPeriodoJustificacion(
+                            periodo.getObservaciones()))
+                    .convocatoriaPeriodoJustificacionId(periodo.getId())
+                    .fechaInicio(PeriodDateUtil.calculateFechaInicioPeriodo(proyecto.getFechaInicio(),
+                        periodo.getMesInicial(), sgiConfigProperties.getTimeZone()))
+                    .fechaFin(resolveFechaFinFromPeriodoJustificacionConvocatoria(proyecto, periodo))
+                    .build())
+                .toList());
 
-    if (!proyectosPeriodosJustificacionSinEstado.isEmpty()){
-      proyectosPeriodosJustificacionSinEstado.stream().forEach(periodoJustificacion ->{
-        periodoJustificacion.setEstado(this.createEstadoProyectoPeriodoJustificacionPendiente(periodoJustificacion.getId()));
+    if (!proyectosPeriodosJustificacionSinEstado.isEmpty()) {
+      proyectosPeriodosJustificacionSinEstado.stream().forEach(periodoJustificacion -> {
+        periodoJustificacion
+            .setEstado(this.createEstadoProyectoPeriodoJustificacionPendiente(periodoJustificacion.getId()));
         proyectoPeriodoJustificacionRepository.save(periodoJustificacion);
       });
     }
-    // @formatter: on
   }
 
-  private EstadoProyectoPeriodoJustificacion createEstadoProyectoPeriodoJustificacionPendiente(Long idPeriodoJustificacion) {
+  private EstadoProyectoPeriodoJustificacion createEstadoProyectoPeriodoJustificacionPendiente(
+      Long idPeriodoJustificacion) {
     return this.estadoProyectoPeriodoJustificacionRepository.save(EstadoProyectoPeriodoJustificacion.builder()
-      .estado(EstadoProyectoPeriodoJustificacion.TipoEstadoPeriodoJustificacion.PENDIENTE)
-      .fechaEstado(Instant.now())
-      .proyectoPeriodoJustificacionId(idPeriodoJustificacion)
-      .build());
+        .estado(EstadoProyectoPeriodoJustificacion.TipoEstadoPeriodoJustificacion.PENDIENTE)
+        .fechaEstado(Instant.now())
+        .proyectoPeriodoJustificacionId(idPeriodoJustificacion)
+        .build());
   }
 
-  private Instant resolveFechaFinFromPeriodoJustificacionConvocatoria(Proyecto proyecto, ConvocatoriaPeriodoJustificacion periodo) {
-    Instant fechaFinProyecto = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva() : proyecto.getFechaFin();
+  private Instant resolveFechaFinFromPeriodoJustificacionConvocatoria(Proyecto proyecto,
+      ConvocatoriaPeriodoJustificacion periodo) {
+    Instant fechaFinProyecto = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
+        : proyecto.getFechaFin();
 
     Instant fechaFin = PeriodDateUtil.calculateFechaFinPeriodo(proyecto.getFechaInicio(),
-      periodo.getMesFinal(), fechaFinProyecto, sgiConfigProperties.getTimeZone());
-    if(fechaFin.isAfter(fechaFinProyecto)){
+        periodo.getMesFinal(), fechaFinProyecto, sgiConfigProperties.getTimeZone());
+    if (fechaFin.isAfter(fechaFinProyecto)) {
       fechaFin = fechaFinProyecto;
     }
     return fechaFin;
@@ -2409,26 +2474,30 @@ public class ProyectoServiceImpl implements ProyectoService {
 
   private boolean checkIfFechaInicioIsInsideProyectoRange(Proyecto proyecto, ConvocatoriaPeriodoJustificacion periodo) {
     Instant fechaInicio = PeriodDateUtil.calculateFechaInicioPeriodo(proyecto.getFechaInicio(),
-      periodo.getMesInicial(), sgiConfigProperties.getTimeZone());
+        periodo.getMesInicial(), sgiConfigProperties.getTimeZone());
 
     return (fechaInicio.isAfter(proyecto.getFechaInicio()) || fechaInicio.equals(proyecto.getFechaInicio()))
-      && (fechaInicio.isBefore(proyecto.getFechaFin()));
+        && (fechaInicio.isBefore(proyecto.getFechaFin()));
   }
 
   /**
    *
-   * @param proyectoId id del {@link Proyecto} del que cuelgan la lista de objetos {@link ProyectoFacturacion} a buscar
-   * @param query información del filtro.
-   * @param paging información de paginación
-   * @return objeto {@link Page} con el listado de objetos de tipo {@link ProyectoFacturacion}
+   * @param proyectoId id del {@link Proyecto} del que cuelgan la lista de objetos
+   *                   {@link ProyectoFacturacion} a buscar
+   * @param query      información del filtro.
+   * @param paging     información de paginación
+   * @return objeto {@link Page} con el listado de objetos de tipo
+   *         {@link ProyectoFacturacion}
    */
   @Override
-  public Page<ProyectoFacturacion> findAllProyectoFacturacionByProyectoId(Long proyectoId, String query, Pageable paging){
+  public Page<ProyectoFacturacion> findAllProyectoFacturacionByProyectoId(Long proyectoId, String query,
+      Pageable paging) {
     return this.proyectoFacturacionService.findByProyectoId(proyectoId, query, paging);
   }
 
   /**
-   * Devuelve una lista de ids de los objetos de tipo {@link Proyecto} que estñan asociados
+   * Devuelve una lista de ids de los objetos de tipo {@link Proyecto} que estñan
+   * asociados
    * con un objeto de tipo {@link Solicitud}
    * 
    * @param solicitudId id de la {@link Solicitud}
@@ -2449,7 +2518,7 @@ public class ProyectoServiceImpl implements ProyectoService {
    * @return Lista de {@link ProyectoDto}
    */
   @Override
-  public List<ProyectoDto> findProyectosProduccionCientifica(Integer anioInicio, Integer anioFin){
+  public List<ProyectoDto> findProyectosProduccionCientifica(Integer anioInicio, Integer anioFin) {
 
     Instant fechaInicioBaremacion = PeriodDateUtil.calculateFechaInicioBaremacionByAnio(
         anioInicio, sgiConfigProperties.getTimeZone());
@@ -2459,14 +2528,16 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     return repository.findProyectosProduccionCientifica(fechaInicioBaremacion, fechaFinBaremacion);
   }
-    
-  /**  
-   * Devuelve una lista paginada y filtrada {@link RelacionEjecucionEconomica} que se
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link RelacionEjecucionEconomica} que
+   * se
    * encuentren dentro de la unidad de gestión del usuario logueado
    * 
    * @param query    filtro de búsqueda.
    * @param pageable {@link Pageable}.
-   * @return el listado de entidades {@link RelacionEjecucionEconomica} activas paginadas
+   * @return el listado de entidades {@link RelacionEjecucionEconomica} activas
+   *         paginadas
    *         y filtradas.
    */
   @Override
@@ -2475,7 +2546,8 @@ public class ProyectoServiceImpl implements ProyectoService {
 
     Specification<ProyectoProyectoSge> specs = ProyectoProyectoSgeSpecifications.activos();
     if (query != null) {
-      specs = specs.and(SgiRSQLJPASupport.toSpecification(query,  ProyectoProyectoSgePredicateResolver.getInstance(sgiConfigProperties)));
+      specs = specs.and(SgiRSQLJPASupport.toSpecification(query,
+          ProyectoProyectoSgePredicateResolver.getInstance(sgiConfigProperties)));
     }
 
     // No tiene acceso a todos los UO
@@ -2488,7 +2560,8 @@ public class ProyectoServiceImpl implements ProyectoService {
       specs = specs.and(specByUnidadGestionRefIn);
     }
 
-    Page<RelacionEjecucionEconomica> returnValue = proyectoProyectoSGERepository.findRelacionesEjecucionEconomica(specs, pageable);
+    Page<RelacionEjecucionEconomica> returnValue = proyectoProyectoSGERepository.findRelacionesEjecucionEconomica(specs,
+        pageable);
     log.debug("findRelacionesEjecucionEconomicaProyectos(String query, Pageable pageable) - end");
     return returnValue;
   }
@@ -2496,40 +2569,50 @@ public class ProyectoServiceImpl implements ProyectoService {
   /**
    * Obtiene los datos de proyectos competitivos de las personas.
    *
-   * @param personasRef Lista de id de las personas.
-   * @param onlyAsRolPrincipal Indica si solo se comprueba la participacion con un rol principal
-   * @param exludedProyectoId Excluye el {@link Proyecto} de la consulta
+   * @param personasRef        Lista de id de las personas.
+   * @param onlyAsRolPrincipal Indica si solo se comprueba la participacion con un
+   *                           rol principal
+   * @param exludedProyectoId  Excluye el {@link Proyecto} de la consulta
    * @return el {@link ProyectosCompetitivosPersonas}.
    */
   @Override
-  public ProyectosCompetitivosPersonas getProyectosCompetitivosPersonas(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) {
-    log.debug("getProyectosCompetitivosPersonas(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) - start");
+  public ProyectosCompetitivosPersonas getProyectosCompetitivosPersonas(List<String> personasRef,
+      Boolean onlyAsRolPrincipal, Long exludedProyectoId) {
+    log.debug(
+        "getProyectosCompetitivosPersonas(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) - start");
 
     Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
 
     ProyectosCompetitivosPersonas proyectosCompetitivosPersona = ProyectosCompetitivosPersonas.builder()
         .numProyectosCompetitivos(
-            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.COMPETITIVOS, onlyAsRolPrincipal, exludedProyectoId))
+            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.COMPETITIVOS,
+                onlyAsRolPrincipal, exludedProyectoId))
         .numProyectosCompetitivosActuales(
-            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.COMPETITIVOS, onlyAsRolPrincipal, exludedProyectoId, fechaActual))
+            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.COMPETITIVOS,
+                onlyAsRolPrincipal, exludedProyectoId, fechaActual))
         .numProyectosNoCompetitivos(
-            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.NO_COMPETITIVOS, onlyAsRolPrincipal, exludedProyectoId))
+            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.NO_COMPETITIVOS,
+                onlyAsRolPrincipal, exludedProyectoId))
         .numProyectosNoCompetitivosActuales(
-            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.NO_COMPETITIVOS, onlyAsRolPrincipal, exludedProyectoId, fechaActual))
+            repository.countProyectosClasificacionCvnPersonas(personasRef, ClasificacionCVN.NO_COMPETITIVOS,
+                onlyAsRolPrincipal, exludedProyectoId, fechaActual))
         .build();
 
-    log.debug("getProyectosCompetitivosPersonas(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) - end");
+    log.debug(
+        "getProyectosCompetitivosPersonas(List<String> personasRef, Boolean onlyAsRolPrincipal, Long exludedProyectoId) - end");
     return proyectosCompetitivosPersona;
   }
 
   @Override
-  public Page<ProyectoSeguimientoEjecucionEconomica> findProyectosSeguimientoEjecucionEconomica(String proyectoSgeRef, String query, Pageable pageable) {
+  public Page<ProyectoSeguimientoEjecucionEconomica> findProyectosSeguimientoEjecucionEconomica(String proyectoSgeRef,
+      String query, Pageable pageable) {
     log.debug("findProyectosSeguimientoEjecucionEconomica(String query, Pageable pageable) - start");
 
     Specification<ProyectoProyectoSge> specs = ProyectoProyectoSgeSpecifications.activos()
-    .and(ProyectoProyectoSgeSpecifications.byProyectoSgeRef(proyectoSgeRef));
+        .and(ProyectoProyectoSgeSpecifications.byProyectoSgeRef(proyectoSgeRef));
     if (query != null) {
-      specs = specs.and(SgiRSQLJPASupport.toSpecification(query, ProyectoProyectoSgePredicateResolver.getInstance(sgiConfigProperties)));
+      specs = specs.and(SgiRSQLJPASupport.toSpecification(query,
+          ProyectoProyectoSgePredicateResolver.getInstance(sgiConfigProperties)));
     }
 
     // No tiene acceso a todos los UO
@@ -2542,13 +2625,15 @@ public class ProyectoServiceImpl implements ProyectoService {
       specs = specs.and(specByUnidadGestionRefIn);
     }
 
-    Page<ProyectoSeguimientoEjecucionEconomica> returnValue = proyectoProyectoSGERepository.findProyectosSeguimientoEjecucionEconomica(specs, pageable);
+    Page<ProyectoSeguimientoEjecucionEconomica> returnValue = proyectoProyectoSGERepository
+        .findProyectosSeguimientoEjecucionEconomica(specs, pageable);
     log.debug("findProyectosSeguimientoEjecucionEconomica(String query, Pageable pageable) - end");
     return returnValue;
   }
 
-    /**
-   * Devuelve el {@link ProyectoApartadosWithDates} con la informacion de cuales de
+  /**
+   * Devuelve el {@link ProyectoApartadosWithDates} con la informacion de cuales
+   * de
    * los apartados tienen elementos con fechas.
    * 
    * @param id Identificador de {@link Proyecto}.
@@ -2559,12 +2644,12 @@ public class ProyectoServiceImpl implements ProyectoService {
     log.debug("getProyectoApartadosWithDates({}) - start", id);
 
     ProyectoApartadosWithDates proyectoApartadosWithDates = ProyectoApartadosWithDates.builder()
-    .elegibilidad(proyectoConceptoGastoService.proyectoHasConceptosGastoWithDates(id))
-    .equiposSocios(proyectoEquipoSocioService.proyectoHasProyectoSocioEquipoWithDates(id))
-    .equipo(proyectoEquipoService.proyectoHasProyectoEquipoWithDates(id))
-    .responsableEconomico(proyectoResponsableEconomicoService.proyectoHasProyectoResponsableEconomicoWithDates(id))
-    .socios(proyectoSocioService.proyectoHasSociosWithDates(id))
-    .build();
+        .elegibilidad(proyectoConceptoGastoService.proyectoHasConceptosGastoWithDates(id))
+        .equiposSocios(proyectoEquipoSocioService.proyectoHasProyectoSocioEquipoWithDates(id))
+        .equipo(proyectoEquipoService.proyectoHasProyectoEquipoWithDates(id))
+        .responsableEconomico(proyectoResponsableEconomicoService.proyectoHasProyectoResponsableEconomicoWithDates(id))
+        .socios(proyectoSocioService.proyectoHasSociosWithDates(id))
+        .build();
 
     log.debug("getProyectoApartadosWithDates({}) - end", id);
     return proyectoApartadosWithDates;
@@ -2578,22 +2663,116 @@ public class ProyectoServiceImpl implements ProyectoService {
    * @return {@link ProyectoApartadosToBeCopied}
    *         correspondiente al id
    */
-   @Override
+  @Override
   public ProyectoApartadosToBeCopied getProyectoApartadosToBeCopied(Long id) {
     log.debug("getProyectoApartadosToBeCopied({}) - start", id);
 
     Proyecto proyecto = findById(id);
 
     ProyectoApartadosToBeCopied proyectoApartadosToBeCopied = ProyectoApartadosToBeCopied.builder()
-    .elegibilidad(proyecto.getConvocatoriaId() != null && convocatoriaConceptoGastoRepository.existsByConvocatoriaId(proyecto.getConvocatoriaId()))
-    .equiposSocios(proyecto.getSolicitudId() != null && solicitudEquipoSocioRepository.existsBySolicitudProyectoSocioSolicitudProyectoId(proyecto.getSolicitudId()))
-    .equipo(proyecto.getSolicitudId() != null && solicitudEquipoRepository.existsBySolicitudProyectoId(proyecto.getSolicitudId()))
-    .responsableEconomico(proyecto.getSolicitudId() != null && solicitudProyectoResponsableEconomicoRepository.existsBySolicitudProyectoId(proyecto.getSolicitudId()))
-    .socios(proyecto.getSolicitudId() != null && solicitudSocioRepository.existsBySolicitudProyectoId(proyecto.getSolicitudId()))
-    .build();
+        .elegibilidad(proyecto.getConvocatoriaId() != null
+            && convocatoriaConceptoGastoRepository.existsByConvocatoriaId(proyecto.getConvocatoriaId()))
+        .equiposSocios(proyecto.getSolicitudId() != null && solicitudEquipoSocioRepository
+            .existsBySolicitudProyectoSocioSolicitudProyectoId(proyecto.getSolicitudId()))
+        .equipo(proyecto.getSolicitudId() != null
+            && solicitudEquipoRepository.existsBySolicitudProyectoId(proyecto.getSolicitudId()))
+        .responsableEconomico(proyecto.getSolicitudId() != null
+            && solicitudProyectoResponsableEconomicoRepository.existsBySolicitudProyectoId(proyecto.getSolicitudId()))
+        .socios(proyecto.getSolicitudId() != null
+            && solicitudSocioRepository.existsBySolicitudProyectoId(proyecto.getSolicitudId()))
+        .build();
 
     log.debug("getProyectoApartadosToBeCopied({}) - end", id);
     return proyectoApartadosToBeCopied;
+  }
+
+  @Override
+  public List<String> getAnualidadesFechasProyecto(Long id) {
+    Proyecto proyecto = findById(id);
+
+    Instant fechaInicioProyecto = proyecto.getFechaInicio();
+    Instant fechaFinProyecto = Optional.ofNullable(proyecto.getFechaFinDefinitiva())
+        .orElse(proyecto.getFechaFin());
+
+    if (fechaInicioProyecto == null) {
+      return Collections.emptyList();
+    }
+
+    // Si la fecha de fin es null se asigna la fecha actual
+    if (fechaFinProyecto == null) {
+      fechaFinProyecto = Instant.now();
+    }
+
+    int anioInicio = fechaInicioProyecto.atZone(sgiConfigProperties.getTimeZone().toZoneId()).getYear();
+    int anioFin = fechaFinProyecto.atZone(sgiConfigProperties.getTimeZone().toZoneId()).getYear();
+
+    if (anioFin < anioInicio) {
+      return Collections.emptyList();
+    }
+
+    return IntStream.rangeClosed(anioInicio, anioFin)
+        .mapToObj(String::valueOf)
+        .toList();
+  }
+
+  private Set<ContextoProyectoObjetivos> convertObjetivosFromSolicitudToProyecto(
+      Set<SolicitudProyectoObjetivos> solicitudProyectoObjetivos) {
+    return solicitudProyectoObjetivos.stream().map(spo -> new ContextoProyectoObjetivos(spo.getLang(), spo.getValue()))
+        .collect(Collectors.toSet());
+  }
+
+  private Set<ContextoProyectoIntereses> convertInteresesFromSolicitudToProyecto(
+      Set<SolicitudProyectoIntereses> solicitudProyectoIntereses) {
+    return solicitudProyectoIntereses.stream().map(spi -> new ContextoProyectoIntereses(spi.getLang(), spi.getValue()))
+        .collect(Collectors.toSet());
+  }
+
+  private Set<ContextoProyectoResultadosPrevistos> convertResultadosPrevistosFromSolicitudToProyecto(
+      Set<SolicitudProyectoResultadosPrevistos> solicitudProyectoResultadosPrevistos) {
+    return solicitudProyectoResultadosPrevistos.stream()
+        .map(sprp -> new ContextoProyectoResultadosPrevistos(sprp.getLang(), sprp.getValue()))
+        .collect(Collectors.toSet());
+  }
+
+  private Set<ProyectoConceptoGastoObservaciones> convertConceptoGastoObservacionesFromConvocatoriaToProyecto(
+      Set<ConvocatoriaConceptoGastoObservaciones> convocatoriaConceptoGastoObservaciones) {
+    return convocatoriaConceptoGastoObservaciones.stream()
+        .map(ccgobs -> new ProyectoConceptoGastoObservaciones(ccgobs.getLang(), ccgobs.getValue()))
+        .collect(Collectors.toSet());
+  }
+
+  private Set<ProyectoConceptoGastoCodigoEcObservaciones> convertConceptoGastoCodigoEcObservacionesFromConvocatoriaToProyecto(
+      Set<ConvocatoriaConceptoGastoCodigoEcObservaciones> convocatoriaConceptoGastoCodigoEcObservaciones) {
+    return convocatoriaConceptoGastoCodigoEcObservaciones.stream()
+        .map(ccgceobs -> new ProyectoConceptoGastoCodigoEcObservaciones(ccgceobs.getLang(), ccgceobs.getValue()))
+        .collect(Collectors.toSet());
+  }
+
+  private Set<ProyectoPartidaDescripcion> convertDescripcionFromConvocatoriaPartidaToProyectoPartida(
+      Set<ConvocatoriaPartidaDescripcion> convocatoriaPartidaDescripcion) {
+    return convocatoriaPartidaDescripcion.stream()
+        .map(cpd -> new ProyectoPartidaDescripcion(cpd.getLang(), cpd.getValue())).collect(Collectors.toSet());
+  }
+
+  private Set<ProyectoPeriodoSeguimientoObservaciones> convertObservacionesFromConvocatoriaProyectoSeguimientoToProyectoPeriodoSeguimiento(
+      Set<ConvocatoriaPeriodoSeguimientoCientificoObservaciones> convocatoriaPeriodoSeguimientoObservaciones) {
+    return convocatoriaPeriodoSeguimientoObservaciones.stream()
+        .map(ppsobs -> new ProyectoPeriodoSeguimientoObservaciones(ppsobs.getLang(), ppsobs.getValue()))
+        .collect(Collectors.toSet());
+  }
+
+  private Set<ProyectoSocioPeriodoJustificacionObservaciones> convertObservacionesFromSolicitudProyectoSocioPeriodoJustificacionToProyectoSocioPeriodoJustificacion(
+      Set<SolicitudProyectoSocioPeriodoJustificacionObservaciones> solicitudProyectoSocioPeriodoJustificacionObservaciones) {
+    return solicitudProyectoSocioPeriodoJustificacionObservaciones.stream()
+        .map(spspjobs -> new ProyectoSocioPeriodoJustificacionObservaciones(spspjobs.getLang(), spspjobs.getValue()))
+        .collect(Collectors.toSet());
+  }
+
+  private Set<ProyectoPeriodoJustificacionObservaciones> convertObservacionesFromConvocatoriaProyectoJustificacionToProyectoPeriodoJustificacion(
+      Set<ConvocatoriaPeriodoJustificacionObservaciones> convocatoriaPeriodoJustificacionObservaciones) {
+    return convocatoriaPeriodoJustificacionObservaciones.stream()
+        .map(ppjobs -> new ProyectoPeriodoJustificacionObservaciones(ppjobs.getLang(), ppjobs.getValue()))
+        .collect(Collectors.toSet());
   }
 
 }

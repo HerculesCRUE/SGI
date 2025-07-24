@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IIncidenciaDocumentacionRequerimiento } from '@core/models/csp/incidencia-documentacion-requerimiento';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 
@@ -44,8 +45,8 @@ export class IncidenciaDocumentoRequerimientoModalComponent
 
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
-      nombreDocumento: new FormControl(this.data?.nombreDocumento, Validators.required),
-      incidencia: new FormControl(this.data.incidencia, Validators.maxLength(2000)),
+      nombreDocumento: new FormControl(this.data?.nombreDocumento, [I18nValidators.required, I18nValidators.maxLength(250)]),
+      incidencia: new FormControl(this.data.incidencia, I18nValidators.maxLength(2000)),
     });
   }
 

@@ -118,6 +118,7 @@ public class ParamRepositoryTest extends BaseRepositoryTest {
           .name(String.format("SUBJECT_%02d", subjectIdx))
           .tpl(String.format("Subject with ${PARAM_%02d}", paramIdx))
           .params(params.subList(paramIdx, paramIdx+1))
+          .defaultTpl(String.format("Subject with ${PARAM_%02d}", paramIdx))
           .build();
       subjectTpls.add(entityManager.persistAndFlush(subjectTpl));
     }
@@ -131,6 +132,8 @@ public class ParamRepositoryTest extends BaseRepositoryTest {
           .tplText(String.format("Content with ${PARAM_%02d} and ${PARAM_%02d}", paramIdx, paramIdx+1))
           .tplHtml(String.format("<b>Content with ${PARAM_%02d} and ${PARAM_%02d}</b>", paramIdx, paramIdx+1))
           .params(params.subList(paramIdx, paramIdx+2))
+          .defaultTplHtml(String.format("<b>Content with ${PARAM_%02d} and ${PARAM_%02d}</b>", paramIdx, paramIdx+1))
+          .defaultTplText(String.format("Content with ${PARAM_%02d} and ${PARAM_%02d}", paramIdx, paramIdx+1))
           .build();
       contentTpls.add(entityManager.persistAndFlush(contentTpl));
     }

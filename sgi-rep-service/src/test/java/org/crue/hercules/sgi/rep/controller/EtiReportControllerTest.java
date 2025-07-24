@@ -3,24 +3,17 @@ package org.crue.hercules.sgi.rep.controller;
 import java.nio.charset.Charset;
 import java.time.Instant;
 
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.crue.hercules.sgi.rep.dto.eti.InformeEvaluacionReportInput;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeActa;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacion;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluacionRetrospectiva;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluador;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableMemoria;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableModificacion;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableRatificacion;
-import org.crue.hercules.sgi.rep.dto.eti.ReportMXX;
-import org.crue.hercules.sgi.rep.service.eti.InformeActaReportService;
-import org.crue.hercules.sgi.rep.service.eti.InformeEvaluacionReportService;
-import org.crue.hercules.sgi.rep.service.eti.InformeEvaluacionRetrospectivaReportService;
-import org.crue.hercules.sgi.rep.service.eti.InformeEvaluadorReportService;
-import org.crue.hercules.sgi.rep.service.eti.InformeFavorableMemoriaReportService;
-import org.crue.hercules.sgi.rep.service.eti.InformeFavorableModificacionReportService;
-import org.crue.hercules.sgi.rep.service.eti.InformeFavorableRatificacionReportService;
-import org.crue.hercules.sgi.rep.service.eti.MXXReportService;
+import org.crue.hercules.sgi.rep.service.InformeActaReportService;
+import org.crue.hercules.sgi.rep.service.InformeEvaluacionFavorableModificacionReportService;
+import org.crue.hercules.sgi.rep.service.InformeEvaluacionFavorableNuevaReportService;
+import org.crue.hercules.sgi.rep.service.InformeEvaluacionFavorableRatificacionReportService;
+import org.crue.hercules.sgi.rep.service.InformeEvaluacionReportService;
+import org.crue.hercules.sgi.rep.service.InformeEvaluacionRetrospectivaReportService;
+import org.crue.hercules.sgi.rep.service.InformeEvaluadorReportService;
+import org.crue.hercules.sgi.rep.service.InformeMemoriaReportService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -42,21 +35,21 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 class EtiReportControllerTest extends BaseControllerTest {
 
   @MockBean
-  private MXXReportService mxxReportService;
+  private InformeMemoriaReportService mxxReportService;
   @MockBean
   private InformeEvaluacionReportService informeEvaluacionReportService;
   @MockBean
   private InformeEvaluadorReportService informeEvaluadorReportService;
   @MockBean
-  private InformeFavorableMemoriaReportService informeFavorableMemoriaReportService;
+  private InformeEvaluacionFavorableNuevaReportService informeFavorableMemoriaReportService;
   @MockBean
   private InformeActaReportService informeActaReportService;
   @MockBean
   private InformeEvaluacionRetrospectivaReportService informeEvaluacionRetrospectivaReportService;
   @MockBean
-  private InformeFavorableModificacionReportService informeFavorableModificacionReportService;
+  private InformeEvaluacionFavorableModificacionReportService informeFavorableModificacionReportService;
   @MockBean
-  private InformeFavorableRatificacionReportService informeFavorableRatificacionReportService;
+  private InformeEvaluacionFavorableRatificacionReportService informeFavorableRatificacionReportService;
 
   private final static String CONTENT_REPORT_TEST = "TEST";
 
@@ -69,8 +62,7 @@ class EtiReportControllerTest extends BaseControllerTest {
     final String url = new StringBuffer(EtiReportController.MAPPING).append("/informe-evaluacion/{idEvaluacion}")
         .toString();
 
-    BDDMockito.given(informeEvaluacionReportService.getReportInformeEvaluacion(
-        ArgumentMatchers.<ReportInformeEvaluacion>any(),
+    BDDMockito.given(informeEvaluacionReportService.getReport(
         ArgumentMatchers
             .<Long>any()))
         .willAnswer((InvocationOnMock invocation) -> {
@@ -96,11 +88,11 @@ class EtiReportControllerTest extends BaseControllerTest {
   void getReportInformeEvaluador_ReturnsResource() throws Exception {
     Long idEvaluacion = 1L;
 
-    final String url = new StringBuffer(EtiReportController.MAPPING).append("/informe-ficha-evaluador/{idEvaluacion}")
+    final String url = new StringBuffer(EtiReportController.MAPPING)
+        .append("/informe-ficha-evaluador/{idEvaluacion}")
         .toString();
 
-    BDDMockito.given(informeEvaluadorReportService.getReportInformeEvaluadorEvaluacion(
-        ArgumentMatchers.<ReportInformeEvaluador>any(),
+    BDDMockito.given(informeEvaluadorReportService.getReport(
         ArgumentMatchers
             .<Long>any()))
         .willAnswer((InvocationOnMock invocation) -> {
@@ -130,8 +122,7 @@ class EtiReportControllerTest extends BaseControllerTest {
         .append("/informe-favorable-memoria/{idEvaluacion}")
         .toString();
 
-    BDDMockito.given(informeFavorableMemoriaReportService.getReportInformeFavorableMemoria(
-        ArgumentMatchers.<ReportInformeFavorableMemoria>any(),
+    BDDMockito.given(informeFavorableMemoriaReportService.getReport(
         ArgumentMatchers
             .<Long>any()))
         .willAnswer((InvocationOnMock invocation) -> {
@@ -158,11 +149,10 @@ class EtiReportControllerTest extends BaseControllerTest {
     Long idActa = 1L;
 
     final String url = new StringBuffer(EtiReportController.MAPPING)
-        .append("/informe-acta/{idActa}")
+        .append("/informe-acta/{idActa}?l={lang}")
         .toString();
 
-    BDDMockito.given(informeActaReportService.getReportInformeActa(
-        ArgumentMatchers.<ReportInformeActa>any(),
+    BDDMockito.given(informeActaReportService.getReport(
         ArgumentMatchers
             .<Long>any()))
         .willAnswer((InvocationOnMock invocation) -> {
@@ -171,7 +161,7 @@ class EtiReportControllerTest extends BaseControllerTest {
 
     // when: Se genera el informe
     MvcResult requestResult = mockMvc.perform(MockMvcRequestBuilders.get(url,
-        idActa).with(SecurityMockMvcRequestPostProcessors.csrf()))
+        idActa, Language.ES.getCode()).with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Se recupera el informe
         .andExpect(MockMvcResultMatchers.status().isOk())
@@ -195,19 +185,19 @@ class EtiReportControllerTest extends BaseControllerTest {
         .append("/informe-evaluacion-retrospectiva")
         .toString();
 
-    BDDMockito.given(informeEvaluacionRetrospectivaReportService.getReportInformeEvaluacionRetrospectiva(
-        ArgumentMatchers.<ReportInformeEvaluacionRetrospectiva>any(),
+    BDDMockito.given(informeEvaluacionRetrospectivaReportService.getReport(
         ArgumentMatchers
-            .<InformeEvaluacionReportInput>any()))
+            .<Long>any()))
         .willAnswer((InvocationOnMock invocation) -> {
           return CONTENT_REPORT_TEST.getBytes();
         });
 
     // when: Se genera el informe
     MvcResult requestResult = mockMvc
-        .perform(MockMvcRequestBuilders.post(url).with(SecurityMockMvcRequestPostProcessors.csrf())
-            .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
-            .content(mapper.writeValueAsString(input)))
+        .perform(
+            MockMvcRequestBuilders.post(url, Language.ES.getCode()).with(SecurityMockMvcRequestPostProcessors.csrf())
+                .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(input)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Se recupera el informe
         .andExpect(MockMvcResultMatchers.status().isOk())
@@ -228,8 +218,7 @@ class EtiReportControllerTest extends BaseControllerTest {
         .append("/informe-favorable-modificacion/{idEvaluacion}")
         .toString();
 
-    BDDMockito.given(informeFavorableModificacionReportService.getReportInformeFavorableModificacion(
-        ArgumentMatchers.<ReportInformeFavorableModificacion>any(),
+    BDDMockito.given(informeFavorableModificacionReportService.getReport(
         ArgumentMatchers
             .<Long>any()))
         .willAnswer((InvocationOnMock invocation) -> {
@@ -259,8 +248,7 @@ class EtiReportControllerTest extends BaseControllerTest {
         .append("/informe-favorable-ratificacion/{idEvaluacion}")
         .toString();
 
-    BDDMockito.given(informeFavorableRatificacionReportService.getReportInformeFavorableRatificacion(
-        ArgumentMatchers.<ReportInformeFavorableRatificacion>any(),
+    BDDMockito.given(informeFavorableRatificacionReportService.getReport(
         ArgumentMatchers
             .<Long>any()))
         .willAnswer((InvocationOnMock invocation) -> {

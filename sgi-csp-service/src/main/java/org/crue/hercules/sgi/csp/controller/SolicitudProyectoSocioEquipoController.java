@@ -52,7 +52,7 @@ public class SolicitudProyectoSocioEquipoController {
    * @return Lista actualizada con los {@link SolicitudProyectoSocioEquipo}.
    */
   @PatchMapping("/{proyectoSolictudSocioId}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<List<SolicitudProyectoSocioEquipo>> updateConvocatoriaPeriodoJustificacionesConvocatoria(
       @PathVariable Long proyectoSolictudSocioId,
       @Valid @RequestBody List<SolicitudProyectoSocioEquipo> solicitudProyectoEquipoSocios) {

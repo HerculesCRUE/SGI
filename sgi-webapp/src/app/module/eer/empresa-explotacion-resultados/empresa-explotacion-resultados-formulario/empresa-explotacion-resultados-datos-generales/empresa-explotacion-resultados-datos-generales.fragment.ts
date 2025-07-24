@@ -5,6 +5,7 @@ import { FormFragment } from '@core/services/action-service';
 import { EmpresaExplotacionResultadosService } from '@core/services/eer/empresa-explotacion-resultados/empresa-explotacion-resultados.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
@@ -66,18 +67,18 @@ export class EmpresaExplotacionResultadosDatosGeneralesFragment extends FormFrag
       tipoEmpresa: new FormControl(null, Validators.required),
       estado: new FormControl(null, Validators.required),
       solicitante: new FormControl(null),
-      nombreRazonSocial: new FormControl(null),
+      nombreRazonSocial: new FormControl([], I18nValidators.maxLength(250)),
       entidad: new FormControl(null),
-      objetoSocial: new FormControl(null, [Validators.required, Validators.maxLength(1000)]),
-      conocimientoTecnologia: new FormControl(null, [Validators.required, Validators.maxLength(1000)]),
+      objetoSocial: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(1000)]),
+      conocimientoTecnologia: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(1000)]),
       numeroProtocolo: new FormControl(null, Validators.maxLength(50)),
-      notario: new FormControl(null, Validators.maxLength(250)),
+      notario: new FormControl([], I18nValidators.maxLength(250)),
       fechaConstitucion: new FormControl(null),
       fechaAprobacionCG: new FormControl(null),
       fechaIncorporacion: new FormControl(null),
       fechaDesvinculacion: new FormControl(null),
       fechaCese: new FormControl(null),
-      observaciones: new FormControl(null, Validators.maxLength(2000))
+      observaciones: new FormControl([], I18nValidators.maxLength(2000))
     });
 
     this.subscriptions.push(
@@ -121,10 +122,10 @@ export class EmpresaExplotacionResultadosDatosGeneralesFragment extends FormFrag
     const form = this.getFormGroup().controls;
 
     if (form.entidad.value || entidad) {
-      form.nombreRazonSocial.setValidators(Validators.maxLength(250));
+      form.nombreRazonSocial.setValidators(I18nValidators.maxLength(250));
       this.showRazonSocial = false;
     } else {
-      form.nombreRazonSocial.setValidators([Validators.required, Validators.maxLength(250)]);
+      form.nombreRazonSocial.setValidators([I18nValidators.required, I18nValidators.maxLength(250)]);
       this.showRazonSocial = true;
     }
     form.nombreRazonSocial.updateValueAndValidity();

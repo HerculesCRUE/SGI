@@ -1,0 +1,81 @@
+[
+  {
+    "key": "ap5_2_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.2 2. Galdera"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "Instalazioak badu baimena genetikoki eraldatutako organismoen erabilera konfinaturako?"
+      },
+      {
+        "key": "pregunta2OMGRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Mezu elektroniko bat bidali behar zaio Etika Batzordeko Idazkaritza Teknikoari, GEOen erabilera konfinatuko jarduera lehen aldiz erabiltzeko baimena/komunikazioa emateko izapideak hasteko eskatzeko.",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'si'"
+      },
+      {
+        "key": "referenciaAutorizacionOMG",
+        "type": "i18n-input",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "label": "Agintari eskudunak emandako baimenaren erreferentzia",
+          "required": true,
+          "placeholder": "Erreferentzia"
+        }
+      },
+      {
+        "key": "fechaFirmaOMG",
+        "type": "datepicker",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "label": "Agintari eskudunaren aldeko txostenaren sinadura data",
+          "required": true,
+          "type": "text"
+        }
+      },
+      {
+        "key": "referenciaOMG",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "name": "GEOak manipulatu edo/eta gordetzeko erabiltzen diren lokalen erreferentzia eta kokapena",
+          "required": true
+        }
+      },
+      {
+        "key": "nivelRiesgoOMG",
+        "type": "i18n-input",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "label": "GEOen arrisku maila",
+          "required": true,
+          "placeholder": "GEOen arrisku maila"
+        }
+      }
+    ]
+  }
+]

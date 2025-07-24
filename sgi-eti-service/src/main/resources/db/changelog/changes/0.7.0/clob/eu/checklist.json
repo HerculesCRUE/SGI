@@ -1,0 +1,146 @@
+[
+  {
+    "template": "<p>Nire ikerketan gizakien datu pertsonalak biltzen dira (hauen bidez: galdetegiak, elkarrizketak, eztabaida taldeak, audio edo bideo grabaketak, argazkiak…).</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_1",
+    "templateOptions": {
+      "label": "Erantzuna",
+      "color": "primary",
+      "options": [
+        {
+          "label": "Ez",
+          "value": false
+        },
+        {
+          "label": "Bai",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  },
+  {
+    "template": "<p>Nire ikerketan parte hartzaileak identifikatu egin daitezke (edo bildutako datuetatik abiatuta identifikagarriak izatera irits daitezke).</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_2",
+    "templateOptions": {
+      "label": "Erantzuna",
+      "color": "primary",
+      "options": [
+        {
+          "label": "Ez",
+          "value": false
+        },
+        {
+          "label": "Bai",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  },
+  {
+    "template": "<p>Nire ikerketan esperimentazio animaliak aztertzen dira.</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_3",
+    "templateOptions": {
+      "label": "Erantzuna",
+      "color": "primary",
+      "options": [
+        {
+          "label": "Ez",
+          "value": false
+        },
+        {
+          "label": "Bai",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  },
+  {
+    "template": "<p>Nire ikerketan gizakien edo animalien lagin biologikoak (listua, odola, ilea, ehunak…) bildu eta tratatzen dira.</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_4",
+    "templateOptions": {
+      "label": "Erantzuna",
+      "color": "primary",
+      "options": [
+        {
+          "label": "Ez",
+          "value": false
+        },
+        {
+          "label": "Bai",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  },
+  {
+    "template": "<p>Nire ikerketak aldeko txostena du, baina aldaketak egingo dira.</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_5",
+    "templateOptions": {
+      "label": "Erantzuna",
+      "color": "primary",
+      "options": [
+        {
+          "label": "Ez",
+          "value": false
+        },
+        {
+          "label": "Bai",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  },
+  {
+    "template": "<p>Nire ikerketan pertsonekin lan egin behar da.</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_6",
+    "templateOptions": {
+      "label": "Erantzuna",
+      "color": "primary",
+      "options": [
+        {
+          "label": "Ez",
+          "value": false
+        },
+        {
+          "label": "Bai",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  }
+]

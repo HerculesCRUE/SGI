@@ -16,29 +16,71 @@
 */
 
 INSERT INTO test.prorroga_documento
-(id, comentario, documento_ref, nombre, visible, proyecto_prorroga_id, tipo_documento_id)
-VALUES(1, 'comentario-prorroga-documento-001', 'documentoRef-001', 'prorroga-documento-001', TRUE, 1, 1);
+(id, documento_ref, visible, proyecto_prorroga_id, tipo_documento_id)
+VALUES(1, 'documentoRef-001', TRUE, 1, 1);
 
 INSERT INTO test.prorroga_documento
-(id, comentario, documento_ref, nombre, visible, proyecto_prorroga_id, tipo_documento_id)
-VALUES(2, 'comentario-prorroga-documento-002', 'documentoRef-002', 'prorroga-documento-002', TRUE, 1, 1);
+(id, documento_ref, visible, proyecto_prorroga_id, tipo_documento_id)
+VALUES(2, 'documentoRef-002', TRUE, 1, 1);
 
 INSERT INTO test.prorroga_documento
-(id, comentario, documento_ref, nombre, visible, proyecto_prorroga_id, tipo_documento_id)
-VALUES(3, 'comentario-prorroga-documento-003', 'documentoRef-003', 'prorroga-documento-003', TRUE, 1, 2);
+(id, documento_ref, visible, proyecto_prorroga_id, tipo_documento_id)
+VALUES(3, 'documentoRef-003', TRUE, 1, 2);
 
 INSERT INTO test.prorroga_documento
-(id, comentario, documento_ref, nombre, visible, proyecto_prorroga_id, tipo_documento_id)
-VALUES(4, 'comentario-prorroga-documento-4', 'documentoRef-004', 'prorroga-documento-004', TRUE, 1, 2);
+(id, documento_ref, visible, proyecto_prorroga_id, tipo_documento_id)
+VALUES(4, 'documentoRef-004', TRUE, 1, 2);
 
 INSERT INTO test.prorroga_documento
-(id, comentario, documento_ref, nombre, visible, proyecto_prorroga_id, tipo_documento_id)
-VALUES(5, 'comentario-prorroga-documento-5', 'documentoRef-005', 'prorroga-documento-005', TRUE, 1, 3);
+(id, documento_ref, visible, proyecto_prorroga_id, tipo_documento_id)
+VALUES(5, 'documentoRef-005', TRUE, 1, 3);
 
 INSERT INTO test.prorroga_documento
-(id, comentario, documento_ref, nombre, visible, proyecto_prorroga_id, tipo_documento_id)
-VALUES(6, 'comentario-prorroga-documento-6', 'documentoRef-006', 'prorroga-documento-006', TRUE, 5, 1);
+(id, documento_ref, visible, proyecto_prorroga_id, tipo_documento_id)
+VALUES(6, 'documentoRef-006', TRUE, 5, 1);
 
 INSERT INTO test.prorroga_documento
-(id, comentario, documento_ref, nombre, visible, proyecto_prorroga_id, tipo_documento_id)
-VALUES(7, 'comentario-prorroga-documento-7', 'documentoRef-007', 'prorroga-documento-007', TRUE, 5, 2);
+(id, documento_ref, visible, proyecto_prorroga_id, tipo_documento_id)
+VALUES(7, 'documentoRef-007', TRUE, 5, 2);
+
+INSERT INTO test.prorroga_documento_nombre(prorroga_documento_id, lang, value_)
+VALUES(1, 'es', 'prorroga-documento-001');
+
+INSERT INTO test.prorroga_documento_nombre(prorroga_documento_id, lang, value_)
+VALUES(2, 'es', 'prorroga-documento-002');
+
+INSERT INTO test.prorroga_documento_nombre(prorroga_documento_id, lang, value_)
+VALUES(3, 'es', 'prorroga-documento-003');
+
+INSERT INTO test.prorroga_documento_nombre(prorroga_documento_id, lang, value_)
+VALUES(4, 'es', 'prorroga-documento-004');
+
+INSERT INTO test.prorroga_documento_nombre(prorroga_documento_id, lang, value_)
+VALUES(5, 'es', 'prorroga-documento-005');
+
+INSERT INTO test.prorroga_documento_nombre(prorroga_documento_id, lang, value_)
+VALUES(6, 'es', 'prorroga-documento-006');
+
+INSERT INTO test.prorroga_documento_nombre(prorroga_documento_id, lang, value_)
+VALUES(7, 'es', 'prorroga-documento-007');
+
+INSERT INTO test.prorroga_documento_comentario(prorroga_documento_id, lang, value_)
+VALUES(1, 'es', 'comentario-prorroga-documento-001');
+
+INSERT INTO test.prorroga_documento_comentario(prorroga_documento_id, lang, value_)
+VALUES(2, 'es', 'comentario-prorroga-documento-002');
+
+INSERT INTO test.prorroga_documento_comentario(prorroga_documento_id, lang, value_)
+VALUES(3, 'es', 'comentario-prorroga-documento-003');
+
+INSERT INTO test.prorroga_documento_comentario(prorroga_documento_id, lang, value_)
+VALUES(4, 'es', 'comentario-prorroga-documento-4');
+
+INSERT INTO test.prorroga_documento_comentario(prorroga_documento_id, lang, value_)
+VALUES(5, 'es', 'comentario-prorroga-documento-5');
+
+INSERT INTO test.prorroga_documento_comentario(prorroga_documento_id, lang, value_)
+VALUES(6, 'es', 'comentario-prorroga-documento-6');
+
+INSERT INTO test.prorroga_documento_comentario(prorroga_documento_id, lang, value_)
+VALUES(7, 'es', 'comentario-prorroga-documento-7');

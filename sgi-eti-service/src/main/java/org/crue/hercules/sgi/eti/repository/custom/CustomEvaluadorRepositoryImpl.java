@@ -83,8 +83,8 @@ public class CustomEvaluadorRepositoryImpl implements CustomEvaluadorRepository 
     Subquery<String> sqPersonaRefEquipoTrabajoInPeticionEvaluacion = cq.subquery(String.class);
     Root<EquipoTrabajo> equipoTrabajoRoot = sqPersonaRefEquipoTrabajoInPeticionEvaluacion.from(EquipoTrabajo.class);
     sqPersonaRefEquipoTrabajoInPeticionEvaluacion.select(equipoTrabajoRoot.get(EquipoTrabajo_.personaRef));
-    sqPersonaRefEquipoTrabajoInPeticionEvaluacion.where(equipoTrabajoRoot.get(EquipoTrabajo_.peticionEvaluacion)
-        .get(PeticionEvaluacion_.id).in(sqPeticionEvaluacionMemoria));
+    sqPersonaRefEquipoTrabajoInPeticionEvaluacion
+        .where(equipoTrabajoRoot.get(EquipoTrabajo_.peticionEvaluacionId).in(sqPeticionEvaluacionMemoria));
 
     /**
      * A partir de las personas del equipo de trabajo se sacan los evaluadores que

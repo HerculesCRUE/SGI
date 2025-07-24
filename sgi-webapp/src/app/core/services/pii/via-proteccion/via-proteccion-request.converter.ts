@@ -1,8 +1,9 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IViaProteccion } from '@core/models/pii/via-proteccion';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IViaProteccionRequest } from './via-proteccion-request';
 
-class ViaProteccionRequestConverter extends SgiBaseConverter<IViaProteccionRequest, IViaProteccion>{
+class ViaProteccionRequestConverter extends SgiBaseConverter<IViaProteccionRequest, IViaProteccion> {
 
   toTarget(value: IViaProteccionRequest): IViaProteccion {
     if (!value) {
@@ -10,8 +11,8 @@ class ViaProteccionRequestConverter extends SgiBaseConverter<IViaProteccionReque
     }
     return {
       id: undefined,
-      nombre: value.nombre,
-      descripcion: value.descripcion,
+      nombre: value.nombre ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.nombre) : [],
+      descripcion: value.descripcion ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.descripcion) : [],
       tipoPropiedad: value.tipoPropiedad,
       mesesPrioridad: value.mesesPrioridad,
       paisEspecifico: value.paisEspecifico,
@@ -25,8 +26,8 @@ class ViaProteccionRequestConverter extends SgiBaseConverter<IViaProteccionReque
       return value as unknown as IViaProteccionRequest;
     }
     return {
-      nombre: value.nombre,
-      descripcion: value.descripcion,
+      nombre: value.nombre ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.nombre) : [],
+      descripcion: value.descripcion ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.descripcion) : [],
       tipoPropiedad: value.tipoPropiedad,
       mesesPrioridad: value.mesesPrioridad,
       paisEspecifico: value.paisEspecifico,

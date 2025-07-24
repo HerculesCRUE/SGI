@@ -5,14 +5,17 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IProyectoPeriodoSeguimientoDocumento } from '@core/models/csp/proyecto-periodo-seguimiento-documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { Group } from '@core/services/action-service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
@@ -30,6 +33,7 @@ const PERIODO_SEGUIMIENTO_CIENTIFICO_DOCUMENTO_KEY = marker('csp.documento');
 const PERIODO_SEGUIMIENTO_CIENTIFICO_DOCUMENTO_NOMBRE_KEY = marker('csp.documento.nombre');
 const PERIODO_SEGUIMIENTO_CIENTIFICO_DOCUMENTO_FICHERO_KEY = marker('csp.proyecto-periodo-seguimiento.documento.fichero');
 const PERIODO_SEGUIMIENTO_CIENTIFICO_DOCUMENTO_VISIBLE_KEY = marker('csp.proyecto-periodo-seguimiento.documento.visible');
+const PERIODO_SEGUIMIENTO_CIENTIFICO_DOCUMENTO_COMENTARIO_KEY = marker('csp.proyecto-periodo-seguimiento.documento.comentario');
 
 enum VIEW_MODE {
   NONE = '',
@@ -62,6 +66,7 @@ export class ProyectoPeriodoSeguimientoDocumentosComponent extends FragmentCompo
   msgParamFicheroEntity = {};
   msgParamNombreEntity = {};
   msgParamVisibleEntity = {};
+  msgParamComentarioEntity = {};
   textoDelete: string;
 
   group = new Group();
@@ -83,9 +88,10 @@ export class ProyectoPeriodoSeguimientoDocumentosComponent extends FragmentCompo
     public actionService: ProyectoPeriodoSeguimientoActionService,
     private documentoService: DocumentoService,
     private snackBar: SnackBarService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DOCUMENTOS, actionService);
+    super(actionService.FRAGMENT.DOCUMENTOS, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -106,23 +112,23 @@ export class ProyectoPeriodoSeguimientoDocumentosComponent extends FragmentCompo
 
   ngOnInit() {
     super.ngOnInit();
-    this.setupI18N();
+
     this.subscriptions.push(this.formPart.documentos$.subscribe((documentos) => {
       this.dataSource.data = documentos;
     }));
     this.group.load(new FormGroup({
-      nombre: new FormControl('', Validators.required),
+      nombre: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(50)]),
       fichero: new FormControl(null, Validators.required),
       tipoDocumento: new FormControl(null, IsEntityValidator.isValid),
       visible: new FormControl(null, Validators.required),
-      comentario: new FormControl('')
+      comentario: new FormControl([], I18nValidators.maxLength(2000))
     }));
     this.group.initialize();
 
     this.switchToNone();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PERIODO_SEGUIMIENTO_CIENTIFICO_DOCUMENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -154,6 +160,11 @@ export class ProyectoPeriodoSeguimientoDocumentosComponent extends FragmentCompo
         );
       })
     ).subscribe((value) => this.textoDelete = value);
+
+    this.translate.get(
+      PERIODO_SEGUIMIENTO_CIENTIFICO_DOCUMENTO_COMENTARIO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamComentarioEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
   }
 
@@ -328,5 +339,9 @@ export class ProyectoPeriodoSeguimientoDocumentosComponent extends FragmentCompo
         this.snackBar.showError(MSG_DOWNLOAD_ERROR);
       }
     ));
+  }
+
+  getI18nValue(i18nFieldValue: I18nFieldValue[]): string {
+    return this.languageService.getFieldValue(i18nFieldValue);
   }
 }

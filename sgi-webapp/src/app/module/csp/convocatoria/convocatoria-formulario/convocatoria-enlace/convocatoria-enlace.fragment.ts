@@ -2,8 +2,8 @@ import { IConvocatoriaEnlace } from '@core/models/csp/convocatoria-enlace';
 import { Fragment } from '@core/services/action-service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { map, mergeMap, takeLast, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { map, tap } from 'rxjs/operators';
 
 export class ConvocatoriaEnlaceFragment extends Fragment {
   enlace$ = new BehaviorSubject<StatusWrapper<IConvocatoriaEnlace>[]>([]);

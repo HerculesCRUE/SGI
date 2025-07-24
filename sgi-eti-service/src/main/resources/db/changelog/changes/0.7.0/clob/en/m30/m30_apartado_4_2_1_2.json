@@ -1,0 +1,82 @@
+[
+  {
+    "key": "ap4_2_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1.2 Another centre or place outside the University"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Are tasks with biological agents and/or genetically modified carried out in the premises of another centre or place?</p>"
+      },
+      {
+        "key": "tareasAgentesBiologicos",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarAgenteBiologico",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "name": "Please specify",
+          "required": true
+        }
+      },
+      {
+        "template": "Please justify the need to perform the tasks in that location",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'"
+      },
+      {
+        "key": "justificarTareas",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "name": "Justify",
+          "required": true
+        }
+      },
+      {
+        "template": "If you have accreditation, please indicate agency and attach a copy",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'"
+      },
+      {
+        "key": "disponeAcreditacion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "name": "Please indicate:",
+          "required": true
+        }
+      },
+      {
+        "key": "fechaAcreditacion",
+        "type": "datepicker",
+        "hideExpression": "!model.tareasAgentesBiologicos || model.tareasAgentesBiologicos === 'no'",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Accreditation date:"
+        }
+      },
+      {
+        "template": "<p>Please remember that the committee report is only valid for work carried out in University Facilities, by University personnel or by any other person who, in application of current regulations, carries out their work there. NOTE: The facility is to comply with the containment requirements for biological agents and/or GMOs, where applicable, the respective authorisation/communication.</p>"
+      }
+    ]
+  }
+]

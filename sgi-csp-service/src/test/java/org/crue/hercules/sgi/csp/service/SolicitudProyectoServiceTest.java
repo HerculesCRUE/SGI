@@ -87,7 +87,7 @@ class SolicitudProyectoServiceTest extends BaseServiceTest {
     // when: Creamos el SolicitudProyecto
     // then: Lanza una excepcion porque el SolicitudProyecto ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(solicitudProyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El id no puede ser null para realizar la acción sobre SolicitudProyecto");
+        .hasMessage("Identificador de Datos de Proyecto no puede ser nulo");
   }
 
   @Test
@@ -101,7 +101,7 @@ class SolicitudProyectoServiceTest extends BaseServiceTest {
     // when: Creamos el SolicitudProyecto
     // then: Lanza una excepcion porque no tiene colaborativo
     Assertions.assertThatThrownBy(() -> service.create(solicitudProyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Colaborativo no puede ser null para realizar la acción sobre SolicitudProyecto");
+        .hasMessage("Colaborativo de Datos de Proyecto no puede ser nulo");
   }
 
   @Test
@@ -186,7 +186,7 @@ class SolicitudProyectoServiceTest extends BaseServiceTest {
     // when: Actualizamos el SolicitudProyecto
     // then: Lanza una excepcion porque no tiene colaborativo
     Assertions.assertThatThrownBy(() -> service.update(solicitudProyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Colaborativo no puede ser null para realizar la acción sobre SolicitudProyecto");
+        .hasMessage("Colaborativo de Datos de Proyecto no puede ser nulo");
   }
 
   @Test

@@ -1,0 +1,7 @@
+<a class="i18n-link" [href]="href" target="_blank"><sup class="prefix"
+    *ngIf="value && value.lang !== languageService.getLanguage(); else empty">{{value.lang.codeExtended}}</sup><span
+    class="link-text">{{value?.value}}</span></a>
+
+<ng-template #empty>
+  <sup class="prefix">&nbsp;&nbsp;&nbsp;</sup>
+</ng-template>

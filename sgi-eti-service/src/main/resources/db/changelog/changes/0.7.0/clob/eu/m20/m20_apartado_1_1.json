@@ -1,0 +1,50 @@
+[
+  {
+    "key": "ap1_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "1.1 Proiektuaren balio soziala"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Atal hau automatikoki betetzen da, <b>Ebaluazio eskaerako</b> <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/datos-generales' target='_blank'><b>Datu orokorrak</b></a> ataleko <b>Balio soziala</b> eremuan sartutako datuetatik abiatuta. Beharrezko aldaketak egiteko, joan menuko puntu horretara.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "template": "<p>Jarraian, proiektuak zer helburu nagusi duen ageri da: zer esparrutan ekarriko duen ezagutza handiagoa, edo zer onura sozial ekarriko duen, berau gauzatzea justifikatzeko. </p>"
+      },
+      {
+        "key": "valorSocial",
+        "type": "tipo-valor-social",
+        "templateOptions": {
+          "label": "Balio soziala",
+          "placeholder": "",
+          "required": true,
+          "disabled": true,
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.valorSocial"
+        }
+      },
+      {
+        "key": "otroValorSocial",
+        "type": "i18n-textarea",
+        "hideExpression": "formState.memoria.peticionEvaluacion.valorSocial !== 'OTRA_FINALIDAD'",
+        "templateOptions": {
+          "placeholder": "Zehaztu",
+          "label": "Zehaztu",
+          "disabled": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10",
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.otroValorSocial"
+        }
+      }
+    ]
+  }
+]

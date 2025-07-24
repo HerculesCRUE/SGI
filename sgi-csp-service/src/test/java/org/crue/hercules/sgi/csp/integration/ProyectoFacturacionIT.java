@@ -1,9 +1,18 @@
 package org.crue.hercules.sgi.csp.integration;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ProyectoFacturacionController;
 import org.crue.hercules.sgi.csp.dto.ProyectoFacturacionInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoFacturacionOutput;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -13,10 +22,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
-
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.Collections;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ProyectoFacturacionIT extends BaseIT {
@@ -65,8 +70,8 @@ class ProyectoFacturacionIT extends BaseIT {
     Assertions.assertThat(created.getId()).as("getId()").isNotNull();
     Assertions.assertThat(created.getProyectoId()).as("getProyectoId()")
         .isEqualTo(toCreate.getProyectoId());
-    Assertions.assertThat(created.getComentario())
-        .as("getComentario()").isEqualTo(toCreate.getComentario());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getComentario(), Language.ES))
+        .as("getComentario()").isEqualTo(I18nHelper.getValueForLanguage(toCreate.getComentario(), Language.ES));
     Assertions.assertThat(created.getFechaConformidad())
         .as("getFechaConformidad()").isEqualTo(toCreate.getFechaConformidad());
     Assertions.assertThat(created.getFechaEmision())
@@ -101,10 +106,13 @@ class ProyectoFacturacionIT extends BaseIT {
   void update_ReturnsProyectoFacturacionOutput() throws Exception {
     Long proyectoFacturacionId = 1L;
     ProyectoFacturacionInput toUpdate = buildMockProyectoFacturacionInput(proyectoFacturacionId);
-    toUpdate.setComentario("updated");
+    List<I18nFieldValueDto> proyectoFacturacionComentario = new ArrayList<I18nFieldValueDto>();
+    proyectoFacturacionComentario
+        .add(new I18nFieldValueDto(Language.ES, "updated"));
+
     toUpdate.setEstadoValidacionIP(ProyectoFacturacionInput.EstadoValidacionIP.builder()
         .estado(ProyectoFacturacionInput.TipoEstadoValidacion.VALIDADA)
-        .comentario("estado validado")
+        .comentario(proyectoFacturacionComentario)
         .build());
 
     final ResponseEntity<ProyectoFacturacionOutput> response = restTemplate.exchange(
@@ -118,8 +126,9 @@ class ProyectoFacturacionIT extends BaseIT {
 
     Assertions.assertThat(updated.getId()).as("getId()")
         .isEqualTo(toUpdate.getId());
-    Assertions.assertThat(updated.getComentario()).as("getComentario()")
-        .isEqualTo(toUpdate.getComentario());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getComentario(), Language.ES))
+        .as("getComentario()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toUpdate.getComentario(), Language.ES));
     Assertions.assertThat(updated.getFechaConformidad()).as("getFechaConformidad()")
         .isEqualTo(toUpdate.getFechaConformidad());
     Assertions.assertThat(updated.getProyectoId()).as("getProyectoId()")
@@ -163,8 +172,12 @@ class ProyectoFacturacionIT extends BaseIT {
   }
 
   private ProyectoFacturacionInput buildMockProyectoFacturacionInput(Long id) {
+    List<I18nFieldValueDto> proyectoFacturacionComentario = new ArrayList<I18nFieldValueDto>();
+    proyectoFacturacionComentario
+        .add(new I18nFieldValueDto(Language.ES, "testing create"));
+
     return ProyectoFacturacionInput.builder()
-        .comentario("testing create")
+        .comentario(proyectoFacturacionComentario)
         .id(id)
         .proyectoId(1L)
         .fechaConformidad(Instant.now())

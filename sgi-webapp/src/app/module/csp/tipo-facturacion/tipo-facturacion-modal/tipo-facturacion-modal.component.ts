@@ -1,11 +1,12 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { FormControl, FormGroup } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoFacturacion } from '@core/models/csp/tipo-facturacion';
 import { TipoFacturacionService } from '@core/services/csp/tipo-facturacion/tipo-facturacion.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -80,7 +81,7 @@ export class TipoFacturacionModalComponent extends DialogActionComponent<ITipoFa
 
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
-      nombre: new FormControl(this.tipoFacturacion?.nombre ?? '', Validators.required),
+      nombre: new FormControl(this.tipoFacturacion?.nombre ?? [], I18nValidators.required),
       incluirEnComunicado: new FormControl(this.tipoFacturacion?.incluirEnComunicado ?? false)
     });
   }

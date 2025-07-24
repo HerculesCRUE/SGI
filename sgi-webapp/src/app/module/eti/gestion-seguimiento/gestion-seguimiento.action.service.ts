@@ -11,27 +11,34 @@ import { SeguimientoDocumentacionFragment } from '../seguimiento-formulario/segu
 import { SeguimientoEvaluacionFragment } from '../seguimiento-formulario/seguimiento-evaluacion/seguimiento-evaluacion.fragment';
 import { Rol, SeguimientoFormularioActionService } from '../seguimiento-formulario/seguimiento-formulario.action.service';
 import { IEvaluacionWithComentariosEnviados } from '../evaluacion-evaluador/evaluacion-evaluador-listado/evaluacion-evaluador-listado.component';
+import { ApartadoService } from '@core/services/eti/apartado.service';
+import { BloqueService } from '@core/services/eti/bloque.service';
+import { NGXLogger } from 'ngx-logger';
 
 @Injectable()
 export class GestionSeguimientoActionService extends SeguimientoFormularioActionService {
 
 
   constructor(
+    private readonly logger: NGXLogger,
     fb: FormBuilder,
     route: ActivatedRoute,
     service: EvaluacionService,
     protected readonly snackBarService: SnackBarService,
     personaService: PersonaService,
-    authService: SgiAuthService) {
+    authService: SgiAuthService,
+    private readonly apartadoService: ApartadoService,
+    private readonly bloqueService: BloqueService
+  ) {
     super();
     this.evaluacion = {} as IEvaluacionWithComentariosEnviados;
     if (route.snapshot.data.evaluacion) {
       this.evaluacion = route.snapshot.data.evaluacion;
       this.enableEdit();
     }
-    this.evaluaciones = new SeguimientoEvaluacionFragment(
+    this.evaluaciones = new SeguimientoEvaluacionFragment(logger,
       fb, this.evaluacion?.id, snackBarService, service, personaService);
-    this.comentarios = new SeguimientoComentarioFragment(this.evaluacion?.id, Rol.GESTOR, service, personaService, authService);
+    this.comentarios = new SeguimientoComentarioFragment(logger, this.evaluacion?.id, Rol.GESTOR, service, personaService, authService);
     this.documentacion = new SeguimientoDocumentacionFragment(this.evaluacion?.id);
 
     this.addFragment(this.FRAGMENT.COMENTARIOS, this.comentarios);

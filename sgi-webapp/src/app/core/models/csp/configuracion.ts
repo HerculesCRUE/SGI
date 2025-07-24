@@ -6,6 +6,12 @@ export enum ValidacionClasificacionGastos {
   ELEGIBILIDAD = 'ELEGIBILIDAD'
 }
 
+export enum CalendarioFacturacionSgeIntegration {
+  INTEGRACION_LECTURA_ESCRITURA = "INTEGRACION_LECTURA_ESCRITURA",
+  INTEGRACION_SOLO_LECTURA = "INTEGRACION_SOLO_LECTURA",
+  SIN_INTEGRACION = "SIN_INTEGRACION"
+}
+
 export enum CardinalidadRelacionSgiSge {
   SGI_1_SGE_1 = 'SGI_1_SGE_1',
   SGI_1_SGE_N = 'SGI_1_SGE_N',
@@ -22,6 +28,17 @@ export enum FacturasJustificantesColumnasFijasConfigurables {
   CLASIFICACION_SGE = 'CLASIFICACION_SGE',
   APLICACION_PRESUPUESTARIA = 'APLICACION_PRESUPUESTARIA'
 }
+
+export enum SgeFiltroAnualidades {
+  ANUALIDADES_OPCIONALES = 'ANUALIDADES_OPCIONALES',
+  ANUALIDADES_OBLIGATORIAS = 'ANUALIDADES_OBLIGATORIAS'
+}
+
+export const CALENDARIO_FACTURACION_SGE_INTEGRATION_MAP: Map<CalendarioFacturacionSgeIntegration, string> = new Map([
+  [CalendarioFacturacionSgeIntegration.INTEGRACION_LECTURA_ESCRITURA, marker(`csp.calendario-facturacion-sge-integration.INTEGRACION_LECTURA_ESCRITURA`)],
+  [CalendarioFacturacionSgeIntegration.INTEGRACION_SOLO_LECTURA, marker(`csp.calendario-facturacion-sge-integration.INTEGRACION_SOLO_LECTURA`)],
+  [CalendarioFacturacionSgeIntegration.SIN_INTEGRACION, marker(`csp.calendario-facturacion-sge-integration.SIN_INTEGRACION`)]
+]);
 
 export const CARDINALIDAD_RELACION_SGI_SGE_MAP: Map<CardinalidadRelacionSgiSge, string> = new Map([
   [CardinalidadRelacionSgiSge.SGI_1_SGE_1, marker(`csp.cardinalidad-relacion-sgi-sge.SGI_1_SGE_1`)],
@@ -46,8 +63,72 @@ export const FACTURAS_JUSTIFICANTES_COLUMNAS_FIJAS_CONFIGURABLES_MAP: Map<Factur
   [FacturasJustificantesColumnasFijasConfigurables.APLICACION_PRESUPUESTARIA, marker(`csp.facturas-justificantes-columnas-fijas-configurables.APLICACION_PRESUPUESTARIA`)]
 ]);
 
+export const SGE_FILTRO_ANUALIDADES_MAP: Map<SgeFiltroAnualidades, string> = new Map([
+  [SgeFiltroAnualidades.ANUALIDADES_OPCIONALES, marker(`csp.sge-filtro-anualidades.ANUALIDADES_OPCIONALES`)],
+  [SgeFiltroAnualidades.ANUALIDADES_OBLIGATORIAS, marker(`csp.sge-filtro-anualidades.ANUALIDADES_OBLIGATORIAS`)]
+]);
+
+export enum SgeIntegracionesEccMenus {
+  ECC_EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL = 'ECC_EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL',
+  ECC_EJECUCION_PRESUPUESTARIA_GASTOS = 'ECC_EJECUCION_PRESUPUESTARIA_GASTOS',
+  ECC_EJECUCION_PRESUPUESTARIA_INGRESOS = 'ECC_EJECUCION_PRESUPUESTARIA_INGRESOS',
+  ECC_DETALLE_OPERACIONES_GASTOS = 'ECC_DETALLE_OPERACIONES_GASTOS',
+  ECC_DETALLE_OPERACIONES_INGRESOS = 'ECC_DETALLE_OPERACIONES_INGRESOS',
+  ECC_DETALLE_OPERACIONES_MODIFICACIONES = 'ECC_DETALLE_OPERACIONES_MODIFICACIONES',
+  ECC_FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS = 'ECC_FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS',
+  ECC_FACTURAS_JUSTIFICANTES_VIAJES_DIETAS = 'ECC_FACTURAS_JUSTIFICANTES_VIAJES_DIETAS',
+  ECC_FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO = 'ECC_FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO',
+  ECC_FACTURAS_EMITIDAS = 'ECC_FACTURAS_EMITIDAS',
+  ECC_SEGUIMIENTO_JUSTIFICACION_RESUMEN = 'ECC_SEGUIMIENTO_JUSTIFICACION_RESUMEN',
+  ECC_SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS = 'ECC_SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS'
+}
+
+export const SGE_INTEGRACIONES_ECC_MENUS_MAP: Map<SgeIntegracionesEccMenus, string> = new Map([
+  [SgeIntegracionesEccMenus.ECC_EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL, marker(`csp.sge-integraciones-ecc-menus.ECC_EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL`)],
+  [SgeIntegracionesEccMenus.ECC_EJECUCION_PRESUPUESTARIA_GASTOS, marker(`csp.sge-integraciones-ecc-menus.ECC_EJECUCION_PRESUPUESTARIA_GASTOS`)],
+  [SgeIntegracionesEccMenus.ECC_EJECUCION_PRESUPUESTARIA_INGRESOS, marker(`csp.sge-integraciones-ecc-menus.ECC_EJECUCION_PRESUPUESTARIA_INGRESOS`)],
+  [SgeIntegracionesEccMenus.ECC_DETALLE_OPERACIONES_GASTOS, marker(`csp.sge-integraciones-ecc-menus.ECC_DETALLE_OPERACIONES_GASTOS`)],
+  [SgeIntegracionesEccMenus.ECC_DETALLE_OPERACIONES_INGRESOS, marker(`csp.sge-integraciones-ecc-menus.ECC_DETALLE_OPERACIONES_INGRESOS`)],
+  [SgeIntegracionesEccMenus.ECC_DETALLE_OPERACIONES_MODIFICACIONES, marker(`csp.sge-integraciones-ecc-menus.ECC_DETALLE_OPERACIONES_MODIFICACIONES`)],
+  [SgeIntegracionesEccMenus.ECC_FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS, marker(`csp.sge-integraciones-ecc-menus.ECC_FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS`)],
+  [SgeIntegracionesEccMenus.ECC_FACTURAS_JUSTIFICANTES_VIAJES_DIETAS, marker(`csp.sge-integraciones-ecc-menus.ECC_FACTURAS_JUSTIFICANTES_VIAJES_DIETAS`)],
+  [SgeIntegracionesEccMenus.ECC_FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO, marker(`csp.sge-integraciones-ecc-menus.ECC_FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO`)],
+  [SgeIntegracionesEccMenus.ECC_FACTURAS_EMITIDAS, marker(`csp.sge-integraciones-ecc-menus.ECC_FACTURAS_EMITIDAS`)],
+  [SgeIntegracionesEccMenus.ECC_SEGUIMIENTO_JUSTIFICACION_RESUMEN, marker(`csp.sge-integraciones-ecc-menus.ECC_SEGUIMIENTO_JUSTIFICACION_RESUMEN`)],
+  [SgeIntegracionesEccMenus.ECC_SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS, marker(`csp.sge-integraciones-ecc-menus.ECC_SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS`)]
+]);
+
+export enum SgeEjecucionEconomicaFiltros {
+  ECC_FILTRO_FACTURAS_GASTOS_FECHA_DEVENGO = 'ECC_FILTRO_FACTURAS_GASTOS_FECHA_DEVENGO',
+  ECC_FILTRO_FACTURAS_GASTOS_FECHA_CONTABILIZACION = 'ECC_FILTRO_FACTURAS_GASTOS_FECHA_CONTABILIZACION',
+  ECC_FILTRO_FACTURAS_GASTOS_FECHA_PAGO = 'ECC_FILTRO_FACTURAS_GASTOS_FECHA_PAGO',
+  ECC_FILTRO_VIAJES_DIETAS_FECHA_DEVENGO = 'ECC_FILTRO_VIAJES_DIETAS_FECHA_DEVENGO',
+  ECC_FILTRO_VIAJES_DIETAS_FECHA_CONTABILIZACION = 'ECC_FILTRO_VIAJES_DIETAS_FECHA_CONTABILIZACION',
+  ECC_FILTRO_VIAJES_DIETAS_FECHA_PAGO = 'ECC_FILTRO_VIAJES_DIETAS_FECHA_PAGO',
+  ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_DEVENGO = 'ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_DEVENGO',
+  ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_CONTABILIZACION = 'ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_CONTABILIZACION',
+  ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_PAGO = 'ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_PAGO',
+  ECC_FILTRO_FACTURAS_EMITIDAS_FECHA_FACTURA = 'ECC_FILTRO_FACTURAS_EMITIDAS_FECHA_FACTURA'
+}
+
+export const SGE_EJECUCION_ECONOMICA_FILTROS_MAP: Map<SgeEjecucionEconomicaFiltros, string> = new Map([
+  [SgeEjecucionEconomicaFiltros.ECC_FILTRO_FACTURAS_GASTOS_FECHA_DEVENGO, marker(`csp.sge-ejecucion-economica-filtros.ECC_FILTRO_FACTURAS_GASTOS_FECHA_DEVENGO`)],
+  [SgeEjecucionEconomicaFiltros.ECC_FILTRO_FACTURAS_GASTOS_FECHA_CONTABILIZACION, marker(`csp.sge-ejecucion-economica-filtros.ECC_FILTRO_FACTURAS_GASTOS_FECHA_CONTABILIZACION`)],
+  [SgeEjecucionEconomicaFiltros.ECC_FILTRO_FACTURAS_GASTOS_FECHA_PAGO, marker(`csp.sge-ejecucion-economica-filtros.ECC_FILTRO_FACTURAS_GASTOS_FECHA_PAGO`)],
+  [SgeEjecucionEconomicaFiltros.ECC_FILTRO_VIAJES_DIETAS_FECHA_DEVENGO, marker(`csp.sge-ejecucion-economica-filtros.ECC_FILTRO_VIAJES_DIETAS_FECHA_DEVENGO`)],
+  [SgeEjecucionEconomicaFiltros.ECC_FILTRO_VIAJES_DIETAS_FECHA_CONTABILIZACION, marker(`csp.sge-ejecucion-economica-filtros.ECC_FILTRO_VIAJES_DIETAS_FECHA_CONTABILIZACION`)],
+  [SgeEjecucionEconomicaFiltros.ECC_FILTRO_VIAJES_DIETAS_FECHA_PAGO, marker(`csp.sge-ejecucion-economica-filtros.ECC_FILTRO_VIAJES_DIETAS_FECHA_PAGO`)],
+  [SgeEjecucionEconomicaFiltros.ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_DEVENGO, marker(`csp.sge-ejecucion-economica-filtros.ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_DEVENGO`)],
+  [SgeEjecucionEconomicaFiltros.ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_CONTABILIZACION, marker(`csp.sge-ejecucion-economica-filtros.ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_CONTABILIZACION`)],
+  [SgeEjecucionEconomicaFiltros.ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_PAGO, marker(`csp.sge-ejecucion-economica-filtros.ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_PAGO`)],
+  [SgeEjecucionEconomicaFiltros.ECC_FILTRO_FACTURAS_EMITIDAS_FECHA_FACTURA, marker(`csp.sge-ejecucion-economica-filtros.ECC_FILTRO_FACTURAS_EMITIDAS_FECHA_FACTURA`)]
+]);
+
+
 export interface IConfiguracion {
   id: number;
+  /** Habilitar que se muestre el buscador de proyectos económicos al pulsar el botón de "Añadir identificador SGE" en la pantalla de  "Configuración económica - Identificación" */
+  altaBuscadorSgeEnabled: boolean;
   /** Expresión regular para validar el formato del código de las partidas presupuestarias */
   formatoPartidaPresupuestaria: string;
   /** Plantilla informativa del formato del código de las partidas presupuestarias */
@@ -78,14 +159,14 @@ export interface IConfiguracion {
   modificacionProyectoSgeEnabled: boolean;
   /** Habilitar la visualización del campo Sector IVA proveniente de la integración con el SGE */
   sectorIvaSgeEnabled: boolean;
-  /** Habilitar la visualización de la la opción de menú "Modificaciones" dentro de "Ejecución económica - Detalle de operaciones" */
-  detalleOperacionesModificacionesEnabled: boolean;
+  /** Habilitar la visualización de las opciones del menú de ejecución económica */
+  integracionesEccSgeEnabled: SgeIntegracionesEccMenus[];
   /** Determina si el alta del proyecto económico en el SGE se realiza de forma sincrona o de forma asíncrona */
   proyectoSgeAltaModoEjecucion: ModoEjecucion;
   /** Determina si la modificacion del proyecto económico en el SGE se realiza de forma sincrona o de forma asíncrona */
   proyectoSgeModificacionModoEjecucion: ModoEjecucion;
   /** Determina si hay integración del calendario facturación con el SGE para indicar si se van a notificar las facturas previstas validadas del calendario de facturación al SGE */
-  calendarioFacturacionSgeEnabled: ModoEjecucion;
+  calendarioFacturacionSgeIntegration: CalendarioFacturacionSgeIntegration;
   /** Columnas a mostrar en Facturas y gastos (ejecución económica - facturas y justificantes) *//** Columnas a mostrar en Personal Contratado (ejecución económica - facturas y justificantes) */
   facturasGastosColumnasFijasVisibles: FacturasJustificantesColumnasFijasConfigurables[];
   /** Columnas a mostrar en Viajes y dietas (ejecución económica - facturas y justificantes) */
@@ -94,4 +175,20 @@ export interface IConfiguracion {
   personalContratadoColumnasFijasVisibles: FacturasJustificantesColumnasFijasConfigurables[];
   /** Habilitar el filtro de busqueda por pais de socio en el listado de proyectos */
   proyectoSocioPaisFilterEnabled: boolean;
+  /** Permitir creación de solicitudes sin convocatoria desde perfil de investigación */
+  solicitudesSinConvocatoriaInvestigadorEnabled: boolean;
+  /** Integración de notificación de presupuestos al SGE */
+  notificacionPresupuestoSgeEnabled: boolean;
+  /** Permite activar formato de año natural en anualidad de presupuesto de proyecto */
+  formatoAnualidadAnio: boolean;
+  /** Define el comportamiento del filtro de anualidades en Ejecución Económica. */
+  sgeFiltroAnualidades: SgeFiltroAnualidades;
+  /** Habilita el modal para el detalle en ejecuciñon presupuestaria - Gasto */
+  sgeEjecucionPresupuestariaGastosDetalleEnabled: boolean;
+  /** Habilita el modal para el detalle en detalle operaciones - Gastos */
+  sgeDetalleOperacionesGastosDetalleEnabled: boolean;
+  /** Habilita los buscadores de las pantallas de Ejecución Económica dependientes del SGE. */
+  sgeEjecucionEconomicaFiltros: SgeEjecucionEconomicaFiltros[];
+  /** Habilita la acción eliminar relación proyecto SGI - identificador SGE */
+  sgeEliminarRelacionProyectoEnabled: boolean;
 }

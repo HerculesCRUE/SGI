@@ -3,9 +3,7 @@ package org.crue.hercules.sgi.csp.controller;
 import java.util.List;
 
 import javax.validation.Valid;
-import javax.validation.groups.Default;
 
-import org.crue.hercules.sgi.csp.model.BaseEntity.Update;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoDocumento;
 import org.crue.hercules.sgi.csp.model.ModeloTipoEnlace;
@@ -13,7 +11,6 @@ import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.ModeloTipoHito;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
-import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.service.ModeloEjecucionService;
 import org.crue.hercules.sgi.csp.service.ModeloTipoDocumentoService;
@@ -28,7 +25,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -142,6 +138,21 @@ public class ModeloEjecucionController {
   }
 
   /**
+   * Comprueba si existen o no {@link ModeloEjecucion} que cumplan con el filtro.
+   *
+   * @param query la información del filtro.
+   * @return Si existen o no {@link ModeloEjecucion} que cumplan con el filtro.
+   */
+  @RequestMapping(method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-C' ,'CSP-SOL-INV-ER')")
+  public ResponseEntity<Void> exists(@RequestParam(name = "q", required = false) String query) {
+    log.debug("exists(String query) - start");
+    boolean returnValue = modeloEjecucionService.exists(query);
+    log.debug("exist(String query) - end");
+    return new ResponseEntity<>(returnValue ? HttpStatus.OK : HttpStatus.NO_CONTENT);
+  }
+
+  /**
    * Devuelve el {@link ModeloEjecucion} con el id indicado.
    * 
    * @param id Identificador de {@link ModeloEjecucion}.
@@ -180,8 +191,7 @@ public class ModeloEjecucionController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-ME-E')")
-  public ModeloEjecucion update(
-      @Validated({ Update.class, Default.class }) @RequestBody ModeloEjecucion modeloEjecucion, @PathVariable Long id) {
+  public ModeloEjecucion update(@Valid @RequestBody ModeloEjecucion modeloEjecucion, @PathVariable Long id) {
     log.debug("update(ModeloEjecucion modeloEjecucion, Long id) - start");
     modeloEjecucion.setId(id);
     ModeloEjecucion returnValue = modeloEjecucionService.update(modeloEjecucion);
@@ -284,58 +294,6 @@ public class ModeloEjecucionController {
   }
 
   /**
-   * Devuelve una lista paginada y filtrada de {@link ModeloTipoFase} del
-   * {@link ModeloEjecucion}.
-   * 
-   * @param id     Identificador de {@link ModeloEjecucion}.
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
-   * @return el listado de entidades {@link ModeloTipoFase}
-   *         paginadas y filtradas del {@link ModeloEjecucion}.
-   */
-  @GetMapping("/{id}/modelotipofases/convocatoria")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V', 'CSP-ME-E')")
-  public ResponseEntity<Page<ModeloTipoFase>> findAllModeloTipoFasesConvocatoria(@PathVariable Long id,
-      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findAllModeloTipoFasesConvocatoria(Long id, String query, Pageable paging) - start");
-    Page<ModeloTipoFase> page = modeloTipoFaseService.findAllByModeloEjecucionActivosConvocatoria(id, query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllModeloTipoFasesConvocatoria(Long id, String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug("findAllModeloTipoFasesConvocatoria(Long id, String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
-  }
-
-  /**
-   * Devuelve una lista paginada y filtrada de {@link TipoFase} del
-   * {@link ModeloEjecucion}.
-   * 
-   * @param id     Identificador de {@link ModeloEjecucion}.
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
-   * @return el listado de entidades {@link TipoFase}
-   *         paginadas y filtradas del {@link ModeloEjecucion}.
-   */
-  @GetMapping("/{id}/modelotipofases/proyecto")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<Page<ModeloTipoFase>> findAllModeloTipoFasesProyecto(@PathVariable Long id,
-      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findAllModeloTipoFasesProyecto(Long id, String query, Pageable paging) - start");
-    Page<ModeloTipoFase> page = modeloTipoFaseService.findAllByModeloEjecucionActivosProyecto(id, query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllModeloTipoFasesProyecto(Long id, String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug("findAllModeloTipoFasesProyecto(Long id, String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
-  }
-
-  /**
    * 
    * MODELO TIPO FASE DOCUMENTO
    * 
@@ -428,84 +386,6 @@ public class ModeloEjecucionController {
     }
 
     log.debug("findAllModeloTipoHitos(Long id, String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
-  }
-
-  /**
-   * Devuelve una lista paginada y filtrada de {@link ModeloTipoHito} del
-   * {@link ModeloEjecucion}.
-   * 
-   * @param id     Identificador de {@link ModeloEjecucion}.
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
-   * @return el listado de entidades {@link ModeloTipoHito}
-   *         paginadas y filtradas del {@link ModeloEjecucion}.
-   */
-  @GetMapping("/{id}/modelotipohitos/convocatoria")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-CON-C', 'CSP-CON-E', 'CSP-CON-V', 'CSP-CON-INV-V')")
-  public ResponseEntity<Page<ModeloTipoHito>> findAllModeloTipoHitosConvocatoria(@PathVariable Long id,
-      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findAllModeloTipoHitosConvocatoria(Long id, String query, Pageable paging) - start");
-    Page<ModeloTipoHito> page = modeloTipoHitoService.findAllByModeloEjecucionActivosConvocatoria(id, query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllModeloTipoHitosConvocatoria(Long id, String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug("findAllModeloTipoHitosConvocatoria(Long id, String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
-  }
-
-  /**
-   * Devuelve una lista paginada y filtrada de {@link ModeloTipoHito} del
-   * {@link ModeloEjecucion}.
-   * 
-   * @param id     Identificador de {@link ModeloEjecucion}.
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
-   * @return el listado de entidades {@link ModeloTipoHito}
-   *         paginadas y filtradas del {@link ModeloEjecucion}.
-   */
-  @GetMapping("/{id}/modelotipohitos/proyecto")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-E')")
-  public ResponseEntity<Page<ModeloTipoHito>> findAllModeloTipoHitosProyecto(@PathVariable Long id,
-      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findAllModeloTipoHitosProyecto(Long id, String query, Pageable paging) - start");
-    Page<ModeloTipoHito> page = modeloTipoHitoService.findAllByModeloEjecucionActivosProyecto(id, query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllModeloTipoHitosProyecto(Long id, String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug("findAllModeloTipoHitosProyecto(Long id, String query, Pageable paging) - end");
-    return new ResponseEntity<>(page, HttpStatus.OK);
-  }
-
-  /**
-   * Devuelve una lista paginada y filtrada de {@link TipoFase} del
-   * {@link ModeloEjecucion}.
-   * 
-   * @param id     Identificador de {@link ModeloEjecucion}.
-   * @param query  filtro de búsqueda.
-   * @param paging pageable.
-   * @return el listado de entidades {@link TipoFase}
-   *         paginadas y filtradas del {@link ModeloEjecucion}.
-   */
-  @GetMapping("/{id}/modelotipohitos/solicitud")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
-  public ResponseEntity<Page<ModeloTipoHito>> findAllModeloTipoHitosSolicitud(@PathVariable Long id,
-      @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("findAllModeloTipoHitosSolicitud(Long id, String query, Pageable paging) - start");
-    Page<ModeloTipoHito> page = modeloTipoHitoService.findAllByModeloEjecucionActivosSolicitud(id, query, paging);
-
-    if (page.isEmpty()) {
-      log.debug("findAllModeloTipoHitosSolicitud(Long id, String query, Pageable paging) - end");
-      return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    }
-
-    log.debug("findAllModeloTipoHitosSolicitud(Long id, String query, Pageable paging) - end");
     return new ResponseEntity<>(page, HttpStatus.OK);
   }
 

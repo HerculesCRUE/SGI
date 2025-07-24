@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration;
 import org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
@@ -30,7 +30,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
     ApplicationContextSupportAutoConfiguration.class })
 @EnableConfigurationProperties(value = SgiConfigProperties.class)
 @TestPropertySource(locations = { "classpath:application.yml" })
-@ContextConfiguration(initializers = { ConfigFileApplicationContextInitializer.class })
+@ContextConfiguration(initializers = { ConfigDataApplicationContextInitializer.class })
 public class FreemarkerDatabaseEmailTemplateLoaderTest {
   @Mock
   private EmailTplRepository repository;

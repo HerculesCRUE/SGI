@@ -124,9 +124,8 @@
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto-socio-periodo-justificacion.observaciones' | translate}}
           </mat-label>
-          <textarea matInput formControlName="observaciones" type="text" id="observaciones"
-            placeholder="{{'csp.proyecto-socio-periodo-justificacion.observaciones' | translate}}">
-                </textarea>
+          <sgi-i18n-textarea formControlName="observaciones"
+            placeholder="{{'csp.proyecto-socio-periodo-justificacion.observaciones' | translate}}"></sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
             {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
           </mat-error>

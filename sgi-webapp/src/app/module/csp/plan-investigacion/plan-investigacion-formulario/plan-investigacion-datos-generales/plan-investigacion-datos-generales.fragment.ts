@@ -2,6 +2,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { IPrograma } from '@core/models/csp/programa';
 import { FormFragment } from '@core/services/action-service';
 import { ProgramaService } from '@core/services/csp/programa.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -22,8 +23,8 @@ export class PlanInvestigacionDatosGeneralesFragment extends FormFragment<IProgr
 
   protected buildFormGroup(): FormGroup {
     const fb = new FormGroup({
-      nombre: new FormControl('', [Validators.maxLength(200)]),
-      descripcion: new FormControl('', [Validators.maxLength(4000)]),
+      nombre: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(200)]),
+      descripcion: new FormControl([], [I18nValidators.maxLength(4000)]),
     });
     return fb;
   }

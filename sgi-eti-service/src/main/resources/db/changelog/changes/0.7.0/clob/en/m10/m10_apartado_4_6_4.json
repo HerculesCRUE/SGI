@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap4_6_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.4 Academic incentives"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Are academic incentives granted?</p>"
+      },
+      {
+        "key": "incentivosAcademicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please describe",
+        "hideExpression": "!model.incentivosAcademicosRadio || model.incentivosAcademicosRadio === 'no'"
+      },
+      {
+        "key": "describirIncentivos",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.incentivosAcademicosRadio || model.incentivosAcademicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Please describe",
+          "placeholder": "Please describe",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

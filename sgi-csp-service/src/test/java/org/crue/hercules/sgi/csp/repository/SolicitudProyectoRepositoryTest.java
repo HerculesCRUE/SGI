@@ -1,12 +1,16 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto.TipoPresupuesto;
+import org.crue.hercules.sgi.csp.model.SolicitudTitulo;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -26,9 +30,12 @@ class SolicitudProyectoRepositoryTest extends BaseRepositoryTest {
     // buscado
 
     // @formatter:off
+    Set<SolicitudTitulo> solicitudTitulo = new HashSet<>();
+    solicitudTitulo.add(new SolicitudTitulo(Language.ES, "titulo"));
+
     Solicitud solicitud1 = entityManager.persistAndFlush(Solicitud.builder()
         .creadorRef("user-001")
-        .titulo("titulo")
+        .titulo(solicitudTitulo)
         .solicitanteRef("user-002")
         .unidadGestionRef("1")
         .formularioSolicitud(FormularioSolicitud.GRUPO)
@@ -42,7 +49,7 @@ class SolicitudProyectoRepositoryTest extends BaseRepositoryTest {
     // @formatter:off
     Solicitud solicitud2 = entityManager.persistAndFlush(Solicitud.builder()
         .creadorRef("user-001")
-        .titulo("titulo")
+        .titulo(solicitudTitulo)
         .solicitanteRef("user-002")
         .unidadGestionRef("1")
         .formularioSolicitud(FormularioSolicitud.GRUPO)
@@ -70,9 +77,12 @@ class SolicitudProyectoRepositoryTest extends BaseRepositoryTest {
     // idSolicitud
     // buscado
     // @formatter:off
+    Set<SolicitudTitulo> solicitudTitulo = new HashSet<>();
+    solicitudTitulo.add(new SolicitudTitulo(Language.ES, "titulo"));
+    
     Solicitud solicitud1 = entityManager.persistAndFlush(Solicitud.builder()
         .creadorRef("user-001")
-        .titulo("titulo")
+        .titulo(solicitudTitulo)
         .solicitanteRef("user-002")
         .unidadGestionRef("1")
         .formularioSolicitud(FormularioSolicitud.GRUPO)
@@ -85,7 +95,7 @@ class SolicitudProyectoRepositoryTest extends BaseRepositoryTest {
     // @formatter:off
     Solicitud solicitud2 = entityManager.persistAndFlush(Solicitud.builder()
         .creadorRef("user-001")
-        .titulo("titulo")
+        .titulo(solicitudTitulo)
         .solicitanteRef("user-002")
         .unidadGestionRef("1")
         .formularioSolicitud(FormularioSolicitud.GRUPO)

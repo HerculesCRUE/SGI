@@ -97,7 +97,7 @@ class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
         () -> service.create(newConvocatoriaAreaTematica))
         // then: throw exception as id can't be provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id tiene que ser null para crear ConvocatoriaAreaTematica");
+        .hasMessage("Identificador de Convocatoria Área Temática debe ser nulo");
   }
 
   @Test
@@ -110,7 +110,7 @@ class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
         () -> service.create(newConvocatoriaAreaTematica))
         // then: throw exception as ConvocatoriaId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Convocatoria no puede ser null para crear ConvocatoriaAreaTematica");
+        .hasMessage("Identificador de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -123,7 +123,7 @@ class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
         () -> service.create(newConvocatoriaAreaTematica))
         // then: throw exception as AreaTematica is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id AreaTematica no puede ser null para crear ConvocatoriaAreaTematica");
+        .hasMessage("Identificador de Área Temática no puede ser nulo");
   }
 
   @Test
@@ -166,7 +166,7 @@ class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
         // then: throw exception as assigned with same Convocatoria And EntidadRef
         // exists
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe una asociación activa para esa Convocatoria y AreaTematica");
+        .hasMessage("Área Temática de Convocatoria ya existe");
   }
 
   @Test
@@ -183,7 +183,7 @@ class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
         () -> service.create(newConvocatoriaAreaTematica))
         // then: throw exception as Convocatoria is not modificable
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede crear ConvocatoriaAreaTematica. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+            "No se puede Crear Convocatoria Área Temática. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test
@@ -241,7 +241,7 @@ class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoriaAreaTematica))
         // then: throw exception as id must be provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ConvocatoriaAreaTematica id no puede ser null para actualizar un ConvocatoriaAreaTematica");
+        .hasMessage("Identificador de Convocatoria Área Temática no puede ser nulo");
   }
 
   @Test
@@ -272,7 +272,7 @@ class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
         () -> service.delete(id))
         // then: IllegalArgumentException is thrown
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ConvocatoriaAreaTematica id no puede ser null para eliminar un ConvocatoriaAreaTematica");
+        .hasMessage("Identificador de Convocatoria Área Temática no puede ser nulo");
   }
 
   @Test
@@ -305,7 +305,7 @@ class ConvocatoriaAreaTematicaServiceTest extends BaseServiceTest {
         () -> service.delete(id))
         // then: throw exception as Convocatoria is not modificable
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede eliminar ConvocatoriaAreaTematica. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+            "No se puede Eliminar Convocatoria Área Temática. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test

@@ -3,6 +3,7 @@ import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { Observable, of } from 'rxjs';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 import { DesgloseEconomicoFragment, IColumnDefinition, IRowConfig, RowTreeDesglose } from './desglose-economico.fragment';
@@ -13,15 +14,18 @@ export abstract class DetalleOperacionFragment extends DesgloseEconomicoFragment
     key: number,
     protected proyectoSge: IProyectoSge,
     protected relaciones: IRelacionEjecucionEconomicaWithResponsables[],
+    protected languageService: LanguageService,
     proyectoService: ProyectoService,
     proyectoAnualidadService: ProyectoAnualidadService,
     protected readonly config: IConfiguracion
   ) {
-    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService, config);
+    super(key, proyectoSge, relaciones, languageService, proyectoService, proyectoAnualidadService, config);
     this.setComplete(true);
   }
 
   protected abstract getColumns(): Observable<IColumnDefinition[]>;
+
+  protected abstract getDisplayColumns(rowConfig: IRowConfig, columns: IColumnDefinition[]): string[];
 
   protected abstract getDatosEconomicos(anualidades: string[]): Observable<IDatoEconomico[]>;
 
@@ -102,6 +106,7 @@ export abstract class DetalleOperacionFragment extends DesgloseEconomicoFragment
 
       const datoEconomico = new RowTreeDesglose(
         {
+          id: element.id,
           anualidad: element.anualidad,
           tipo: element.tipo,
           partidaPresupuestaria: element.partidaPresupuestaria,

@@ -39,8 +39,8 @@ export class EjecucionPresupuestariaGastosExportService
       row.elements.push(item.anualidad);
       row.elements.push(item.tipo);
       row.elements.push(item.partidaPresupuestaria);
-      reportConfig.reportOptions.columns.forEach((column, index) => {
-        const value = item.columnas[column.id] ?? 0;
+      reportConfig.reportOptions.columns.forEach((column, _) => {
+        const value = item.columnas[column.id] ?? (column?.compute ? 0 : '');
         row.elements.push(value);
       });
       rows.push(row);

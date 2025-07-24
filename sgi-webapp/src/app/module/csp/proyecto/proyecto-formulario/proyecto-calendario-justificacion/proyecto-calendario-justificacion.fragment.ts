@@ -1,5 +1,6 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { TipoJustificacion } from '@core/enums/tipo-justificacion';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria-periodo-justificacion';
 import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
@@ -8,6 +9,7 @@ import { Fragment } from '@core/services/action-service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
@@ -38,7 +40,7 @@ export interface IPeriodoJustificacionListado {
   fechaInicioPresentacion: DateTime;
   fechaFinPresentacion: DateTime;
   tipoJustificacion: TipoJustificacion;
-  observaciones: string;
+  observaciones: I18nFieldValue[];
   isProyectoPeriodoJustificacionDeleteable: boolean;
 }
 
@@ -52,6 +54,7 @@ export class ProyectoCalendarioJustificacionFragment extends Fragment {
     private proyectoService: ProyectoService,
     private proyectoPeriodoJustifiacionService: ProyectoPeriodoJustificacionService,
     private convocatoriaService: ConvocatoriaService,
+    private readonly languageService: LanguageService
   ) {
     super(key);
     this.setComplete(true);

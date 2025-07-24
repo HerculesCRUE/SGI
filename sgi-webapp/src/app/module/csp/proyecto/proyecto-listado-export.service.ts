@@ -25,8 +25,8 @@ import { ReportService } from '@core/services/rep/report.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { concat, Observable, of, zip } from 'rxjs';
-import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concat, from, Observable, of, zip } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { ProyectoAreaConocimientoListadoExportService } from './proyecto-area-conocimiento-listado-export.service';
 import { ProyectoCalendarioFacturacionListadoExportService } from './proyecto-calendario-facturacion-listado-export.service';
 import { ProyectoCalendarioJustificacionListadoExportService } from './proyecto-calendario-justificacion-listado-export.service';
@@ -239,12 +239,12 @@ export class ProyectoListadoExportService extends AbstractTableExportService<IPr
         return proyectos.items.map((pr) => pr as IProyectoReportData);
       }),
       switchMap((proyectosReportData) => {
-        const requestsProyecto: Observable<IProyectoReportData>[] = [];
-
-        proyectosReportData.forEach(proyecto => {
-          requestsProyecto.push(this.getDataReportInner(proyecto, reportConfig.reportOptions, reportConfig.outputType));
-        });
-        return zip(...requestsProyecto);
+        return from(proyectosReportData).pipe(
+          mergeMap((proyecto) => {
+            return this.getDataReportInner(proyecto, reportConfig.reportOptions, reportConfig.outputType)
+          }, this.DEFAULT_CONCURRENT),
+          toArray()
+        )
       }),
       takeLast(1)
     );

@@ -1,3 +1,4 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IAlegacionRequerimiento } from '@core/models/csp/alegacion-requerimiento';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -22,7 +23,7 @@ class AlegacionRequerimientoRequestConverter
       importeReintegradoCi: value.importeReintegradoCi,
       interesesReintegrados: value.interesesReintegrados,
       justificanteReintegro: value.justificanteReintegro,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.observaciones) : [],
       requerimientoJustificacion: value.requerimientoJustificacionId ?
         { id: value.requerimientoJustificacionId } as IRequerimientoJustificacion : null
     };
@@ -43,7 +44,7 @@ class AlegacionRequerimientoRequestConverter
       importeReintegradoCi: value.importeReintegradoCi,
       interesesReintegrados: value.interesesReintegrados,
       justificanteReintegro: value.justificanteReintegro,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.observaciones) : [],
       requerimientoJustificacionId: value.requerimientoJustificacion.id
     };
   }

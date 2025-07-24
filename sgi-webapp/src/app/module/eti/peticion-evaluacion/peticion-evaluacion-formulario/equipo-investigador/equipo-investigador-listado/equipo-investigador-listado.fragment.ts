@@ -1,6 +1,5 @@
 import { IEquipoTrabajoWithIsEliminable } from '@core/models/eti/equipo-trabajo-with-is-eliminable';
 import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
-import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
@@ -9,6 +8,7 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiAuthService } from '@sgi/framework/auth';
+import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeAll, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
@@ -24,6 +24,7 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
   solicitantePeticionEvaluacion: IPersona;
 
   constructor(
+    private readonly logger: NGXLogger,
     key: number,
     private personaService: PersonaService,
     private peticionEvaluacionService: PeticionEvaluacionService,
@@ -78,7 +79,14 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
                       this.sgiAuthService.authStatus$.getValue().userRefId && element.value.eliminable;
                     return element;
                   }),
+                  catchError((err) => {
+                    this.logger.error(err);
+                    return of(element);
+                  }),
                   switchMap(() => {
+                    if (!element.value.persona?.nombre) {
+                      return of(element);
+                    }
                     return this.vinculacionService.findByPersonaId(element.value.persona.id).pipe(
                       map((vinculacion) => {
                         element.value.persona.vinculacion = vinculacion;
@@ -88,6 +96,9 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
                     );
                   }),
                   switchMap(() => {
+                    if (!element.value.persona?.nombre) {
+                      return of(element);
+                    }
                     return this.datosAcademicosService.findByPersonaId(element.value.persona.id).pipe(
                       map((datosAcademicos) => {
                         element.value.persona.datosAcademicos = datosAcademicos;
@@ -142,7 +153,7 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
    * @param equipoTrabajo un equipoTrabajo
    */
   addEquipoTrabajo(equipoTrabajo: IEquipoTrabajoWithIsEliminable): void {
-    equipoTrabajo.peticionEvaluacion = { id: this.getKey() as number } as IPeticionEvaluacion;
+    equipoTrabajo.peticionEvaluacionId = this.getKey() as number;
     const wrapped = new StatusWrapper<IEquipoTrabajoWithIsEliminable>(equipoTrabajo);
     wrapped.setCreated();
     const current = this.equiposTrabajo$.value;
@@ -199,7 +210,7 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
         map((persona) => {
           return {
             id: null,
-            peticionEvaluacion: null,
+            peticionEvaluacionId: null,
             persona,
             eliminable: false
           };
@@ -214,7 +225,7 @@ export class EquipoInvestigadorListadoFragment extends Fragment {
     return from(this.deletedEquiposTrabajo).pipe(
       mergeMap((wrappedEquipoTrabajo) => {
         return this.peticionEvaluacionService
-          .deleteEquipoTrabajoPeticionEvaluacion(wrappedEquipoTrabajo.value.peticionEvaluacion.id, wrappedEquipoTrabajo.value.id)
+          .deleteEquipoTrabajoPeticionEvaluacion(wrappedEquipoTrabajo.value.peticionEvaluacionId, wrappedEquipoTrabajo.value.id)
           .pipe(
             tap(_ => {
               this.deletedEquiposTrabajo = this.deletedEquiposTrabajo.filter(deletedEquipoTrabajo =>

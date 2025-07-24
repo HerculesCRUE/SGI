@@ -1,20 +1,13 @@
-import { TipoPropiedad } from '@core/enums/tipo-propiedad';
+import { I18nFieldValueResponse } from '@core/i18n/i18n-field-response';
+import { ITipoProteccionResponse } from '../tipo-proteccion/tipo-proteccion-response';
 
 export interface IInvencionResponse {
   id: number;
-  titulo: string;
+  titulo: I18nFieldValueResponse[];
   fechaComunicacion: string;
-  descripcion: string;
-  comentarios: string;
+  descripcion: I18nFieldValueResponse[];
+  comentarios: I18nFieldValueResponse[];
   proyectoRef: string;
-  tipoProteccion: {
-    id: number;
-    nombre: string;
-    padre: {
-      id: number;
-      nombre: string;
-    };
-    tipoPropiedad: TipoPropiedad;
-  }
+  tipoProteccion: ITipoProteccionResponse;
   activo: boolean;
 }

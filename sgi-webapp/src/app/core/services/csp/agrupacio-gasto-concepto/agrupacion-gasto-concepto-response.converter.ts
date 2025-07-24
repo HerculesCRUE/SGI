@@ -1,6 +1,6 @@
 import { IAgrupacionGastoConcepto } from '@core/models/csp/agrupacion-gasto-concepto';
-import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { SgiBaseConverter } from '@sgi/framework/core';
+import { CONCEPTO_GASTO_RESPONSE_CONVERTER } from '../concepto-gasto/concepto-gasto-response.converter';
 import { IAgrupacionGastoConceptoResponse } from './agrupacion-gasto-concepto-response';
 
 class AgrupacionGastoConceptoResponseConverter
@@ -12,10 +12,7 @@ class AgrupacionGastoConceptoResponseConverter
     return {
       id: value.id,
       agrupacionId: value.agrupacionId,
-      conceptoGasto: {
-        id: value.conceptoGasto.id,
-        nombre: value.conceptoGasto.nombre
-      } as IConceptoGasto,
+      conceptoGasto: value.conceptoGasto ? CONCEPTO_GASTO_RESPONSE_CONVERTER.toTarget(value.conceptoGasto) : null
     };
   }
 
@@ -26,10 +23,7 @@ class AgrupacionGastoConceptoResponseConverter
     return {
       id: value.id,
       agrupacionId: value.agrupacionId,
-      conceptoGasto: {
-        id: value.conceptoGasto.id,
-        nombre: value.conceptoGasto.nombre
-      },
+      conceptoGasto: value.conceptoGasto ? CONCEPTO_GASTO_RESPONSE_CONVERTER.fromTarget(value.conceptoGasto) : null
     };
   }
 }

@@ -12,6 +12,7 @@ import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, Observable, Subject, Subscription, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, take, tap } from 'rxjs/operators';
 import { AreaTematicaModalData } from '../../modals/solicitud-area-tematica-modal/solicitud-area-tematica-modal.component';
+import { I18nValidators } from '@core/validators/i18n-validator';
 
 export interface AreaTematicaSolicitudData {
   rootTree: IAreaTematica;
@@ -72,45 +73,41 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
       duracion: new FormControl(
         { value: null, disabled: !this.userCanEdit },
         [Validators.min(1), Validators.max(9999)]),
-
       objetivos: new FormControl(
-        { value: null, disabled: !this.userCanEdit },
-        [Validators.maxLength(2000)]),
+        { value: [], disabled: !this.userCanEdit },
+        [I18nValidators.maxLength(2000)]),
       intereses: new FormControl(
-        { value: null, disabled: !this.userCanEdit },
-        [Validators.maxLength(2000)]),
+        { value: [], disabled: !this.userCanEdit },
+        [I18nValidators.maxLength(2000)]),
       resultadosPrevistos: new FormControl(
-        { value: null, disabled: !this.userCanEdit },
-        [Validators.maxLength(2000)]),
+        { value: [], disabled: !this.userCanEdit },
+        [I18nValidators.maxLength(2000)]),
       peticionEvaluacionRef: new FormControl(null, []),
-      palabrasClave: new FormControl(null)
+      palabrasClave: new FormControl(null),
+      colaborativo: new FormControl(null, []),
+      coordinado: new FormControl(undefined, [Validators.required]),
+      rolUniversidad: new FormControl(undefined, [Validators.required]),
+      tipoDesglosePresupuesto: new FormControl(undefined, [Validators.required])
     });
-    if (this.isInvestigador) {
-      form.addControl('importeSolicitado', new FormControl({ value: null, disabled: !this.userCanEdit }));
-    } else {
-      form.addControl('colaborativo', new FormControl(null, []));
-      form.addControl('coordinado', new FormControl(undefined, [Validators.required]));
-      form.addControl('rolUniversidad', new FormControl(undefined));
-      form.addControl('tipoDesglosePresupuesto', new FormControl(undefined, [Validators.required]));
 
-      this.subscriptions.push(
-        this.coordinadoValueChangeListener(
-          form.controls.coordinado as FormControl,
-          form.controls.rolUniversidad as FormControl,
-          form.controls.colaborativo as FormControl
-        )
-      );
+    this.subscriptions.push(
+      this.coordinadoValueChangeListener(
+        form.controls.coordinado as FormControl,
+        form.controls.rolUniversidad as FormControl,
+        form.controls.colaborativo as FormControl
+      )
+    );
 
-      this.subscriptions.push(
-        this.rolUniversidadValueChangeListener(form.controls.rolUniversidad as FormControl)
-      );
+    this.subscriptions.push(
+      this.rolUniversidadValueChangeListener(form.controls.rolUniversidad as FormControl)
+    );
 
-      this.subscriptions.push(
-        form.controls.tipoDesglosePresupuesto.valueChanges.subscribe((value) => {
-          this.tipoDesglosePresupuesto$.next(value);
-        })
-      );
-    }
+    this.subscriptions.push(
+      form.controls.tipoDesglosePresupuesto.valueChanges.subscribe((value) => {
+        this.tipoDesglosePresupuesto$.next(value);
+      })
+    );
+
 
     if (this.readonly) {
       form.disable();
@@ -186,33 +183,20 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     if (solicitudProyecto) {
       this.solicitudProyecto = solicitudProyecto;
     }
-    let controls;
-    if (this.isInvestigador) {
-      controls = {
-        acronimo: solicitudProyecto?.acronimo,
-        importeSolicitado: solicitudProyecto?.totalImporteSolicitado,
-        codExterno: solicitudProyecto?.codExterno,
-        duracion: solicitudProyecto?.duracion,
-        objetivos: solicitudProyecto?.objetivos,
-        intereses: solicitudProyecto?.intereses,
-        resultadosPrevistos: solicitudProyecto?.resultadosPrevistos,
-        peticionEvaluacionRef: solicitudProyecto?.peticionEvaluacionRef
-      };
-    } else {
-      controls = {
-        acronimo: solicitudProyecto?.acronimo,
-        codExterno: solicitudProyecto?.codExterno,
-        duracion: solicitudProyecto?.duracion,
-        colaborativo: solicitudProyecto?.colaborativo,
-        coordinado: solicitudProyecto?.coordinado,
-        rolUniversidad: solicitudProyecto?.rolUniversidad,
-        tipoDesglosePresupuesto: solicitudProyecto?.tipoPresupuesto,
-        objetivos: solicitudProyecto?.objetivos,
-        intereses: solicitudProyecto?.intereses,
-        resultadosPrevistos: solicitudProyecto?.resultadosPrevistos,
-        peticionEvaluacionRef: solicitudProyecto?.peticionEvaluacionRef
-      };
-    }
+    const controls = {
+      acronimo: solicitudProyecto?.acronimo,
+      codExterno: solicitudProyecto?.codExterno,
+      duracion: solicitudProyecto?.duracion,
+      colaborativo: solicitudProyecto?.colaborativo,
+      coordinado: solicitudProyecto?.coordinado,
+      rolUniversidad: solicitudProyecto?.rolUniversidad,
+      tipoDesglosePresupuesto: solicitudProyecto?.tipoPresupuesto,
+      objetivos: solicitudProyecto?.objetivos,
+      intereses: solicitudProyecto?.intereses,
+      resultadosPrevistos: solicitudProyecto?.resultadosPrevistos,
+      peticionEvaluacionRef: solicitudProyecto?.peticionEvaluacionRef
+    };
+
     if (!this.userCanEdit) {
       this.getFormGroup()?.disable();
     }
@@ -225,7 +209,7 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
 
     return this.solicitudService.findSolicitudProyecto(key).pipe(
       switchMap(solicitudProyecto => {
-        if (solicitudProyecto?.id && !this.isInvestigador) {
+        if (solicitudProyecto?.id) {
           return this.solicitudProyectoService.hasSolicitudPresupuesto(solicitudProyecto.id).pipe(
             map(hasSolicitudPresupuesto => {
               this.disableTipoDesglosePresupuesto(hasSolicitudPresupuesto);
@@ -287,7 +271,7 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
         return of(solicitudProyecto);
       }),
       switchMap(solicitudProyecto => {
-        if (solicitudProyecto?.id && !this.isInvestigador) {
+        if (solicitudProyecto?.id) {
           return this.solicitudProyectoService.hasSolicitudSocio(solicitudProyecto?.id).pipe(
             map(hasSolicitudSocio => {
               this.hasSolicitudSocio$.next(hasSolicitudSocio);
@@ -297,7 +281,7 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
         return of(solicitudProyecto);
       }),
       switchMap(solicitudProyecto => {
-        if (this.isInvestigador || !solicitudProyecto?.rolUniversidad?.id) {
+        if (!solicitudProyecto?.rolUniversidad?.id) {
           return of(solicitudProyecto);
         }
 
@@ -370,16 +354,12 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
     this.solicitudProyecto.intereses = form.intereses.value;
     this.solicitudProyecto.resultadosPrevistos = form.resultadosPrevistos.value;
     this.solicitudProyecto.codExterno = form.codExterno.value;
-    if (this.isInvestigador) {
-      this.solicitudProyecto.totalImporteSolicitado = form.importeSolicitado.value;
-    } else {
-      this.solicitudProyecto.colaborativo = Boolean(form.colaborativo.value);
-      this.solicitudProyecto.coordinado = Boolean(form.coordinado.value);
-      this.solicitudProyecto.rolUniversidad = form.rolUniversidad.value;
-      this.solicitudProyecto.peticionEvaluacionRef = form.peticionEvaluacionRef.value;
-      this.solicitudProyecto.tipoPresupuesto = form.tipoDesglosePresupuesto.value;
+    this.solicitudProyecto.colaborativo = Boolean(form.colaborativo.value);
+    this.solicitudProyecto.coordinado = Boolean(form.coordinado.value);
+    this.solicitudProyecto.rolUniversidad = form.rolUniversidad.value;
+    this.solicitudProyecto.peticionEvaluacionRef = form.peticionEvaluacionRef.value;
+    this.solicitudProyecto.tipoPresupuesto = form.tipoDesglosePresupuesto.value;
 
-    }
     return this.solicitudProyecto;
   }
 
@@ -397,6 +377,10 @@ export class SolicitudProyectoFichaGeneralFragment extends FormFragment<ISolicit
         return void 0;
       })
     );
+  }
+
+  hasConvocatoria(): boolean {
+    return !!this.convocatoriaId;
   }
 
   isEdit(): boolean {

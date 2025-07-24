@@ -2,10 +2,16 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
+import org.crue.hercules.sgi.csp.model.TipoFinanciacionDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFinanciacionNombre;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -76,7 +82,8 @@ class TipoFinanciacionIT extends BaseIT {
 
     TipoFinanciacion tipoFinanciacion = response.getBody();
     Assertions.assertThat(tipoFinanciacion.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(tipoFinanciacion.getNombre()).as("getNombre()").isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFinanciacion.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-001");
     Assertions.assertThat(tipoFinanciacion.getDescripcion()).as("descripcion-001")
         .isEqualTo(tipoFinanciacion.getDescripcion());
     Assertions.assertThat(tipoFinanciacion.getActivo()).as("getActivo()").isFalse();
@@ -96,26 +103,11 @@ class TipoFinanciacionIT extends BaseIT {
 
     TipoFinanciacion tipoFinanciacion = response.getBody();
     Assertions.assertThat(tipoFinanciacion.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(tipoFinanciacion.getNombre()).as("getNombre()").isEqualTo("nombre-001");
-    Assertions.assertThat(tipoFinanciacion.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFinanciacion.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFinanciacion.getDescripcion(), Language.ES))
+        .as("getDescripcion()").isEqualTo("descripcion-001");
     Assertions.assertThat(tipoFinanciacion.getActivo()).as("getActivo()").isTrue();
-  }
-
-  @Sql
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void findById_ReturnsTipoFinanciacion() throws Exception {
-    Long id = 1L;
-
-    final ResponseEntity<TipoFinanciacion> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-        HttpMethod.GET, buildRequest(null, null), TipoFinanciacion.class, id);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    TipoFinanciacion tipoFinanciacion = response.getBody();
-
-    Assertions.assertThat(tipoFinanciacion).as("isNotNull()").isNotNull();
-    Assertions.assertThat(tipoFinanciacion.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(tipoFinanciacion.getNombre()).as("getNombre()").isNotNull();
   }
 
   @Sql
@@ -124,8 +116,11 @@ class TipoFinanciacionIT extends BaseIT {
   void update_WithExistingId_ReturnsTipoFinanciacion() throws Exception {
 
     // given: Entidad existente que se va a actualizar
+    Set<TipoFinanciacionNombre> nombre = new HashSet<>();
+    nombre.add(new TipoFinanciacionNombre(Language.ES, "nuevoNombre"));
+
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(1L);
-    tipoFinanciacion.setNombre("nuevoNombre");
+    tipoFinanciacion.setNombre(nombre);
 
     // when: Se actualiza la entidad
     final ResponseEntity<TipoFinanciacion> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -134,7 +129,8 @@ class TipoFinanciacionIT extends BaseIT {
     TipoFinanciacion updatedTipoFinanciacion = response.getBody();
     // then: Los datos se actualizan correctamente
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Assertions.assertThat(updatedTipoFinanciacion.getNombre()).as("getNombre()").isEqualTo("nuevoNombre");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updatedTipoFinanciacion.getNombre(), Language.ES))
+        .as("getNombre()").isEqualTo("nuevoNombre");
   }
 
   @Sql
@@ -144,8 +140,8 @@ class TipoFinanciacionIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
         .build(false).toUri();
@@ -162,11 +158,14 @@ class TipoFinanciacionIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(tiposFinanciacion.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposFinanciacion.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(tiposFinanciacion.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposFinanciacion.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(tiposFinanciacion.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposFinanciacion.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
 
@@ -178,8 +177,8 @@ class TipoFinanciacionIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "AUTH")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + "/todos").queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -196,11 +195,14 @@ class TipoFinanciacionIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(tiposFinanciacion.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposFinanciacion.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(tiposFinanciacion.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposFinanciacion.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(tiposFinanciacion.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposFinanciacion.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
 
@@ -223,11 +225,17 @@ class TipoFinanciacionIT extends BaseIT {
    */
   public TipoFinanciacion generarMockTipoFinanciacion(Long id, String nombre) {
 
+    Set<TipoFinanciacionNombre> tipoFinanciacionNombre = new HashSet<>();
+    tipoFinanciacionNombre.add(new TipoFinanciacionNombre(Language.ES, nombre));
+
+    Set<TipoFinanciacionDescripcion> tipoFinanciacionDescripcion = new HashSet<>();
+    tipoFinanciacionDescripcion.add(new TipoFinanciacionDescripcion(Language.ES, "descripcion-" + 1));
+
     TipoFinanciacion tipoFinanciacion = new TipoFinanciacion();
     tipoFinanciacion.setId(id);
     tipoFinanciacion.setActivo(true);
-    tipoFinanciacion.setNombre(nombre);
-    tipoFinanciacion.setDescripcion("descripcion-" + 1);
+    tipoFinanciacion.setNombre(tipoFinanciacionNombre);
+    tipoFinanciacion.setDescripcion(tipoFinanciacionDescripcion);
 
     return tipoFinanciacion;
   }

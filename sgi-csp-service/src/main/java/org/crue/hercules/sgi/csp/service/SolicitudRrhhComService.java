@@ -1,14 +1,14 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.com.CspComCambioEstadoRechazadaSolTipoRrhhData;
 import org.crue.hercules.sgi.csp.dto.com.CspComCambioEstadoSolicitadaSolTipoRrhhData;
-import org.crue.hercules.sgi.csp.dto.com.CspComCambioEstadoSolicitadaSolTipoRrhhData.CspComCambioEstadoSolicitadaSolTipoRrhhDataBuilder;
 import org.crue.hercules.sgi.csp.dto.com.CspComCambioEstadoValidadaSolTipoRrhhData;
 import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
@@ -16,6 +16,7 @@ import org.crue.hercules.sgi.csp.dto.sgp.PersonaOutput;
 import org.crue.hercules.sgi.csp.dto.sgp.PersonaOutput.Email;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudRrhhNotFoundException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudRrhh;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
@@ -46,7 +47,7 @@ public class SolicitudRrhhComService {
   public void enviarComunicadoCambioEstadoSolicitadaSolTipoRrhh(Instant fechaEstado, Solicitud solicitud)
       throws JsonProcessingException {
 
-    CspComCambioEstadoSolicitadaSolTipoRrhhDataBuilder dataBuilder = CspComCambioEstadoSolicitadaSolTipoRrhhData
+    CspComCambioEstadoSolicitadaSolTipoRrhhData.CspComCambioEstadoSolicitadaSolTipoRrhhDataBuilder dataBuilder = CspComCambioEstadoSolicitadaSolTipoRrhhData
         .builder()
         .fechaEstado(fechaEstado)
         .nombreApellidosSolicitante(
@@ -54,7 +55,13 @@ public class SolicitudRrhhComService {
         .codigoInternoSolicitud(solicitud.getCodigoRegistroInterno())
         .enlaceAplicacionMenuValidacionTutor(getEnlaceAplicacionMenuValidacionTutor());
 
-    this.fillConvocatoriaData(dataBuilder, solicitud.getConvocatoriaId());
+    if (solicitud.getConvocatoriaId() != null) {
+      Optional<Convocatoria> convocatoria = this.convocatoriaRepository.findById(solicitud.getConvocatoriaId());
+      if (convocatoria.isPresent()) {
+        dataBuilder.tituloConvocatoria(convocatoria.get().getTitulo());
+        dataBuilder.fechaProvisionalConvocatoria(convocatoria.get().getFechaProvisional());
+      }
+    }
 
     log.debug(
         "Construyendo comunicado aviso cambio de estado SOLICITADA a la solicitud de tipo RRHH {} para enviarlo inmediatamente al solicitante",
@@ -111,26 +118,14 @@ public class SolicitudRrhhComService {
 
   }
 
-  private void fillConvocatoriaData(
-      CspComCambioEstadoSolicitadaSolTipoRrhhDataBuilder dataBuilder,
-      Long convocatoriaId) {
-    if (convocatoriaId != null) {
-      Optional<Convocatoria> convocatoria = this.convocatoriaRepository.findById(convocatoriaId);
-      if (convocatoria.isPresent()) {
-        dataBuilder.tituloConvocatoria(convocatoria.get().getTitulo());
-        dataBuilder.fechaProvisionalConvocatoria(convocatoria.get().getFechaProvisional());
-      }
-    }
-  }
-
-  private String getTituloConvocatoria(Long convocatoriaId) {
+  private Set<ConvocatoriaTitulo> getTituloConvocatoria(Long convocatoriaId) {
     if (convocatoriaId != null) {
       Optional<Convocatoria> convocatoria = this.convocatoriaRepository.findById(convocatoriaId);
       if (convocatoria.isPresent()) {
         return convocatoria.get().getTitulo();
       }
     }
-    return null;
+    return Collections.emptySet();
   }
 
   private String getEnlaceAplicacionMenuValidacionTutor() {
@@ -146,7 +141,7 @@ public class SolicitudRrhhComService {
         .map(email -> Recipient
             .builder().name(email.getEmail()).address(email.getEmail())
             .build())
-        .collect(Collectors.toList());
+        .toList();
   }
 
 }

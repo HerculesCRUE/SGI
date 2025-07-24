@@ -64,13 +64,13 @@ export class ProyectoCalendarioJustificacionComponent extends FragmentComponent 
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.CALENDARIO_JUSTIFICACION, actionService);
+    super(actionService.FRAGMENT.CALENDARIO_JUSTIFICACION, actionService, translate);
     this.formPart = this.fragment as ProyectoCalendarioJustificacionFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource = new MatTableDataSource<IPeriodoJustificacionListado>();
     this.dataSource.paginator = this.paginator;
     this.subscriptions.push(this.formPart.periodoJustificaciones$.subscribe(
@@ -87,7 +87,7 @@ export class ProyectoCalendarioJustificacionComponent extends FragmentComponent 
     this.dataSource.sort = this.sort;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_PERIODO_JUSTIFICACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

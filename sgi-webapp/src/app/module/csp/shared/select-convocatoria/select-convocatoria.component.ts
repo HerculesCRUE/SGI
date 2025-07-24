@@ -3,10 +3,11 @@ import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormField, MatFormFieldControl, MAT_FORM_FIELD } from '@angular/material/form-field';
+import { MAT_FORM_FIELD, MatFormField, MatFormFieldControl } from '@angular/material/form-field';
 import { SearchResult, SelectDialogComponent } from '@core/component/select-dialog/select-dialog.component';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { LanguageService } from '@core/services/language.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import {
   RSQLSgiRestFilter,
@@ -82,10 +83,11 @@ export class SelectConvocatoriaComponent extends SelectDialogComponent<SearchCon
     @Self() @Optional() ngControl: NgControl,
     dialog: MatDialog,
     focusMonitor: FocusMonitor,
-    private readonly convocatoriaService: ConvocatoriaService
+    private readonly convocatoriaService: ConvocatoriaService,
+    private readonly languageService: LanguageService
   ) {
     super(changeDetectorRef, elementRef, parentFormField, ngControl, dialog, SearchConvocatoriaModalComponent, focusMonitor);
-    this.displayWith = (option) => option.titulo;
+    this.displayWith = (option) => this.languageService.getFieldValue(option.titulo);
   }
 
   protected getDialogData(): SearchConvocatoriaModalData {
@@ -124,7 +126,7 @@ export class SelectConvocatoriaComponent extends SelectDialogComponent<SearchCon
         index: 0,
         size: 10
       },
-      sort: new RSQLSgiRestSort('titulo', SgiRestSortDirection.ASC),
+      sort: new RSQLSgiRestSort('titulo.value', SgiRestSortDirection.ASC),
       filter: this.buildFilter(term)
     };
 
@@ -145,7 +147,7 @@ export class SelectConvocatoriaComponent extends SelectDialogComponent<SearchCon
   }
 
   private buildFilter(term: string): SgiRestFilter {
-    const filter = new RSQLSgiRestFilter('titulo', SgiRestFilterOperator.LIKE_ICASE, term);
+    const filter = new RSQLSgiRestFilter('titulo.value', SgiRestFilterOperator.LIKE_ICASE, term);
     if (this.getFilterUnidadesGestion().length > 0) {
       filter.and('unidadGestionRef', SgiRestFilterOperator.IN, this.getFilterUnidadesGestion());
     }

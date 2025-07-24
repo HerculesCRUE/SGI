@@ -19,4 +19,5 @@ export class SolicitudAutoevaluacionComponent extends FragmentComponent {
     this.formPart = this.fragment as SolicitudAutoevaluacionFragment;
   }
 
+  protected setupI18N(): void { }
 }

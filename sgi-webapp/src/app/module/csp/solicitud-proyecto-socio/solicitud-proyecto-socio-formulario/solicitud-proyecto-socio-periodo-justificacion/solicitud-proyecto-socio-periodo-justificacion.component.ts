@@ -42,13 +42,13 @@ export class SolicitudProyectoSocioPeriodoJustificacionComponent extends Fragmen
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.PERIODOS_JUSTIFICACION, actionService);
+    super(actionService.FRAGMENT.PERIODOS_JUSTIFICACION, actionService, translate);
     this.formPart = this.fragment as SolicitudProyectoSocioPeriodoJustificacionFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subcription = this.formPart.periodoJustificaciones$.subscribe(
       (proyectoEquipos) => {
         this.dataSource.data = proyectoEquipos;
@@ -68,7 +68,7 @@ export class SolicitudProyectoSocioPeriodoJustificacionComponent extends Fragmen
     };
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_PROYECTO_PERIODO_JUSTIFICACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

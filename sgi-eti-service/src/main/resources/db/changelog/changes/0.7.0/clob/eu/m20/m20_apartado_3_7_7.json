@@ -1,0 +1,70 @@
+[
+  {
+    "key": "ap3_7_7",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.7 Agente biologikoak"
+    },
+    "fieldGroup": [
+      {
+        "template": "Esperimentazio prozesuan agente biologikoak inokulatuko zaizkie?"
+      },
+      {
+        "key": "agentesBiologicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Esperimentazio prozesuak agente biologikoekin (AB) edo genetikoki eraldatutako organismoekin (GEO) lan egitea eskatzen badu 2 edo goragoko babes mailako laborategi batean, ebaluazioa eskatu behar zaio #nombre_comite_M30_eu#.</p>"
+      },
+      {
+        "key": "tipoAgenteBiologico",
+        "type": "i18n-input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Agente biologiko mota",
+          "required": true,
+          "placeholder": "Mota"
+        }
+      },
+      {
+        "key": "nivelBioseguridad",
+        "type": "i18n-input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Biosegurtasun maila",
+          "required": true,
+          "placeholder": "Maila"
+        }
+      },
+      {
+        "key": "administracion",
+        "type": "i18n-input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Dosia eta emateko modua",
+          "required": true,
+          "placeholder": "Dosia"
+        }
+      }
+    ]
+  }
+]

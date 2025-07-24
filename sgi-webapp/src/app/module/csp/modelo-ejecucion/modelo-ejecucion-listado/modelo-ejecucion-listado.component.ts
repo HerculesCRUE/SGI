@@ -55,7 +55,7 @@ export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComp
     private readonly translate: TranslateService,
     private authService: SgiAuthService
   ) {
-    super();
+    super(translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -66,11 +66,18 @@ export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComp
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'nombre') {
+        return 'nombre.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.formGroup = new FormGroup({
       nombre: new FormControl(''),
       activo: new FormControl(true)
@@ -78,7 +85,7 @@ export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComp
     this.filter = this.createFilter();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MODELO_EJECUCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -175,9 +182,9 @@ export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComp
 
   protected initColumns(): void {
     if (this.authService.hasAuthority('CSP-ME-R')) {
-      this.columnas = ['nombre', 'descripcion', 'externo', 'contrato', 'activo', 'acciones'];
+      this.columnas = ['nombre', 'externo', 'contrato', 'solicitudSinConvocatoria', 'activo', 'acciones'];
     } else {
-      this.columnas = ['nombre', 'descripcion', 'externo', 'contrato', 'acciones'];
+      this.columnas = ['nombre', 'externo', 'contrato', 'solicitudSinConvocatoria', 'acciones'];
     }
 
   }
@@ -188,7 +195,7 @@ export class ModeloEjecucionListadoComponent extends AbstractTablePaginationComp
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const filter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value);
+    const filter = new RSQLSgiRestFilter('nombre.value', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value);
     if (controls.activo.value !== 'todos') {
       filter.and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value?.toString());
     }

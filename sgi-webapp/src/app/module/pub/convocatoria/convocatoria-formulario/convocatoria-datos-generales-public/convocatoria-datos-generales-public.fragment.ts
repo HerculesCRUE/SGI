@@ -8,8 +8,10 @@ import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { FormFragment } from '@core/services/action-service';
 import { ConvocatoriaPublicService } from '@core/services/csp/convocatoria-public.service';
 import { UnidadGestionPublicService } from '@core/services/csp/unidad-gestion-public.service';
+import { LanguageService } from '@core/services/language.service';
 import { EmpresaPublicService } from '@core/services/sgemp/empresa-public.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, Observable, of, Subject } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
@@ -29,6 +31,7 @@ export class ConvocatoriaDatosGeneralesPublicFragment extends FormFragment<IConv
 
   constructor(
     private readonly logger: NGXLogger,
+    private readonly languageService: LanguageService,
     key: number,
     private convocatoriaService: ConvocatoriaPublicService,
     private empresaService: EmpresaPublicService,
@@ -51,7 +54,7 @@ export class ConvocatoriaDatosGeneralesPublicFragment extends FormFragment<IConv
       fechaPublicacion: new FormControl(null),
       fechaProvisional: new FormControl(null),
       fechaConcesion: new FormControl(null),
-      titulo: new FormControl('', [Validators.required, Validators.maxLength(1000)]),
+      titulo: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(1000)]),
       modeloEjecucion: new FormControl(null),
       finalidad: new FormControl(null),
       duracion: new FormControl('', [Validators.min(1), Validators.max(9999)]),
@@ -61,8 +64,8 @@ export class ConvocatoriaDatosGeneralesPublicFragment extends FormFragment<IConv
       clasificacionCVN: new FormControl(null),
       regimenConcurrencia: new FormControl(null),
       entidadGestora: new FormControl(null),
-      objeto: new FormControl('', Validators.maxLength(2000)),
-      observaciones: new FormControl('', Validators.maxLength(2000)),
+      objeto: new FormControl([], I18nValidators.maxLength(2000)),
+      observaciones: new FormControl([], I18nValidators.maxLength(2000)),
       palabrasClave: new FormControl(null)
     });
 
@@ -74,7 +77,7 @@ export class ConvocatoriaDatosGeneralesPublicFragment extends FormFragment<IConv
   buildPatch(convocatoria: IConvocatoria): { [key: string]: any } {
     this.convocatoria = convocatoria;
     return {
-      modeloEjecucion: convocatoria.modeloEjecucion?.nombre ?? '',
+      modeloEjecucion: convocatoria.modeloEjecucion?.nombre ? this.languageService.getFieldValue(convocatoria?.modeloEjecucion?.nombre) : '',
       unidadGestion: convocatoria.unidadGestion?.acronimo ?? '',
       codigo: convocatoria.codigo,
       fechaPublicacion: convocatoria.fechaPublicacion,
@@ -83,7 +86,7 @@ export class ConvocatoriaDatosGeneralesPublicFragment extends FormFragment<IConv
       titulo: convocatoria.titulo,
       objeto: convocatoria.objeto,
       observaciones: convocatoria.observaciones,
-      finalidad: convocatoria.finalidad?.nombre ?? '',
+      finalidad: this.languageService.getFieldValue(convocatoria.finalidad?.nombre) ?? '',
       regimenConcurrencia: convocatoria.regimenConcurrencia?.nombre ?? '',
       formularioSolicitud: convocatoria.formularioSolicitud,
       duracion: convocatoria.duracion,

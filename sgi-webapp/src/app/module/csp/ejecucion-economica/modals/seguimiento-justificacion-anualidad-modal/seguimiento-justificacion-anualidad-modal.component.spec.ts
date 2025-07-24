@@ -20,7 +20,7 @@ describe('SeguimientoJustificacionAnualidadModalComponent', () => {
 
   const newData: ISeguimientoJustificacionAnualidadModalData = {
     seguimientoJustificacionAnualidad: new StatusWrapper({}),
-    tituloProyecto: ''
+    tituloProyecto: []
   } as ISeguimientoJustificacionAnualidadModalData;
 
   beforeEach(waitForAsync(() => {

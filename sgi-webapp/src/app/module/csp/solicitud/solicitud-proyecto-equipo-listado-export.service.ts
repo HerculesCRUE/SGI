@@ -1,11 +1,10 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ISolicitudProyectoEquipo } from '@core/models/csp/solicitud-proyecto-equipo';
-import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { IPersona } from '@core/models/sgp/persona';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -33,13 +32,14 @@ const INVESTIGADOR_FECHA_INICIO_FIELD = 'fechaInicioInvestigador';
 const INVESTIGADOR_FECHA_FIN_FIELD = 'fechaFinInvestigador';
 
 @Injectable()
-export class SolicitudProyectoEquipoListadoExportService extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions>{
+export class SolicitudProyectoEquipoListadoExportService extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     private readonly solicitudService: SolicitudService,
     private personaService: PersonaService,
+    private languageService: LanguageService
   ) {
     super(translate);
   }
@@ -78,36 +78,7 @@ export class SolicitudProyectoEquipoListadoExportService extends AbstractTableEx
     solicitudes: ISolicitudReportData[],
     reportConfig: IReportConfig<ISolicitudReportOptions>
   ): ISgiColumnReport[] {
-
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsInvestigadorNotExcel();
-    } else {
-      return this.getColumnsInvestigadorExcel(solicitudes);
-    }
-  }
-
-  private getColumnsInvestigadorNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: EQUIPO_FIELD,
-      title: this.translate.instant(INVESTIGADOR_KEY),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(PROYECTO_KEY) + ': ' + this.translate.instant(EQUIPO_KEY) +
-      ' (' + this.translate.instant(INVESTIGADOR_NOMBRE_KEY) +
-      ' - ' + this.translate.instant(INVESTIGADOR_EMAIL_KEY) +
-      ' - ' + this.translate.instant(INVESTIGADOR_ROL_KEY) +
-      ' - ' + this.translate.instant(INVESTIGADOR_MES_INICIO_KEY) +
-      ' - ' + this.translate.instant(INVESTIGADOR_MES_FIN_KEY) +
-      ')';
-    const columnEquipo: ISgiColumnReport = {
-      name: EQUIPO_FIELD,
-      title: titleI18n,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns
-    };
-    return [columnEquipo];
+    return this.getColumnsInvestigadorExcel(solicitudes);
   }
 
   private getColumnsInvestigadorExcel(solicitudes: ISolicitudReportData[]): ISgiColumnReport[] {
@@ -160,45 +131,12 @@ export class SolicitudProyectoEquipoListadoExportService extends AbstractTableEx
   public fillRows(solicitudes: ISolicitudReportData[], index: number, reportConfig: IReportConfig<ISolicitudReportOptions>): any[] {
     const solicitud = solicitudes[index];
     const elementsRow: any[] = [];
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      this.fillRowsInvestigadorNotExcel(solicitud, elementsRow);
-    } else {
-      const maxNumEquipo = Math.max(...solicitudes.map(s => s.equipo ? s.equipo?.length : 0));
-      for (let i = 0; i < maxNumEquipo; i++) {
-        const equipo = solicitud.equipo && solicitud.equipo.length > 0 ? solicitud.equipo[i] : null;
-        this.fillRowsInvestigadorExcel(elementsRow, equipo);
-      }
+    const maxNumEquipo = Math.max(...solicitudes.map(s => s.equipo ? s.equipo?.length : 0));
+    for (let i = 0; i < maxNumEquipo; i++) {
+      const equipo = solicitud.equipo && solicitud.equipo.length > 0 ? solicitud.equipo[i] : null;
+      this.fillRowsInvestigadorExcel(elementsRow, equipo);
     }
     return elementsRow;
-  }
-
-  private fillRowsInvestigadorNotExcel(solicitud: ISolicitudReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-
-    solicitud.equipo?.forEach(miembroEquipo => {
-      const equipoElementsRow: any[] = [];
-
-      let miembroEquipoTable = miembroEquipo?.persona?.nombre + ' ' + miembroEquipo?.persona?.apellidos;
-      miembroEquipoTable += '\n';
-      miembroEquipoTable += this.getEmailPrincipal(miembroEquipo?.persona) ?? '';
-      miembroEquipoTable += '\n';
-      miembroEquipoTable += miembroEquipo?.rolProyecto?.nombre ?? '';
-      miembroEquipoTable += '\n';
-      miembroEquipoTable += miembroEquipo?.mesInicio ?? '';
-      miembroEquipoTable += '\n';
-      miembroEquipoTable += miembroEquipo?.mesFin ?? '';
-
-      equipoElementsRow.push(miembroEquipoTable);
-
-      const rowReport: ISgiRowReport = {
-        elements: equipoElementsRow
-      };
-      rowsReport.push(rowReport);
-    });
-
-    elementsRow.push({
-      rows: rowsReport
-    });
   }
 
   private fillRowsInvestigadorExcel(elementsRow: any[], miembroEquipo: ISolicitudProyectoEquipo) {
@@ -206,7 +144,7 @@ export class SolicitudProyectoEquipoListadoExportService extends AbstractTableEx
       elementsRow.push(miembroEquipo.persona?.nombre ?? '');
       elementsRow.push(miembroEquipo.persona?.apellidos ?? '');
       elementsRow.push(this.getEmailPrincipal(miembroEquipo.persona));
-      elementsRow.push(miembroEquipo.rolProyecto?.nombre ?? '');
+      elementsRow.push(this.languageService.getFieldValue(miembroEquipo.rolProyecto?.nombre));
       elementsRow.push(miembroEquipo.mesInicio?.toString() ?? '');
       elementsRow.push(miembroEquipo.mesFin?.toString() ?? '');
     } else {

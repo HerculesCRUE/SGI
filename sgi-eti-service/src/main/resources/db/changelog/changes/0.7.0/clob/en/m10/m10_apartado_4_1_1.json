@@ -1,0 +1,108 @@
+[
+  {
+    "key": "ap4_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.1.1 Type of risks or inconveniences"
+    },
+    "hideExpression": "!formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio || formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Please indicate below the type of risks and/or inconveniences that will be caused to the research subject due to the interventions or tests that will be carried out for the project.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>The consideration of risk or discomfort should be carried out in a broad sense, since not only the physical risks to health should be taken into account (as in the case of invasive tests, for example) but also possible psychological damages (for example when deal with 'sensitive topics') or the inconvenience caused by the simple intrusion into the privacy of the study subject or the use of their time.</p>"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tipoRiesgosOMolestiasCheck",
+        "templateOptions": {
+          "label": "Options",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "riesgoFisico",
+              "label": "Physical risk"
+            },
+            {
+              "value": "riesgoPsicologico",
+              "label": "Psychological Risk"
+            },
+            {
+              "value": "intromisionIntimidad",
+              "label": "Intrusion into privacy"
+            },
+            {
+              "value": "usoTiempo",
+              "label": "Use of their time"
+            },
+            {
+              "value": "sinRiesgoPorTratarseDeDatos",
+              "label": "No risk as data/samples are anonymous"
+            }
+          ]
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "multicheckbox-restricted",
+              "options": {
+                "message": "The answers \"${option1}\" and \"${option2}\" are not compatible.",
+                "restrictions": {
+                  "notValidCombinations": [
+                    {
+                      "option": "riesgoFisico",
+                      "incompatibleOptions": [
+                        "sinRiesgoPorTratarseDeDatos"
+                      ]
+                    },
+                    {
+                      "option": "riesgoPsicologico",
+                      "incompatibleOptions": [
+                        "sinRiesgoPorTratarseDeDatos"
+                      ]
+                    },
+                    {
+                      "option": "intromisionIntimidad",
+                      "incompatibleOptions": [
+                        "sinRiesgoPorTratarseDeDatos"
+                      ]
+                    },
+                    {
+                      "option": "usoTiempo",
+                      "incompatibleOptions": [
+                        "sinRiesgoPorTratarseDeDatos"
+                      ]
+                    },
+                    {
+                      "option": "sinRiesgoPorTratarseDeDatos",
+                      "incompatibleOptions": [
+                        "riesgoFisico",
+                        "riesgoPsicologico",
+                        "intromisionIntimidad",
+                        "usoTiempo"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: possible damage/discomfort should be related to the interventions described in detail in the section <strong>'3.4.3 Description of interventions or tests'</strong></p><p>Please remember that the participant should be duly informed of the inconveniences and possible risks and benefits of the research and should be informed of this in <strong>the consent document</strong> (section '4.4.2 Minimum mandatory information').</p><p>For more information on the minimum information required, consult <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a15' target='_blank'>article 15</a> of LIB 14/2007.</p>"
+      }
+    ]
+  }
+]

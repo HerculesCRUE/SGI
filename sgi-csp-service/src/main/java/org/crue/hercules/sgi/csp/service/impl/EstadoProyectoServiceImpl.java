@@ -4,11 +4,11 @@ import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.repository.EstadoProyectoRepository;
 import org.crue.hercules.sgi.csp.service.EstadoProyectoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,9 +37,8 @@ public class EstadoProyectoServiceImpl implements EstadoProyectoService {
   public EstadoProyecto create(EstadoProyecto estadoProyecto) {
     log.debug("create(EstadoProyecto estadoProyecto) - start");
 
-    Assert.isNull(estadoProyecto.getId(), "EstadoProyecto id tiene que ser null para crear un EstadoProyecto");
-
-    Assert.notNull(estadoProyecto.getProyectoId(), "proyectoId no puede ser null para crear un EstadoProyecto");
+    AssertHelper.idIsNull(estadoProyecto.getId(), EstadoProyecto.class);
+    AssertHelper.idNotNull(estadoProyecto.getProyectoId(), Proyecto.class);
 
     EstadoProyecto returnValue = repository.save(estadoProyecto);
 

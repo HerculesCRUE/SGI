@@ -5,6 +5,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { LanguageService } from '@core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { ProyectoConceptoGastoActionService } from '../../proyecto-concepto-gasto.action.service';
@@ -40,9 +41,10 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
 
   constructor(
     public readonly actionService: ProyectoConceptoGastoActionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as ProyectoConceptoGastoDatosGeneralesFragment;
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.layout = 'row';
@@ -56,7 +58,7 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.textSaveOrUpdate = this.fragment.getKey() ? MSG_ACEPTAR : MSG_ANADIR;
   }
 
@@ -76,7 +78,7 @@ export class ProyectoConceptoGastoDatosGeneralesComponent
       this.formPart.getFormGroup().controls.costesIndirectosConvocatoria.value);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_CONCEPTO_GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

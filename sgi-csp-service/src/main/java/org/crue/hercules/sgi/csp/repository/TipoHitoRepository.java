@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.TipoHito;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -15,11 +16,13 @@ import org.springframework.stereotype.Repository;
 public interface TipoHitoRepository extends JpaRepository<TipoHito, Long>, JpaSpecificationExecutor<TipoHito> {
 
   /**
-   * Busca un {@link TipoHito} activo por su nombre.
-   * 
-   * @param nombre Nombre del {@link TipoHito}.
-   * @return un {@link TipoHito} si tiene el nombre buscado.
+   * Obtiene la entidad {@link TipoHito} activa con el nombre e idioma
+   * indicados
+   *
+   * @param lang   el language sobre el que buscar
+   * @param nombre el nombre del {@link TipoHito}.
+   * @return el {@link TipoHito} activo con el nombre indicado
    */
-  Optional<TipoHito> findByNombreAndActivoIsTrue(String nombre);
+  Optional<TipoHito> findByNombreLangAndNombreValueAndActivoIsTrue(Language lang, String nombre);
 
 }

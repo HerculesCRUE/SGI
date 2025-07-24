@@ -1,5 +1,5 @@
-<sgi-fragment title="{{ 'label.datos-generales' | translate }}: {{ formGroup.controls.tipoRequerimiento?.value?.nombre
-  }}">
+<sgi-fragment
+  [titleArray]="['label.datos-generales' | translate, ':', formGroup.controls.tipoRequerimiento?.value?.nombre]">
   <section class="form-section">
     <form [formGroup]="formGroup">
       <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
@@ -196,9 +196,9 @@
         <mat-form-field fxFlex="98%" fxFlex.sm="99%">
           <mat-label>{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.observaciones' | translate}}
           </mat-label>
-          <textarea matInput formControlName="observaciones" type="text" id="observaciones"
+          <sgi-i18n-textarea formControlName="observaciones"
             placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.observaciones' | translate}}">
-          </textarea>
+          </sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
             {{'error.maxlength.entity' | translate: msgParamObservaciones}}
           </mat-error>
@@ -281,7 +281,7 @@
             {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento.documento' |
             translate}} </th>
           <td mat-cell *matCellDef="let wrapper">
-            {{wrapper.value.nombreDocumento}}
+            <sgi-i18n-table-field [field]="wrapper.value.nombreDocumento"></sgi-i18n-table-field>
           </td>
         </ng-container>
 
@@ -291,7 +291,9 @@
             {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.incidencia-documento.incidencia' |
             translate}}
           </th>
-          <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.incidencia}} </td>
+          <td mat-cell *matCellDef="let wrapper">
+            <sgi-i18n-table-field [field]="wrapper.value.incidencia"></sgi-i18n-table-field>
+          </td>
         </ng-container>
 
         <!-- Acciones  Column -->

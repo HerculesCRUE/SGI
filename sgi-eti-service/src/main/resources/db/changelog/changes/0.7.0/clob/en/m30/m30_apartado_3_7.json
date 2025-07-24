@@ -1,0 +1,61 @@
+[
+  {
+    "key": "ap3_7",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.7 Complete trajectory of biological agents and/or genetically modified organisms"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Please describe below the path followed by biological agents, genetically modified organisms from the time they are obtained to the time they are disposed of:</p>"
+      },
+      {
+        "key": "mododeObtencion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Date obtained",
+          "required": true
+        }
+      },
+      {
+        "key": "transporte",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Transport",
+          "required": true
+        }
+      },
+      {
+        "key": "recepcion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Reception",
+          "required": true
+        }
+      },
+      {
+        "key": "almacenamiento",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Storage",
+          "required": true
+        }
+      },
+      {
+        "key": "eliminacion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Disposal",
+          "required": true
+        }
+      }
+    ]
+  }
+]

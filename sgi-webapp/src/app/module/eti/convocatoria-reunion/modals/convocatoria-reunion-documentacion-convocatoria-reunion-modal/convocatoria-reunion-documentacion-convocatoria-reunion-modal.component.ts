@@ -8,6 +8,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaReunion } from '@core/models/eti/convocatoria-reunion';
 import { IDocumentacionConvocatoriaReunion } from '@core/models/eti/documentacion-convocatoria-reunion';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
 import { switchMap } from 'rxjs/operators';
@@ -94,7 +95,7 @@ export class ConvocatoriaReunionDocumentacionConvocatoriaReunionModalComponent e
    */
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.data?.documentacion?.nombre, Validators.required),
+      nombre: new FormControl(this.data?.documentacion?.nombre ?? [], I18nValidators.required),
       fichero: new FormControl(null, Validators.required),
     });
 

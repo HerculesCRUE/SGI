@@ -133,9 +133,9 @@
           [fxFlex.gt-md]="fxFlexProperties2.gtMd" [fxFlexOrder]="fxFlexProperties2.order">
           <mat-form-field>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.observaciones' | translate}}</mat-label>
-            <textarea matInput formControlName="observaciones" type="text" id="observaciones"
+            <sgi-i18n-textarea formControlName="observaciones"
               placeholder="{{'csp.proyecto-periodo-seguimiento-cientifico.observaciones' | translate}}">
-                      </textarea>
+            </sgi-i18n-textarea>
             <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
               {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
             </mat-error>
@@ -243,10 +243,12 @@
           [fxFlex.gt-md]="fxFlexProperties2.gtMd" [fxFlexOrder]="fxFlexProperties2.order">
           <mat-form-field>
             <mat-label>{{'csp.proyecto-periodo-seguimiento-cientifico.observaciones' | translate}}</mat-label>
-            <textarea matInput formControlName="observacionesConvocatoria" type="text" id="observacionesConvocatoria"
+            <sgi-i18n-textarea formControlName="observacionesConvocatoria"
               placeholder="{{'csp.proyecto-periodo-seguimiento-cientifico.observaciones' | translate}}">
-          </textarea>
-
+            </sgi-i18n-textarea>
+            <mat-error *ngIf="formGroup.controls.observacionesConvocatoria.errors?.maxlength">
+              {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
+            </mat-error>
           </mat-form-field>
         </div>
       </div>

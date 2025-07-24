@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap4_6_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.4 Pizgarri akademikoak"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Pizgarri akademikoak ematen dira?</p>"
+      },
+      {
+        "key": "incentivosAcademicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Hautatu aukera bat:",
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Deskribatu ",
+        "hideExpression": "!model.incentivosAcademicosRadio || model.incentivosAcademicosRadio === 'no'"
+      },
+      {
+        "key": "describirIncentivos",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.incentivosAcademicosRadio || model.incentivosAcademicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Deskribatu ",
+          "placeholder": "Deskribatu ",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

@@ -5,6 +5,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { IComite } from '@core/models/eti/comite';
 import { ComiteService } from '@core/services/eti/comite.service';
+import { LanguageService } from '@core/services/language.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -23,11 +24,13 @@ export class SelectComiteComponent extends SelectServiceComponent<IComite> {
 
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
+    @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private service: ComiteService,
-    @Self() @Optional() ngControl: NgControl) {
-    super(defaultErrorStateMatcher, ngControl);
+  ) {
+    super(defaultErrorStateMatcher, ngControl, languageService);
 
-    this.displayWith = (comite: IComite) => comite?.comite;
+    this.displayWith = (comite: IComite) => comite?.codigo;
   }
 
   protected loadServiceOptions(): Observable<IComite[]> {

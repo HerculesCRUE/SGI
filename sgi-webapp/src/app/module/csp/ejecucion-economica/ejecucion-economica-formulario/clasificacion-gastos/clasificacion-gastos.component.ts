@@ -19,6 +19,8 @@ import { EjecucionEconomicaActionService } from '../../ejecucion-economica.actio
 import { DatoEconomicoDetalleClasificacionModalData, FacturasJustificantesClasificacionModal } from '../../modals/facturas-justificantes-clasificacion-modal/facturas-justificantes-clasificacion-modal.component';
 import { GastosClasficadosSgiEnum } from '../facturas-justificantes.fragment';
 import { ClasificacionGasto, ClasificacionGastosFragment } from './clasificacion-gastos.fragment';
+import { TranslateService } from '@ngx-translate/core';
+import { LanguageService } from '@core/services/language.service';
 
 const MODAL_CLASIFICACION_TITLE_KEY = marker('title.csp.ejecucion-economica.clasificacion.detalle-gasto');
 const MSG_ACCEPT_CLASIFICACION = marker('csp.ejecucion-economica.clasificacion-gastos.aceptar');
@@ -55,9 +57,11 @@ export class ClasificacionGastosComponent extends FragmentComponent implements O
     private dialogService: DialogService,
     private ejecucionEconomicaService: EjecucionEconomicaService,
     private gastoProyectoService: GastoProyectoService,
-    private proyectoProyectoSgeService: ProyectoProyectoSgeService
+    private proyectoProyectoSgeService: ProyectoProyectoSgeService,
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.CLASIFICACION_GASTOS, actionService);
+    super(actionService.FRAGMENT.CLASIFICACION_GASTOS, actionService, translate);
     this.formPart = this.fragment as ClasificacionGastosFragment;
   }
 
@@ -71,11 +75,11 @@ export class ClasificacionGastosComponent extends FragmentComponent implements O
         case 'anualidad':
           return gasto.anualidad;
         case 'proyecto':
-          return gasto.proyecto?.titulo;
+          return this.languageService.getFieldValue(gasto.proyecto?.titulo);
         case 'clasificacionSGE':
           return gasto.clasificacionSGE?.nombre;
         case 'conceptoGasto':
-          return gasto.conceptoGasto?.nombre;
+          return gasto.conceptoGasto?.nombre ? this.languageService.getFieldValue(gasto.conceptoGasto.nombre) : '';
         case 'aplicacionPresupuestaria':
           return gasto.partidaPresupuestaria;
         case 'codigoEconomico':
@@ -84,7 +88,7 @@ export class ClasificacionGastosComponent extends FragmentComponent implements O
           const gastoColumn = this.formPart.columns.find(column => column.id === property);
 
           let columnId: string;
-          switch (gasto.tipo) {
+          switch (gasto.tipoOperacion) {
             case TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS:
               columnId = gastoColumn.idFacturasGastos;
               break;
@@ -157,7 +161,7 @@ export class ClasificacionGastosComponent extends FragmentComponent implements O
               tituloModal: MODAL_CLASIFICACION_TITLE_KEY,
               proyecto: null,
               vinculacion: null,
-              showDatosCongreso: element.tipo === TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS,
+              showDatosCongreso: element.tipoOperacion === TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS,
               disableProyectoSgi: this.formPart.disableProyectoSgi
             }
           };
@@ -193,7 +197,7 @@ export class ClasificacionGastosComponent extends FragmentComponent implements O
 
   private getGastoDetalle(gasto: ClasificacionGasto): Observable<IDatoEconomicoDetalle> {
     let detalleGasto$: Observable<IDatoEconomicoDetalle>;
-    switch (gasto.tipo) {
+    switch (gasto.tipoOperacion) {
       case TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS:
         detalleGasto$ = this.ejecucionEconomicaService.getFacturaGasto(gasto.id);
         break;
@@ -219,4 +223,5 @@ export class ClasificacionGastosComponent extends FragmentComponent implements O
     });
   }
 
+  protected setupI18N(): void { }
 }

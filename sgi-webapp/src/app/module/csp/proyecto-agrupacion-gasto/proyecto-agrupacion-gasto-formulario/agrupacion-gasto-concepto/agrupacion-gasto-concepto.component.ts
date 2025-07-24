@@ -49,7 +49,7 @@ export class AgrupacionGastoConceptoComponent extends FragmentComponent implemen
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.AGRUPACION_GASTO_CONCEPTO, actionService);
+    super(actionService.FRAGMENT.AGRUPACION_GASTO_CONCEPTO, actionService, translate);
     this.formPart = this.fragment as AgrupacionGastoConceptoFragment;
   }
 
@@ -59,7 +59,7 @@ export class AgrupacionGastoConceptoComponent extends FragmentComponent implemen
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -80,7 +80,7 @@ export class AgrupacionGastoConceptoComponent extends FragmentComponent implemen
 
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONCEPTO_GASTO_ADD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

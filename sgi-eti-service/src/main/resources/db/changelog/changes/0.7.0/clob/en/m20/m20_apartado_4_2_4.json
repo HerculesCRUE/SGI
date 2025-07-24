@@ -1,0 +1,24 @@
+[
+  {
+    "key": "ap4_2_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.4 Supervision protocol"
+    },
+    "fieldGroup": [
+      {
+        "template": "Develop a protocol on how the animal will be supervised and quantify the parameters that will be supervised, indicating at what point in the procedure/intervention the monitoring will begin and what the duration and frequency of the monitoring will be."
+      },
+      {
+        "key": "protocoloSupervision",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Supervision protocol",
+          "required": true
+        }
+      }
+    ]
+  }
+]

@@ -1,7 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CONVOCATORIA_REQUISITO_EQUIPO_CONVERTER } from '@core/converters/csp/convocatoria-requisito-equipo.converter';
-import { IConvocatoriaRequisitoEquipoBackend } from '@core/models/csp/backend/convocatoria-requisito-equipo-backend';
 import { IConvocatoriaRequisitoEquipo } from '@core/models/csp/convocatoria-requisito-equipo';
 import { IRequisitoEquipoCategoriaProfesional } from '@core/models/csp/requisito-equipo-categoria-profesional';
 import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
@@ -9,6 +7,8 @@ import { environment } from '@env';
 import { FindByIdCtor, mixinFindById, SgiRestBaseService } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IConvocatoriaRequisitoEquipoResponse } from './convocatoria-requisito-equipo/convocatoria-requisito-equipo-response';
+import { CONVOCATORIA_REQUISITO_EQUIPO_RESPONSE_CONVERTER } from './convocatoria-requisito-equipo/convocatoria-requisito-equipo-response.converter';
 import { IRequisitoEquipoCategoriaProfesionalResponse } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response';
 import { REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response.converter';
 import { IRequisitoEquipoNivelAcademicoResponse } from './requisito-equipo-nivel-academico/requisito-equipo-nivel-academico-response';
@@ -16,10 +16,10 @@ import { REQUISITO_EQUIPO_NIVELACADEMICO_RESPONSE_CONVERTER } from './requisito-
 
 // tslint:disable-next-line: variable-name
 const _ConvocatoriaRequisitoEquipoMixinBase:
-  FindByIdCtor<number, IConvocatoriaRequisitoEquipo, IConvocatoriaRequisitoEquipoBackend> &
+  FindByIdCtor<number, IConvocatoriaRequisitoEquipo, IConvocatoriaRequisitoEquipoResponse> &
   typeof SgiRestBaseService = mixinFindById(
     SgiRestBaseService,
-    CONVOCATORIA_REQUISITO_EQUIPO_CONVERTER
+    CONVOCATORIA_REQUISITO_EQUIPO_RESPONSE_CONVERTER
   );
 
 @Injectable({
@@ -72,8 +72,8 @@ export class ConvocatoriaRequisitoEquipoPublicService extends _ConvocatoriaRequi
    * @param id Id de la convocatoria
    */
   findByConvocatoriaId(id: number): Observable<IConvocatoriaRequisitoEquipo> {
-    return this.http.get<IConvocatoriaRequisitoEquipoBackend>(`${this.endpointUrl}/${id}`).pipe(
-      map(response => CONVOCATORIA_REQUISITO_EQUIPO_CONVERTER.toTarget(response))
+    return this.http.get<IConvocatoriaRequisitoEquipoResponse>(`${this.endpointUrl}/${id}`).pipe(
+      map(response => CONVOCATORIA_REQUISITO_EQUIPO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 

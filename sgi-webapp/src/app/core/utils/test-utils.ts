@@ -2,6 +2,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 import { ActivatedRoute, Data, ParamMap } from '@angular/router';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { DialogCommonComponent } from '@core/component/dialog-common.component';
+import { Language } from '@core/i18n/language';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateTestingModule } from 'ngx-translate-testing';
 import { Subject } from 'rxjs';
@@ -72,7 +73,7 @@ export default class TestUtils {
   static getIdiomas(): TranslateTestingModule {
     return TranslateTestingModule.withTranslations({
       es: require('src/assets/i18n/es.json'),
-    }).withDefaultLanguage('es');
+    }).withDefaultLanguage(Language.ES.code);
   }
 
   /**

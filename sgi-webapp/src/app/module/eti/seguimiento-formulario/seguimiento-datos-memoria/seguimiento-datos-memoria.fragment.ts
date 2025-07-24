@@ -24,10 +24,10 @@ export class SeguimientoDatosMemoriaFragment extends FormFragment<IMemoria> {
 
   protected buildFormGroup(): FormGroup {
     const fb = this.fb.group({
-      comite: [{ value: this.memoria?.comite?.comite, disabled: true }],
+      comite: [{ value: null, disabled: true }],
       fechaEvaluacion: [{ value: null, disabled: true }],
       referenciaMemoria: [{ value: '', disabled: true }],
-      solicitante: [{ value: '', disabled: true }],
+      solicitante: [{ value: null, disabled: true }],
       version: [{ value: '', disabled: true }]
     });
     return fb;
@@ -62,11 +62,11 @@ export class SeguimientoDatosMemoriaFragment extends FormFragment<IMemoria> {
 
   buildPatch(value: IMemoria): { [key: string]: any } {
     const patch = {
-      comite: value.comite.comite,
+      comite: value.comite,
       fechaEvaluacion: value.fechaEnvioSecretaria,
       referenciaMemoria: value.numReferencia,
       version: value.version,
-      solicitante: `${value?.peticionEvaluacion.solicitante?.nombre} ${value?.peticionEvaluacion?.solicitante?.apellidos}`
+      solicitante: value.peticionEvaluacion?.solicitante
     };
     return patch;
   }

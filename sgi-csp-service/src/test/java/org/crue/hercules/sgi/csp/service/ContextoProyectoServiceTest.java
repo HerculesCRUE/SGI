@@ -1,14 +1,19 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ContextoProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ContextoProyecto;
+import org.crue.hercules.sgi.csp.model.ContextoProyectoIntereses;
 import org.crue.hercules.sgi.csp.repository.ContextoProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.service.impl.ContextoProyectoServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -62,7 +67,7 @@ class ContextoProyectoServiceTest extends BaseServiceTest {
     // when: Creamos el ContextoProyecto
     // then: Lanza una excepcion porque el ContextoProyecto ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(contextoProyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id tiene que ser null para crear ContextoProyecto");
+        .hasMessage("Identificador de Contexto Proyecto debe ser nulo");
   }
 
   @Test
@@ -74,13 +79,12 @@ class ContextoProyectoServiceTest extends BaseServiceTest {
     // when: Creamos el ContextoProyecto
     // then: Lanza una excepcion porque la proyecto es null
     Assertions.assertThatThrownBy(() -> service.create(contextoProyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Proyecto no puede ser null para crear ContextoProyecto");
+        .hasMessage("Identificador de Proyecto no puede ser nulo");
   }
 
   @Test
   void create_WithDuplicatedProyecto_ThrowsIllegalArgumentException() {
     // given: Un nuevo ContextoProyecto con proyecto ya asignada
-    Long proyectoId = 1L;
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(null);
 
     BDDMockito.given(repository.existsByProyectoId(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
@@ -88,15 +92,18 @@ class ContextoProyectoServiceTest extends BaseServiceTest {
     // when: Creamos el ContextoProyecto
     // then: Lanza una excepcion porque la proyecto ya tiene un ContextoProyecto
     Assertions.assertThatThrownBy(() -> service.create(contextoProyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe ContextoProyecto para el proyecto " + proyectoId);
+        .hasMessage("Contexto Proyecto de Proyecto ya existe");
   }
 
   @Test
   void update_ReturnsContextoProyecto() {
     // given: Un nuevo ContextoProyecto con el sexo actualizado
+    Set<ContextoProyectoIntereses> interesesContextoProyecto = new HashSet<>();
+    interesesContextoProyecto.add(new ContextoProyectoIntereses(Language.ES, "Intereses"));
+
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(1L);
     ContextoProyecto contextoProyectoActualizado = generarMockContextoProyecto(1L);
-    contextoProyectoActualizado.setIntereses("Intereses");
+    contextoProyectoActualizado.setIntereses(interesesContextoProyecto);
 
     BDDMockito.given(repository.findByProyectoId(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(contextoProyecto));
@@ -143,7 +150,8 @@ class ContextoProyectoServiceTest extends BaseServiceTest {
     // then: el ContextoProyecto
     Assertions.assertThat(contextoProyecto).as("isNotNull()").isNotNull();
     Assertions.assertThat(contextoProyecto.getId()).as("getId()").isEqualTo(idBuscado);
-    Assertions.assertThat(contextoProyecto.getIntereses()).as("getIntereses()").isEqualTo("intereses");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(contextoProyecto.getIntereses(), Language.ES))
+        .as("getIntereses()").isEqualTo("intereses");
 
   }
 
@@ -167,10 +175,13 @@ class ContextoProyectoServiceTest extends BaseServiceTest {
    * @return el objeto ContextoProyecto
    */
   private ContextoProyecto generarMockContextoProyecto(Long id) {
+    Set<ContextoProyectoIntereses> interesesContextoProyecto = new HashSet<>();
+    interesesContextoProyecto.add(new ContextoProyectoIntereses(Language.ES, "intereses"));
+
     ContextoProyecto contextoProyecto = new ContextoProyecto();
     contextoProyecto.setId(id);
     contextoProyecto.setProyectoId(id != null ? id : 1L);
-    contextoProyecto.setIntereses("intereses");
+    contextoProyecto.setIntereses(interesesContextoProyecto);
     return contextoProyecto;
   }
 

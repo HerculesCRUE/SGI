@@ -9,6 +9,7 @@ import { SgiAuthService } from '@sgi/framework/auth';
 import { Observable, Subscription } from 'rxjs';
 import { NotificacionCvnActionService } from '../../notificacion-cvn.action.service';
 import { NotificacionCvnDatosGeneralesFragment } from './notificacion-cvn-datos-generales.fragment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'sgi-notificacion-cvn-datos-generales',
@@ -30,8 +31,9 @@ export class NotificacionCvnDatosGeneralesComponent extends FormFragmentComponen
   constructor(
     protected actionService: NotificacionCvnActionService,
     public authService: SgiAuthService,
+    private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as NotificacionCvnDatosGeneralesFragment;
   }
 
@@ -45,4 +47,5 @@ export class NotificacionCvnDatosGeneralesComponent extends FormFragmentComponen
     ));
   }
 
+  protected setupI18N(): void { }
 }

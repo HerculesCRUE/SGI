@@ -1,0 +1,41 @@
+[
+  {
+    "key": "ap5_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.1 Baimen dokumentua"
+    },
+    "fieldGroup": [
+      {
+        "template": "Zure proiektuak informazio iturri den subjektuaren edo/eta haren ordezkariaren baimen dokumentua behar du?"
+      },
+      {
+        "key": "documentoConsentimiento",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "Ez"
+            },
+            {
+              "value": "CONSENTIMIENTO",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: ikusi ‘4.4 Informazioa eta baimena’ atala. </p>"
+      }
+    ]
+  }
+]

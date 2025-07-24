@@ -109,4 +109,6 @@ export class ComiteEditorialListadoComponent extends AbstractTablePaginationComp
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
   }
+
+  protected setupI18N(): void { }
 }

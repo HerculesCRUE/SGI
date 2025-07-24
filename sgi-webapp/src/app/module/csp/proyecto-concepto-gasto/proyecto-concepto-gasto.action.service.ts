@@ -8,6 +8,7 @@ import { ActionService } from '@core/services/action-service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
 import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyecto-concepto-gasto-codigo-ec.service';
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
+import { LanguageService } from '@core/services/language.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
@@ -76,6 +77,7 @@ export class ProyectoConceptoGastoActionService extends ActionService {
     proyectoConceptoGastoCodigoEcService: ProyectoConceptoGastoCodigoEcService,
     codigoEconomicoGastoService: CodigoEconomicoGastoService,
     private convocatoriaConceptoGastoService: ConvocatoriaConceptoGastoService,
+    private languageService: LanguageService
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_CONCEPTO_GASTO_DATA_KEY];

@@ -141,7 +141,7 @@ export class SolicitudRrhhTutorFragment extends FormFragment<ISolicitudRrhhTutor
   }
 
   private fillDatosContactoAndVinculacionesTutor(tutor: IPersona): Observable<IPersona> {
-    if (!!!tutor?.id) {
+    if (!!!tutor?.id || Object.keys(tutor).length == 1) {
       return of(tutor);
     }
 

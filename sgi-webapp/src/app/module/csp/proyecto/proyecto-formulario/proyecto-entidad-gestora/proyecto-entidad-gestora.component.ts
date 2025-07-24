@@ -5,6 +5,7 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { ProyectoEntidadGestoraFragment } from './proyecto-entidad-gestora.fragment';
+import { TranslateService } from '@ngx-translate/core';
 @Component({
   selector: 'sgi-proyecto-entidad-gestora',
   templateUrl: './proyecto-entidad-gestora.component.html',
@@ -27,9 +28,10 @@ export class ProyectoEntidadGestoraComponent extends FormFragmentComponent<IProy
     ];
 
   constructor(
-    actionService: ProyectoActionService
+    actionService: ProyectoActionService,
+    private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.ENTIDAD_GESTORA, actionService);
+    super(actionService.FRAGMENT.ENTIDAD_GESTORA, actionService, translate);
     this.formPart = this.fragment as ProyectoEntidadGestoraFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -53,4 +55,6 @@ export class ProyectoEntidadGestoraComponent extends FormFragmentComponent<IProy
   ngOnInit() {
     super.ngOnInit();
   }
+
+  protected setupI18N(): void { }
 }

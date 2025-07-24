@@ -6,7 +6,9 @@ import static org.mockito.Mockito.verify;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoAlegacionesData;
@@ -17,9 +19,13 @@ import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudPeticionEvaluacionData;
 import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlace;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceNombre;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiCnfService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -57,7 +63,8 @@ class SolicitudComServiceTest {
     Long solicitudId = 1L;
     String solicitanteRef = "2323423";
     String unidadGestionRef = "OPE";
-    String tituloConvocatoria = "TESTING CONVOCATORIA";
+    Set<ConvocatoriaTitulo> tituloConvocatoria = new HashSet<>();
+    tituloConvocatoria.add(new ConvocatoriaTitulo(Language.ES, "TESTING CONVOCATORIA"));
     Instant fechaPublicacionConvocatoria = Instant.now();
     Instant fechaCambioEstadoSolicitud = Instant.now();
     EmailOutput emailOutput = EmailOutput.builder().id(1L).build();
@@ -85,7 +92,8 @@ class SolicitudComServiceTest {
     Long solicitudId = 1L;
     String solicitanteRef = "2323423";
     String unidadGestionRef = "OPE";
-    String tituloConvocatoria = "TESTING CONVOCATORIA";
+    Set<ConvocatoriaTitulo> tituloConvocatoria = new HashSet<>();
+    tituloConvocatoria.add(new ConvocatoriaTitulo(Language.ES, "TESTING CONVOCATORIA"));
     String codigoInterno = "11";
     Instant fechaPublicacionConvocatoria = Instant.now();
     Instant fechaCambioEstadoSolicitud = Instant.now();
@@ -115,7 +123,8 @@ class SolicitudComServiceTest {
   void enviarComunicadoSolicitudCambioEstadoExclProv_WithSolicitanteRef_ShouldSendMail() throws Exception {
     Long solicitudId = 1L;
     String solicitanteRef = "2324944";
-    String tituloConvocatoria = "Convocatoria Test";
+    Set<ConvocatoriaTitulo> tituloConvocatoria = new HashSet<>();
+    tituloConvocatoria.add(new ConvocatoriaTitulo(Language.ES, "Convocatoria Test"));
     Instant fechaProvisionalConvocatoria = Instant.now();
     EmailOutput emailOutput = EmailOutput.builder().id(1L).build();
     List<ConvocatoriaEnlace> convocatoriaEnlaces = Arrays.asList(buildMockConvocatoriaEnlace(1L));
@@ -139,7 +148,8 @@ class SolicitudComServiceTest {
   void enviarComunicadoSolicitudCambioEstadoExclDef_WithoutSolicitanteRef_ShouldSendMail() throws Exception {
     Long solicitudId = 1L;
     String solicitanteRef = "";
-    String tituloConvocatoria = "Convocatoria Test Solicitente Externo";
+    Set<ConvocatoriaTitulo> tituloConvocatoria = new HashSet<>();
+    tituloConvocatoria.add(new ConvocatoriaTitulo(Language.ES, "Convocatoria Test Solicitente Externo"));
     Instant fechaProvisionalConvocatoria = Instant.now();
     EmailOutput emailOutput = EmailOutput.builder().id(1L).build();
     List<ConvocatoriaEnlace> convocatoriaEnlaces = Arrays.asList(buildMockConvocatoriaEnlace(1L));
@@ -163,7 +173,9 @@ class SolicitudComServiceTest {
   void enviarComunicadoSolicitudCambioEstadoConcProv_WithoutSolicitanteRef_ShouldSendMail() throws Exception {
     Long solicitudId = 1L;
     String solicitanteRef = "";
-    String tituloConvocatoria = "Convocatoria Test Solicitente Externo";
+    Set<ConvocatoriaTitulo> tituloConvocatoria = new HashSet<>();
+    tituloConvocatoria.add(new ConvocatoriaTitulo(Language.ES, "Convocatoria Test Solicitente Externo"));
+
     Instant fechaProvisionalConvocatoria = Instant.now();
     EmailOutput emailOutput = EmailOutput.builder().id(1L).build();
     List<ConvocatoriaEnlace> convocatoriaEnlaces = Arrays.asList(buildMockConvocatoriaEnlace(1L));
@@ -187,7 +199,8 @@ class SolicitudComServiceTest {
   void enviarComunicadoSolicitudCambioEstadoDenProv_WithoutSolicitanteRef_ShouldSendMail() throws Exception {
     Long solicitudId = 1L;
     String solicitanteRef = "";
-    String tituloConvocatoria = "Convocatoria Test Solicitente Externo";
+    Set<ConvocatoriaTitulo> tituloConvocatoria = new HashSet<>();
+    tituloConvocatoria.add(new ConvocatoriaTitulo(Language.ES, "Convocatoria Test Solicitente Externo"));
     Instant fechaProvisionalConvocatoria = Instant.now();
     EmailOutput emailOutput = EmailOutput.builder().id(1L).build();
     List<ConvocatoriaEnlace> convocatoriaEnlaces = Arrays.asList(buildMockConvocatoriaEnlace(1L));
@@ -211,7 +224,8 @@ class SolicitudComServiceTest {
   void enviarComunicadoSolicitudCambioEstadoConc_WithoutSolicitanteRef_ShouldSendMail() throws Exception {
     Long solicitudId = 1L;
     String solicitanteRef = "";
-    String tituloConvocatoria = "Convocatoria Test Solicitente Externo";
+    Set<ConvocatoriaTitulo> tituloConvocatoria = new HashSet<>();
+    tituloConvocatoria.add(new ConvocatoriaTitulo(Language.ES, "Convocatoria Test Solicitente Externo"));
     Instant fechaProvisionalConvocatoria = Instant.now();
     EmailOutput emailOutput = EmailOutput.builder().id(1L).build();
     List<ConvocatoriaEnlace> convocatoriaEnlaces = Arrays.asList(buildMockConvocatoriaEnlace(1L));
@@ -235,7 +249,8 @@ class SolicitudComServiceTest {
   void enviarComunicadoSolicitudCambioEstadoDen_WithoutSolicitanteRef_ShouldSendMail() throws Exception {
     Long solicitudId = 1L;
     String solicitanteRef = "";
-    String tituloConvocatoria = "Convocatoria Test Solicitente Externo";
+    Set<ConvocatoriaTitulo> tituloConvocatoria = new HashSet<>();
+    tituloConvocatoria.add(new ConvocatoriaTitulo(Language.ES, "Convocatoria Test Solicitente Externo"));
     Instant fechaProvisionalConvocatoria = Instant.now();
     EmailOutput emailOutput = EmailOutput.builder().id(1L).build();
     List<ConvocatoriaEnlace> convocatoriaEnlaces = Arrays.asList(buildMockConvocatoriaEnlace(1L));
@@ -281,14 +296,20 @@ class SolicitudComServiceTest {
   }
 
   private ConvocatoriaEnlace buildMockConvocatoriaEnlace(Long id) {
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "ENLACE MOCKED"));
+
+    Set<ConvocatoriaEnlaceDescripcion> descripcionConvocatoriaEnlace = new HashSet<>();
+    descripcionConvocatoriaEnlace.add(new ConvocatoriaEnlaceDescripcion(Language.ES, "Enlace Test"));
+
     return ConvocatoriaEnlace.builder()
         .convocatoriaId(1L)
-        .descripcion("Enlace Test")
+        .descripcion(descripcionConvocatoriaEnlace)
         .id(id)
         .tipoEnlace(TipoEnlace.builder()
             .id(1L)
             .activo(Boolean.TRUE)
-            .nombre("ENLACE MOCKED")
+            .nombre(nombre)
             .build())
         .build();
   }

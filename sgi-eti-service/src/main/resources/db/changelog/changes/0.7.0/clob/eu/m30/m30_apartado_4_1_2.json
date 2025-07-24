@@ -1,0 +1,110 @@
+[
+  {
+    "key": "ap4_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.2 Agente biologikoen edo/eta material biologikoaren"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Erabiltzen diren agente biologikoek edo/eta material biologikoak efektu potentzialki kaltegarriren bat dakarte?</p>"
+      },
+      {
+        "key": "agentesBiologicos",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "key": "grupoDiana",
+        "type": "multicheckbox",
+        "hideExpression": "!model.agentesBiologicos || model.agentesBiologicos === 'no'",
+        "templateOptions": {
+          "label": "Jomugako taldea:",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "serHumamno",
+              "label": "Gizakiak"
+            },
+            {
+              "value": "animales",
+              "label": "Animaliak"
+            },
+            {
+              "value": "medioambiente",
+              "label": "Ingurumena"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Efektu kaltegarri mota",
+        "hideExpression": "!model.agentesBiologicos || model.agentesBiologicos === 'no'"
+      },
+      {
+        "key": "efectoNocivo",
+        "type": "multicheckbox",
+        "hideExpression": "!model.agentesBiologicos || model.agentesBiologicos === 'no'",
+        "templateOptions": {
+          "label": "Mota:",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "infeccioso",
+              "label": "Infekziosoa"
+            },
+            {
+              "value": "toxico",
+              "label": "Toxikoa"
+            },
+            {
+              "value": "alergico",
+              "label": "Alergikoa"
+            },
+            {
+              "value": "radiactivo",
+              "label": "Erradioaktiboa"
+            },
+            {
+              "value": "otro",
+              "label": "Beste bat"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Adierazi zer motatako efektu kaltegarria den",
+        "hideExpression": "!((model.agentesBiologicos && model.agentesBiologicos === 'si') && (model.efectoNocivo && model.efectoNocivo.find((m) => m === 'otro')))"
+      },
+      {
+        "key": "tipoEfectoNocivo",
+        "type": "i18n-textarea",
+        "hideExpression": "!((model.agentesBiologicos && model.agentesBiologicos === 'si') && (model.efectoNocivo && model.efectoNocivo.find((m) => m === 'otro')))",
+        "templateOptions": {
+          "label": "Adierazi:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

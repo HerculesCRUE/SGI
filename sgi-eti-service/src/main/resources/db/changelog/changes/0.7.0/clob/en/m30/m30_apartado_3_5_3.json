@@ -1,0 +1,97 @@
+[
+  {
+    "key": "ap3_5_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.3 Biological material"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.ap3_4_1 || !formState.mainModel.ap3_4.ap3_4_1.agentesBiologicosRadio || formState.mainModel.ap3_4.ap3_4_1.agentesBiologicosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "type": "table-crud",
+        "key": "materialBiologicoTable",
+        "templateOptions": {
+          "entity": "biological material",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Biological material"
+          },
+          "fieldGroup": [
+            {
+              "key": "tipoMaterial",
+              "type": "select",
+              "templateOptions": {
+                "label": "Type of material",
+                "order": 10,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Animal husbandry and management"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Animal tissue, blood and/or fluids"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Human tissue, blood and/or fluids"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Other"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "descripcionCaracteristicas",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Description/Characteristics",
+                "order": 20
+              }
+            },
+            {
+              "key": "grupoRiesgo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Risk group",
+                "order": 30,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Group 1"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Group 2"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Group 3"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Group 4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "volumenMaximo",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Maximum sample volume to be handled at any one time or number of animals",
+                "order": 40
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

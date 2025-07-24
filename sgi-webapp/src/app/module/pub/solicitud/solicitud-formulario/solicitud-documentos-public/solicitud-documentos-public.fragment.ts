@@ -1,4 +1,5 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IDocumentoRequeridoSolicitud } from '@core/models/csp/documento-requerido-solicitud';
 import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
 import { ITipoDocumento } from '@core/models/csp/tipos-configuracion';
@@ -18,7 +19,7 @@ const SIN_TIPO_DOCUMENTO = marker('label.csp.documento.sin-tipo');
 export class NodeDocumentoSolicitud {
   parent: NodeDocumentoSolicitud;
   key: string;
-  title: string;
+  title: string | I18nFieldValue[];
   required: boolean;
   documento?: StatusWrapper<ISolicitudDocumento>;
   fichero?: IDocumento;
@@ -35,7 +36,7 @@ export class NodeDocumentoSolicitud {
   }
 
   constructor(
-    key: string, title: string, level: number, required: boolean,
+    key: string, title: string | I18nFieldValue[], level: number, required: boolean,
     documento?: StatusWrapper<ISolicitudDocumento>) {
     this.key = key;
     this.title = title;

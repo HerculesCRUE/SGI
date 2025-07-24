@@ -18,8 +18,9 @@
       <mat-form-field>
         <mat-label>{{'csp.convocatoria-configuracion-solicitud.documento.observaciones' | translate}}
         </mat-label>
-        <input matInput formControlName="observaciones" type="text"
-          placeholder="{{'csp.convocatoria-configuracion-solicitud.documento.observaciones' | translate}}">
+        <sgi-i18n-input formControlName="observaciones"
+          placeholder="{{'csp.convocatoria-configuracion-solicitud.documento.observaciones' | translate}}"
+          maxlength="250"></sgi-i18n-input>
       </mat-form-field>
     </div>
   </form>

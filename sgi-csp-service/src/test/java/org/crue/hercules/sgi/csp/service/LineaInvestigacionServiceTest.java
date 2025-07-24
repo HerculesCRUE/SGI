@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -12,7 +14,10 @@ import javax.validation.ValidationException;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.LineaInvestigacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.LineaInvestigacion;
+import org.crue.hercules.sgi.csp.model.LineaInvestigacionNombre;
 import org.crue.hercules.sgi.csp.repository.LineaInvestigacionRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +72,8 @@ class LineaInvestigacionServiceTest extends BaseServiceTest {
     LineaInvestigacion lineaInvestigacion = lineaInvestigacionService.findById(1L);
     Assertions.assertThat(lineaInvestigacion.getId()).isEqualTo(1L);
     Assertions.assertThat(lineaInvestigacion.getActivo()).isEqualTo(Boolean.TRUE);
-    Assertions.assertThat(lineaInvestigacion.getNombre()).isEqualTo("LineaInvestigacion1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(lineaInvestigacion.getNombre(), Language.ES))
+        .isEqualTo("LineaInvestigacion1");
 
   }
 
@@ -124,7 +130,8 @@ class LineaInvestigacionServiceTest extends BaseServiceTest {
 
     // then: El tipo Fase se actualiza correctamente.
     Assertions.assertThat(lineaInvestigacionActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(lineaInvestigacionActualizado.getNombre()).isEqualTo("LineaInvestigacion1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(lineaInvestigacionActualizado.getNombre(), Language.ES))
+        .isEqualTo("LineaInvestigacion1 actualizada");
 
   }
 
@@ -153,7 +160,9 @@ class LineaInvestigacionServiceTest extends BaseServiceTest {
 
     BDDMockito.given(lineaInvestigacionRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(lineaInvestigacion));
-    BDDMockito.given(lineaInvestigacionRepository.findByNombreAndActivoIsTrue(lineaInvestigacion.getNombre()))
+    BDDMockito
+        .given(lineaInvestigacionRepository.findByNombreLangAndNombreValueAndActivoIsTrue(
+            ArgumentMatchers.<Language>any(), ArgumentMatchers.<String>any()))
         .willReturn(Optional.empty());
     BDDMockito.given(lineaInvestigacionRepository.save(ArgumentMatchers.<LineaInvestigacion>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -191,7 +200,9 @@ class LineaInvestigacionServiceTest extends BaseServiceTest {
     mockActivableIsActivo(LineaInvestigacion.class, null);
     BDDMockito.given(lineaInvestigacionRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(lineaInvestigacion));
-    BDDMockito.given(lineaInvestigacionRepository.findByNombreAndActivoIsTrue(ArgumentMatchers.<String>any()))
+    BDDMockito.given(
+        lineaInvestigacionRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(lineaInvestigacionExistente));
 
     // when: activamos el LineaInvestigacion
@@ -279,7 +290,8 @@ class LineaInvestigacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       LineaInvestigacion lineaInvestigacion = page.getContent().get(i);
-      Assertions.assertThat(lineaInvestigacion.getNombre()).isEqualTo("LineaInvestigacion" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(lineaInvestigacion.getNombre(), Language.ES))
+          .isEqualTo("LineaInvestigacion" + String.format("%03d", j));
     }
   }
 
@@ -321,7 +333,8 @@ class LineaInvestigacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       LineaInvestigacion lineaInvestigacion = page.getContent().get(i);
-      Assertions.assertThat(lineaInvestigacion.getNombre()).isEqualTo("LineaInvestigacion" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(lineaInvestigacion.getNombre(), Language.ES))
+          .isEqualTo("LineaInvestigacion" + String.format("%03d", j));
     }
   }
 
@@ -335,8 +348,9 @@ class LineaInvestigacionServiceTest extends BaseServiceTest {
     newLineaInvestigacion.setId(null);
 
     mockActivableIsActivo(LineaInvestigacion.class, lineaInvestigacion);
-    BDDMockito.given(lineaInvestigacionRepository.findByNombreAndActivoIsTrue(
-        newLineaInvestigacion.getNombre()))
+    BDDMockito.given(
+        lineaInvestigacionRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(lineaInvestigacion));
 
     Assertions.assertThatThrownBy(
@@ -355,7 +369,9 @@ class LineaInvestigacionServiceTest extends BaseServiceTest {
 
     mockActivableIsActivo(LineaInvestigacion.class, lineaInvestigacion);
 
-    BDDMockito.given(lineaInvestigacionRepository.findByNombreAndActivoIsTrue(lineaInvestigacionUpdated.getNombre()))
+    BDDMockito.given(
+        lineaInvestigacionRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(lineaInvestigacion));
 
     // when: Actualizamos el LineaInvestigacion
@@ -382,9 +398,12 @@ class LineaInvestigacionServiceTest extends BaseServiceTest {
    * @return el objeto LineaInvestigacion
    */
   LineaInvestigacion generarMockLineaInvestigacion(Long id, String nombre) {
+    Set<LineaInvestigacionNombre> nombreLineaInvestigacion = new HashSet<>();
+    nombreLineaInvestigacion.add(new LineaInvestigacionNombre(Language.ES, nombre));
+
     LineaInvestigacion lineaInvestigacion = new LineaInvestigacion();
     lineaInvestigacion.setId(id);
-    lineaInvestigacion.setNombre(nombre);
+    lineaInvestigacion.setNombre(nombreLineaInvestigacion);
     lineaInvestigacion.setActivo(Boolean.TRUE);
     return lineaInvestigacion;
   }

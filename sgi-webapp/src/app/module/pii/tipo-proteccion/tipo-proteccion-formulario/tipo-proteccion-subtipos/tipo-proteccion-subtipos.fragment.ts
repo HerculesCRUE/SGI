@@ -1,6 +1,7 @@
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
 import { Fragment } from '@core/services/action-service';
+import { LanguageService } from '@core/services/language.service';
 import { TipoProteccionService } from '@core/services/pii/tipo-proteccion/tipo-proteccion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
@@ -26,7 +27,8 @@ export class TipoProteccionSubtiposFragment extends Fragment {
     private readonly logger: NGXLogger,
     key: number,
     private tipoProteccionService: TipoProteccionService,
-    protected readonly snackBarService: SnackBarService
+    protected readonly snackBarService: SnackBarService,
+    protected readonly languageService: LanguageService
   ) {
     super(key);
     this.setComplete(true);
@@ -56,11 +58,12 @@ export class TipoProteccionSubtiposFragment extends Fragment {
       takeLast(1),
       tap(() => {
         if (this.isSaveOrUpdateComplete()) {
+          this.subtiposProteccion$.next(this.subtiposProteccion$.value);
           this.setChanges(false);
         }
       }),
       catchError((error) => {
-        this.logger.error(error);
+        this.processError(error);
         return EMPTY;
       }),
       switchMap(() => EMPTY)
@@ -74,7 +77,9 @@ export class TipoProteccionSubtiposFragment extends Fragment {
           filter(([subtipoProteccionAgregar, listaSubtiposProteccion]) =>
             listaSubtiposProteccion.indexOf(subtipoProteccionAgregar) === -1),
           switchMap(([subtipoProteccionAgregar, listaSubtiposProteccion]) => {
-            if (listaSubtiposProteccion.some(elem => elem.value.nombre === subtipoProteccionAgregar.value.nombre)) {
+            if (listaSubtiposProteccion.some(elem =>
+              elem.value.nombre.some(n =>
+                subtipoProteccionAgregar.value.nombre.some(m => n.lang === m.lang && n.value === m.value)))) {
               throw new TipoProteccionDuplicatedError();
             }
             return this.tipoProteccionService

@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IEntidadFinanciadora } from '@core/models/csp/entidad-financiadora';
 import { IProyectoEntidadFinanciadora } from '@core/models/csp/proyecto-entidad-financiadora';
@@ -11,6 +12,7 @@ import { ISeguimientoJustificacionAnualidad } from '@core/models/csp/seguimiento
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { ProyectoPeriodoJustificacionSeguimientoService } from '@core/services/csp/proyecto-periodo-justificacion-seguimiento/proyecto-periodo-justificacion-seguimiento.service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
 import { ProyectoPeriodoSeguimientoService } from '@core/services/csp/proyecto-periodo-seguimiento.service';
@@ -22,6 +24,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
 import { BehaviorSubject, forkJoin, from, merge, Observable, of } from 'rxjs';
 import { concatMap, map, mergeMap, tap, toArray } from 'rxjs/operators';
+import { ConfigCsp } from 'src/app/module/adm/config-csp/config-csp.component';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
 
 export interface IProyectoSeguimientoEjecucionEconomicaData extends IProyectoSeguimientoEjecucionEconomica {
@@ -34,16 +37,16 @@ export interface IProyectoSeguimientoJustificacionWithFechaJustificacion extends
 }
 
 export interface IProyectoPeriodoJustificacionWithTituloProyecto extends IProyectoPeriodoJustificacion {
-  tituloProyecto: string;
+  tituloProyecto: I18nFieldValue[];
 }
 
 export interface IProyectoPeriodoSeguimientoWithTituloProyecto extends IProyectoPeriodoSeguimiento {
-  tituloProyecto: string;
+  tituloProyecto: I18nFieldValue[];
 }
 
 export class SeguimientoJustificacionResumenFragment extends Fragment {
   private responsablesMap: Map<number, IPersona[]>;
-  private proyectoTituloMap: Map<number, string>;
+  private proyectoTituloMap: Map<number, I18nFieldValue[]>;
   private proyectosSGI$ = new BehaviorSubject<IProyectoSeguimientoEjecucionEconomicaData[]>([]);
   private seguimientosJustificacion$ = new BehaviorSubject<StatusWrapper<IProyectoSeguimientoJustificacionWithFechaJustificacion>[]>([]);
   private seguimientosJustificacionAnualidad$ = new BehaviorSubject<StatusWrapper<ISeguimientoJustificacionAnualidad>[]>([]);
@@ -51,12 +54,18 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
   private periodoJustificacionChanged$ = new BehaviorSubject<IProyectoPeriodoJustificacion>(null);
   private periodosSeguimiento$ = new BehaviorSubject<StatusWrapper<IProyectoPeriodoSeguimientoWithTituloProyecto>[]>([]);
 
+  limiteRegistrosExportacionExcel: number;
+
   get configuracion(): IConfiguracion {
     return this._configuracion;
   }
 
   get proyectoSgeRef(): string {
     return this.proyectoSge.id;
+  }
+
+  get gastosJustificadosSgeEnabled(): boolean {
+    return this._configuracion.gastosJustificadosSgeEnabled;
   }
 
   constructor(
@@ -71,18 +80,25 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
     private readonly proyectoPeriodoJustificacionService: ProyectoPeriodoJustificacionService,
     private readonly proyectoPeriodoSeguimientoService: ProyectoPeriodoSeguimientoService,
     private readonly proyectoSeguimientoJustificacionService: ProyectoSeguimientoJustificacionService,
-    private readonly proyectoPeriodoJustificacionSeguimientoService: ProyectoPeriodoJustificacionSeguimientoService
+    private readonly proyectoPeriodoJustificacionSeguimientoService: ProyectoPeriodoJustificacionSeguimientoService,
+    private readonly cnfService: ConfigService
   ) {
     super(key);
+
     this.responsablesMap = new Map(
       relacionesProyectos.map(relacion => ([relacion.id, relacion.responsables]))
     );
+
     this.proyectoTituloMap = new Map(
       relacionesProyectos.map(relacion => ([relacion.id, relacion.nombre]))
     );
   }
 
   protected onInitialize(): void | Observable<any> {
+    this.subscriptions.push(
+      this.getLimiteRegistrosExportacionExcel().subscribe(limite => this.limiteRegistrosExportacionExcel = limite)
+    );
+
     return forkJoin({
       proyectosSGI: this.findProyectosSGI(this.proyectoSge),
       seguimientosJustificacion: this.findSeguimientosJustificacion(this.proyectoSge),
@@ -621,5 +637,11 @@ export class SeguimientoJustificacionResumenFragment extends Fragment {
     target: IProyectoPeriodoSeguimientoWithTituloProyecto
   ): void {
     target.tituloProyecto = source.tituloProyecto;
+  }
+
+  private getLimiteRegistrosExportacionExcel(): Observable<number> {
+    return this.cnfService.getLimiteRegistrosExportacionExcel(ConfigCsp.CSP_EXP_MAX_NUM_REGISTROS_EXCEL_SEGUIMIENTO_JUSTIFICACION_RESUMEN).pipe(
+      map(limite => Number(limite))
+    );
   }
 }

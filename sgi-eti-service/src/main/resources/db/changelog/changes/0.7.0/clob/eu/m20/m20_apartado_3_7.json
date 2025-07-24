@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap3_7",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.7 Animaliari aplikatuko zaion esperimentazio prozesua"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Animalia bat prestatzen denetik ‘haren gaineko behaketa gehiago egiten ez den’ arte eta ‘animalia hil, birkokatu edo habitat edo sistema zootekniko egoki batera itzultzen duten’ arte egiten diren prozeduren/esku hartzeen multzo edo segidari esaten diogu ‘esperimentazio prozesu’.</p>"
+      }
+    ]
+  }
+]

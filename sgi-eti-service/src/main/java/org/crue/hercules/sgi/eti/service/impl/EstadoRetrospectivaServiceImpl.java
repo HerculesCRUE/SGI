@@ -6,12 +6,12 @@ import org.crue.hercules.sgi.eti.repository.EstadoRetrospectivaRepository;
 import org.crue.hercules.sgi.eti.repository.specification.EstadoRetrospectivaSpecifications;
 import org.crue.hercules.sgi.eti.service.EstadoRetrospectivaService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,8 +39,7 @@ public class EstadoRetrospectivaServiceImpl implements EstadoRetrospectivaServic
   @Transactional
   public EstadoRetrospectiva create(EstadoRetrospectiva estadoRetrospectiva) {
     log.debug("create(EstadoRetrospectiva estadoRetrospectiva) - start");
-    Assert.notNull(estadoRetrospectiva.getId(),
-        "EstadoRetrospectiva id no puede ser null para crear un nuevo estadoRetrospectiva");
+    AssertHelper.idNotNull(estadoRetrospectiva.getId(), EstadoRetrospectiva.class);
     EstadoRetrospectiva returnValue = repository.save(estadoRetrospectiva);
     log.debug("create(EstadoRetrospectiva estadoRetrospectiva) - end");
     return returnValue;
@@ -64,8 +63,7 @@ public class EstadoRetrospectivaServiceImpl implements EstadoRetrospectivaServic
   public EstadoRetrospectiva update(final EstadoRetrospectiva estadoRetrospectivaActualizar) {
     log.debug("update(EstadoRetrospectiva estadoRetrospectivaActualizar) - start");
 
-    Assert.notNull(estadoRetrospectivaActualizar.getId(),
-        "EstadoRetrospectiva id no puede ser null para actualizar un estadoRetrospectiva");
+    AssertHelper.idNotNull(estadoRetrospectivaActualizar.getId(), EstadoRetrospectiva.class);
 
     return repository.findById(estadoRetrospectivaActualizar.getId()).map(estadoRetrospectiva -> {
       estadoRetrospectiva.setNombre(estadoRetrospectivaActualizar.getNombre());
@@ -103,7 +101,7 @@ public class EstadoRetrospectivaServiceImpl implements EstadoRetrospectivaServic
   @Transactional
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
-    Assert.notNull(id, "EstadoRetrospectiva id no puede ser null para eliminar una estadoRetrospectiva");
+    AssertHelper.idNotNull(id, EstadoRetrospectiva.class);
     if (!repository.existsById(id)) {
       throw new EstadoRetrospectivaNotFoundException(id);
     }
@@ -146,7 +144,7 @@ public class EstadoRetrospectivaServiceImpl implements EstadoRetrospectivaServic
   @Override
   public EstadoRetrospectiva findById(final Long id) {
     log.debug("findById(final Long id) - start");
-    Assert.notNull(id, "EstadoRetrospectiva id no puede ser null para buscar una estadoRetrospectiva por Id");
+    AssertHelper.idNotNull(id, EstadoRetrospectiva.class);
     final EstadoRetrospectiva estadoRetrospectiva = repository.findById(id)
         .orElseThrow(() -> new EstadoRetrospectivaNotFoundException(id));
     log.debug("findById(final Long id) - end");

@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap4_6_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.5 Use of teaching time"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Will the tests in which students participate as research subjects be carried out during school time?</p>"
+      },
+      {
+        "key": "usoTiempoLectivoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Schedule and duration",
+        "hideExpression": "!model.usoTiempoLectivoRadio || model.usoTiempoLectivoRadio === 'no'"
+      },
+      {
+        "key": "horarioYduracion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.usoTiempoLectivoRadio || model.usoTiempoLectivoRadio === 'no'",
+        "templateOptions": {
+          "label": "Please specify",
+          "placeholder": "Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

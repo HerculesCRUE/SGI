@@ -7,15 +7,21 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
+import org.crue.hercules.sgi.csp.converter.SolicitudProyectoObjetivosConverter;
+import org.crue.hercules.sgi.csp.converter.SolicitudProyectoResultadosPrevistosConverter;
+import org.crue.hercules.sgi.csp.converter.SolicitudTituloConverter;
 import org.crue.hercules.sgi.csp.dto.eti.ChecklistOutput;
 import org.crue.hercules.sgi.csp.dto.eti.ChecklistOutput.Formly;
 import org.crue.hercules.sgi.csp.dto.eti.PeticionEvaluacion;
+import org.crue.hercules.sgi.csp.dto.eti.PeticionEvaluacion.EstadoFinanciacion;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.ColaborativoWithoutCoordinadorExternoException;
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
@@ -28,19 +34,23 @@ import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToChangeEstadoSolic
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
+import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitudObservaciones;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud.Estado;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.RolSocio;
 import org.crue.hercules.sgi.csp.model.Solicitud;
+import org.crue.hercules.sgi.csp.model.Solicitud.OrigenSolicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
+import org.crue.hercules.sgi.csp.model.SolicitudObservaciones;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto.TipoPresupuesto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEquipo;
+import org.crue.hercules.sgi.csp.model.SolicitudTitulo;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEnlaceRepository;
-import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadFinanciadoraRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.DocumentoRequeridoSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.EstadoSolicitudRepository;
@@ -49,15 +59,19 @@ import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.RolSocioRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudExternaRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEntidadRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoPresupuestoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiEtiService;
+import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgempService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
 import org.crue.hercules.sgi.csp.util.GrupoAuthorityHelper;
 import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -112,9 +126,6 @@ class SolicitudServiceTest extends BaseServiceTest {
   private ConvocatoriaRepository convocatoriaRepository;
 
   @Mock
-  ConvocatoriaEntidadFinanciadoraRepository convocatoriaEntidadFinanciadoraRepository;
-
-  @Mock
   ConvocatoriaEnlaceRepository convocatoriaEnlaceRepository;
 
   @Mock
@@ -125,6 +136,9 @@ class SolicitudServiceTest extends BaseServiceTest {
 
   @Mock
   private SgiApiSgpService personasService;
+
+  @Mock
+  private SgiApiSgempService sgiApiSgempService;
 
   @Mock
   private ProgramaRepository programaRepository;
@@ -150,31 +164,49 @@ class SolicitudServiceTest extends BaseServiceTest {
   @Mock
   private RolSocioRepository rolSocioRepository;
 
+  @Mock
+  private SolicitudProyectoEntidadRepository solicitudProyectoEntidadRepository;
+
+  @Mock
+  private SolicitudTituloConverter solicitudTituloConverter;
+
+  @Mock
+  private SolicitudProyectoObjetivosConverter solicitudProyectoObjetivosConverter;
+
+  @Mock
+  private SolicitudProyectoResultadosPrevistosConverter solicitudProyectoResultadosPrevistosConverter;
+
   private SolicitudService service;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     solicitudAuthorityHelper = new SolicitudAuthorityHelper(repository, solicitudExternaRepository);
-    service = new SolicitudService(sgiConfigProperties,
-        sgiApiEtiService, repository,
+    service = new SolicitudService(
+        sgiConfigProperties,
+        sgiApiEtiService,
+        sgiApiSgempService,
+        repository,
         estadoSolicitudRepository,
         configuracionSolicitudRepository,
         proyectoRepository,
-        solicitudProyectoRepository,
         documentoRequeridoSolicitudRepository,
         solicitudDocumentoRepository,
+        solicitudProyectoRepository,
         solicitudProyectoEquipoRepository,
         solicitudProyectoSocioRepository,
         solicitudProyectoPresupuestoRepository,
         convocatoriaRepository,
-        convocatoriaEntidadFinanciadoraRepository,
         convocatoriaEnlaceRepository,
         programaRepository,
         solicitudAuthorityHelper,
         grupoAuthorityHelper,
         solicitudRrhhComService,
         solicitudComService,
-        rolSocioRepository);
+        rolSocioRepository,
+        solicitudProyectoEntidadRepository,
+        solicitudTituloConverter,
+        solicitudProyectoObjetivosConverter,
+        solicitudProyectoResultadosPrevistosConverter);
   }
 
   @Test
@@ -281,7 +313,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     // when: Creamos el Solicitud
     // then: Lanza una excepcion porque el Solicitud ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(solicitud)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Solicitud id tiene que ser null para crear una Solicitud");
+        .hasMessage("Identificador de Solicitud debe ser nulo");
   }
 
   @Test
@@ -294,7 +326,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     // when: Creamos el Solicitud
     // then: Lanza una excepcion porque no tiene creadorRef
     Assertions.assertThatThrownBy(() -> service.create(solicitud)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("CreadorRef no puede ser null para crear una Solicitud");
+        .hasMessage("Referencia creador solicitud de Solicitud no puede ser nulo");
   }
 
   @Test
@@ -307,7 +339,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque no tiene convocatoria ni convocatoria
     // externa
     Assertions.assertThatThrownBy(() -> service.create(solicitud)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Convocatoria o Convocatoria externa tienen que ser distinto de null para crear una Solicitud");
+        .hasMessage("Convocatoria o Convocatoria Externa de Solicitud no puede ser nulo");
   }
 
   @Test
@@ -343,7 +375,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     // no
     // permitida para el usuario
     Assertions.assertThatThrownBy(() -> service.create(solicitud)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La Convocatoria pertenece a una Unidad de Gestión no gestionable por el usuario");
+        .hasMessage("Convocatoria pertenece a una Unidad de Gestión no gestionable por el usuario");
   }
 
   @Test
@@ -356,7 +388,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque no tiene convocatoria ni convocatoria
     // externa
     Assertions.assertThatThrownBy(() -> service.create(solicitud)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La Unidad de Gestión no es gestionable por el usuario");
+        .hasMessage("Solicitud pertenece a una Unidad de Gestión no gestionable por el usuario");
   }
 
   @Test
@@ -365,7 +397,9 @@ class SolicitudServiceTest extends BaseServiceTest {
     // given: Un nuevo Solicitud con las observaciones actualizadas
     Solicitud solicitud = generarMockSolicitud(1L, 1L, null);
     Solicitud solicitudoObservacionesActualizadas = generarMockSolicitud(1L, 1L, null);
-    solicitudoObservacionesActualizadas.setObservaciones("observaciones actualizadas");
+    Set<SolicitudObservaciones> solicitudObservaciones = new HashSet<>();
+    solicitudObservaciones.add(new SolicitudObservaciones(Language.ES, "observaciones actualizadas"));
+    solicitudoObservacionesActualizadas.setObservaciones(solicitudObservaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(solicitud));
 
@@ -403,7 +437,9 @@ class SolicitudServiceTest extends BaseServiceTest {
     // given: Un nuevo Solicitud con las observaciones actualizadas
     Solicitud solicitud = generarMockSolicitud(1L, 1L, null);
     Solicitud solicitudoObservacionesActualizadas = generarMockSolicitud(1L, 1L, null);
-    solicitudoObservacionesActualizadas.setObservaciones("observaciones actualizadas");
+    Set<SolicitudObservaciones> solicitudObservaciones = new HashSet<>();
+    solicitudObservaciones.add(new SolicitudObservaciones(Language.ES, "observaciones actualizadas"));
+    solicitudoObservacionesActualizadas.setObservaciones(solicitudObservaciones);
 
     solicitud.setConvocatoriaId(null);
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(solicitud));
@@ -474,7 +510,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     // when: Creamos el Solicitud
     // then: Lanza una excepcion porque no tiene creadorRef
     Assertions.assertThatThrownBy(() -> service.update(solicitud)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El solicitante no puede ser null para actualizar Solicitud");
+        .hasMessage("Referencia solicitante solicitud de Solicitud no puede ser nulo");
   }
 
   @Test
@@ -551,7 +587,7 @@ class SolicitudServiceTest extends BaseServiceTest {
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(solicitud));
 
     Assertions.assertThatThrownBy(() -> service.disable(solicitud.getId())).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La Solicitud pertenece a una Unidad de Gestión no gestionable por el usuario");
+        .hasMessage("Solicitud pertenece a una Unidad de Gestión no gestionable por el usuario");
 
   }
 
@@ -587,7 +623,8 @@ class SolicitudServiceTest extends BaseServiceTest {
     Assertions.assertThat(solicitud.getConvocatoriaId()).as("getConvocatoriaId()").isEqualTo(1);
     Assertions.assertThat(solicitud.getCreadorRef()).as("getCreadorRef()").isEqualTo("usr-001");
     Assertions.assertThat(solicitud.getSolicitanteRef()).as("getSolicitanteRef()").isEqualTo("usr-002");
-    Assertions.assertThat(solicitud.getObservaciones()).as("getObservaciones()").isEqualTo("observaciones-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(solicitud.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("observaciones-001");
     Assertions.assertThat(solicitud.getConvocatoriaExterna()).as("getConvocatoriaExterna()").isNull();
     Assertions.assertThat(solicitud.getUnidadGestionRef()).as("getUnidadGestionRef()").isEqualTo("1");
     Assertions.assertThat(solicitud.getActivo()).as("getActivo()").isTrue();
@@ -643,7 +680,8 @@ class SolicitudServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       Solicitud solicitud = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(solicitud.getObservaciones()).isEqualTo("observaciones-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(solicitud.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
 
@@ -685,7 +723,8 @@ class SolicitudServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       Solicitud solicitud = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(solicitud.getObservaciones()).isEqualTo("observaciones-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(solicitud.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
 
@@ -727,7 +766,8 @@ class SolicitudServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       Solicitud solicitud = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(solicitud.getObservaciones()).isEqualTo("observaciones-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(solicitud.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
 
@@ -1205,18 +1245,26 @@ class SolicitudServiceTest extends BaseServiceTest {
     Programa programa = new Programa();
     programa.setId(1L);
 
+    Set<SolicitudTitulo> solicitudTitulo = new HashSet<>();
+    solicitudTitulo.add(new SolicitudTitulo(Language.ES, "titulo"));
+
+    Set<SolicitudObservaciones> solicitudObservaciones = new HashSet<>();
+    solicitudObservaciones.add(new SolicitudObservaciones(Language.ES, "observaciones-" + String.format("%03d", id)));
+
     Solicitud solicitud = new Solicitud();
     solicitud.setId(id);
-    solicitud.setTitulo("titulo");
+    solicitud.setTitulo(solicitudTitulo);
     solicitud.setCodigoExterno(null);
     solicitud.setConvocatoriaId(convocatoriaId);
     solicitud.setCreadorRef("usr-001");
     solicitud.setSolicitanteRef("usr-002");
-    solicitud.setObservaciones("observaciones-" + String.format("%03d", id));
+    solicitud.setObservaciones(solicitudObservaciones);
     solicitud.setConvocatoriaExterna(convocatoriaExterna);
     solicitud.setUnidadGestionRef("1");
     solicitud.setActivo(true);
     solicitud.setFormularioSolicitud(FormularioSolicitud.PROYECTO);
+    solicitud.setOrigenSolicitud(
+        convocatoriaId != null ? OrigenSolicitud.CONVOCATORIA_SGI : OrigenSolicitud.CONVOCATORIA_NO_SGI);
 
     if (id != null) {
       solicitud.setEstado(estadoSolicitud);
@@ -1281,6 +1329,7 @@ class SolicitudServiceTest extends BaseServiceTest {
         .id(id)
         .activo(Boolean.TRUE)
         .checklistId(checklistId)
+        .estadoFinanciacion(EstadoFinanciacion.SOLICITADO)
         .build();
   }
 
@@ -1294,19 +1343,23 @@ class SolicitudServiceTest extends BaseServiceTest {
   }
 
   private DocumentoRequeridoSolicitud buildMockDocumentoRequeridoSolicitud(Long id, TipoDocumento tipoDocumento) {
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "Testing"));
     return DocumentoRequeridoSolicitud.builder()
         .id(id)
         .configuracionSolicitudId(1L)
-        .observaciones("Testing")
+        .observaciones(obsDocumentoRequerido)
         .tipoDocumento(tipoDocumento)
         .build();
   }
 
   private TipoDocumento buildMockTipoDocumento(Long id) {
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "testion"));
     return TipoDocumento.builder()
         .activo(Boolean.TRUE)
         .id(id)
-        .descripcion("testion")
+        .descripcion(descripcionTipoDocumento)
         .build();
   }
 }

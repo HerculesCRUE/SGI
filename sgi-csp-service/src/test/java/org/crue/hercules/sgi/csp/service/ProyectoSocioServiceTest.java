@@ -115,7 +115,7 @@ class ProyectoSocioServiceTest extends BaseServiceTest {
         // when: create ProyectoSocio
         () -> service.create(proyectoSocio))
         // then: throw exception as id can't be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Id tiene que ser null para crear el ProyectoSocio");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Identificador de Proyecto Socio debe ser nulo");
   }
 
   @Test
@@ -164,7 +164,7 @@ class ProyectoSocioServiceTest extends BaseServiceTest {
         // when: update ProyectoSocio
         () -> service.update(proyectoSocio))
         // then: throw exception as id must be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Id no puede ser null para actualizar ProyectoSocio");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Identificador de Proyecto Socio no puede ser nulo");
   }
 
   @Test

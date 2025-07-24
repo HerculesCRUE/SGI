@@ -1,9 +1,23 @@
+-- CONCEPTO_GASTO
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (1, true,  true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (2, true,  true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (3, false, false);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (11, true,  true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (12, true,  true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (13, true,  true);
 
-INSERT INTO test.concepto_gasto (id, nombre, descripcion, activo, costes_indirectos)
-VALUES 
-  (1,  'nombre-001', 'descripcion-001', true,  true),
-  (2,  'nombre-002', 'descripcion-002', true,  true),
-  (3,  'nombre-003', 'descripcion-003', false, false),
-  (11, 'nombre-011', 'descripcion-011', true,  true),
-  (12, 'nombre-012', 'descripcion-012', true,  true),
-  (13, 'nombre-013', 'descripcion-013', true,  true);
+-- CONCEPTO_GASTO_NOMBRE
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (1, 'es', 'nombre-001');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (2, 'es', 'nombre-002');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (3, 'es', 'nombre-003');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (11, 'es', 'nombre-011');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (12, 'es', 'nombre-012');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (13, 'es', 'nombre-013');
+
+-- CONCEPTO_GASTO_DESCRIPCION
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (1, 'es', 'descripcion-001');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (2, 'es', 'descripcion-002');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (3, 'es', 'descripcion-003');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (11, 'es', 'descripcion-011');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (12, 'es', 'descripcion-012');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (13, 'es', 'descripcion-013');

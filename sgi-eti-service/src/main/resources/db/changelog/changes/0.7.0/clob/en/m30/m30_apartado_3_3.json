@@ -1,0 +1,24 @@
+[
+  {
+    "key": "ap3_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.3 References from scientific publications"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Please cite in full (author, title, publication, date, etc.) the most relevant references used for the method (maximum 10 references)</p>"
+      },
+      {
+        "key": "referenciasPublicaciones",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "References",
+          "required": true
+        }
+      }
+    ]
+  }
+]

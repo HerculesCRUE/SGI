@@ -50,4 +50,6 @@ export class ConvocatoriaEntidadesConvocantesPublicComponent extends FragmentCom
     return MSG_PARAMS;
   }
 
+  protected setupI18N(): void { }
+
 }

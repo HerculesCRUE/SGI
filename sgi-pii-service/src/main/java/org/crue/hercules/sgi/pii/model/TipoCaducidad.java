@@ -1,12 +1,20 @@
 package org.crue.hercules.sgi.pii.model;
 
-import javax.persistence.Column;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,7 +45,11 @@ public class TipoCaducidad extends BaseEntity {
   @SequenceGenerator(name = SEQUENCE_NAME, sequenceName = SEQUENCE_NAME, allocationSize = 1)
   private Long id;
 
-  @Column(name = "descripcion", nullable = false, length = DESCRIPCION_MAX_LENGTH)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tipo_caducidad_descripcion", joinColumns = @JoinColumn(name = "tipo_caducidad_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<TipoCaducidadDescripcion> descripcion = new HashSet<>();
 
 }

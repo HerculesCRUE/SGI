@@ -6,6 +6,7 @@ import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ISectorAplicacion } from '@core/models/pii/sector-aplicacion';
 import { SectorAplicacionService } from '@core/services/pii/sector-aplicacion/sector-aplicacion.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -87,11 +88,10 @@ export class SectorAplicacionModalComponent
   }
 
   protected buildFormGroup(): FormGroup {
-    const formGroup = new FormGroup({
-      nombre: new FormControl(this.sectorAplicacion?.nombre ?? '', [Validators.required, Validators.maxLength(50)]),
-      descripcion: new FormControl(this.sectorAplicacion?.descripcion ?? '', [Validators.required, Validators.maxLength(250)]),
+    return new FormGroup({
+      nombre: new FormControl(this.sectorAplicacion?.nombre ?? [], [I18nValidators.required, I18nValidators.maxLength(50)]),
+      descripcion: new FormControl(this.sectorAplicacion?.descripcion ?? [], [I18nValidators.required, I18nValidators.maxLength(250)]),
     });
-    return formGroup;
   }
 
   protected saveOrUpdate(): Observable<ISectorAplicacion> {

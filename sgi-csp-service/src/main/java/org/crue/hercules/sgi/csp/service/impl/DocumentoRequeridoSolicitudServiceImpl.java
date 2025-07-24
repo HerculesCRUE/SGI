@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.crue.hercules.sgi.csp.dto.sgp.PersonaOutput.TipoDocumento;
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.DocumentoRequeridoSolicitudNotFoundException;
@@ -20,8 +21,11 @@ import org.crue.hercules.sgi.csp.repository.ModeloTipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.specification.DocumentoRequeridoSolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.service.DocumentoRequeridoSolicitudService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -38,6 +42,26 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequeridoSolicitudService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_MODELO = "modelo";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_CREAR = "action.crear";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_FIELD_ACTION_ELIMINAR = "action.eliminar";
+  private static final String MSG_DOCUMENTO_REQUERIDO = "documentoRequerido";
+  private static final String MSG_MODEL_MODELO_TIPO_FASE = "org.crue.hercules.sgi.csp.model.ModeloTipoFase.message";
+  private static final String MSG_MODEL_TIPO_FASE = "org.crue.hercules.sgi.csp.model.TipoFase.message";
+  private static final String MSG_MODEL_DOCUMENTO_REQUERIDO_SOLICITUD = "org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud.message";
+  private static final String MSG_MODEL_MODELO_TIPO_DOCUMENTO = "org.crue.hercules.sgi.csp.model.ModeloTipoDocumento.message";
+  private static final String MSG_MODEL_TIPO_DOCUMENTO = "org.crue.hercules.sgi.csp.model.TipoDocumento.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODELO_EJECUCION_INACTIVO = "org.springframework.util.Assert.entity.modeloEjecucion.inactivo.message";
+  private static final String MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.exceptions.AssignModeloEjecucion.message";
+  private static final String MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO = "org.crue.hercules.sgi.csp.model.Convocatoria.sinModeloEjecucion.message";
+  private static final String MSG_NO_DISPONIBLE_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.model.ModeloEjecucion.noDisponible.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA_PERMISOS = "org.springframework.util.Assert.accion.denegada.permisos.message";
 
   private final DocumentoRequeridoSolicitudRepository repository;
   private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
@@ -72,7 +96,7 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
   public DocumentoRequeridoSolicitud create(DocumentoRequeridoSolicitud documentoRequeridoSolicitud) {
     log.debug("create(DocumentoRequeridoSolicitud documentoRequeridoSolicitud) - start");
 
-    Assert.isNull(documentoRequeridoSolicitud.getId(), "Id tiene que ser null para crear DocumentoRequeridoSolicitud");
+    AssertHelper.idIsNull(documentoRequeridoSolicitud.getId(), DocumentoRequeridoSolicitud.class);
 
     validarDocumentoRequeridoSolicitud(documentoRequeridoSolicitud, null, new String[] {
         ConvocatoriaAuthorityHelper.CSP_CON_C,
@@ -98,8 +122,7 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
   public DocumentoRequeridoSolicitud update(DocumentoRequeridoSolicitud documentoRequeridoSolicitud) {
     log.debug("update(DocumentoRequeridoSolicitud documentoRequeridoSolicitud) - start");
 
-    Assert.notNull(documentoRequeridoSolicitud.getId(),
-        "DocumentoRequeridoSolicitud id no puede ser null para actualizar un DocumentoRequeridoSolicitud");
+    AssertHelper.idNotNull(documentoRequeridoSolicitud.getId(), DocumentoRequeridoSolicitud.class);
 
     return repository.findById(documentoRequeridoSolicitud.getId()).map(datosOriginales -> {
 
@@ -126,7 +149,7 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "DocumentoRequeridoSolicitud id no puede ser null para eliminar un DocumentoRequeridoSolicitud");
+    AssertHelper.idNotNull(id, DocumentoRequeridoSolicitud.class);
 
     Optional<DocumentoRequeridoSolicitud> documentoRequeridoSolicitud = repository.findById(id);
     if (documentoRequeridoSolicitud.isPresent()) {
@@ -137,7 +160,12 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
       Assert.isTrue(
           convocatoriaService.isRegistradaConSolicitudesOProyectos(configuracionSolicitud.getConvocatoriaId(), null,
               new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E }),
-          "No se puede eliminar DocumentoRequeridoSolicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_DOCUMENTO_REQUERIDO_SOLICITUD))
+              .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_ELIMINAR))
+              .build());
+
     } else {
       throw new DocumentoRequeridoSolicitudNotFoundException(id);
     }
@@ -197,14 +225,12 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
         "validarDocumentoRequeridoSolicitud(DocumentoRequeridoSolicitud datosDocumentoRequeridoSolicitud, DocumentoRequeridoSolicitud datosOriginales) - start");
 
     /** Obligatoria Configuración Solicitud */
-    Assert.isTrue(documentoRequeridoSolicitud.getConfiguracionSolicitudId() != null,
-        "ConfiguracionSolicitud no puede ser null en la DocumentoRequeridoSolicitud");
+    AssertHelper.idNotNull(documentoRequeridoSolicitud.getConfiguracionSolicitudId(), ConfiguracionSolicitud.class);
 
     /** Obligatorio TipoDocumento */
-    Assert.isTrue(
-        documentoRequeridoSolicitud.getTipoDocumento() != null
-            && documentoRequeridoSolicitud.getTipoDocumento().getId() != null,
-        "TipoDocumento no puede ser null en la DocumentoRequeridoSolicitud");
+    AssertHelper.entityNotNull(documentoRequeridoSolicitud.getTipoDocumento(), DocumentoRequeridoSolicitud.class,
+        TipoDocumento.class);
+    AssertHelper.idNotNull(documentoRequeridoSolicitud.getTipoDocumento().getId(), TipoDocumento.class);
 
     /** Se recupera la Configuración Solicitud para la convocatoria */
     ConfiguracionSolicitud configuracionSolicitud = configuracionSolicitudRepository
@@ -216,8 +242,13 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
     Assert.isTrue(
         convocatoriaService.isRegistradaConSolicitudesOProyectos(configuracionSolicitud.getConvocatoriaId(), null,
             authorities),
-        "No se puede " + ((datosOriginales != null) ? "modificar" : "crear")
-            + " DocumentoRequeridoSolicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_DOCUMENTO_REQUERIDO_SOLICITUD))
+            .parameter(MSG_KEY_ACTION,
+                ((datosOriginales != null) ? ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR)
+                    : ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_CREAR)))
+            .build());
 
     // Se recupera el Id de ModeloEjecucion para las siguientes validaciones
     Convocatoria convocatoria = convocatoriaRepository.findById(configuracionSolicitud.getConvocatoriaId())
@@ -237,25 +268,37 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
     ModeloTipoFase configuracionModeloTipoFase = null;
 
     Assert.isTrue(!(configuracionTipoFase == null || configuracionTipoFase.getId() == null),
-        "Solo se pueden añadir documentos asociados a la Fase del plazo de presentación de solicitudes en la configuración de la convocatoria");
+        ApplicationContextSupport.getMessage(MSG_DOCUMENTO_REQUERIDO));
 
     Optional<ModeloTipoFase> modeloTipoFase = modeloTipoFaseRepository
         .findByModeloEjecucionIdAndTipoFaseId(modeloEjecucionId, configuracionTipoFase.getId());
 
     // TipoFase está asignado al ModeloEjecucion
     Assert.isTrue(modeloTipoFase.isPresent(),
-        "TipoFase '" + configuracionTipoFase.getNombre() + "' no disponible para el ModeloEjecucion '"
-            + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
-                : "Convocatoria sin modelo asignado")
-            + "'");
+        () -> ProblemMessage.builder()
+            .key(MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+            .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+            .parameter(MSG_KEY_MODELO, ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
+                : ApplicationContextSupport.getMessage(MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO)))
+            .build());
 
     // La asignación al ModeloEjecucion está activa
-    Assert.isTrue(modeloTipoFase.get().getActivo(), "ModeloTipoFase '" + modeloTipoFase.get().getTipoFase().getNombre()
-        + "' no está activo para el ModeloEjecucion '" + modeloTipoFase.get().getModeloEjecucion().getNombre() + "'");
+    Assert.isTrue(modeloTipoFase.get().getActivo(),
+        () -> ProblemMessage.builder()
+            .key(MSG_MODELO_EJECUCION_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_FASE))
+            .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+            .parameter(MSG_KEY_MODELO, modeloTipoFase.get().getModeloEjecucion().getNombre())
+            .build());
 
     // El TipoFase está activo
     Assert.isTrue(modeloTipoFase.get().getTipoFase().getActivo(),
-        "TipoFase '" + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+            .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+            .build());
 
     configuracionModeloTipoFase = modeloTipoFase.get();
 
@@ -272,11 +315,13 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
 
     // Está asignado al ModeloEjecucion y ModeloTipoFase
     Assert.isTrue(modeloTipoDocumento.isPresent(),
-        "TipoDocumento '" + documentoRequeridoSolicitud.getTipoDocumento().getNombre()
-            + "' no disponible para el ModeloEjecucion '"
-            + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
-                : "Convocatoria sin modelo asignado")
-            + "' y TipoFase '" + configuracionModeloTipoFase.getTipoFase().getNombre() + "'");
+        () -> ProblemMessage.builder()
+            .key(MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_DOCUMENTO))
+            .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+            .parameter(MSG_KEY_MODELO, ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
+                : ApplicationContextSupport.getMessage(MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO)))
+            .build());
 
     // Comprobar solamente si estamos creando o se ha modificado el documento
     if (datosOriginales == null
@@ -285,13 +330,20 @@ public class DocumentoRequeridoSolicitudServiceImpl implements DocumentoRequerid
 
       // La asignación al ModeloEjecucion está activa
       Assert.isTrue(modeloTipoDocumento.get().getActivo(),
-          "ModeloTipoDocumento '" + modeloTipoDocumento.get().getTipoDocumento().getNombre()
-              + "' no está activo para el ModeloEjecucion '"
-              + modeloTipoDocumento.get().getModeloEjecucion().getNombre() + "'");
+          () -> ProblemMessage.builder()
+              .key(MSG_MODELO_EJECUCION_INACTIVO)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_DOCUMENTO))
+              .parameter(MSG_KEY_FIELD, modeloTipoDocumento.get().getTipoDocumento().getNombre())
+              .parameter(MSG_KEY_MODELO, modeloTipoDocumento.get().getModeloEjecucion().getNombre())
+              .build());
 
       // El TipoDocumento está activo
       Assert.isTrue(modeloTipoDocumento.get().getTipoDocumento().getActivo(),
-          "TipoDocumento '" + modeloTipoDocumento.get().getTipoDocumento().getNombre() + "' no está activo");
+          () -> ProblemMessage.builder()
+              .key(MSG_ENTITY_INACTIVO)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_DOCUMENTO))
+              .parameter(MSG_KEY_FIELD, modeloTipoDocumento.get().getTipoDocumento().getNombre())
+              .build());
 
       documentoRequeridoSolicitud.setTipoDocumento(modeloTipoDocumento.get().getTipoDocumento());
 

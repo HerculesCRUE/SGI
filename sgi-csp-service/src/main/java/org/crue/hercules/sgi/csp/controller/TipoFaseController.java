@@ -97,21 +97,6 @@ public class TipoFaseController {
   }
 
   /**
-   * Devuelve el {@link TipoFase} con el id indicado.
-   * 
-   * @param id Identificador de {@link TipoFase}.
-   * @return returnTipoFase {@link TipoFase} correspondiente al id.
-   */
-  @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  public TipoFase findById(@PathVariable Long id) {
-    log.debug("findById(Long id) - start");
-    TipoFase returnTipoFase = tipoFaseService.findById(id);
-    log.debug("findById(Long id) - end");
-    return returnTipoFase;
-  }
-
-  /**
    * Actualiza {@link TipoFase}.
    * 
    * @param updatedTipoFase {@link TipoFase} a actualizar.

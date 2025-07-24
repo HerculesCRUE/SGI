@@ -1,42 +1,51 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoSocioEquipoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoSocioNotFoundException;
+import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
+import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
-import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
-import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioEquipo;
+import org.crue.hercules.sgi.csp.model.Solicitud;
+import org.crue.hercules.sgi.csp.model.Solicitud.OrigenSolicitud;
+import org.crue.hercules.sgi.csp.model.SolicitudObservaciones;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioEquipo;
+import org.crue.hercules.sgi.csp.model.SolicitudTitulo;
+import org.crue.hercules.sgi.csp.repository.SolicitudExternaRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioEquipoRepository;
-import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioRepository;
+import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.SolicitudProyectoSocioEquipoServiceImpl;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.stubbing.Answer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.test.context.support.WithMockUser;
 
 /**
  * SolicitudProyectoSocioEquipoServiceTest
  */
-@ExtendWith(MockitoExtension.class)
-class SolicitudProyectoSocioEquipoServiceTest {
+class SolicitudProyectoSocioEquipoServiceTest extends BaseServiceTest {
 
   @Mock
   private SolicitudProyectoSocioEquipoRepository repository;
@@ -48,23 +57,28 @@ class SolicitudProyectoSocioEquipoServiceTest {
   private SolicitudService solicitudService;
 
   @Mock
-  private SolicitudProyectoRepository solicitudProyectoRepository;
+  private SolicitudRepository solicitudRepository;
+
+  @Mock
+  private SolicitudExternaRepository solicitudExternaRepository;
 
   private SolicitudProyectoSocioEquipoService service;
+  private SolicitudAuthorityHelper solicitudAuthorityHelper;
 
   @BeforeEach
   void setUp() throws Exception {
+    solicitudAuthorityHelper = new SolicitudAuthorityHelper(solicitudRepository, solicitudExternaRepository);
     service = new SolicitudProyectoSocioEquipoServiceImpl(repository, solicitudService,
-        solicitudProyectoSocioRepository, solicitudProyectoRepository);
+        solicitudProyectoSocioRepository, solicitudAuthorityHelper);
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   void update_ReturnsSolicitudProyectoSocioEquipo() {
     // given: una lista con uno de los SolicitudProyectoSocioEquipo actualizado,
     // otro nuevo y sin el otros existente
     Long solicitudProyectoId = 1L;
     Long solicitudProyectoSocioId = 1L;
-    SolicitudProyecto solicitudProyecto = generarMockSolicitudProyecto(solicitudProyectoId);
     SolicitudProyectoSocio solicitudProyectoSocio = generarMockSolicitudProyectoSocio(solicitudProyectoSocioId,
         solicitudProyectoId);
 
@@ -84,8 +98,8 @@ class SolicitudProyectoSocioEquipoServiceTest {
     solicitudProyectoEquipoSocioActualizar.add(newSolicitudProyectoSocioEquipo);
     solicitudProyectoEquipoSocioActualizar.add(updatedSolicitudProyectoSocioEquipo);
 
-    BDDMockito.given(solicitudProyectoRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(solicitudProyecto));
+    BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockSolicitud(1L, 1L, null)));
     BDDMockito.given(solicitudProyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudProyectoSocio));
     BDDMockito.given(repository.findAllBySolicitudProyectoSocioId(ArgumentMatchers.anyLong()))
@@ -141,6 +155,7 @@ class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   void update_WithoutSolicitudProyectoSocio_ThrowsSolicitudProyectoSocioNotFoundException() {
     // given: Un nuevo SolicitudProyectoSocioEquipo que no tiene
     // SolicitudProyectoSocio
@@ -164,11 +179,11 @@ class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   void update_WithoSolicitudProyectoSocioChange_ThrowsIllegalArgumentException() {
     // given: Se actualiza la solicitud proyecto socio
     Long solicitudProyectoId = 1L;
     Long solicitudProyectoSocioId = 1L;
-    SolicitudProyecto solicitudProyecto = generarMockSolicitudProyecto(solicitudProyectoId);
     SolicitudProyectoSocio solicitudProyectoSocio = generarMockSolicitudProyectoSocio(solicitudProyectoSocioId,
         solicitudProyectoId);
     SolicitudProyectoSocioEquipo updateSolicitudProyectoSocioEquipo = generarSolicitudProyectoSocioEquipo(2L, 1L);
@@ -183,8 +198,8 @@ class SolicitudProyectoSocioEquipoServiceTest {
     solicitudProyectoSocioEquipo.setSolicitudProyectoSocioId(3L);
     solicitudProyecotEquipoSocioJustificiacionExistentes.add(solicitudProyectoSocioEquipo);
 
-    BDDMockito.given(solicitudProyectoRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(solicitudProyecto));
+    BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockSolicitud(1L, 1L, null)));
     BDDMockito.given(solicitudProyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudProyectoSocio));
     BDDMockito.given(repository.findAllBySolicitudProyectoSocioId(ArgumentMatchers.anyLong()))
@@ -196,15 +211,15 @@ class SolicitudProyectoSocioEquipoServiceTest {
     Assertions
         .assertThatThrownBy(() -> service.update(solicitudProyectoSocioId, solicitudProyectoEquipoSocioActualizar))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("No se puede modificar la solicitud proyecto socio del SolicitudProyectoSocioEquipo");
+        .hasMessage("No se puede Modificar Solicitud Proyecto Socio para Solicitud Proyecto Socio Equipo");
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   void update_WithoutRolProyectoId_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyectoSocioEquipo que no tiene rol proyecto
     Long solicitudProyectoId = 1L;
     Long solicitudProyectoSocioId = 1L;
-    SolicitudProyecto solicitudProyecto = generarMockSolicitudProyecto(solicitudProyectoId);
     SolicitudProyectoSocio solicitudProyectoSocio = generarMockSolicitudProyectoSocio(solicitudProyectoSocioId,
         solicitudProyectoId);
     SolicitudProyectoSocioEquipo newSolicitudProyectoSocioEquipo = generarSolicitudProyectoSocioEquipo(null, 1L);
@@ -214,8 +229,8 @@ class SolicitudProyectoSocioEquipoServiceTest {
     newSolicitudProyectoSocioEquipo.setRolProyecto(null);
     solicitudProyectoEquipoSocioActualizar.add(newSolicitudProyectoSocioEquipo);
 
-    BDDMockito.given(solicitudProyectoRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(solicitudProyecto));
+    BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockSolicitud(1L, 1L, null)));
     BDDMockito.given(solicitudProyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudProyectoSocio));
     BDDMockito.given(solicitudService.modificable(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
@@ -225,15 +240,15 @@ class SolicitudProyectoSocioEquipoServiceTest {
     Assertions
         .assertThatThrownBy(() -> service.update(solicitudProyectoSocioId, solicitudProyectoEquipoSocioActualizar))
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "El rol de participación no puede ser null para realizar la acción sobre SolicitudProyectoSocioEquipo");
+            "Rol Proyecto de Solicitud Proyecto Socio Equipo no puede ser nulo");
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   void update_WithoutPersonaRef_ThrowsIllegalArgumentException() {
     // given: Un nuevo SolicitudProyectoSocioEquipo que no tiene persona ref
     Long solicitudProyectoId = 1L;
     Long solicitudProyectoSocioId = 1L;
-    SolicitudProyecto solicitudProyecto = generarMockSolicitudProyecto(solicitudProyectoId);
     SolicitudProyectoSocio solicitudProyectoSocio = generarMockSolicitudProyectoSocio(solicitudProyectoSocioId,
         solicitudProyectoId);
     SolicitudProyectoSocioEquipo newSolicitudProyectoSocioEquipo = generarSolicitudProyectoSocioEquipo(null, 1L);
@@ -243,8 +258,8 @@ class SolicitudProyectoSocioEquipoServiceTest {
     newSolicitudProyectoSocioEquipo.setPersonaRef(null);
     solicitudProyectoEquipoSocioActualizar.add(newSolicitudProyectoSocioEquipo);
 
-    BDDMockito.given(solicitudProyectoRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(solicitudProyecto));
+    BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockSolicitud(1L, 1L, null)));
     BDDMockito.given(solicitudProyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudProyectoSocio));
     BDDMockito.given(solicitudService.modificable(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
@@ -254,16 +269,16 @@ class SolicitudProyectoSocioEquipoServiceTest {
     Assertions
         .assertThatThrownBy(() -> service.update(solicitudProyectoSocioId, solicitudProyectoEquipoSocioActualizar))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La persona ref no puede ser null para realizar la acción sobre SolicitudProyectoSocioEquipo");
+        .hasMessage("Referencia persona de Solicitud Proyecto Socio Equipo no puede ser nulo");
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   void update_WithRangosMesesSolapados_ThrowsIllegalArgumentException() {
     // given: una lista con uno de los SolicitudProyectoSocioEquipo actualizado,
     // otro nuevo y sin el otros existente
     Long solicitudProyectoId = 1L;
     Long solicitudProyectoSocioId = 1L;
-    SolicitudProyecto solicitudProyecto = generarMockSolicitudProyecto(solicitudProyectoId);
     SolicitudProyectoSocio solicitudProyectoSocio = generarMockSolicitudProyectoSocio(solicitudProyectoSocioId,
         solicitudProyectoId);
 
@@ -279,8 +294,8 @@ class SolicitudProyectoSocioEquipoServiceTest {
     solicitudProyectoEquipoSocioActualizar.add(newSolicitudProyectoSocioEquipo);
     solicitudProyectoEquipoSocioActualizar.add(updatedSolicitudProyectoSocioEquipo);
 
-    BDDMockito.given(solicitudProyectoRepository.findById(ArgumentMatchers.anyLong()))
-        .willReturn(Optional.of(solicitudProyecto));
+    BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockSolicitud(1L, 1L, null)));
     BDDMockito.given(solicitudProyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(solicitudProyectoSocio));
     BDDMockito.given(repository.findAllBySolicitudProyectoSocioId(ArgumentMatchers.anyLong()))
@@ -292,7 +307,9 @@ class SolicitudProyectoSocioEquipoServiceTest {
     // dentro del mismo rango de meses
     Assertions
         .assertThatThrownBy(() -> service.update(solicitudProyectoSocioId, solicitudProyectoEquipoSocioActualizar))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El periodo se solapa con otro existente");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage(
+            "Solicitud Proyecto Socio Equipo %s ya está presente y tiene un periodo de vigencia que se solapa con el indicado",
+            solicitudProyectoEquipoSocioActualizar.get(0).getPersonaRef());
 
   }
 
@@ -324,6 +341,7 @@ class SolicitudProyectoSocioEquipoServiceTest {
   }
 
   @Test
+  @WithMockUser(username = "user", authorities = { "CSP-SOL-E" })
   void findBySolicitudProyectoSocioId_ReturnsSolicitudProyectoSocioEquipo() {
     // given: Una lista con 37 SolicitudProyectoSocio
     Long solicitudId = 1L;
@@ -331,6 +349,11 @@ class SolicitudProyectoSocioEquipoServiceTest {
     for (long i = 1; i <= 37; i++) {
       solicitudProyectoSocioEquipo.add(generarSolicitudProyectoSocioEquipo(i, i));
     }
+
+    BDDMockito.given(solicitudRepository.findById(ArgumentMatchers.<Long>any()))
+        .willReturn(Optional.of(generarMockSolicitud(1L, 1L, null)));
+    BDDMockito.given(solicitudProyectoSocioRepository.findById(ArgumentMatchers.anyLong()))
+        .willReturn(Optional.of(generarMockSolicitudProyectoSocio(1L, solicitudId)));
 
     BDDMockito.given(repository.findAll(ArgumentMatchers.<Specification<SolicitudProyectoSocioEquipo>>any(),
         ArgumentMatchers.<Pageable>any())).willAnswer(new Answer<Page<SolicitudProyectoSocioEquipo>>() {
@@ -366,10 +389,6 @@ class SolicitudProyectoSocioEquipoServiceTest {
 
   }
 
-  private SolicitudProyecto generarMockSolicitudProyecto(Long solicitudProyectoId) {
-    return SolicitudProyecto.builder().id(solicitudProyectoId).build();
-  }
-
   private SolicitudProyectoSocio generarMockSolicitudProyectoSocio(Long solicitudProyectoSocioId,
       Long solicitudProyectoId) {
     return SolicitudProyectoSocio.builder().id(solicitudProyectoSocioId).solicitudProyectoId(solicitudProyectoId)
@@ -392,6 +411,52 @@ class SolicitudProyectoSocioEquipoServiceTest {
         .mesFin(3).build();
 
     return solicitudProyectoSocioEquipo;
+  }
+
+  /**
+   * Función que devuelve un objeto Solicitud
+   * 
+   * @param id                  id del Solicitud
+   * @param convocatoriaId      id de la Convocatoria
+   * @param convocatoriaExterna convocatoria externa
+   * @return el objeto Solicitud
+   */
+  private Solicitud generarMockSolicitud(Long id, Long convocatoriaId, String convocatoriaExterna) {
+    EstadoSolicitud estadoSolicitud = new EstadoSolicitud();
+    estadoSolicitud.setId(1L);
+    estadoSolicitud.setEstado(EstadoSolicitud.Estado.BORRADOR);
+
+    Programa programa = new Programa();
+    programa.setId(1L);
+
+    Set<SolicitudTitulo> solicitudTitulo = new HashSet<>();
+    solicitudTitulo.add(new SolicitudTitulo(Language.ES, "titulo"));
+
+    Set<SolicitudObservaciones> solicitudObservaciones = new HashSet<>();
+    solicitudObservaciones.add(new SolicitudObservaciones(Language.ES, "observaciones-" + String.format("%03d", id)));
+
+    Solicitud solicitud = new Solicitud();
+    solicitud.setId(id);
+    solicitud.setTitulo(solicitudTitulo);
+    solicitud.setCodigoExterno(null);
+    solicitud.setConvocatoriaId(convocatoriaId);
+    solicitud.setCreadorRef("usr-001");
+    solicitud.setSolicitanteRef("usr-002");
+    solicitud.setObservaciones(solicitudObservaciones);
+    solicitud.setConvocatoriaExterna(convocatoriaExterna);
+    solicitud.setUnidadGestionRef("1");
+    solicitud.setActivo(true);
+    solicitud.setFormularioSolicitud(FormularioSolicitud.PROYECTO);
+    solicitud.setOrigenSolicitud(
+        convocatoriaId != null ? OrigenSolicitud.CONVOCATORIA_SGI : OrigenSolicitud.CONVOCATORIA_NO_SGI);
+
+    if (id != null) {
+      solicitud.setEstado(estadoSolicitud);
+      solicitud.setCodigoRegistroInterno("SGI_SLC1202011061027");
+      solicitud.setCreadorRef("usr-001");
+    }
+
+    return solicitud;
   }
 
 }

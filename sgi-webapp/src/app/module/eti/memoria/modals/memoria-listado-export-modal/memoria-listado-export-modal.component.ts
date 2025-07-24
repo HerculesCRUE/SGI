@@ -11,8 +11,11 @@ import { IReportConfig } from '@core/services/rep/abstract-table-export.service'
 import { TranslateService } from '@ngx-translate/core';
 import { SgiRestFindOptions } from '@sgi/framework/http';
 import { IMemoriaReportOptions, MemoriaListadoExportService } from '../../memoria-listado-export.service';
+import { switchMap } from 'rxjs/operators';
 
 const REPORT_TITLE_KEY = marker('eti.memoria.report.title');
+const ENTITY_KEY = marker('list.entity');
+const MEMORIA_KEY = marker('eti.memoria');
 
 export interface IMemoriaListadoModalData extends IBaseExportModalData {
   isInvestigador: boolean;
@@ -29,6 +32,7 @@ export const OUTPUT_REPORT_TYPE_EXCEL_CSV_MAP: Map<OutputReport, string> = new M
 })
 export class MemoriaListadoExportModalComponent extends
   BaseExportModalComponent<IMemoriaReportOptions> implements OnInit {
+  sheetTitleMemorias: string;
 
   readonly OUTPUT_REPORT_TYPE_EXCEL_CSV_MAP = OUTPUT_REPORT_TYPE_EXCEL_CSV_MAP;
   private reportTitle: string;
@@ -61,6 +65,18 @@ export class MemoriaListadoExportModalComponent extends
     super.ngOnInit();
     this.reportTitle = this.translate.instant(REPORT_TITLE_KEY);
     this.formGroup = this.buildFormGroup();
+
+    this.translate.get(
+      MEMORIA_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          ENTITY_KEY,
+          { entity: value, ...MSG_PARAMS.GENDER.MALE }
+        );
+      })
+    ).subscribe((value) => this.sheetTitleMemorias = value);
   }
 
   protected buildFormGroup(): FormGroup {
@@ -74,7 +90,7 @@ export class MemoriaListadoExportModalComponent extends
 
   protected getReportOptions(): IReportConfig<IMemoriaReportOptions> {
     const reportModalData: IReportConfig<IMemoriaReportOptions> = {
-      title: this.translate.instant('pii.invencion.titulo'),
+      title: this.sheetTitleMemorias,
       outputType: this.formGroup.controls.outputType.value,
       hideBlocksIfNoData: this.formGroup.controls.hideBlocksIfNoData.value,
       reportOptions: {

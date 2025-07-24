@@ -17,5 +17,7 @@ public enum ServiceType {
   /** REP */
   REP,
   /** COM */
-  COM;
+  COM,
+  /** SGE */
+  SGE;
 }

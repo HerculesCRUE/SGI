@@ -15,7 +15,7 @@
 */
 
 INSERT INTO test.proyecto_partida
-(id, codigo, convocatoria_partida_id, descripcion, proyecto_id, tipo_partida)
+(id, codigo, convocatoria_partida_id, proyecto_id, tipo_partida)
 VALUES
-(1, '08.002B.541A.64215', NULL, NULL, 1, 'GASTO'),
-(2, '08.002B.541A.64215', NULL, NULL, 2, 'GASTO');
+(1, '08.002B.541A.64215', NULL, 1, 'GASTO'),
+(2, '08.002B.541A.64215', NULL, 2, 'GASTO');

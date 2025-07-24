@@ -24,9 +24,9 @@
       <mat-form-field fxFill>
         <mat-label>{{'csp.convocatoria-enlace.descripcion' | translate}}
         </mat-label>
-        <textarea matInput formControlName="descripcion" type="text"
+        <sgi-i18n-textarea formControlName="descripcion"
           placeholder="{{'csp.convocatoria-enlace.descripcion' | translate}}">
-             </textarea>
+        </sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.get('descripcion').errors?.maxlength">
           {{ 'error.maxlength.entity' | translate:msgParamDescripcionEntity }}
         </mat-error>

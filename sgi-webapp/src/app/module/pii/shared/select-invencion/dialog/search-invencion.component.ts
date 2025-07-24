@@ -111,7 +111,7 @@ export class SearchInvencionModalComponent extends DialogCommonComponent impleme
         index: reset ? 0 : this.paginator.pageIndex,
         size: this.paginator.pageSize
       },
-      sort: new RSQLSgiRestSort(this.sort?.active, SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
+      sort: new RSQLSgiRestSort(this.resolveSortProperty(this.sort?.active), SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
       filter: this.buildFilter()
     };
 
@@ -128,11 +128,18 @@ export class SearchInvencionModalComponent extends DialogCommonComponent impleme
       .and('fechaComunicacion', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaComunicacionDesde.value))
       .and('fechaComunicacion', SgiRestFilterOperator.LOWER_OR_EQUAL,
         LuxonUtils.toBackend(controls.fechaComunicacionHasta.value?.plus({ hour: 23, minutes: 59, seconds: 59 })))
-      .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
+      .and('titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('tipoProteccion', SgiRestFilterOperator.EQUALS, controls.tipoProteccion.value?.id?.toString());;
   }
 
   openCreate(): void {
     window.open(this.router.serializeUrl(this.router.createUrlTree(['/', Module.PII.path, PII_ROUTE_NAMES.INVENCION, ROUTE_NAMES.NEW])), '_blank');
+  }
+
+  private resolveSortProperty(column: string): string {
+    if (column == 'titulo') {
+      return 'titulo.value';
+    }
+    return column;
   }
 }

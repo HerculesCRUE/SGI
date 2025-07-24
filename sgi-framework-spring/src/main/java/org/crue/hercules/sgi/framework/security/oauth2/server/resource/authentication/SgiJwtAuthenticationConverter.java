@@ -26,12 +26,12 @@ public class SgiJwtAuthenticationConverter implements Converter<Jwt, AbstractAut
   public final AbstractAuthenticationToken convert(Jwt jwt) {
     Collection<GrantedAuthority> authorities = extractAuthorities(jwt);
     if (userNameClaim != null) {
-      if (Boolean.TRUE.equals(jwt.containsClaim(userNameClaim))) {
+      if (Boolean.TRUE.equals(jwt.hasClaim(userNameClaim))) {
         // OAuth 2 Authorization Code Flow (C2B)
         String userName = jwt.getClaimAsString(userNameClaim);
         Assert.hasText(userName, String.format(MESSAGE_NOT_EMPTY, userNameClaim));
         return new JwtAuthenticationToken(jwt, authorities, userName);
-      } else if (Boolean.TRUE.equals(jwt.containsClaim(CLIENT_ID))) {
+      } else if (Boolean.TRUE.equals(jwt.hasClaim(CLIENT_ID))) {
         // OAuth 2 Client Credentials Grant (B2B)
         String userName = jwt.getClaimAsString(CLIENT_ID);
         Assert.hasText(userName, String.format(MESSAGE_NOT_EMPTY, CLIENT_ID));

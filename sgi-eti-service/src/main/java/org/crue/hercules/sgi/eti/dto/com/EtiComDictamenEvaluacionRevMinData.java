@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.eti.dto.com;
 
 import java.io.Serializable;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +20,11 @@ public class EtiComDictamenEvaluacionRevMinData implements Serializable {
   /** Serial version */
   private static final long serialVersionUID = 1L;
 
-  private String nombreInvestigacion;
+  private Collection<? extends I18nFieldValue> nombreInvestigacion;
   private String generoComite;
+  private String comiteCodigo;
   private String referenciaMemoria;
-  private String tipoActividad;
-  private String tituloSolicitudEvaluacion;
+  private Collection<? extends I18nFieldValue> tipoActividad;
+  private Collection<? extends I18nFieldValue> tituloSolicitudEvaluacion;
   private String enlaceAplicacion;
 }

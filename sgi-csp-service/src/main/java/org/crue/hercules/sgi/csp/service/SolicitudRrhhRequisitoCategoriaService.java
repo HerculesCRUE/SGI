@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.RequiredArgsConstructor;
@@ -119,7 +118,7 @@ public class SolicitudRrhhRequisitoCategoriaService {
   public Page<SolicitudRrhhRequisitoCategoria> findAllBySolicitudPublicId(String solicitudPublicId, String query,
       Pageable paging) {
     log.debug("findAllBySolicitudPublicId(String solicitudPublicId, String query, Pageable paging) - start");
-    Assert.notNull(solicitudPublicId, "Solicitud Id null");
+    AssertHelper.fieldNotNull(solicitudPublicId, Solicitud.class, AssertHelper.MESSAGE_KEY_ID);
     Long solicitudId = authorityHelper.getSolicitudIdByPublicId(solicitudPublicId);
     Specification<SolicitudRrhhRequisitoCategoria> specs = SolicitudRrhhRequisitoCategoriaSpecifications
         .bySolicitudRrhhId(solicitudId)

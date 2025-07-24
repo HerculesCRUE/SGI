@@ -3,13 +3,14 @@ package org.crue.hercules.sgi.csp.service.sgi;
 import java.time.Instant;
 
 import org.crue.hercules.sgi.csp.config.RestApiProperties;
+import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
 import org.crue.hercules.sgi.csp.dto.tp.SgiApiInstantTaskInput;
 import org.crue.hercules.sgi.csp.dto.tp.SgiApiInstantTaskOutput;
 import org.crue.hercules.sgi.csp.enums.ServiceType;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class SgiApiTpService extends SgiApiBaseService {
+  private static final String MSG_FIELD_URL = "tp.url";
+  private static final String MSG_FIELD_DESCRIPCION = "descripcion";
 
   private static final String SEND_EMAIL_URL_FORMAT = "/emails/%s/send";
   private static final String SEND_EMAIL_DEFAULT_DESCRIPTION = "Task for send email ";
@@ -40,11 +43,7 @@ public class SgiApiTpService extends SgiApiBaseService {
       Instant instant) {
     log.debug("createInstantTask({}, {}, {}, {}, {}) - start", type, method, url, description);
 
-    Assert.notNull(type, "ServiceType is required");
-    Assert.notNull(method, "HttpMethod is required");
-    Assert.notNull(url, "URL is required");
-    Assert.notNull(description, "description is required");
-    Assert.notNull(instant, "Instant is required");
+    this.validateTareaProgramada(type, method, url, description, instant);
 
     ServiceType serviceType = ServiceType.TP;
     String relativeUrl = "/sgiapitasks/instant";
@@ -80,12 +79,8 @@ public class SgiApiTpService extends SgiApiBaseService {
       String description, Instant instant) {
     log.debug("updateInstantTask({}, {}, {}, {}, {}, {}) - start", id, type, method, url, description, instant);
 
-    Assert.notNull(id, "ID is required");
-    Assert.notNull(type, "ServiceType is required");
-    Assert.notNull(method, "HttpMethod is required");
-    Assert.notNull(url, "URL is required");
-    Assert.notNull(description, "description is required");
-    Assert.notNull(instant, "Instant is required");
+    AssertHelper.idNotNull(id, SgiApiInstantTaskOutput.class);
+    this.validateTareaProgramada(type, method, url, description, instant);
 
     ServiceType serviceType = ServiceType.TP;
     String relativeUrl = "/sgiapitasks/instant/{id}";
@@ -112,7 +107,7 @@ public class SgiApiTpService extends SgiApiBaseService {
   public void deleteTask(Long id) {
     log.debug("deleteTask({}) - start", id);
 
-    Assert.notNull(id, "ID is required");
+    AssertHelper.idNotNull(id, SgiApiInstantTaskOutput.class);
 
     ServiceType serviceType = ServiceType.TP;
     String relativeUrl = "/sgiapitasks/{id}";
@@ -157,8 +152,8 @@ public class SgiApiTpService extends SgiApiBaseService {
   public Long createSendEmailTask(Long emailId, Instant instant) {
     log.debug("createSendEmailTask({}, {}) - start", emailId, instant);
 
-    Assert.notNull(emailId, "Email ID is required");
-    Assert.notNull(instant, "Instant is required");
+    AssertHelper.idNotNull(emailId, EmailOutput.class);
+    AssertHelper.entityNotNull(instant, SgiApiInstantTaskOutput.class, Instant.class);
 
     Long id = this.createInstantTask(ServiceType.COM, HttpMethod.GET, String.format(SEND_EMAIL_URL_FORMAT, emailId),
         SEND_EMAIL_DEFAULT_DESCRIPTION + emailId, instant).getId();
@@ -176,13 +171,22 @@ public class SgiApiTpService extends SgiApiBaseService {
   public void updateSendEmailTask(Long id, Long emailId, Instant instant) {
     log.debug("updateSendEmailTask({}, {}, {}) - start", id, emailId, instant);
 
-    Assert.notNull(id, "ID is required");
-    Assert.notNull(emailId, "Email ID is required");
-    Assert.notNull(instant, "Instant is required");
+    AssertHelper.idNotNull(id, SgiApiInstantTaskOutput.class);
+    AssertHelper.idNotNull(emailId, EmailOutput.class);
+    AssertHelper.entityNotNull(instant, SgiApiInstantTaskOutput.class, Instant.class);
 
     this.updateInstantTask(id, ServiceType.COM, HttpMethod.GET, String.format(SEND_EMAIL_URL_FORMAT,
         emailId),
         SEND_EMAIL_DEFAULT_DESCRIPTION + emailId, instant);
     log.debug("updateSendEmailTask({}, {}, {}) - end", id, emailId, instant);
+  }
+
+  private void validateTareaProgramada(ServiceType type, HttpMethod method, String url, String description,
+      Instant instant) {
+    AssertHelper.entityNotNull(type, SgiApiInstantTaskOutput.class, ServiceType.class);
+    AssertHelper.entityNotNull(method, SgiApiInstantTaskOutput.class, HttpMethod.class);
+    AssertHelper.fieldNotNull(url, SgiApiInstantTaskOutput.class, MSG_FIELD_URL);
+    AssertHelper.fieldNotNull(description, SgiApiInstantTaskOutput.class, MSG_FIELD_DESCRIPCION);
+    AssertHelper.entityNotNull(instant, SgiApiInstantTaskOutput.class, Instant.class);
   }
 }

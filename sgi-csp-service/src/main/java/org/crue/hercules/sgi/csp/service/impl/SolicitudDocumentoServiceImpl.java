@@ -9,7 +9,9 @@ import org.crue.hercules.sgi.csp.service.SolicitudDocumentoService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,6 +28,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class SolicitudDocumentoServiceImpl implements SolicitudDocumentoService {
+
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_FIELD_DOCUMENTO_REF = "documentoRef";
+  private static final String MSG_MODEL_SOLICITUD = "org.crue.hercules.sgi.csp.model.Solicitud.message";
+  private static final String MSG_MODEL_SOLICITUD_DOCUMENTO = "org.crue.hercules.sgi.csp.model.SolicitudDocumento.message";
+  private static final String MSG_ENTITY_MODIFICABLE = "org.springframework.util.Assert.entity.modificable.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA = "org.springframework.util.Assert.accion.denegada.message";
 
   private final SolicitudDocumentoRepository repository;
   private final SolicitudService solicitudService;
@@ -49,18 +62,19 @@ public class SolicitudDocumentoServiceImpl implements SolicitudDocumentoService 
   public SolicitudDocumento create(SolicitudDocumento solicitudDocumento) {
     log.debug("create(SolicitudDocumento solicitudDocumento) - start");
 
-    Assert.isNull(solicitudDocumento.getId(), "Id tiene que ser null para crear la SolicitudDocumento");
-
+    AssertHelper.idIsNull(solicitudDocumento.getId(), SolicitudDocumento.class);
     AssertHelper.idNotNull(solicitudDocumento.getSolicitudId(), SolicitudDocumento.class);
-
-    Assert.notNull(solicitudDocumento.getNombre(),
-        "Nombre documento no puede ser null para crear la SolicitudDocumento");
-    Assert.notNull(solicitudDocumento.getDocumentoRef(),
-        "La referencia del documento no puede ser null para crear la SolicitudDocumento");
+    AssertHelper.fieldNotNull(solicitudDocumento.getNombre(), SolicitudDocumento.class, AssertHelper.MESSAGE_KEY_NAME);
+    AssertHelper.fieldNotNull(solicitudDocumento.getDocumentoRef(), SolicitudDocumento.class, MSG_FIELD_DOCUMENTO_REF);
 
     // comprobar si la solicitud es modificable
     Assert.isTrue(solicitudService.modificableEstadoAndDocumentos(solicitudDocumento.getSolicitudId()),
-        "No se puede modificar SolicitudDocumento");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_ACCION_DENEGADA)
+            .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD))
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_DOCUMENTO))
+            .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+            .build());
 
     SolicitudDocumento returnValue = repository.save(solicitudDocumento);
 
@@ -80,19 +94,18 @@ public class SolicitudDocumentoServiceImpl implements SolicitudDocumentoService 
   public SolicitudDocumento update(SolicitudDocumento solicitudDocumento) {
     log.debug("update(SolicitudDocumento solicitudDocumento) - start");
 
-    Assert.notNull(solicitudDocumento.getId(), "Id no puede ser null para actualizar SolicitudDocumento");
-
-    Assert.notNull(solicitudDocumento.getSolicitudId(),
-        "Solicitud id no puede ser null para crear una SolicitudModalidad");
-
-    Assert.notNull(solicitudDocumento.getNombre(),
-        "Nombre documento no puede ser null para actualizar la SolicitudDocumento");
-    Assert.notNull(solicitudDocumento.getDocumentoRef(),
-        "La referencia del documento no puede ser null para actualizar la SolicitudDocumento");
+    AssertHelper.idNotNull(solicitudDocumento.getId(), SolicitudDocumento.class);
+    AssertHelper.idNotNull(solicitudDocumento.getSolicitudId(), Solicitud.class);
+    AssertHelper.fieldNotNull(solicitudDocumento.getNombre(), SolicitudDocumento.class, AssertHelper.MESSAGE_KEY_NAME);
+    AssertHelper.fieldNotNull(solicitudDocumento.getDocumentoRef(), SolicitudDocumento.class, MSG_FIELD_DOCUMENTO_REF);
 
     // comprobar si la solicitud es modificable
     Assert.isTrue(solicitudService.modificable(solicitudDocumento.getSolicitudId()),
-        "No se puede modificar SolicitudDocumento");
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_MODIFICABLE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_DOCUMENTO))
+            .parameter(MSG_KEY_MSG, null)
+            .build());
 
     return repository.findById(solicitudDocumento.getId()).map(solicitudDocumentoExistente -> {
 
@@ -133,7 +146,7 @@ public class SolicitudDocumentoServiceImpl implements SolicitudDocumentoService 
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "SolicitudDocumento id no puede ser null para eliminar un SolicitudDocumento");
+    AssertHelper.idNotNull(id, SolicitudDocumento.class);
     if (!repository.existsById(id)) {
       throw new SolicitudDocumentoNotFoundException(id);
     }
@@ -182,12 +195,10 @@ public class SolicitudDocumentoServiceImpl implements SolicitudDocumentoService 
     authorityHelper.checkExternalUserHasAuthorityModifySolicitud(solicitud);
     solicitudDocumento.setSolicitudId(solicitud.getId());
 
-    Assert.isNull(solicitudDocumento.getId(), "Id tiene que ser null para crear la SolicitudDocumento");
+    AssertHelper.idIsNull(solicitudDocumento.getId(), SolicitudDocumento.class);
     AssertHelper.idNotNull(solicitudDocumento.getSolicitudId(), SolicitudDocumento.class);
-    Assert.notNull(solicitudDocumento.getNombre(),
-        "Nombre documento no puede ser null para crear la SolicitudDocumento");
-    Assert.notNull(solicitudDocumento.getDocumentoRef(),
-        "La referencia del documento no puede ser null para crear la SolicitudDocumento");
+    AssertHelper.fieldNotNull(solicitudDocumento.getNombre(), SolicitudDocumento.class, AssertHelper.MESSAGE_KEY_NAME);
+    AssertHelper.fieldNotNull(solicitudDocumento.getDocumentoRef(), SolicitudDocumento.class, MSG_FIELD_DOCUMENTO_REF);
 
     SolicitudDocumento returnValue = repository.save(solicitudDocumento);
 
@@ -208,12 +219,9 @@ public class SolicitudDocumentoServiceImpl implements SolicitudDocumentoService 
   public SolicitudDocumento updateByExternalUser(String solicitudPublicId, SolicitudDocumento solicitudDocumento) {
     log.debug("updateByExternalUser(String solicitudPublicId, SolicitudModalidad solicitudDocumento) - start");
 
-    Assert.notNull(solicitudDocumento.getId(), "Id no puede ser null para actualizar SolicitudDocumento");
-
-    Assert.notNull(solicitudDocumento.getNombre(),
-        "Nombre documento no puede ser null para actualizar la SolicitudDocumento");
-    Assert.notNull(solicitudDocumento.getDocumentoRef(),
-        "La referencia del documento no puede ser null para actualizar la SolicitudDocumento");
+    AssertHelper.idNotNull(solicitudDocumento.getId(), SolicitudDocumento.class);
+    AssertHelper.fieldNotNull(solicitudDocumento.getNombre(), SolicitudDocumento.class, AssertHelper.MESSAGE_KEY_NAME);
+    AssertHelper.fieldNotNull(solicitudDocumento.getDocumentoRef(), SolicitudDocumento.class, MSG_FIELD_DOCUMENTO_REF);
 
     return repository.findById(solicitudDocumento.getId()).map(solicitudDocumentoExistente -> {
 

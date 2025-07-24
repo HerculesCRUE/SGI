@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoFacturacion;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -50,7 +52,7 @@ class TipoFacturacionIT extends BaseIT {
 
     // sorted by nombre asc and filter
     String[] roles = { "CSP-TFAC-V", "CSP-TFAC-C", "CSP-TFAC-E", "CSP-TFAC-B", "CSP-TFAC-V" };
-    String sort = "nombre,asc";
+    String sort = "nombre.value,asc";
     // String filter = "tipoComunicado=ke=00";
     String filter = "";
 
@@ -68,11 +70,11 @@ class TipoFacturacionIT extends BaseIT {
     final List<TipoFacturacion> responseData = response.getBody();
     Assertions.assertThat(responseData).hasSize(3);
 
-    Assertions.assertThat(responseData.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getNombre(), Language.ES)).as("get(0).getNombre())")
         .isEqualTo("nombre-facturacion-" + String.format("%03d", 1));
-    Assertions.assertThat(responseData.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getNombre(), Language.ES)).as("get(1).getNombre())")
         .isEqualTo("nombre-facturacion-" + String.format("%03d", 2));
-    Assertions.assertThat(responseData.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getNombre(), Language.ES)).as("get(2).getNombre())")
         .isEqualTo("nombre-facturacion-" + String.format("%03d", 3));
   }
 
@@ -81,7 +83,7 @@ class TipoFacturacionIT extends BaseIT {
 
     // sorted by nombre asc and filter
     String[] roles = { "CSP-TFAC-V", "CSP-TFAC-C", "CSP-TFAC-E", "CSP-TFAC-B", "CSP-TFAC-V" };
-    String sort = "nombre,asc";
+    String sort = "nombre.value,asc";
     // String filter = "tipoComunicado=ke=00";
     String filter = "";
 

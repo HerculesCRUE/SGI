@@ -1,14 +1,19 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoDocumentoNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
+import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.service.TipoDocumentoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -29,6 +34,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * TipoDocumentoControllerTest
  */
@@ -47,29 +54,32 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-C" })
   void create_ReturnsTipoDocumento() throws Exception {
     // given: Un TipoDocumento nuevo
-    String tipoDocumentoJson = "{ \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
+    TipoDocumento data = generarMockTipoDocumento(1L, "nombre-1");
+    data.setId(null);
 
     BDDMockito.given(tipoDocumentoService.create(ArgumentMatchers.<TipoDocumento>any()))
-        .will((InvocationOnMock invocation) -> {
-          TipoDocumento tipoDocumentoCreado = invocation.getArgument(0);
-          tipoDocumentoCreado.setId(1L);
-          if (tipoDocumentoCreado.getActivo() == null) {
-            tipoDocumentoCreado.setActivo(true);
+        .willAnswer(new Answer<TipoDocumento>() {
+          @Override
+          public TipoDocumento answer(InvocationOnMock invocation) throws Throwable {
+            TipoDocumento givenData = invocation.getArgument(0, TipoDocumento.class);
+            TipoDocumento newData = new TipoDocumento();
+            BeanUtils.copyProperties(givenData, newData);
+            newData.setId(1L);
+            return newData;
           }
-          return tipoDocumentoCreado;
         });
 
     // when: Creamos un TipoDocumento
     mockMvc
         .perform(MockMvcRequestBuilders.post(TIPO_DOCUMENTO_CONTROLLER_BASE_PATH)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(tipoDocumentoJson))
+            .content(mapper.writeValueAsString(data)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Crea el nuevo TipoDocumento y lo devuelve
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -96,21 +106,21 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-E" })
   void update_ReturnsTipoDocumento() throws Exception {
     // given: Un TipoDocumento a modificar
-    String tipoDocumentoJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
+    TipoDocumento data = generarMockTipoDocumento(1L, "nombre-1-modificado");
 
     BDDMockito.given(tipoDocumentoService.update(ArgumentMatchers.<TipoDocumento>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
 
     // when: Actualizamos el TipoDocumento
     mockMvc
-        .perform(MockMvcRequestBuilders.put(TIPO_DOCUMENTO_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
+        .perform(MockMvcRequestBuilders.put(TIPO_DOCUMENTO_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, data.getId())
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(tipoDocumentoJson))
+            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(data)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Modifica el TipoDocumento y lo devuelve
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1-modificado"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1-modificado"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -118,7 +128,7 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-TDOC-E" })
   void update_WithIdNotExist_Returns404() throws Exception {
     // given: Un TipoDocumento a modificar
-    String tipoDocumentoJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
+    TipoDocumento data = generarMockTipoDocumento(1L, "nombre-1-modificado");
 
     BDDMockito.given(tipoDocumentoService.update(ArgumentMatchers.<TipoDocumento>any()))
         .will((InvocationOnMock invocation) -> {
@@ -129,7 +139,7 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
     mockMvc
         .perform(MockMvcRequestBuilders.put(TIPO_DOCUMENTO_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(tipoDocumentoJson))
+            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(data)))
         // then: No encuentra el TipoDocumento y devuelve un 404
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isNotFound());
   }
@@ -178,8 +188,10 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
         // then: return enabled TipoDocumento
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(tipoDocumento.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoDocumento.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoDocumento.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoDocumento.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoDocumento.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(Boolean.TRUE));
   }
 
@@ -227,8 +239,10 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
         // then: return disabled TipoDocumento
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(idBuscado))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoDocumento.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoDocumento.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoDocumento.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoDocumento.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(Boolean.FALSE));
   }
 
@@ -300,7 +314,8 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       TipoDocumento tipoDocumento = tiposDocumentoResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(tipoDocumento.getNombre()).isEqualTo("TipoDocumento" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoDocumento.getNombre(), Language.ES))
+          .isEqualTo("TipoDocumento" + String.format("%03d", i));
     }
   }
 
@@ -383,7 +398,8 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       TipoDocumento tipoDocumento = tiposDocumentoResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(tipoDocumento.getNombre()).isEqualTo("TipoDocumento" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoDocumento.getNombre(), Language.ES))
+          .isEqualTo("TipoDocumento" + String.format("%03d", i));
     }
   }
 
@@ -432,8 +448,8 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
         // then: Devuelve TipoDocumento
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -472,11 +488,16 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
    * @return el objeto TipoDocumento
    */
   private TipoDocumento generarMockTipoDocumento(Long id, String nombre) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, nombre));
+
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "descripcion-" + id));
 
     TipoDocumento tipoDocumento = new TipoDocumento();
     tipoDocumento.setId(id);
-    tipoDocumento.setNombre(nombre);
-    tipoDocumento.setDescripcion("descripcion-" + id);
+    tipoDocumento.setNombre(nombreTipoDocumento);
+    tipoDocumento.setDescripcion(descripcionTipoDocumento);
     tipoDocumento.setActivo(Boolean.TRUE);
 
     return tipoDocumento;

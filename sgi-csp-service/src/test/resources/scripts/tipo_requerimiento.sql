@@ -1,12 +1,23 @@
 INSERT INTO test.tipo_requerimiento 
-  (id, nombre, activo) 
+  (id, activo) 
 VALUES 
-  (1, 'Requerimiento documental', true),
-  (2, 'Resolución requerimiento documental', true),
-  (3, 'Requerimiento subsanación', true),
-  (4, 'Acuerdo de inicio de procedimiento de reintegro', true),
-  (5, 'Resolución del procedimiento de reintegro', true),
-  (6, 'Informe de cierre', true),
-  (7, 'Resolución de recurso', true),
-  (8, 'Dado de baja 1', false),
-  (9, 'Dado de baja 2', false);
+  (1, true),
+  (2, true),
+  (3, true),
+  (4, true),
+  (5, true),
+  (6, true),
+  (7, true),
+  (8, false),
+  (9, false);
+
+-- TIPO_REQUERIMIENTO_NOMBRE
+INSERT INTO test.tipo_requerimiento_nombre (tipo_requerimiento_id, lang, value_) VALUES(1, 'es', 'Requerimiento documental');
+INSERT INTO test.tipo_requerimiento_nombre (tipo_requerimiento_id, lang, value_) VALUES(2, 'es', 'Resolución requerimiento documental');
+INSERT INTO test.tipo_requerimiento_nombre (tipo_requerimiento_id, lang, value_) VALUES(3, 'es', 'Requerimiento subsanación');
+INSERT INTO test.tipo_requerimiento_nombre (tipo_requerimiento_id, lang, value_) VALUES(4, 'es', 'Acuerdo de inicio de procedimiento de reintegro');
+INSERT INTO test.tipo_requerimiento_nombre (tipo_requerimiento_id, lang, value_) VALUES(5, 'es', 'Resolución del procedimiento de reintegro');
+INSERT INTO test.tipo_requerimiento_nombre (tipo_requerimiento_id, lang, value_) VALUES(6, 'es', 'Informe de cierre');
+INSERT INTO test.tipo_requerimiento_nombre (tipo_requerimiento_id, lang, value_) VALUES(7, 'es', 'Resolución de recurso');
+INSERT INTO test.tipo_requerimiento_nombre (tipo_requerimiento_id, lang, value_) VALUES(8, 'es', 'Dado de baja 1');
+INSERT INTO test.tipo_requerimiento_nombre (tipo_requerimiento_id, lang, value_) VALUES(9, 'es', 'Dado de baja 2');

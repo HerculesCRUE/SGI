@@ -55,13 +55,13 @@ export class GrupoLineaInvestigadorComponent extends FragmentComponent implement
     private dialogService: DialogService,
     private readonly translate: TranslateService,
   ) {
-    super(actionService.FRAGMENT.LINEA_INVESTIGADOR, actionService);
+    super(actionService.FRAGMENT.LINEA_INVESTIGADOR, actionService, translate);
     this.formPart = this.fragment as GrupoLineaInvestigadorFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IGrupoLineaInvestigador>, property: string) => {
@@ -87,7 +87,7 @@ export class GrupoLineaInvestigadorComponent extends FragmentComponent implement
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       GRUPO_LINEA_INVESTIGADOR_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

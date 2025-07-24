@@ -1,10 +1,10 @@
-import { IDocumento } from '../sgdoc/documento';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IAutorizacion } from './autorizacion';
 
 export interface ICertificadoAutorizacion {
   id: number;
   autorizacion: IAutorizacion;
-  documento: IDocumento;
-  nombre: string;
+  documentoRef: I18nFieldValue[];
+  nombre: I18nFieldValue[];
   visible: boolean;
 }

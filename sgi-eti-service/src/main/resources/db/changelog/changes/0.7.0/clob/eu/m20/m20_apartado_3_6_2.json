@@ -1,0 +1,86 @@
+[
+  {
+    "key": "ap3_6_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.2 Genetikoki eraldatutako animaliak"
+    },
+    "fieldGroup": [
+      {
+        "template": "Erabilitako animalia batzuk genetikoki eraldatzen dira?"
+      },
+      {
+        "key": "animalesModificadosGeneticamenteRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: #nombre_comite_M30_eu#ren txostena behar da. </p>"
+      },
+      {
+        "template": "Arriskutsuak dira gizakien eta animalien osasunerako edo ingurumenerako?",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'"
+      },
+      {
+        "key": "implicanRiesgosRadio",
+        "type": "radio",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Eraldaketa genetikoaren ondorioz sor daiteke orratz bat sartzeak eragindako minaren, sufrimenduaren, estutasunaren edo kalte iraunkorraren parekoa edo hori baino handiagoa jasaten duen animalia leinu edo lerro bat?",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'"
+      },
+      {
+        "key": "experimentaDolorRadio",
+        "type": "radio",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

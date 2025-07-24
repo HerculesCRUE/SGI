@@ -1,0 +1,39 @@
+[
+  {
+    "key": "ap5_2_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.1 Pregunta 1"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿La actividad que se presenta a evaluación implica uso confinado de Organismos Modificados Genéticamente (OMG)?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "OMG es cualquier organismo cuyo material genético ha sido modificado de una manera que no se produce de forma natural siempre que se utilicen las técnicas que reglamentariamente se establezcan. Para ser considerado OMG, las modificaciones deberán tener carácter permanente."
+      },
+      {
+        "key": "pregunta1OMGRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

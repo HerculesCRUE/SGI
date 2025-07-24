@@ -53,7 +53,7 @@ export class EmpresaExplotacionResultadosDatosGeneralesComponent extends FormFra
     public authService: SgiAuthService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as EmpresaExplotacionResultadosDatosGeneralesFragment;
 
     if (this.formPart.isEdit()) {
@@ -77,7 +77,7 @@ export class EmpresaExplotacionResultadosDatosGeneralesComponent extends FormFra
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
   private getEstadosWithoutActiva(): Map<EstadoEmpresa, string> {
@@ -97,7 +97,7 @@ export class EmpresaExplotacionResultadosDatosGeneralesComponent extends FormFra
     return estadosNew;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       EMPRESA_NOMBRE_RAZON_SOCIAL_KEY,

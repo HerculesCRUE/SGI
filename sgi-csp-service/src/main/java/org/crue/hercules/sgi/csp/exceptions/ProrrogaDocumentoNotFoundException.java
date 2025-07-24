@@ -1,14 +1,17 @@
 package org.crue.hercules.sgi.csp.exceptions;
 
-public class ProrrogaDocumentoNotFoundException extends CspNotFoundException {
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 
+public class ProrrogaDocumentoNotFoundException extends CspNotFoundException {
+  public static final String MSG_MODEL_PRORROGA_DOCUMENTO = "org.crue.hercules.sgi.csp.model.ProrrogaDocumento.message";
   /**
   *
   */
   private static final long serialVersionUID = 1L;
 
-  public ProrrogaDocumentoNotFoundException(Long ProrrogaDocumentoId) {
-    super("ProrrogaDocumento " + ProrrogaDocumentoId + " does not exist.");
+  public ProrrogaDocumentoNotFoundException(Long prorrogaDocumentoId) {
+    super(ApplicationContextSupport.getMessage("notFoundException",
+        new Object[] { ApplicationContextSupport.getMessage(MSG_MODEL_PRORROGA_DOCUMENTO), prorrogaDocumentoId }));
   }
 
 }

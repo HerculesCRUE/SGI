@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { IComentario } from '@core/models/eti/comentario';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'sgi-comentarios-generales-formly',
@@ -35,10 +36,11 @@ export class ComentariosGeneralesFormlyComponent {
   private _expanded = true;
 
   get titulo(): string {
-    return this.comentarios[0]?.apartado.nombre ?? '';
+    return this.comentarios[0]?.apartado.definicion.find(a => a.lang === this.languageService.getLanguage())?.nombre ?? '';
   }
 
-  constructor() {
+  constructor(private readonly languageService: LanguageService) {
+    //
   }
 
 }

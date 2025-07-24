@@ -21,7 +21,7 @@
       [fragment]="actionService.getFragment(actionService.FRAGMENT.SEGUIMIENTO_FINAL)">
     </sgi-action-fragment-menu-item>
     <sgi-action-fragment-menu-item
-      *ngIf="actionService.memoria.comite.id === COMITE.CEEA && actionService.memoria.requiereRetrospectiva"
+      *ngIf="actionService.memoria.comite.requiereRetrospectiva && actionService.memoria.requiereRetrospectiva"
       [route]="[MEMORIA_ROUTE_NAMES.RETROSPECTIVA]" [title]="'eti.memoria.retrospectiva' | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.RETROSPECTIVA)">
     </sgi-action-fragment-menu-item>

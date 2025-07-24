@@ -1,0 +1,16 @@
+<div class="ckeditor-i18n">
+  <mat-select matPrefix [(ngModel)]="selectedLanguage">
+    <mat-select-trigger>
+      <span>{{selectedLanguage?.translateKey| translate}}
+        ({{selectedLanguage.codeExtended}})</span>
+    </mat-select-trigger>
+    <mat-option *ngFor="let language of enabledLanguages" [value]="language">
+      <span>{{language.translateKey |
+        translate}} ({{language.codeExtended}})</span>
+    </mat-option>
+  </mat-select>
+
+  <ckeditor [editor]="CkEditor" [config]="config" [(ngModel)]="editingValue" [required]="required" [disabled]="disabled"
+    (change)="onEdit()" (focus)="onInputFocus()" (blur)="onInputBlur()">
+  </ckeditor>
+</div>

@@ -1,12 +1,13 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IInvencionDocumento } from '@core/models/pii/invencion-documento';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
 import { map, switchMap } from 'rxjs/operators';
@@ -81,7 +82,7 @@ export class InvencionDocumentoModalComponent extends DialogFormComponent<IInven
 
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
-      nombre: new FormControl(this.invencionDocumento?.nombre, [Validators.maxLength(250), Validators.required]),
+      nombre: new FormControl(this.invencionDocumento?.nombre, [I18nValidators.maxLength(250), I18nValidators.required]),
       fichero: new FormControl(this.invencionDocumento?.documento, [Validators.required]),
     });
   }

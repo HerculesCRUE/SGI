@@ -21,7 +21,7 @@ export class SolicitudCrearGuard implements CanActivate {
       if (!this.router.navigated) {
         return this.router.createUrlTree(['/', Module.INV.path, INV_ROUTE_NAMES.SOLICITUDES]);
       }
-      return false;
+      return true;
     }
   }
 

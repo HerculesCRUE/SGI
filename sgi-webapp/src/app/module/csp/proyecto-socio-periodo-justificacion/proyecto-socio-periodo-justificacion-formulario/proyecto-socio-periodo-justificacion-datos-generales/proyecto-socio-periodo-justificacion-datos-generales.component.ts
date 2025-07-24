@@ -40,7 +40,7 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesComponent extends
     protected actionService: ProyectoSocioPeriodoJustificacionActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as ProyectoSocioPeriodoJustificacionDatosGeneralesFragment;
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(36%-10px)';
@@ -57,11 +57,11 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesComponent extends
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_SOCIO_PERIODO_JUSTIFICACION_FECHA_FIN_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

@@ -1,3 +1,4 @@
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { Component, Input } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
@@ -19,6 +20,16 @@ export class DetalleEconomicoComponent {
 
   @Input()
   detalle: IDatoEconomicoDetalle;
+
+  @Input()
+  get showDocumentos(): boolean {
+    return this._showDocumentos;
+  }
+  set showDocumentos(value: boolean) {
+    this._showDocumentos = coerceBooleanProperty(value);
+  }
+  // tslint:disable-next-line: variable-name
+  private _showDocumentos = true;
 
   @Input()
   rowConfig: IRowConfig;

@@ -1,0 +1,25 @@
+[
+  {
+    "key": "ap3_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.6 Erabilera maiztasuna eta aldizkakotasuna"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Jarraian, deskribatu zer maiztasunekin erabiltzen diren zehaztutako agente biologiko, genetikoki eraldatutako organismo, hau da, lagina egunean edo astean zenbat aldiz erabiliko den manipulatzeko, kultibatzeko eta abarrerako, zenbat iraungo duen manipulazioak eta ea ekintza hori aldian behin errepikatuko den (adibidez, astean edo hilabetean zenbat aldiz, urtean zenbat hilabetez, etab.).</p>"
+      },
+      {
+        "key": "frecuenciaPeriodicidad",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Deskribatu ",
+          "required": true
+        }
+      }
+    ]
+  }
+]

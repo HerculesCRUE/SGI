@@ -1,3 +1,4 @@
+import { I18nFieldValueResponse } from '@core/i18n/i18n-field-response';
 import { Dedicacion } from '@core/models/csp/grupo-equipo';
 
 export interface IGrupoEquipoResponse {
@@ -8,7 +9,7 @@ export interface IGrupoEquipoResponse {
   fechaFin: string;
   rol: {
     id: number;
-    nombre: string;
+    nombre: I18nFieldValueResponse[];
   };
   dedicacion: Dedicacion;
   participacion: number;

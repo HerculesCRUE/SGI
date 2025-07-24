@@ -1,0 +1,16 @@
+[
+  {
+    "key": "ap5_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.3 Istripu eta erantzukizun zibileko asegurua"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Arrisku biologikoa duen ikerketa jarduera batean parte hartzeak arriskuak ekar diezazkieke gizakiei eta ingurumenari. Hori dela eta, UPV/EHUk jarduera profesional horien ondoriozko kalteak estaltzen dituen erantzukizun zibileko aseguru bat du.</p><p>Consulte con la Secretaría Técnica del Comité de Ética la necesidad de contratación de un seguro de responsabilidad civil.</p>"
+      }
+    ]
+  }
+]

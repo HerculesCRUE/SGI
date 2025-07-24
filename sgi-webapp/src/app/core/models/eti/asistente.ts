@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoriaReunion } from './convocatoria-reunion';
 import { IEvaluador } from './evaluador';
 
@@ -11,5 +12,5 @@ export interface IAsistente {
   /** Asistencia */
   asistencia: boolean;
   /** Motivo */
-  motivo: string;
+  motivo: I18nFieldValue[];
 }

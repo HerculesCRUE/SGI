@@ -3,10 +3,13 @@ package org.crue.hercules.sgi.csp.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
 
 import org.crue.hercules.sgi.csp.model.GrupoEquipo.Dedicacion;
 import org.crue.hercules.sgi.csp.model.RolProyecto.Equipo;
 import org.crue.hercules.sgi.csp.model.RolProyecto.Orden;
+import org.crue.hercules.sgi.csp.model.RolSocioAbreviatura;
+import org.crue.hercules.sgi.csp.model.RolSocioNombre;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,8 +40,8 @@ public class GrupoEquipoOutput implements Serializable {
   @Builder
   public static class Rol implements Serializable {
     private Long id;
-    private String abreviatura;
-    private String nombre;
+    private Collection<RolSocioAbreviatura> abreviatura;
+    private Collection<RolSocioNombre> nombre;
     private Boolean rolPrincipal;
     private Orden orden;
     private Equipo equipo;

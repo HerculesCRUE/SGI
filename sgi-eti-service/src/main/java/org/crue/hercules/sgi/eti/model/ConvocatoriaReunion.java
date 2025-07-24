@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.eti.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -32,7 +38,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @ScriptAssert.List({
     // Validacion de lugar
-    @ScriptAssert(lang = "javascript", alias = "_this", script = "(_this.getVideoconferencia() || _this.getLugar() != null)", reportOn = "lugar", message = "{org.crue.hercules.sgi.eti.validation.required.message}") })
+    @ScriptAssert(lang = "javascript", alias = "_this", script = "(_this.getVideoconferencia() || _this.getLugar().size() > 0)", reportOn = "lugar", message = "{org.crue.hercules.sgi.eti.validation.required.message}") })
 public class ConvocatoriaReunion extends BaseEntity {
 
   private static final long serialVersionUID = 1L;
@@ -63,12 +69,16 @@ public class ConvocatoriaReunion extends BaseEntity {
   private Boolean videoconferencia;
 
   /** Lugar. */
-  @Column(name = "lugar", length = 250)
-  private String lugar;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "convocatoria_reunion_lugar", joinColumns = @JoinColumn(name = "convocatoria_reunion_id"))
+  @Valid
+  private Set<ConvocatoriaReunionLugar> lugar = new HashSet<>();
 
   /** Orden del día. */
-  @Column(name = "orden_dia", length = 2000, nullable = false)
-  private String ordenDia;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "convocatoria_reunion_orden_dia", joinColumns = @JoinColumn(name = "convocatoria_reunion_id"))
+  @Valid
+  private Set<ConvocatoriaReunionOrdenDia> ordenDia = new HashSet<>();
 
   /** Anio */
   @Column(name = "anio", nullable = false)

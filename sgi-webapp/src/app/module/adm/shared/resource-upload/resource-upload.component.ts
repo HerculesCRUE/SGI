@@ -6,12 +6,13 @@ import {
   hasModifierKey,
   SPACE
 } from '@angular/cdk/keycodes';
-import { HttpEventType } from '@angular/common/http';
+import { HttpEvent, HttpEventType } from '@angular/common/http';
 import { Attribute, ChangeDetectionStrategy, ChangeDetectorRef, Component, DoCheck, ElementRef, EventEmitter, Inject, Input, OnDestroy, OnInit, Optional, Output, Self, ViewChild } from '@angular/core';
 import { ControlValueAccessor, NgControl } from '@angular/forms';
-import { MatFormField, MatFormFieldControl, MAT_FORM_FIELD } from '@angular/material/form-field';
+import { MAT_FORM_FIELD, MatFormField, MatFormFieldControl } from '@angular/material/form-field';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { ResourceService } from '@core/services/cnf/resource.service';
+import { FormularioService } from '@core/services/eti/formulario.service';
 import { Observable, of, Subject, throwError } from 'rxjs';
 import { catchError, filter, map, takeLast } from 'rxjs/operators';
 
@@ -202,7 +203,8 @@ export class ResourceUploadComponent implements
     @Optional() @Inject(MAT_FORM_FIELD) private parentFormField: MatFormField,
     @Self() @Optional() public ngControl: NgControl,
     @Attribute('tabindex') tabIndex: string,
-    private resourceService: ResourceService) {
+    private resourceService: ResourceService,
+    private formularioService: FormularioService) {
 
     if (this.ngControl) {
       // Note: we provide the value accessor through here, instead of
@@ -389,10 +391,10 @@ export class ResourceUploadComponent implements
     }
   }
 
-  uploadSelection(): Observable<void> {
+  handleUploadRequest(request: Observable<HttpEvent<any>>): Observable<void> {
     if (this.selection && !this.disabled) {
       this.uploading = true;
-      return this.resourceService.updateWithStatus(this.key, this.selection).pipe(
+      return request.pipe(
         map(event => {
           switch (event.type) {
             case HttpEventType.Sent:
@@ -403,9 +405,7 @@ export class ResourceUploadComponent implements
               break;
             case HttpEventType.Response:
               this._value = event.body;
-              this.fileUpload.nativeElement.value = null;
-              this.uploading = false;
-              this.selection = null;
+              this.resetUploadState();
               this.uploadEventChange.next({ status: 'end' });
               break;
           }
@@ -415,17 +415,19 @@ export class ResourceUploadComponent implements
         takeLast(1),
         map(() => void 0),
         catchError(error => {
-          this._value = null;
-          this.uploading = false;
-          this.fileUpload.nativeElement.value = null;
+          this.resetUploadState();
           this.uploadEventChange.next({ status: 'error' });
           this.propagateChanges();
           return throwError(error);
         })
       );
     }
-    else {
-      return of(void 0);
-    }
+    return of(void 0);
+  }
+
+  private resetUploadState(): void {
+    this.uploading = false;
+    this.selection = null;
+    this.fileUpload.nativeElement.value = null;
   }
 }

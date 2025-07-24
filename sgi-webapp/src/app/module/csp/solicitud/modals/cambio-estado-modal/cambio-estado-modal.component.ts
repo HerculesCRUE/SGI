@@ -13,6 +13,7 @@ import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { ErrorUtils } from '@core/utils/error-utils';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
 import { Observable, of, throwError } from 'rxjs';
@@ -104,9 +105,9 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoSol
     super(matDialogRef, true);
 
     if (this.data?.isTutor) {
-      this.estadosNuevos = ESTADO_MAP_TUTOR.get(this.data.estadoActual);
+      this.estadosNuevos = ESTADO_MAP_TUTOR.get(this.data.estadoActual) ?? new Map<Estado, string>();
     } else if (this.data?.isInvestigador) {
-      this.estadosNuevos = ESTADO_MAP_INVESTIGADOR.get(this.data.estadoActual);
+      this.estadosNuevos = ESTADO_MAP_INVESTIGADOR.get(this.data.estadoActual) ?? new Map<Estado, string>();
     } else {
       const estados = new Map<string, string>();
       ESTADO_MAP.forEach((value, key) => {
@@ -168,7 +169,7 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoSol
       estadoActual: new FormControl({ value: this.data.estadoActual, disabled: true }),
       estadoNuevo: new FormControl(this.data.estadoNuevo, Validators.required),
       fechaEstado: new FormControl({ value: DateTime.now(), disabled: this.data.isInvestigador }, Validators.required),
-      comentario: new FormControl('', [Validators.maxLength(2000)])
+      comentario: new FormControl([], [I18nValidators.maxLength(2000)])
     });
   }
 

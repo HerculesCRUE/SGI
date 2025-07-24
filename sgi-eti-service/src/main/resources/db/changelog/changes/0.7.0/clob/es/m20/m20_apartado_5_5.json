@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap5_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.5 Resumen no técnico (RNT)"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>El Real Decreto 118/2021, de 23 de febrero, por el que se modifica el Real Decreto 53/2013, de 1 de febrero, dictamina que la persona responsable del proyecto con animales debe redactar un resumen anónimo no técnico (RNT) del proyecto y sus eventuales actualizaciones, que se presentará a la Comisión Europea en el plazo máximo de seis meses desde su autorización.</p><p>Siempre que la propiedad intelectual y la información confidencial queden protegidas, el RNT del proyecto no contendrá ningún dato de carácter personal e incluirá, al menos, información sobre los objetivos del proyecto, incluidos los perjuicios y los beneficios previstos, así como el número y tipo de animales que van a utilizarse, demostrando el cumplimiento del requisito de reemplazo, reducción y refinamiento.</p><p>Los órganos competentes podrán exigir que el RNT del proyecto especifique si éste debe someterse a una evaluación retrospectiva y, en tal caso, establecer el plazo. El RNT del proyecto deberá actualizarse con los resultados de la evaluación retrospectiva en un plazo de seis meses a partir de la finalización de la misma.</p><p>Una vez autorizado el proyecto, el órgano competente publicará el RNT en la página web del Ministerio de Agricultura, Pesca y Alimentación. Asimismo, el RNT se publicará en la base de datos ALURES - Animal use reporting EU System.</p><p>El RNT debe adjuntarse en el apartado de Documentación. Consulte con la Secretaría Técnica del Comité de Ética para mayor detalle sobre el contenido o plantilla de este RNT.</p>"
+      },
+      {
+        "key": "resumenNoTecnico",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Indicar",
+          "required": true,
+          "options": [
+            {
+              "value": "RESUMEN_RNT",
+              "label": "Sí"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

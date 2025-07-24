@@ -1,0 +1,90 @@
+[
+  {
+    "key": "ap3_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.5 Giza jatorriko lagin biologikoak"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Jarduera honetan giza jatorriko lagin biologikoak erabiltzen dira?</p>"
+      },
+      {
+        "key": "muestrasBiologicasRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Hautatu aukera bat:",
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "type": "multicheckbox",
+        "key": "muestrasBiologicasCheck",
+        "hideExpression": "!model.muestrasBiologicasRadio || model.muestrasBiologicasRadio === 'no'",
+        "templateOptions": {
+          "label": "Hauetako zein?",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "celulasgerminales",
+              "label": "Hozi zelulak"
+            },
+            {
+              "value": "celulassomaticas",
+              "label": "Zelula somatikoak"
+            },
+            {
+              "value": "sangre",
+              "label": "Odola"
+            },
+            {
+              "value": "fluidos",
+              "label": "Jariakinak"
+            },
+            {
+              "value": "organos",
+              "label": "Organoak"
+            },
+            {
+              "value": "tejidos",
+              "label": "Ehunak"
+            },
+            {
+              "value": "lineasCelulares",
+              "label": "Enbrioien enborreko zelula lerroak*"
+            },
+            {
+              "value": "celulasTejidos",
+              "label": "Giza enbrioietatik ateratako zelulak eta ehunak*"
+            },
+            {
+              "value": "embrionesFetos",
+              "label": "Giza enbrioiak eta fetuak*"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: gogoratu giza ehunak/odola/jariakinak manipulatzeko #nombre_comite_M30_eu#ren ebaluazioa behar dela. </p><p>Izartxoz (*) markatuta dauden aukerak erabiltzeko, Berme Batzordearen aldeko txostena lortu behar da aldez aurretik.</p>",
+        "hideExpression": "!model.muestrasBiologicasRadio || model.muestrasBiologicasRadio === 'no'"
+      }
+    ]
+  }
+]

@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyectoEntidadConvocante } from '@core/models/csp/proyecto-entidad-convocante';
 
@@ -7,7 +8,7 @@ import { IProyectoEntidadConvocante } from '@core/models/csp/proyecto-entidad-co
 })
 export class ProyectoEntidadConvocantePlanPipe implements PipeTransform {
 
-  transform(value: IProyectoEntidadConvocante): string {
+  transform(value: IProyectoEntidadConvocante): I18nFieldValue[] {
     if (value.programa) {
       return this.getTopLevel(value.programa).nombre;
     }

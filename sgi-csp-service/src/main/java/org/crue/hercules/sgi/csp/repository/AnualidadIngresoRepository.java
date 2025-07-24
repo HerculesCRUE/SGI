@@ -37,4 +37,13 @@ public interface AnualidadIngresoRepository
    */
   boolean existsByProyectoAnualidadProyectoId(Long proyectoId);
 
+  /**
+   * Indica si existen {@link AnualidadIngreso} asociados al proyectoSgeRef
+   * 
+   * @param proyectoSgeRef identificador del proyecto en el SGE
+   * @return {@code true} si existe al menos un {@link AnualidadIngreso} asociado
+   *         al proyectoSgeRef, {@code false} en caso contrario.
+   */
+  boolean existsByProyectoSgeRef(String proyectoSgeRef);
+
 }

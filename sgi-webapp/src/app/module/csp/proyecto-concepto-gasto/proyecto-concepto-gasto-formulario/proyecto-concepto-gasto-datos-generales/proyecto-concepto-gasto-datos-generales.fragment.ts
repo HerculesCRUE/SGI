@@ -56,7 +56,7 @@ export class ProyectoConceptoGastoDatosGeneralesFragment extends FormFragment<IP
         fechaFin: new FormControl(null, [
           DateValidator.isBetween(this.proyecto?.fechaInicio, this.proyecto?.fechaFinDefinitiva ?? this.proyecto?.fechaFin, false)
         ]),
-        observaciones: new FormControl(undefined),
+        observaciones: new FormControl([]),
         conceptoGastoConvocatoria: new FormControl({ value: null, disabled: true }),
         costesIndirectosConvocatoria: new FormControl({
           value: this.convocatoriaConceptoGasto?.conceptoGasto?.costesIndirectos === undefined ?

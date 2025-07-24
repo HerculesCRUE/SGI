@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "4.2 Refinement"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Refinement is understood as the use of systems that allow reducing the severity of the damage inflicted on animals as well as alleviating or reducing the possible pain or discomfort that they will suffer. These strategies include classification of severity, control of the condition, the use of corrective measures such as anaesthesia and analgesia, as well as planned and unplanned “humanitarian euthanasia.”</p>"
+      }
+    ]
+  }
+]

@@ -1,8 +1,12 @@
 package org.crue.hercules.sgi.csp.service;
 
+import javax.validation.Valid;
+
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Service Interface para gestionar {@link TipoHito}.
@@ -15,7 +19,8 @@ public interface TipoHitoService {
    * @param tipoHito la entidad {@link TipoHito} a guardar.
    * @return la entidad {@link TipoHito} persistida.
    */
-  TipoHito create(TipoHito tipoHito);
+  @Validated({ BaseEntity.Create.class })
+  TipoHito create(@Valid TipoHito tipoHito);
 
   /**
    * Actualizar {@link TipoHito}.
@@ -23,7 +28,8 @@ public interface TipoHitoService {
    * @param tipoHito la entidad {@link TipoHito} a actualizar.
    * @return la entidad {@link TipoHito} persistida.
    */
-  TipoHito update(TipoHito tipoHito);
+  @Validated({ BaseEntity.Update.class })
+  TipoHito update(@Valid TipoHito tipoHito);
 
   /**
    * Obtener todas las entidades {@link TipoHito} paginadas y/o filtradas

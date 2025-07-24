@@ -2,12 +2,17 @@ package org.crue.hercules.sgi.eti.integration;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.Asistentes;
+import org.crue.hercules.sgi.eti.model.AsistentesMotivo;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -73,7 +78,7 @@ public class AsistentesIT extends BaseIT {
     final Asistentes asistente = response.getBody();
 
     Assertions.assertThat(asistente.getId()).isEqualTo(2L);
-    Assertions.assertThat(asistente.getMotivo()).isEqualTo("Motivo2");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(asistente.getMotivo(), Language.ES)).isEqualTo("Motivo2");
     Assertions.assertThat(asistente.getAsistencia()).isTrue();
     Assertions.assertThat(asistente.getConvocatoriaReunion().getId()).isEqualTo(2L);
     Assertions.assertThat(asistente.getEvaluador().getId()).isEqualTo(2L);
@@ -82,8 +87,10 @@ public class AsistentesIT extends BaseIT {
   @Test
   public void addAsistentes_ReturnsAsistentes() throws Exception {
 
+    Set<AsistentesMotivo> motivo = new HashSet<>();
+    motivo.add(new AsistentesMotivo(Language.ES, "Motivo 1"));
     Asistentes nuevoAsistente = new Asistentes();
-    nuevoAsistente.setMotivo("Motivo 1");
+    nuevoAsistente.setMotivo(motivo);
     nuevoAsistente.setAsistencia(Boolean.TRUE);
     nuevoAsistente.setConvocatoriaReunion(new ConvocatoriaReunion());
     nuevoAsistente.getConvocatoriaReunion().setId(2L);
@@ -134,8 +141,10 @@ public class AsistentesIT extends BaseIT {
   @Test
   public void replaceAsistentes_ReturnsAsistentes() throws Exception {
 
+    Set<AsistentesMotivo> motivo = new HashSet<>();
+    motivo.add(new AsistentesMotivo(Language.ES, "Motivo 1"));
     Asistentes replaceAsistente = new Asistentes();
-    replaceAsistente.setMotivo("Motivo 1");
+    replaceAsistente.setMotivo(motivo);
     replaceAsistente.setAsistencia(Boolean.TRUE);
     replaceAsistente.setConvocatoriaReunion(new ConvocatoriaReunion());
     replaceAsistente.getConvocatoriaReunion().setId(2L);
@@ -155,7 +164,7 @@ public class AsistentesIT extends BaseIT {
 
     Assertions.assertThat(asistente.getId()).isNotNull();
     Assertions.assertThat(asistente.getId()).isEqualTo(2L);
-    Assertions.assertThat(asistente.getMotivo()).isEqualTo("Motivo 1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(asistente.getMotivo(), Language.ES)).isEqualTo("Motivo 1");
     Assertions.assertThat(asistente.getAsistencia()).isTrue();
     Assertions.assertThat(asistente.getConvocatoriaReunion().getId()).isEqualTo(2L);
     Assertions.assertThat(asistente.getEvaluador().getId()).isEqualTo(2L);
@@ -185,15 +194,17 @@ public class AsistentesIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("5");
 
     // Contiene de motivo='Motivo5' a 'Motivo6'
-    Assertions.assertThat(asistentes.get(0).getMotivo()).isEqualTo("Motivo5");
-    Assertions.assertThat(asistentes.get(1).getMotivo()).isEqualTo("Motivo6");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(asistentes.get(0).getMotivo(), Language.ES))
+        .isEqualTo("Motivo5");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(asistentes.get(1).getMotivo(), Language.ES))
+        .isEqualTo("Motivo6");
   }
 
   @Test
   public void findAll_WithSearchQuery_ReturnsFilteredAsistentesList() throws Exception {
     // when: Búsqueda por motivo like e id equals
     Long id = 5L;
-    String query = "motivo=ke=Motivo;id==" + id;
+    String query = "motivo.value=ke=Motivo;id==" + id;
 
     URI uri = UriComponentsBuilder.fromUriString(ASISTENTE_CONTROLLER_BASE_PATH).queryParam("q", query).build(false)
         .toUri();
@@ -214,13 +225,14 @@ public class AsistentesIT extends BaseIT {
     final List<Asistentes> asistentes = response.getBody();
     Assertions.assertThat(asistentes.size()).isEqualTo(1);
     Assertions.assertThat(asistentes.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(asistentes.get(0).getMotivo()).startsWith("Motivo5");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(asistentes.get(0).getMotivo(), Language.ES))
+        .startsWith("Motivo5");
   }
 
   @Test
   public void findAll_WithSortQuery_ReturnsOrderedAsistentesList() throws Exception {
     // when: Ordenación por motivo desc
-    String query = "motivo,desc";
+    String query = "motivo.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(ASISTENTE_CONTROLLER_BASE_PATH).queryParam("s", query).build(false)
         .toUri();
@@ -243,7 +255,8 @@ public class AsistentesIT extends BaseIT {
     for (int i = 0; i < 5; i++) {
       Asistentes asistente = asistentes.get(i);
       Assertions.assertThat(asistente.getId()).isEqualTo(6 - i);
-      Assertions.assertThat(asistente.getMotivo()).isEqualTo("Motivo" + String.valueOf(6 - i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(asistente.getMotivo(), Language.ES))
+          .isEqualTo("Motivo" + String.valueOf(6 - i));
     }
   }
 
@@ -256,9 +269,9 @@ public class AsistentesIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     // when: Ordena por nombre desc
-    String sort = "motivo,desc";
+    String sort = "motivo.value,desc";
     // when: Filtra por motivo like
-    String filter = "motivo=ke=Motivo";
+    String filter = "motivo.value=ke=Motivo";
 
     URI uri = UriComponentsBuilder.fromUriString(ASISTENTE_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -279,9 +292,12 @@ public class AsistentesIT extends BaseIT {
 
     // Contiene de motivo='Motivo6' a
     // 'Motivo4'
-    Assertions.assertThat(asistentes.get(0).getMotivo()).isEqualTo("Motivo6");
-    Assertions.assertThat(asistentes.get(1).getMotivo()).isEqualTo("Motivo5");
-    Assertions.assertThat(asistentes.get(2).getMotivo()).isEqualTo("Motivo4");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(asistentes.get(0).getMotivo(), Language.ES))
+        .isEqualTo("Motivo6");
+    Assertions.assertThat(
+        I18nHelper.getValueForLanguage(asistentes.get(1).getMotivo(), Language.ES)).isEqualTo("Motivo5");
+    Assertions.assertThat(
+        I18nHelper.getValueForLanguage(asistentes.get(2).getMotivo(), Language.ES)).isEqualTo("Motivo4");
 
   }
 

@@ -1,0 +1,24 @@
+[
+  {
+    "key": "ap4_2_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.5 Endpoint criteria"
+    },
+    "fieldGroup": [
+      {
+        "template": "Based on the quantification of the parameters, please indicate the endpoint criteria that will be applied to proceed with the euthanasia of the animal."
+      },
+      {
+        "key": "puntoFinal",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Endpoint criteria",
+          "required": true
+        }
+      }
+    ]
+  }
+]

@@ -15,14 +15,6 @@ import org.springframework.data.domain.Pageable;
 public interface ConvocatoriaConceptoGastoCodigoEcService {
 
   /**
-   * Obtiene {@link ConvocatoriaConceptoGastoCodigoEc} por su id.
-   *
-   * @param id el id de la entidad {@link ConvocatoriaConceptoGastoCodigoEc}.
-   * @return la entidad {@link ConvocatoriaConceptoGastoCodigoEc}.
-   */
-  ConvocatoriaConceptoGastoCodigoEc findById(Long id);
-
-  /**
    * Obtiene las {@link ConvocatoriaConceptoGastoCodigoEc} para una
    * {@link ConvocatoriaConceptoGasto}
    *

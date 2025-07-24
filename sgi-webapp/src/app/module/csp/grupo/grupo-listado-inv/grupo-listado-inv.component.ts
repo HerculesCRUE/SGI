@@ -11,7 +11,7 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { EMPTY, Observable, from } from 'rxjs';
+import { EMPTY, Observable, from, of } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 
@@ -48,6 +48,13 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
     private readonly configService: ConfigService
   ) {
     super();
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'nombre') {
+        return 'nombre.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
@@ -103,9 +110,10 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
 
-    return new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
+    return new RSQLSgiRestFilter('nombre.value', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
       .and('codigo', SgiRestFilterOperator.LIKE_ICASE, controls.codigo.value)
-      .and('proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.proyectoSgeRef.value);
+      .and('proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.proyectoSgeRef.value)
+      .and('isModuloInvestigador', SgiRestFilterOperator.EQUALS, 'true');
   }
 
   protected resetFilters(): void {
@@ -127,16 +135,14 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
       filter(investigadoresPrincipales => !!investigadoresPrincipales),
       map(investigadoresPrincipales => investigadoresPrincipales.map(investigador => investigador.persona.id)),
       tap(investigadoresPrincipales => idsInvestigadoresPrincipales = [...investigadoresPrincipales]),
-      switchMap(investigadoresPrincipales => this.personaService.findAllByIdIn(investigadoresPrincipales)),
+      switchMap(investigadoresPrincipales => investigadoresPrincipales?.length ? this.personaService.findAllByIdIn(investigadoresPrincipales).pipe(map(r => r.items)) : of([])),
       map(investigadoresPrincipales => {
-        grupo.investigadoresPrincipales = investigadoresPrincipales.items;
+        grupo.investigadoresPrincipales = investigadoresPrincipales;
         if (grupo.investigadoresPrincipales.length < idsInvestigadoresPrincipales.length) {
           grupo.investigadoresPrincipales.push(
             ...idsInvestigadoresPrincipales
-              .filter(id => grupo.investigadoresPrincipales.map(i => i.id).includes(id))
-              .map(id => {
-                return { id } as IPersona;
-              })
+              .filter(id => !grupo.investigadoresPrincipales.some(i => i.id === id))
+              .map(id => ({ id } as IPersona))
           )
         }
 
@@ -150,4 +156,5 @@ export class GrupoListadoInvComponent extends AbstractTablePaginationComponent<I
     );
   }
 
+  protected setupI18N(): void { }
 }

@@ -1,2 +1,8 @@
 -- CONCEPTO_GASTO
-insert into test.concepto_gasto (id,nombre,descripcion,activo) values (1,'nombre-001','descripcion-001',true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (1, true, true);
+
+-- CONCEPTO_GASTO_NOMBRE
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (1, 'es', 'nombre-001');
+
+-- CONCEPTO_GASTO_DESCRIPCION
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (1, 'es', 'descripcion-001');

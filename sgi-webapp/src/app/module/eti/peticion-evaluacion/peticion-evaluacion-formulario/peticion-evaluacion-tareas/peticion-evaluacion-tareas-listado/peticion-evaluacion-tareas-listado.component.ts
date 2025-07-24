@@ -15,6 +15,7 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
+import { LanguageService } from '@core/services/language.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
@@ -61,9 +62,10 @@ export class PeticionEvaluacionTareasListadoComponent extends FragmentComponent 
     protected matDialog: MatDialog,
     protected readonly snackBarService: SnackBarService,
     actionService: PeticionEvaluacionActionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.TAREAS, actionService);
+    super(actionService.FRAGMENT.TAREAS, actionService, translate);
     this.tareas$ = (this.fragment as PeticionEvaluacionTareasFragment).tareas$;
     this.listadoFragment = this.fragment as PeticionEvaluacionTareasFragment;
 
@@ -74,7 +76,7 @@ export class PeticionEvaluacionTareasListadoComponent extends FragmentComponent 
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.datasource.paginator = this.paginator;
     this.datasource.sort = this.sort;
     this.listadoFragment.tareas$.subscribe((tarea) => {
@@ -90,16 +92,18 @@ export class PeticionEvaluacionTareasListadoComponent extends FragmentComponent 
           case 'numReferencia':
             return wrapper.value.memoria?.numReferencia;
           case 'tarea':
-            return wrapper.value.tipoTarea ? wrapper.value.tipoTarea?.nombre : wrapper.value.tarea;
+            return wrapper.value.tipoTarea ? this.languageService.getFieldValue(wrapper.value.tipoTarea.nombre) : this.languageService.getFieldValue(wrapper.value.nombre);
           case 'formacionEspecifica':
-            return wrapper.value.formacionEspecifica ? wrapper.value.formacionEspecifica?.nombre : wrapper.value.formacion;
+            return wrapper.value.formacionEspecifica ? this.languageService.getFieldValue(wrapper.value.formacionEspecifica.nombre) : this.languageService.getFieldValue(wrapper.value.formacion);
+          case 'organismo':
+            return this.languageService.getFieldValue(wrapper.value.organismo);
           default:
             return wrapper.value[property];
         }
       };
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       TAREA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

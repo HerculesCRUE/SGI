@@ -6,12 +6,12 @@ import org.crue.hercules.sgi.eti.repository.CargoComiteRepository;
 import org.crue.hercules.sgi.eti.repository.specification.CargoComiteSpecifications;
 import org.crue.hercules.sgi.eti.service.CargoComiteService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +37,7 @@ public class CargoComiteServiceImpl implements CargoComiteService {
   @Transactional
   public CargoComite create(CargoComite cargoComite) {
     log.debug("Petición a create CargoComite : {} - start", cargoComite);
-    Assert.notNull(cargoComite.getId(), "CargoComite id no puede ser null para crear un nuevo cargoComite");
+    AssertHelper.idNotNull(cargoComite.getId(), CargoComite.class);
 
     return cargoComiteRepository.save(cargoComite);
   }
@@ -85,7 +85,7 @@ public class CargoComiteServiceImpl implements CargoComiteService {
   @Transactional
   public void delete(Long id) throws CargoComiteNotFoundException {
     log.debug("Petición a delete CargoComite : {}  - start", id);
-    Assert.notNull(id, "El id de CargoComite no puede ser null.");
+    AssertHelper.idNotNull(id, CargoComite.class);
     if (!cargoComiteRepository.existsById(id)) {
       throw new CargoComiteNotFoundException(id);
     }
@@ -118,7 +118,7 @@ public class CargoComiteServiceImpl implements CargoComiteService {
   public CargoComite update(final CargoComite cargoComiteActualizar) {
     log.debug("update(CargoComite CargoComiteActualizar) - start");
 
-    Assert.notNull(cargoComiteActualizar.getId(), "CargoComite id no puede ser null para actualizar un cargo comité");
+    AssertHelper.idNotNull(cargoComiteActualizar.getId(), CargoComite.class);
 
     return cargoComiteRepository.findById(cargoComiteActualizar.getId()).map(cargoComite -> {
       cargoComite.setNombre(cargoComiteActualizar.getNombre());

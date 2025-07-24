@@ -1,9 +1,18 @@
 package org.crue.hercules.sgi.eti.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +27,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TipoTarea extends BaseEntity {
-
   /**
    * Serial version
    */
@@ -31,13 +39,14 @@ public class TipoTarea extends BaseEntity {
   private Long id;
 
   /** Nombre. */
-  @Column(name = "nombre", length = 250, nullable = false)
-  @NotNull
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tipo_tarea_nombre", joinColumns = @JoinColumn(name = "tipo_tarea_id"))
+  @Valid
+  @NotEmpty
+  private Set<TipoTareaNombre> nombre = new HashSet<>();
 
   /** Activo */
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   @NotNull
   private Boolean activo;
-
 }

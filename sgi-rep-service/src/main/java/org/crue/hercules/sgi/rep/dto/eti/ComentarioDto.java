@@ -1,5 +1,8 @@
 package org.crue.hercules.sgi.rep.dto.eti;
 
+import java.util.List;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.crue.hercules.sgi.rep.dto.BaseRestDto;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +22,7 @@ public class ComentarioDto extends BaseRestDto {
   private ApartadoDto apartado;
   private EvaluacionDto evaluacion;
   private TipoComentarioDto tipoComentario;
-  private String texto;
+  private List<I18nFieldValueDto> texto;
   private String createdBy;
   private String personaCreated;
   private String sexoPersonaCreated;

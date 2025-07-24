@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.eti.service;
 
 import java.util.List;
 
+import org.crue.hercules.sgi.eti.dto.MemoriaInput;
 import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
 import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
@@ -13,6 +14,7 @@ import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria.Tipo;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,10 +25,10 @@ public interface MemoriaService {
   /**
    * Guardar {@link Memoria}.
    *
-   * @param memoria la entidad {@link Memoria} a guardar.
+   * @param memoria la entidad {@link MemoriaInput} a guardar.
    * @return la entidad {@link Memoria} persistida.
    */
-  Memoria create(Memoria memoria);
+  Memoria create(MemoriaInput memoria);
 
   /**
    * Actualizar {@link Memoria}.
@@ -213,21 +215,22 @@ public interface MemoriaService {
       Pageable pageable);
 
   /**
-   * 
-   * Enviar comunicados de aviso para memorias con evaluación retrospectiva
-   * pendiente
-   * 
+   * Envia el comunicado {@code ETI_COM_INF_RETRO_PENDIENTE} de aquellas memorias
+   * que requieren evaluación retrospectiva y cuya fecha de evaluación
+   * retrospectiva se encuentre entre el día actual y el número de días guardado
+   * como parámetro de configuración
    */
   void sendComunicadoInformeRetrospectivaCeeaPendiente();
 
   /**
-   * Crea una memoria del tipo modificada a partir de la recibida por parámetro.
+   * Crea una memoria del tipo modificada a partir de la recibida por parámetro en
+   * el idioma indicado.
    * 
-   * @param nuevaMemoria Nueva {@link Memoria} a crear.
+   * @param nuevaMemoria Nueva {@link MemoriaInput} a crear.
    * @param id           Identificador de {@link Memoria} de la que se parte.
    * @return {@link Memoria} creada.
    */
-  Memoria createModificada(Memoria nuevaMemoria, Long id);
+  Memoria createModificada(MemoriaInput nuevaMemoria, Long id);
 
   /**
    * Comprobación de si están o no los documentos obligatorios aportados para
@@ -304,7 +307,7 @@ public interface MemoriaService {
    * @param id         Id de la {@link Memoria}.
    * @param comentario comentario subsanacion
    */
-  void indicarSubsanacion(Long id, String comentario);
+  void indicarSubsanacion(Long id, List<I18nFieldValueDto> comentario);
 
   /**
    * Devuelve el estado actual de la memoria

@@ -5,8 +5,10 @@ import java.time.Instant;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -21,13 +23,18 @@ import org.crue.hercules.sgi.csp.exceptions.TipoFinalException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaPeriodoJustificacionServiceImpl;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -215,7 +222,7 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
             Arrays.asList(convocatoriaPeriodoJustificacion)))
         // then: throw exception
         .isInstanceOf(ConstraintViolationException.class)
-        .hasMessageContaining("End month must be bigger or equal than initial month");
+        .hasMessageContaining("mesFinal: El mes final debe ser mayor o igual que el mes inicial");
   }
 
   @Test
@@ -239,7 +246,7 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
             Arrays.asList(convocatoriaPeriodoJustificacion)))
         // then: throw exception
         .isInstanceOf(ConstraintViolationException.class)
-        .hasMessageContaining("End date must be bigger or equal than initial date");
+        .hasMessageContaining("fechaFinPresentacion: La fecha final debe ser mayor o igual que la fecha inicial");
   }
 
   @Test
@@ -263,7 +270,7 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
             Arrays.asList(convocatoriaPeriodoJustificacion)))
         // then: throw exception
         .isInstanceOf(PeriodoLongerThanConvocatoriaException.class)
-        .hasMessage("The Period goes beyond the duration of the Call");
+        .hasMessage("El Periodo se extiende más allá de la duración de la Convocatoria");
   }
 
   @Test
@@ -288,7 +295,8 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
             Arrays.asList(convocatoriaPeriodoJustificacion1, convocatoriaPeriodoJustificacion2)))
         // then: throw exception
         .isInstanceOf(PeriodoWrongOrderException.class)
-        .hasMessage("The first Period must start in month 1 and all Periods must be consecutive, with no gaps");
+        .hasMessage(
+            "El primer Periodo debe comenzar en el mes 1 y todos los Periodos deben ser consecutivos, sin huecos");
   }
 
   @Test
@@ -313,7 +321,7 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
             Arrays.asList(convocatoriaPeriodoJustificacion1, convocatoriaPeriodoJustificacion2)))
         // then: throw exception
         .isInstanceOf(TipoFinalException.class)
-        .hasMessage("There must not be more than one final period, and it must be the last one");
+        .hasMessage("No puede haber más de un periodo final y este ha de ser el último");
   }
 
   @Test
@@ -362,7 +370,9 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
       ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = page.getContent()
           .get(i - (page.getSize() * page.getNumber()) - 1);
       Assertions.assertThat(convocatoriaPeriodoJustificacion.getId()).isEqualTo(Long.valueOf(i));
-      Assertions.assertThat(convocatoriaPeriodoJustificacion.getObservaciones()).isEqualTo("observaciones-" + i);
+      Assertions
+          .assertThat(I18nHelper.getValueForLanguage(convocatoriaPeriodoJustificacion.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + i);
     }
   }
 
@@ -386,8 +396,9 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getFechaFinPresentacion()).as("getFechaFinPresentacion()")
         .isEqualTo(Instant.parse("2020-11-20T23:59:59Z"));
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getNumPeriodo()).as("getNumPeriodo()").isEqualTo(1);
-    Assertions.assertThat(convocatoriaPeriodoJustificacion.getObservaciones()).as("getObservaciones()")
-        .isEqualTo("observaciones-1");
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriaPeriodoJustificacion.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("observaciones-1");
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getTipo()).as("getTipo()")
         .isEqualTo(TipoJustificacion.PERIODICO);
   }
@@ -426,6 +437,10 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
    */
   private ConvocatoriaPeriodoJustificacion generarMockConvocatoriaPeriodoJustificacion(Long id, Integer mesInicial,
       Integer mesFinal, TipoJustificacion tipo, Long convocatoriaId) {
+    Set<ConvocatoriaPeriodoJustificacionObservaciones> obsConvocatoriaPeriodoJustificacion = new HashSet<>();
+    obsConvocatoriaPeriodoJustificacion
+        .add(new ConvocatoriaPeriodoJustificacionObservaciones(Language.ES, "observaciones-" + id));
+
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = new ConvocatoriaPeriodoJustificacion();
     convocatoriaPeriodoJustificacion.setId(id);
     convocatoriaPeriodoJustificacion.setConvocatoriaId(convocatoriaId == null ? 1 : convocatoriaId);
@@ -434,7 +449,7 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
     convocatoriaPeriodoJustificacion.setMesFinal(mesFinal);
     convocatoriaPeriodoJustificacion.setFechaInicioPresentacion(Instant.parse("2020-10-10T00:00:00Z"));
     convocatoriaPeriodoJustificacion.setFechaFinPresentacion(Instant.parse("2020-11-20T23:59:59Z"));
-    convocatoriaPeriodoJustificacion.setObservaciones("observaciones-" + id);
+    convocatoriaPeriodoJustificacion.setObservaciones(obsConvocatoriaPeriodoJustificacion);
     convocatoriaPeriodoJustificacion.setTipo(tipo);
 
     return convocatoriaPeriodoJustificacion;
@@ -463,12 +478,17 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
    */
   private ConfiguracionSolicitud generarMockConfiguracionSolicitud(Long configuracionSolicitudId, Long convocatoriaId,
       Long convocatoriaFaseId) {
-    // @formatter:off
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-1"));
+
     TipoFase tipoFase = TipoFase.builder()
         .id(convocatoriaFaseId)
-        .nombre("nombre-1")
+        .nombre(nombreTipoFase)
         .activo(Boolean.TRUE)
         .build();
+
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    obsConvocatoriaFase.add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones"));
 
     ConvocatoriaFase convocatoriaFase = ConvocatoriaFase.builder()
         .id(convocatoriaFaseId)
@@ -476,7 +496,7 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
         .tipoFase(tipoFase)
         .fechaInicio(Instant.parse("2020-10-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-10-15T00:00:00Z"))
-        .observaciones("observaciones")
+        .observaciones(obsConvocatoriaFase)
         .build();
 
     ConfiguracionSolicitud configuracionSolicitud = ConfiguracionSolicitud.builder()
@@ -486,7 +506,6 @@ class ConvocatoriaPeriodoJustificacionServiceTest extends BaseServiceTest {
         .fasePresentacionSolicitudes(convocatoriaFase)
         .importeMaximoSolicitud(BigDecimal.valueOf(12345))
         .build();
-    // @formatter:on
 
     return configuracionSolicitud;
   }

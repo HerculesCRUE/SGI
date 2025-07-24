@@ -8,6 +8,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoEntidadConvocante } from '@core/models/csp/proyecto-entidad-convocante';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs/internal/Subscription';
 import { switchMap } from 'rxjs/operators';
@@ -44,23 +45,29 @@ export class ProyectoEntidadesConvocantesComponent extends FragmentComponent imp
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly translate: TranslateService,
+    private readonly languageService: LanguageService,
     private proyectoEntidadConvocantePlanPipe: ProyectoEntidadConvocantePlanPipe
   ) {
-    super(actionService.FRAGMENT.ENTIDADES_CONVOCANTES, actionService);
+    super(actionService.FRAGMENT.ENTIDADES_CONVOCANTES, actionService, translate);
     this.proyectoEntidadesConvocantesFragment = this.fragment as ProyectoEntidadesConvocantesFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor = (proyectoEntidadConvocante: IProyectoEntidadConvocante, property: string) => {
       switch (property) {
-        case 'nombre': return proyectoEntidadConvocante.entidad.nombre;
-        case 'cif': return proyectoEntidadConvocante.entidad.numeroIdentificacion;
-        case 'plan': return this.proyectoEntidadConvocantePlanPipe.transform(proyectoEntidadConvocante);
-        case 'programaConvocatoria': return proyectoEntidadConvocante.programaConvocatoria?.nombre;
-        case 'programa': return proyectoEntidadConvocante.programa?.nombre;
+        case 'nombre':
+          return proyectoEntidadConvocante.entidad.nombre;
+        case 'cif':
+          return proyectoEntidadConvocante.entidad.numeroIdentificacion;
+        case 'plan':
+          return this.languageService.getFieldValue(this.proyectoEntidadConvocantePlanPipe.transform(proyectoEntidadConvocante));
+        case 'programaConvocatoria':
+          return this.languageService.getFieldValue(proyectoEntidadConvocante.programaConvocatoria?.nombre);
+        case 'programa':
+          return this.languageService.getFieldValue(proyectoEntidadConvocante.programa?.nombre);
         default: return proyectoEntidadConvocante[property];
       }
     };
@@ -72,7 +79,7 @@ export class ProyectoEntidadesConvocantesComponent extends FragmentComponent imp
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_ENTIDAD_CONVOCANTE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

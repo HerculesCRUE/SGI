@@ -9,8 +9,8 @@ import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equip
 import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
 import { ICategoriaProfesional } from '@core/models/sgp/categoria-profesional';
 import { Fragment } from '@core/services/action-service';
-import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
-import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
+import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo/convocatoria-requisito-equipo.service';
+import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip/convocatoria-requisito-ip.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProyectoEquipoService } from '@core/services/csp/proyecto-equipo.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
@@ -22,7 +22,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, forkJoin, from, Observable, of, Subject } from 'rxjs';
-import { concatMap, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { catchError, concatMap, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export enum HelpIconClass {
   DANGER = 'danger',
@@ -123,6 +123,10 @@ export class ProyectoEquipoFragment extends Fragment {
                   map(persona => {
                     element.persona = persona;
                     return element;
+                  }),
+                  catchError((err) => {
+                    this.logger.error(err);
+                    return of(element);
                   })
                 );
               }),
@@ -157,7 +161,7 @@ export class ProyectoEquipoFragment extends Fragment {
             }
           },
           error => {
-            this.logger.error(error);
+            this.processError(error);
           }
         )
       );

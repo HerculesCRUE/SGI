@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -77,8 +83,11 @@ public class ProyectoPaqueteTrabajo extends BaseEntity {
   private Double personaMes;
 
   /** Descripción. */
-  @Column(name = "descripcion", length = 2000)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "proyecto_paquete_trabajo_descripcion", joinColumns = @JoinColumn(name = "proyecto_id"))
+  @Valid
+  @Builder.Default
+  private Set<ProyectoPaqueteTrabajoDescripcion> descripcion = new HashSet<>();
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne

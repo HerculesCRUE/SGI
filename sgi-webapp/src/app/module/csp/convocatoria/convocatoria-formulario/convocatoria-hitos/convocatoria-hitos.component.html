@@ -15,13 +15,17 @@
       <!-- Tipo hito Column -->
       <ng-container matColumnDef="tipoHito">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.hito.tipo' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoHito.nombre}} </td>
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.tipoHito.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Comentario Column -->
       <ng-container matColumnDef="comentario">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.hito.comentario' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.comentario}} </td>
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.comentario"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
 

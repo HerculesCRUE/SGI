@@ -1,0 +1,397 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <property name="defaultLang" value="" />
+
+  <changeSet context="!test" author="master" id="00.08.00-resources-new-en">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <changeLogPropertyDefined property="defaultLang" value="en" />
+      </not>
+    </preConditions>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-csp-certificado-autorizacion-proyecto-externo-docx-en" />
+      <column name="description"
+        value="Informe del certificado de autorización del proyecto externo en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-acta-docx-en" />
+      <column name="description"
+        value="Informe del acta en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-eti-acta.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-acta.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-acta-docx-en" />
+      <column name="description"
+        value="Informe de los bloques apartados acta en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-eti-bloque-apartado-acta.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-bloque-apartado-acta.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-ficha-evaluador-docx-en" />
+      <column name="description"
+        value="Informe de los bloques apartados de la ficha de evaluador en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-docx-en" />
+      <column name="description"
+        value="Informe bloques apartados de las evaluaciones en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-eti-bloque-apartado.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-bloque-apartado.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-modificacion-docx-en" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria de modificación en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx-en" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria nueva en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx-en" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria de ratificación en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-retrospectiva-docx-en" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria de retrospectiva en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-retrospectiva.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-retrospectiva.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-docx-en" />
+      <column name="description"
+        value="Informe de evaluación en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-ficha-evaluador-docx-en" />
+      <column name="description"
+        value="Informe de la ficha de evaluador en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-eti-ficha-evaluador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-ficha-evaluador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-detalle-grupo-docx-en" />
+      <column name="description"
+        value="Informe del detalle de grupo en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-prc-detalle-grupo.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-prc-detalle-grupo.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-detalle-produccion-investigador-docx-en" />
+      <column name="description"
+        value="Informe del detalle de grupos de producción por investigador en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-prc-detalle-produccion-investigador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-prc-detalle-produccion-investigador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-resumen-puntuacion-grupos-docx-en" />
+      <column name="description"
+        value="Informe del resumen de puntuación de grupos en inglés" />
+      <column name="value"
+        valueBlobFile="blob/rep/en/rep-prc-resumen-puntuacion-grupos.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-prc-resumen-puntuacion-grupos.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-i18n-en" />
+      <column name="description" value="i18n en" />
+      <column name="value" valueBlobFile="blob/web/web-i18n-en.json" />
+      <column name="default_value" valueBlobFile="blob/web/web-i18n-en.json" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.08.00-resources-update-en">
+    <preConditions onFail="MARK_RAN">
+      <changeLogPropertyDefined property="defaultLang" value="en" />
+    </preConditions>
+
+    <update tableName="resources">
+      <column name="name"
+        value="rep-csp-certificado-autorizacion-proyecto-externo-docx-en" />
+      <column
+        name="description"
+        value="Informe del certificado de autorización del proyecto externo en inglés" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/en/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-csp-certificado-autorizacion-proyecto-externo-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-acta-docx-en" />
+      <column name="description"
+        value="Informe del acta en inglés" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-acta.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-acta-docx-en" />
+      <column name="description"
+        value="Informe de los bloques apartados acta en inglés" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-bloque-apartado-acta.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-ficha-evaluador-docx-en" />
+      <column
+        name="description"
+        value="Informe de los bloques apartados de la ficha de evaluador en inglés" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-ficha-evaluador-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-docx-en" />
+      <column name="description"
+        value="Informe bloques apartados de las evaluaciones en inglés" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-bloque-apartado.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name"
+        value="rep-eti-evaluacion-favorable-memoria-modificacion-docx-en" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria de modificación en inglés" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-modificacion-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx-en" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria nueva en inglés" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name"
+        value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx-en" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria de ratificación en inglés" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-retrospectiva-docx-en" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria de retrospectiva en inglés" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion-retrospectiva.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-retrospectiva-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-docx-en" />
+      <column name="description"
+        value="Informe de evaluación en inglés" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-evaluacion.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-ficha-evaluador-docx-en" />
+      <column name="description"
+        value="Informe de la ficha de evaluador en inglés" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-eti-ficha-evaluador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-ficha-evaluador-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-prc-detalle-grupo-docx-en" />
+      <column name="description"
+        value="Informe del detalle de grupo en inglés" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/en/rep-prc-detalle-grupo.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-prc-detalle-grupo-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-prc-detalle-produccion-investigador-docx-en" />
+      <column
+        name="description"
+        value="Informe del detalle de grupos de producción por investigador en inglés" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/en/rep-prc-detalle-produccion-investigador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-prc-detalle-produccion-investigador-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-prc-resumen-puntuacion-grupos-docx-en" />
+      <column
+        name="description" value="Informe del resumen de puntuación de grupos en inglés" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/en/rep-prc-resumen-puntuacion-grupos.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-prc-resumen-puntuacion-grupos-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="web-i18n-en" />
+      <column
+        name="description" value="i18n en" />
+      <column name="default_value"
+        valueBlobFile="blob/web/web-i18n-en.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-i18n-es" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.08.00-resources-web-en">
+    <insert tableName="resources">
+      <column name="name" value="rep-font-en" />
+      <column name="description" value="Fuente para los informes en inglés" />
+      <column name="value" valueBlobFile="blob/fonts/EHUSans.otf" />
+      <column name="default_value" valueBlobFile="blob/fonts/EHUSans.otf" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

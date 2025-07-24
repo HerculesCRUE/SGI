@@ -52,14 +52,14 @@ export class GrupoLineaClasificacionesComponent extends FragmentComponent implem
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.CLASIFICACIONES, actionService);
+    super(actionService.FRAGMENT.CLASIFICACIONES, actionService, translate);
 
     this.formPart = this.fragment as GrupoLineaClasificacionesFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -83,7 +83,7 @@ export class GrupoLineaClasificacionesComponent extends FragmentComponent implem
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       GRUPO_LINEA_CLASIFICACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

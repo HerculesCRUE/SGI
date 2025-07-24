@@ -42,15 +42,15 @@ export class ProyectoPeriodoSeguimientoEditarComponent extends ActionComponent i
     dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_PERIODO_SEGUIMIENTO_CIENTIFICO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

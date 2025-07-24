@@ -24,13 +24,18 @@ export class LayoutService {
   menuAutoclose$ = new BehaviorSubject<boolean>(false);
   breadcrumData$ = new BehaviorSubject<BreadcrumbData[]>([]);
   title$ = new BehaviorSubject<Title>(undefined);
+  private lastNavigationStack: Navigation[] = [];
 
   constructor(private navigationService: NavigationService,
     private readonly translate: TranslateService) {
     this.navigationService.navigation$.subscribe((navigationStack) => {
       if (navigationStack.length > 0) {
         this.parseNavigationStack(navigationStack);
+        this.lastNavigationStack = navigationStack;
       }
+    });
+    this.translate.onLangChange.subscribe(() => {
+      this.title$.next(this.getTitle(this.lastNavigationStack));
     });
   }
 
@@ -121,23 +126,11 @@ export class LayoutService {
     let params: { [key: string]: any };
     key = data.title;
     if (data.titleParams) {
-      params = this.resolvedParams(data.titleParams);
+      params = data.titleParams;
     } else {
       params = {};
     }
     return { key, params };
-  }
-
-  resolvedParams(titleParams: any): any {
-    if (titleParams.entity) {
-      this.translate.get(
-        titleParams.entity,
-        { count: titleParams.count }
-      ).subscribe((value) => titleParams.entity = value);
-
-    }
-
-    return titleParams;
   }
 
   openMenu(): void {

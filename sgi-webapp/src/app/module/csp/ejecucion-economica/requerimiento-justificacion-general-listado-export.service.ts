@@ -9,6 +9,7 @@ import { ProyectoProyectoSgeService } from '@core/services/csp/proyecto-proyecto
 import { ProyectoSeguimientoEjecucionEconomicaService } from '@core/services/csp/proyecto-seguimiento-ejecucion-economica/proyecto-seguimiento-ejecucion-economica.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RequerimientoJustificacionService } from '@core/services/csp/requerimiento-justificacion/requerimiento-justificacion.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
@@ -128,8 +129,7 @@ const REQUERIMIENTO_JUSTIFICACION_JUSTIFICANTE_REINTEGRO_FIELD = 'justificanteRe
 const COLUMN_VALUE_PREFIX = ': ';
 
 @Injectable()
-export class RequerimientoJustificacionGeneralListadoExportService extends
-  AbstractTableExportFillService<IRequerimientoJustificacionReportData, IReportOptions>{
+export class RequerimientoJustificacionGeneralListadoExportService extends AbstractTableExportFillService<IRequerimientoJustificacionReportData, IReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -142,6 +142,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
     private readonly empresaService: EmpresaService,
     private readonly requerimientoJustificacionService: RequerimientoJustificacionService,
     private luxonDatePipe: LuxonDatePipe,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -240,7 +241,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
           if (requerimientoJustificacionData.proyecto.convocatoriaId) {
             return this.convocatoriaService.findById(requerimientoJustificacionData.proyecto.convocatoriaId).pipe(
               map(convocatoria => {
-                requerimientoJustificacionData.tituloConvocatoria = convocatoria.titulo;
+                requerimientoJustificacionData.tituloConvocatoria = this.languageService.getFieldValue(convocatoria.titulo);
                 return requerimientoJustificacionData;
               })
             );
@@ -697,7 +698,7 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
     rows.push(requerimiento?.proyectoSge?.id ?? '');
     rows.push(requerimiento?.proyecto?.id ?? '');
     rows.push(requerimiento?.proyecto?.codigoExterno ?? '');
-    rows.push(requerimiento?.nombre ?? '');
+    rows.push(this.languageService.getFieldValue(requerimiento?.nombre));
     rows.push(LuxonUtils.toBackend(requerimiento?.fechaInicio) ?? '');
     rows.push(LuxonUtils.toBackend(requerimiento?.fechaFin) ?? '');
     rows.push(LuxonUtils.toBackend(requerimiento?.proyecto?.fechaFinDefinitiva) ?? '');
@@ -737,10 +738,13 @@ export class RequerimientoJustificacionGeneralListadoExportService extends
     for (let i = 0; i < maxNumRequerimientosJustificacion; i++) {
       if (requerimiento.requerimientosJustificacion && requerimiento.requerimientosJustificacion[i]) {
         rows.push(requerimiento.requerimientosJustificacion[i].numRequerimiento ?? '');
-        rows.push(requerimiento.requerimientosJustificacion[i].tipoRequerimiento?.nombre ?? '');
+        rows.push(this.languageService.getFieldValue(requerimiento.requerimientosJustificacion[i].tipoRequerimiento?.nombre));
         rows.push(requerimiento.requerimientosJustificacion[i].proyectoPeriodoJustificacion?.numPeriodo ?? '');
-        rows.push(requerimiento.requerimientosJustificacion[i].requerimientoPrevio?.numRequerimiento ? (requerimiento.requerimientosJustificacion[i].requerimientoPrevio?.numRequerimiento + ' - ' +
-          requerimiento.requerimientosJustificacion[i].requerimientoPrevio?.tipoRequerimiento?.nombre ?? '') : '');
+        rows.push(requerimiento.requerimientosJustificacion[i].requerimientoPrevio?.numRequerimiento
+          ? (requerimiento.requerimientosJustificacion[i].requerimientoPrevio?.numRequerimiento
+            + ' - '
+            + this.languageService.getFieldValue(requerimiento.requerimientosJustificacion[i].requerimientoPrevio?.tipoRequerimiento?.nombre))
+          : '');
         rows.push(requerimiento.requerimientosJustificacion[i].fechaNotificacion ? this.luxonDatePipe.transform(LuxonUtils.toBackend(requerimiento.requerimientosJustificacion[i].fechaNotificacion, true), 'shortDate') : '');
         rows.push(requerimiento.requerimientosJustificacion[i].fechaFinAlegacion ? this.luxonDatePipe.transform(LuxonUtils.toBackend(requerimiento.requerimientosJustificacion[i].fechaFinAlegacion, true), 'short') : '');
         rows.push(requerimiento.requerimientosJustificacion[i].importeAceptado ?? '');

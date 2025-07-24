@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
 import { ActionService } from '@core/services/action-service';
+import { LanguageService } from '@core/services/language.service';
 import { TipoProteccionService } from '@core/services/pii/tipo-proteccion/tipo-proteccion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NGXLogger } from 'ngx-logger';
@@ -28,7 +29,8 @@ export class TipoProteccionActionService extends ActionService {
     private readonly logger: NGXLogger,
     private route: ActivatedRoute,
     private tipoProteccionService: TipoProteccionService,
-    private readonly snackBarService: SnackBarService
+    private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService
   ) {
     super();
     this.tipoProteccion = {} as ITipoProteccion;
@@ -42,7 +44,7 @@ export class TipoProteccionActionService extends ActionService {
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.tipoProteccionDatosGenerales);
 
     this.tipoProteccionSubtipos = new TipoProteccionSubtiposFragment(this.logger, this.tipoProteccion?.id,
-      this.tipoProteccionService, this.snackBarService);
+      this.tipoProteccionService, this.snackBarService, this.languageService);
     this.addFragment(this.FRAGMENT.SUBTIPOS, this.tipoProteccionSubtipos);
   }
 

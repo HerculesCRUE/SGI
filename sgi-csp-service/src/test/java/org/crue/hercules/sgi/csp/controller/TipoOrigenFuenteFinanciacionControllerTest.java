@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoOrigenFuenteFinanciacion;
+import org.crue.hercules.sgi.csp.model.TipoOrigenFuenteFinanciacionNombre;
 import org.crue.hercules.sgi.csp.service.TipoOrigenFuenteFinanciacionService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -92,7 +97,7 @@ class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTest {
     for (int i = 31; i <= 37; i++) {
       TipoOrigenFuenteFinanciacion tipoOrigenFuenteFinanciacion = tiposOrigenFuenteFinanciacionResponse
           .get(i - (page * pageSize) - 1);
-      Assertions.assertThat(tipoOrigenFuenteFinanciacion.getNombre())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoOrigenFuenteFinanciacion.getNombre(), Language.ES))
           .isEqualTo("TipoOrigenFuenteFinanciacion" + String.format("%03d", i));
     }
   }
@@ -143,11 +148,13 @@ class TipoOrigenFuenteFinanciacionControllerTest extends BaseControllerTest {
    * @return el objeto TipoOrigenFuenteFinanciacion
    */
   TipoOrigenFuenteFinanciacion generarMockTipoOrigenFuenteFinanciacion(Long id, String nombre) {
+    Set<TipoOrigenFuenteFinanciacionNombre> tipoOrigenFuenteFinanciacionNombre = new HashSet<>();
+    tipoOrigenFuenteFinanciacionNombre.add(new TipoOrigenFuenteFinanciacionNombre(Language.ES, nombre));
 
     TipoOrigenFuenteFinanciacion tipoOrigenFuenteFinanciacion = new TipoOrigenFuenteFinanciacion();
     tipoOrigenFuenteFinanciacion.setId(id);
     tipoOrigenFuenteFinanciacion.setActivo(true);
-    tipoOrigenFuenteFinanciacion.setNombre(nombre);
+    tipoOrigenFuenteFinanciacion.setNombre(tipoOrigenFuenteFinanciacionNombre);
 
     return tipoOrigenFuenteFinanciacion;
   }

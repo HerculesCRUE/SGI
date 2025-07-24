@@ -12,15 +12,14 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { DialogService } from '@core/services/dialog.service';
-import { InvencionDocumentoService } from '@core/services/pii/invencion/invencion-documento/invencion-documento.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
-import { NGXLogger } from 'ngx-logger';
 import { Subscription } from 'rxjs';
-import { switchMap, tap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { InvencionActionService } from '../../invencion.action.service';
 import { InvencionDocumentoModalComponent } from '../../modals/invencion-documento-modal/invencion-documento-modal.component';
 import { InvencionDocumentoFragment } from './invencion-documento.fragment';
@@ -76,23 +75,31 @@ export class InvencionDocumentoComponent extends FragmentComponent implements On
     private snackBarService: SnackBarService,
     private translate: TranslateService,
     private matDialog: MatDialog,
-    private invencionDocumentoService: InvencionDocumentoService,
-    private logger: NGXLogger,
     private documentoService: DocumentoService,
-    private dialogService: DialogService
+    private dialogService: DialogService,
+    private readonly languageService: LanguageService
   ) {
 
-    super(actionService.FRAGMENT.DOCUMENTOS, actionService);
+    super(actionService.FRAGMENT.DOCUMENTOS, actionService, translate);
     this.formPart = this.fragment as InvencionDocumentoFragment;
     this.elementosPagina = [5, 10, 25, 100];
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
 
     this.subscriptions.push(this.subscribeToInvencionDocumentosChanges());
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor = (wrapper: StatusWrapper<IInvencionDocumento>, property: string) => {
+      switch (property) {
+        case 'nombre':
+          return this.languageService.getFieldValue(wrapper.value?.nombre);
+        case 'fichero':
+          return wrapper.value?.documento?.nombre;
+        default:
+          return wrapper.value[property];
+      }
+    }
     this.dataSource.sort = this.sort;
   }
 
@@ -100,7 +107,7 @@ export class InvencionDocumentoComponent extends FragmentComponent implements On
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       INVENCION_DOCUMENTO_KEY,

@@ -1,0 +1,139 @@
+[
+  {
+    "key": "ap3_5_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.4 Genetically modified organism"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4 || !formState.mainModel.ap3_4.ap3_4_3 || !formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio || formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Type 1 GMO: One whose probability of causing a disease in living organisms or an adverse effect on the environment is negligible.</p><p>Type 2 GMO: One that can cause a disease in living organisms that is unlikely to spread to the community and effective prophylaxis or treatment is generally available; or that can cause a low adverse effect on the environment.</p><p>Type 3 GMO: One that can cause a serious disease in living organisms that poses a risk of spreading to the community but effective prophylaxis or treatment is generally available; or that can cause an adverse effect on the environment.</p><p>Type 4 GMO: One that can cause a serious disease in living organisms that is highly likely to spread to the community and there is no effective prophylaxis or treatment generally available; or that can cause a severe adverse effect on the environment.</p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "microorganismosParasitosTable",
+        "templateOptions": {
+          "entity": "genetically modified organism",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "genetically modified organism"
+          },
+          "fieldGroup": [
+            {
+              "key": "organismoModificadoNombre",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Name",
+                "order": 10,
+                "placeholder": "Name",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoHuesped",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Host",
+                "order": 20,
+                "placeholder": "Host",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoVectorUtilizado",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Vector used",
+                "order": 30,
+                "placeholder": "Vector used",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoInsertoEspecie",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Insert and species of origin of the insert",
+                "order": 40,
+                "placeholder": "Insert and species of origin of the insert",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoProteina",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Protein it encodes",
+                "order": 50,
+                "placeholder": "Protein it encodes",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoGrupoRiesgo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Risk group",
+                "order": 60,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Group 1"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Group 2"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Group 3"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Group 4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "organismoModificadoVolumenMaximo",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Maximum sample volume to be handled at any one time or number of animals",
+                "order": 70,
+                "placeholder": "Maximum sample volume to be handled at any one time or number of animals",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

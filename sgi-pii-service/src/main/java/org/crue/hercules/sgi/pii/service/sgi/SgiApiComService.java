@@ -100,11 +100,19 @@ public class SgiApiComService extends SgiApiBaseService {
         TEMPLATE_PII_COM_AVISO_FIN_PLAZO_PRESENTACION_FASES_NACIONALES_REGIONALES_SOLICITUD_PROTECCION_PARAM);
   }
 
+  /**
+   * Crea el comunicado {@code PII_COM_FECHA_LIMITE_PROCEDIMIENTO}
+   * 
+   * @param data       Información para rellenar la plantilla del comunicado
+   * @param recipients remitentes del comunicado
+   * @return el email creado
+   * @throws JsonProcessingException
+   */
   public EmailOutput createComunicadoFechaLimiteProcedimiento(PiiComFechaLimiteProcedimientoData data,
       List<Recipient> recipients) throws JsonProcessingException {
-
     return this.createComunicado(data, recipients,
         TEMPLATE_PII_COM_FECHA_LIMITE_PROCEDIMIENTO,
         TEMPLATE_PII_COM_FECHA_LIMITE_PROCEDIMIENTO_PARAM);
   }
+
 }

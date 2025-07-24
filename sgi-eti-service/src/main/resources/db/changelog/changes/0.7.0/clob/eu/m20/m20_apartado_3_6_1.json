@@ -1,0 +1,241 @@
+[
+  {
+    "key": "ap3_6_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.1 Definizioa"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Esperimentazioan <a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#ani'>53/13 EDren I. eranskinean</a> zerrendatuta dauden espezieetako animaliak bakarrik erabili ahal izango dira, berariaz helburu horretarako hazi badituzte.</p><p>Salbuespenezko kasuetan, eta betiere justifikazio zientifikoren bat badago, organo eskudunek esperimentaziorako hazi ez dituzten animaliak erabiltzea baimendu ahal izango dute (<a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a19'>53/13 EDren 19. art.</a>).</p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "animalesExperimentacionTable",
+        "templateOptions": {
+          "entity": "animalia espeziea",
+          "gender": "female"
+        },
+        "validators": {
+          "validation": [
+            "oneRowRequired"
+          ]
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Esperimentazioa animaliekin"
+          },
+          "fieldGroup": [
+            {
+              "key": "especie",
+              "type": "select",
+              "templateOptions": {
+                "label": "Espeziea",
+                "required": true,
+                "order": 10,
+                "options": [
+                  {
+                    "label": "[1] Sagua",
+                    "value": "1"
+                  },
+                  {
+                    "label": "[2] Arratoia",
+                    "value": "2"
+                  },
+                  {
+                    "label": "[3] Akuria",
+                    "value": "3"
+                  },
+                  {
+                    "label": "[4] Hamsterra",
+                    "value": "4"
+                  },
+                  {
+                    "label": "[5] Beste karraskari batzuk",
+                    "value": "5"
+                  },
+                  {
+                    "label": "[6] Untxia",
+                    "value": "6"
+                  },
+                  {
+                    "label": "[7] Katua",
+                    "value": "7"
+                  },
+                  {
+                    "label": "[8] Txakurra",
+                    "value": "8"
+                  },
+                  {
+                    "label": "[9] Hudoa",
+                    "value": "9"
+                  },
+                  {
+                    "label": "[10] Beste karniboro batzuk",
+                    "value": "10"
+                  },
+                  {
+                    "label": "[11] Zaldia, astoa, hibridoa",
+                    "value": "11"
+                  },
+                  {
+                    "label": "[12] Txerria",
+                    "value": "12"
+                  },
+                  {
+                    "label": "[13] Ahuntza",
+                    "value": "13"
+                  },
+                  {
+                    "label": "[14] Ardia",
+                    "value": "14"
+                  },
+                  {
+                    "label": "[15] Behia",
+                    "value": "15"
+                  },
+                  {
+                    "label": "[16] Prosimioak",
+                    "value": "16"
+                  },
+                  {
+                    "label": "[17] Mundu zaharreko primateak",
+                    "value": "17"
+                  },
+                  {
+                    "label": "[18] Mundu berriko primateak",
+                    "value": "18"
+                  },
+                  {
+                    "label": "[19] Primate hominidoak",
+                    "value": "19"
+                  },
+                  {
+                    "label": "[20] Beste ugaztun batzuk",
+                    "value": "20"
+                  },
+                  {
+                    "label": "[21] Galeperra",
+                    "value": "21"
+                  },
+                  {
+                    "label": "[22] Beste hegazti batzuk",
+                    "value": "22"
+                  },
+                  {
+                    "label": "[23] Narrastiak",
+                    "value": "23"
+                  },
+                  {
+                    "label": "[24] Anfibioak",
+                    "value": "24"
+                  },
+                  {
+                    "label": "[25] Arrainak",
+                    "value": "25"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "nombreCientifico",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Izen zientifikoa",
+                "required": true,
+                "placeholder": "Izena",
+                "order": 20
+              }
+            },
+            {
+              "key": "cepa",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Anduia/k",
+                "placeholder": "Anduia/k",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10",
+                "order": 30
+              }
+            },
+            {
+              "key": "sexo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Sexua",
+                "required": true,
+                "order": 40,
+                "options": [
+                  {
+                    "label": "Arra",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Emea",
+                    "value": "2"
+                  },
+                  {
+                    "label": "Arra eta emea",
+                    "value": "3"
+                  },
+                  {
+                    "label": "Ez du garrantzirik",
+                    "value": "4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "edadPeso",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Adina edo pisua",
+                "order": 50,
+                "required": true,
+                "placeholder": "Adina edo pisua"
+              }
+            },
+            {
+              "key": "procedencia",
+              "type": "select",
+              "templateOptions": {
+                "label": "Jatorria",
+                "required": true,
+                "order": 60,
+                "options": [
+                  {
+                    "label": "Ekoizpen propioa",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Herrialdean erregistratutako hazkuntza edo hornikuntza zentroak",
+                    "value": "2"
+                  },
+                  {
+                    "label": "Beste zentro erabiltzaile batek emana/truke zientifikoa",
+                    "value": "3"
+                  },
+                  {
+                    "label": "Legalki inportatuak",
+                    "value": "4"
+                  },
+                  {
+                    "label": "Naturan harrapatuak edo kalekoak",
+                    "value": "5"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

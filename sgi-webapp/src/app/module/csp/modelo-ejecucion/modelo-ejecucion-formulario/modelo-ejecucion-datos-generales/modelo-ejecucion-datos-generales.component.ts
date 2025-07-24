@@ -10,6 +10,7 @@ import { ModeloEjecucionActionService } from '../../modelo-ejecucion.action.serv
 import { ModeloEjecucionDatosGeneralesFragment } from './modelo-ejecucion-datos-generales.fragment';
 
 const MODELO_EJECUCION_NOMBRE_KEY = marker('csp.modelo-ejecucion.nombre');
+const MODELO_EJECUCION_DESCRIPCION_KEY = marker('csp.modelo-ejecucion.descripcion');
 
 @Component({
   selector: 'sgi-modelo-ejecucion-datos-generales',
@@ -24,12 +25,13 @@ export class ModeloEjecucionDatosGeneralesComponent extends FormFragmentComponen
   key: number;
 
   msgParamNombreEntity = {};
+  msgParamDescripcionEntity = {}
 
   constructor(
     readonly actionService: ModeloEjecucionActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
 
     this.key = this.fragment.getKey() as number;
 
@@ -48,14 +50,19 @@ export class ModeloEjecucionDatosGeneralesComponent extends FormFragmentComponen
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MODELO_EJECUCION_NOMBRE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamNombreEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      MODELO_EJECUCION_DESCRIPCION_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamDescripcionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
 
 }

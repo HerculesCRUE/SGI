@@ -1,0 +1,22 @@
+[
+  {
+    "key": "ap5_2_2_4_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.4.3 Genetic modification. Gene sequence(s) inserted, deleted or modified. Function(s)"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "key": "detallarModificacionGeneticaOMG",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Describe in detail",
+          "required": false
+        }
+      }
+    ]
+  }
+]

@@ -1,15 +1,19 @@
 package org.crue.hercules.sgi.eti.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.BloqueNotFoundException;
 import org.crue.hercules.sgi.eti.model.Bloque;
+import org.crue.hercules.sgi.eti.model.BloqueNombre;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.repository.BloqueRepository;
 import org.crue.hercules.sgi.eti.service.impl.BloqueServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -40,13 +44,11 @@ public class BloqueServiceTest extends BaseServiceTest {
 
   @Test
   public void find_WithId_ReturnsBloque() {
-    BDDMockito.given(bloqueRepository.findById(1L)).willReturn(Optional.of(generarMockBloque(1L, "Bloque1")));
+    BDDMockito.given(bloqueRepository.findById(1L)).willReturn(Optional.of(generarMockBloque(1L)));
 
-    Bloque Bloque = bloqueService.findById(1L);
+    Bloque bloque = bloqueService.findById(1L);
 
-    Assertions.assertThat(Bloque.getId()).isEqualTo(1L);
-
-    Assertions.assertThat(Bloque.getNombre()).isEqualTo("Bloque1");
+    Assertions.assertThat(bloque.getId()).isEqualTo(1L);
 
   }
 
@@ -54,7 +56,8 @@ public class BloqueServiceTest extends BaseServiceTest {
   public void find_NotFound_ThrowsBloqueNotFoundException() throws Exception {
     BDDMockito.given(bloqueRepository.findById(1L)).willReturn(Optional.empty());
 
-    Assertions.assertThatThrownBy(() -> bloqueService.findById(1L)).isInstanceOf(BloqueNotFoundException.class);
+    Assertions.assertThatThrownBy(() -> bloqueService.findById(1L))
+        .isInstanceOf(BloqueNotFoundException.class);
   }
 
   @Test
@@ -62,7 +65,7 @@ public class BloqueServiceTest extends BaseServiceTest {
     // given: One hundred Bloque
     List<Bloque> bloques = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
-      bloques.add(generarMockBloque(Long.valueOf(i), "Bloque" + String.format("%03d", i)));
+      bloques.add(generarMockBloque(Long.valueOf(i)));
     }
 
     BDDMockito
@@ -85,7 +88,7 @@ public class BloqueServiceTest extends BaseServiceTest {
     // given: One hundred Bloques
     List<Bloque> bloques = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
-      bloques.add(generarMockBloque(Long.valueOf(i), "Bloque" + String.format("%03d", i)));
+      bloques.add(generarMockBloque(Long.valueOf(i)));
     }
 
     BDDMockito
@@ -115,10 +118,6 @@ public class BloqueServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
     Assertions.assertThat(page.getSize()).isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
-    for (int i = 0, j = 31; i < 10; i++, j++) {
-      Bloque Bloque = page.getContent().get(i);
-      Assertions.assertThat(Bloque.getNombre()).isEqualTo("Bloque" + String.format("%03d", j));
-    }
   }
 
   @Test
@@ -129,10 +128,12 @@ public class BloqueServiceTest extends BaseServiceTest {
     // given: 1 Bloque y 1 Formulario
     List<Bloque> bloques = new ArrayList<>();
     for (int i = 1; i <= 10; i++) {
-      bloques.add(generarMockBloque(Long.valueOf(i), "Bloque" + String.format("%03d", i)));
+      bloques.add(generarMockBloqueOutput(Long.valueOf(i), "Bloque" + String.format("%03d", i)));
     }
 
-    BDDMockito.given(bloqueRepository.findByFormularioId(ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito
+        .given(bloqueRepository.findByFormularioId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.<Pageable>any()))
         .willReturn(new PageImpl<>(bloques));
 
     // when: Se buscan todos las datos
@@ -153,19 +154,43 @@ public class BloqueServiceTest extends BaseServiceTest {
    * @return el objeto Bloque
    */
 
-  private Bloque generarMockBloque(Long id, String nombre) {
+  private Bloque generarMockBloque(Long id) {
 
     Formulario formulario = new Formulario();
     formulario.setId(1L);
-    formulario.setNombre("Formulario1");
-    formulario.setDescripcion("Descripcion formulario 1");
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
 
-    Bloque Bloque = new Bloque();
-    Bloque.setId(id);
-    Bloque.setFormulario(formulario);
-    Bloque.setNombre(nombre);
-    Bloque.setOrden(1);
+    Bloque bloque = new Bloque();
+    bloque.setId(id);
+    bloque.setFormulario(formulario);
+    bloque.setOrden(1);
 
-    return Bloque;
+    return bloque;
+  }
+
+  /**
+   * Función que devuelve un objeto Bloque
+   * 
+   * @param id     id del Bloque
+   * @param nombre el nombre de Bloque
+   * @return el objeto Bloque
+   */
+
+  private Bloque generarMockBloqueOutput(Long id, String nombre) {
+
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+
+    Bloque bloque = new Bloque();
+    Set<BloqueNombre> nombres = new HashSet<>();
+    BloqueNombre blnombre = new BloqueNombre(Language.ES, nombre);
+    nombres.add(blnombre);
+    bloque.setId(id);
+    bloque.setFormulario(formulario);
+    bloque.setOrden(1);
+    bloque.setNombre(nombres);
+
+    return bloque;
   }
 }

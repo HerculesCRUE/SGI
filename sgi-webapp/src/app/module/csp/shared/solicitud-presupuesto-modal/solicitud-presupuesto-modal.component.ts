@@ -1,5 +1,5 @@
 import { Component, Inject } from '@angular/core';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogCommonComponent } from '@core/component/dialog-common.component';
@@ -7,6 +7,7 @@ import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyec
 import { ConfigService } from '@core/services/cnf/config.service';
 import { SolicitudProyectoEntidadService } from '@core/services/csp/solicitud-proyecto-entidad/solicitud-proyecto-entidad.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
+import { LanguageService } from '@core/services/language.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { of } from 'rxjs';
@@ -101,7 +102,8 @@ export class SolicitiudPresupuestoModalComponent extends DialogCommonComponent {
     private readonly solicitudProyectoEntidadService: SolicitudProyectoEntidadService,
     private readonly empresaService: EmpresaService,
     private matDialog: MatDialog,
-    private readonly cnfService: ConfigService
+    private readonly cnfService: ConfigService,
+    private readonly languageService: LanguageService
   ) {
     super(matDialogRef);
     this.title = this.data.entidadId ? TITLE_PRESUPUESTO_ENTIDAD : TITLE_PRESUPUESTO_COMPLETO;
@@ -256,8 +258,11 @@ export class SolicitiudPresupuestoModalComponent extends DialogCommonComponent {
       const anualidadA = a.anualidad ?? '';
       const anualidadB = b.anualidad ?? '';
 
+      const conceptoGastoA = a.conceptoGasto?.nombre ? this.languageService.getFieldValue(a.conceptoGasto.nombre) : '';
+      const conceptoGastoB = b.conceptoGasto?.nombre ? this.languageService.getFieldValue(b.conceptoGasto.nombre) : '';
+
       return anualidadB.toLocaleString().localeCompare(anualidadA.toLocaleString())
-        || a.conceptoGasto?.nombre.localeCompare(b.conceptoGasto?.nombre);
+        || conceptoGastoA.localeCompare(conceptoGastoB);
     });
   }
 

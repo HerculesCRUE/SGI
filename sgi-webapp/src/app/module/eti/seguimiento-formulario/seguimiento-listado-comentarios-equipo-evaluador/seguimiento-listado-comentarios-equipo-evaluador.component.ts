@@ -9,8 +9,9 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http';
 import { Observable, from, of } from 'rxjs';
-import { map, mergeMap, switchMap, toArray } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { Rol } from '../seguimiento-formulario.action.service';
+import { NGXLogger } from 'ngx-logger';
 
 export interface IEvaluadorWithComentariosAndEnviados extends IEvaluador {
   numComentarios: number;
@@ -34,6 +35,7 @@ export class SeguimientoListadoComentariosEquipoEvaluadorComponent extends Abstr
   evaluacion: IEvaluacion;
 
   constructor(
+    private readonly logger: NGXLogger,
     protected readonly snackBarService: SnackBarService,
     private readonly personaService: PersonaService,
     private readonly evaluadorService: EvaluadorService,
@@ -60,6 +62,10 @@ export class SeguimientoListadoComentariosEquipoEvaluadorComponent extends Abstr
                   evaluador.numComentarios = 0;
                   evaluador.comentariosEnviados = false;
                   return evaluador;
+                }),
+                catchError(err => {
+                  this.logger.error(err);
+                  return of(evaluador);
                 })
               );
             }

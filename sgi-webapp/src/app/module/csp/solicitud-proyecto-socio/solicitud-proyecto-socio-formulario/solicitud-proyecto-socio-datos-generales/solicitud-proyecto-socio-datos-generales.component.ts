@@ -47,7 +47,7 @@ export class SolicitudProyectoSocioDatosGeneralesComponent extends FormFragmentC
     protected actionService: SolicitudProyectoSocioActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as SolicitudProyectoSocioDatosGeneralesFragment;
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(36%-10px)';
@@ -63,7 +63,7 @@ export class SolicitudProyectoSocioDatosGeneralesComponent extends FormFragmentC
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.subscriptions.push(
       merge(
@@ -76,7 +76,7 @@ export class SolicitudProyectoSocioDatosGeneralesComponent extends FormFragmentC
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_PROYECTO_SOCIO_IMPORTE_SOLICITADO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

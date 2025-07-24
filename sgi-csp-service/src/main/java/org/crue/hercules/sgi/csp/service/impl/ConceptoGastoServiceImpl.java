@@ -1,24 +1,33 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
+
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity;
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.repository.ConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ConceptoGastoPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ConceptoGastoSpecifications;
 import org.crue.hercules.sgi.csp.service.ConceptoGastoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
-
-import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
-
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -27,17 +36,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Validated
 public class ConceptoGastoServiceImpl implements ConceptoGastoService {
 
-  private static final String MESSAGE_CONCEPTO_GASTO_EXISTE = "Ya existe un ConceptoGasto con el nombre ";
+  private static final String MSG_ENTITY_EXISTS = "org.springframework.util.Assert.entity.exists.message";
+  private static final String MSG_MODEL_CONCEPTO_GASTO = "org.crue.hercules.sgi.csp.model.ConceptoGasto.message";
   private static final String PROBLEM_MESSAGE_KEY_NOT_NULL = "notNull";
   private static final String PROBLEM_MESSAGE_PARAMETER_KEY_ENTITY = "entity";
   private static final String PROBLEM_MESSAGE_PARAMETER_KEY_FIELD = "field";
   private final ConceptoGastoRepository repository;
-
-  public ConceptoGastoServiceImpl(ConceptoGastoRepository conceptoGastoRepository) {
-    this.repository = conceptoGastoRepository;
-  }
+  private final Validator validator;
 
   /**
    * Guardar un nuevo {@link ConceptoGasto}.
@@ -47,7 +56,8 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
    */
   @Override
   @Transactional
-  public ConceptoGasto create(ConceptoGasto conceptoGasto) {
+  @Validated({ BaseEntity.Create.class })
+  public ConceptoGasto create(@Valid ConceptoGasto conceptoGasto) {
     log.debug("create(ConceptoGasto conceptoGasto) - start");
 
     Assert.isNull(conceptoGasto.getId(),
@@ -61,9 +71,6 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
             .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_FIELD, ApplicationContextSupport.getMessage("costesIndirectos"))
             .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_ENTITY, ApplicationContextSupport.getMessage(ConceptoGasto.class))
             .build());
-
-    Assert.isTrue(!(repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre()).isPresent()),
-        MESSAGE_CONCEPTO_GASTO_EXISTE + conceptoGasto.getNombre());
 
     conceptoGasto.setActivo(true);
     ConceptoGasto returnValue = repository.save(conceptoGasto);
@@ -81,7 +88,8 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
    */
   @Override
   @Transactional
-  public ConceptoGasto update(ConceptoGasto conceptoGastoActualizar) {
+  @Validated({ BaseEntity.Update.class })
+  public ConceptoGasto update(@Valid ConceptoGasto conceptoGastoActualizar) {
     log.debug("update(ConceptoGasto conceptoGastoActualizar) - start");
 
     Assert.notNull(conceptoGastoActualizar.getId(),
@@ -95,11 +103,6 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
             .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_FIELD, ApplicationContextSupport.getMessage("costesIndirectos"))
             .parameter(PROBLEM_MESSAGE_PARAMETER_KEY_ENTITY, ApplicationContextSupport.getMessage(ConceptoGasto.class))
             .build());
-
-    repository.findByNombreAndActivoIsTrue(conceptoGastoActualizar.getNombre()).ifPresent(
-        conceptoGastoExistente -> Assert.isTrue(
-            Objects.equals(conceptoGastoActualizar.getId(), conceptoGastoExistente.getId()),
-            MESSAGE_CONCEPTO_GASTO_EXISTE + conceptoGastoExistente.getNombre()));
 
     return repository.findById(conceptoGastoActualizar.getId()).map(conceptoGasto -> {
       conceptoGasto.setNombre(conceptoGastoActualizar.getNombre());
@@ -123,7 +126,7 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
   public ConceptoGasto enable(Long id) {
     log.debug("enable(Long id) - start");
 
-    Assert.notNull(id, "ConceptoGasto id no puede ser null para reactivar un ConceptoGasto");
+    AssertHelper.idNotNull(id, ConceptoGasto.class);
 
     return repository.findById(id).map(conceptoGasto -> {
       if (Boolean.TRUE.equals(conceptoGasto.getActivo())) {
@@ -131,10 +134,13 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
         return conceptoGasto;
       }
 
-      repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre())
-          .ifPresent(conceptoGastoExistente -> Assert.isTrue(
-              Objects.equals(conceptoGasto.getId(), conceptoGastoExistente.getId()),
-              MESSAGE_CONCEPTO_GASTO_EXISTE + conceptoGastoExistente.getNombre()));
+      // Invocar validaciones asociadas a OnActivar
+      Set<ConstraintViolation<ConceptoGasto>> result = validator.validate(
+          conceptoGasto,
+          BaseActivableEntity.OnActivar.class);
+      if (!result.isEmpty()) {
+        throw new ConstraintViolationException(result);
+      }
 
       conceptoGasto.setActivo(true);
 
@@ -155,7 +161,7 @@ public class ConceptoGastoServiceImpl implements ConceptoGastoService {
   public ConceptoGasto disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "ConceptoGasto id no puede ser null para desactivar un ConceptoGasto");
+    AssertHelper.idNotNull(id, ConceptoGasto.class);
 
     return repository.findById(id).map(conceptoGasto -> {
       if (Boolean.FALSE.equals(conceptoGasto.getActivo())) {

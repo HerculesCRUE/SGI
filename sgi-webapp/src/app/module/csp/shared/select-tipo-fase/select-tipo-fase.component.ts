@@ -5,20 +5,22 @@ import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
+import { SelectValue } from '@core/component/select-common/select-common.component';
 import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { Module } from '@core/module';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { TipoFaseService } from '@core/services/csp/tipo-fase.service';
+import { LanguageService } from '@core/services/language.service';
 import { SgiAuthService } from '@sgi/framework/auth';
-import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 import { MODELO_EJECUCION_ROUTE_NAMES } from '../../modelo-ejecucion/modelo-ejecucion-route-names';
 import { TipoFaseModalComponent } from '../../tipo-fase/tipo-fase-modal/tipo-fase-modal.component';
 
-export type Relation = 'convocatoria' | 'proyecto' | null | undefined;
+export type Relation = 'convocatoria' | 'solicitud' | 'proyecto' | null | undefined;
 
 @Component({
   selector: 'sgi-select-tipo-fase',
@@ -78,16 +80,27 @@ export class SelectTipoFaseComponent extends SelectServiceExtendedComponent<ITip
   // tslint:disable-next-line: variable-name
   private _relation: Relation;
 
+  @Input()
+  get relations(): Relation[] {
+    return this._relations;
+  }
+  set relations(value: Relation[]) {
+    this._relations = value;
+  }
+  // tslint:disable-next-line: variable-name
+  private _relations: Relation[];
+
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation: PlatformLocation,
     dialog: MatDialog,
     private service: TipoFaseService,
     private modeloEjecucionService: ModeloEjecucionService,
     private authService: SgiAuthService
   ) {
-    super(defaultErrorStateMatcher, ngControl, platformLocation, dialog);
+    super(defaultErrorStateMatcher, ngControl, languageService, platformLocation, dialog);
 
     this.disableWith = (option) => {
       if (this.excluded.length) {
@@ -97,6 +110,9 @@ export class SelectTipoFaseComponent extends SelectServiceExtendedComponent<ITip
     };
 
     this.addTarget = TipoFaseModalComponent;
+    this.sortWith = (o1: SelectValue<ITipoFase>, o2: SelectValue<ITipoFase>) => {
+      return o1?.displayText.localeCompare(o2?.displayText)
+    };
   }
 
   protected loadServiceOptions(): Observable<ITipoFase[]> {
@@ -106,9 +122,18 @@ export class SelectTipoFaseComponent extends SelectServiceExtendedComponent<ITip
         return of([]);
       }
       const findOptions: SgiRestFindOptions = {
-        filter: new RSQLSgiRestFilter('tipoFase.activo', SgiRestFilterOperator.EQUALS, 'true'),
-        sort: new RSQLSgiRestSort('tipoFase.nombre', SgiRestSortDirection.ASC)
+        filter: new RSQLSgiRestFilter('tipoFase.activo', SgiRestFilterOperator.EQUALS, 'true')
       };
+
+      if (this.relations) {
+        let filterRelations = new RSQLSgiRestFilter(this.relations.shift(), SgiRestFilterOperator.EQUALS, 'true');
+        this.relations.forEach(relation => {
+          filterRelations.or(relation, SgiRestFilterOperator.EQUALS, 'true')
+        })
+
+        findOptions.filter.and(filterRelations);
+      }
+
       if (this.relation === 'convocatoria' || this.relation === 'proyecto' || this.relation === 'solicitud') {
         findOptions.filter.and(this.relation, SgiRestFilterOperator.EQUALS, 'true');
       }
@@ -118,10 +143,7 @@ export class SelectTipoFaseComponent extends SelectServiceExtendedComponent<ITip
       );
     }
     else {
-      const findOptions: SgiRestFindOptions = {
-        sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
-      };
-      return this.service.findAll(findOptions).pipe(map(response => response.items));
+      return this.service.findAll().pipe(map(response => response.items));
     }
   }
 

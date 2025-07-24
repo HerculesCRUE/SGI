@@ -1,12 +1,12 @@
 package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import org.crue.hercules.sgi.csp.model.BaseEntity;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,9 +22,7 @@ import lombok.NoArgsConstructor;
 public class IncidenciaDocumentacionRequerimientoInput implements Serializable {
   @NotNull
   private Long requerimientoJustificacionId;
-  @NotBlank
-  @Size(max = BaseEntity.DEFAULT_TEXT_LENGTH)
-  private String nombreDocumento;
-  @Size(max = BaseEntity.DEFAULT_LONG_TEXT_LENGTH)
-  private String incidencia;
+  @NotEmpty
+  private List<I18nFieldValueDto> nombreDocumento;
+  private List<I18nFieldValueDto> incidencia;
 }

@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap3_7_11",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.11 Final destination"
+    },
+    "fieldGroup": [
+      {
+        "template": "What is the final destination of the animal once the entire experimentation process is finished?"
+      },
+      {
+        "key": "destinoFinalCheck",
+        "type": "multicheckbox",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "eutanasia",
+              "label": "Euthanasia"
+            },
+            {
+              "value": "muerte",
+              "label": "The process involves the death of the animal"
+            },
+            {
+              "value": "mantenimiento",
+              "label": "Maintained alive"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "You should indicate, in the respective section, the number of animals for each destination."
+      },
+      {
+        "key": "justificarMantenimiento",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.destinoFinalCheck || !model.destinoFinalCheck.some(destino => destino === 'mantenimiento')",
+        "templateOptions": {
+          "name": "Justify",
+          "required": true
+        }
+      }
+    ]
+  }
+]

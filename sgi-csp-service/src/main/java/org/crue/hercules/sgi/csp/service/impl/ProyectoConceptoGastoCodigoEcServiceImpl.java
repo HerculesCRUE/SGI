@@ -17,7 +17,10 @@ import org.crue.hercules.sgi.csp.repository.ProyectoConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoConceptoGastoCodigoEcPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoConceptoGastoCodigoEcSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoCodigoEcService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,6 +37,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConceptoGastoCodigoEcService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_OTHER_ENTITY = "otherEntity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA = "org.springframework.util.Assert.accion.denegada.message";
+  private static final String MSG_MODEL_CODIGO_ECONOMICO = "codigoEconomico";
+  private static final String MSG_MODEL_PROYECTO_CONCEPTO_GASTO = "org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto.message";
+  private static final String MSG_MODEL_PROYECTO_CONCEPTO_GASTO_CODIGO_EC = "org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoCodigoEc.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP = "org.springframework.util.Assert.date.overloap.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP_OTHER_ENTITY = "org.springframework.util.Assert.date.overloap.other.entity.message";
 
   private final ProyectoConceptoGastoCodigoEcRepository repository;
   private final ProyectoConceptoGastoRepository proyectoConceptoGastoRepository;
@@ -42,21 +56,6 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
       ProyectoConceptoGastoRepository proyectoConceptoGastoRepository) {
     this.repository = repository;
     this.proyectoConceptoGastoRepository = proyectoConceptoGastoRepository;
-  }
-
-  /**
-   * Obtiene {@link ProyectoConceptoGastoCodigoEc} por su id.
-   *
-   * @param id el id de la entidad {@link ProyectoConceptoGastoCodigoEc}.
-   * @return la entidad {@link ProyectoConceptoGastoCodigoEc}.
-   */
-  @Override
-  public ProyectoConceptoGastoCodigoEc findById(Long id) {
-    log.debug("findById(Long id)  - start");
-    final ProyectoConceptoGastoCodigoEc returnValue = repository.findById(id)
-        .orElseThrow(() -> new ProyectoConceptoGastoCodigoEcNotFoundException(id));
-    log.debug("findById(Long id)  - end");
-    return returnValue;
   }
 
   /**
@@ -302,14 +301,20 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
         Assert.isTrue(
             Objects.equals(proyectoConceptoGastoCodigoEcBD.getProyectoConceptoGastoId(), proyectoConceptoGastoCodigoEc
                 .getProyectoConceptoGastoId()),
-            "No se puede modificar el proyectoConceptoGasto del ProyectoConceptoGastoCodigoEc");
+            () -> ProblemMessage.builder()
+                .key(MSG_PROBLEM_ACCION_DENEGADA)
+                .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_PROYECTO_CONCEPTO_GASTO))
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_PROYECTO_CONCEPTO_GASTO_CODIGO_EC))
+                .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+                .build());
       }
 
       if (proyectoConceptoGastoCodigoEc.getFechaInicio() != null
           && proyectoConceptoGastoCodigoEc.getFechaFin() != null) {
-        Assert.isTrue(
-            proyectoConceptoGastoCodigoEc.getFechaInicio().isBefore(proyectoConceptoGastoCodigoEc.getFechaFin()),
-            "La fecha fin no puede ser superior a la fecha de inicio");
+        AssertHelper.isBefore(
+            proyectoConceptoGastoCodigoEc.getFechaInicio().isBefore(proyectoConceptoGastoCodigoEc.getFechaFin()));
 
       }
 
@@ -317,16 +322,23 @@ public class ProyectoConceptoGastoCodigoEcServiceImpl implements ProyectoConcept
       Assert.isTrue(
           !existsProyectoConceptoGastoCodigoEcConFechasSolapadas(proyectoConceptoGastoCodigoEc,
               proyectoConceptoGasto.getPermitido()),
-          "El código económico '" + proyectoConceptoGastoCodigoEc.getCodigoEconomicoRef()
-              + "' ya está presente y tiene un periodo de vigencia que se solapa con el indicado");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_DATE_OVERLOAP)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CODIGO_ECONOMICO))
+              .parameter(MSG_KEY_FIELD, proyectoConceptoGastoCodigoEc.getCodigoEconomicoRef())
+              .build());
 
       Assert.isTrue(
           !existsProyectoConceptoGastoCodigoEcAndConceptoGastoConFechasSolapadas(proyectoConceptoGastoCodigoEc,
               proyectoConceptoGasto.getFechaInicio(),
               proyectoConceptoGasto.getFechaFin(),
               proyectoConceptoGasto.getProyectoId()),
-          "El código económico '" + proyectoConceptoGastoCodigoEc.getCodigoEconomicoRef()
-              + "' ya está presente en otro concepto gasto del proyecto y tiene un periodo de vigencia que se solapa con el indicado");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_DATE_OVERLOAP_OTHER_ENTITY)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CODIGO_ECONOMICO))
+              .parameter(MSG_KEY_FIELD, proyectoConceptoGastoCodigoEc.getCodigoEconomicoRef())
+              .parameter(MSG_KEY_OTHER_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_PROYECTO_CONCEPTO_GASTO))
+              .build());
 
       returnValue.add(repository.save(proyectoConceptoGastoCodigoEc));
     }

@@ -1,0 +1,52 @@
+[
+  {
+    "key": "ap4_4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.4.1 Baimen mota"
+    },
+    "hideExpression": "!formState.mainModel.ap4_4.informacionConsentimientoRadio || formState.mainModel.ap4_4.informacionConsentimientoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Zer zereginetarako eskatzen da baimena?</p>"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tipoConsentimientoCheck",
+        "templateOptions": {
+          "label": "Zeregina",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "intervencionesInvasivas",
+              "label": "Parte hartzaileari esku hartze inbaditzaileak egiteko."
+            },
+            {
+              "value": "intervencionesNoInvasivas",
+              "label": "Parte hartzaileari esku hartze ez-inbaditzaileak egiteko."
+            },
+            {
+              "value": "usoMuestrasProyectoActual",
+              "label": "Parte hartzailearen laginak edo/eta datuak proiektu honetan erabiltzeko."
+            },
+            {
+              "value": "usoMuestrasProyectosPosteriores",
+              "label": "Laginak edo/eta datuak gorde eta geroagoko proiektuetan erabiltzeko."
+            },
+            {
+              "value": "cesion",
+              "label": "Lagatzeko."
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>Hurrengo ataletan, subjektu parte hartzaileari zer informazio emango zaion berrikusiko da, eta kontrol zerrenda gisa balio dezake ikertzaile arduradunarentzat.</p>"
+      }
+    ]
+  }
+]

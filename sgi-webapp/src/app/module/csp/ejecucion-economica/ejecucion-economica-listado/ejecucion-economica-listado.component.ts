@@ -19,7 +19,7 @@ import { LuxonUtils } from '@core/utils/luxon-utils';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, Observable, Subscription, from, of } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { EJECUCION_ECONOMICA_ROUTE_NAMES } from '../ejecucion-economica-route-names';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 import { IRequerimientoJustificacionListadoModalData, RequerimientoJustificacionListadoExportModalComponent } from '../modals/requerimiento-justificacion-listado-export-modal/requerimiento-justificacion-listado-export-modal.component';
@@ -72,6 +72,13 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     private readonly configCspService: ConfigCspService
   ) {
     super();
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'nombre' && this.tipoEntidadSelected === TipoEntidad.GRUPO) {
+        return 'nombre.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
@@ -99,9 +106,8 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
         throw Error(`Invalid tipoEntidad "${this.tipoEntidadSelected}"`);
     }
 
-    this.idsProyectoSge = [];
-
     return relaciones$.pipe(
+      tap(() => this.idsProyectoSge = []),
       map(result => result as SgiRestListResult<IRelacionEjecucionEconomicaWithResponsables>),
       switchMap(response =>
         from(response.items).pipe(
@@ -179,6 +185,7 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
             );
           }),
           toArray(),
+          tap(response => this.idsProyectoSge = [...new Set(response.map(relacion => relacion.proyectoSge.id))]),
           map(() => {
             return response;
           })
@@ -224,7 +231,7 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     this.tipoEntidadSelected = this.formGroup.controls.tipoEntidad?.value;
     this.columnas = this.tipoEntidadSelected === TipoEntidad.PROYECTO ? this.columnasTipoEntidadProyecto : this.columnasTipoEntidadGrupo;
 
-    const restFilter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
+    const restFilter = new RSQLSgiRestFilter(this.tipoEntidadSelected === TipoEntidad.GRUPO ? 'nombre.value' : 'nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
       .and('proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.identificadorSge.value)
       .and('fechaInicio',
         SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaInicioDesde.value))
@@ -349,4 +356,5 @@ export class EjecucionEconomicaListadoComponent extends AbstractTablePaginationC
     this.matDialog.open(RequerimientoJustificacionListadoExportModalComponent, config);
   }
 
+  protected setupI18N(): void { }
 }

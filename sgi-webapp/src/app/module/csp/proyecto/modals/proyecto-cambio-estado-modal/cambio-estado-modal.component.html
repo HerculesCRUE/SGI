@@ -36,8 +36,7 @@
     <div fxLayout="row">
       <mat-form-field fxFill>
         <mat-label>{{'csp.proyecto.cambio-estado.comentario' | translate}}</mat-label>
-        <textarea matInput formControlName="comentario" type="text">
-            </textarea>
+        <sgi-i18n-textarea formControlName="comentario"></sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.get('comentario').errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamComentarioEntity}}
         </mat-error>

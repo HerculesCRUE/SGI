@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -80,27 +85,6 @@ class ModeloTipoFaseIT extends BaseIT {
   @Sql
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
-  void findById_ReturnsModeloTipoFase() throws Exception {
-    Long id = 1L;
-
-    final ResponseEntity<ModeloTipoFase> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-        HttpMethod.GET, buildRequest(null, null), ModeloTipoFase.class, id);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    ModeloTipoFase modeloTipoFaseResponse = response.getBody();
-
-    Assertions.assertThat(modeloTipoFaseResponse).as("isNotNull()").isNotNull();
-    Assertions.assertThat(modeloTipoFaseResponse.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(modeloTipoFaseResponse.getModeloEjecucion()).as("getModeloEjecucion()").isNotNull();
-    Assertions.assertThat(modeloTipoFaseResponse.getModeloEjecucion().getId()).as("getModeloEjecucion().getId()")
-        .isEqualTo(1L);
-    Assertions.assertThat(modeloTipoFaseResponse.getTipoFase()).as("getTipoFase()").isNotNull();
-    Assertions.assertThat(modeloTipoFaseResponse.getTipoFase().getId()).as("getTipoFase().getId()").isEqualTo(1L);
-  }
-
-  @Sql
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
   void update_WithExistingId_ReturnsModeloTipoFase() throws Exception {
 
     // given: Entidad existente que se va a actualizar
@@ -125,11 +109,16 @@ class ModeloTipoFaseIT extends BaseIT {
    * @return el objeto TipoDocumento
    */
   private TipoFase generarMockTipoFase(Long id, String nombre) {
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, nombre));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcion-" + id));
 
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id);
-    tipoFase.setNombre(nombre);
-    tipoFase.setDescripcion("descripcion-" + id);
+    tipoFase.setNombre(nombreTipoFase);
+    tipoFase.setDescripcion(descripcionTipoFase);
     tipoFase.setActivo(Boolean.TRUE);
 
     return tipoFase;

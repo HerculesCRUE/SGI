@@ -6,6 +6,7 @@ import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { IPrograma } from '@core/models/csp/programa';
+import { LanguageService } from '@core/services/language.service';
 import { Subject } from 'rxjs';
 import { SearchPlanInvestigacionModalComponent, SearchPlanInvestigacionModalData } from './dialog/search-plan-investigacion.component';
 
@@ -89,7 +90,8 @@ export class SelectPlanInvestigacionComponent implements MatFormFieldControl<IPr
     private elementRef: ElementRef,
     private dialog: MatDialog,
     @Self() @Optional() public ngControl: NgControl,
-    private focusMonitor: FocusMonitor
+    private focusMonitor: FocusMonitor,
+    private readonly languageService: LanguageService
   ) {
     if (this.ngControl) {
       // Note: we provide the value accessor through here, instead of
@@ -134,7 +136,7 @@ export class SelectPlanInvestigacionComponent implements MatFormFieldControl<IPr
   writeValue(value: IPrograma): void {
     if (value !== this._value) {
       this._value = value;
-      this.inputControl.setValue(value?.nombre ?? '', { emitEvent: false });
+      this.inputControl.setValue(this.languageService.getFieldValue(value?.nombre) ?? '', { emitEvent: false });
     }
   }
 
@@ -169,7 +171,7 @@ export class SelectPlanInvestigacionComponent implements MatFormFieldControl<IPr
 
   private propagateChanges(value: IPrograma): void {
     this._value = value;
-    this.inputControl.setValue(value?.nombre ?? '', { emitEvent: false });
+    this.inputControl.setValue(this.languageService.getFieldValue(value?.nombre) ?? '', { emitEvent: false });
     this.onChange(value);
     this.stateChanges.next();
     this.changeDetectorRef.markForCheck();

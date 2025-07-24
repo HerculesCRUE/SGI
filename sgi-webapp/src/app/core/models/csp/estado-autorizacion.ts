@@ -1,11 +1,12 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IAutorizacion } from './autorizacion';
 
 export interface IEstadoAutorizacion {
   id: number;
   autorizacion: IAutorizacion;
-  comentario: string;
+  comentario: I18nFieldValue[];
   fecha: DateTime;
   estado: Estado;
 }

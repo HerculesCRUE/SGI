@@ -1,5 +1,6 @@
 import { IConvocatoriaAreaTematicaBackend } from '@core/models/csp/backend/convocatoria-area-tematica-backend';
 import { IConvocatoriaAreaTematica } from '@core/models/csp/convocatoria-area-tematica';
+import { AREA_TEMATICA_RESPONSE_CONVERTER } from '@core/services/csp/area-tematica/area-tematica-response.converter';
 import { SgiBaseConverter } from '@sgi/framework/core';
 
 class ConvocatoriaAreaTematicaConverter extends SgiBaseConverter<IConvocatoriaAreaTematicaBackend, IConvocatoriaAreaTematica> {
@@ -10,7 +11,7 @@ class ConvocatoriaAreaTematicaConverter extends SgiBaseConverter<IConvocatoriaAr
     }
     return {
       id: value.id,
-      areaTematica: value.areaTematica,
+      areaTematica: AREA_TEMATICA_RESPONSE_CONVERTER.toTarget(value.areaTematica),
       convocatoriaId: value.convocatoriaId,
       observaciones: value.observaciones
     };
@@ -22,7 +23,7 @@ class ConvocatoriaAreaTematicaConverter extends SgiBaseConverter<IConvocatoriaAr
     }
     return {
       id: value.id,
-      areaTematica: value.areaTematica,
+      areaTematica: AREA_TEMATICA_RESPONSE_CONVERTER.fromTarget(value.areaTematica),
       convocatoriaId: value.convocatoriaId,
       observaciones: value.observaciones
     };

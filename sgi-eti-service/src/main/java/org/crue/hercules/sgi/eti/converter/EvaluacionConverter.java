@@ -71,7 +71,7 @@ public class EvaluacionConverter {
    * @return true or false
    */
   public Boolean isEliminable(Evaluacion evaluacion) {
-    // La fecha de la convocatoria es anterior a la actual
+    // Fecha Actual debe ser anterior Fecha Convocatoria
     if (evaluacion.getConvocatoriaReunion().getFechaEvaluacion().isBefore(Instant.now())) {
       return false;
     }

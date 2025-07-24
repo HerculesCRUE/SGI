@@ -1,0 +1,81 @@
+[
+  {
+    "key": "ap5_2_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.2 Question 2"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "Is the facility authorised for the confined use of genetically-modified organisms?"
+      },
+      {
+        "key": "pregunta2OMGRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "An email must be sent to the Technical Secretariat of the Ethics Committee requesting initiation of the process for authorisation/reporting of first use of the activity involving the confined use of GMOs.",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'si'"
+      },
+      {
+        "key": "referenciaAutorizacionOMG",
+        "type": "i18n-input",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "label": "Reference of authorisation by the competent authority",
+          "required": true,
+          "placeholder": "Reference"
+        }
+      },
+      {
+        "key": "fechaFirmaOMG",
+        "type": "datepicker",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "label": "Date of signature of the favourable report by the competent authority",
+          "required": true,
+          "type": "text"
+        }
+      },
+      {
+        "key": "referenciaOMG",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "name": "Reference(s) and location(s) of the premises where the GMOs are handled and/or stored.",
+          "required": true
+        }
+      },
+      {
+        "key": "nivelRiesgoOMG",
+        "type": "i18n-input",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "label": "Risk level of the GMO.",
+          "required": true,
+          "placeholder": "Risk level of the GMO."
+        }
+      }
+    ]
+  }
+]

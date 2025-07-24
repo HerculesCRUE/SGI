@@ -5,6 +5,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaEnlace } from '@core/models/csp/convocatoria-enlace';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { StringValidator } from '@core/validators/string-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
@@ -100,7 +101,7 @@ export class ConvocatoriaEnlaceModalComponent extends DialogFormComponent<Convoc
         Validators.maxLength(250),
         StringValidator.notIn(this.data.selectedUrls.filter(url => url !== this.data.enlace.url))
       ]),
-      descripcion: new FormControl(this.data.enlace.descripcion, [Validators.maxLength(250)]),
+      descripcion: new FormControl(this.data.enlace.descripcion, [I18nValidators.maxLength(250)]),
       tipoEnlace: new FormControl(this.data.enlace.tipoEnlace),
     });
     if (!this.data.canEdit) {

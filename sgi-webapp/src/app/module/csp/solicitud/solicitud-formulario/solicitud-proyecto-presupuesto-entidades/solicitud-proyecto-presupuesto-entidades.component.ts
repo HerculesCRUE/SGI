@@ -84,7 +84,7 @@ export class SolicitudProyectoPresupuestoEntidadesComponent
     private readonly translate: TranslateService,
     private solicitudService: SolicitudService
   ) {
-    super(actionService.FRAGMENT.DESGLOSE_PRESUPUESTO_ENTIDADES, actionService);
+    super(actionService.FRAGMENT.DESGLOSE_PRESUPUESTO_ENTIDADES, actionService, translate);
     this.formPart = this.fragment as SolicitudProyectoPresupuestoEntidadesFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -104,7 +104,7 @@ export class SolicitudProyectoPresupuestoEntidadesComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.actionService.datosProyectoComplete$.pipe(
       take(1)
     ).subscribe(
@@ -140,7 +140,7 @@ export class SolicitudProyectoPresupuestoEntidadesComponent
     this.subscriptions.push(subscription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_PROYECTO_ENTIDAD_FINANCIADORA_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL

@@ -1,0 +1,47 @@
+[
+  {
+    "key": "ap5_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.5 Berme Batzordearen txostena"
+    },
+    "fieldGroup": [
+      {
+        "template": "Zure proiektuak Berme Batzordearen aurretiko aldeko txostena behar du?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Giza Zelulak eta Ehunak Eman eta Erabiltzeko Berme Batzordearen aldez aurretiko aldeko txostena beharko dute osorik edo partzialki gai hauek jorratzen dituzten ikerketa proiektuek:</p><ul><li>Zelula lerroen deribaziorako, ikerketa enbriologikorako eta beste erabilera batzuetarako giza preenbrioiekin egindako ikerketak, ugalketa lagunduko tekniken garapen eta aplikazioarekin lotutakoak izan ezik.</li><li>Giza enbrioien enborreko zelulekin egindako ikerketak.</li><li>Obozitoen aktibazioa nukleo transferentziaren bidez, helburu terapeutikoetarako edo ikerketarako erabiltzeko.</li><li>Osorik edo partzialki giza jatorriko lagin biologikoak erabiliz enborreko zelulak lortzea ekar dezakeen beste edozein teknika.</li><li><a href='https://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a33' target='_blank'>33.2. artikuluan</a> aipatutako prozeduretako edozeinen bidez lortutako enbrioi zelula edo ehunekin egindako ikerketa.</li><li>Giza enbrioietatik lortutako material zelularra edo funtzionalki antzekoa den beste bat darabilen beste edozein ikerketa lerro.</li><li>Erkidego barruko edo kanpoko beste herrialde batetik datozen enbrioien enborreko zelula lerroekin egindako ikerketa. Jatorria txostenean aurkeztutako proiektuan zehaztuko da. </li></ul><p>Informazio gehiagorako, kontsultatu <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a35' target='_blank'>14/2007 IBLren 35. artikulua</a>.</p>"
+      },
+      {
+        "key": "informeComisionGarantiasRadio",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "Ez"
+            },
+            {
+              "value": "INFORME_GARANTIAS",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: ‘3.5 Giza jatorriko lagin biologikoak’ atalean izartxoz <b>*</b> markatuta dauden aukeretako bat hautatu bada bakarrik erantzun ahal izango da <b>Bai</b>.</p>"
+      }
+    ]
+  }
+]

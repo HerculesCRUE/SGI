@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.eti.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
@@ -53,12 +61,17 @@ public class DocumentacionConvocatoriaReunion extends BaseEntity {
   private String documentoRef;
 
   /** Nombre */
-  @Column(name = "nombre", nullable = false, length = 250)
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "documentacion_convocatoria_reunion_nombre", joinColumns = @JoinColumn(name = "documentacion_convocatoria_reunion_id"))
+  @NotEmpty
+  @Valid
+  private Set<DocumentacionConvocatoriaReunionNombre> nombre = new HashSet<>();
 
-  @ManyToOne
+  // Relation mappings for JPA metamodel generation only
+  @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "convocatoria_reunion_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_DOCUMENTACIONCONVOCATORIAREUNION_CONVOCATORIAREUNION"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
+  @EqualsAndHashCode.Exclude
   private final ConvocatoriaReunion convocatoriaReunion = null;
 }

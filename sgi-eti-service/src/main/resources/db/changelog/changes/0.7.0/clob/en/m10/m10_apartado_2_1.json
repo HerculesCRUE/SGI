@@ -1,0 +1,101 @@
+[
+  {
+    "key": "ap2_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "2.1 Personnel who will carry out tasks with human beings, their samples and/or their data"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Below are the data of all the members of the research team, including the applicant. Add in this section any other persons collaborating in the project such as recruiters, surveyors, etc... In the case of a supervised project, add the tutor or director of the project.<br><br>Please specify per person:<br><br><ul><li>Identification data (name, email, connection and academic level)</li><li>Specific tasks that will be carried out according to what is described in section 3.2 Methodological design (add as many tasks as necessary)</li><li>Training and previous experience in each particular task (conducting surveys, recruitment, sampling, data processing, laboratory work, thesis direction, etc.).</li></ul></p><p>This section is completed automatically based on the data entered in the section <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/tareas' target='_blank'><b>Task assignment</b></a> of the <b>Evaluation Request</b>. Access this menu item to make the necessary modifications.</p>",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "type": "table-crud",
+        "key": "equipoInvestigador",
+        "templateOptions": {
+          "entity": "research team",
+          "gender": "male",
+          "disabled": true
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Research team"
+          },
+          "fieldGroup": [
+            {
+              "key": "nombre",
+              "type": "input",
+              "templateOptions": {
+                "label": "Name",
+                "order": 10,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.nombre"
+              }
+            },
+            {
+              "key": "apellidos",
+              "type": "input",
+              "templateOptions": {
+                "label": "Surname",
+                "order": 20,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.apellidos"
+              }
+            },
+            {
+              "key": "email",
+              "type": "input",
+              "templateOptions": {
+                "label": "E-mail",
+                "order": 30,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.emails?.find((e)=>e.principal)?.email"
+              }
+            },
+            {
+              "key": "vinculacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Links",
+                "order": 40,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.vinculacion?.categoriaProfesional?.nombre"
+              }
+            },
+            {
+              "key": "nivelAcademico",
+              "type": "input",
+              "templateOptions": {
+                "label": "Academic level",
+                "order": 50,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona.datosAcademicos?.nivelAcademico?.nombre"
+              }
+            },
+            {
+              "key": "tarea",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Task",
+                "order": 60,
+                "expressionModelValue": "formState.tareas[$1].nombre"
+              }
+            },
+            {
+              "key": "experiencia",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Experience",
+                "order": 70,
+                "expressionModelValue": "formState.tareas[$1].formacion"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

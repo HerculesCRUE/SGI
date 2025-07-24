@@ -10,8 +10,8 @@ import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
 import { NGXLogger } from 'ngx-logger';
-import { concat, Observable, of, zip } from 'rxjs';
-import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concat, from, Observable, of, zip } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { SeguimientoEvaluacionesAnterioresListadoExportService } from './seguimiento-evaluaciones-anteriores-listado-export.service';
 import { SeguimientoGeneralListadoExportService } from './seguimiento-general-listado-export.service';
 
@@ -103,12 +103,19 @@ export class SeguimientoListadoExportService extends
         return evaluaciones.items.map((evaluacion) => evaluacion as unknown as ISeguimientoReportData);
       }),
       switchMap((evaluacionReportData) => {
-        const requestsEvaluacion: Observable<ISeguimientoReportData>[] = [];
+        const requestsEvaluacion: ISeguimientoReportData[] = [];
 
-        evaluacionReportData.forEach(evaluacion => {
-          requestsEvaluacion.push(this.getDataReportInner(evaluacion, reportConfig.reportOptions));
-        });
-        return zip(...requestsEvaluacion);
+        return from(evaluacionReportData).pipe(
+          mergeMap((evaluacion) => {
+            return this.getDataReportInner(evaluacion, reportConfig.reportOptions)
+          }, this.DEFAULT_CONCURRENT)
+        ).pipe(
+          map(r => {
+            requestsEvaluacion.push(r);
+            return requestsEvaluacion;
+          }),
+          takeLast(1)
+        )
       }),
       takeLast(1)
     );

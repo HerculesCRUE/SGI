@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap1_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Alderdi etiko espezifikoak",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Urteko txostena zer batzorderentzat den, horren araberakoa izango da alderdi etiko espezifikoei dagokien deskribapena, eta urte horretan zer gertatu den azalduko du.<ul><li>#nombre_comite_M10_eu#: ikerketaren garapena eta arrisku/onurari, informazioari eta baimenari, konfidentzialtasunari eta abarri lotutako alderdiekin izandako arazoak.</li><li>#nombre_comite_M20_eu#: ikerketaren garapena eta ordezkatzeari, fintzeari eta murrizteari begira sortutako arazoak.</li><li>#nombre_comite_M30_eu#: ikerketaren garapena eta ikerketan erabilitako agente biologikoekin edo genetikoki eraldatutako organismoekin zerikusia duten osasun edo ingurumen arriskuen prebentzioari dagokionez sortutako arazoak.</li></ul></p>"
+      },
+      {
+        "template": "Deskribatu, labur-labur, nola ari diren garatzen proiektuko alderdi etikoak, eta aipatu zer arazo izan diren, arazorik izan bada, eta nola konpondu diren."
+      },
+      {
+        "key": "aspectosEticos",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Deskribapena",
+          "label": "Deskribapena",
+          "required": false,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

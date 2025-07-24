@@ -128,6 +128,7 @@ export class ProyectoPaqueteTrabajoFragment extends Fragment {
           map((updatedPaquetes) => {
             const index = this.paquetesTrabajo$.value.findIndex((currentPaquetes) => currentPaquetes === wrappedPaquetes);
             this.paquetesTrabajo$.value[index] = new StatusWrapper<IProyectoPaqueteTrabajo>(updatedPaquetes);
+            this.paquetesTrabajo$.next(this.paquetesTrabajo$.value);
           })
         );
       })

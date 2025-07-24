@@ -4,19 +4,27 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.fuente-financiacion.nombre' | translate}}</mat-label>
-        <input matInput formControlName="nombre" type="text" id="nombre"
-          placeholder="{{'csp.fuente-financiacion.nombre' | translate}}" required>
+        <sgi-i18n-input matInput formControlName="nombre" type="text" id="nombre"
+          placeholder="{{'csp.fuente-financiacion.nombre' | translate}}"></sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
+
       </mat-form-field>
     </div>
     <!-- Descripción -->
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.fuente-financiacion.descripcion' | translate}}</mat-label>
-        <textarea matInput formControlName="descripcion" id="descripcion"
-          placeholder="{{'csp.fuente-financiacion.descripcion' | translate}}"></textarea>
+        <sgi-i18n-textarea matInput formControlName="descripcion" id="descripcion"
+          placeholder="{{'csp.fuente-financiacion.descripcion' | translate}}"></sgi-i18n-textarea>
+        <mat-error *ngIf="formGroup.controls.descripcion.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamDescripcionEntity}}
+        </mat-error>
+
       </mat-form-field>
     </div>
     <!--Ambito geográfico-->

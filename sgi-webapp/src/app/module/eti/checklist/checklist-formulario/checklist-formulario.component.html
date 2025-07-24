@@ -1,7 +1,8 @@
 <sgi-fragment title="{{'title.csp.solicitudes.autoevaluacion' | translate}}">
 
   <form [formGroup]="data.formGroup">
-    <formly-form [model]="data.model" [fields]="data.formly.esquema" [form]="data.formGroup">
+    <formly-form [model]="data.model" [fields]="getEsquema(data.formly)" [form]="data.formGroup"
+      [options]="data.options">
     </formly-form>
     <p>{{ 'eti.checklist.texto' | translate }}</p>
   </form>

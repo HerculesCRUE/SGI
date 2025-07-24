@@ -36,6 +36,8 @@ export class ModuladoresRangosFragment extends FormFragment<ModuladoresFormData>
 
   hasCostesIndirectosTipoRango$ = new BehaviorSubject<boolean>(false);
 
+  private tiposRangosEliminados: TipoRango[] = [];
+
   constructor(
     key: number,
     private convocatoriaBaremacion: IConvocatoriaBaremacion,
@@ -208,6 +210,9 @@ export class ModuladoresRangosFragment extends FormFragment<ModuladoresFormData>
     const index = current.findIndex((value) => value === wrapper);
     if (index >= 0) {
       current.splice(index, 1);
+      if (!this.tiposRangosEliminados.includes(tipo)) {
+        this.tiposRangosEliminados.push(tipo);
+      }
       rangos$.next(current);
       this.setChanges(true);
     }
@@ -255,8 +260,10 @@ export class ModuladoresRangosFragment extends FormFragment<ModuladoresFormData>
 
   private updateRangos(tipo: TipoRango): Observable<void> {
     const rangos$ = this.getRangosTipo$(tipo);
-    if (!rangos$.value.some((wrapper) => wrapper.touched)) {
-      return of(void 0);
+    if (!this.tiposRangosEliminados.includes(tipo)) {
+      if (!rangos$.value.some((wrapper) => wrapper.touched)) {
+        return of(void 0);
+      }
     }
 
     return this.convocatoriaBaremacionService.updateRangos(
@@ -269,6 +276,7 @@ export class ModuladoresRangosFragment extends FormFragment<ModuladoresFormData>
       tipo
     ).pipe(
       map(results => {
+        this.tiposRangosEliminados = [];
         rangos$.next(results.map(rango => new StatusWrapper<IRango>(rango)));
       })
     );

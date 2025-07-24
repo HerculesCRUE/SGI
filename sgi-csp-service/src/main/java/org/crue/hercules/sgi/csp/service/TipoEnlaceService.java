@@ -1,8 +1,12 @@
 package org.crue.hercules.sgi.csp.service;
 
+import javax.validation.Valid;
+
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Service Interface para gestionar {@link TipoEnlace}.
@@ -16,7 +20,8 @@ public interface TipoEnlaceService {
    * @param tipoEnlace la entidad {@link TipoEnlace} a guardar.
    * @return TipoEnlace la entidad {@link TipoEnlace} persistida.
    */
-  TipoEnlace create(TipoEnlace tipoEnlace);
+  @Validated({ BaseEntity.Create.class })
+  TipoEnlace create(@Valid TipoEnlace tipoEnlace);
 
   /**
    * Actualiza los datos del {@link TipoEnlace}.
@@ -24,7 +29,8 @@ public interface TipoEnlaceService {
    * @param tipoEnlaceActualizar {@link TipoEnlace} con los datos actualizados.
    * @return TipoEnlace {@link TipoEnlace} actualizado.
    */
-  TipoEnlace update(final TipoEnlace tipoEnlaceActualizar);
+  @Validated({ BaseEntity.Update.class })
+  TipoEnlace update(@Valid final TipoEnlace tipoEnlaceActualizar);
 
   /**
    * Reactiva el {@link TipoEnlace}.

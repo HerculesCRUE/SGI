@@ -1,10 +1,20 @@
 INSERT INTO test.empresa_documento
-(id, nombre, documento_ref, comentarios, empresa_id, tipo_documento_id)
+(id, documento_ref, empresa_id, tipo_documento_id)
 VALUES
-(1, 'Documento de procedimiento 1', 'documento-ref-1', 'Comentarios', 1, 1),
-(2, 'Informe anual de cuentas 1', 'documento-ref-2', 'Comentarios', 1, 7);
+(1, 'documento-ref-1', 1, 1),
+(2, 'documento-ref-2', 1, 7),
+(3, 'documento-ref-3', 2, 8);
 
-INSERT INTO test.empresa_documento
-(id, nombre, documento_ref, comentarios, empresa_id, tipo_documento_id)
+-- EMPRESA DOCUMENTO NOMBRE
+INSERT INTO test.empresa_documento_nombre(empresa_documento_id, lang, value_) 
 VALUES
-(3, 'Acta de reunión 1', 'documento-ref-3', 'Comentarios', 2, 8);
+(1, 'es', 'Documento de procedimiento 1'),
+(2, 'es', 'Informe anual de cuentas 1'),
+(3, 'es', 'Acta de reunión 1');
+
+-- EMPRESA DOCUMENTO COMENTARIOS
+INSERT INTO test.empresa_documento_comentarios(empresa_documento_id, lang, value_) 
+VALUES
+(1, 'es', 'Comentarios'),
+(2, 'es', 'Comentarios'),
+(3, 'es', 'Comentarios');

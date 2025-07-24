@@ -17,7 +17,7 @@
 */
 
 INSERT INTO test.solicitud_proyecto_socio_periodo_justificacion
-(id, fecha_fin, fecha_inicio, mes_final, mes_inicial, num_periodo, observaciones, solicitud_proyecto_socio_id)
+(id, fecha_fin, fecha_inicio, mes_final, mes_inicial, num_periodo, solicitud_proyecto_socio_id)
 VALUES
-(1, NULL, NULL, 12, 1, 1, NULL, 1),
-(2, NULL, NULL, 24, 13, 2, NULL, 1);
+(1, NULL, NULL, 12, 1, 1, 1),
+(2, NULL, NULL, 24, 13, 2, 1);

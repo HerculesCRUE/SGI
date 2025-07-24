@@ -34,8 +34,7 @@
       <!-- Estado Memoria -->
       <mat-form-field fxFlex="15%">
         <mat-label>{{'eti.memoria.estado' | translate}}</mat-label>
-        <sgi-select-enum formControlName="tipoEstadoMemoria" [enumMap]="ESTADO_MEMORIA_MAP">
-        </sgi-select-enum>
+        <sgi-select-tipo-estado-memoria formControlName="tipoEstadoMemoria"></sgi-select-tipo-estado-memoria>
       </mat-form-field>
 
       <!-- Contiene texto -->
@@ -66,7 +65,7 @@
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef> {{'eti.solicitante' | translate}}
         </th>
-        <td mat-cell *matCellDef="let memoria">
+        <td mat-cell *matCellDef="let memoria" sgpNotFoundError [model]="memoria.solicitante">
           {{memoria.solicitante?.nombre}} {{memoria.solicitante?.apellidos}}
         </td>
       </ng-container>
@@ -83,7 +82,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'label.eti.comite' | translate}}
         </th>
-        <td mat-cell *matCellDef="let memoria">{{memoria.comite?.comite}}</td>
+        <td mat-cell *matCellDef="let memoria">{{memoria.comite?.codigo}}</td>
       </ng-container>
 
       <!-- Estado memoria -->
@@ -91,7 +90,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'eti.memoria.estado' | translate}}
         </th>
-        <td mat-cell *matCellDef="let memoria"> {{memoria.estadoActual?.nombre}} </td>
+        <td mat-cell *matCellDef="let memoria"> {{ESTADO_MEMORIA_MAP.get(memoria.estadoActual?.id) | translate}} </td>
       </ng-container>
 
       <!-- Fecha evaluacion -->

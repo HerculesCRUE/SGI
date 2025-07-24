@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.eer.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,10 +16,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -39,12 +48,19 @@ public class TipoDocumento extends BaseActivableEntity {
   private Long id;
 
   /** Nombre */
-  @Column(name = "nombre", length = SHORT_TEXT_LENGTH, nullable = false)
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tipo_documento_nombre", joinColumns = @JoinColumn(name = "tipo_documento_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<TipoDocumentoNombre> nombre = new HashSet<>();
 
   /** Descripción */
-  @Column(name = "descripcion", length = SHORT_TEXT_LENGTH, nullable = true)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tipo_documento_descripcion", joinColumns = @JoinColumn(name = "tipo_documento_id"))
+  @Valid
+  @Builder.Default
+  private Set<TipoDocumentoDescripcion> descripcion = new HashSet<>();
 
   @ManyToOne
   @JoinColumn(name = "tipo_documento_padre_id", nullable = true, foreignKey = @ForeignKey(name = "FK_TIPODOCUMENTO_PADRE"))

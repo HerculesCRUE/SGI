@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { TIPO_JUSTIFICACION_MAP } from '@core/enums/tipo-justificacion';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
-import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
@@ -15,7 +14,6 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-export.service';
 
-const CALENDARIO_JUSTIFICACION_KEY = marker('menu.csp.proyectos.periodos-justificacion');
 const CALENDARIO_JUSTIFICACION_ITEM_KEY = marker('csp.proyecto-periodo-justificacion');
 const CALENDARIO_JUSTIFICACION_NUM_PERIODO_KEY = marker('csp.proyecto-periodo-justificacion.numero-periodo');
 const CALENDARIO_JUSTIFICACION_TIPO_KEY = marker('csp.proyecto-periodo-justificacion.tipo-justificacion');
@@ -24,7 +22,6 @@ const CALENDARIO_JUSTIFICACION_FECHA_FIN_KEY = marker('csp.proyecto-periodo-just
 const CALENDARIO_JUSTIFICACION_FECHA_INICIO_PRESENTACION_KEY = marker('csp.proyecto-periodo-justificacion.fecha-inicio-presentacion');
 const CALENDARIO_JUSTIFICACION_FECHA_FIN_PRESENTACION_KEY = marker('csp.proyecto-periodo-justificacion.fecha-fin-presentacion');
 
-const CALENDARIO_JUSTIFICACION_FIELD = 'calendarioJustificacion';
 const CALENDARIO_NUM_PERIODO_JUSTIFICACION_FIELD = 'numPeriodoJustificacion';
 const CALENDARIO_JUSTIFICACION_TIPO_FIELD = 'tipoCalendarioJustificacion';
 const CALENDARIO_JUSTIFICACION_FECHA_INICIO_FIELD = 'fechaInicioJustificacion';
@@ -34,7 +31,7 @@ const CALENDARIO_JUSTIFICACION_FECHA_FIN_PRESENTACION_FIELD = 'fechaFinPresentac
 
 @Injectable()
 export class ProyectoCalendarioJustificacionListadoExportService
-  extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions>{
+  extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -59,38 +56,9 @@ export class ProyectoCalendarioJustificacionListadoExportService
     proyectos: IProyectoReportData[],
     reportConfig: IReportConfig<IProyectoReportOptions>
   ): ISgiColumnReport[] {
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsCalendarioJustificacionNotExcel();
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       return this.getColumnsCalendarioJustificacionExcel(proyectos);
     }
-  }
-
-  private getColumnsCalendarioJustificacionNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: CALENDARIO_JUSTIFICACION_FIELD,
-      title: this.translate.instant(CALENDARIO_JUSTIFICACION_ITEM_KEY),
-      type: ColumnType.STRING
-    });
-
-    const titleI18n = this.translate.instant(CALENDARIO_JUSTIFICACION_KEY) +
-      ' (' + this.translate.instant(CALENDARIO_JUSTIFICACION_NUM_PERIODO_KEY) +
-      ' - ' + this.translate.instant(CALENDARIO_JUSTIFICACION_TIPO_KEY) +
-      ' - ' + this.translate.instant(CALENDARIO_JUSTIFICACION_FECHA_INICIO_KEY) +
-      ' - ' + this.translate.instant(CALENDARIO_JUSTIFICACION_FECHA_FIN_KEY) +
-      ' - ' + this.translate.instant(CALENDARIO_JUSTIFICACION_FECHA_INICIO_PRESENTACION_KEY) +
-      ' - ' + this.translate.instant(CALENDARIO_JUSTIFICACION_FECHA_FIN_PRESENTACION_KEY) +
-      ')';
-
-    const columnEntidad: ISgiColumnReport = {
-      name: CALENDARIO_JUSTIFICACION_FIELD,
-      title: titleI18n,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns
-    };
-    return [columnEntidad];
   }
 
   private getColumnsCalendarioJustificacionExcel(proyectos: IProyectoReportData[]): ISgiColumnReport[] {
@@ -148,13 +116,9 @@ export class ProyectoCalendarioJustificacionListadoExportService
   }
 
   public fillRows(proyectos: IProyectoReportData[], index: number, reportConfig: IReportConfig<IProyectoReportOptions>): any[] {
-
     const proyecto = proyectos[index];
-
     const elementsRow: any[] = [];
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      this.fillRowsCalendarioJustificacionNotExcel(proyecto, elementsRow);
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       const maxNumCalendarioJustificaciones = Math.max(...proyectos.map(p => p.calendarioJustificacion?.length));
       for (let i = 0; i < maxNumCalendarioJustificaciones; i++) {
         const calendarioJustificacion = proyecto.calendarioJustificacion[i] ?? null;
@@ -164,45 +128,10 @@ export class ProyectoCalendarioJustificacionListadoExportService
     return elementsRow;
   }
 
-  private fillRowsCalendarioJustificacionNotExcel(proyecto: IProyectoReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-
-    proyecto.calendarioJustificacion?.forEach(proyectoCalendarioJustificacion => {
-      const calendarioJustificacionElementsRow: any[] = [];
-
-      let calendarioJustificacionContent = proyectoCalendarioJustificacion?.numPeriodo ?? '';
-      calendarioJustificacionContent += '\n';
-      calendarioJustificacionContent += proyectoCalendarioJustificacion.tipoJustificacion ?? '';
-      calendarioJustificacionContent += '\n';
-      calendarioJustificacionContent += this.luxonDatePipe.transform(
-        LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaInicio, true), 'shortDate') ?? '';
-      calendarioJustificacionContent += '\n';
-      calendarioJustificacionContent += this.luxonDatePipe.transform(LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaFin, true), 'shortDate') ?? '';
-      calendarioJustificacionContent += '\n';
-      calendarioJustificacionContent += this.luxonDatePipe.transform(
-        LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaInicioPresentacion, false), 'short') ?? '';
-      calendarioJustificacionContent += '\n';
-      calendarioJustificacionContent += this.luxonDatePipe.transform(
-        LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaFinPresentacion, false), 'short') ?? '';
-      calendarioJustificacionContent += '\n';
-
-      calendarioJustificacionElementsRow.push(calendarioJustificacionContent);
-
-      const rowReport: ISgiRowReport = {
-        elements: calendarioJustificacionElementsRow
-      };
-      rowsReport.push(rowReport);
-    });
-
-    elementsRow.push({
-      rows: rowsReport
-    });
-  }
-
   private fillRowsEntidadExcel(elementsRow: any[], proyectoCalendarioJustificacion: IProyectoPeriodoJustificacion) {
     if (proyectoCalendarioJustificacion) {
       elementsRow.push(proyectoCalendarioJustificacion.numPeriodo ?? '');
-      elementsRow.push(proyectoCalendarioJustificacion.tipoJustificacion ?? '');
+      elementsRow.push(proyectoCalendarioJustificacion?.tipoJustificacion ? this.translate.instant(TIPO_JUSTIFICACION_MAP.get(proyectoCalendarioJustificacion?.tipoJustificacion)) : '');
       elementsRow.push(LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaInicio) ?? '');
       elementsRow.push(LuxonUtils.toBackend(proyectoCalendarioJustificacion?.fechaFin) ?? '');
       elementsRow.push(this.luxonDatePipe.transform(

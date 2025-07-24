@@ -1,0 +1,30 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet context="!test" author="master" id="0.10.0-configuracion">
+    <update tableName="configuracion">
+      <column name="sge_filtro_anualidades" value="ANUALIDADES_OPCIONALES" />
+    </update>
+
+    <update tableName="configuracion">
+      <column name="sge_integraciones_ecc_habilitadas"
+        value="ECC_DETALLE_OPERACIONES_GASTOS,ECC_DETALLE_OPERACIONES_INGRESOS,ECC_DETALLE_OPERACIONES_MODIFICACIONES,ECC_EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL,ECC_EJECUCION_PRESUPUESTARIA_GASTOS,ECC_EJECUCION_PRESUPUESTARIA_INGRESOS,ECC_FACTURAS_EMITIDAS,ECC_FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS,ECC_FACTURAS_JUSTIFICANTES_VIAJES_DIETAS,ECC_FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO,ECC_SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS,ECC_SEGUIMIENTO_JUSTIFICACION_RESUMEN" />
+    </update>
+
+    <update tableName="configuracion">
+      <column name="sge_ejecucion_economica_filtros"
+        value="ECC_FILTRO_FACTURAS_EMITIDAS_FECHA_FACTURA,ECC_FILTRO_FACTURAS_GASTOS_FECHA_CONTABILIZACION,ECC_FILTRO_FACTURAS_GASTOS_FECHA_DEVENGO,ECC_FILTRO_FACTURAS_GASTOS_FECHA_PAGO,ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_CONTABILIZACION,ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_DEVENGO,ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_PAGO,ECC_FILTRO_VIAJES_DIETAS_FECHA_CONTABILIZACION,ECC_FILTRO_VIAJES_DIETAS_FECHA_DEVENGO,ECC_FILTRO_VIAJES_DIETAS_FECHA_PAGO" />
+    </update>
+
+    <update tableName="configuracion">
+      <column name="sge_calendario_facturacion" value="INTEGRACION_SOLO_LECTURA" />
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

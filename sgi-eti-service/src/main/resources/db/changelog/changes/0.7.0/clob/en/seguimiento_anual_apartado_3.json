@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap1_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Methodological design",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>The description regarding the methodological design will depend on the committee to which the annual report is addressed.<ul><li>For the #nombre_comite_M10_en#, describing the current sample (characteristics and size) and the development of the project, indicating whether issues have arisen and how they have been resolved.</li><li>For the #nombre_comite_M20_en#, describing the sample (total number of animals used to date) and the development of the project, indicating whether issues have arisen and how they have been resolved.</li><li>For the #nombre_comite_M30_en#, the development of the project, indicating whether issues have arisen and how they have been resolved.</li></ul></p>"
+      },
+      {
+        "template": "Briefly describe how the project is developing methodologically and point out the problems encountered and their solutions, if any."
+      },
+      {
+        "key": "disenioMetodologico",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Description",
+          "label": "Description",
+          "required": false,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

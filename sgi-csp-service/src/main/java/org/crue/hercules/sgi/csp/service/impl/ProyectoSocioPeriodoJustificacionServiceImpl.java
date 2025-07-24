@@ -21,7 +21,10 @@ import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionDoc
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoSocioPeriodoJustificacionSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.SgdocService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -39,6 +42,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSocioPeriodoJustificacionService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_FIELD_FECHA_FIN_PROYECTO_SOCIO = "fechaFinProyectoSocio";
+  private static final String MSG_FIELD_FECHA_FIN_PROYECTO_SOCIO_PERIODO_JUSTIFICACION = "fechaFinProyectoSocioPeriodoJustificacion";
+  private static final String MSG_FIELD_FECHA_INICIO_PRESENTACION = "fechaInicioPresentacion";
+  private static final String MSG_FIELD_FECHA_FIN_PRESENTACION = "fechaFinPresentacion";
+  private static final String MSG_MODEL_PROYECTO_SOCIO = "org.crue.hercules.sgi.csp.model.ProyectoSocio.message";
+  private static final String MSG_MODEL_PROYECTO_PERIODO_JUSTIFICACION = "org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacion.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA = "org.springframework.util.Assert.accion.denegada.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP = "org.springframework.util.Assert.date.overloap.message";
 
   private final ProyectoSocioPeriodoJustificacionRepository repository;
   private final ProyectoSocioRepository proyectoSocioRepository;
@@ -131,7 +146,7 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
       Long proyectoSocioPeriodoJustificacionId) {
     log.debug("update(ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificaciones) - start");
 
-    Assert.notNull(proyectoSocioPeriodoJustificacionId, "El id de proeycto socio no puede ser null");
+    AssertHelper.idNotNull(proyectoSocioPeriodoJustificacionId, ProyectoSocioPeriodoJustificacion.class);
 
     ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacionExistente = repository
         .findById(proyectoSocioPeriodoJustificacionId)
@@ -150,7 +165,14 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
         Objects.equals(proyectoSocioPeriodoJustificacionExistente.getProyectoSocioId(),
             proyectoSocioPeriodoJustificacion
                 .getProyectoSocioId()),
-        "No se puede modificar el proyecto socio del ProyectoSocioPeriodoJustificacion");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_ACCION_DENEGADA)
+            .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                MSG_MODEL_PROYECTO_SOCIO))
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_PROYECTO_PERIODO_JUSTIFICACION))
+            .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+            .build());
 
     validateProyectoSocioPeriodoJustificacion(proyectoSocioPeriodoJustificacion);
 
@@ -182,8 +204,7 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
   public ProyectoSocioPeriodoJustificacion create(ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion) {
     log.debug("create(ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificaciones) - start");
 
-    Assert.isNull(proyectoSocioPeriodoJustificacion.getId(),
-        "El id de proyecto socio periodo justificación debe ser null");
+    AssertHelper.idIsNull(proyectoSocioPeriodoJustificacion.getId(), ProyectoSocioPeriodoJustificacion.class);
 
     // Validaciones
     validateProyectoSocioPeriodoJustificacion(proyectoSocioPeriodoJustificacion);
@@ -263,15 +284,14 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
   private void validateProyectoSocioPeriodoJustificacion(
       ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion) {
 
-    Assert.notNull(proyectoSocioPeriodoJustificacion.getProyectoSocioId(), "El id de proyecto socio no puede ser null");
+    AssertHelper.idNotNull(proyectoSocioPeriodoJustificacion.getProyectoSocioId(), ProyectoSocio.class);
 
     ProyectoSocio proyectoSocio = proyectoSocioRepository
         .findById(proyectoSocioPeriodoJustificacion.getProyectoSocioId())
         .orElseThrow(() -> new ProyectoSocioNotFoundException(proyectoSocioPeriodoJustificacion.getProyectoSocioId()));
 
-    Assert.isTrue(
-        proyectoSocioPeriodoJustificacion.getFechaInicio().isBefore(proyectoSocioPeriodoJustificacion.getFechaFin()),
-        "La fecha final tiene que ser posterior a la fecha inicial");
+    AssertHelper.isBefore(
+        proyectoSocioPeriodoJustificacion.getFechaInicio().isBefore(proyectoSocioPeriodoJustificacion.getFechaFin()));
 
     Proyecto proyecto = proyectoRepository.findById(proyectoSocio.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoSocio.getProyectoId()));
@@ -284,18 +304,24 @@ public class ProyectoSocioPeriodoJustificacionServiceImpl implements ProyectoSoc
 
     if (proyectoSocioPeriodoJustificacion.getFechaInicioPresentacion() != null
         && proyectoSocioPeriodoJustificacion.getFechaFinPresentacion() != null) {
-      Assert.isTrue(
+      AssertHelper.fieldBefore(
           proyectoSocioPeriodoJustificacion.getFechaInicioPresentacion()
               .isBefore(proyectoSocioPeriodoJustificacion.getFechaFinPresentacion()),
-          "La fecha de fin de presentación tiene que ser posterior a la fecha de inicio de presentación");
+          MSG_FIELD_FECHA_INICIO_PRESENTACION, MSG_FIELD_FECHA_FIN_PRESENTACION);
     }
 
-    Assert.isTrue(
+    AssertHelper.fieldBefore(
         proyectoSocio.getFechaFin() == null
             || !proyectoSocioPeriodoJustificacion.getFechaFin().isAfter(proyectoSocio.getFechaFin()),
-        "La fecha fin no puede ser superior a la fecha fin indicada en Proyecto socio");
+        MSG_FIELD_FECHA_FIN_PROYECTO_SOCIO, MSG_FIELD_FECHA_FIN_PROYECTO_SOCIO_PERIODO_JUSTIFICACION);
 
-    Assert.isTrue(!isRangoFechasSolapado(proyectoSocioPeriodoJustificacion), "El periodo se solapa con otro existente");
+    Assert.isTrue(!isRangoFechasSolapado(proyectoSocioPeriodoJustificacion),
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_DATE_OVERLOAP)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_PROYECTO_PERIODO_JUSTIFICACION))
+            .parameter(MSG_KEY_FIELD, proyectoSocioPeriodoJustificacion.getNumPeriodo())
+            .build());
 
   }
 

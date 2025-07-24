@@ -1,0 +1,40 @@
+[
+  {
+    "key": "ap5_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.4 Special, exceptional situations or legal safeguards"
+    },
+    "fieldGroup": [
+      {
+        "template": "Does the project require a request for special situations, exceptions or legal safeguards?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>All special situations or exceptions will require the drafting by the Project Leader of a Reasoned Request (formerly Prior and Express Request) explaining the reason for the exception and its justification, which will be sent to the Enabling Committee and the Competent Agency.</p><p>These situations are provided for in Royal Decree 53/2013 (Articles 6, 7, 9.1, 19, 20, 21, 22, 23, 25.3 and 25.5, 26 and 29) and broadly have to do with:</p><ul><li>Performance of procedures in which anaesthesia, analgesia or other methods intended to eliminate pain, suffering or distress to the maximum extent possible are not used, because they are incompatible with the results pursued by the procedure or because they are contraindicated.</li><li>Use of animals of the species included in <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#ani'>annex I</a> of Royal Decree 53/2013 that were not born and not expressly bred in officially recognised centres.</li><li>Use of animals of species not listed in <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#ani'>Annex I</a> to Royal Decree 53/2013 which do not come from breeding or supply centres.</li><li>Performance of procedures outside user centres</li><li>Release of animals during the procedure</li><li>Use of wild animals captured in the wild, stray animals, animals from official animal protection centres or from protected or endangered animals.</li><li>Performance of procedures in which the animal may suffer severe or prolonged pain</li><li>Release of these animals to the original environment after completion of procedures using wild-caught animals</li><li>Use of non-human primates.</li></ul>"
+      },
+      {
+        "key": "solicitudSituacionesEspeciales",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": "SOLICITUD_RAZONADA",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

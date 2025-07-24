@@ -1,10 +1,15 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionDescripcion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -22,10 +27,24 @@ class ModeloUnidadRepositoryTest extends BaseRepositoryTest {
   void findByModeloEjecucionIdAndUnidadGestionRef_ReturnsModeloUnidad() throws Exception {
     // given: 2 ModeloUnidad de los que 1 coincide con los id de
     // ModeloEjecucion y UnidadGestionRef
-    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion1 = new HashSet<>();
+    nombreModeloEjecucion1.add(new ModeloEjecucionNombre(Language.ES, "nombre-1"));
+    Set<ModeloEjecucionDescripcion> descripcionModeloEjecucion1 = new HashSet<>();
+    descripcionModeloEjecucion1.add(new ModeloEjecucionDescripcion(Language.ES, "descripcion-1"));
+    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, nombreModeloEjecucion1, descripcionModeloEjecucion1,
+        true, false,
+        false,
+        false);
     entityManager.persistAndFlush(modeloEjecucion1);
 
-    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true, false, false);
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion2 = new HashSet<>();
+    nombreModeloEjecucion2.add(new ModeloEjecucionNombre(Language.ES, "nombre-2"));
+    Set<ModeloEjecucionDescripcion> descripcionModeloEjecucion2 = new HashSet<>();
+    descripcionModeloEjecucion2.add(new ModeloEjecucionDescripcion(Language.ES, "descripcion-2"));
+    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, nombreModeloEjecucion2, descripcionModeloEjecucion2,
+        true, false,
+        false,
+        false);
     entityManager.persistAndFlush(modeloEjecucion2);
 
     ModeloUnidad modeloUnidad1 = new ModeloUnidad(null, "unidad-1", modeloEjecucion1, true);
@@ -55,10 +74,24 @@ class ModeloUnidadRepositoryTest extends BaseRepositoryTest {
   void findByModeloEjecucionIdAndUnidadGestionRef_NoExiste_ReturnsNull() throws Exception {
     // given: 2 ModeloUnidad de los que ninguno coincide con los id de
     // ModeloEjecucion y UnidadGestionRef
-    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, "nombre-1", "descripcion-1", true, false, false);
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion1 = new HashSet<>();
+    nombreModeloEjecucion1.add(new ModeloEjecucionNombre(Language.ES, "nombre-1"));
+    Set<ModeloEjecucionDescripcion> descripcionModeloEjecucion1 = new HashSet<>();
+    descripcionModeloEjecucion1.add(new ModeloEjecucionDescripcion(Language.ES, "descripcion-1"));
+    ModeloEjecucion modeloEjecucion1 = new ModeloEjecucion(null, nombreModeloEjecucion1, descripcionModeloEjecucion1,
+        true, false,
+        false,
+        false);
     entityManager.persistAndFlush(modeloEjecucion1);
 
-    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, "nombre-2", "descripcion-2", true, false, false);
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion2 = new HashSet<>();
+    nombreModeloEjecucion2.add(new ModeloEjecucionNombre(Language.ES, "nombre-2"));
+    Set<ModeloEjecucionDescripcion> descripcionModeloEjecucion2 = new HashSet<>();
+    descripcionModeloEjecucion2.add(new ModeloEjecucionDescripcion(Language.ES, "descripcion-2"));
+    ModeloEjecucion modeloEjecucion2 = new ModeloEjecucion(null, nombreModeloEjecucion2, descripcionModeloEjecucion2,
+        true, false,
+        false,
+        false);
     entityManager.persistAndFlush(modeloEjecucion2);
 
     ModeloUnidad modeloUnidad1 = new ModeloUnidad(null, "unidad-1", modeloEjecucion1, true);

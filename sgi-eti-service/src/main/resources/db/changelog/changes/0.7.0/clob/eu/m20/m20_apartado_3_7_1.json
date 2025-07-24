@@ -1,0 +1,109 @@
+[
+  {
+    "key": "ap3_7_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.1 Animaliari aplikatuko zaizkion prozedurak/esku hartzeak"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Esperimentazio prozesuan zehar animaliari egiten zaizkion manipulazio (kirurgikoak edo ez), proba edo behaketei esaten diegu ‘prozedura/esku hartze’. </p>"
+      },
+      {
+        "template": "<p>Deskribatu <strong>ZEHATZ-MEHATZ</strong> (eta <strong>zenbakitu</strong>) esperimentazio prozesuan zehar animaliari egingo zaizkion prozedura/esku hartze guztiak. Zehaztu, bereziki, animaliari ‘albaitaritza jardunbide egokiaren arabera orratz bat sartzeak eragiten duen min, sufrimendu, estutasun edo kalte iraunkorraren parekoa edo hori baino handiagoa’ eragin diezazkioketenak.</p>"
+      },
+      {
+        "key": "descripcionProcedimientoIntervencion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Prozeduraren/esku hartzearen deskribapena",
+          "required": false
+        }
+      },
+      {
+        "template": "<p>Adierazi prozedura/esku hartze bakoitzaren iraupena, maiztasuna, animalia kopurua eta laztasun kategoria. </p></br><p>Animaliak jasan dezakeen min, sufrimendu edo estutasunaren laztasuna sailkatzeko, sailkapen hau erabiliko da: <ul><li><strong>Suspertzeko aukerarik gabe</strong>: prozedura/esku hartze hauek anestesia orokorrarekin egiten dira, eta horren ondoren animalia ez da suspertzen. </li><li><strong>Arina</strong>: prozedura/esku hartze hauen ondorioz animaliak min, sufrimendu edo estutasun labur eta arina jasan dezake; animaliaren ongizatea edo egoera orokorra nabarmenki aldatzen ez duten prozedurak/esku hartzeak ere arintzat sailkatu behar dira. </li><li><strong>Ertaina</strong>: prozedura/esku hartze hauen ondorioz, animaliek gutxi irauten duten baina iraunkorrak diren min, sufrimendu edo estutasun ertainak jasan ditzakete; animalien ongizatean edo egoera orokorrean aldaketa handi samarra eragin dezaketen prozedurak/esku hartzeak ere ertaintzat sailkatu behar dira. </li><li><strong>Larria</strong>: prozedura/esku hartze hauen ondorioz, animaliek min, sufrimendu edo estutasun biziak jasan ditzakete, edo ertainak baina iraunkorrak; animalien ongizatean edo egoera orokorrean aldaketa larriak eragin ditzaketen prozedurak/esku hartzeak ere larritzat sailkatu behar dira. </li></ul></p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "procedimientoIntervencionMedidaCorrectoraTable",
+        "templateOptions": {
+          "entity": "prozedura/esku hartzea",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Neurri zuzentzailea"
+          },
+          "fieldGroup": [
+            {
+              "key": "numeroProcedimiento",
+              "type": "input",
+              "templateOptions": {
+                "label": "Prozeduraren/Esku hartzearen zk.",
+                "required": true,
+                "order": 10
+              }
+            },
+            {
+              "key": "frecuenciaRealizacion",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Maiztasuna",
+                "required": true,
+                "order": 30
+              }
+            },
+            {
+              "key": "numeroAnimales",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Animalia kopurua",
+                "required": true,
+                "order": 40
+              }
+            },
+            {
+              "key": "categoriaSeveridad",
+              "type": "select",
+              "templateOptions": {
+                "label": "Laztasun kategoria",
+                "required": true,
+                "order": 50,
+                "options": [
+                  {
+                    "value": "Sin recuperación",
+                    "label": "Suspertzeko aukerarik gabe"
+                  },
+                  {
+                    "value": "Leve",
+                    "label": "Arina"
+                  },
+                  {
+                    "value": "Moderada",
+                    "label": "Ertaina"
+                  },
+                  {
+                    "value": "Severa",
+                    "label": "Larria"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "warn-div"
+        ],
+        "hideExpression": "!model.procedimientoIntervencionMedidaCorrectoraTable.length > 0",
+        "template": "<p>Prozedurak/esku hartzeak edo haien laztasuna aldatuz gero, ez ahaztu 4.2.1 ataleko taula berrikusi eta eguneratzea.</p>"
+      }
+    ]
+  }
+]

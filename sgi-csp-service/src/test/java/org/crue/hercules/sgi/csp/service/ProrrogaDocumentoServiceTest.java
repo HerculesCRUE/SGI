@@ -1,19 +1,27 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ProrrogaDocumentoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoProrrogaNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoDocumento;
 import org.crue.hercules.sgi.csp.model.ProrrogaDocumento;
+import org.crue.hercules.sgi.csp.model.ProrrogaDocumentoComentario;
+import org.crue.hercules.sgi.csp.model.ProrrogaDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ProrrogaDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProrrogaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProrrogaDocumentoServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -90,7 +98,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.create(newProrrogaDocumento))
         // then: throw exception as id can't be provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ProrrogaDocumento id tiene que ser null para crear un nuevo ProrrogaDocumento");
+        .hasMessage("Identificador de Prórroga Documento debe ser nulo");
   }
 
   @Test
@@ -105,7 +113,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.create(newProrrogaDocumento))
         // then: throw exception as ProyectoProrroga is not provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id ProyectoProrroga no puede ser null para realizar la acción sobre ProrrogaDocumento");
+        .hasMessage("Identificador de Proyecto Prórroga no puede ser nulo");
   }
 
   @Test
@@ -119,7 +127,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         // when: Create ProrrogaDocumento
         () -> service.create(newProrrogaDocumento))
         // then: throw exception as Nombre is not provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Es necesario indicar el nombre del documento");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Nombre de Prórroga Documento no puede ser nulo");
   }
 
   @Test
@@ -133,7 +141,8 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         // when: Create ProrrogaDocumento
         () -> service.create(newProrrogaDocumento))
         // then: throw exception as DocumentoRef is not provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Es necesario indicar la referencia al documento");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Referencia documento de Prórroga Documento no puede ser nulo");
   }
 
   @Test
@@ -148,7 +157,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.create(newProrrogaDocumento))
         // then: throw exception as Visible is not provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Visible no puede ser null para realizar la acción sobre ProrrogaDocumento");
+        .hasMessage("Visible de Prórroga Documento no puede ser nulo");
   }
 
   @Test
@@ -181,7 +190,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.create(newProrrogaDocumento))
         // then: throw exception as Prorroga is not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El Proyecto de la prórroga no cuenta con un modelo de ejecución asignado");
+        .hasMessage("Modelo Ejecución de Proyecto Prórroga no existe");
   }
 
   @Test
@@ -201,7 +210,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.create(newProrrogaDocumento))
         // then: throw exception as ModeloEjecucion is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El modelo de ejecución asignado al proyecto no está activo");
+        .hasMessage("%s de Modelo Ejecución no está activo", proyecto.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -224,7 +233,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.create(newProrrogaDocumento))
         // then: throw exception as ModeloTipoDocumento is not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El TipoDocumento no está asociado al modelo de ejecución del proyecto");
+        .hasMessage("Tipo Documento de Modelo Ejecución no existe");
   }
 
   @Test
@@ -248,7 +257,8 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         // when: Create ProrrogaDocumento
         () -> service.create(newProrrogaDocumento))
         // then: throw exception as TipoDocumento is disabled
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El TipoDocumento no está activo");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("%s de Tipo Documento no está activo", newProrrogaDocumento.getTipoDocumento().getNombre());
   }
 
   @Test
@@ -273,7 +283,8 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.create(newProrrogaDocumento))
         // then: throw exception as ModeloTipoDocumento is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El TipoDocumento no está activo para el modelo de ejecución del proyecto");
+        .hasMessage("%s de Modelo Tipo Documento no está activo",
+            newProrrogaDocumento.getTipoDocumento().getNombre());
   }
 
   @Test
@@ -281,7 +292,9 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
     // given: updated ProrrogaDocumento
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
-    updatedProrrogaDocumento.setComentario("comentario-modificado");
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario.add(new ProrrogaDocumentoComentario(Language.ES, "comentario-modificado"));
+    updatedProrrogaDocumento.setComentario(prorrogaDocumentoComentario);
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(originalProrrogaDocumento);
     Proyecto proyecto = generarMockProyecto();
 
@@ -328,7 +341,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.update(updatedProrrogaDocumento))
         // then: throw exception as id can't be provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ProrrogaDocumento id no puede ser null para actualizar un ProrrogaDocumento");
+        .hasMessage("Identificador de Prórroga Documento no puede ser nulo");
   }
 
   @Test
@@ -342,7 +355,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.update(updatedProrrogaDocumento))
         // then: throw exception as ProyectoProrroga is not provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id ProyectoProrroga no puede ser null para realizar la acción sobre ProrrogaDocumento");
+        .hasMessage("Identificador de Proyecto Prórroga no puede ser nulo");
   }
 
   @Test
@@ -355,7 +368,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         // when: update ProrrogaDocumento
         () -> service.update(updatedProrrogaDocumento))
         // then: throw exception as Publico is not provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Es necesario indicar el nombre del documento");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Nombre de Prórroga Documento no puede ser nulo");
   }
 
   @Test
@@ -368,7 +381,8 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         // when: update ProrrogaDocumento
         () -> service.update(updatedProrrogaDocumento))
         // then: throw exception as DocumentoRef is not provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Es necesario indicar la referencia al documento");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Referencia documento de Prórroga Documento no puede ser nulo");
   }
 
   @Test
@@ -382,7 +396,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.update(updatedProrrogaDocumento))
         // then: throw exception as Visible is not provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Visible no puede ser null para realizar la acción sobre ProrrogaDocumento");
+        .hasMessage("Visible de Prórroga Documento no puede ser nulo");
   }
 
   @Test
@@ -402,7 +416,9 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
     // given: a updated ProrrogaDocumento with no existing Prorroga
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
-    updatedProrrogaDocumento.setComentario("comentario-modificado");
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario.add(new ProrrogaDocumentoComentario(Language.ES, "comentario-modificado"));
+    updatedProrrogaDocumento.setComentario(prorrogaDocumentoComentario);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(originalProrrogaDocumento));
@@ -420,7 +436,9 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
     // given: ProrrogaDocumento with no existing ModeloEjecucion
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
-    updatedProrrogaDocumento.setComentario("comentario-modificado");
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario.add(new ProrrogaDocumentoComentario(Language.ES, "comentario-modificado"));
+    updatedProrrogaDocumento.setComentario(prorrogaDocumentoComentario);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(originalProrrogaDocumento));
@@ -434,7 +452,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.update(updatedProrrogaDocumento))
         // then: throw exception as Prorroga is not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El Proyecto de la prórroga no cuenta con un modelo de ejecución asignado");
+        .hasMessage("Modelo Ejecución de Proyecto Prórroga no existe");
   }
 
   @Test
@@ -442,7 +460,9 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
     // given: ProrrogaDocumento with disabled ModeloEjecucion
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
-    updatedProrrogaDocumento.setComentario("comentario-modificado");
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario.add(new ProrrogaDocumentoComentario(Language.ES, "comentario-modificado"));
+    updatedProrrogaDocumento.setComentario(prorrogaDocumentoComentario);
     Proyecto proyecto = generarMockProyecto();
 
     proyecto.getModeloEjecucion().setActivo(Boolean.FALSE);
@@ -459,7 +479,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.update(updatedProrrogaDocumento))
         // then: throw exception as ModeloEjecucion is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El modelo de ejecución asignado al proyecto no está activo");
+        .hasMessage("%s de Modelo Ejecución no está activo", proyecto.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -467,7 +487,9 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
     // given: ProrrogaDocumento without ModeloTipoDocumento
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
-    updatedProrrogaDocumento.setComentario("comentario-modificado");
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario.add(new ProrrogaDocumentoComentario(Language.ES, "comentario-modificado"));
+    updatedProrrogaDocumento.setComentario(prorrogaDocumentoComentario);
     Proyecto proyecto = generarMockProyecto();
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
@@ -486,7 +508,7 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.update(updatedProrrogaDocumento))
         // then: throw exception as ModeloTipoDocumento is not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El TipoDocumento no está asociado al modelo de ejecución del proyecto");
+        .hasMessage("Tipo Documento de Modelo Ejecución no existe");
   }
 
   @Test
@@ -494,7 +516,9 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
     // given: ProrrogaDocumento with TipoDocumento disabled
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
-    updatedProrrogaDocumento.setComentario("comentario-modificado");
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario.add(new ProrrogaDocumentoComentario(Language.ES, "comentario-modificado"));
+    updatedProrrogaDocumento.setComentario(prorrogaDocumentoComentario);
 
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(originalProrrogaDocumento);
     modeloTipoDocumento.getTipoDocumento().setActivo(Boolean.FALSE);
@@ -516,7 +540,8 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         // when: update ProrrogaDocumento
         () -> service.update(updatedProrrogaDocumento))
         // then: throw exception as TipoDocumento is disabled
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El TipoDocumento no está activo");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("%s de Tipo Documento no está activo", updatedProrrogaDocumento.getTipoDocumento().getNombre());
   }
 
   @Test
@@ -524,7 +549,9 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
     // given: ProrrogaDocumento with ModeloTipoDocumento disabled
     ProrrogaDocumento originalProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento updatedProrrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
-    updatedProrrogaDocumento.setComentario("comentario-modificado");
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario.add(new ProrrogaDocumentoComentario(Language.ES, "comentario-modificado"));
+    updatedProrrogaDocumento.setComentario(prorrogaDocumentoComentario);
 
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(originalProrrogaDocumento);
     modeloTipoDocumento.setActivo(Boolean.FALSE);
@@ -547,7 +574,8 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         () -> service.update(updatedProrrogaDocumento))
         // then: throw exception as ModeloTipoDocumento is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("El TipoDocumento no está activo para el modelo de ejecución del proyecto");
+        .hasMessage("%s de Modelo Tipo Documento no está activo",
+            updatedProrrogaDocumento.getTipoDocumento().getNombre());
   }
 
   @Test
@@ -608,10 +636,11 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
         .isEqualTo(prorrogaDocumento.getProyectoProrrogaId());
     Assertions.assertThat(prorrogaDocumento.getDocumentoRef()).as("getDocumentoRef()")
         .isEqualTo("documentoRef-" + String.format("%03d", idBuscado));
-    Assertions.assertThat(prorrogaDocumento.getNombre()).as("getNombre()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(prorrogaDocumento.getNombre(), Language.ES)).as("getNombre()")
         .isEqualTo("prorroga-documento-" + String.format("%03d", idBuscado));
     Assertions.assertThat(prorrogaDocumento.getTipoDocumento().getId()).as("getTipoDocumento().getId()").isEqualTo(1L);
-    Assertions.assertThat(prorrogaDocumento.getComentario()).as("getComentario()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(prorrogaDocumento.getComentario(), Language.ES))
+        .as("getComentario()")
         .isEqualTo("comentario-prorroga-documento-" + String.format("%03d", idBuscado));
     Assertions.assertThat(prorrogaDocumento.getVisible()).as("getVisible()").isEqualTo(Boolean.TRUE);
   }
@@ -629,11 +658,14 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
   }
 
   private Proyecto generarMockProyecto() {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion"));
     // @formatter:off
     return Proyecto.builder()
         .id(1L)
         .modeloEjecucion(ModeloEjecucion.builder()
             .id(1L)
+            .nombre(nombreModeloEjecucion)
             .activo(Boolean.TRUE)
             .build())
         .activo(Boolean.TRUE)
@@ -649,18 +681,29 @@ class ProrrogaDocumentoServiceTest extends BaseServiceTest {
    * @return el objeto ProrrogaDocumento
    */
   private ProrrogaDocumento generarMockProrrogaDocumento(Long id, Long proyectoProrrogaId, Long tipoDocumentoId) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, "nombreTipoDocumento"));
+
+    Set<ProrrogaDocumentoNombre> prorrogaDocumentoNombre = new HashSet<>();
+    prorrogaDocumentoNombre.add(new ProrrogaDocumentoNombre(Language.ES,
+        "prorroga-documento-" + (id == null ? "" : String.format("%03d", id))));
+
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario.add(new ProrrogaDocumentoComentario(Language.ES,
+        "comentario-prorroga-documento-" + (id == null ? "" : String.format("%03d", id))));
 
     // @formatter:off
     return ProrrogaDocumento.builder()
         .id(id)
         .proyectoProrrogaId(proyectoProrrogaId)
-        .nombre("prorroga-documento-" + (id == null ? "" : String.format("%03d", id)))
+        .nombre(prorrogaDocumentoNombre)
         .documentoRef("documentoRef-" + (id == null ? "" : String.format("%03d", id)))
         .tipoDocumento(TipoDocumento.builder()
             .id(tipoDocumentoId)
+            .nombre(nombreTipoDocumento)
             .activo(Boolean.TRUE)
             .build())
-        .comentario("comentario-prorroga-documento-" + (id == null ? "" : String.format("%03d", id)))
+        .comentario(prorrogaDocumentoComentario)
         .visible(Boolean.TRUE)
         .build();
     // @formatter:on

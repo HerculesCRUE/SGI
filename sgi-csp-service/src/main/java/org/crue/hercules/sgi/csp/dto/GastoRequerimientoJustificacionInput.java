@@ -2,10 +2,12 @@ package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.List;
 
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.model.BaseEntity;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,11 +35,9 @@ public class GastoRequerimientoJustificacionInput implements Serializable {
 
   private Boolean aceptado;
 
-  @Size(max = BaseEntity.DEFAULT_LONG_TEXT_LENGTH)
-  private String incidencia;
+  private List<I18nFieldValueDto> incidencia;
 
-  @Size(max = BaseEntity.DEFAULT_LONG_TEXT_LENGTH)
-  private String alegacion;
+  private List<I18nFieldValueDto> alegacion;
 
   @Size(max = BaseEntity.EXTERNAL_REF_LENGTH)
   private String identificadorJustificacion;

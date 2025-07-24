@@ -12,8 +12,8 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.From;
 import javax.persistence.criteria.Order;
 
+import org.crue.hercules.sgi.framework.data.jpa.repository.query.SgiQueryUtils;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -28,7 +28,7 @@ public class CriteriaQueryUtils {
     if (selectionIndex.isPresent()) {
       return toOrdersByPosition(selectionIndex.get() + 1, sort, cb);
     } else {
-      return QueryUtils.toOrders(sort, from, cb);
+      return SgiQueryUtils.toOrders(sort, from, cb);
     }
   }
 

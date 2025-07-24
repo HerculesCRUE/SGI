@@ -1,9 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { IProyectoPeriodoJustificacionSeguimiento } from '@core/models/csp/proyecto-periodo-justificacion-seguimiento';
 import { ISeguimientoJustificacionAnualidad } from '@core/models/csp/seguimiento-justificacion-anualidad';
@@ -18,7 +19,7 @@ const JUSTIFICANTE_REINTEGRO_KEY = marker('csp.seguimiento-justificacion-anualid
 
 export interface ISeguimientoJustificacionAnualidadModalData {
   seguimientoJustificacionAnualidad: StatusWrapper<ISeguimientoJustificacionAnualidad>;
-  tituloProyecto: string;
+  tituloProyecto: I18nFieldValue[];
 }
 
 @Component({

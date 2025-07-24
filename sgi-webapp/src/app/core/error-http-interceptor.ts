@@ -87,7 +87,7 @@ export class SgiErrorHttpInterceptor implements HttpInterceptor {
   }
 
   private isProblem(error: HttpErrorResponse): boolean {
-    return error.headers.get('content-type') === 'application/problem+json';
+    return !!error.headers.get('content-type')?.startsWith('application/problem+json');
   }
 
   private toJSONHttpErrorResponse(blobError: HttpErrorResponse): Observable<HttpErrorResponse> {

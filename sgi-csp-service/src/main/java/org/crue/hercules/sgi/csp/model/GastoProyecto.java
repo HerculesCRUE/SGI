@@ -2,9 +2,14 @@ package org.crue.hercules.sgi.csp.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -34,7 +40,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GastoProyecto extends BaseEntity {
   public static final int GASTO_REF_LENGTH = 50;
-  public static final int OBSERVACIONES_LENGTH = 2000;
   public static final int IMPORTE_INSCRIPCION_MIN = 0;
 
   /** Id. */
@@ -76,9 +81,11 @@ public class GastoProyecto extends BaseEntity {
   private BigDecimal importeInscripcion;
 
   /** Observaciones */
-  @Column(name = "observaciones", length = OBSERVACIONES_LENGTH, nullable = true)
-  @Size(max = OBSERVACIONES_LENGTH, groups = { OnCrear.class, OnActualizar.class })
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "gasto_proyecto_observaciones", joinColumns = @JoinColumn(name = "gasto_proyecto_id"))
+  @Valid
+  @Builder.Default
+  private Set<GastoProyectoObservaciones> observaciones = new HashSet<>();
 
   /**
    * Interfaz para marcar validaciones en la creación de la entidad.

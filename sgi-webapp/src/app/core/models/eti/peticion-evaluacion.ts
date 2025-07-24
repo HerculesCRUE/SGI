@@ -1,4 +1,5 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IPersona } from '../sgp/persona';
 import { ITipoActividad } from './tipo-actividad';
@@ -12,7 +13,7 @@ export interface IPeticionEvaluacion {
   /** Código */
   codigo: string;
   /** Título */
-  titulo: string;
+  titulo: I18nFieldValue[];
   /** Tipo de actividad */
   tipoActividad: ITipoActividad;
   /** Tipo de investigacion tutelada */
@@ -20,7 +21,7 @@ export interface IPeticionEvaluacion {
   /** Existe fuente financiacion */
   existeFinanciacion: boolean;
   /** Referencia fuente financiacion */
-  fuenteFinanciacion: string;
+  fuenteFinanciacion: I18nFieldValue[];
   /** Estado fuente financiacion */
   estadoFinanciacion: EstadoFinanciacion;
   /** Importe fuente financiacion */
@@ -30,15 +31,15 @@ export interface IPeticionEvaluacion {
   /** Fecha Fin. */
   fechaFin: DateTime;
   /** Resumen */
-  resumen: string;
+  resumen: I18nFieldValue[];
   /** Valor social */
   valorSocial: TipoValorSocial;
   /** Otro valor social */
-  otroValorSocial: string;
+  otroValorSocial: I18nFieldValue[];
   /** Objetivos */
-  objetivos: string;
+  objetivos: I18nFieldValue[];
   /** Diseño metodológico */
-  disMetodologico: string;
+  disMetodologico: I18nFieldValue[];
   /** Tiene fondos propios */
   tieneFondosPropios: boolean;
   /** Referencia persona */

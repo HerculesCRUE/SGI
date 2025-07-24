@@ -1,0 +1,85 @@
+[
+  {
+    "key": "ap4_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1 Assessment of severity and corrective measures for pain, suffering or distress of the animal"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Taking into account the procedures/interventions listed under 'Procedures/interventions to be performed on the animal' please indicate the corrective measures envisaged (e.g. anaesthesia, analgesia) to minimise possible pain, suffering or anxiety caused:<ul><li><strong>intended effect</strong>: intended effect on the animal of the procedure/intervention performed: removal of the spleen, increase of a certain parameter, anaesthetising the animal for surgery.</li><li><strong>Side effects, side effects or adverse reactions</strong>: any effect, other than the intended effect, which may cause the animal to experience pain, suffering, distress or lasting harm equivalent to or greater than that caused by the introduction of a needle.</li><li><strong>Corrective measure</strong>: any measure intended to alleviate animal suffering and/or side-effects without interfering with the intended effect'.</li></ul></p>\""
+      },
+      {
+        "type": "table-crud",
+        "key": "valoracionSeveridadTable",
+        "templateOptions": {
+          "entity": "corrective measure",
+          "gender": "female"
+        },
+        "expressionProperties": {
+          "templateOptions.required": "formState.bloques[3].ap3_7?.ap3_7_1?.procedimientoIntervencionMedidaCorrectoraTable.length > 0"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Corrective measure"
+          },
+          "fieldGroup": [
+            {
+              "key": "intervencion",
+              "type": "selector-procedimientos",
+              "templateOptions": {
+                "label": "Procedure/Intervention",
+                "options": [],
+                "order": 10
+              },
+              "expressionProperties": {
+                "templateOptions.options": "formState.bloques[3].ap3_7?.ap3_7_1?.procedimientoIntervencionMedidaCorrectoraTable"
+              }
+            },
+            {
+              "key": "severidad",
+              "type": "input",
+              "templateOptions": {
+                "label": "Severity category",
+                "order": 20,
+                "disabled": true
+              }
+            },
+            {
+              "key": "efectoBuscado",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Intended effect",
+                "order": 30
+              }
+            },
+            {
+              "key": "efectoColateral",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Collateral effect",
+                "order": 40
+              }
+            },
+            {
+              "key": "medidasCorrectoras",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Corrective measures",
+                "order": 50
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: Please remember that exceptions require providing the respective document in section '5.4 Special situations', annex IX of Royal Decree 53/2013.</p>"
+      }
+    ]
+  }
+]

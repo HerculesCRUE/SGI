@@ -177,12 +177,12 @@ public class RequestPageableArgumentResolver implements HandlerMethodArgumentRes
     log.debug("generateSortList(List<SortCriteria> criteria) - start");
     List<Sort> returnValue = criteria.stream().map(criterion -> {
       switch (criterion.getOperation()) {
-      case ASC:
-        return Sort.by(Order.asc(criterion.getKey()));
-      case DESC:
-        return Sort.by(Order.desc(criterion.getKey()));
-      default:
-        return null;
+        case ASC:
+          return Sort.by(Order.asc(criterion.getKey()));
+        case DESC:
+          return Sort.by(Order.desc(criterion.getKey()));
+        default:
+          return null;
       }
     }).filter(Objects::nonNull).collect(Collectors.toList());
     log.debug("generateSortList(List<SortCriteria> criteria) - end");
@@ -291,6 +291,12 @@ public class RequestPageableArgumentResolver implements HandlerMethodArgumentRes
       log.debug("first() - start");
       log.debug("first() - end");
       return this;
+    }
+
+    @Override
+    public Pageable withPage(int pageNumber) {
+      log.debug("withPage() - start");
+      throw new UnsupportedOperationException();
     }
 
   }

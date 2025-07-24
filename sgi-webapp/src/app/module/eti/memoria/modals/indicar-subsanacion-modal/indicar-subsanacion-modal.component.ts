@@ -1,12 +1,14 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DialogService } from '@core/services/dialog.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
@@ -19,7 +21,7 @@ export interface IndicarSubsanacionModalComponentData {
 }
 
 interface IComentarioEstadoMemoria {
-  comentario: string;
+  comentario: I18nFieldValue[];
 }
 
 @Component({
@@ -62,7 +64,7 @@ export class IndicarSubsanacionModalComponent extends DialogActionComponent<ICom
 
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
-      comentario: new FormControl('', [Validators.maxLength(2000), Validators.required])
+      comentario: new FormControl([], [I18nValidators.maxLength(2000), I18nValidators.required])
     });
   }
 

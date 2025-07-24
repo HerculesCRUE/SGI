@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap1_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Diseinu metodologikoa",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Urteko txostena zer batzorderentzat den, horren araberakoa izango da diseinu metodologikoari dagokion deskribapena.<ul><li>#nombre_comite_M10_eu#: deskribatu egungo lagina (ezaugarriak eta tamaina) eta proiektuaren garapena, eta adierazi arazorik izan den eta nola konpondu diren.</li><li>#nombre_comite_M20_eu#: deskribatu lagina (orain arte erabilitako animalia kopuru osoa) eta proiektuaren garapena, eta adierazi arazorik izan den eta nola konpondu diren.</li><li>#nombre_comite_M30_eu#: deskribatu proiektuaren garapena, eta adierazi arazorik izan den eta nola konpondu diren.</li></ul></p>"
+      },
+      {
+        "template": "Deskribatu, labur-labur, nola ari den garatzen proiektua metodologikoki, eta aipatu zer arazo izan diren, arazorik izan bada, eta nola konpondu diren."
+      },
+      {
+        "key": "disenioMetodologico",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Deskribapena",
+          "label": "Deskribapena",
+          "required": false,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

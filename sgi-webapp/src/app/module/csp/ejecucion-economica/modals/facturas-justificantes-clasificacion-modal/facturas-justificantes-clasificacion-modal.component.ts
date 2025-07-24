@@ -11,6 +11,8 @@ import { IProyecto } from '@core/models/csp/proyecto';
 import { IDatoEconomicoDetalle } from '@core/models/sge/dato-economico-detalle';
 import { ConceptoGastoService } from '@core/services/csp/concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { BehaviorSubject, Observable, from, of } from 'rxjs';
@@ -73,7 +75,8 @@ export class FacturasJustificantesClasificacionModal extends DialogFormComponent
     @Inject(MAT_DIALOG_DATA) public data: DatoEconomicoDetalleClasificacionModalData,
     private conceptoGastoService: ConceptoGastoService,
     private proyectoService: ProyectoService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
     super(matDialogRef, !!data.gastoProyecto?.id);
   }
@@ -105,7 +108,7 @@ export class FacturasJustificantesClasificacionModal extends DialogFormComponent
         this.data.gastoProyecto?.importeInscripcion,
         [Validators.min(0), Validators.max(2_147_483_647)])
       );
-      formGroup.addControl('observaciones', new FormControl(this.data.gastoProyecto?.observaciones, [Validators.maxLength(2000)]));
+      formGroup.addControl('observaciones', new FormControl(this.data.gastoProyecto?.observaciones, [I18nValidators.maxLength(2000)]));
     }
 
     this.conceptosGasto$.pipe(
@@ -169,7 +172,7 @@ export class FacturasJustificantesClasificacionModal extends DialogFormComponent
   }
 
   displayerProyecto(proyecto: IProyecto): string {
-    return proyecto?.titulo;
+    return this.languageService.getFieldValue(proyecto?.titulo);
   }
 
   private loadProyectos(): void {

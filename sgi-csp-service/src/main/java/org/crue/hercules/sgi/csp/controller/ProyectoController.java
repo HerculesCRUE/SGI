@@ -2,7 +2,6 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -10,7 +9,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.crue.hercules.sgi.csp.converter.ProyectoFaseConverter;
 import org.crue.hercules.sgi.csp.converter.RequerimientoJustificacionConverter;
 import org.crue.hercules.sgi.csp.dto.AnualidadGastoOutput;
-import org.crue.hercules.sgi.csp.dto.ConvocatoriaTituloOutput;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaOnlyTituloOutput;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAgrupacionGastoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadOutput;
@@ -131,6 +130,9 @@ public class ProyectoController {
   public static final String PATH_INVESTIGADOR = PATH_SEPARATOR + "investigador";
 
   public static final String PATH_ID = PATH_SEPARATOR + "{id}";
+  public static final String PATH_ANUALIDADES = PATH_ID + PATH_SEPARATOR + "anualidades";
+  public static final String PATH_ANUALIDADES_FECHAS_PROYECTO = PATH_ID + PATH_SEPARATOR
+      + "anualidades-fechas-proyecto";
   public static final String PATH_ANUALIDAD_GASTOS = PATH_ID + PATH_SEPARATOR + "anualidad-gastos";
   public static final String PATH_ANUALIDAD_INGRESOS = PATH_ID + PATH_SEPARATOR + "anualidad-ingresos";
   public static final String PATH_APARTADOS_WITH_DATES = PATH_ID + PATH_SEPARATOR + "has-apartados-with-dates";
@@ -856,7 +858,7 @@ public class ProyectoController {
    * @return el listado de entidades {@link ProyectoAnualidadResumen} del
    *         {@link Proyecto}.
    */
-  @GetMapping("/{id}/anualidades")
+  @GetMapping(PATH_ANUALIDADES)
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-V','CSP-PRO-E')")
   public ResponseEntity<Page<ProyectoAnualidadResumen>> findAllProyectoAnualidadResumen(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -1129,7 +1131,7 @@ public class ProyectoController {
 
   private Page<ProyectoResponsableEconomicoOutput> convert(Page<ProyectoResponsableEconomico> page) {
     List<ProyectoResponsableEconomicoOutput> content = page.getContent().stream()
-        .map(this::convert).collect(Collectors.toList());
+        .map(this::convert).toList();
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
 
@@ -1143,7 +1145,7 @@ public class ProyectoController {
   private Page<ProyectoAgrupacionGastoOutput> convertProyectoAgrupacionGastoOutput(Page<ProyectoAgrupacionGasto> page) {
     List<ProyectoAgrupacionGastoOutput> content = page.getContent().stream()
         .map(this::convertProyectoAgrupacionGastoOutput)
-        .collect(Collectors.toList());
+        .toList();
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
 
@@ -1271,7 +1273,7 @@ public class ProyectoController {
 
   private List<AnualidadGastoOutput> convertListAnualidadGastoOutput(List<AnualidadGasto> anualidadesGasto) {
     return anualidadesGasto.stream().map(anualidadGasto -> modelMapper.map(anualidadGasto, AnualidadGastoOutput.class))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /*
@@ -1298,7 +1300,7 @@ public class ProyectoController {
 
   private Page<ProyectoFacturacionOutput> convertToProyectoFacturacionOutputPage(Page<ProyectoFacturacion> page) {
 
-    return new PageImpl<>(page.getContent().stream().map(this::convert).collect(Collectors.toList()),
+    return new PageImpl<>(page.getContent().stream().map(this::convert).toList(),
         page.getPageable(), page.getTotalElements());
 
   }
@@ -1408,11 +1410,11 @@ public class ProyectoController {
    */
   @GetMapping("/{id}/convocatoria")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-PRO-INV-VR')")
-  public ResponseEntity<ConvocatoriaTituloOutput> findConvocatoriaByProyectoIdAndUserIsInvestigador(
+  public ResponseEntity<ConvocatoriaOnlyTituloOutput> findConvocatoriaByProyectoIdAndUserIsInvestigador(
       @PathVariable Long id) {
     log.debug("findConvocatoriaByProyectoIdAndUserIsInvestigador(Long id) - start");
 
-    ConvocatoriaTituloOutput returnValue = convert(
+    ConvocatoriaOnlyTituloOutput returnValue = convert(
         convocatoriaService.findConvocatoriaByProyectoIdAndUserIsInvestigador(id));
 
     if (returnValue == null) {
@@ -1617,7 +1619,7 @@ public class ProyectoController {
   private Page<ProyectoPalabraClaveOutput> convertProyectoPalabraClave(Page<ProyectoPalabraClave> page) {
     List<ProyectoPalabraClaveOutput> content = page.getContent().stream()
         .map(this::convert)
-        .collect(Collectors.toList());
+        .toList();
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
@@ -1625,7 +1627,7 @@ public class ProyectoController {
   private List<ProyectoPalabraClaveOutput> convertProyectoPalabraClave(List<ProyectoPalabraClave> list) {
     return list.stream()
         .map(this::convert)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private ProyectoPalabraClaveOutput convert(ProyectoPalabraClave proyectoPalabraClave) {
@@ -1634,7 +1636,7 @@ public class ProyectoController {
 
   private List<ProyectoPalabraClave> convertProyectoPalabraClaveInputs(Long proyectoId,
       List<ProyectoPalabraClaveInput> inputs) {
-    return inputs.stream().map(input -> convert(proyectoId, input)).collect(Collectors.toList());
+    return inputs.stream().map(input -> convert(proyectoId, input)).toList();
   }
 
   private ProyectoPalabraClave convert(Long proyectoId, ProyectoPalabraClaveInput input) {
@@ -1651,17 +1653,17 @@ public class ProyectoController {
   private List<NotificacionProyectoExternoCVNOutput> convert(List<NotificacionProyectoExternoCVN> list) {
     return list.stream()
         .map(this::convert)
-        .collect(Collectors.toList());
+        .toList();
   }
 
-  private ConvocatoriaTituloOutput convert(Convocatoria convocatoria) {
-    return modelMapper.map(convocatoria, ConvocatoriaTituloOutput.class);
+  private ConvocatoriaOnlyTituloOutput convert(Convocatoria convocatoria) {
+    return modelMapper.map(convocatoria, ConvocatoriaOnlyTituloOutput.class);
   }
 
   private List<ProyectoEquipoDto> convertProyectoEquipoToProyectoEquipoDto(List<ProyectoEquipo> list) {
     return list.stream()
         .map(this::convert)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private ProyectoEquipoDto convert(ProyectoEquipo proyectoEquipo) {
@@ -1803,6 +1805,23 @@ public class ProyectoController {
     Proyecto returnValue = service.initFechaInicio(id);
     log.debug("initFechaInicio(Long id) - end");
     return returnValue;
+  }
+
+  /**
+   * Obtiene la lista de anualidades de un proyecto comprendidas entre su fecha
+   * de inicio y us fecha de fin o fecha de fin definitiva si esta informada
+   * 
+   * @param id Identificador de {@link Proyecto}
+   * @return la lista de anualidades del proyecto
+   */
+  @GetMapping(PATH_ANUALIDADES_FECHAS_PROYECTO)
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-csp')) or hasAnyAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<List<String>> getAnualidadesFechasProyecto(@PathVariable Long id) {
+    log.debug("getAnualidadesFechasProyecto(Long id) - start");
+    List<String> returnValue = service.getAnualidadesFechasProyecto(id);
+    log.debug("getAnualidadesFechasProyecto(Long id) - end");
+    return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+        : new ResponseEntity<>(returnValue, HttpStatus.OK);
   }
 
 }

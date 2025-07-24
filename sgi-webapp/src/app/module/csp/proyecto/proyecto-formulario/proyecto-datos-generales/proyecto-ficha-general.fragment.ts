@@ -22,10 +22,13 @@ import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geografico/tipo-ambito-geografico.service';
 import { TipoFinalidadService } from '@core/services/csp/tipo-finalidad.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
+import { LanguageService } from '@core/services/language.service';
 import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { anioValidator } from '@core/validators/anio-validator';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
@@ -120,7 +123,8 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     private readonly palabraClaveService: PalabraClaveService,
     private authService: SgiAuthService,
     private configuracionService: ConfigService,
-    private rolSocioService: RolSocioService
+    private rolSocioService: RolSocioService,
+    private languageService: LanguageService
   ) {
     super(key);
     // TODO: Eliminar la declaración de activo, ya que no debería ser necesaria
@@ -158,7 +162,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         if (this.proyecto.solicitudId) {
           this.subscriptions.push(this.solicitudService.findById(this.proyecto.solicitudId).subscribe(solicitud => {
             this.solicitud = solicitud;
-            this.getFormGroup().controls.solicitudProyecto.setValue(solicitud.titulo);
+            this.getFormGroup().controls.solicitudProyecto.setValue(this.languageService.getFieldValue(solicitud.titulo));
           }));
         }
         return proyecto as IProyectoDatosGenerales;
@@ -214,8 +218,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         value: '',
         disabled: true
       }),
-      titulo: new FormControl('', [
-        Validators.required, Validators.maxLength(250)]),
+      titulo: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(250)]),
       acronimo: new FormControl('', [Validators.maxLength(50)]),
       codigoInterno: new FormControl(null, [Validators.maxLength(50)]),
       codigoExterno: new FormControl(null, [Validators.maxLength(50)]),
@@ -246,14 +249,15 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
         this.buildValidatorIva()
       ]),
       causaExencion: new FormControl(null),
-      observaciones: new FormControl(''),
+      observaciones: new FormControl([], I18nValidators.maxLength(2000)),
       comentario: new FormControl({
-        value: '',
+        value: [],
         disabled: true
       }),
       solicitudProyecto: new FormControl({ value: null, disabled: true }),
       proyectosRelacionados: new FormControl({ value: '', disabled: true }),
-      palabrasClave: new FormControl(null)
+      palabrasClave: new FormControl(null),
+      anio: new FormControl(this.isEdit() ? null : this.getCurrentYear(), anioValidator())
     },
       {
         validators: [
@@ -599,7 +603,8 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       causaExencion: proyecto.causaExencion,
       observaciones: proyecto.observaciones,
       comentario: proyecto.estado?.comentario,
-      solicitudProyecto: this.solicitud?.titulo ?? null,
+      solicitudProyecto: this.solicitud?.titulo ? this.languageService.getFieldValue(this.solicitud?.titulo) : null,
+      anio: proyecto.anio
     };
 
     this.initialIva = proyecto.iva?.iva;
@@ -662,6 +667,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     this.proyecto.ivaDeducible = form.ivaDeducible.value;
     this.proyecto.iva = {} as IProyectoIVA;
     this.proyecto.iva.iva = form.iva.value;
+    this.proyecto.anio = form.anio.value;
 
     if (form.causaExencion.value?.length > 0) {
       this.proyecto.causaExencion = form.causaExencion?.value;
@@ -669,7 +675,6 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       this.proyecto.causaExencion = undefined;
     }
 
-    this.proyecto.comentario = form.comentario.value;
     this.proyecto.observaciones = form.observaciones.value;
 
     this.proyecto.rolUniversidad = form.rolUniversidad.value;
@@ -742,9 +747,14 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       this.ambitoGeograficoConvocatoria = convocatoria.ambitoGeografico;
       this.finalidadConvocatoria = convocatoria.finalidad;
       this.modeloEjecucionConvocatoria = convocatoria.modeloEjecucion;
+
+      if (convocatoria.anio) {
+        this.getFormGroup().controls.anio.setValue(convocatoria.anio);
+      }
     } else if (!this.isEdit()) {
       // Clean dependencies
       this.getFormGroup().controls.unidadGestion.setValue(null);
+      this.getFormGroup().controls.anio.setValue(this.getCurrentYear());
       // Enable fields
       if (!this.isVisor && !this.isInvestigador) {
         this.getFormGroup().controls.unidadGestion.enable();
@@ -765,7 +775,7 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
       formgroup.get('finalidad').setValidators([
         Validators.required, IsEntityValidator.isValid()]);
       formgroup.get('ambitoGeografico').setValidators([
-        Validators.required, IsEntityValidator.isValid()]);
+        Validators.required]);
       formgroup.get('confidencial').setValidators([
         Validators.required]);
       formgroup.get('coordinado').setValidators([
@@ -979,5 +989,10 @@ export class ProyectoFichaGeneralFragment extends FormFragment<IProyecto> {
     if (!this.readonly) {
       this.getFormGroup()?.controls.permitePaquetesTrabajo.enable({ emitEvent: false });
     }
+  }
+
+  private getCurrentYear(): number {
+    const today = new Date();
+    return today.getFullYear();
   }
 }

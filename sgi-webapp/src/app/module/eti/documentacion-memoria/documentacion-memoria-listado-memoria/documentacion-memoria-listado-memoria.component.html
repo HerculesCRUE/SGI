@@ -19,7 +19,7 @@
         <td mat-cell *matCellDef="let documentacionMemoria">
           <button color="primary" *ngIf="documentacionMemoria.informe" mat-icon-button
             matTooltip="{{'btn.show.file' | translate}}"
-            (click)="visualizarInforme(documentacionMemoria.informe?.documentoRef)">
+            (click)="visualizarInformeDocumentos(documentacionMemoria.informe?.documentos)">
             <mat-icon>picture_as_pdf</mat-icon>
           </button>
           <button color="primary" *ngIf="documentacionMemoria.fichaEvaluador" mat-icon-button

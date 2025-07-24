@@ -1,7 +1,9 @@
 package org.crue.hercules.sgi.rep.dto.eti;
 
 import java.time.Instant;
+import java.util.List;
 
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.crue.hercules.sgi.rep.dto.BaseRestDto;
 
 import lombok.AllArgsConstructor;
@@ -24,7 +26,7 @@ public class EvaluacionDto extends BaseRestDto {
   private Instant fechaDictamen;
   private Integer version;
   private Boolean esRevMinima;
-  private String comentario;
+  private List<I18nFieldValueDto> comentario;
   private Boolean activo;
 
 }

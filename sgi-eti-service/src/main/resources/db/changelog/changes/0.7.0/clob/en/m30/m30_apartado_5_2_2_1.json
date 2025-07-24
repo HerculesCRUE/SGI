@@ -1,0 +1,39 @@
+[
+  {
+    "key": "ap5_2_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.1 Question 1"
+    },
+    "fieldGroup": [
+      {
+        "template": "Does the activity submitted for assessment involve the confined use of genetically-modified organisms (GMOs)?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "A GMO is any organisms whose genetic material has been modified in a way that does not occur naturally, where the techniques established in regulations are used. To be considered a GMO, the modifications must be permanent in nature."
+      },
+      {
+        "key": "pregunta1OMGRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

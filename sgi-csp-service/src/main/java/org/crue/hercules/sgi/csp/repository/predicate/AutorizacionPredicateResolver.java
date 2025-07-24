@@ -8,6 +8,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.Autorizacion_;
@@ -22,6 +23,7 @@ import io.github.perplexhub.rsql.RSQLOperators;
 
 public class AutorizacionPredicateResolver implements SgiRSQLPredicateResolver<Autorizacion> {
   private enum Property {
+    FECHA_FIRST_ESTADO("fechaFirstEstado"),
     /* Fecha modificación */
     FECHA_MODIFICACION("fechaModificacion");
 
@@ -62,6 +64,26 @@ public class AutorizacionPredicateResolver implements SgiRSQLPredicateResolver<A
         cb.greaterThanOrEqualTo(joinEstadoAutorizacion.get(EstadoAutorizacion_.fecha), fechaModificacion));
   }
 
+  private Predicate buildByFechaFirstEstado(ComparisonNode node, Root<Autorizacion> root, CriteriaQuery<?> query,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL,
+        RSQLOperators.LESS_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    Instant fecha = Instant.parse(node.getArguments().get(0));
+
+    Subquery<Instant> queryFirstEstado = query.subquery(Instant.class);
+    Root<EstadoAutorizacion> subqRoot = queryFirstEstado.from(EstadoAutorizacion.class);
+    queryFirstEstado.select(cb.least(subqRoot.get(EstadoAutorizacion_.fecha)))
+        .where(cb.and(cb.equal(subqRoot.get(EstadoAutorizacion_.autorizacionId), root.get(Autorizacion_.id))));
+
+    if (node.getOperator().equals(RSQLOperators.GREATER_THAN_OR_EQUAL)) {
+      return cb.greaterThanOrEqualTo(queryFirstEstado, fecha);
+    } else {
+      return cb.lessThanOrEqualTo(queryFirstEstado, fecha);
+    }
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -77,6 +99,8 @@ public class AutorizacionPredicateResolver implements SgiRSQLPredicateResolver<A
     }
 
     switch (property) {
+      case FECHA_FIRST_ESTADO:
+        return buildByFechaFirstEstado(node, root, query, criteriaBuilder);
       case FECHA_MODIFICACION:
         return buildByFechaModificacion(node, root, criteriaBuilder);
       default:

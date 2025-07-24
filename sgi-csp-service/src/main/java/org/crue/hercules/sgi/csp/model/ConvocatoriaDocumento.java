@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -60,10 +67,12 @@ public class ConvocatoriaDocumento extends BaseEntity {
   private TipoDocumento tipoDocumento;
 
   /** Nombre */
-  @Column(name = "nombre", length = 50, nullable = false)
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "convocatoria_documento_nombre", joinColumns = @JoinColumn(name = "convocatoria_documento_id"))
   @NotEmpty
-  @Size(max = 50)
-  private String nombre;
+  @Valid
+  @Builder.Default
+  private Set<ConvocatoriaDocumentoNombre> nombre = new HashSet<>();
 
   /** Público */
   @Column(name = "publico", columnDefinition = "boolean default true", nullable = false)
@@ -71,9 +80,11 @@ public class ConvocatoriaDocumento extends BaseEntity {
   private Boolean publico;
 
   /** Observaciones */
-  @Column(name = "observaciones", length = 2000, nullable = true)
-  @Size(max = 2000)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "convocatoria_documento_observaciones", joinColumns = @JoinColumn(name = "convocatoria_documento_id"))
+  @Valid
+  @Builder.Default
+  private Set<ConvocatoriaDocumentoObservaciones> observaciones = new HashSet<>();
 
   /** Referencia documento */
   @Column(name = "documento_ref", length = 250, nullable = false)

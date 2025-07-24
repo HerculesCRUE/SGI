@@ -10,6 +10,7 @@ import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindO
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { SearchInvencionModalComponent } from './dialog/search-invencion.component';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'sgi-select-invencion',
@@ -46,10 +47,11 @@ export class SelectInvencionComponent extends SelectDialogComponent<SearchInvenc
     @Self() @Optional() ngControl: NgControl,
     dialog: MatDialog,
     focusMonitor: FocusMonitor,
-    private readonly invencionService: InvencionService
+    private readonly invencionService: InvencionService,
+    private readonly languageService: LanguageService
   ) {
     super(changeDetectorRef, elementRef, parentFormField, ngControl, dialog, SearchInvencionModalComponent, focusMonitor);
-    this.displayWith = (option) => option.titulo;
+    this.displayWith = (option) => this.languageService.getFieldValue(option.titulo);
   }
 
   protected search(term: string): Observable<SearchResult<IInvencion>> {
@@ -58,8 +60,8 @@ export class SelectInvencionComponent extends SelectDialogComponent<SearchInvenc
         index: 0,
         size: 10
       },
-      sort: new RSQLSgiRestSort('titulo', SgiRestSortDirection.ASC),
-      filter: new RSQLSgiRestFilter('titulo', SgiRestFilterOperator.LIKE_ICASE, term)
+      sort: new RSQLSgiRestSort('titulo.value', SgiRestSortDirection.ASC),
+      filter: new RSQLSgiRestFilter('titulo.value', SgiRestFilterOperator.LIKE_ICASE, term)
     };
     return this.invencionService.findAll(options).pipe(
       map(response => {

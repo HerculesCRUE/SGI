@@ -2,14 +2,16 @@ package org.crue.hercules.sgi.eer.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.eer.model.Empresa;
 import org.crue.hercules.sgi.eer.model.Empresa.EstadoEmpresa;
 import org.crue.hercules.sgi.eer.model.Empresa.TipoEmpresa;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -33,25 +35,21 @@ public class EmpresaInput implements Serializable {
   @Size(max = Empresa.REFERENCIAS_LENGTH)
   private String solicitanteRef;
 
-  @Size(max = Empresa.NOMBRE_RAZON_SOCIAL_LENGTH)
-  private String nombreRazonSocial;
+  private List<I18nFieldValueDto> nombreRazonSocial;
 
   @Size(max = Empresa.REFERENCIAS_LENGTH)
   private String entidadRef;
 
-  @Size(max = Empresa.OBJETO_SOCIAL_LENGTH)
-  @NotBlank
-  private String objetoSocial;
+  @NotEmpty
+  private List<I18nFieldValueDto> objetoSocial;
 
-  @Size(max = Empresa.CONOCIMIENTO_TECNOLOGIA_LENGTH)
-  @NotBlank
-  private String conocimientoTecnologia;
+  @NotEmpty
+  private List<I18nFieldValueDto> conocimientoTecnologia;
 
   @Size(max = Empresa.NUMERO_PROTOCOLO_LENGTH)
   private String numeroProtocolo;
 
-  @Size(max = Empresa.NOTARIO_LENGTH)
-  private String notario;
+  private List<I18nFieldValueDto> notario;
 
   private Instant fechaConstitucion;
 
@@ -63,8 +61,7 @@ public class EmpresaInput implements Serializable {
 
   private Instant fechaCese;
 
-  @Size(max = Empresa.OBSERVACIONES_LENGTH)
-  private String observaciones;
+  private List<I18nFieldValueDto> observaciones;
 
   @NotNull
   private EstadoEmpresa estado;

@@ -15,6 +15,7 @@ import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { MemoriaListado } from './acta-formulario/acta-memorias/acta-memorias.fragment';
 import { IActaReportData, IActaReportOptions } from './acta-listado-export.service';
+import { DICTAMEN_MAP } from '@core/models/eti/dictamen';
 
 const MEMORIA_KEY = marker('eti.memoria');
 const REFERENCIA_KEY = marker('eti.memoria.referencia-informe');
@@ -161,7 +162,7 @@ export class ActaMemoriaListadoExportService extends AbstractTableExportFillServ
       memoriaTable += '\n';
       memoriaTable += memoria.version ? memoria.version.toString() : '';
       memoriaTable += '\n';
-      memoriaTable += memoria.dictamen ? memoria.dictamen.nombre ?? '' : '';
+      memoriaTable += memoria.dictamen ? this.translate.instant(DICTAMEN_MAP.get(memoria.dictamen.id)) ?? '' : '';
 
       memoriaElementsRow.push(memoriaTable);
 
@@ -180,7 +181,7 @@ export class ActaMemoriaListadoExportService extends AbstractTableExportFillServ
     if (memoria) {
       elementsRow.push(memoria.numReferencia ? memoria.numReferencia.toString() : '');
       elementsRow.push(memoria.version ? memoria.version.toString() : '');
-      elementsRow.push(memoria.dictamen ? memoria.dictamen.nombre ?? '' : '');
+      elementsRow.push(memoria.dictamen ? this.translate.instant(DICTAMEN_MAP.get(memoria.dictamen.id)) ?? '' : '');
     } else {
       elementsRow.push('');
       elementsRow.push('');

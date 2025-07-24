@@ -1,7 +1,14 @@
+-- MODELO_EJECUCION
+INSERT INTO test.modelo_ejecucion (id, activo) VALUES (1, true);
+INSERT INTO test.modelo_ejecucion (id, activo) VALUES (12, true);
 
--- MODELO EJECUCION
-INSERT INTO test.modelo_ejecucion (id, nombre, descripcion, activo) VALUES (1, 'nombre-001', 'descripcion-001', true);
-INSERT INTO test.modelo_ejecucion (id, nombre, descripcion, activo) VALUES (12, 'nombre-012', 'descripcion-012', true);
+-- MODELO_EJECUCION_NOMBRE
+INSERT INTO test.modelo_ejecucion_nombre (modelo_ejecucion_id, lang, value_) VALUES (1, 'es', 'nombre-001');
+INSERT INTO test.modelo_ejecucion_nombre (modelo_ejecucion_id, lang, value_) VALUES (12, 'es', 'nombre-012');
+
+-- MODELO_EJECUCION_DESCRIPCION
+INSERT INTO test.modelo_ejecucion_descripcion (modelo_ejecucion_id, lang, value_) VALUES (1, 'es', 'descripcion-001');
+INSERT INTO test.modelo_ejecucion_descripcion (modelo_ejecucion_id, lang, value_) VALUES (12, 'es', 'descripcion-012');
 
 -- MODELO UNIDAD
 INSERT INTO test.modelo_unidad (id, unidad_gestion_ref, modelo_ejecucion_id, activo) VALUES (1, '1', 1, true);

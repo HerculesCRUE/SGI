@@ -1,0 +1,28 @@
+[
+  {
+    "key": "ap4_3_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.3 Maintained alive"
+    },
+    "hideExpression": "!formState.mainModel.ap4_3.ap4_3_2.reutilizacionRadio || formState.mainModel.ap4_3.ap4_3_2.reutilizacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "If the animals have been used previously or are going to be reused later, please explain if the circumstances established by law exist or justify the exception."
+      },
+      {
+        "key": "excepcionReutilizacion",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Justify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

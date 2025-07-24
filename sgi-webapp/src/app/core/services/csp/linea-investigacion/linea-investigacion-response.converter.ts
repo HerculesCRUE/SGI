@@ -1,3 +1,4 @@
+import { I18N_FIELD_RESPONSE_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { ILineaInvestigacion } from '@core/models/csp/linea-investigacion';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { ILineaInvestigacionResponse } from './linea-investigacion-response';
@@ -9,7 +10,7 @@ class LineaInvestigacionResponseConverter extends SgiBaseConverter<ILineaInvesti
     }
     return {
       id: value.id,
-      nombre: value.nombre,
+      nombre: value.nombre ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.nombre) : [],
       activo: value.activo
     };
   }
@@ -19,7 +20,7 @@ class LineaInvestigacionResponseConverter extends SgiBaseConverter<ILineaInvesti
     }
     return {
       id: value.id,
-      nombre: value.nombre,
+      nombre: value.nombre ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.nombre) : [],
       activo: value.activo
     };
   }

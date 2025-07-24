@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { MatSelectChange } from '@angular/material/select';
+import { LanguageService } from '@core/services/language.service';
 import { FieldType } from '@ngx-formly/material/form-field';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -41,6 +42,12 @@ export class SelectObjectTypeComponent extends FieldType implements OnInit {
     },
   };
 
+  constructor(
+    private readonly languageService: LanguageService
+  ) {
+    super();
+  }
+
   get selectedOptionLabel(): Observable<string> {
     const options = this.to.options;
     if (Array.isArray(options)) {
@@ -64,7 +71,9 @@ export class SelectObjectTypeComponent extends FieldType implements OnInit {
     this.to.options = [
       {
         value: this.model[this.to.modelKeyValueProp],
-        label: this.model[this.to.modelKeyValueProp][this.to.modelKeyLabelProp]
+        label: this.to.modelKeyLabelPropI18n
+          ? this.languageService.getFieldValue(this.model[this.to.modelKeyValueProp]?.[this.to.modelKeyLabelPropI18n])
+          : this.model[this.to.modelKeyValueProp]?.[this.to.modelKeyLabelProp] ?? ''
       }
     ];
 

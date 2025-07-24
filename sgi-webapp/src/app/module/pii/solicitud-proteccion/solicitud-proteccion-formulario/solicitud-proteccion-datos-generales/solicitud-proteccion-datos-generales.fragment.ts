@@ -1,5 +1,6 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { TipoPropiedad } from '@core/enums/tipo-propiedad';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IInvencion } from '@core/models/pii/invencion';
 import { IPaisValidado } from '@core/models/pii/pais-validado';
 import { Estado, ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
@@ -14,6 +15,7 @@ import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PaisService } from '@core/services/sgo/pais/pais.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, concat, forkJoin, from, Observable, of, Subscription } from 'rxjs';
@@ -22,7 +24,7 @@ import { catchError, defaultIfEmpty, last, map, mergeMap, switchMap, takeLast, t
 export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISolicitudProteccion> {
 
   private readonly TITULO_MAX_LENGTH = 250;
-  private readonly COMENTARIOS_MAX_LENGTH = 250;
+  private readonly COMENTARIOS_MAX_LENGTH = 2000;
   private readonly NUMERO_REGISTRO_MAX_LENGTH = 24;
   private readonly NUMERO_SOLICITUD_MAX_LENGTH = 24;
   private readonly NUMERO_PUBLICACION_MAX_LENGTH = 24;
@@ -55,7 +57,7 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
     key: number,
     private invencionId: number,
     public tipoPropiedad: TipoPropiedad,
-    private invencionTitulo: string,
+    private invencionTitulo: I18nFieldValue[],
     private solicitudProteccionService: SolicitudProteccionService,
     public readonly: boolean,
     private paisService: PaisService,
@@ -88,7 +90,7 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
 
     const form: FormGroup = new FormGroup({
       titulo: new FormControl(
-        !this.getKey() ? this.defaultTitle : null, [Validators.maxLength(this.TITULO_MAX_LENGTH), Validators.required]
+        !this.getKey() ? this.defaultTitle : [], [I18nValidators.maxLength(this.TITULO_MAX_LENGTH), I18nValidators.required]
       ),
       viaProteccion: new FormControl('', Validators.required),
       pais: new FormControl(null, [Validators.required]),
@@ -100,7 +102,7 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
       numeroConcesion: new FormControl('', [Validators.maxLength(this.NUMERO_CONCESION_MAX_LENGTH)]),
       fechaConcesion: new FormControl(null, []),
       agentePropiedad: new FormControl(null, []),
-      comentarios: new FormControl('', [Validators.maxLength(this.COMENTARIOS_MAX_LENGTH)]),
+      comentarios: new FormControl([], [I18nValidators.maxLength(this.COMENTARIOS_MAX_LENGTH)]),
       numeroRegistro: new FormControl('', [Validators.maxLength(this.NUMERO_REGISTRO_MAX_LENGTH)]),
       fechaCaducidad: new FormControl(null, []),
       tipoCaducidad: new FormControl(null, []),
@@ -260,8 +262,7 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
 
   }
 
-  private get defaultTitle(): string {
-
+  private get defaultTitle(): I18nFieldValue[] {
     return this.solicitudProteccion.titulo || this.invencionTitulo;
   }
 
@@ -317,7 +318,7 @@ export class SolicitudProteccionDatosGeneralesFragment extends FormFragment<ISol
       .subscribe((via: IViaProteccion) => {
         this.enableOrDisablePaisSelector(via, form.controls.pais as FormControl);
         this.isExtensionInternacional$.next(via.extensionInternacional);
-        this.isViaEuropea.next(via.nombre === 'Europea');
+        this.isViaEuropea.next(via.nombre.find(v => v.lang.code == 'es').value === 'Europea');
         if (!this.shouldShowFechaFinPrioridad(via)) {
           form.controls.fechaFinPrioridad.setValidators([]);
           form.controls.fechaFinPrioridad.setValue(null);

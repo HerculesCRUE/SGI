@@ -5,6 +5,7 @@ import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { ComentarioModule } from '../comentario/comentario.module';
 import { DocumentacionMemoriaModule } from '../documentacion-memoria/documentacion-memoria.module';
 import { EvaluacionFormularioModule } from '../evaluacion-formulario/evaluacion-formulario.module';
@@ -34,7 +35,8 @@ import { EvaluacionEvaluadorResolver } from './evaluacion-evaluador.resolver';
     ReactiveFormsModule,
     ComentarioModule,
     DocumentacionMemoriaModule,
-    EtiSharedModule
+    EtiSharedModule,
+    SgpSharedModule
   ],
   providers: [
     EvaluacionEvaluadorResolver,

@@ -5,10 +5,9 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaEntidadFinanciadora } from '@core/models/csp/convocatoria-entidad-financiadora';
-import { IEmpresa } from '@core/models/sgemp/empresa';
 import { EmpresaPublicService } from '@core/services/sgemp/empresa-public.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { forkJoin, of, Subscription } from 'rxjs';
+import { Subscription, forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
 import { ConvocatoriaEntidadesFinanciadorasPublicFragment } from './convocatoria-entidades-financiadoras-public.fragment';
@@ -77,4 +76,6 @@ export class ConvocatoriaEntidadesFinanciadorasPublicComponent extends FragmentC
   get MSG_PARAMS() {
     return MSG_PARAMS;
   }
+
+  protected setupI18N(): void { }
 }

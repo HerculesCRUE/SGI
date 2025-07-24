@@ -8,8 +8,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.nombre' | translate}}</mat-label>
-          <input matInput formControlName="nombre" type="text" id="nombre"
-            placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.nombre' | translate}}">
+          <sgi-select-empresa placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.nombre' | translate}}"
+            formControlName="nombre"></sgi-select-empresa>
         </mat-form-field>
       </div>
     </div>
@@ -37,8 +37,9 @@
           <mat-form-field fxFill>
             <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.fuente-financiacion' | translate}}
             </mat-label>
-            <input matInput formControlName="fuenteFinanciacion" type="text" id="fuenteFinanciacion"
+            <sgi-i18n-input formControlName="fuenteFinanciacion" id="fuenteFinanciacion"
               placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.fuente-financiacion' | translate}}">
+            </sgi-i18n-input>
           </mat-form-field>
         </div>
       </div>
@@ -50,8 +51,9 @@
           [fxFlexOrder]="fxFlexProperties.order">
           <mat-form-field fxFill>
             <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.ambito' | translate}}</mat-label>
-            <input matInput formControlName="ambito" type="text" id="ambito"
+            <sgi-i18n-input formControlName="ambito" id="ambito"
               placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.ambito' | translate}}">
+            </sgi-i18n-input>
           </mat-form-field>
         </div>
       </div>
@@ -64,8 +66,9 @@
           <mat-form-field fxFill>
             <mat-label>{{'csp.solicitud-proyecto-presupuesto.datos-generales.tipo-financiacion' | translate}}
             </mat-label>
-            <input matInput formControlName="tipoFinanciacion" type="text" id="tipoFinanciacion"
+            <sgi-i18n-input formControlName="tipoFinanciacion" id="tipoFinanciacion"
               placeholder="{{'csp.solicitud-proyecto-presupuesto.datos-generales.tipo-financiacion' | translate}}">
+            </sgi-i18n-input>
           </mat-form-field>
         </div>
       </div>

@@ -1,0 +1,68 @@
+[
+  {
+    "key": "ap3_4_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.3 Confined use of genetically modified organisms"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>In this activity, are tasks involving the confined use of genetically modified organisms carried out?</p>"
+      },
+      {
+        "key": "tareasUsoConfinadoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Attach the GMO information sheet from the commercial company."
+      },
+      {
+        "template": "Type of genetically modified organisms used",
+        "hideExpression": "!model.tareasUsoConfinadoRadio || model.tareasUsoConfinadoRadio === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tiposOMG",
+        "hideExpression": "!model.tareasUsoConfinadoRadio || model.tareasUsoConfinadoRadio === 'no'",
+        "templateOptions": {
+          "label": "Options:",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "microOrganismos",
+              "label": "Microorganisms"
+            },
+            {
+              "value": "animales",
+              "label": "Animals"
+            },
+            {
+              "value": "plantas",
+              "label": "Plants"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

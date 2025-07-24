@@ -87,6 +87,7 @@ export class ModeloEjecucionTipoHitoFragment extends Fragment {
           map((updatedTarea) => {
             const index = this.modeloTipoHito$.value.findIndex((currentTarea) => currentTarea === wrappedTarea);
             this.modeloTipoHito$.value[index] = new StatusWrapper<IModeloTipoHito>(updatedTarea);
+            this.modeloTipoHito$.next(this.modeloTipoHito$.value);
           })
         );
       })

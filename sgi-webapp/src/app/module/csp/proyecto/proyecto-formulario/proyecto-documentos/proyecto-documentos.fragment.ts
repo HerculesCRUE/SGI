@@ -1,5 +1,5 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IProyectoDocumento } from '@core/models/csp/proyecto-documento';
 import { ITipoDocumento, ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { IDocumento } from '@core/models/sgdoc/documento';
@@ -15,6 +15,7 @@ import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { ITranslateParams } from '@core/utils/translate-params';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
@@ -23,7 +24,8 @@ const SIN_TIPO_FASE = marker('label.csp.documentos.sin-fase');
 const SIN_TIPO_DOCUMENTO = marker('label.csp.documentos.sin-tipo-documento');
 
 const PERIODO_JUSTIFICACION_PERIODO_TITLE = marker('label.csp.documentos.periodo-justificacion.periodo');
-const PRORROGA_PERIODO_TITLE = marker('label.csp.documentos.prorroga');
+const PRORROGA_TITLE = marker('label.csp.documentos.prorroga');
+const PRORROGA_PERIODO_TITLE = marker('label.csp.documentos.prorroga.periodo');
 const SEGUIMIENTO_PERIODO_TITLE = marker('label.csp.documentos.periodo-seguimiento.periodo');
 
 const PERIODO_JUSTIFICACION_TITLE = marker('label.csp.documentos.periodo-justificacion.socios');
@@ -43,10 +45,10 @@ enum TIPO_DOCUMENTO {
 
 interface IDocumentoData {
   id: number;
-  nombre: string;
+  nombre: I18nFieldValue[];
   tipoFase?: ITipoFase;
   tipoDocumento: ITipoDocumento;
-  comentario?: string;
+  comentario?: I18nFieldValue[];
   documentoRef: string;
   visible?: boolean;
   proyectoId?: number;
@@ -58,7 +60,8 @@ interface IDocumentoData {
 export class NodeDocumento {
   parent: NodeDocumento;
   key: string;
-  title: string;
+  title: string | I18nFieldValue[];
+  params?: ITranslateParams;
   documento?: StatusWrapper<IDocumentoData>;
   fichero?: IDocumento;
   // tslint:disable-next-line: variable-name
@@ -76,10 +79,11 @@ export class NodeDocumento {
   }
 
   constructor(
-    key: string, title: string, level: number,
+    key: string, title: string | I18nFieldValue[], level: number, params?: ITranslateParams,
     documento?: StatusWrapper<IDocumentoData>, readonly?: boolean) {
     this.key = key;
     this.title = title;
+    this.params = params ? params : {} as ITranslateParams;
 
     this._level = level;
     if (((level === 0 || (level === 1 && key.startsWith('4'))) && !title)) {
@@ -160,13 +164,6 @@ export class ProyectoDocumentosFragment extends Fragment {
 
   private nodeLookup = new Map<string, NodeDocumento>();
 
-  msgParamSeguimientoTitle: string;
-  msgParamPeriodoJustificacionTitle: string;
-  msgParamProrrogaPeriodoTitle: string;
-  msgParamProrrogaTitle: string;
-  msgParamConvocatoriaTitle: string;
-  msgParamSolicitudTitle: string;
-
   constructor(
     proyectoId: number,
     private convocatoriaService: ConvocatoriaService,
@@ -187,7 +184,6 @@ export class ProyectoDocumentosFragment extends Fragment {
   }
 
   protected onInitialize(): void {
-    this.setupI18N();
     this.subscriptions.push(
       merge(
         this.loadProyectoDocumentos(),
@@ -225,7 +221,7 @@ export class ProyectoDocumentosFragment extends Fragment {
             this.nodeLookup.set(keyTipoDocumento, tipoDocumentoNode);
             faseNode.addChild(tipoDocumentoNode);
           }
-          const documentoNode = new NodeDocumento(null, documento.nombre, 2, new StatusWrapper<IDocumentoData>(documento), false);
+          const documentoNode = new NodeDocumento(null, documento.nombre, 2, null, new StatusWrapper<IDocumentoData>(documento), false);
           tipoDocumentoNode.addChild(documentoNode);
         });
         return nodes;
@@ -253,7 +249,7 @@ export class ProyectoDocumentosFragment extends Fragment {
             documento.visible = documento.publico;
             let tipoNode = this.nodeLookup.get(keyTipo);
             if (!tipoNode) {
-              tipoNode = new NodeDocumento(keyTipo, this.msgParamConvocatoriaTitle, 0);
+              tipoNode = new NodeDocumento(keyTipo, DOCUMENTO_CONVOCATORIA_TITLE, 0);
               this.nodeLookup.set(keyTipo, tipoNode);
               nodes.push(tipoNode);
             }
@@ -274,7 +270,7 @@ export class ProyectoDocumentosFragment extends Fragment {
               faseNode.addChild(tipoDocumentoNode);
             }
 
-            const documentoNode = new NodeDocumento(null, documento.nombre, 3, new StatusWrapper<IDocumentoData>(documento), false);
+            const documentoNode = new NodeDocumento(null, documento.nombre, 3, null, new StatusWrapper<IDocumentoData>(documento), false);
             documentoNode.readonly = true;
             tipoDocumentoNode.addChild(documentoNode);
           });
@@ -301,7 +297,7 @@ export class ProyectoDocumentosFragment extends Fragment {
           response.forEach((documento) => {
             let tipoNode = this.nodeLookup.get(keyTipo);
             if (!tipoNode) {
-              tipoNode = new NodeDocumento(keyTipo, this.msgParamSolicitudTitle, 0);
+              tipoNode = new NodeDocumento(keyTipo, DOCUMENTO_SOLICITUD_TITLE, 0);
               this.nodeLookup.set(keyTipo, tipoNode);
               nodes.push(tipoNode);
             }
@@ -314,7 +310,7 @@ export class ProyectoDocumentosFragment extends Fragment {
               tipoNode.addChild(tipoDocumentoNode);
             }
 
-            const documentoNode = new NodeDocumento(null, documento.nombre, 2, new StatusWrapper<IDocumentoData>(documento), false);
+            const documentoNode = new NodeDocumento(null, documento.nombre, 2, null, new StatusWrapper<IDocumentoData>(documento), false);
             documentoNode.readonly = true;
             tipoDocumentoNode.addChild(documentoNode);
           });
@@ -344,7 +340,7 @@ export class ProyectoDocumentosFragment extends Fragment {
                   const keyPeriodo = `${keyTipo}-${periodo.id}`;
                   let periodoNode = this.nodeLookup.get(keyPeriodo);
                   if (!periodoNode) {
-                    periodoNode = new NodeDocumento(keyPeriodo, this.msgParamPeriodoJustificacionTitle + ' ' + periodo.numPeriodo, 1);
+                    periodoNode = new NodeDocumento(keyPeriodo, SEGUIMIENTO_PERIODO_TITLE, 1, { numPeriodo: periodo.numPeriodo });
                     this.nodeLookup.set(keyPeriodo, periodoNode);
                     tipoNode.addChild(periodoNode);
                   }
@@ -356,9 +352,8 @@ export class ProyectoDocumentosFragment extends Fragment {
                     this.nodeLookup.set(keyTipoDocumento, tipoDocumentoNode);
                     periodoNode.addChild(tipoDocumentoNode);
                   }
-
                   const documentoNode = new NodeDocumento(
-                    null, documento.nombre, 3, new StatusWrapper<IDocumentoData>(documento as IDocumentoData), true
+                    null, documento.nombre, 3, null, new StatusWrapper<IDocumentoData>(documento), true
                   );
                   tipoDocumentoNode.addChild(documentoNode);
                 });
@@ -414,9 +409,7 @@ export class ProyectoDocumentosFragment extends Fragment {
                           const keyPeriodo = `${keySocio}-${periodo.numPeriodo}`;
                           let periodoNode = this.nodeLookup.get(keyPeriodo);
                           if (!periodoNode) {
-                            periodoNode = new NodeDocumento(
-                              keyPeriodo, this.msgParamPeriodoJustificacionTitle + ' ' + periodo.numPeriodo, 2
-                            );
+                            periodoNode = new NodeDocumento(keyPeriodo, PERIODO_JUSTIFICACION_PERIODO_TITLE, 2, { numPeriodo: periodo.numPeriodo });
                             this.nodeLookup.set(keyPeriodo, periodoNode);
                             socioNode.addChild(periodoNode);
                           }
@@ -428,9 +421,8 @@ export class ProyectoDocumentosFragment extends Fragment {
                             this.nodeLookup.set(keyTipoDocumento, tipoDocumentoNode);
                             periodoNode.addChild(tipoDocumentoNode);
                           }
-
                           const documentoNode = new NodeDocumento(
-                            null, documento.nombre, 4, new StatusWrapper<IDocumentoData>(documento as IDocumentoData), true
+                            null, documento.nombre, 4, null, new StatusWrapper<IDocumentoData>(documento), true
                           );
                           tipoDocumentoNode.addChild(documentoNode);
                         });
@@ -460,7 +452,7 @@ export class ProyectoDocumentosFragment extends Fragment {
                 documentos.items.forEach((documento) => {
                   let tipoNode = this.nodeLookup.get(keyTipo);
                   if (!tipoNode) {
-                    tipoNode = new NodeDocumento(keyTipo, this.msgParamProrrogaTitle, 0);
+                    tipoNode = new NodeDocumento(keyTipo, PRORROGA_TITLE, 0);
                     this.nodeLookup.set(keyTipo, tipoNode);
                     nodes.push(tipoNode);
                   }
@@ -468,7 +460,7 @@ export class ProyectoDocumentosFragment extends Fragment {
                   const keyProrroga = `${keyTipo}-${prorroga.numProrroga}`;
                   let prorrogaNode = this.nodeLookup.get(keyProrroga);
                   if (!prorrogaNode) {
-                    prorrogaNode = new NodeDocumento(keyProrroga, this.msgParamProrrogaPeriodoTitle + ' ' + prorroga.numProrroga, 1);
+                    prorrogaNode = new NodeDocumento(keyProrroga, PRORROGA_PERIODO_TITLE, 1, { numProrroga: prorroga.numProrroga });
                     this.nodeLookup.set(keyProrroga, prorrogaNode);
                     tipoNode.addChild(prorrogaNode);
                   }
@@ -482,7 +474,7 @@ export class ProyectoDocumentosFragment extends Fragment {
                   }
 
                   const documentoNode = new NodeDocumento(
-                    null, documento.nombre, 3, new StatusWrapper<IDocumentoData>(documento as IDocumentoData), true
+                    null, documento.nombre, 3, null, new StatusWrapper<IDocumentoData>(documento as IDocumentoData), true
                   );
                   tipoDocumentoNode.addChild(documentoNode);
                 });
@@ -494,29 +486,6 @@ export class ProyectoDocumentosFragment extends Fragment {
       }),
       takeLast(1)
     );
-  }
-
-  private setupI18N(): void {
-    this.translate.get(
-      PERIODO_JUSTIFICACION_PERIODO_TITLE
-    ).subscribe((value) => this.msgParamPeriodoJustificacionTitle = value);
-    this.translate.get(
-      SEGUIMIENTO_PERIODO_TITLE
-    ).subscribe((value) => this.msgParamSeguimientoTitle = value);
-    this.translate.get(
-      PRORROGA_PERIODO_TITLE,
-      MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamProrrogaPeriodoTitle = value);
-    this.translate.get(
-      PRORROGA_PERIODO_TITLE,
-      MSG_PARAMS.CARDINALIRY.PLURAL
-    ).subscribe((value) => this.msgParamProrrogaTitle = value);
-    this.translate.get(
-      DOCUMENTO_CONVOCATORIA_TITLE
-    ).subscribe((value) => this.msgParamConvocatoriaTitle = value);
-    this.translate.get(
-      DOCUMENTO_SOLICITUD_TITLE
-    ).subscribe((value) => this.msgParamSolicitudTitle = value);
   }
 
   publishNodes(rootNodes?: NodeDocumento[]) {
@@ -541,7 +510,7 @@ export class ProyectoDocumentosFragment extends Fragment {
       nodeFase.addChild(nodeTipoDoc);
       this.nodeLookup.set(keyTipoDocumento, nodeTipoDoc);
     }
-    const nodeDocumento = new NodeDocumento(keyTipoDocumento, node.title, 2, node.documento);
+    const nodeDocumento = new NodeDocumento(keyTipoDocumento, node.title, 2, null, node.documento);
     nodeDocumento.documento.setCreated();
     nodeDocumento.fichero = node.fichero;
     nodeDocumento.documento.value.documentoRef = node.fichero?.documentoRef;
@@ -795,4 +764,5 @@ export class ProyectoDocumentosFragment extends Fragment {
     });
     return true;
   }
+
 }

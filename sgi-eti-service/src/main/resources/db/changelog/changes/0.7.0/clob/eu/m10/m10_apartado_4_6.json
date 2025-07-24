@@ -1,0 +1,75 @@
+[
+  {
+    "key": "ap4_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6 Ikasleak ikerketako subjektu gisa"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Unibertsitateko ikasleek ikerketako subjektu gisa parte hartzen dute?</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Irakaslearen eta ikaslearen arteko harreman berezi dela eta, kontu handia izan behar da borondatezkotasunarekin, pribatutasunarekin, konfidentzialtasunarekin, pizgarriekin eta irakastorduen erabilerarekin.</p>"
+      },
+      {
+        "key": "estudiantesSujetosInvestigacionRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Zehaztu zer ikaslek parte hartzen duten (fakultatea, maila, etab.).",
+        "hideExpression": "!model.estudiantesSujetosInvestigacionRadio || model.estudiantesSujetosInvestigacionRadio === 'no'"
+      },
+      {
+        "key": "especificarEstudiantesSujetosInvestigacion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.estudiantesSujetosInvestigacionRadio || model.estudiantesSujetosInvestigacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Zehaztu",
+          "placeholder": "Zehaztu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "Justifikatu",
+        "hideExpression": "!model.estudiantesSujetosInvestigacionRadio || model.estudiantesSujetosInvestigacionRadio === 'no'"
+      },
+      {
+        "key": "justificarEstudiantesSujetosInvestigacion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.estudiantesSujetosInvestigacionRadio || model.estudiantesSujetosInvestigacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Justifikatu",
+          "placeholder": "Justifikatu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

@@ -1,5 +1,8 @@
 package org.crue.hercules.sgi.rep.dto.csp;
 
+import java.util.List;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.crue.hercules.sgi.rep.dto.BaseRestDto;
 
 import lombok.AllArgsConstructor;
@@ -19,7 +22,7 @@ public class AutorizacionDto extends BaseRestDto {
   private Long id;
 
   /** Observaciones */
-  private String observaciones;
+  private List<I18nFieldValueDto> observaciones;
 
   /** Responsable Ref */
   private String responsableRef;
@@ -28,7 +31,7 @@ public class AutorizacionDto extends BaseRestDto {
   private String solicitanteRef;
 
   /** Titulo Proyecto */
-  private String tituloProyecto;
+  private List<I18nFieldValueDto> tituloProyecto;
 
   /** Entidad Ref */
   private String entidadRef;
@@ -43,7 +46,7 @@ public class AutorizacionDto extends BaseRestDto {
   private String datosEntidad;
 
   /** Datos Convocatoria */
-  private String datosConvocatoria;
+  private List<I18nFieldValueDto> datosConvocatoria;
 
   /** Convocatoria */
   private Long convocatoriaId;

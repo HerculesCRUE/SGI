@@ -4,7 +4,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ActionComponent } from '@core/component/action.component';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
-import { ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
+import { SgeIntegracionesEccMenus, ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -28,6 +28,7 @@ const EJECUCION_ECONOMICA_KEY = marker('csp.ejecucion-economica');
   ]
 })
 export class EjecucionEconomicaEditarComponent extends ActionComponent implements OnInit {
+  SGE_INTEGRACIONES_ECC_MENUS = SgeIntegracionesEccMenus;
 
   EJECUCION_ECONOMICA_ROUTE_NAMES = EJECUCION_ECONOMICA_ROUTE_NAMES;
 
@@ -46,16 +47,16 @@ export class EjecucionEconomicaEditarComponent extends ActionComponent implement
     dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
     this.data = route.snapshot.data[EJECUCION_ECONOMICA_DATA_KEY];
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       EJECUCION_ECONOMICA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -125,8 +126,8 @@ export class EjecucionEconomicaEditarComponent extends ActionComponent implement
     return this.data?.configuracion?.validacionClasificacionGastos === ValidacionClasificacionGastos.VALIDACION;
   }
 
-  get isDetalleOperacionesModificacionesEnabled(): boolean {
-    return this.data?.configuracion?.detalleOperacionesModificacionesEnabled;
+  isOpcionHabilitadaIntegracionesEcc(opcion: SgeIntegracionesEccMenus): boolean {
+    return this.data?.configuracion?.integracionesEccSgeEnabled?.includes(opcion) ?? false;;
   }
 
   private returnUrl() {

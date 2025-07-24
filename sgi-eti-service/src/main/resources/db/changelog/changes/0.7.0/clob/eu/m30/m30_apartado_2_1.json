@@ -1,0 +1,128 @@
+[
+  {
+    "key": "ap2_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "2.1 Agente biologikoekin edo/eta GEOekin zereginak egingo dituzten langileak"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Ondoren, ikerketa taldeko kide guztiak ageri dira. Gehitu atal honetan agente biologikoekin edo/eta GEOekin lotutako lanak egiten proiektuan laguntzen duen beste edozein pertsona.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Atal hau automatikoki betetzen da, <b>Ebaluazio eskaerako</b> <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/tareas' target='_blank'><b>Zereginen esleipena</b></a> atalean sartutako datuetatik abiatuta. Beharrezko aldaketak egiteko, joan menuko puntu horretara.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "type": "table-crud",
+        "key": "equipoInvestigador",
+        "templateOptions": {
+          "entity": "ikertzaile taldea",
+          "gender": "male",
+          "disabled": true
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Ikertzaile taldea"
+          },
+          "fieldGroup": [
+            {
+              "key": "nombre",
+              "type": "input",
+              "templateOptions": {
+                "label": "Izena",
+                "order": 10,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.nombre"
+              }
+            },
+            {
+              "key": "apellidos",
+              "type": "input",
+              "templateOptions": {
+                "label": "Abizenak",
+                "order": 20,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.apellidos"
+              }
+            },
+            {
+              "key": "email",
+              "type": "input",
+              "templateOptions": {
+                "label": "E-maila",
+                "order": 30,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.emails?.find((e)=>e.principal)?.email"
+              }
+            },
+            {
+              "key": "vinculacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Lotura",
+                "order": 40,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.vinculacion?.categoriaProfesional?.nombre"
+              }
+            },
+            {
+              "key": "nivelAcademico",
+              "type": "input",
+              "templateOptions": {
+                "label": "Maila akademikoa",
+                "order": 50,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona.datosAcademicos?.nivelAcademico?.nombre"
+              }
+            },
+            {
+              "key": "tarea",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Zeregina",
+                "order": 60,
+                "expressionModelValue": "formState.tareas[$1].nombre"
+              }
+            },
+            {
+              "key": "experiencia",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Formakuntza arrisku biologikoetan",
+                "order": 70,
+                "expressionModelValue": "formState.tareas[$1].formacion"
+              }
+            },
+            {
+              "key": "organismo",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Erakunde akreditatzailea",
+                "order": 80,
+                "expressionModelValue": "formState.tareas[$1].organismo"
+              }
+            },
+            {
+              "key": "anio",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Urtea",
+                "order": 90,
+                "expressionModelValue": "formState.tareas[$1].anio"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: gogoratu ikertzaile taldearen akreditazio guztien kopiak aurkeztu behar dituzula '5.1 Akreditazioak' atalean, proiektuaren memoriarekin batera artxibatuta gera daitezen.</p>"
+      }
+    ]
+  }
+]

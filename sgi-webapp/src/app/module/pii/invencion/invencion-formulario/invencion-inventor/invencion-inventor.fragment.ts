@@ -167,12 +167,10 @@ export class InvencionInventorFragment extends Fragment {
         }),
         catchError(err => {
           this.logger.error(err);
-          invencionInventor.inventor = {} as IPersona;
           return of(invencionInventor);
         }),
         mergeMap(invencionInventorEntidad => {
           if (!invencionInventorEntidad.inventor?.entidad?.id) {
-            invencionInventorEntidad.inventor.entidad = {} as IEmpresa;
             return of(invencionInventorEntidad);
           }
           return this.empresaService
@@ -190,7 +188,6 @@ export class InvencionInventorFragment extends Fragment {
         }),
         mergeMap(invencionInventorEntidad => {
           if (!invencionInventorEntidad.inventor?.entidadPropia?.id) {
-            invencionInventorEntidad.inventor.entidadPropia = {} as IEmpresa;
             return of(invencionInventorEntidad);
           }
           return this.empresaService

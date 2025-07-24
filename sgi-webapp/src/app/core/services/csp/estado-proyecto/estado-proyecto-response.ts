@@ -1,3 +1,4 @@
+import { I18nFieldValueResponse } from '@core/i18n/i18n-field-response';
 import { Estado } from '../../../models/csp/estado-proyecto';
 
 export interface IEstadoProyectoResponse {
@@ -10,5 +11,5 @@ export interface IEstadoProyectoResponse {
   /** Fecha estado */
   fechaEstado: string;
   /** Comentario */
-  comentario: string;
+  comentario: I18nFieldValueResponse[];
 }

@@ -1,0 +1,12 @@
+[
+  {
+    "key": "ap4_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "4.1 Evaluación del riesgo"
+    },
+    "fieldGroup": []
+  }
+]

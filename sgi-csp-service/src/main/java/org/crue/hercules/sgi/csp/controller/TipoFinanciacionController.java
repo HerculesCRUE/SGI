@@ -97,22 +97,6 @@ public class TipoFinanciacionController {
   }
 
   /**
-   * Devuelve el {@link TipoFinanciacion} con el id indicado.
-   * 
-   * @param id Identificador de {@link TipoFinanciacion}.
-   * @return returnTipoFinanciacion {@link TipoFinanciacion} correspondiente al
-   *         id.
-   */
-  @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  public TipoFinanciacion findById(@PathVariable Long id) {
-    log.debug("findById(Long id) - start");
-    TipoFinanciacion returnTipoFinanciacion = tipoFinanciacionService.findById(id);
-    log.debug("findById(Long id) - end");
-    return returnTipoFinanciacion;
-  }
-
-  /**
    * Actualiza {@link TipoFinanciacion}.
    * 
    * @param updatedTipoFinanciacion {@link TipoFinanciacion} a actualizar.

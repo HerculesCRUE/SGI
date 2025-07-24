@@ -12,6 +12,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { ModeloEjecucionActionService } from '../../modelo-ejecucion.action.service';
 
 import { ModeloEjecucionDatosGeneralesComponent } from './modelo-ejecucion-datos-generales.component';
+import { SharedModule } from '@shared/shared.module';
 
 describe('ModeloEjecucionDatosGeneralesComponent', () => {
   let component: ModeloEjecucionDatosGeneralesComponent;
@@ -32,7 +33,8 @@ describe('ModeloEjecucionDatosGeneralesComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        SgiAuthModule
+        SgiAuthModule,
+        SharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

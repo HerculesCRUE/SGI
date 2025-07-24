@@ -1,14 +1,22 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.dto.ProyectoHitoInput;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoHitoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
 import org.crue.hercules.sgi.csp.model.ProyectoHitoAviso;
+import org.crue.hercules.sgi.csp.model.ProyectoHitoComentario;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.service.ProyectoHitoService;
 import org.crue.hercules.sgi.csp.service.TipoHitoService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -47,8 +55,18 @@ class ProyectoHitoControllerTest extends BaseControllerTest {
 
     BDDMockito.given(service.create(ArgumentMatchers.<ProyectoHitoInput>any()))
         .willAnswer((InvocationOnMock invocation) -> {
+          ProyectoHitoInput input = invocation.getArgument(0);
           ProyectoHito newProyectoHito = new ProyectoHito();
-          BeanUtils.copyProperties(invocation.getArgument(0), newProyectoHito);
+          BeanUtils.copyProperties(input, newProyectoHito);
+          Set<ProyectoHitoComentario> comentarios = input.getComentario().stream()
+              .map(dto -> {
+                ProyectoHitoComentario observacion = new ProyectoHitoComentario();
+                observacion.setValue(dto.getValue());
+                observacion.setLang(Language.ES);
+                return observacion;
+              })
+              .collect(Collectors.toSet());
+          newProyectoHito.setComentario(comentarios);
           newProyectoHito.setId(1L);
           return newProyectoHito;
         });
@@ -64,7 +82,7 @@ class ProyectoHitoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
         .andExpect(MockMvcResultMatchers.jsonPath("proyectoId").value(proyectoHito.getProyectoId()))
         .andExpect(MockMvcResultMatchers.jsonPath("fecha").value("2020-10-19T00:00:00Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario")
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario[0].value")
             .value("comentario-proyecto-hito-" + String.format("%03d", 1L)));
   }
 
@@ -110,7 +128,7 @@ class ProyectoHitoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(proyectoHitoExistente.getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("proyectoId").value(proyectoHitoExistente.getProyectoId()))
         .andExpect(MockMvcResultMatchers.jsonPath("fecha").value("2020-10-19T00:00:00Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario")
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario[0].value")
             .value("comentario-proyecto-hito-" + String.format("%03d", 1L)))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(proyectoHito.getTipoHitoId()));
   }
@@ -191,7 +209,7 @@ class ProyectoHitoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(id))
         .andExpect(MockMvcResultMatchers.jsonPath("proyectoId").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("fecha").value("2020-10-19T00:00:00Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario")
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario[0].value")
             .value("comentario-proyecto-hito-" + String.format("%03d", id)));
 
   }
@@ -224,11 +242,15 @@ class ProyectoHitoControllerTest extends BaseControllerTest {
     tipoHito.setId(id == null ? 1 : id);
     tipoHito.setActivo(true);
 
+    Set<ProyectoHitoComentario> proyectoHitoComentario = new HashSet<>();
+    proyectoHitoComentario
+        .add(new ProyectoHitoComentario(Language.ES, "comentario-proyecto-hito-" + String.format("%03d", id)));
+
     ProyectoHito proyectoHito = new ProyectoHito();
     proyectoHito.setId(id);
     proyectoHito.setProyectoId(id == null ? 1 : id);
     proyectoHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
-    proyectoHito.setComentario("comentario-proyecto-hito-" + String.format("%03d", id));
+    proyectoHito.setComentario(proyectoHitoComentario);
     proyectoHito.setProyectoHitoAviso(ProyectoHitoAviso.builder().build());
     proyectoHito.setTipoHito(tipoHito);
 
@@ -237,10 +259,14 @@ class ProyectoHitoControllerTest extends BaseControllerTest {
 
   private ProyectoHitoInput generarMockProyectoHito() {
 
+    List<I18nFieldValueDto> proyectoHitoComentario = new ArrayList<I18nFieldValueDto>();
+    proyectoHitoComentario
+        .add(new I18nFieldValueDto(Language.ES, "comentario-proyecto-hito-001"));
+
     ProyectoHitoInput proyectoHito = new ProyectoHitoInput();
     proyectoHito.setProyectoId(1L);
     proyectoHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
-    proyectoHito.setComentario("comentario-proyecto-hito-001");
+    proyectoHito.setComentario(proyectoHitoComentario);
     proyectoHito.setAviso(null);
     proyectoHito.setTipoHitoId(1L);
 

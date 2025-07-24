@@ -13,6 +13,7 @@ import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IConvocatoriaReportData, IConvocatoriaReportOptions } from './convocatoria-listado-export.service';
+import { LanguageService } from '@core/services/language.service';
 
 export interface IConvocatoriaAreaTematicaListadoExport {
   padre: IAreaTematica;
@@ -25,12 +26,13 @@ const AREA_TEMATICA_FIELD = 'areaTematica';
 
 @Injectable()
 export class ConvocatoriaAreaTematicaListadoExportService
-  extends AbstractTableExportFillService<IConvocatoriaReportData, IConvocatoriaReportOptions>{
+  extends AbstractTableExportFillService<IConvocatoriaReportData, IConvocatoriaReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    private readonly convocatoriaService: ConvocatoriaService
+    private readonly convocatoriaService: ConvocatoriaService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -147,8 +149,8 @@ export class ConvocatoriaAreaTematicaListadoExportService
       const areaConocimientoElementsRow: any[] = [];
 
       const areaConocimientoContent = data.convocatoriaAreaTematica.areaTematica?.padre ?
-        (data.convocatoriaAreaTematica.areaTematica?.nombre + ' - ' + data.convocatoriaAreaTematica.areaTematica?.padre.nombre) :
-        (data.convocatoriaAreaTematica.areaTematica?.nombre ?? '');
+        (this.languageService.getFieldValue(data.convocatoriaAreaTematica.areaTematica?.nombre) + ' - ' + this.languageService.getFieldValue(data.convocatoriaAreaTematica.areaTematica?.padre.nombre)) :
+        (data.convocatoriaAreaTematica.areaTematica?.nombre ? this.languageService.getFieldValue(data.convocatoriaAreaTematica.areaTematica?.nombre) : '');
       areaConocimientoElementsRow.push(areaConocimientoContent);
 
       const rowReport: ISgiRowReport = {
@@ -165,8 +167,8 @@ export class ConvocatoriaAreaTematicaListadoExportService
   private fillRowsEntidadExcel(elementsRow: any[], data: IConvocatoriaAreaTematicaListadoExport) {
     if (data && data.convocatoriaAreaTematica) {
       const content = data?.convocatoriaAreaTematica && data.convocatoriaAreaTematica.areaTematica?.padre ?
-        (data.convocatoriaAreaTematica.areaTematica?.nombre + ' - ' + data.convocatoriaAreaTematica.areaTematica?.padre.nombre) :
-        (data.convocatoriaAreaTematica?.areaTematica?.nombre ?? '');
+        (this.languageService.getFieldValue(data.convocatoriaAreaTematica.areaTematica?.nombre) + ' - ' + this.languageService.getFieldValue(data.convocatoriaAreaTematica.areaTematica?.padre.nombre)) :
+        (data.convocatoriaAreaTematica.areaTematica?.nombre ? this.languageService.getFieldValue(data.convocatoriaAreaTematica.areaTematica?.nombre) : '');
       elementsRow.push(content);
     } else {
       elementsRow.push('');

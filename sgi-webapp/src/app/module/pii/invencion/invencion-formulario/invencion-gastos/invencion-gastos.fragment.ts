@@ -1,15 +1,17 @@
+import { Language } from '@core/i18n/language';
 import { IInvencion } from '@core/models/pii/invencion';
 import { Estado, IInvencionGasto } from '@core/models/pii/invencion-gasto';
 import { IDatoEconomico } from '@core/models/sgepii/dato-economico';
 import { IDatoEconomicoDetalle } from '@core/models/sgepii/dato-economico-detalle';
 import { Fragment } from '@core/services/action-service';
+import { LanguageService } from '@core/services/language.service';
 import { InvencionGastoService } from '@core/services/pii/invencion/invencion-gasto/invencion-gasto.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { GastosInvencionService, TipoOperacion } from '@core/services/sgepii/gastos-invencion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, forkJoin, from, merge, Observable, of } from 'rxjs';
-import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
+import { catchError, map, mergeMap, skip, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { IColumnDefinition } from 'src/app/module/csp/ejecucion-economica/ejecucion-economica-formulario/desglose-economico.fragment';
 
 export class InvencionGastosFragment extends Fragment {
@@ -19,6 +21,10 @@ export class InvencionGastosFragment extends Fragment {
   invencionId: number;
   displayColumns: string[] = [];
   columns: IColumnDefinition[] = [];
+  columns$ = new BehaviorSubject<IColumnDefinition[]>([]);
+
+  private columnsLanguage: Map<Language, IColumnDefinition[]> = new Map();
+  private datosEconomicosLanguage: Map<Language, IDatoEconomico[]> = new Map();
 
   constructor(
     key: number,
@@ -26,45 +32,78 @@ export class InvencionGastosFragment extends Fragment {
     private readonly invencionGastosService: InvencionGastoService,
     private readonly invencionService: InvencionService,
     private readonly solicitudProteccionService: SolicitudProteccionService,
+    private readonly languageService: LanguageService
   ) {
     super(key);
     this.setComplete(true);
     this.invencionId = key;
   }
 
+  private getDisplayColumns(columns: IColumnDefinition[]): string[] {
+    return [
+      ...columns.map(column => column.id),
+      'estado',
+      'solicitudProteccion',
+      'acciones'
+    ];
+  }
+
   protected onInitialize(): void | Observable<any> {
     if (this.invencionId) {
       const invencionIdQueryParam = this.invencionId.toString();
-      this.subscriptions.push(this.getColumns(invencionIdQueryParam).pipe(
-        tap((columns) => {
+
+      this.subscriptions.push(
+        this.languageService.languageChange$.pipe(
+          skip(1), // El primer valor se descarta para que se ejecute solo cuando se cambia el idioma
+          switchMap(language => forkJoin({
+            columns: this.columnsLanguage.has(language) ? of(this.columnsLanguage.get(language)) : this.gastosInvencionService.getColumnas(invencionIdQueryParam),
+            language: of(language),
+            datosEconomicos: this.getGastosInvencion$(invencionIdQueryParam, language)
+          }))
+        ).subscribe(({ columns, language, datosEconomicos }) => {
           this.columns = columns;
-          this.displayColumns = [
-            ...columns.map(column => column.id),
-            'estado',
-            'solicitudProteccion',
-            'acciones'
-          ];
-        }),
-        switchMap(() =>
-          forkJoin(
-            {
-              gastosInvencion: this.getGastosInvencion$(invencionIdQueryParam),
-              invencionGastos: this.getInvencionGasto$(this.invencionId)
-            })
+          this.columnsLanguage.set(language, this.columns);
+          this.columns$.next(this.columns);
+          this.displayColumns = this.getDisplayColumns(this.columns);
+
+          // Actualiza en la tabla los valores de las columnas variables correspondientes al idioma actual 
+          this.invencionGastos$.next(this.invencionGastos$.value.map(invencionGasto => {
+            invencionGasto.value.gasto.columnas = datosEconomicos
+              .find(datoEconomico => datoEconomico.id === invencionGasto.value.gasto.id)?.columnas
+            return invencionGasto;
+          }))
+        })
+      );
+
+      this.subscriptions.push(
+        this.gastosInvencionService.getColumnas(invencionIdQueryParam).pipe(
+          tap((columns) => {
+            this.columns = columns;
+            this.columnsLanguage.set(this.languageService.getLanguage(), this.columns);
+            this.columns$.next(this.columns);
+            this.displayColumns = this.getDisplayColumns(this.columns);
+          }),
+          switchMap(() =>
+            forkJoin(
+              {
+                datosEconomicos: this.getGastosInvencion$(invencionIdQueryParam, this.languageService.getLanguage()),
+                invencionGastos: this.getInvencionGasto$(this.invencionId)
+              })
+          )
+        ).subscribe(
+          ({ datosEconomicos, invencionGastos }) => {
+            const gastosInvencionProcessed = datosEconomicos.map(datoEconomico => ({
+              ...datoEconomico,
+              columnas: this.processColumnsValues(datoEconomico.columnas, this.columns)
+            }));
+            const invencionGastoTableData = gastosInvencionProcessed.map(gastoInvencion => {
+              const relatedInvencionGasto = invencionGastos.find(invencionGasto => invencionGasto.gasto.id === gastoInvencion.id);
+              return new StatusWrapper(this.createInvencionGastoTableData(gastoInvencion, relatedInvencionGasto));
+            });
+            this.invencionGastos$.next(invencionGastoTableData);
+          }
         )
-      ).subscribe(
-        ({ gastosInvencion, invencionGastos }) => {
-          const gastosInvencionProcessed = gastosInvencion.map(gastoInvencion => ({
-            ...gastoInvencion,
-            columnas: this.processColumnsValues(gastoInvencion.columnas, this.columns)
-          }));
-          const invencionGastoTableData = gastosInvencionProcessed.map(gastoInvencion => {
-            const relatedInvencionGasto = invencionGastos.find(invencionGasto => invencionGasto.gasto.id === gastoInvencion.id);
-            return new StatusWrapper(this.createInvencionGastoTableData(gastoInvencion, relatedInvencionGasto));
-          });
-          this.invencionGastos$.next(invencionGastoTableData);
-        }
-      ));
+      );
     }
   }
 
@@ -78,6 +117,10 @@ export class InvencionGastosFragment extends Fragment {
         this.setChanges(this.hasFragmentChangesPending());
       })
     );
+  }
+
+  public trackByColumnId(index, column: IColumnDefinition): string {
+    return column.id;
   }
 
   private updateInvencionesGasto(): Observable<void> {
@@ -146,23 +189,14 @@ export class InvencionGastosFragment extends Fragment {
     return this.gastosInvencionService.getGastoDetalle(gasto.id);
   }
 
-  private getColumns(invencionId: string): Observable<IColumnDefinition[]> {
-    return this.gastosInvencionService.getColumnas(invencionId)
-      .pipe(
-        map(columnas => columnas.map(columna => {
-          return {
-            id: columna.id,
-            name: columna.nombre,
-            compute: columna.acumulable,
-            importeReparto: columna.importeReparto
-          };
-        })
-        )
-      );
-  }
+  private getGastosInvencion$(invencionId: string, lang: Language): Observable<IDatoEconomico[]> {
+    if (this.datosEconomicosLanguage.has(lang)) {
+      return of(this.datosEconomicosLanguage.get(lang));
+    }
 
-  private getGastosInvencion$(invencionId: string): Observable<IDatoEconomico[]> {
-    return this.gastosInvencionService.getGastos(invencionId, TipoOperacion.GASTO);
+    return this.gastosInvencionService.getGastos(invencionId, TipoOperacion.GASTO).pipe(
+      tap(gastos => this.datosEconomicosLanguage.set(lang, gastos))
+    );
   }
 
   private getInvencionGasto$(invencionId: number): Observable<IInvencionGasto[]> {

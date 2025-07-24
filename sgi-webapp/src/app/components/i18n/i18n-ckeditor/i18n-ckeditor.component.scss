@@ -1,0 +1,13 @@
+:host {
+  .ckeditor-i18n {
+    .mat-select {
+      max-width: 140px;
+    }
+
+    mat-select-trigger {
+      display: flex;
+      gap: 5px;
+    }
+  }
+
+}

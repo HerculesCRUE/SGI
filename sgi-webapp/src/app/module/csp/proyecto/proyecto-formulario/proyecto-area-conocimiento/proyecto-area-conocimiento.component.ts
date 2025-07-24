@@ -48,13 +48,13 @@ export class ProyectoAreaConocimientoComponent extends FragmentComponent impleme
     private matDialog: MatDialog,
     private dialogService: DialogService,
   ) {
-    super(actionService.FRAGMENT.AREA_CONOCIMIENTO, actionService);
+    super(actionService.FRAGMENT.AREA_CONOCIMIENTO, actionService, translate);
     this.formPart = this.fragment as ProyectoAreaConocimientoFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -74,7 +74,7 @@ export class ProyectoAreaConocimientoComponent extends FragmentComponent impleme
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_AREA_CONOCIMIENTO_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL

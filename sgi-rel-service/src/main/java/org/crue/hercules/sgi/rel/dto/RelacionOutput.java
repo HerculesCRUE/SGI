@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.rel.dto;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 import org.crue.hercules.sgi.rel.model.Relacion.TipoEntidad;
+import org.crue.hercules.sgi.rel.model.RelacionObservaciones;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,5 +23,5 @@ public class RelacionOutput implements Serializable {
   private TipoEntidad tipoEntidadDestino;
   private String entidadOrigenRef;
   private String entidadDestinoRef;
-  private String observaciones;
+  private Collection<RelacionObservaciones> observaciones;
 }

@@ -8,6 +8,7 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadGestoraRepository
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaEntidadGestoraSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadGestoraService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ConvocatoriaEntidadGestoraServiceImpl implements ConvocatoriaEntidadGestoraService {
+  private static final String MSG_KEY_ENTIDAD_REF = "entidadRef";
 
   private final ConvocatoriaEntidadGestoraRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
@@ -53,22 +54,19 @@ public class ConvocatoriaEntidadGestoraServiceImpl implements ConvocatoriaEntida
   public ConvocatoriaEntidadGestora create(ConvocatoriaEntidadGestora convocatoriaEntidadGestora) {
     log.debug("create(ConvocatoriaEntidadGestora convocatoriaEntidadGestora) - start");
 
-    Assert.isNull(convocatoriaEntidadGestora.getId(), "Id tiene que ser null para crear ConvocatoriaEntidadGestora");
-
-    Assert.notNull(convocatoriaEntidadGestora.getConvocatoriaId(),
-        "Id Convocatoria no puede ser null para crear ConvocatoriaEntidadGestora");
-
-    Assert.notNull(convocatoriaEntidadGestora.getEntidadRef(),
-        "Entidad no puede ser null para crear ConvocatoriaEntidadGestora");
+    AssertHelper.idIsNull(convocatoriaEntidadGestora.getId(), ConvocatoriaEntidadGestora.class);
+    AssertHelper.idNotNull(convocatoriaEntidadGestora.getConvocatoriaId(), Convocatoria.class);
+    AssertHelper.fieldNotNull(convocatoriaEntidadGestora.getEntidadRef(), ConvocatoriaEntidadGestora.class,
+        MSG_KEY_ENTIDAD_REF);
 
     if (!convocatoriaRepository.existsById(convocatoriaEntidadGestora.getConvocatoriaId())) {
       throw new ConvocatoriaNotFoundException(convocatoriaEntidadGestora.getConvocatoriaId());
     }
 
-    Assert.isTrue(
+    AssertHelper.fieldExists(
         !repository.findByConvocatoriaIdAndEntidadRef(convocatoriaEntidadGestora.getConvocatoriaId(),
             convocatoriaEntidadGestora.getEntidadRef()).isPresent(),
-        "Ya existe una asociación activa para esa Convocatoria y Entidad");
+        Convocatoria.class, MSG_KEY_ENTIDAD_REF);
 
     ConvocatoriaEntidadGestora returnValue = repository.save(convocatoriaEntidadGestora);
 
@@ -89,11 +87,10 @@ public class ConvocatoriaEntidadGestoraServiceImpl implements ConvocatoriaEntida
   public ConvocatoriaEntidadGestora update(ConvocatoriaEntidadGestora convocatoriaEntidadGestora) {
     log.debug("update(ConvocatoriaEntidadGestora convocatoriaEntidadGestora) - start");
     Long id = convocatoriaEntidadGestora.getId();
-    Assert.notNull(id, "Id no puede ser null");
-    Assert.notNull(convocatoriaEntidadGestora.getConvocatoriaId(),
-        "Convocatoria no puede ser null para crear ConvocatoriaEntidadGestora");
-    Assert.notNull(convocatoriaEntidadGestora.getEntidadRef(),
-        "Entidad no puede ser null para crear ConvocatoriaEntidadGestora");
+    AssertHelper.idNotNull(id, ConvocatoriaEntidadGestora.class);
+    AssertHelper.idNotNull(convocatoriaEntidadGestora.getConvocatoriaId(), Convocatoria.class);
+    AssertHelper.fieldNotNull(convocatoriaEntidadGestora.getEntidadRef(), convocatoriaEntidadGestora.getClass(),
+        MSG_KEY_ENTIDAD_REF);
     return repository.findById(id).map(entidadGestora -> {
       entidadGestora.setConvocatoriaId(convocatoriaEntidadGestora.getConvocatoriaId());
       entidadGestora.setEntidadRef(convocatoriaEntidadGestora.getEntidadRef());
@@ -113,7 +110,7 @@ public class ConvocatoriaEntidadGestoraServiceImpl implements ConvocatoriaEntida
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ConvocatoriaEntidadGestora id no puede ser null para eliminar un ConvocatoriaEntidadGestora");
+    AssertHelper.idNotNull(id, ConvocatoriaEntidadGestora.class);
     if (!repository.existsById(id)) {
       throw new ConvocatoriaEntidadGestoraNotFoundException(id);
     }

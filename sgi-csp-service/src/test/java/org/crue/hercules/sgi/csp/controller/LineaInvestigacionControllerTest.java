@@ -2,14 +2,17 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.LineaInvestigacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.LineaInvestigacion;
+import org.crue.hercules.sgi.csp.model.LineaInvestigacionNombre;
 import org.crue.hercules.sgi.csp.service.LineaInvestigacionService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -29,6 +32,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * LineaInvestigacionControllerTest
@@ -72,7 +77,8 @@ class LineaInvestigacionControllerTest extends BaseControllerTest {
         // then: new LineaInvestigacion is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(data.getNombre()));
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(data.getNombre(), Language.ES)));
   }
 
   @Test
@@ -125,7 +131,8 @@ class LineaInvestigacionControllerTest extends BaseControllerTest {
         // then: LineaInvestigacion is updated
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(data.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(data.getNombre()));
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(data.getNombre(), Language.ES)));
   }
 
   @Test
@@ -179,25 +186,26 @@ class LineaInvestigacionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-LIN-R" })
   void reactivar_WithExistingId_ReturnLineaInvestigacion() throws Exception {
     // given: existing id
-    LineaInvestigacion tipoEnlace = generarMockLineaInvestigacion(1L, Boolean.FALSE);
+    LineaInvestigacion lineaInvestigacion = generarMockLineaInvestigacion(1L, Boolean.FALSE);
 
     BDDMockito.given(service.enable(ArgumentMatchers.<Long>any())).willAnswer((InvocationOnMock invocation) -> {
-      LineaInvestigacion tipoEnlaceEnabled = new LineaInvestigacion();
-      BeanUtils.copyProperties(tipoEnlace, tipoEnlaceEnabled);
-      tipoEnlaceEnabled.setActivo(Boolean.TRUE);
-      return tipoEnlaceEnabled;
+      LineaInvestigacion lineaInvestigacionEnabled = new LineaInvestigacion();
+      BeanUtils.copyProperties(lineaInvestigacion, lineaInvestigacionEnabled);
+      lineaInvestigacionEnabled.setActivo(Boolean.TRUE);
+      return lineaInvestigacionEnabled;
     });
 
     // when: enable by id
     mockMvc
         .perform(MockMvcRequestBuilders
-            .patch(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PARAMETER_REACTIVAR, tipoEnlace.getId())
+            .patch(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_PARAMETER_REACTIVAR, lineaInvestigacion.getId())
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: return enabled LineaInvestigacion
         .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("id").value(tipoEnlace.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoEnlace.getNombre()));
+        .andExpect(MockMvcResultMatchers.jsonPath("id").value(lineaInvestigacion.getId()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(lineaInvestigacion.getNombre(), Language.ES)));
   }
 
   @Test
@@ -224,13 +232,13 @@ class LineaInvestigacionControllerTest extends BaseControllerTest {
   void desactivar_WithExistingId_ReturnLineaInvestigacion() throws Exception {
     // given: existing id
     Long idBuscado = 1L;
-    LineaInvestigacion tipoEnlace = generarMockLineaInvestigacion(idBuscado, Boolean.TRUE);
+    LineaInvestigacion lineaInvestigacion = generarMockLineaInvestigacion(idBuscado, Boolean.TRUE);
 
     BDDMockito.given(service.disable(ArgumentMatchers.<Long>any())).willAnswer((InvocationOnMock invocation) -> {
-      LineaInvestigacion tipoEnlaceDisabled = new LineaInvestigacion();
-      BeanUtils.copyProperties(tipoEnlace, tipoEnlaceDisabled);
-      tipoEnlaceDisabled.setActivo(false);
-      return tipoEnlaceDisabled;
+      LineaInvestigacion lineaInvestigacionDisabled = new LineaInvestigacion();
+      BeanUtils.copyProperties(lineaInvestigacion, lineaInvestigacionDisabled);
+      lineaInvestigacionDisabled.setActivo(false);
+      return lineaInvestigacionDisabled;
     });
 
     // when: disable by id
@@ -242,7 +250,8 @@ class LineaInvestigacionControllerTest extends BaseControllerTest {
         // then: return disabled LineaInvestigacion
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(idBuscado))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoEnlace.getNombre()));
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(lineaInvestigacion.getNombre(), Language.ES)));
   }
 
   @Test
@@ -350,7 +359,7 @@ class LineaInvestigacionControllerTest extends BaseControllerTest {
     // containing Nombre='Nombre-31' to 'Nombre-40'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       LineaInvestigacion item = actual.get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + j);
     }
   }
 
@@ -425,7 +434,7 @@ class LineaInvestigacionControllerTest extends BaseControllerTest {
     // containing Nombre='Nombre-31' to 'Nombre-40'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       LineaInvestigacion item = actual.get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + j);
     }
   }
 
@@ -461,7 +470,9 @@ class LineaInvestigacionControllerTest extends BaseControllerTest {
    * @return LineaInvestigacion
    */
   private LineaInvestigacion generarMockLineaInvestigacion(Long id, Boolean activo) {
-    return LineaInvestigacion.builder().id(id).nombre("nombre-" + id).activo(activo).build();
+    Set<LineaInvestigacionNombre> nombreLineaInvestigacion = new HashSet<>();
+    nombreLineaInvestigacion.add(new LineaInvestigacionNombre(Language.ES, "nombre-" + id));
+    return LineaInvestigacion.builder().id(id).nombre(nombreLineaInvestigacion).activo(activo).build();
   }
 
 }

@@ -1,9 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -15,9 +19,11 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -67,10 +73,12 @@ public class NotificacionProyectoExternoCVN extends BaseEntity {
   private Long id;
 
   /** Titulo */
-  @Column(name = "titulo", length = NotificacionProyectoExternoCVN.MAX_LENGTH, nullable = false)
-  @Size(max = NotificacionProyectoExternoCVN.MAX_LENGTH)
-  @NotBlank
-  private String titulo;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "notificacion_proyecto_externo_cvn_titulo", joinColumns = @JoinColumn(name = "notificacion_proyecto_externo_cvn_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<NotificacionProyectoExternoCVNTitulo> titulo = new HashSet<>();
 
   /** Autorizacion */
   @Column(name = "autorizacion_id", nullable = true)

@@ -2,11 +2,16 @@ package org.crue.hercules.sgi.eti.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import lombok.AccessLevel;
@@ -93,8 +99,10 @@ public class PeticionEvaluacion extends BaseEntity {
   private String codigo;
 
   /** Título */
-  @Column(name = "titulo", length = 1000)
-  private String titulo;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "peticion_evaluacion_titulo", joinColumns = @JoinColumn(name = "peticion_evaluacion_id"))
+  @Valid
+  private Set<PeticionEvaluacionTitulo> titulo = new HashSet<>();
 
   /** Tipo Actividad */
   @ManyToOne
@@ -110,9 +118,11 @@ public class PeticionEvaluacion extends BaseEntity {
   @Column(name = "existe_financiacion", nullable = false)
   private Boolean existeFinanciacion;
 
-  /** Fuente financiacion */
-  @Column(name = "fuente_financiacion", length = 250)
-  private String fuenteFinanciacion;
+   /** Fuente financiacion */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "peticion_evaluacion_fuente_financiacion", joinColumns = @JoinColumn(name = "peticion_evaluacion_id"))
+  @Valid
+  private Set<PeticionEvaluacionFuenteFinanciacion> fuenteFinanciacion = new HashSet<>();
 
   /** Estado Financiación */
   @Column(name = "estado_financiacion", length = 50)
@@ -133,8 +143,10 @@ public class PeticionEvaluacion extends BaseEntity {
   private Instant fechaFin;
 
   /** Resumen */
-  @Column(name = "resumen", length = 4000)
-  private String resumen;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "peticion_evaluacion_resumen", joinColumns = @JoinColumn(name = "peticion_evaluacion_id"))
+  @Valid
+  private Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
 
   /** Valor social */
   @Column(name = "valor_social", length = 2000)
@@ -142,16 +154,22 @@ public class PeticionEvaluacion extends BaseEntity {
   private TipoValorSocial valorSocial;
 
   /** Otro valor social */
-  @Column(name = "otro_valor_social", length = 2000)
-  private String otroValorSocial;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "peticion_evaluacion_otrovalorsocial", joinColumns = @JoinColumn(name = "peticion_evaluacion_id"))
+  @Valid
+  private Set<PeticionEvaluacionOtroValorSocial> otroValorSocial = new HashSet<>();
 
   /** Objetivos */
-  @Column(name = "objetivos", length = 4000, columnDefinition = "clob")
-  private String objetivos;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "peticion_evaluacion_objetivos", joinColumns = @JoinColumn(name = "peticion_evaluacion_id"))
+  @Valid
+  private Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
 
   /** Diseño metodológico */
-  @Column(name = "dis_metodologico", length = 4000, columnDefinition = "clob")
-  private String disMetodologico;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "peticion_evaluacion_dismetodologico", joinColumns = @JoinColumn(name = "peticion_evaluacion_id"))
+  @Valid
+  private Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
 
   /** Tiene fondos propios */
   @Column(name = "tiene_fondos_propios", columnDefinition = "boolean default false")
@@ -174,9 +192,10 @@ public class PeticionEvaluacion extends BaseEntity {
   private Boolean activo;
 
   // Relations mapping, only for JPA metamodel generation
-  @OneToOne
+  @OneToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = "checklistId", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_PETICIONEVALUACION_CHECKLIST"))
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
+  @EqualsAndHashCode.Exclude
   private final Checklist checklist = null;
 }

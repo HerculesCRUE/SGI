@@ -68,7 +68,7 @@
       <ng-container matColumnDef="comite">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.eti.comite' | translate}}
         </th>
-        <td mat-cell *matCellDef="let convocatoriaReunion"> {{convocatoriaReunion.comite.comite}} </td>
+        <td mat-cell *matCellDef="let convocatoriaReunion"> {{convocatoriaReunion.comite.codigo}} </td>
       </ng-container>
 
       <!-- Fecha evaluacion Column -->
@@ -109,7 +109,9 @@
       <ng-container matColumnDef="lugar">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.convocatoria-reunion.lugar' | translate}}
         </th>
-        <td mat-cell *matCellDef="let convocatoriaReunion"> {{convocatoriaReunion.lugar}} </td>
+        <td mat-cell *matCellDef="let convocatoriaReunion">
+          <sgi-i18n-table-field [field]="convocatoriaReunion.lugar"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Convocatoria Column -->
@@ -117,7 +119,9 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'eti.convocatoria-reunion.tipo' | translate}}
         </th>
-        <td mat-cell *matCellDef="let convocatoriaReunion"> {{convocatoriaReunion.tipoConvocatoriaReunion.nombre}} </td>
+        <td mat-cell *matCellDef="let convocatoriaReunion">
+          {{TIPO_CONVOCATORIA_REUNION_MAP.get(convocatoriaReunion.tipoConvocatoriaReunion?.id) | translate}}
+        </td>
       </ng-container>
 
       <!-- Fecha envio Column -->

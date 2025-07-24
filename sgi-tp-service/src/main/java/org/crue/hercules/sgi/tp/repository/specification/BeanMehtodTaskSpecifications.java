@@ -71,7 +71,7 @@ public class BeanMehtodTaskSpecifications {
   public static Specification<BeanMethodTask> pastInstantTasks() {
     return (Root<BeanMethodTask> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
       Root<BeanMethodInstantTask> beanMethodInstantTaskRoot = cb.treat(root, BeanMethodInstantTask.class);
-      return cb.greaterThan(beanMethodInstantTaskRoot.get(BeanMethodInstantTask_.instant), Instant.now());
+      return cb.lessThan(beanMethodInstantTaskRoot.get(BeanMethodInstantTask_.instant), Instant.now());
     };
   }
 }

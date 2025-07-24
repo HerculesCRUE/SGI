@@ -8,6 +8,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IInformePatentabilidad } from '@core/models/pii/informe-patentabilidad';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
@@ -55,14 +56,15 @@ export class InvencionInformesPatentabilidadComponent extends FragmentComponent 
     private readonly matDialog: MatDialog,
     private readonly documentoService: DocumentoService,
     private readonly logger: NGXLogger,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.INFORME_PATENTABILIDAD, actionService);
+    super(actionService.FRAGMENT.INFORME_PATENTABILIDAD, actionService, translate);
     this.formPart = this.fragment as InvencionInformesPatentabilidadFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.initInformesPatentabilidadTable();
   }
 
@@ -137,13 +139,13 @@ export class InvencionInformesPatentabilidadComponent extends FragmentComponent 
           case 'fecha':
             return wrapper.value.fecha;
           case 'nombre':
-            return wrapper.value.nombre;
+            return this.languageService.getFieldValue(wrapper.value.nombre);
           case 'fichero':
             return wrapper.value.documento.nombre;
           case 'entidadCreadora':
             return wrapper.value.entidadCreadora.nombre;
           case 'resultado':
-            return wrapper.value.resultadoInformePatentabilidad.nombre;
+            return this.languageService.getFieldValue(wrapper.value.resultadoInformePatentabilidad.nombre);
           default:
             return wrapper[property];
         }
@@ -157,7 +159,7 @@ export class InvencionInformesPatentabilidadComponent extends FragmentComponent 
       .subscribe(elements => this.dataSource.data = elements));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       INVENCION_INFORME_PATENTABILIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

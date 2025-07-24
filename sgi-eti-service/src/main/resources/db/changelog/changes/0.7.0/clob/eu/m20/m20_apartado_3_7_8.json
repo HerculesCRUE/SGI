@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap3_7_8",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.8 Isotopo erradioaktiboak ematea"
+    },
+    "fieldGroup": [
+      {
+        "template": "Esperimentazio prozesuan isotopo erradioaktiboak emango zaizkio animaliari?"
+      },
+      {
+        "key": "administracionIsotoposRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "key": "tipoIsotopo",
+        "type": "i18n-input",
+        "hideExpression": "!model.administracionIsotoposRadio || model.administracionIsotoposRadio === 'no'",
+        "templateOptions": {
+          "label": "Isotopo mota",
+          "required": true,
+          "placeholder": "Mota"
+        }
+      },
+      {
+        "key": "administracionIsotopo",
+        "type": "i18n-input",
+        "hideExpression": "!model.administracionIsotoposRadio || model.administracionIsotoposRadio === 'no'",
+        "templateOptions": {
+          "label": "Dosia eta emateko modua",
+          "required": true,
+          "placeholder": "Dosia"
+        }
+      }
+    ]
+  }
+]

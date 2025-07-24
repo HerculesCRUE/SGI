@@ -8,6 +8,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPeriodoSeguimientoCientifico } from '@core/models/csp/convocatoria-periodo-seguimiento-cientifico';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NumberValidator } from '@core/validators/number-validator';
 import { RangeValidator } from '@core/validators/range-validator';
 import { StringValidator } from '@core/validators/string-validator';
@@ -136,7 +137,7 @@ export class ConvocatoriaSeguimientoCientificoModalComponent extends DialogFormC
       fechaInicio: new FormControl(this.data.convocatoriaSeguimientoCientifico?.fechaInicioPresentacion, []),
       fechaFin: new FormControl(this.data.convocatoriaSeguimientoCientifico?.fechaFinPresentacion, []),
       tipoSeguimiento: new FormControl(this.data.convocatoriaSeguimientoCientifico?.tipoSeguimiento, [Validators.required]),
-      observaciones: new FormControl(this.data.convocatoriaSeguimientoCientifico?.observaciones, [Validators.maxLength(2000)])
+      observaciones: new FormControl(this.data.convocatoriaSeguimientoCientifico?.observaciones, [I18nValidators.maxLength(2000)])
     }, {
       validators: [
         this.isFinalUltimoPeriodo(ultimoseguimientoCientificoNoFinal?.value.mesFinal),

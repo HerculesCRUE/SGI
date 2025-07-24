@@ -6,6 +6,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
 import { Subscription } from 'rxjs';
@@ -36,7 +37,8 @@ export class ConvocatoriaConceptoGastoCodigoEcPublicComponent extends FragmentCo
 
   constructor(
     protected readonly logger: NGXLogger,
-    public readonly actionService: ConvocatoriaConceptoGastoPublicActionService
+    public readonly actionService: ConvocatoriaConceptoGastoPublicActionService,
+    private readonly languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.CODIGOS_ECONOMICOS, actionService);
     this.formPart = this.fragment as ConvocatoriaConceptoGastoCodigoEcPublicFragment;
@@ -66,6 +68,10 @@ export class ConvocatoriaConceptoGastoCodigoEcPublicComponent extends FragmentCo
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<ConvocatoriaConceptoGastoCodigoEc>, property: string) => {
         switch (property) {
+          case 'conceptoGasto.nombre':
+            return this.languageService.getFieldValue(wrapper.value.convocatoriaConceptoGasto.conceptoGasto?.nombre);
+          case 'observaciones':
+            return this.languageService.getFieldValue(wrapper.value.observaciones);
           default:
             return wrapper.value[property];
         }
@@ -76,4 +82,5 @@ export class ConvocatoriaConceptoGastoCodigoEcPublicComponent extends FragmentCo
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  protected setupI18N(): void { }
 }

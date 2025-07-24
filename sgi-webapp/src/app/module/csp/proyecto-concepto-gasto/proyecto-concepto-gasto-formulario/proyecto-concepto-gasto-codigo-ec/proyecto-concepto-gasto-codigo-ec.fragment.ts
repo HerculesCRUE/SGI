@@ -1,5 +1,6 @@
 
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoConceptoGastoCodigoEc } from '@core/models/csp/proyecto-concepto-gasto-codigo-ec';
@@ -36,7 +37,7 @@ export interface CodigoEconomicoListado {
   codigoEconomico: ICodigoEconomicoGasto;
   fechaInicio: DateTime;
   fechaFin: DateTime;
-  observaciones: string;
+  observaciones: I18nFieldValue[];
 }
 
 export class ProyectoConceptoGastoCodigoEcFragment extends Fragment {
@@ -291,7 +292,7 @@ export class ProyectoConceptoGastoCodigoEcFragment extends Fragment {
       codigoEconomico.codigoEconomico = codigoEconomico.codigoEconomico ?? codigoEconomico.convocatoriaCodigoEconomico.codigoEconomico;
       codigoEconomico.fechaInicio = codigoEconomico.convocatoriaCodigoEconomico.fechaInicio;
       codigoEconomico.fechaFin = codigoEconomico.convocatoriaCodigoEconomico.fechaFin;
-      codigoEconomico.observaciones = codigoEconomico.convocatoriaCodigoEconomico.observaciones;
+      codigoEconomico.observaciones = codigoEconomico.convocatoriaCodigoEconomico?.observaciones;
       codigoEconomico.help = {
         class: HelpIconClass.DANGER,
         tooltip: PROYECTO_CONCEPTO_GASTO_CODIGO_EC_NO_PROYECTO_KEY

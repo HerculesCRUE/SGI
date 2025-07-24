@@ -1,0 +1,1332 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <property name="defaultLang" value="es" />
+  <property name="blob_type" value="BYTEA" dbms="postgresql,h2" />
+  <property name="blob_type" value="BLOB" dbms="!postgresql,!h2" />
+
+  <changeSet author="user (generated)" id="00.07.00-1">
+
+    <createTable tableName="informe_documento">
+      <column name="informe_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="documento_ref" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="informe_documento" columnNames="informe_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="informe_id" baseTableName="informe_documento"
+      constraintName="FK_INFORMEDOCUMENTO_INFORME" deferrable="false" initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="informe" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}informe_documento(informe_id, documento_ref, lang) SELECT id,
+      documento_ref, '${defaultLang}' FROM ${schemaPrefix}informe</sql>
+
+    <dropColumn columnName="documento_ref" tableName="informe" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.07.00-2">
+
+    <createTable tableName="acta_documento">
+      <column name="acta_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="documento_ref" type="VARCHAR(250)">
+        <constraints nullable="true" />
+      </column>
+      <column name="transaccion_ref" type="VARCHAR(250)">
+        <constraints nullable="true" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="acta_documento" columnNames="acta_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="acta_id" baseTableName="acta_documento"
+      constraintName="FK_ACTADOCUMENTO_ACTA" deferrable="false" initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="acta" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}acta_documento(acta_id, documento_ref, transaccion_ref, lang)
+      SELECT id, documento_ref, transaccion_ref, '${defaultLang}' FROM ${schemaPrefix}acta</sql>
+
+    <dropColumn columnName="documento_ref" tableName="acta" />
+    <dropColumn columnName="transaccion_ref" tableName="acta" />
+
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.07.00-3">
+
+    <createTable tableName="bloque_nombre">
+      <column name="bloque_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="bloque_nombre" columnNames="bloque_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="bloque_id" baseTableName="bloque_nombre"
+      constraintName="FK_BLOQUENOMBRE_BLOQUE" deferrable="false" initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="bloque" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}bloque_nombre(bloque_id, value_, lang) SELECT id, nombre,
+      '${defaultLang}' FROM ${schemaPrefix}bloque</sql>
+
+    <dropColumn columnName="nombre" tableName="bloque" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.07.00-4">
+
+    <createTable tableName="apartado_definicion">
+      <column name="apartado_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="nombre" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+      <column name="esquema" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="apartado_definicion" columnNames="apartado_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="apartado_id" baseTableName="apartado_definicion"
+      constraintName="FK_APARTADODEFINICION_APARTADO" deferrable="false" initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="apartado" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}apartado_definicion(apartado_id, nombre, esquema, lang) SELECT
+      id, nombre, esquema, '${defaultLang}' FROM ${schemaPrefix}apartado</sql>
+
+    <dropColumn columnName="nombre" tableName="apartado" />
+    <dropColumn columnName="esquema" tableName="apartado" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.07.00-5">
+
+    <createTable tableName="formly_definicion">
+      <column name="formly_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="esquema" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey
+      tableName="formly_definicion" columnNames="formly_id, lang" />
+
+    <addForeignKeyConstraint
+      baseColumnNames="formly_id" baseTableName="formly_definicion"
+      constraintName="FK_FORMLYDEFINICION_FORMLY" deferrable="false" initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="formly" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}formly_definicion(formly_id, esquema, lang) SELECT id, esquema,
+      '${defaultLang}' FROM ${schemaPrefix}formly</sql>
+
+    <dropColumn
+      columnName="esquema" tableName="formly" />
+
+  </changeSet>
+
+  <!-- Petición Evaluacion -->
+  <changeSet author="user (generated)" id="00.07.00-6">
+    <!-- Título -->
+    <createTable tableName="peticion_evaluacion_titulo">
+      <column name="peticion_evaluacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(1000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="peticion_evaluacion_titulo" columnNames="peticion_evaluacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="peticion_evaluacion_id"
+      baseTableName="peticion_evaluacion_titulo"
+      constraintName="FK_PETICIONEVALUACIONTITULO_PETICIONEVALUACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="peticion_evaluacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}peticion_evaluacion_titulo(peticion_evaluacion_id, lang, value_)
+      SELECT id, '${defaultLang}', titulo FROM ${schemaPrefix}peticion_evaluacion WHERE titulo IS
+      NOT NULL</sql>
+
+    <dropColumn columnName="titulo" tableName="peticion_evaluacion" />
+
+    <!-- Resumen -->
+    <createTable tableName="peticion_evaluacion_resumen">
+      <column name="peticion_evaluacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="peticion_evaluacion_resumen"
+      columnNames="peticion_evaluacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="peticion_evaluacion_id"
+      baseTableName="peticion_evaluacion_resumen"
+      constraintName="FK_PETICIONEVALUACIONRESUMEN_PETICIONEVALUACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="peticion_evaluacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}peticion_evaluacion_resumen(peticion_evaluacion_id, lang,
+      value_) SELECT id, '${defaultLang}', resumen FROM ${schemaPrefix}peticion_evaluacion WHERE
+      resumen IS NOT NULL</sql>
+
+    <dropColumn columnName="resumen" tableName="peticion_evaluacion" />
+
+    <!-- Otro Valor Social -->
+    <createTable tableName="peticion_evaluacion_otrovalorsocial">
+      <column name="peticion_evaluacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="peticion_evaluacion_otrovalorsocial"
+      columnNames="peticion_evaluacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="peticion_evaluacion_id"
+      baseTableName="peticion_evaluacion_otrovalorsocial"
+      constraintName="FK_PETICIONEVALUACIONOTROVALORSOCIAL_PETICIONEVALUACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="peticion_evaluacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}peticion_evaluacion_otrovalorsocial(peticion_evaluacion_id,
+      lang, value_) SELECT id, '${defaultLang}', otro_valor_social FROM
+      ${schemaPrefix}peticion_evaluacion WHERE otro_valor_social IS NOT NULL</sql>
+
+    <dropColumn columnName="otro_valor_social" tableName="peticion_evaluacion" />
+
+    <!-- Objetivos -->
+    <createTable tableName="peticion_evaluacion_objetivos">
+      <column name="peticion_evaluacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="peticion_evaluacion_objetivos"
+      columnNames="peticion_evaluacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="peticion_evaluacion_id"
+      baseTableName="peticion_evaluacion_objetivos"
+      constraintName="FK_PETICIONEVALUACIONOBJETIVOS_PETICIONEVALUACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="peticion_evaluacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}peticion_evaluacion_objetivos(peticion_evaluacion_id, lang,
+      value_) SELECT id, '${defaultLang}', objetivos FROM ${schemaPrefix}peticion_evaluacion WHERE
+      objetivos IS NOT NULL</sql>
+
+    <dropColumn columnName="objetivos" tableName="peticion_evaluacion" />
+
+    <!-- Diseño Metodologico -->
+    <createTable tableName="peticion_evaluacion_dismetodologico">
+      <column name="peticion_evaluacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="peticion_evaluacion_dismetodologico"
+      columnNames="peticion_evaluacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="peticion_evaluacion_id"
+      baseTableName="peticion_evaluacion_dismetodologico"
+      constraintName="FK_PETICIONEVALUACIONDISMETODOLOGICOS_PETICIONEVALUACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="peticion_evaluacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}peticion_evaluacion_dismetodologico(peticion_evaluacion_id,
+      lang, value_) SELECT id, '${defaultLang}', dis_metodologico FROM
+      ${schemaPrefix}peticion_evaluacion WHERE dis_metodologico IS NOT NULL</sql>
+
+    <dropColumn columnName="dis_metodologico" tableName="peticion_evaluacion" />
+  </changeSet>
+
+  <!-- Tarea -->
+  <changeSet author="user (generated)" id="00.07.00-7">
+    <!-- Nombre -->
+    <createTable tableName="tarea_nombre">
+      <column name="tarea_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tarea_nombre" columnNames="tarea_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tarea_id"
+      baseTableName="tarea_nombre"
+      constraintName="FK_TAREANOMBRE_TAREA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tarea" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tarea_nombre(tarea_id, lang, value_) SELECT id,
+      '${defaultLang}', tarea FROM ${schemaPrefix}tarea WHERE tarea IS NOT NULL</sql>
+
+    <dropColumn columnName="tarea" tableName="tarea" />
+
+    <!-- Formacion -->
+    <createTable tableName="tarea_formacion">
+      <column name="tarea_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tarea_formacion" columnNames="tarea_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tarea_id"
+      baseTableName="tarea_formacion"
+      constraintName="FK_TAREAFORMACION_TAREA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tarea" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tarea_formacion(tarea_id, lang, value_) SELECT id,
+      '${defaultLang}', formacion FROM ${schemaPrefix}tarea WHERE formacion IS NOT NULL</sql>
+
+    <dropColumn columnName="formacion" tableName="tarea" />
+
+    <!-- Organismo -->
+    <createTable tableName="tarea_organismo">
+      <column name="tarea_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tarea_organismo" columnNames="tarea_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tarea_id"
+      baseTableName="tarea_organismo"
+      constraintName="FK_TAREAORGANISMO_TAREA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tarea" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tarea_organismo(tarea_id, lang, value_) SELECT id,
+      '${defaultLang}', organismo FROM ${schemaPrefix}tarea WHERE organismo IS NOT NULL</sql>
+
+    <dropColumn columnName="organismo" tableName="tarea" />
+  </changeSet>
+
+  <!-- Comite -->
+  <changeSet author="user (generated)" id="00.07.00-8">
+    <dropSequence sequenceName="comite_seq" />
+    <createSequence incrementBy="1" sequenceName="comite_seq" startValue="4" />
+    <dropForeignKeyConstraint
+      baseTableName="comite"
+      constraintName="FK_COMITE_FORMULARIO" />
+    <renameColumn
+      newColumnName="codigo"
+      oldColumnName="comite"
+      tableName="comite" />
+    <renameColumn
+      newColumnName="formulario_memoria_id"
+      oldColumnName="formulario_id"
+      tableName="comite" />
+
+    <!-- Nombre -->
+    <createTable tableName="comite_nombre">
+      <column name="comite_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+      <column name="genero" type="VARCHAR(1)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="comite_nombre" columnNames="comite_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="comite_id"
+      baseTableName="comite_nombre"
+      constraintName="FK_COMITENOMBRE_COMITE" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="comite" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}comite_nombre(comite_id, lang, value_, genero) SELECT id,
+      '${defaultLang}', nombre_investigacion, genero FROM ${schemaPrefix}comite WHERE
+      nombre_investigacion IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre_investigacion" tableName="comite" />
+    <dropColumn columnName="genero" tableName="comite" />
+
+    <addColumn tableName="comite">
+      <column name="formulario_seguimiento_anual_id"
+        type="BIGINT" />
+      <column name="formulario_seguimiento_final_id"
+        type="BIGINT"> </column>
+      <column name="formulario_retrospectiva_id"
+        type="BIGINT"> </column>
+      <column name="requiere_retrospectiva"
+        type="BOOLEAN" defaultValueBoolean="false"><constraints nullable="false" />
+      </column>
+      <column name="prefijo_referencia"
+        type="VARCHAR(50)"> </column>
+      <column name="permitir_ratificacion"
+        type="BOOLEAN" defaultValueBoolean="false"><constraints nullable="false" />
+      </column>
+      <column name="tarea_nombre_libre"
+        type="BOOLEAN" defaultValueBoolean="false"><constraints nullable="false" />
+      </column>
+      <column name="tarea_experiencia_libre"
+        type="BOOLEAN" defaultValueBoolean="false"><constraints nullable="false" />
+      </column>
+      <column name="tarea_experiencia_detalle"
+        type="BOOLEAN" defaultValueBoolean="false"><constraints nullable="false" />
+      </column>
+      <column name="memoria_titulo_libre"
+        type="BOOLEAN" defaultValueBoolean="false"><constraints nullable="false" />
+      </column>
+    </addColumn>
+    <update tableName="comite">
+      <column name="formulario_seguimiento_anual_id" valueNumeric="4" />
+      <column
+        name="formulario_seguimiento_final_id" valueNumeric="5" />
+      <column
+        name="requiere_retrospectiva" valueBoolean="false" />
+    </update>
+    <update tableName="comite">
+      <column name="formulario_retrospectiva_id" valueNumeric="6" />
+      <column
+        name="requiere_retrospectiva" valueBoolean="true" />
+      <where>id=2</where>
+    </update>
+    <update tableName="comite">
+      <column name="prefijo_referencia" value="M10" />
+      <column name="permitir_ratificacion"
+        valueBoolean="true" /> 
+      <column name="tarea_nombre_libre"
+        valueBoolean="true" /> 
+      <column name="tarea_experiencia_libre"
+        valueBoolean="true" /> 
+      <column name="tarea_experiencia_detalle" valueBoolean="false" />
+      <column
+        name="memoria_titulo_libre"
+        valueBoolean="false" /> 
+      <where>id=1</where>
+    </update>
+    <update tableName="comite">
+      <column name="prefijo_referencia" value="M20" />
+      <column name="permitir_ratificacion"
+        valueBoolean="false" /> 
+      <column name="tarea_nombre_libre"
+        valueBoolean="false" /> 
+      <column name="tarea_experiencia_libre"
+        valueBoolean="false" />
+        <column name="tarea_experiencia_detalle" valueBoolean="true" />
+      <column
+        name="memoria_titulo_libre"
+        valueBoolean="true" /> 
+      <where>id=2</where>
+    </update>
+    <update tableName="comite">
+      <column name="prefijo_referencia" value="M30" />
+      <column name="permitir_ratificacion"
+        valueBoolean="true" /> 
+      <column name="tarea_nombre_libre" valueBoolean="true" />
+      <column
+        name="tarea_experiencia_libre"
+        valueBoolean="true" /> 
+      <column name="tarea_experiencia_detalle" valueBoolean="true" />
+      <column
+        name="memoria_titulo_libre"
+        valueBoolean="false" /> 
+      <where>id=3</where>
+    </update>
+    <addNotNullConstraint
+      columnDataType="BIGINT"
+      columnName="formulario_seguimiento_anual_id"
+      tableName="comite" />
+    <addNotNullConstraint
+      columnDataType="BIGINT"
+      columnName="formulario_seguimiento_final_id"
+      tableName="comite" />
+    <addNotNullConstraint
+      columnDataType="VARCHAR(50)"
+      columnName="prefijo_referencia"
+      tableName="comite" />
+    <addForeignKeyConstraint baseColumnNames="formulario_memoria_id" baseTableName="comite"
+      constraintName="FK_COMITE_FORMULARIOMEMORIA" referencedColumnNames="id"
+      referencedTableName="formulario" />
+    <addForeignKeyConstraint baseColumnNames="formulario_seguimiento_anual_id"
+      baseTableName="comite" constraintName="FK_COMITE_FORMULARIOMEMORIASEGUIMIENTOANUAL"
+      referencedColumnNames="id" referencedTableName="formulario" />
+    <addForeignKeyConstraint baseColumnNames="formulario_seguimiento_final_id"
+      baseTableName="comite" constraintName="FK_COMITE_FORMULARIOMEMORIASEGUIMIENTOFINAL"
+      referencedColumnNames="id" referencedTableName="formulario" />
+    <addForeignKeyConstraint baseColumnNames="formulario_retrospectiva_id"
+      baseTableName="comite" constraintName="FK_COMITE_FORMULARIORETROSPECTIVA"
+      referencedColumnNames="id" referencedTableName="formulario" />
+  </changeSet>
+
+  <!-- Memoria -->
+  <changeSet author="user (generated)" id="00.07.00-9">
+    <!-- Titulo -->
+    <createTable tableName="memoria_titulo">
+      <column name="memoria_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="memoria_titulo" columnNames="memoria_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="memoria_id"
+      baseTableName="memoria_titulo"
+      constraintName="FK_MEMORIATITULO_MEMORIA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="memoria" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}memoria_titulo(memoria_id, lang, value_) SELECT id,
+      '${defaultLang}', titulo FROM ${schemaPrefix}memoria WHERE titulo IS NOT NULL</sql>
+
+    <dropColumn columnName="titulo" tableName="memoria" />
+
+    <addColumn tableName="memoria">
+      <column name="tipo"
+        type="VARCHAR(50)" />
+      <column name="formulario_id"
+        type="BIGINT" />
+      <column name="formulario_seguimiento_anual_id"
+        type="BIGINT" />
+      <column name="formulario_seguimiento_final_id"
+        type="BIGINT"> </column>
+      <column name="formulario_retrospectiva_id"
+        type="BIGINT"> </column>
+    </addColumn>
+    <update tableName="memoria">
+      <column name="formulario_id" valueNumeric="1" />
+      <column name="formulario_seguimiento_anual_id"
+        valueNumeric="4" />
+      <column
+        name="formulario_seguimiento_final_id" valueNumeric="5" />
+      <where>comite_id=1</where>
+    </update>
+    <update tableName="memoria">
+      <column name="formulario_id" valueNumeric="2" />
+      <column name="formulario_seguimiento_anual_id"
+        valueNumeric="4" />
+      <column
+        name="formulario_seguimiento_final_id" valueNumeric="5" />
+      <column
+        name="formulario_retrospectiva_id"
+        valueNumeric="6" />
+      <where>comite_id=2</where>
+    </update>
+    <update tableName="memoria">
+      <column name="formulario_id" valueNumeric="3" />
+      <column name="formulario_seguimiento_anual_id"
+        valueNumeric="4" />
+      <column
+        name="formulario_seguimiento_final_id" valueNumeric="5" />
+      <where>comite_id=3</where>
+    </update>
+    <update tableName="memoria">
+      <column name="tipo" value="NUEVA" />
+      <where>tipo_memoria_id=1</where>
+    </update>
+    <update tableName="memoria">
+      <column name="tipo" value="MODIFICACION" />
+      <where>tipo_memoria_id=2</where>
+    </update>
+    <update tableName="memoria">
+      <column name="tipo" value="RATIFICACION" />
+      <where>tipo_memoria_id=3</where>
+    </update>
+    <addNotNullConstraint
+      columnDataType="BIGINT"
+      columnName="formulario_id"
+      tableName="memoria" />
+    <addNotNullConstraint
+      columnDataType="BIGINT"
+      columnName="formulario_seguimiento_anual_id"
+      tableName="memoria" />
+    <addNotNullConstraint
+      columnDataType="BIGINT"
+      columnName="formulario_seguimiento_final_id"
+      tableName="memoria" />
+    <addNotNullConstraint
+      columnDataType="VARCHAR(50)"
+      columnName="tipo"
+      tableName="memoria" />
+    <addForeignKeyConstraint baseColumnNames="formulario_id" baseTableName="memoria"
+      constraintName="FK_MEMORIA_FORMULARIOMEMORIA" referencedColumnNames="id"
+      referencedTableName="formulario" />
+    <addForeignKeyConstraint baseColumnNames="formulario_seguimiento_anual_id"
+      baseTableName="memoria" constraintName="FK_MEMORIA_FORMULARIOMEMORIASEGUIMIENTOANUAL"
+      referencedColumnNames="id" referencedTableName="formulario" />
+    <addForeignKeyConstraint baseColumnNames="formulario_seguimiento_final_id"
+      baseTableName="memoria" constraintName="FK_MEMORIA_FORMULARIOMEMORIASEGUIMIENTOFINAL"
+      referencedColumnNames="id" referencedTableName="formulario" />
+    <addForeignKeyConstraint baseColumnNames="formulario_retrospectiva_id"
+      baseTableName="memoria" constraintName="FK__FORMULARIORETROSPECTIVA"
+      referencedColumnNames="id" referencedTableName="formulario" />
+    <dropForeignKeyConstraint
+      baseTableName="memoria"
+      constraintName="FK_MEMORIA_TIPOMEMORIA" />
+    <dropColumn
+      columnName="tipo_memoria_id"
+      tableName="memoria">
+    </dropColumn>
+    <dropTable cascadeConstraints="true"
+      tableName="tipo_memoria_comite" />
+    <dropTable cascadeConstraints="true"
+      tableName="tipo_memoria" />
+  </changeSet>
+
+  <!-- Formulario -->
+  <changeSet author="user (generated)" id="00.07.00-10">
+    <createSequence incrementBy="1" sequenceName="formulario_seq" startValue="7" />
+    <addColumn tableName="formulario">
+      <column name="tipo"
+        type="VARCHAR(50)" />
+      <column name="codigo"
+        type="VARCHAR(50)" />
+      <column name="seguimiento_anual_documentacion_title"
+        type="VARCHAR(50)" />
+    </addColumn>
+    <update tableName="formulario">
+      <column name="tipo" value="MEMORIA" />
+      <where>id=1 OR id=2 OR id=3</where>
+    </update>
+    <update tableName="formulario">
+      <column name="seguimiento_anual_documentacion_title" value="TITULO_1" />
+      <column name="codigo"
+        value="M10/2024/001" />
+      <where>id=1</where>
+    </update>
+    <update tableName="formulario">
+      <column name="seguimiento_anual_documentacion_title" value="TITULO_2" />
+      <column name="codigo"
+        value="M20/2024/001" />
+      <where>id=2</where>
+    </update>
+    <update tableName="formulario">
+      <column name="seguimiento_anual_documentacion_title" value="TITULO_3" />
+      <column name="codigo"
+        value="M30/2024/001" />
+      <where>id=3</where>
+    </update>
+    <update tableName="formulario">
+      <column name="tipo" value="SEGUIMIENTO_ANUAL" />
+      <column name="codigo"
+        value="SA/2024/001" />
+      <where>id=4</where>
+    </update>
+    <update tableName="formulario">
+      <column name="tipo" value="SEGUIMIENTO_FINAL" />
+      <column name="codigo"
+        value="SF/2024/001" />
+      <where>id=5</where>
+    </update>
+    <update tableName="formulario">
+      <column name="tipo" value="RETROSPECTIVA" />
+      <column name="codigo"
+        value="R/2024/001" />
+      <where>id=6</where>
+    </update>
+    <dropColumn
+      columnName="nombre"
+      tableName="formulario">
+    </dropColumn>
+    <dropColumn
+      columnName="descripcion"
+      tableName="formulario">
+    </dropColumn>
+    <addNotNullConstraint
+      columnDataType="VARCHAR(50)"
+      columnName="tipo"
+      tableName="formulario" />
+    <addNotNullConstraint
+      columnDataType="VARCHAR(50)"
+      columnName="codigo"
+      tableName="formulario" />
+
+    <addUniqueConstraint
+      columnNames="codigo"
+      constraintName="UK_FORMULARIO_CODIGO"
+      tableName="formulario" />
+  </changeSet>
+
+  <!-- Tipo Documento -->
+  <changeSet author="user (generated)" id="00.07.00-11">
+    <createSequence incrementBy="1" sequenceName="tipo_documento_seq" startValue="24" />
+
+    <!-- Nombre -->
+    <createTable tableName="tipo_documento_nombre">
+      <column name="tipo_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="tipo_documento_nombre" columnNames="tipo_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_documento_id"
+      baseTableName="tipo_documento_nombre"
+      constraintName="FK_TIPODOCUMENTONOMBRE_TIPODOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_documento_nombre(tipo_documento_id, lang, value_) SELECT
+      id, '${defaultLang}', nombre FROM ${schemaPrefix}tipo_documento WHERE nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_documento" />
+
+    <addColumn tableName="tipo_documento">
+      <column name="codigo"
+        type="VARCHAR(50)" />
+      <column name="adicional"
+        type="BOOLEAN" defaultValueBoolean="false"><constraints nullable="false" />
+      </column>
+    </addColumn>
+    <!--M10 -->
+    <update tableName="tipo_documento">
+      <column name="codigo" value="CONSENTIMIENTO" />
+      <column name="adicional" valueBoolean="false" />
+      <where>id=4</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="CESION_DATOS" />
+      <column name="adicional" valueBoolean="false" />
+      <where>id=5</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="AUTORIZACION" />
+      <column name="adicional" valueBoolean="false" />
+      <where>id=6</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="ACEPTACION_COLABORACION" />
+      <column name="adicional"
+        valueBoolean="false" />
+      <where>id=7</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="INFORME_GARANTIAS" />
+      <column name="adicional"
+        valueBoolean="false" />
+      <where>id=8</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="ACUERDO_TRANSFERENCIA" />
+      <column name="adicional"
+        valueBoolean="false" />
+      <where>id=9</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="REGISTRO_RGPD" />
+      <column name="adicional" valueBoolean="false" />
+      <where>id=10</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="INFORME_EXTERNO" />
+      <column name="adicional" valueBoolean="false" />
+      <where>id=23</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="ADICIONAL" />
+      <column name="adicional" valueBoolean="true" />
+      <where>id=11</where>
+    </update>
+    <!--M20 -->
+    <update tableName="tipo_documento">
+      <column name="codigo" value="ACREDITACIONES" />
+      <column name="adicional" valueBoolean="false" />
+      <where>id=12</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="INFORME_VETERINARIO" />
+      <column name="adicional"
+        valueBoolean="false" />
+      <where>id=13</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="SOLICITUD_RAZONADA" />
+      <column name="adicional"
+        valueBoolean="false" />
+      <where>id=14</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="RESUMEN_RNT" />
+      <column name="adicional" valueBoolean="false" />
+      <where>id=15</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="ADICIONAL" />
+      <column name="adicional" valueBoolean="true" />
+      <where>id=16</where>
+    </update>
+    <!-- M30 -->
+    <update tableName="tipo_documento">
+      <column name="codigo" value="ACREDITACIONES" />
+      <column name="adicional" valueBoolean="false" />
+      <where>id=17</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="USO_AGENTES" />
+      <column name="adicional" valueBoolean="false" />
+      <where>id=18</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="SEGURO_RESPONSABILIDAD" />
+      <column name="adicional"
+        valueBoolean="false" />
+      <where>id=19</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="PROTOCOLO_ACTUACION" />
+      <column name="adicional"
+        valueBoolean="false" />
+      <where>id=20</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="AUTORIZACION_CONFINADA" />
+      <column name="adicional"
+        valueBoolean="false" />
+      <where>id=22</where>
+    </update>
+    <update tableName="tipo_documento">
+      <column name="codigo" value="ADICIONAL" />
+      <column name="adicional" valueBoolean="true" />
+      <where>id=21</where>
+    </update>
+    <!-- Seguimiento anual -->
+    <update tableName="tipo_documento">
+      <column name="codigo" value="ADICIONAL" />
+      <column name="adicional" valueBoolean="true" />
+      <where>id=1</where>
+    </update>
+    <!-- Seguimiento final -->
+    <update tableName="tipo_documento">
+      <column name="codigo" value="ADICIONAL" />
+      <column name="adicional" valueBoolean="true" />
+      <where>id=2</where>
+    </update>
+    <!-- Retrospectiva -->
+    <update tableName="tipo_documento">
+      <column name="codigo" value="ADICIONAL" />
+      <column name="adicional" valueBoolean="true" />
+      <where>id=3</where>
+    </update>
+
+    <addNotNullConstraint
+      columnDataType="VARCHAR(50)"
+      columnName="codigo"
+      tableName="tipo_documento" />
+    <addUniqueConstraint
+      columnNames="formulario_id,codigo"
+      constraintName="UK_TIPODOCUMENTO_CODIGOFORMULARIO"
+      tableName="tipo_documento" />
+  </changeSet>
+
+  <!-- Formulario Report  -->
+  <changeSet author="user (generated)" id="00.07.00-12">
+    <createTable tableName="formulario_report">
+      <column name="formulario_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="${blob_type}">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="formulario_report" columnNames="formulario_id,lang"
+      constraintName="PK_FORMULARIOREPORT" />
+
+    <addForeignKeyConstraint baseColumnNames="formulario_id"
+      baseTableName="formulario_report"
+      constraintName="FK_FORMULARIOREPORT_FORMULARIO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="formulario" validate="true" />
+  </changeSet>
+
+  <!-- Formacion Especifica -->
+  <changeSet author="user (generated)" id="00.07.00-13">
+    <!-- Nombre -->
+    <createTable tableName="formacion_especifica_nombre">
+      <column name="formacion_especifica_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="formacion_especifica_nombre"
+      columnNames="formacion_especifica_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="formacion_especifica_id"
+      baseTableName="formacion_especifica_nombre"
+      constraintName="FK_FORMACIONESPECIFICANOMBRE_FORMACIONESPECIFICA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="formacion_especifica" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}formacion_especifica_nombre(formacion_especifica_id, lang,
+      value_) SELECT id, '${defaultLang}', nombre FROM ${schemaPrefix}formacion_especifica WHERE
+      nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="formacion_especifica" />
+  </changeSet>
+
+  <!-- Tipo Tarea -->
+  <changeSet author="user (generated)" id="00.07.00-14">
+    <!-- Nombre -->
+    <createTable tableName="tipo_tarea_nombre">
+      <column name="tipo_tarea_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_tarea_nombre"
+      columnNames="tipo_tarea_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_tarea_id"
+      baseTableName="tipo_tarea_nombre"
+      constraintName="FK_TIPOTAREANOMBRE_TIPOTAREA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_tarea" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_tarea_nombre(tipo_tarea_id, lang, value_) SELECT id,
+      '${defaultLang}', nombre FROM ${schemaPrefix}tipo_tarea WHERE nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_tarea" />
+  </changeSet>
+
+  <!-- Documentacion Memoria -->
+  <changeSet author="user (generated)" id="00.07.00-15">
+    <!-- Nombre -->
+    <createTable tableName="documentacion_memoria_nombre">
+      <column name="documentacion_memoria_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="documentacion_memoria_nombre"
+      columnNames="documentacion_memoria_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="documentacion_memoria_id"
+      baseTableName="documentacion_memoria_nombre"
+      constraintName="FK_DOCUMENTACIONMEMORIANOMBRE_DOCUMENTACIONMEMORIA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="documentacion_memoria" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}documentacion_memoria_nombre(documentacion_memoria_id, lang,
+      value_) SELECT id, '${defaultLang}', nombre FROM ${schemaPrefix}documentacion_memoria WHERE
+      nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="documentacion_memoria" />
+  </changeSet>
+
+  <!-- Convocatoria Reunion -->
+  <changeSet author="user (generated)" id="00.07.00-16">
+    <!-- Lugar -->
+    <createTable tableName="convocatoria_reunion_lugar">
+      <column name="convocatoria_reunion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_reunion_lugar"
+      columnNames="convocatoria_reunion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_reunion_id"
+      baseTableName="convocatoria_reunion_lugar"
+      constraintName="FK_CONVOCATORIAREUNIONLUGAR_CONVOCATORIAREUNION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_reunion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_reunion_lugar(convocatoria_reunion_id, lang,
+      value_) SELECT id, '${defaultLang}', lugar FROM ${schemaPrefix}convocatoria_reunion WHERE
+      lugar IS NOT NULL</sql>
+
+    <dropColumn columnName="lugar" tableName="convocatoria_reunion" />
+
+    <!-- Orden día -->
+    <createTable tableName="convocatoria_reunion_orden_dia">
+      <column name="convocatoria_reunion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_reunion_orden_dia"
+      columnNames="convocatoria_reunion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_reunion_id"
+      baseTableName="convocatoria_reunion_orden_dia"
+      constraintName="FK_CONVOCATORIAREUNIONORDENDIA_CONVOCATORIAREUNION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_reunion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_reunion_orden_dia(convocatoria_reunion_id, lang,
+      value_) SELECT id, '${defaultLang}', orden_dia FROM ${schemaPrefix}convocatoria_reunion WHERE
+      orden_dia IS NOT NULL</sql>
+
+    <dropColumn columnName="orden_dia" tableName="convocatoria_reunion" />
+  </changeSet>
+
+  <!-- Documentacion Convocatoria Reunion -->
+  <changeSet author="user (generated)" id="00.07.00-17">
+    <!-- Nombre -->
+    <createTable tableName="documentacion_convocatoria_reunion_nombre">
+      <column name="documentacion_convocatoria_reunion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="documentacion_convocatoria_reunion_nombre"
+      columnNames="documentacion_convocatoria_reunion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="documentacion_convocatoria_reunion_id"
+      baseTableName="documentacion_convocatoria_reunion_nombre"
+      constraintName="FK_DOCUMENTACIONCONVOCATORIAREUNIONNOMBRE_DOCUMENTACIONCONVOCATORIAREUNION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="documentacion_convocatoria_reunion"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}documentacion_convocatoria_reunion_nombre(documentacion_convocatoria_reunion_id,
+      lang, value_) SELECT id, '${defaultLang}', nombre FROM
+      ${schemaPrefix}documentacion_convocatoria_reunion WHERE nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="documentacion_convocatoria_reunion" />
+  </changeSet>
+
+  <!-- Evaluacion -->
+  <changeSet author="user (generated)" id="00.07.00-18">
+    <!-- Comentario -->
+    <createTable tableName="evaluacion_comentario">
+      <column name="evaluacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="evaluacion_comentario"
+      columnNames="evaluacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="evaluacion_id"
+      baseTableName="evaluacion_comentario"
+      constraintName="FK_EVALUACIONCOMENTARIO_EVALUACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="evaluacion"
+      validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}evaluacion_comentario(evaluacion_id, lang, value_) SELECT id,
+      '${defaultLang}', comentario FROM ${schemaPrefix}evaluacion WHERE comentario IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="evaluacion" />
+  </changeSet>
+
+  <!-- Comentario -->
+  <changeSet author="user (generated)" id="00.07.00-19">
+    <!-- Texto -->
+    <createTable tableName="comentario_texto">
+      <column name="comentario_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="comentario_texto"
+      columnNames="comentario_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="comentario_id"
+      baseTableName="comentario_texto"
+      constraintName="FK_COMENTARIOTEXTO_COMENTARIO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="comentario"
+      validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}comentario_texto(comentario_id, lang, value_) SELECT id,
+      '${defaultLang}', texto FROM ${schemaPrefix}comentario WHERE texto IS NOT NULL</sql>
+
+    <dropColumn columnName="texto" tableName="comentario" />
+  </changeSet>
+
+  <!-- Estado Memoria -->
+  <changeSet author="user (generated)" id="00.07.00-20">
+    <!-- Comentario -->
+    <createTable tableName="estado_memoria_comentario">
+      <column name="estado_memoria_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="estado_memoria_comentario"
+      columnNames="estado_memoria_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="estado_memoria_id"
+      baseTableName="estado_memoria_comentario"
+      constraintName="FK_ESTADOMEMORIACOMENTARIO_ESTADOMEMORIA"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="estado_memoria"
+      validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}estado_memoria_comentario(estado_memoria_id, lang, value_)
+      SELECT id, '${defaultLang}', comentario FROM ${schemaPrefix}estado_memoria WHERE comentario IS
+      NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="estado_memoria" />
+  </changeSet>
+
+  <!-- Evaluador -->
+  <changeSet author="user (generated)" id="00.07.00-21">
+    <!-- Resumen -->
+    <createTable tableName="evaluador_resumen">
+      <column name="evaluador_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="evaluador_resumen"
+      columnNames="evaluador_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="evaluador_id"
+      baseTableName="evaluador_resumen"
+      constraintName="FK_EVALUADORRESUMEN_EVALUADOR" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="evaluador" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}evaluador_resumen(evaluador_id, lang, value_) SELECT id,
+      '${defaultLang}', resumen FROM ${schemaPrefix}evaluador WHERE resumen IS NOT NULL</sql>
+
+    <dropColumn columnName="resumen" tableName="evaluador" />
+  </changeSet>
+
+  <!-- Acta -->
+  <changeSet author="user (generated)" id="00.07.00-22">
+    <!-- Resumen -->
+    <createTable tableName="acta_resumen">
+      <column name="acta_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="acta_resumen"
+      columnNames="acta_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="acta_id"
+      baseTableName="acta_resumen"
+      constraintName="FK_ACTARESUMEN_ACTA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="acta" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}acta_resumen(acta_id, lang, value_) SELECT id, '${defaultLang}',
+      resumen FROM ${schemaPrefix}acta WHERE resumen IS NOT NULL</sql>
+
+    <dropColumn columnName="resumen" tableName="acta" />
+  </changeSet>
+
+  <!-- Asistentes -->
+  <changeSet author="user (generated)" id="00.07.00-23">
+    <!-- Motivo -->
+    <createTable tableName="asistentes_motivo">
+      <column name="asistentes_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="asistentes_motivo"
+      columnNames="asistentes_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="asistentes_id"
+      baseTableName="asistentes_motivo"
+      constraintName="FK_ASISTENTESMOVITO_ASISTENTES"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="asistentes"
+      validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}asistentes_motivo(asistentes_id, lang, value_) SELECT id,
+      '${defaultLang}', motivo FROM ${schemaPrefix}asistentes WHERE motivo IS NOT NULL</sql>
+
+    <dropColumn columnName="motivo" tableName="asistentes" />
+  </changeSet>
+
+  <changeSet author="user (generated)" id="00.07.00-24">
+    <!-- Fuente financiación -->
+    <createTable tableName="peticion_evaluacion_fuente_financiacion">
+      <column name="peticion_evaluacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="peticion_evaluacion_fuente_financiacion"
+      columnNames="peticion_evaluacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="peticion_evaluacion_id"
+      baseTableName="peticion_evaluacion_fuente_financiacion"
+      constraintName="FK_PETICIONEVALUACIONFUENTEFINANCIACIONPETICIONEVALUACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="peticion_evaluacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}peticion_evaluacion_fuente_financiacion(peticion_evaluacion_id,
+      lang,value_) SELECT id, '${defaultLang}', fuente_financiacion FROM
+      ${schemaPrefix}peticion_evaluacion WHERE fuente_financiacion IS NOT NULL</sql>
+
+    <dropColumn columnName="fuente_financiacion" tableName="peticion_evaluacion" />
+  </changeSet>
+
+</databaseChangeLog>

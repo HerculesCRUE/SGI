@@ -5,15 +5,18 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IProyectoDocumento } from '@core/models/csp/proyecto-documento';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { Group } from '@core/services/action-service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
@@ -32,6 +35,7 @@ const DOCUMENTO_KEY = marker('csp.documento');
 const PROYECTO_DOCUMENTO_FICHERO_KEY = marker('csp.proyecto-documento.fichero');
 const PROYECTO_DOCUMENTO_NOMBRE_KEY = marker('csp.documento.nombre');
 const PROYECTO_VISIBLE_KEY = marker('csp.proyecto-documento.visible');
+const PROYECTO_DOCUMENTO_COMENTARIOS_KEY = marker('csp.documento.comentarios');
 
 enum VIEW_MODE {
   NONE = '',
@@ -69,6 +73,8 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
   msgParamFicheroEntity = {};
   msgParamNombreEntity = {};
   msgParamVisibleEntity = {};
+  msgParamComentariosEntity = {};
+
   textoDelete: string;
 
   fxFlexProperties: FxFlexProperties;
@@ -92,10 +98,11 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
     public actionService: ProyectoActionService,
     private snackBarService: SnackBarService,
     private documentoService: DocumentoService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
 
-    super(actionService.FRAGMENT.DOCUMENTOS, actionService);
+    super(actionService.FRAGMENT.DOCUMENTOS, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -116,7 +123,7 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subcription = this.formPart.documentos$.subscribe(
       (documentos) => {
         this.dataSource.data = documentos;
@@ -127,11 +134,11 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
     );
     this.subscriptions.push(subcription);
     this.group.load(new FormGroup({
-      nombre: new FormControl('', Validators.required),
+      nombre: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(250)]),
       fichero: new FormControl(null, Validators.required),
       tipoFase: new FormControl(null, IsEntityValidator.isValid),
       tipoDocumento: new FormControl(null, IsEntityValidator.isValid),
-      comentarios: new FormControl(''),
+      comentarios: new FormControl([], I18nValidators.maxLength(2000)),
       visible: new FormControl('')
     }));
 
@@ -149,7 +156,7 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
     this.switchToNone();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       DOCUMENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -181,6 +188,12 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
       PROYECTO_VISIBLE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamVisibleEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      PROYECTO_DOCUMENTO_COMENTARIOS_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).subscribe((value) => this.msgParamComentariosEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
+
   }
 
   ngOnDestroy(): void {
@@ -331,7 +344,7 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
   switchToNew(): void {
     const wrapper = new StatusWrapper<IProyectoDocumento>({} as IProyectoDocumento);
     wrapper.value.visible = true;
-    const newNode: NodeDocumento = new NodeDocumento(null, undefined, 2, wrapper);
+    const newNode: NodeDocumento = new NodeDocumento(null, undefined, 2, null, wrapper);
     this.viewMode = VIEW_MODE.NEW;
     this.viewingNode = newNode;
     this.loadDetails(this.viewingNode);
@@ -355,6 +368,10 @@ export class ProyectoDocumentosComponent extends FragmentComponent implements On
     } else {
       this.switchToView();
     }
+  }
+
+  getI18nValue(i18nFieldValue: I18nFieldValue[]): string {
+    return this.languageService.getFieldValue(i18nFieldValue);
   }
 
 }

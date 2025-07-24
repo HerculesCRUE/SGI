@@ -1,4 +1,5 @@
-import { ITipoHito } from '@core/models/csp/tipos-configuracion';
+import { I18nFieldValueResponse } from '@core/i18n/i18n-field-response';
+import { ITipoHitoResponse } from '../tipo-hito/tipo-hito-response';
 
 export interface ISolicitudHitoResponse {
   /** Id */
@@ -6,11 +7,12 @@ export interface ISolicitudHitoResponse {
   /** Fecha inicio  */
   fecha: string;
   /** Tipo de hito */
-  tipoHito: ITipoHito;
+  tipoHito: ITipoHitoResponse;
   /** Comentario */
-  comentario: string;
+  comentario: I18nFieldValueResponse[];
   /** Id de Solicitud */
   solicitudId: number;
+  createdBy: string;
   aviso: {
     comunicadoRef: string;
     tareaProgramadaRef: string;

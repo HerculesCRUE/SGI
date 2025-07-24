@@ -1,0 +1,46 @@
+[
+  {
+    "key": "ap3_6_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.3 Animalia babestuak edo galzorian daudenak"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Mehatxupean eta galzorian dauden espezieak CITESen webgunean kontsulta daitezke (<a target='_blank' href='https://cites.org/esp/app/appendices.php'>338/97 zenbakidun Erregelamenduaren (CE) A eranskina</a>).</p><p>Esperimentazioan espezie horiek erabiltzeko arauak 53/13 EDren <a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a20'>20. artikuluan</a> zehazten dira; horren arabera, bi baldintza hauek betetzen badira bakarrik erabil daitezke horrelako animaliak:</p><ul><li>Proiektuak helburu hauetako bat badu:<ul><li>a) Gaixotasun, osasun txar edo bestelako anomalien edo horien ondorioen prebentzioa, profilaxia, diagnostikoa edo tratamendua gizaki, animalia edo landareetan.</li><li>b) Ingurumenaren babesa, gizakien edo animalien osasun edo ongizatearen mesedetan.</li><li>c) Espezieak kontserbatzea xedetzat duen ikerketa.</li></ul></li><li>Zientifikoki justifikatu bada helburu hori ezin dela lortu beste espezie bateko animaliak erabiliz.</li></ul><p>Atal honetan sartzen da, halaber, primateen erabilera esperimentazio animalia gisa, eta horretarako kontuan hartu behar da azaroaren 19ko <strong>1386/2018 Errege Dekretua</strong>, zeinak aldatzen baitu 53/2013 Errege Dekretua.</p>"
+      },
+      {
+        "template": "Animalia babestuak dira edo galzorian daude?"
+      },
+      {
+        "key": "animalesProtegidosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: gogoratu salbuespen kasuetan dagokion dokumentua aurkeztu behar dela ‘5.4 Egoera bereziak’ atalean. </p>"
+      }
+    ]
+  }
+]

@@ -18,7 +18,10 @@ import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -32,6 +35,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
+
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_FIELD_COLABORATIVO = "colaborativo";
+  private static final String MSG_MODEL_SOLICITUD_PROYECTO = "org.crue.hercules.sgi.csp.model.SolicitudProyecto.message";
+  private static final String MSG_ENTITY_MODIFICABLE = "org.springframework.util.Assert.entity.modificable.message";
 
   private final SolicitudProyectoRepository repository;
 
@@ -96,7 +105,12 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
     // TODO validación de SolicitudProyectoPresupuesto
 
     // comprobar si la solicitud es modificable
-    Assert.isTrue(solicitudService.modificable(solicitudProyecto.getId()), "No se puede modificar SolicitudProyecto");
+    Assert.isTrue(solicitudService.modificable(solicitudProyecto.getId()),
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_MODIFICABLE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_PROYECTO))
+            .parameter(MSG_KEY_MSG, null)
+            .build());
 
     return repository.findById(solicitudProyecto.getId()).map(
         (solicitudProyectoExistente) -> updateExistingSolicitudProyecto(solicitudProyecto, solicitudProyectoExistente))
@@ -157,7 +171,7 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "SolicitudProyecto id no puede ser null para eliminar un SolicitudProyecto");
+    AssertHelper.idNotNull(id, SolicitudProyecto.class);
     if (!repository.existsById(id)) {
       throw new SolicitudProyectoNotFoundException(id);
     }
@@ -225,14 +239,11 @@ public class SolicitudProyectoServiceImpl implements SolicitudProyectoService {
   private void validateSolicitudProyecto(SolicitudProyecto solicitudProyecto) {
     log.debug("validateSolicitudProyecto(SolicitudProyecto solicitudProyecto) - start");
 
-    Assert.notNull(solicitudProyecto.getId(),
-        "El id no puede ser null para realizar la acción sobre SolicitudProyecto");
+    AssertHelper.idNotNull(solicitudProyecto.getId(), SolicitudProyecto.class);
     if (!SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER")) {
-      Assert.notNull(solicitudProyecto.getColaborativo(),
-          "Colaborativo no puede ser null para realizar la acción sobre SolicitudProyecto");
-
-      Assert.notNull(solicitudProyecto.getTipoPresupuesto(),
-          "Tipo presupuesto no puede ser null para realizar la acción sobre SolicitudProyecto");
+      AssertHelper.fieldNotNull(solicitudProyecto.getColaborativo(), SolicitudProyecto.class, MSG_FIELD_COLABORATIVO);
+      AssertHelper.entityNotNull(solicitudProyecto.getTipoPresupuesto(), SolicitudProyecto.class,
+          TipoPresupuesto.class);
     }
     if (!solicitudRepository.existsById(solicitudProyecto.getId())) {
       throw new SolicitudNotFoundException(solicitudProyecto.getId());

@@ -36,7 +36,7 @@ export class ConvocatoriaConceptoGastoDatosGeneralesComponent
     public readonly actionService: ConvocatoriaConceptoGastoActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaConceptoGastoDatosGeneralesFragment;
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.layout = 'row';
@@ -50,11 +50,11 @@ export class ConvocatoriaConceptoGastoDatosGeneralesComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.textSaveOrUpdate = this.fragment.getKey() ? MSG_ACEPTAR : MSG_ANADIR;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_ELEGIBILIDAD_CONCEPTO_GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

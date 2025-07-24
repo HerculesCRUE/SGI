@@ -6,8 +6,8 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoAgrupacionGastoNotFoundExcep
 import org.crue.hercules.sgi.csp.model.ProyectoAgrupacionGasto;
 import org.crue.hercules.sgi.csp.repository.ProyectoAgrupacionGastoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoAgrupacionGastoSpecifications;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.modelmapper.internal.util.Assert;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -59,7 +59,7 @@ public class ProyectoAgrupacionGastoService {
   public ProyectoAgrupacionGasto update(@Valid ProyectoAgrupacionGasto proyectoAgrupacionGasto) {
     log.debug("update(ProyectoAgrupacionGasto proyectoAgrupacionGasto) - start");
 
-    Assert.notNull(proyectoAgrupacionGasto.getId(), "Id no puede ser null para actualizar proyectoAgrupacionGasto");
+    AssertHelper.idNotNull(proyectoAgrupacionGasto.getId(), ProyectoAgrupacionGasto.class);
 
     return repository.findById(proyectoAgrupacionGasto.getId()).map(proyectoAgrupacionGastoExistente -> {
 

@@ -1,13 +1,16 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.com.CspComCalendarioFacturacionNotificarData;
 import org.crue.hercules.sgi.csp.dto.com.CspComCalendarioFacturacionValidarIPData;
 import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
@@ -21,6 +24,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoResponsableEconomico;
+import org.crue.hercules.sgi.csp.model.TipoFacturacion;
 import org.crue.hercules.sgi.csp.repository.ProyectoEntidadFinanciadoraRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoFacturacionRepository;
@@ -32,8 +36,15 @@ import org.crue.hercules.sgi.csp.service.sgi.SgiApiCnfService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgempService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.framework.i18n.I18nConfig;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +54,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ProyectoFacturacionComService {
   private static final String CONFIG_CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_DESTINATARIOS = "csp-com-cal-fact-validarip-destinatarios-";
+  private static final String MSG_SIN_ESPEFICAR = "sinEspeficar";
 
   private final ProyectoRepository proyectoRepository;
   private final ProyectoProyectoSgeRepository proyectoProyectoSgeRepository;
@@ -55,8 +67,11 @@ public class ProyectoFacturacionComService {
   private final SgiApiComService emailService;
   private final SgiApiSgpService sgiApiSgpService;
   private final SgiApiSgempService sgiApiSgempService;
+  private final MessageSource messageSource;
+  private final I18nConfig i18nConfig;
+  private final SgiConfigProperties sgiConfigProperties;
 
-  public void enviarComunicado(ProyectoFacturacion proyectoFacturacion) throws Exception {
+  public void enviarComunicado(ProyectoFacturacion proyectoFacturacion) throws JsonProcessingException {
 
     switch (proyectoFacturacion.getEstadoValidacionIP().getEstado()) {
       case VALIDADA:
@@ -73,7 +88,8 @@ public class ProyectoFacturacionComService {
     }
   }
 
-  private void enviarComunicadoValidarIpValidada(ProyectoFacturacion proyectoFacturacion) throws Exception {
+  private void enviarComunicadoValidarIpValidada(ProyectoFacturacion proyectoFacturacion)
+      throws JsonProcessingException {
 
     Proyecto proyecto = proyectoRepository.findById(proyectoFacturacion.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoFacturacion.getProyectoId()));
@@ -86,7 +102,8 @@ public class ProyectoFacturacionComService {
 
   }
 
-  private void enviarComunicadoValidarIpRechazada(ProyectoFacturacion proyectoFacturacion) throws Exception {
+  private void enviarComunicadoValidarIpRechazada(ProyectoFacturacion proyectoFacturacion)
+      throws JsonProcessingException {
 
     Proyecto proyecto = proyectoRepository.findById(proyectoFacturacion.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoFacturacion.getProyectoId()));
@@ -121,82 +138,142 @@ public class ProyectoFacturacionComService {
       CspComCalendarioFacturacionNotificarData data,
       Recipient recipient) throws JsonProcessingException {
 
-    this.buildAndSendIfFacturaIsUniqueAndNotInsideProrroga(proyectoFacturacion, data, recipient);
-    this.buildAndSendIfFacturaIsFirstAndNotInsideProrrogaAndNotLast(proyectoFacturacion, data, recipient);
-    this.buildAndSendIfFacturaIsNotFirstOrInsideProrrogaAndIsLast(proyectoFacturacion, data, recipient);
-    this.buildAndSendIfFacturaIsNotFirstOrInsideProrrogaAndNotIsLast(proyectoFacturacion, data, recipient);
-  }
-
-  private void buildAndSendIfFacturaIsUniqueAndNotInsideProrroga(ProyectoFacturacion proyectoFacturacion,
-      CspComCalendarioFacturacionNotificarData data, Recipient recipient) throws JsonProcessingException {
-    if (proyectoFacturacion.getNumeroPrevision() == 1 && !isInsideProrroga(proyectoFacturacion)
-        && isTheLastFactura(proyectoFacturacion)) {
-      EmailOutput output = null;
-      if (proyectoFacturacion.getTipoFacturacion() == null
-          || !proyectoFacturacion.getTipoFacturacion().isIncluirEnComunicado()) {
-        output = this.emailService.createComunicadoCalendarioFacturacionNotificarFacturaUnicaNoProrrogaNoRequisito(data,
-            Collections.singletonList(recipient));
-      } else {
-        output = this.emailService.createComunicadoCalendarioFacturacionNotificarFacturaUnicaNoProrroga(data,
-            Collections.singletonList(recipient));
-      }
-      this.emailService.sendEmail(output.getId());
-
-    }
-  }
-
-  private void buildAndSendIfFacturaIsFirstAndNotInsideProrrogaAndNotLast(ProyectoFacturacion proyectoFacturacion,
-      CspComCalendarioFacturacionNotificarData data, Recipient recipient) throws JsonProcessingException {
-    if (proyectoFacturacion.getNumeroPrevision() == 1 && !isInsideProrroga(proyectoFacturacion)
-        && !isTheLastFactura(proyectoFacturacion)) {
-      EmailOutput output = this.emailService.createComunicadoCalendarioFacturacionNotificarFacturaFirstNoProrrogaNoLast(
-          data,
-          Collections.singletonList(recipient));
-      this.emailService.sendEmail(output.getId());
-    }
-  }
-
-  private void buildAndSendIfFacturaIsNotFirstOrInsideProrrogaAndIsLast(ProyectoFacturacion proyectoFacturacion,
-      CspComCalendarioFacturacionNotificarData data, Recipient recipient) throws JsonProcessingException {
+    boolean isIncluirEnComunicado = proyectoFacturacion.getTipoFacturacion() != null
+        && proyectoFacturacion.getTipoFacturacion().isIncluirEnComunicado();
 
     data.setProrroga(isInsideProrroga(proyectoFacturacion));
 
-    if ((proyectoFacturacion.getNumeroPrevision() > 1 || data.isProrroga())
-        && isTheLastFactura(proyectoFacturacion)) {
-
-      EmailOutput output = null;
-      if (proyectoFacturacion.getTipoFacturacion() == null
-          || !proyectoFacturacion.getTipoFacturacion().isIncluirEnComunicado()) {
-        output = this.emailService
-            .createComunicadoCalendarioFacturacionNotificarFacturaNotFirstOrInProrrogaAndIsLastNoRequisitos(data,
-                Collections.singletonList(recipient));
+    if (proyectoFacturacion.getNumeroPrevision() == 1 && !data.isProrroga()) {
+      if (isTheLastFactura(proyectoFacturacion)) {
+        // Es la primera factura Y NO se trata de una prórroga Y ES la factura final
+        this.buildAndSendIfFacturaIsUniqueAndNotInsideProrroga(data, recipient, isIncluirEnComunicado);
       } else {
-        output = this.emailService.createComunicadoCalendarioFacturacionNotificarFacturaNotFirstOrInProrrogaAndIsLast(
-            data,
-            Collections.singletonList(recipient));
+        // Es la primera factura Y NO se trata de una prórroga Y NO ES la factura final
+        this.buildAndSendIfFacturaIsFirstAndNotInsideProrrogaAndNotLast(data, recipient);
       }
-      this.emailService.sendEmail(output.getId());
-
     }
+
+    if ((proyectoFacturacion.getNumeroPrevision() > 1 || data.isProrroga())) {
+      if (isTheLastFactura(proyectoFacturacion)) {
+        // (NO es la primera factura O se trata de una prórroga) Y ES la factura final
+        this.buildAndSendIfFacturaIsNotFirstOrInsideProrrogaAndIsLast(data, recipient, isIncluirEnComunicado);
+      } else {
+        // (NO es la primera factura O se trata de una prórroga) Y NO ES la factura
+        // final
+        this.buildAndSendIfFacturaIsNotFirstOrInsideProrrogaAndNotIsLast(data, recipient, isIncluirEnComunicado);
+      }
+    }
+
   }
 
-  private void buildAndSendIfFacturaIsNotFirstOrInsideProrrogaAndNotIsLast(ProyectoFacturacion proyectoFacturacion,
-      CspComCalendarioFacturacionNotificarData data, Recipient recipient) throws JsonProcessingException {
-    if ((proyectoFacturacion.getNumeroPrevision() > 1 || isInsideProrroga(proyectoFacturacion))
-        && !isTheLastFactura(proyectoFacturacion)) {
-      EmailOutput output = null;
-      if (proyectoFacturacion.getTipoFacturacion() == null
-          || !proyectoFacturacion.getTipoFacturacion().isIncluirEnComunicado()) {
-        output = this.emailService
-            .createComunicadoCalendarioFacturacionNotificarFacturaNotFirstOrInProrrogaAndIsNotLastNoRequisito(data,
-                Collections.singletonList(recipient));
-      } else {
-        output = this.emailService
-            .createComunicadoCalendarioFacturacionNotificarFacturaNotFirstOrInProrrogaAndIsNotLast(data,
-                Collections.singletonList(recipient));
-      }
-      this.emailService.sendEmail(output.getId());
+  /**
+   * Envia el comunicado si {@code isIncluirEnComunicado} es
+   * {@code true}
+   * <code>CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA</code>,
+   * si es {@code false} se envia
+   * <code>CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_UNICA_NOT_IN_PRORROGA_NO_REQUISITO</code>
+   * 
+   * @param data                  datos para el comunicado
+   * @param recipient             destinatarios
+   * @param isIncluirEnComunicado indica si el tipo {@link TipoFacturacion} se
+   *                              incluye en el comunicado
+   * @throws JsonProcessingException
+   */
+  private void buildAndSendIfFacturaIsUniqueAndNotInsideProrroga(
+      CspComCalendarioFacturacionNotificarData data,
+      Recipient recipient,
+      boolean isIncluirEnComunicado) throws JsonProcessingException {
+    EmailOutput output = null;
+    if (isIncluirEnComunicado) {
+      output = this.emailService.createComunicadoCalendarioFacturacionNotificarFacturaUnicaNoProrroga(data,
+          Collections.singletonList(recipient));
+    } else {
+      output = this.emailService.createComunicadoCalendarioFacturacionNotificarFacturaUnicaNoProrrogaNoRequisito(data,
+          Collections.singletonList(recipient));
     }
+
+    this.emailService.sendEmail(output.getId());
+  }
+
+  /**
+   * Envia el comunicado
+   * <code>CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_FIRST_NO_PRORROGA_NO_LAST</code>
+   * 
+   * @param data      datos para el comunicado
+   * @param recipient destinatarios
+   * @throws JsonProcessingException
+   */
+  private void buildAndSendIfFacturaIsFirstAndNotInsideProrrogaAndNotLast(
+      CspComCalendarioFacturacionNotificarData data,
+      Recipient recipient) throws JsonProcessingException {
+    EmailOutput output = this.emailService.createComunicadoCalendarioFacturacionNotificarFacturaFirstNoProrrogaNoLast(
+        data,
+        Collections.singletonList(recipient));
+    this.emailService.sendEmail(output.getId());
+  }
+
+  /**
+   * Envia el comunicado si {@code isIncluirEnComunicado} es
+   * {@code true}
+   * <code>CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST</code>,
+   * si es {@code false} se envia
+   * <code>CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_LAST_NO_REQUISITO</code>
+   * 
+   * @param data                  datos para el comunicado
+   * 
+   * @param recipient             destinatarios
+   * @param isIncluirEnComunicado indica si el tipo {@link TipoFacturacion} se
+   *                              incluye en el comunicado
+   * @throws JsonProcessingException
+   */
+  private void buildAndSendIfFacturaIsNotFirstOrInsideProrrogaAndIsLast(
+      CspComCalendarioFacturacionNotificarData data,
+      Recipient recipient,
+      boolean isIncluirEnComunicado) throws JsonProcessingException {
+    EmailOutput output = null;
+    if (isIncluirEnComunicado) {
+      output = this.emailService.createComunicadoCalendarioFacturacionNotificarFacturaNotFirstOrInProrrogaAndIsLast(
+          data,
+          Collections.singletonList(recipient));
+    } else {
+      output = this.emailService
+          .createComunicadoCalendarioFacturacionNotificarFacturaNotFirstOrInProrrogaAndIsLastNoRequisitos(data,
+              Collections.singletonList(recipient));
+    }
+
+    this.emailService.sendEmail(output.getId());
+  }
+
+  /**
+   * Envia el comunicado si {@code isIncluirEnComunicado} es
+   * {@code true}
+   * <code>CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST</code>,
+   * si es {@code false} se envia
+   * <code>CSP_COM_CALENDARIO_FACTURACION_NOTIFICAR_FACTURA_NOT_FIRST_OR_IN_PRORROGA_AND_IS_NOT_LAST_NO_REQUISITO</code>
+   * 
+   * @param data                  datos para el comunicado
+   * @param recipient             destinatarios
+   * @param isIncluirEnComunicado indica si el tipo {@link TipoFacturacion} se
+   *                              incluye en el comunicado
+   * @throws JsonProcessingException
+   */
+  private void buildAndSendIfFacturaIsNotFirstOrInsideProrrogaAndNotIsLast(
+      CspComCalendarioFacturacionNotificarData data,
+      Recipient recipient,
+      boolean isIncluirEnComunicado) throws JsonProcessingException {
+
+    EmailOutput output = null;
+    if (isIncluirEnComunicado) {
+      output = this.emailService
+          .createComunicadoCalendarioFacturacionNotificarFacturaNotFirstOrInProrrogaAndIsNotLast(data,
+              Collections.singletonList(recipient));
+    } else {
+      output = this.emailService
+          .createComunicadoCalendarioFacturacionNotificarFacturaNotFirstOrInProrrogaAndIsNotLastNoRequisito(data,
+              Collections.singletonList(recipient));
+    }
+
+    this.emailService.sendEmail(output.getId());
   }
 
   private boolean isTheLastFactura(ProyectoFacturacion proyectoFacturacion) {
@@ -217,17 +294,24 @@ public class ProyectoFacturacionComService {
       ProyectoFacturacion proyectoFacturacion,
       Proyecto proyecto, PersonaOutput persona) {
 
+    List<I18nFieldValueDto> i18nSinEspecificar = new ArrayList<>();
+    for (Language language : i18nConfig.getEnabledLanguages()) {
+      i18nSinEspecificar.add(new I18nFieldValueDto(language,
+          messageSource.getMessage(MSG_SIN_ESPEFICAR, null, Locale.forLanguageTag(language.getCode()))));
+    }
+
     return CspComCalendarioFacturacionNotificarData
         .builder()
         .codigosSge(this.getCodigosSge(proyectoFacturacion.getProyectoId()))
-        .tituloProyecto(proyecto.getTitulo())
+        .tituloProyecto(convertToI18nFieldValueDto(proyecto.getTitulo()))
         .numPrevision(proyectoFacturacion.getNumeroPrevision())
         .tipoFacturacion(proyectoFacturacion.getTipoFacturacion() == null
-            || StringUtils.isEmpty(proyectoFacturacion.getTipoFacturacion().getNombre()) ? "Sin especificar"
-                : proyectoFacturacion.getTipoFacturacion().getNombre())
+            ? i18nSinEspecificar
+            : convertToI18nFieldValueDto(proyectoFacturacion.getTipoFacturacion().getNombre()))
         .entidadesFinanciadoras(getNombresEntidadesFinanciadorasByProyectoId(
             proyectoFacturacion.getProyectoId()))
         .apellidosDestinatario(persona.getApellidos())
+        .enlaceAplicacion(sgiConfigProperties.getWebUrl())
         .build();
   }
 
@@ -235,7 +319,7 @@ public class ProyectoFacturacionComService {
     return this.proyectoEntidadFinanciadoraRepository
         .findByProyectoId(proyectoId).stream()
         .map(entidad -> sgiApiSgempService.findById(entidad.getEntidadRef()).getNombre())
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private Recipient getRecipientFromPersona(PersonaOutput persona) {
@@ -253,14 +337,17 @@ public class ProyectoFacturacionComService {
   }
 
   private List<PersonaOutput> getMiembrosEquiposAndResponsablesEconomicos(Long proyectoId) {
-
-    List<String> members = this.proyectoEquipoRepository
-        .findByProyectoIdAndRolProyectoRolPrincipalTrue(proyectoId).stream()
-        .map(ProyectoEquipo::getPersonaRef).collect(Collectors.toList());
-
-    members.addAll(
-        this.proyectoResponsableEconomicoRepository.findByProyectoId(proyectoId).stream()
-            .map(ProyectoResponsableEconomico::getPersonaRef).collect(Collectors.toList()));
+    List<String> members = Stream.concat(
+        this.proyectoEquipoRepository
+            .findByProyectoIdAndRolProyectoRolPrincipalTrue(proyectoId)
+            .stream()
+            .map(ProyectoEquipo::getPersonaRef),
+        this.proyectoResponsableEconomicoRepository
+            .findByProyectoId(proyectoId)
+            .stream()
+            .map(ProyectoResponsableEconomico::getPersonaRef))
+        .distinct()
+        .toList();
 
     return this.sgiApiSgpService.findAllByIdIn(members);
   }
@@ -280,14 +367,14 @@ public class ProyectoFacturacionComService {
         .codigosSge(codigosSge)
         .motivoRechazo(proyectoFacturacion.getEstadoValidacionIP().getEstado() == TipoEstadoValidacion.RECHAZADA
             ? proyectoFacturacion.getEstadoValidacionIP().getComentario()
-            : "")
+            : Collections.emptyList())
         .nombreApellidosValidador(persona.getNombre() + " " + persona.getApellidos())
         .build();
   }
 
   private List<String> getCodigosSge(Long proyectoId) {
     return this.proyectoProyectoSgeRepository.findByProyectoId(proyectoId).stream()
-        .map(ProyectoProyectoSge::getProyectoSgeRef).collect(Collectors.toList());
+        .map(ProyectoProyectoSge::getProyectoSgeRef).toList();
   }
 
   private List<Recipient> getRecipientsUG(String unidadGestionRef) throws JsonProcessingException {
@@ -296,7 +383,12 @@ public class ProyectoFacturacionComService {
             CONFIG_CSP_COM_CALENDARIO_FACTURACION_VALIDAR_IP_DESTINATARIOS + unidadGestionRef)
         .stream()
         .map(destinatario -> Recipient.builder().name(destinatario).address(destinatario).build())
-        .collect(Collectors.toList());
+        .toList();
+  }
+
+  private Set<I18nFieldValueDto> convertToI18nFieldValueDto(Set<? extends I18nFieldValue> values) {
+    return values.stream().map(t -> new I18nFieldValueDto(t.getLang(), t.getValue()))
+        .collect(Collectors.toSet());
   }
 
 }

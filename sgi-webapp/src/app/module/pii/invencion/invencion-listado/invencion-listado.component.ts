@@ -98,7 +98,7 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
     private readonly cnfService: ConfigService
 
   ) {
-    super();
+    super(translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -116,11 +116,20 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
     this.fxLayoutProperties.xs = 'column';
     this.sectoresAplicacion$ = sectorAplicacionService.findAll().pipe(map(({ items }) => items));
     this.tiposProteccion$ = tipoProteccionService.findAll().pipe(map(({ items }) => items));
+
+    this.resolveSortProperty = (column: string) => {
+      if (column == 'tipoProteccion.nombre') {
+        return 'tipoProteccion.nombre.value';
+      } else if (column == 'titulo') {
+        return 'titulo.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.formGroup = new FormGroup({
       id: new FormControl(''),
       fechaComunicacionDesde: new FormControl(),
@@ -180,7 +189,7 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
         LuxonUtils.toBackend(controls.fechaComunicacionHasta.value))
       .and('tipoProteccion', SgiRestFilterOperator.EQUALS, controls.tipoProteccion.value?.id?.toString())
       .and('sectoresAplicacion.sectorAplicacion.id', SgiRestFilterOperator.EQUALS, controls.sectorAplicacion.value?.id?.toString())
-      .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
+      .and('titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('inventores.inventorRef', SgiRestFilterOperator.LIKE_ICASE, controls.inventor.value?.id?.toString());
     if (this.isBusquedaAvanzada) {
       filter.and('solicitudesProteccion.numeroSolicitud', SgiRestFilterOperator.EQUALS, controls.solicitudNumero.value)
@@ -295,7 +304,7 @@ export class InvencionListadoComponent extends AbstractTablePaginationComponent<
     this.suscripciones.push(subcription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       INVENCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

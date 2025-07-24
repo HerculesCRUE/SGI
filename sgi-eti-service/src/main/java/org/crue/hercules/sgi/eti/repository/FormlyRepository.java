@@ -8,7 +8,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface FormlyRepository extends JpaRepository<Formly, Long>, JpaSpecificationExecutor<Formly> {
+public interface FormlyRepository
+    extends JpaRepository<Formly, Long>, JpaSpecificationExecutor<Formly> {
 
   /**
    * Recupera el Formly con mayor versión cuyo nombre coincide con el
@@ -18,4 +19,5 @@ public interface FormlyRepository extends JpaRepository<Formly, Long>, JpaSpecif
    * @return el Formly con mayor versión cuyo nombre coincide con el especificado.
    */
   public Optional<Formly> findFirstByNombreOrderByVersionDesc(String nombre);
+
 }

@@ -1,0 +1,117 @@
+[
+  {
+    "key": "ap3_7_14",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.14 Animaliei emandako substantzia eta agente biologikoen (anestesia eta analgesia barne) zerrenda eta protokoloa "
+    },
+    "fieldGroup": [
+      {
+        "template": "Zehaztu animaliari emandako substantzia GUZTIEN printzipio aktiboa eta jarraibideak, horien barruan sartuta anestesia, analgesia eta eutanasia programaturako eta programatu gaberako protokoloa (hala badagokio)."
+      },
+      {
+        "type": "table-crud",
+        "key": "principioActivoTable",
+        "templateOptions": {
+          "entity": "printzipio aktiboa",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Printzipio aktiboa"
+          },
+          "fieldGroup": [
+            {
+              "key": "Tipo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Mota",
+                "order": 10,
+                "options": [
+                  {
+                    "label": "Prozedura/esku hartze kirurgikorako aurre-anestesia",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Anestesia",
+                    "value": "2"
+                  },
+                  {
+                    "label": "Operazio barruko anestesia",
+                    "value": "3"
+                  },
+                  {
+                    "label": "Operazio osteko anestesia",
+                    "value": "4"
+                  },
+                  {
+                    "label": "Esku hartze ez-kirurgikoko analgesia",
+                    "value": "5"
+                  },
+                  {
+                    "label": "Esperimentazio prozesuko beste substantzia bat",
+                    "value": "6"
+                  },
+                  {
+                    "label": "Eutanasia programatua",
+                    "value": "7"
+                  },
+                  {
+                    "label": "Eutanasia programatu gabea",
+                    "value": "8"
+                  },
+                  {
+                    "label": "Eutanasia (programatua eta programatu gabea)",
+                    "value": "9"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "producto",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Produktua (printzipio aktiboa)",
+                "order": 20
+              }
+            },
+            {
+              "key": "viaAdministracion",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Emateko modua",
+                "order": 30
+              }
+            },
+            {
+              "key": "dosis",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Dosia",
+                "order": 40
+              }
+            },
+            {
+              "key": "volumen",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Bolumena",
+                "order": 50
+              }
+            },
+            {
+              "key": "pauta",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Pauta",
+                "order": 60
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

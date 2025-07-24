@@ -37,7 +37,8 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.ejecucion-economica.seguimiento-justificacion.requerimientos.tipo-requerimiento' | translate}}
         </th>
-        <td mat-cell *matCellDef="let element"> {{element.value.tipoRequerimiento?.nombre }}
+        <td mat-cell *matCellDef="let element">
+          <sgi-i18n-table-field [field]="element.value.tipoRequerimiento?.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -47,7 +48,9 @@
           {{'csp.ejecucion-economica.seguimiento-justificacion.requerimientos.requerimiento-previo' |
           translate}} </th>
         <td mat-cell *matCellDef="let element">
-          {{element.value?.requerimientoPrevio | requerimientoJustificacionNombre}}
+          <sgi-i18n-table-field *ngIf="element.value?.requerimientoPrevio"
+            [fields]="[element.value.requerimientoPrevio?.numRequerimiento, ' - ', element.value.requerimientoPrevio?.tipoRequerimiento.nombre]">
+          </sgi-i18n-table-field>
         </td>
       </ng-container>
 

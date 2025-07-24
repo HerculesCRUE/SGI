@@ -1,22 +1,31 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoFaseNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.repository.TipoFaseRepository;
 import org.crue.hercules.sgi.csp.service.impl.TipoFaseServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,42 +35,25 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * TipoFaseServiceTest
  */
+@Import({ TipoFaseServiceImpl.class })
 class TipoFaseServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private TipoFaseRepository tipoFaseRepository;
 
+  // This bean must be created by Spring so validations can be applied
+  @Autowired
   private TipoFaseService tipoFaseService;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    tipoFaseService = new TipoFaseServiceImpl(tipoFaseRepository);
-  }
-
-  @Test
-  void findById_WithId_ReturnsTipoFase() {
-    BDDMockito.given(tipoFaseRepository.findById(1L)).willReturn(Optional.of(generarMockTipoFase(1L, "TipoFase1")));
-
-    TipoFase tipoFase = tipoFaseService.findById(1L);
-    Assertions.assertThat(tipoFase.getId()).isEqualTo(1L);
-    Assertions.assertThat(tipoFase.getActivo()).isEqualTo(Boolean.TRUE);
-    Assertions.assertThat(tipoFase.getNombre()).isEqualTo("TipoFase1");
-
-  }
-
-  @Test
-  void find_NotFound_ThrowsTipoFaseNotFoundException() throws Exception {
-    BDDMockito.given(tipoFaseRepository.findById(1L)).willReturn(Optional.empty());
-
-    Assertions.assertThatThrownBy(() -> tipoFaseService.findById(1L)).isInstanceOf(TipoFaseNotFoundException.class);
-  }
 
   @Test
   void create_ReturnsTipoFase() {
     // given: Un nuevo TipoFase
     TipoFase tipoFase = generarMockTipoFase(null);
 
-    BDDMockito.given(tipoFaseRepository.findByNombreAndActivoIsTrue(tipoFase.getNombre())).willReturn(Optional.empty());
+    BDDMockito
+        .given(tipoFaseRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
+        .willReturn(Optional.empty());
 
     BDDMockito.given(tipoFaseRepository.save(tipoFase)).will((InvocationOnMock invocation) -> {
       TipoFase tipoFaseCreado = invocation.getArgument(0);
@@ -95,7 +87,8 @@ class TipoFaseServiceTest extends BaseServiceTest {
 
     // then: El tipo Fase se actualiza correctamente.
     Assertions.assertThat(tipoFaseActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(tipoFaseActualizado.getNombre()).isEqualTo("TipoFase1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFaseActualizado.getNombre(), Language.ES))
+        .isEqualTo("TipoFase1 actualizada");
 
   }
 
@@ -157,14 +150,17 @@ class TipoFaseServiceTest extends BaseServiceTest {
     tipoFase.setActivo(Boolean.FALSE);
 
     BDDMockito.given(tipoFaseRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(tipoFase));
-    BDDMockito.given(tipoFaseRepository.findByNombreAndActivoIsTrue(ArgumentMatchers.<String>any()))
+    BDDMockito
+        .given(tipoFaseRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(tipoFaseExistente));
 
     // when: activamos el TipoFase
-    // then: Lanza una excepcion porque el TipoFase no existe
+    // then: Lanza una excepcion porque ya exsite un TipoFase con el mismo nombre
     Assertions.assertThatThrownBy(() -> tipoFaseService.enable(tipoFase.getId()))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoFase activo con el nombre '%s'", tipoFase.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un tipo de fase con el nombre '%s'",
+            I18nHelper.getValueForLanguage(tipoFase.getNombre(), Language.ES));
 
   }
 
@@ -243,7 +239,8 @@ class TipoFaseServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFase tipoFase = page.getContent().get(i);
-      Assertions.assertThat(tipoFase.getNombre()).isEqualTo("TipoFase" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFase.getNombre(), Language.ES))
+          .isEqualTo("TipoFase" + String.format("%03d", j));
     }
   }
 
@@ -283,7 +280,8 @@ class TipoFaseServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFase tipoFase = page.getContent().get(i);
-      Assertions.assertThat(tipoFase.getNombre()).isEqualTo("TipoFase" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFase.getNombre(), Language.ES))
+          .isEqualTo("TipoFase" + String.format("%03d", j));
     }
   }
 
@@ -296,15 +294,18 @@ class TipoFaseServiceTest extends BaseServiceTest {
     BeanUtils.copyProperties(givenData, newTFase);
     newTFase.setId(null);
 
-    BDDMockito.given(tipoFaseRepository.findByNombreAndActivoIsTrue(ArgumentMatchers.anyString()))
+    BDDMockito
+        .given(tipoFaseRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(givenData));
 
     Assertions.assertThatThrownBy(
         // when: create TipoFase
         () -> tipoFaseService.create(newTFase))
         // then: throw exception as Nombre already exists
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoFase activo con el nombre '%s'", newTFase.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un tipo de fase con el nombre '%s'",
+            I18nHelper.getValueForLanguage(newTFase.getNombre(), Language.ES));
   }
 
   @Test
@@ -313,14 +314,17 @@ class TipoFaseServiceTest extends BaseServiceTest {
     TipoFase tipoFaseUpdated = generarMockTipoFase(1L, "nombreRepetido");
     TipoFase tipoFase = generarMockTipoFase(2L, "nombreRepetido");
 
-    BDDMockito.given(tipoFaseRepository.findByNombreAndActivoIsTrue(tipoFaseUpdated.getNombre()))
+    BDDMockito
+        .given(tipoFaseRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(tipoFase));
 
     // when: Actualizamos el TipoFase
     // then: Lanza una excepcion porque ya existe otro TipoFase con ese nombre
     Assertions.assertThatThrownBy(() -> tipoFaseService.update(tipoFaseUpdated))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoFase activo con el nombre '%s'", tipoFaseUpdated.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un tipo de fase con el nombre '%s'",
+            I18nHelper.getValueForLanguage(tipoFaseUpdated.getNombre(), Language.ES));
   }
 
   /**
@@ -340,10 +344,16 @@ class TipoFaseServiceTest extends BaseServiceTest {
    * @return el objeto TipoFase
    */
   TipoFase generarMockTipoFase(Long id, String nombre) {
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, nombre));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcion-" + id));
+
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id);
-    tipoFase.setNombre(nombre);
-    tipoFase.setDescripcion("descripcion-" + id);
+    tipoFase.setNombre(nombreTipoFase);
+    tipoFase.setDescripcion(descripcionTipoFase);
     tipoFase.setActivo(Boolean.TRUE);
     return tipoFase;
   }

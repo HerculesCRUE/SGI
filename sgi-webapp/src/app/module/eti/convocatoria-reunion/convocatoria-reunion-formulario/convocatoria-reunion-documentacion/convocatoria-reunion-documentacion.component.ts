@@ -10,6 +10,7 @@ import { IDocumentacionConvocatoriaReunion } from '@core/models/eti/documentacio
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
@@ -55,7 +56,7 @@ export class ConvocatoriaReunionDocumentacionComponent extends FragmentComponent
   private sortingDataAccesor = (wrapper: StatusWrapper<IDocumentacionConvocatoriaReunion>, property: string) => {
     switch (property) {
       case 'nombre':
-        return wrapper.value?.nombre;
+        return this.languageService.getFieldValue(wrapper.value?.nombre);
       default:
         return wrapper.value[property];
     }
@@ -70,16 +71,17 @@ export class ConvocatoriaReunionDocumentacionComponent extends FragmentComponent
     private matDialog: MatDialog,
     private actionService: ConvocatoriaReunionActionService,
     private readonly documentoService: DocumentoService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
+  ) {
 
-    super(actionService.FRAGMENT.DOCUMENTACION, actionService);
+    super(actionService.FRAGMENT.DOCUMENTACION, actionService, translate);
 
     this.formPart = this.fragment as ConvocatoriaReunionDocumentacionFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
 
     this.dataSourceDocumentoConvocatoriaReunion.paginator = this.paginatorDocumentacionConvocatoriaReunion;
     this.dataSourceDocumentoConvocatoriaReunion.sort = this.sortDocumentacionConvocatoriaReunion;
@@ -90,7 +92,7 @@ export class ConvocatoriaReunionDocumentacionComponent extends FragmentComponent
     this.dataSourceDocumentoConvocatoriaReunion.sortingDataAccessor = this.sortingDataAccesor;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       DOCUMENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

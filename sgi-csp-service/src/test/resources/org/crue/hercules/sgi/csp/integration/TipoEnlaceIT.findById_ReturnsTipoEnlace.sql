@@ -1,2 +1,6 @@
 -- TIPO_ENLACE
-insert into test.tipo_enlace (id,nombre,descripcion,activo) values (1,'nombre-1','descripcion-1',true);
+insert into test.tipo_enlace (id,activo) values (1,true);
+-- TIPO_ENLACE_NOMBRE
+INSERT INTO test.tipo_enlace_nombre (tipo_enlace_id, lang, value_) VALUES(1, 'es', 'nombre-1');
+-- TIPO_ENLACE_DESCRIPCION
+INSERT INTO test.tipo_enlace_descripcion (tipo_enlace_id, lang, value_) VALUES(1, 'es', 'descripcion-1');

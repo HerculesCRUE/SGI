@@ -12,15 +12,18 @@
           <mat-error *ngIf="formGroup.controls.anualidad.errors?.duplicate">
             {{'error.duplicate.anualidad' | translate}}
           </mat-error>
-          <mat-error *ngIf="formGroup.controls.anualidad.errors?.pattern">
+          <mat-error *ngIf="formGroup.controls.anualidad.errors?.pattern && this.formPart.isFormatoAnio">
             {{'error.csp.proyecto-presupuesto.anualidad.pattern' | translate}}
+          </mat-error>
+          <mat-error *ngIf="formGroup.controls.anualidad.errors?.pattern && !this.formPart.isFormatoAnio">
+            {{'error.csp.proyecto-presupuesto.anualidad.numero.pattern' | translate}}
           </mat-error>
           <mat-error *ngIf="formGroup.controls.anualidad.errors?.required">
             {{ 'error.required.entity' | translate:msgParamAnualidadEntity}}
           </mat-error>
         </mat-form-field>
       </div>
-      <div fxFlex>
+      <div fxFlex *ngIf="this.formPart.isNotificacionPresupuestoSgeEnabled">
         <!-- Presupuestar -->
         <mat-form-field class="input-form">
           <mat-label>{{'csp.proyecto-anualidad.presupuestar' | translate}}
@@ -30,7 +33,8 @@
       </div>
     </div>
 
-    <div fxLayout="row" fxLayoutGap="10px" *ngIf="this.formPart.isAnualidadGenerica">
+    <div fxLayout="row" fxLayoutGap="10px"
+      *ngIf="this.formPart.isAnualidadGenerica && this.formPart.isNotificacionPresupuestoSgeEnabled">
       <div fxFlex="50">
         <!-- Presupuestar -->
         <mat-form-field class="input-form">

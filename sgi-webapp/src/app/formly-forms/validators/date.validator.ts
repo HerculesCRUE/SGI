@@ -1,9 +1,15 @@
-import { AbstractControl, FormGroup, ValidationErrors } from '@angular/forms';
+import { AbstractControl, FormGroup } from '@angular/forms';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { SgiFormlyFieldConfig } from '@formly-forms/formly-field-config';
+import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
+import { IValidationError } from './models/validation-error';
 import { IValidatorCompareToOptions } from './models/validator-compare-to-options';
 import { IValidatorOptions } from './models/validator-options';
 import { getOptionsCompareValues as getCompareValue } from './utils.validator';
+
+const MSG_FORMLY_VALIDATIONS_DATE_IS_AFTER = marker('msg.formly.validations.date-is-after');
+const MSG_FORMLY_VALIDATIONS_DATE_IS_BETWEEN = marker('msg.formly.validations.date-is-between');
 
 export interface IDateValidatorOptions extends IValidatorOptions, Partial<Pick<IValidatorCompareToOptions, 'formStateProperty' | 'value'>> {
 }
@@ -15,7 +21,8 @@ export function dateIsAfter(
   control: AbstractControl,
   field: SgiFormlyFieldConfig,
   options: IDateValidatorOptions,
-): ValidationErrors {
+  translate: TranslateService
+): IValidationError {
   let valueToCompare: DateTime | string = getCompareValue(field.options.formState, options);
   let controlValue: DateTime | string = options.errorPath ? control.value[options.errorPath] : control.value;
 
@@ -36,9 +43,14 @@ export function dateIsAfter(
   }
 
   return {
-    'date-is-after': {
-      message: options.message ? eval('`' + options.message + '`') : `La fecha debe de ser posterior al ${valueToCompare.toLocaleString(DateTime.DATE_SHORT)}`
-    }
+    name: 'date-is-after',
+    customMessage: options.message ? eval('`' + options.message + '`') : null,
+    defatultMessage: translate.instant(
+      MSG_FORMLY_VALIDATIONS_DATE_IS_AFTER,
+      {
+        min: valueToCompare.setLocale(translate.currentLang).toLocaleString(DateTime.DATE_SHORT)
+      }
+    )
   };
 }
 
@@ -46,7 +58,8 @@ export function dateIsBetween(
   control: AbstractControl,
   field: SgiFormlyFieldConfig,
   options: IDateBetweenValidatorOptions,
-): ValidationErrors {
+  translate: TranslateService
+): IValidationError {
   let [minDate, maxDate]: (DateTime | string)[] = getCompareValue(field.options.formState, options);
   let controlValue: DateTime | string = options.errorPath ? control.value[options.errorPath] : control.value;
 
@@ -67,8 +80,14 @@ export function dateIsBetween(
   }
 
   return {
-    'date-is-between': {
-      message: options.message ? eval('`' + options.message + '`') : `La fecha debe de estar entre ${minDate.toLocaleString(DateTime.DATE_SHORT)} y ${maxDate.toLocaleString(DateTime.DATE_SHORT)}`
-    }
+    name: 'date-is-between',
+    customMessage: options.message ? eval('`' + options.message + '`') : null,
+    defatultMessage: translate.instant(
+      MSG_FORMLY_VALIDATIONS_DATE_IS_BETWEEN,
+      {
+        min: minDate.setLocale(translate.currentLang).toLocaleString(DateTime.DATE_SHORT),
+        max: maxDate.setLocale(translate.currentLang).toLocaleString(DateTime.DATE_SHORT)
+      }
+    )
   };
 }

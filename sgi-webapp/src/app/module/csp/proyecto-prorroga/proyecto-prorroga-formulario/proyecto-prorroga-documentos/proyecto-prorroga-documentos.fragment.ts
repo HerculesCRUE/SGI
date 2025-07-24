@@ -1,4 +1,5 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IProyectoProrrogaDocumento } from '@core/models/csp/proyecto-prorroga-documento';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { Fragment } from '@core/services/action-service';
@@ -13,7 +14,7 @@ import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 export class NodeDocumento {
   parent: NodeDocumento;
   key: string;
-  title: string;
+  title: string | I18nFieldValue[];
   documento?: StatusWrapper<IProyectoProrrogaDocumento>;
   fichero?: IDocumento;
   // tslint:disable-next-line: variable-name
@@ -28,7 +29,7 @@ export class NodeDocumento {
     return this._level;
   }
 
-  constructor(key: string, title: string, level: number, documento?: StatusWrapper<IProyectoProrrogaDocumento>) {
+  constructor(key: string, title: string | I18nFieldValue[], level: number, documento?: StatusWrapper<IProyectoProrrogaDocumento>) {
     this.key = key;
     this.title = title;
     this._level = level;

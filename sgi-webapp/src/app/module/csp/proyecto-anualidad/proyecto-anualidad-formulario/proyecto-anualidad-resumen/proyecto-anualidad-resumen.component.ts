@@ -36,13 +36,13 @@ export class ProyectoAnualidadResumenComponent extends FragmentComponent impleme
     private actionService: ProyectoAnualidadActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.RESUMEN, actionService);
+    super(actionService.FRAGMENT.RESUMEN, actionService, translate);
     this.formPart = this.fragment as ProyectoAnualidadResumenFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.subscriptions.push(this.formPart.anualidades$.subscribe(elements => {
       const result = [];
@@ -65,7 +65,7 @@ export class ProyectoAnualidadResumenComponent extends FragmentComponent impleme
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_HISTORICO_ESTADO_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL

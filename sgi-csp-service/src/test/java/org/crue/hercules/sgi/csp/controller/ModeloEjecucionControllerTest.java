@@ -1,11 +1,15 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionDescripcion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoDocumento;
 import org.crue.hercules.sgi.csp.model.ModeloTipoEnlace;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
@@ -13,10 +17,20 @@ import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.ModeloTipoHito;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceNombre;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.model.TipoHito;
+import org.crue.hercules.sgi.csp.model.TipoHitoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoHitoNombre;
 import org.crue.hercules.sgi.csp.service.ModeloEjecucionService;
 import org.crue.hercules.sgi.csp.service.ModeloTipoDocumentoService;
 import org.crue.hercules.sgi.csp.service.ModeloTipoEnlaceService;
@@ -24,6 +38,8 @@ import org.crue.hercules.sgi.csp.service.ModeloTipoFaseService;
 import org.crue.hercules.sgi.csp.service.ModeloTipoFinalidadService;
 import org.crue.hercules.sgi.csp.service.ModeloTipoHitoService;
 import org.crue.hercules.sgi.csp.service.ModeloUnidadService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -82,29 +98,32 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-ME-C" })
   void create_ReturnsModeloEjecucion() throws Exception {
     // given: Un ModeloEjecucion nuevo
-    String modeloEjecucionJson = "{ \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\", \"externo\": false, \"contrato\": false }";
+    ModeloEjecucion data = generarMockModeloEjecucion(1L, "nombre-1");
+    data.setId(null);
 
     BDDMockito.given(modeloEjecucionService.create(ArgumentMatchers.<ModeloEjecucion>any()))
-        .will((InvocationOnMock invocation) -> {
-          ModeloEjecucion modeloEjecucionCreado = invocation.getArgument(0);
-          modeloEjecucionCreado.setId(1L);
-          if (modeloEjecucionCreado.getActivo() == null) {
-            modeloEjecucionCreado.setActivo(true);
+        .willAnswer(new Answer<ModeloEjecucion>() {
+          @Override
+          public ModeloEjecucion answer(InvocationOnMock invocation) throws Throwable {
+            ModeloEjecucion givenData = invocation.getArgument(0, ModeloEjecucion.class);
+            ModeloEjecucion newData = new ModeloEjecucion();
+            BeanUtils.copyProperties(givenData, newData);
+            newData.setId(1L);
+            return newData;
           }
-          return modeloEjecucionCreado;
         });
 
     // when: Creamos un ModeloEjecucion
     mockMvc
         .perform(MockMvcRequestBuilders.post(MODELO_EJECUCION_CONTROLLER_BASE_PATH)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(modeloEjecucionJson))
+            .content(mapper.writeValueAsString(data)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Crea el nuevo ModeloEjecucion y lo devuelve
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -131,24 +150,21 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
   void update_ReturnsModeloEjecucion() throws Exception {
     // given: Un ModeloEjecucion a modificar
-    String modeloEjecucionJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true, \"externo\": false, \"contrato\": false  }";
-    ModeloEjecucion modeloEjecucionSinModificar = generarMockModeloEjecucion(1L, "nombre-1");
+    ModeloEjecucion data = generarMockModeloEjecucion(1L, "nombre-1-modificado");
 
-    BDDMockito.given(modeloEjecucionService.findById(ArgumentMatchers.<Long>any()))
-        .willReturn(modeloEjecucionSinModificar);
     BDDMockito.given(modeloEjecucionService.update(ArgumentMatchers.<ModeloEjecucion>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
 
     // when: Actualizamos el ModeloEjecucion
     mockMvc
-        .perform(MockMvcRequestBuilders.put(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
+        .perform(MockMvcRequestBuilders.put(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, data.getId())
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(modeloEjecucionJson))
+            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(data)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Modifica el ModeloEjecucion y lo devuelve
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1-modificado"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1-modificado"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true))
         .andExpect(MockMvcResultMatchers.jsonPath("externo").value(false))
         .andExpect(MockMvcResultMatchers.jsonPath("contrato").value(false));
@@ -158,17 +174,18 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
   void update_WithIdNotExist_Returns404() throws Exception {
     // given: Un ModeloEjecucion a modificar
-    String modeloEjecucionJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true, \"externo\": false, \"contrato\": false }";
+    ModeloEjecucion data = generarMockModeloEjecucion(1L, "nombre-1-modificado");
+
     BDDMockito.given(modeloEjecucionService.update(ArgumentMatchers.<ModeloEjecucion>any()))
         .will((InvocationOnMock invocation) -> {
           throw new ModeloEjecucionNotFoundException(((ModeloEjecucion) invocation.getArgument(0)).getId());
         });
 
-    // when: Actualizamos el ModeloEjecucion
+    // when: Actualizamos el TipoDocumento
     mockMvc
         .perform(MockMvcRequestBuilders.put(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(modeloEjecucionJson))
+            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(data)))
         // then: No encuentra el ModeloEjecucion y devuelve un 404
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isNotFound());
   }
@@ -217,8 +234,10 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
         // then: return enabled ModeloEjecucion
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(modeloEjecucion.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(modeloEjecucion.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(modeloEjecucion.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(modeloEjecucion.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(modeloEjecucion.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(Boolean.TRUE));
   }
 
@@ -266,8 +285,10 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
         // then: return disabled ModeloEjecucion
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(idBuscado))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(modeloEjecucion.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(modeloEjecucion.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(modeloEjecucion.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(modeloEjecucion.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(Boolean.FALSE));
   }
 
@@ -322,7 +343,8 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
 
     for (int i = 31; i < 37; i++) {
       ModeloEjecucion modeloEjecucion = modelosEjecucionResponse.get(i);
-      Assertions.assertThat(modeloEjecucion.getNombre()).isEqualTo("ModeloEjecucion" + String.format("%03d", i + 1));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(modeloEjecucion.getNombre(), Language.ES))
+          .isEqualTo("ModeloEjecucion" + String.format("%03d", i + 1));
     }
   }
 
@@ -397,7 +419,8 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ModeloEjecucion modeloEjecucion = modelosEjecucionResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloEjecucion.getNombre()).isEqualTo("ModeloEjecucion" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(modeloEjecucion.getNombre(), Language.ES))
+          .isEqualTo("ModeloEjecucion" + String.format("%03d", i));
     }
   }
 
@@ -446,8 +469,8 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
         // then: Devuelve ModeloEjecucion
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -530,7 +553,7 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ModeloTipoEnlace modeloTipoEnlace = modeloTipoEnlacesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloTipoEnlace.getTipoEnlace().getNombre())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(modeloTipoEnlace.getTipoEnlace().getNombre(), Language.ES))
           .isEqualTo("TipoEnlace" + String.format("%03d", i));
     }
   }
@@ -628,7 +651,8 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ModeloTipoFase modeloTipoFase = modeloTipoFasesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloTipoFase.getTipoFase().getNombre()).isEqualTo("TipoFase" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(modeloTipoFase.getTipoFase().getNombre(), Language.ES))
+          .isEqualTo("TipoFase" + String.format("%03d", i));
     }
   }
 
@@ -658,192 +682,6 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
     mockMvc
         .perform(MockMvcRequestBuilders
             .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipofases", idModeloEjecucion)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve un 204
-        .andExpect(MockMvcResultMatchers.status().isNoContent());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  void findAllModeloTipoFasesConvocatoria_ReturnsPage() throws Exception {
-    // given: Una lista con 37 ModeloTipoFase para el ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-
-    List<ModeloTipoFase> modeloTipoFases = new ArrayList<>();
-    for (long i = 1; i <= 37; i++) {
-      modeloTipoFases.add(generarMockModeloTipoFase(i, "TipoFase" + String.format("%03d", i)));
-    }
-
-    Integer page = 3;
-    Integer pageSize = 10;
-
-    BDDMockito
-        .given(modeloTipoFaseService.findAllByModeloEjecucionActivosConvocatoria(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloTipoFase>>() {
-          @Override
-          public Page<ModeloTipoFase> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > modeloTipoFases.size() ? modeloTipoFases.size() : toIndex;
-            List<ModeloTipoFase> content = modeloTipoFases.subList(fromIndex, toIndex);
-            Page<ModeloTipoFase> page = new PageImpl<>(content, pageable, modeloTipoFases.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    MvcResult requestResult = mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipofases/convocatoria",
-                idModeloEjecucion)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve la pagina 3 con los ModeloTipoFase del 31 al 37
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page", "3"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Total-Count", "7"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "37"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(7))).andReturn();
-
-    List<ModeloTipoFase> modeloTipoFasesResponse = mapper.readValue(requestResult.getResponse().getContentAsString(),
-        new TypeReference<List<ModeloTipoFase>>() {
-        });
-
-    for (int i = 31; i <= 37; i++) {
-      ModeloTipoFase modeloTipoFase = modeloTipoFasesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloTipoFase.getTipoFase().getNombre()).isEqualTo("TipoFase" + String.format("%03d", i));
-    }
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  void findAllModeloTipoFasesConvocatoria_EmptyList_Returns204() throws Exception {
-    // given: Una lista vacia de ModeloTipoFase del ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-    List<ModeloTipoFase> modeloTipoFases = new ArrayList<>();
-
-    Integer page = 0;
-    Integer pageSize = 10;
-
-    BDDMockito
-        .given(modeloTipoFaseService.findAllByModeloEjecucionActivosConvocatoria(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloTipoFase>>() {
-          @Override
-          public Page<ModeloTipoFase> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ModeloTipoFase> page = new PageImpl<>(modeloTipoFases, pageable, 0);
-            return page;
-          }
-        });
-
-    // when: Get page=0 with pagesize=10
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipofases/convocatoria",
-                idModeloEjecucion)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve un 204
-        .andExpect(MockMvcResultMatchers.status().isNoContent());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  void findAllModeloTipoFasesProyecto_ReturnsPage() throws Exception {
-    // given: Una lista con 37 ModeloTipoFase para el ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-
-    List<ModeloTipoFase> modeloTipoFases = new ArrayList<>();
-    for (long i = 1; i <= 37; i++) {
-      modeloTipoFases.add(generarMockModeloTipoFase(i, "TipoFase" + String.format("%03d", i)));
-    }
-
-    Integer page = 3;
-    Integer pageSize = 10;
-
-    BDDMockito
-        .given(modeloTipoFaseService.findAllByModeloEjecucionActivosProyecto(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloTipoFase>>() {
-          @Override
-          public Page<ModeloTipoFase> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > modeloTipoFases.size() ? modeloTipoFases.size() : toIndex;
-            List<ModeloTipoFase> content = modeloTipoFases.subList(fromIndex, toIndex);
-            Page<ModeloTipoFase> page = new PageImpl<>(content, pageable, modeloTipoFases.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    MvcResult requestResult = mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipofases/proyecto",
-                idModeloEjecucion)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve la pagina 3 con los ModeloTipoFase del 31 al 37
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page", "3"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Total-Count", "7"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "37"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(7))).andReturn();
-
-    List<ModeloTipoFase> modeloTipoFasesResponse = mapper.readValue(requestResult.getResponse().getContentAsString(),
-        new TypeReference<List<ModeloTipoFase>>() {
-        });
-
-    for (int i = 31; i <= 37; i++) {
-      ModeloTipoFase modeloTipoFase = modeloTipoFasesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloTipoFase.getTipoFase().getNombre()).isEqualTo("TipoFase" + String.format("%03d", i));
-    }
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  void findAllModeloTipoFasesProyecto_EmptyList_Returns204() throws Exception {
-    // given: Una lista vacia de ModeloTipoFase del ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-    List<ModeloTipoFase> modeloTipoFases = new ArrayList<>();
-
-    Integer page = 0;
-    Integer pageSize = 10;
-
-    BDDMockito
-        .given(modeloTipoFaseService.findAllByModeloEjecucionActivosProyecto(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloTipoFase>>() {
-          @Override
-          public Page<ModeloTipoFase> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ModeloTipoFase> page = new PageImpl<>(modeloTipoFases, pageable, 0);
-            return page;
-          }
-        });
-
-    // when: Get page=0 with pagesize=10
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipofases/proyecto",
-                idModeloEjecucion)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
             .accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
@@ -911,7 +749,8 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ModeloTipoDocumento modeloTipoDocumento = tiposDocumentoResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloTipoDocumento.getTipoDocumento().getNombre())
+      Assertions
+          .assertThat(I18nHelper.getValueForLanguage(modeloTipoDocumento.getTipoDocumento().getNombre(), Language.ES))
           .isEqualTo("TipoDocumento" + String.format("%03d", i));
     }
   }
@@ -1010,7 +849,8 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ModeloTipoFinalidad modeloTipoFinalidad = modeloTipoFinalidadesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloTipoFinalidad.getTipoFinalidad().getNombre())
+      Assertions
+          .assertThat(I18nHelper.getValueForLanguage(modeloTipoFinalidad.getTipoFinalidad().getNombre(), Language.ES))
           .isEqualTo("TipoFinalidad" + String.format("%03d", i));
     }
   }
@@ -1109,7 +949,8 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ModeloTipoHito modeloTipoHito = modeloTipoHitosResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloTipoHito.getTipoHito().getNombre()).isEqualTo("TipoHito" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(modeloTipoHito.getTipoHito().getNombre(),
+          Language.ES)).isEqualTo("TipoHito" + String.format("%03d", i));
     }
   }
 
@@ -1139,285 +980,6 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
     mockMvc
         .perform(MockMvcRequestBuilders
             .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipohitos", idModeloEjecucion)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve un 204
-        .andExpect(MockMvcResultMatchers.status().isNoContent());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  void findAllModeloTipoHitosConvocatoria_ReturnsPage() throws Exception {
-    // given: Una lista con 37 ModeloTipoHito para el ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-
-    List<ModeloTipoHito> modeloTipoHitos = new ArrayList<>();
-    for (long i = 1; i <= 37; i++) {
-      modeloTipoHitos.add(generarMockModeloTipoHito(i, "TipoHito" + String.format("%03d", i)));
-    }
-
-    Integer page = 3;
-    Integer pageSize = 10;
-
-    BDDMockito
-        .given(modeloTipoHitoService.findAllByModeloEjecucionActivosConvocatoria(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloTipoHito>>() {
-          @Override
-          public Page<ModeloTipoHito> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > modeloTipoHitos.size() ? modeloTipoHitos.size() : toIndex;
-            List<ModeloTipoHito> content = modeloTipoHitos.subList(fromIndex, toIndex);
-            Page<ModeloTipoHito> page = new PageImpl<>(content, pageable, modeloTipoHitos.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    MvcResult requestResult = mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipohitos/convocatoria",
-                idModeloEjecucion)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve la pagina 3 con los ModeloTipoHito del 31 al 37
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page", "3"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Total-Count", "7"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "37"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(7))).andReturn();
-
-    List<ModeloTipoHito> modeloTipoHitosResponse = mapper.readValue(requestResult.getResponse().getContentAsString(),
-        new TypeReference<List<ModeloTipoHito>>() {
-        });
-
-    for (int i = 31; i <= 37; i++) {
-      ModeloTipoHito modeloTipoHito = modeloTipoHitosResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloTipoHito.getTipoHito().getNombre()).isEqualTo("TipoHito" + String.format("%03d", i));
-    }
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  void findAllModeloTipoHitosConvocatoria_EmptyList_Returns204() throws Exception {
-    // given: Una lista vacia de ModeloTipoHito del ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-    List<ModeloTipoHito> modeloTipoHitos = new ArrayList<>();
-
-    Integer page = 0;
-    Integer pageSize = 10;
-
-    BDDMockito
-        .given(modeloTipoHitoService.findAllByModeloEjecucionActivosConvocatoria(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloTipoHito>>() {
-          @Override
-          public Page<ModeloTipoHito> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ModeloTipoHito> page = new PageImpl<>(modeloTipoHitos, pageable, 0);
-            return page;
-          }
-        });
-
-    // when: Get page=0 with pagesize=10
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipohitos/convocatoria",
-                idModeloEjecucion)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve un 204
-        .andExpect(MockMvcResultMatchers.status().isNoContent());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  void findAllModeloTipoHitosProyecto_ReturnsPage() throws Exception {
-    // given: Una lista con 37 ModeloTipoHito para el ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-
-    List<ModeloTipoHito> modeloTipoHitos = new ArrayList<>();
-    for (long i = 1; i <= 37; i++) {
-      modeloTipoHitos.add(generarMockModeloTipoHito(i, "TipoHito" + String.format("%03d", i)));
-    }
-
-    Integer page = 3;
-    Integer pageSize = 10;
-
-    BDDMockito
-        .given(modeloTipoHitoService.findAllByModeloEjecucionActivosProyecto(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloTipoHito>>() {
-          @Override
-          public Page<ModeloTipoHito> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > modeloTipoHitos.size() ? modeloTipoHitos.size() : toIndex;
-            List<ModeloTipoHito> content = modeloTipoHitos.subList(fromIndex, toIndex);
-            Page<ModeloTipoHito> page = new PageImpl<>(content, pageable, modeloTipoHitos.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    MvcResult requestResult = mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipohitos/proyecto",
-                idModeloEjecucion)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve la pagina 3 con los ModeloTipoHito del 31 al 37
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page", "3"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Total-Count", "7"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "37"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(7))).andReturn();
-
-    List<ModeloTipoHito> modeloTipoHitosResponse = mapper.readValue(requestResult.getResponse().getContentAsString(),
-        new TypeReference<List<ModeloTipoHito>>() {
-        });
-
-    for (int i = 31; i <= 37; i++) {
-      ModeloTipoHito modeloTipoHito = modeloTipoHitosResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloTipoHito.getTipoHito().getNombre()).isEqualTo("TipoHito" + String.format("%03d", i));
-    }
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  void findAllModeloTipoHitosProyecto_EmptyList_Returns204() throws Exception {
-    // given: Una lista vacia de ModeloTipoHito del ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-    List<ModeloTipoHito> modeloTipoHitos = new ArrayList<>();
-
-    Integer page = 0;
-    Integer pageSize = 10;
-
-    BDDMockito
-        .given(modeloTipoHitoService.findAllByModeloEjecucionActivosProyecto(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloTipoHito>>() {
-          @Override
-          public Page<ModeloTipoHito> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ModeloTipoHito> page = new PageImpl<>(modeloTipoHitos, pageable, 0);
-            return page;
-          }
-        });
-
-    // when: Get page=0 with pagesize=10
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipohitos/proyecto",
-                idModeloEjecucion)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve un 204
-        .andExpect(MockMvcResultMatchers.status().isNoContent());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-SOL-E", "CSP-SOL-V" })
-  void findAllModeloTipoHitosSolicitud_ReturnsPage() throws Exception {
-    // given: Una lista con 37 ModeloTipoHito para el ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-
-    List<ModeloTipoHito> modeloTipoHitos = new ArrayList<>();
-    for (long i = 1; i <= 37; i++) {
-      modeloTipoHitos.add(generarMockModeloTipoHito(i, "TipoHito" + String.format("%03d", i)));
-    }
-
-    Integer page = 3;
-    Integer pageSize = 10;
-
-    BDDMockito
-        .given(modeloTipoHitoService.findAllByModeloEjecucionActivosSolicitud(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloTipoHito>>() {
-          @Override
-          public Page<ModeloTipoHito> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > modeloTipoHitos.size() ? modeloTipoHitos.size() : toIndex;
-            List<ModeloTipoHito> content = modeloTipoHitos.subList(fromIndex, toIndex);
-            Page<ModeloTipoHito> page = new PageImpl<>(content, pageable, modeloTipoHitos.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    MvcResult requestResult = mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipohitos/solicitud",
-                idModeloEjecucion)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devuelve la pagina 3 con los ModeloTipoHito del 31 al 37
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page", "3"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Total-Count", "7"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
-        .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "37"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(7))).andReturn();
-
-    List<ModeloTipoHito> modeloTipoHitosResponse = mapper.readValue(requestResult.getResponse().getContentAsString(),
-        new TypeReference<List<ModeloTipoHito>>() {
-        });
-
-    for (int i = 31; i <= 37; i++) {
-      ModeloTipoHito modeloTipoHito = modeloTipoHitosResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(modeloTipoHito.getTipoHito().getNombre()).isEqualTo("TipoHito" + String.format("%03d", i));
-    }
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-SOL-E", "CSP-SOL-V" })
-  void findAllModeloTipoHitosSolicitud_EmptyList_Returns204() throws Exception {
-    // given: Una lista vacia de ModeloTipoHito del ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-    List<ModeloTipoHito> modeloTipoHitos = new ArrayList<>();
-
-    Integer page = 0;
-    Integer pageSize = 10;
-
-    BDDMockito
-        .given(modeloTipoHitoService.findAllByModeloEjecucionActivosSolicitud(ArgumentMatchers.<Long>any(),
-            ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer(new Answer<Page<ModeloTipoHito>>() {
-          @Override
-          public Page<ModeloTipoHito> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ModeloTipoHito> page = new PageImpl<>(modeloTipoHitos, pageable, 0);
-            return page;
-          }
-        });
-
-    // when: Get page=0 with pagesize=10
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .get(MODELO_EJECUCION_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/modelotipohitos/solicitud",
-                idModeloEjecucion)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).header("X-Page", page).header("X-Page-Size", pageSize)
             .accept(MediaType.APPLICATION_JSON))
         .andDo(SgiMockMvcResultHandlers.printOnError())
@@ -1541,9 +1103,18 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
    */
   private ModeloEjecucion generarMockModeloEjecucion(Long id, String nombre) {
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
+
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, nombre));
+
+    Set<ModeloEjecucionDescripcion> descripcionModeloEjecucion = new HashSet<>();
+    descripcionModeloEjecucion.add(new ModeloEjecucionDescripcion(Language.ES, "descripcion-" + id));
+
     modeloEjecucion.setId(id);
-    modeloEjecucion.setNombre(nombre);
-    modeloEjecucion.setDescripcion("descripcion-" + id);
+    modeloEjecucion.setNombre(nombreModeloEjecucion);
+    modeloEjecucion.setDescripcion(descripcionModeloEjecucion);
+    modeloEjecucion.setExterno(Boolean.FALSE);
+    modeloEjecucion.setContrato(Boolean.FALSE);
     modeloEjecucion.setActivo(Boolean.TRUE);
 
     return modeloEjecucion;
@@ -1560,10 +1131,16 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
     modeloEjecucion.setId(1L);
 
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, nombre));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcion-" + id));
+
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id);
-    tipoFase.setNombre(nombre);
-    tipoFase.setDescripcion("descripcion-" + id);
+    tipoFase.setNombre(nombreTipoFase);
+    tipoFase.setDescripcion(descripcionTipoFase);
     tipoFase.setActivo(Boolean.TRUE);
 
     ModeloTipoFase modeloTipoFase = new ModeloTipoFase();
@@ -1589,10 +1166,16 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
     modeloEjecucion.setId(1L);
 
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, nombre));
+
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "descripcion-" + id));
+
     TipoDocumento tipoDocumento = new TipoDocumento();
     tipoDocumento.setId(id);
-    tipoDocumento.setNombre(nombre);
-    tipoDocumento.setDescripcion("descripcion-" + id);
+    tipoDocumento.setNombre(nombreTipoDocumento);
+    tipoDocumento.setDescripcion(descripcionTipoDocumento);
     tipoDocumento.setActivo(Boolean.TRUE);
 
     ModeloTipoDocumento modeloTipoDocumento = new ModeloTipoDocumento();
@@ -1616,10 +1199,16 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
     modeloEjecucion.setId(1L);
 
+    Set<TipoEnlaceNombre> tipoEnlaceNombre = new HashSet<>();
+    tipoEnlaceNombre.add(new TipoEnlaceNombre(Language.ES, nombre));
+
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcion-" + id));
+
     TipoEnlace tipoEnlace = new TipoEnlace();
     tipoEnlace.setId(id);
-    tipoEnlace.setNombre(nombre);
-    tipoEnlace.setDescripcion("descripcion-" + id);
+    tipoEnlace.setNombre(tipoEnlaceNombre);
+    tipoEnlace.setDescripcion(descripcion);
     tipoEnlace.setActivo(Boolean.TRUE);
 
     ModeloTipoEnlace modeloTipoEnlace = new ModeloTipoEnlace();
@@ -1641,10 +1230,16 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
     modeloEjecucion.setId(1L);
 
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, nombre));
+
+    Set<TipoFinalidadDescripcion> descripcionTipoFinalidad = new HashSet<>();
+    descripcionTipoFinalidad.add(new TipoFinalidadDescripcion(Language.ES, "descripcion-" + id));
+
     TipoFinalidad tipoFinalidad = new TipoFinalidad();
     tipoFinalidad.setId(id);
-    tipoFinalidad.setNombre(nombre);
-    tipoFinalidad.setDescripcion("descripcion-" + id);
+    tipoFinalidad.setNombre(nombreTipoFinalidad);
+    tipoFinalidad.setDescripcion(descripcionTipoFinalidad);
     tipoFinalidad.setActivo(Boolean.TRUE);
 
     ModeloTipoFinalidad modeloTipoFinalidad = new ModeloTipoFinalidad();
@@ -1666,10 +1261,16 @@ class ModeloEjecucionControllerTest extends BaseControllerTest {
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
     modeloEjecucion.setId(1L);
 
+    Set<TipoHitoNombre> nombreTipoHito = new HashSet<>();
+    nombreTipoHito.add(new TipoHitoNombre(Language.ES, nombre));
+
+    Set<TipoHitoDescripcion> descripcionTipoHito = new HashSet<>();
+    descripcionTipoHito.add(new TipoHitoDescripcion(Language.ES, "descripcion-" + id));
+
     TipoHito tipoHito = new TipoHito();
     tipoHito.setId(id);
-    tipoHito.setNombre(nombre);
-    tipoHito.setDescripcion("descripcion-" + id);
+    tipoHito.setNombre(nombreTipoHito);
+    tipoHito.setDescripcion(descripcionTipoHito);
     tipoHito.setActivo(Boolean.TRUE);
 
     ModeloTipoHito modeloTipoHito = new ModeloTipoHito();

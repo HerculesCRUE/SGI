@@ -3,18 +3,24 @@ package org.crue.hercules.sgi.csp.repository.custom;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.csp.dto.ProyectoDto;
@@ -37,10 +43,18 @@ import org.crue.hercules.sgi.csp.model.ProyectoEquipo_;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio_;
+import org.crue.hercules.sgi.csp.model.ProyectoTitulo;
+import org.crue.hercules.sgi.csp.model.ProyectoTitulo_;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.RolProyecto_;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico_;
+import org.crue.hercules.sgi.csp.util.CriteriaQueryUtils;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.spring.context.i18n.SgiLocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
@@ -52,6 +66,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Component
 public class CustomProyectoRepositoryImpl implements CustomProyectoRepository {
+
+  private static final String SELECTION_NAME_SEPARATOR = ".";
+  private static final String SELECTION_NAME_TITULO = Proyecto_.TITULO + SELECTION_NAME_SEPARATOR
+      + ProyectoTitulo_.VALUE;
 
   /**
    * The entity manager.
@@ -242,25 +260,26 @@ public class CustomProyectoRepositoryImpl implements CustomProyectoRepository {
 
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-    CriteriaQuery<ProyectoDto> cq = cb.createQuery(ProyectoDto.class);
+    CriteriaQuery<Tuple> cq = cb.createQuery(Tuple.class);
 
     Root<Proyecto> root = cq.from(Proyecto.class);
 
     Join<Proyecto, Convocatoria> joinConvocatoria = root.join(Proyecto_.convocatoria, JoinType.LEFT);
     Join<Proyecto, EstadoProyecto> joinEstado = root.join(Proyecto_.estado);
     Join<Proyecto, ModeloEjecucion> joinModeloEjecucion = root.join(Proyecto_.modeloEjecucion);
+    SetJoin<Proyecto, ProyectoTitulo> joinProyectoTitulo = root.join(Proyecto_.titulo, JoinType.LEFT);
 
     cq.multiselect(
-        root.get(Proyecto_.id),
-        root.get(Proyecto_.titulo),
-        root.get(Proyecto_.fechaInicio),
-        root.get(Proyecto_.fechaFin),
-        root.get(Proyecto_.fechaFinDefinitiva),
-        root.get(Proyecto_.modeloEjecucion).get(ModeloEjecucion_.contrato),
-        root.get(Proyecto_.totalImporteConcedido),
-        root.get(Proyecto_.importeConcedidoCostesIndirectos),
-        root.get(Proyecto_.ambitoGeografico).get(TipoAmbitoGeografico_.id),
-        joinConvocatoria.get(Convocatoria_.excelencia));
+        root.get(Proyecto_.id).alias(Proyecto_.ID),
+        joinProyectoTitulo.alias(Proyecto_.TITULO),
+        root.get(Proyecto_.fechaInicio).alias(Proyecto_.FECHA_INICIO),
+        root.get(Proyecto_.fechaFin).alias(Proyecto_.FECHA_FIN),
+        root.get(Proyecto_.fechaFinDefinitiva).alias(Proyecto_.FECHA_FIN_DEFINITIVA),
+        root.get(Proyecto_.modeloEjecucion).get(ModeloEjecucion_.contrato).alias(ModeloEjecucion_.CONTRATO),
+        root.get(Proyecto_.totalImporteConcedido).alias(Proyecto_.TOTAL_IMPORTE_CONCEDIDO),
+        root.get(Proyecto_.importeConcedidoCostesIndirectos).alias(Proyecto_.IMPORTE_CONCEDIDO_COSTES_INDIRECTOS),
+        root.get(Proyecto_.ambitoGeografico).get(TipoAmbitoGeografico_.id).alias(Proyecto_.AMBITO_GEOGRAFICO),
+        joinConvocatoria.get(Convocatoria_.excelencia).alias(Convocatoria_.EXCELENCIA));
 
     Predicate predicateModeloEjecucionExternoFalse = cb.equal(joinModeloEjecucion.get(ModeloEjecucion_.externo),
         Boolean.FALSE);
@@ -280,8 +299,35 @@ public class CustomProyectoRepositoryImpl implements CustomProyectoRepository {
         predicateEstadoConcedido,
         predicateFechasBaremacion));
 
-    TypedQuery<ProyectoDto> typedQuery = entityManager.createQuery(cq);
-    List<ProyectoDto> result = typedQuery.getResultList();
+    TypedQuery<Tuple> typedQuery = entityManager.createQuery(cq);
+    List<Tuple> proyectoTuples = typedQuery.getResultList();
+
+    Map<Long, ProyectoDto> proyectoTuplesMap = new HashMap<>();
+    Map<Long, HashSet<ProyectoTitulo>> tituloTuplesMap = new HashMap<>();
+    proyectoTuples.forEach(tuple -> {
+      Long proyectoId = tuple.get(Proyecto_.ID, Long.class);
+
+      ProyectoDto proyecto = proyectoTuplesMap.computeIfAbsent(proyectoId,
+          key -> ProyectoDto.builder()
+              .id(proyectoId)
+              .fechaInicio(tuple.get(Proyecto_.FECHA_INICIO, Instant.class))
+              .fechaFin(tuple.get(Proyecto_.FECHA_FIN, Instant.class))
+              .fechaFinDefinitiva(tuple.get(Proyecto_.FECHA_FIN_DEFINITIVA, Instant.class))
+              .contrato(tuple.get(ModeloEjecucion_.CONTRATO, Boolean.class))
+              .totalImporteConcedido(tuple.get(Proyecto_.TOTAL_IMPORTE_CONCEDIDO, BigDecimal.class))
+              .importeConcedidoCostesIndirectos(
+                  tuple.get(Proyecto_.IMPORTE_CONCEDIDO_COSTES_INDIRECTOS, BigDecimal.class))
+              .ambitoGeograficoId(tuple.get(Proyecto_.AMBITO_GEOGRAFICO, Long.class))
+              .convocatoriaExcelencia(tuple.get(Convocatoria_.EXCELENCIA, Boolean.class))
+              .build());
+
+      tituloTuplesMap.computeIfAbsent(proyectoId, key -> new HashSet<>());
+      tituloTuplesMap.get(proyectoId).add(tuple.get(Proyecto_.TITULO, ProyectoTitulo.class));
+      proyecto.setTitulo(I18nHelper.getFieldValue(tituloTuplesMap.get(proyectoId)));
+
+    });
+
+    List<ProyectoDto> result = proyectoTuplesMap.values().stream().toList();
 
     log.debug("findProyectosProduccionCientifica(fechaInicioBaremacion, fechaFinBaremacion) : {} - end");
 
@@ -384,6 +430,89 @@ public class CustomProyectoRepositoryImpl implements CustomProyectoRepository {
 
     log.debug(
         "countProyectosClasificacionCvnPersona(List<String> personaRef, ClasificacionCVN clasificacionCvn, boolean rolPrincipal, Long exludedProyectoId, Instant fecha) - end");
+    return returnValue;
+  }
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link Proyecto} sin duplicados y
+   * ordenable por el titulo.
+   * 
+   * @param specs    condiciones que deben cumplir.
+   * @param pageable la información de la paginación.
+   * @return la lista de {@link Proyecto} paginadas y/o filtradas.
+   */
+  @Override
+  public Page<Proyecto> findAllDistinct(Specification<Proyecto> specs, Pageable pageable) {
+    log.debug("findAll(String query, Pageable pageable) - start");
+
+    // Crete query
+    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+    CriteriaQuery<Tuple> cq = cb.createTupleQuery();
+
+    // Define FROM clause
+    Root<Proyecto> root = cq.from(Proyecto.class);
+
+    // Si se ordena por el titulo del proyecto se hace un subquery para obtener el
+    // titulo en el idioma actual para poder hacer la ordenacion, si no se ordena
+    // por el titulo no es necesaria la subquery
+    boolean sortingByTituloProyecto = pageable.getSort().get()
+        .anyMatch(sort -> sort.getProperty().equals(SELECTION_NAME_TITULO));
+
+    Expression<String> proyectoTituloExpression;
+    if (sortingByTituloProyecto) {
+      Subquery<String> subqueryTitulo = cq.subquery(String.class);
+      Root<Proyecto> subRoot = subqueryTitulo.correlate(root);
+      Join<Proyecto, ProyectoTitulo> joinProyectoTitulo = subRoot.join(Proyecto_.titulo);
+
+      subqueryTitulo.select(joinProyectoTitulo.get(ProyectoTitulo_.value))
+          .where(cb.equal(joinProyectoTitulo.get(ProyectoTitulo_.lang), SgiLocaleContextHolder.getLanguage()));
+
+      proyectoTituloExpression = subqueryTitulo;
+    } else {
+      proyectoTituloExpression = cb.literal("");
+    }
+
+    // Count query
+    CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
+    Root<Proyecto> rootCount = countQuery.from(Proyecto.class);
+    countQuery.select(cb.countDistinct(rootCount));
+
+    List<Predicate> listPredicates = new ArrayList<>();
+    List<Predicate> listPredicatesCount = new ArrayList<>();
+
+    // Where
+    if (specs != null) {
+      listPredicates.add(specs.toPredicate(root, cq, cb));
+      listPredicatesCount.add(specs.toPredicate(rootCount, cq, cb));
+    }
+
+    cq.where(listPredicates.toArray(new Predicate[] {}));
+
+    cq.distinct(true).multiselect(
+        root,
+        proyectoTituloExpression.alias(SELECTION_NAME_TITULO));
+
+    String[] selectionNames = new String[] {
+        SELECTION_NAME_TITULO
+    };
+
+    cq.orderBy(CriteriaQueryUtils.toOrders(pageable.getSort(), root, cb, cq, selectionNames));
+
+    // Número de registros totales para la paginación
+    countQuery.where(listPredicatesCount.toArray(new Predicate[] {}));
+    Long count = entityManager.createQuery(countQuery).getSingleResult();
+
+    TypedQuery<Tuple> typedQuery = entityManager.createQuery(cq);
+    if (pageable.isPaged()) {
+      typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+      typedQuery.setMaxResults(pageable.getPageSize());
+    }
+
+    List<Proyecto> result = typedQuery.getResultList().stream().map(a -> (Proyecto) a.get(0)).toList();
+    Page<Proyecto> returnValue = new PageImpl<>(result, pageable, count);
+
+    log.debug("findAll(String query, Pageable pageable) - end");
+
     return returnValue;
   }
 

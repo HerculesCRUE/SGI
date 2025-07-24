@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.pii.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 
@@ -53,8 +60,13 @@ public class InformePatentabilidad extends BaseEntity {
   private Instant fecha;
 
   /** Nombre. */
-  @Column(name = "nombre", length = NOMBRE_LENGTH, nullable = false)
-  private String nombre;
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "informe_patentabilidad_nombre", joinColumns = @JoinColumn(name = "informe_patentabilidad_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<InformePatentabilidadNombre> nombre = new HashSet<>();
 
   /** Documento ref. */
   @Column(name = "documento_ref", length = REF_LENGTH, nullable = false)
@@ -78,8 +90,11 @@ public class InformePatentabilidad extends BaseEntity {
   private String contactoExaminador;
 
   /** Comentarios */
-  @Column(name = "comentarios", length = LONG_TEXT_LENGTH, nullable = true)
-  private String comentarios;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "informe_patentabilidad_comentarios", joinColumns = @JoinColumn(name = "informe_patentabilidad_id"))
+  @Valid
+  @Builder.Default
+  private Set<InformePatentabilidadComentarios> comentarios = new HashSet<>();
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne

@@ -10,10 +10,8 @@ import org.crue.hercules.sgi.eti.model.Asistentes;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.DocumentacionConvocatoriaReunion;
-import org.crue.hercules.sgi.eti.model.DocumentacionConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Memoria;
-import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.AsistentesService;
 import org.crue.hercules.sgi.eti.service.ConvocatoriaReunionService;
@@ -483,10 +481,12 @@ public class ConvocatoriaReunionController {
   /**
    * Actualiza {@link DocumentacionConvocatoriaReunion}.
    * 
-   * @param id                               Identificador de la
-   *                                         {@link ConvocatoriaReunion}.
-   * @param documentacionConvocatoriaReunion {@link DocumentacionConvocatoriaReunion}.
-   *                                         que se quiere crear.
+   * @param id                                 Identificador de la
+   *                                           {@link ConvocatoriaReunion}.
+   * @param idDocumentacionConvocatoriaReunion Identificador de la
+   *                                           {@link DocumentacionConvocatoriaReunion}
+   * @param documentacionConvocatoriaReunion   {@link DocumentacionConvocatoriaReunion}.
+   *                                           que se quiere crear.
    * @return Nueva {@link DocumentacionConvocatoriaReunion} creada.
    */
   @PutMapping("/{id}/documentacion/{idDocumentacionConvocatoriaReunion}")

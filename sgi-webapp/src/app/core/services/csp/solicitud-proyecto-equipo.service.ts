@@ -1,35 +1,43 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SOLICITUD_PROYECTO_EQUIPO_CONVERTER } from '@core/converters/csp/solicitud-proyecto-equipo.converter';
-import { ISolicitudProyectoEquipoBackend } from '@core/models/csp/backend/solicitud-proyecto-equipo-backend';
 import { ISolicitudProyectoEquipo } from '@core/models/csp/solicitud-proyecto-equipo';
 import { environment } from '@env';
-import { SgiMutableRestService } from '@sgi/framework/http';
+import { FindByIdCtor, mixinFindById, SgiRestBaseService } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ISolicitudProyectoEquipoResponse } from './solicitud-proyecto-equipo/solicitud-proyecto-equipo-response';
+import { SOLICITUD_PROYECTO_EQUIPO_RESPONSE_CONVERTER } from './solicitud-proyecto-equipo/solicitud-proyecto-equipo.converter';
+
+// tslint:disable-next-line: variable-name
+const _SolicitudProyectoEquipoMixinBase:
+  FindByIdCtor<number, ISolicitudProyectoEquipo, ISolicitudProyectoEquipoResponse> &
+  typeof SgiRestBaseService =
+  mixinFindById(
+    SgiRestBaseService,
+    SOLICITUD_PROYECTO_EQUIPO_RESPONSE_CONVERTER
+  );
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class SolicitudProyectoEquipoService
-  extends SgiMutableRestService<number, ISolicitudProyectoEquipoBackend, ISolicitudProyectoEquipo> {
+  extends _SolicitudProyectoEquipoMixinBase {
   private static readonly MAPPING = '/solicitudproyectoequipo';
 
   constructor(protected http: HttpClient) {
     super(
-      SolicitudProyectoEquipoService.name,
       `${environment.serviceServers.csp}${SolicitudProyectoEquipoService.MAPPING}`,
-      http,
-      SOLICITUD_PROYECTO_EQUIPO_CONVERTER
+      http
     );
   }
 
   updateSolicitudProyectoEquipo(solicitudId: number, solicitudProyectoEquipos: ISolicitudProyectoEquipo[]):
     Observable<ISolicitudProyectoEquipo[]> {
-    return this.http.patch<ISolicitudProyectoEquipoBackend[]>(`${this.endpointUrl}/${solicitudId}`,
-      this.converter.fromTargetArray(solicitudProyectoEquipos)
+    return this.http.patch<ISolicitudProyectoEquipoResponse[]>(`${this.endpointUrl}/${solicitudId}`,
+      SOLICITUD_PROYECTO_EQUIPO_RESPONSE_CONVERTER.fromTargetArray(solicitudProyectoEquipos)
     ).pipe(
-      map(response => this.converter.toTargetArray(response))
+      map(response => SOLICITUD_PROYECTO_EQUIPO_RESPONSE_CONVERTER.toTargetArray(response))
     );
   }
 }

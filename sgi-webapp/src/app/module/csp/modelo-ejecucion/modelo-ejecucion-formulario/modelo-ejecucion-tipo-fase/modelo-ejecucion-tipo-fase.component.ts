@@ -11,6 +11,7 @@ import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -31,7 +32,7 @@ export class ModeloEjecucionTipoFaseComponent extends FragmentComponent implemen
   private formPart: ModeloEjecucionTipoFaseFragment;
   private subscriptions = [] as Subscription[];
 
-  columns = ['nombre', 'descripcion', 'convocatorias', 'proyectos', 'acciones'];
+  columns = ['nombre', 'descripcion', 'convocatorias', 'solicitudes', 'proyectos', 'acciones'];
   numPage = [5, 10, 25, 100];
 
   modelosTipoFases = new MatTableDataSource<StatusWrapper<IModeloTipoFase>>();
@@ -48,9 +49,10 @@ export class ModeloEjecucionTipoFaseComponent extends FragmentComponent implemen
     private dialogService: DialogService,
     private matDialog: MatDialog,
     actionService: ModeloEjecucionActionService,
+    private readonly languageService: LanguageService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.TIPO_FASES, actionService);
+    super(actionService.FRAGMENT.TIPO_FASES, actionService, translate);
     this.formPart = this.fragment as ModeloEjecucionTipoFaseFragment;
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
@@ -66,7 +68,7 @@ export class ModeloEjecucionTipoFaseComponent extends FragmentComponent implemen
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subscription = this.formPart.modeloTipoFase$.subscribe(
       wrappers => this.modelosTipoFases.data = wrappers);
     this.subscriptions.push(subscription);
@@ -75,13 +77,15 @@ export class ModeloEjecucionTipoFaseComponent extends FragmentComponent implemen
       (wrapper: StatusWrapper<IModeloTipoFase>, property: string) => {
         switch (property) {
           case 'nombre':
-            return wrapper.value.tipoFase.nombre;
+            return this.languageService.getFieldValue(wrapper.value.tipoFase.nombre);
           case 'descripcion':
-            return wrapper.value.tipoFase.descripcion;
+            return wrapper.value.tipoFase.descripcion ? this.languageService.getFieldValue(wrapper.value.tipoFase.descripcion) : '';
           case 'convocatorias':
             return wrapper.value.convocatoria;
           case 'proyectos':
             return wrapper.value.proyecto;
+          case 'solicitudes':
+            return wrapper.value.solicitud;
           default:
             return wrapper[property];
         }
@@ -89,7 +93,7 @@ export class ModeloEjecucionTipoFaseComponent extends FragmentComponent implemen
     this.modelosTipoFases.sort = this.sort;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MODELO_EJECUCION_TIPO_FASE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

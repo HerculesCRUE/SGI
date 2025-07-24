@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -42,14 +50,24 @@ public class IncidenciaDocumentacionRequerimiento extends BaseEntity {
   @Column(name = "requerimiento_justificacion_id", nullable = false)
   private Long requerimientoJustificacionId;
 
-  @Column(name = "nombre_documento", nullable = false, length = DEFAULT_TEXT_LENGTH)
-  private String nombreDocumento;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "incidencia_documentacion_requerimiento_nombre_documento", joinColumns = @JoinColumn(name = "incidencia_documentacion_requerimiento_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<IncidenciaDocumentacionRequerimientoNombreDocumento> nombreDocumento = new HashSet<>();
 
-  @Column(name = "incidencia", nullable = true, length = DEFAULT_LONG_TEXT_LENGTH)
-  private String incidencia;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "incidencia_documentacion_requerimiento_incidencia", joinColumns = @JoinColumn(name = "incidencia_documentacion_requerimiento_id"))
+  @Valid
+  @Builder.Default
+  private Set<IncidenciaDocumentacionRequerimientoIncidencia> incidencia = new HashSet<>();
 
-  @Column(name = "alegacion", nullable = true, length = DEFAULT_LONG_TEXT_LENGTH)
-  private String alegacion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "incidencia_documentacion_requerimiento_alegacion", joinColumns = @JoinColumn(name = "incidencia_documentacion_requerimiento_id"))
+  @Valid
+  @Builder.Default
+  private Set<IncidenciaDocumentacionRequerimientoAlegacion> alegacion = new HashSet<>();
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne

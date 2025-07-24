@@ -25,7 +25,7 @@ public interface CustomSolicitudRepository {
 
   /**
    * Devuelve una lista paginada y filtrada {@link Solicitud} sin duplicados y
-   * ordenable por el estaod y la fecha del estado.
+   * ordenable por el titulo, el estado y la fecha del estado.
    * 
    * @param specs    condiciones que deben cumplir.
    * @param pageable la información de la paginación.

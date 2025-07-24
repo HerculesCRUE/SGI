@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.pii.integration;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.dto.InvencionDocumentoInput;
 import org.crue.hercules.sgi.pii.dto.InvencionDocumentoOutput;
 import org.crue.hercules.sgi.pii.model.InvencionDocumento;
@@ -69,7 +74,8 @@ class InvencionDocumentoControllerIT extends BaseIT {
     Assertions.assertThat(created).isNotNull();
     Assertions.assertThat(created.getId()).as("id").isEqualTo(lastId + 1);
     Assertions.assertThat(created.getDocumentoRef()).as("getDocumentoRef()").isEqualTo(toCreate.getDocumentoRef());
-    Assertions.assertThat(created.getNombre()).as("getNombre()").isEqualTo(toCreate.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toCreate.getNombre(), Language.ES));
     Assertions.assertThat(created.getInvencionId()).as("getInvencionId()").isEqualTo(toCreate.getInvencionId());
     Assertions.assertThat(created.getFechaAnadido()).isNotNull();
   }
@@ -93,7 +99,10 @@ class InvencionDocumentoControllerIT extends BaseIT {
     final String updatedSuffix = "-updated";
 
     InvencionDocumentoInput toUpdate = this.modelMapper.map(informeDocumento5.get(), InvencionDocumentoInput.class);
-    toUpdate.setNombre(informeDocumento5.get().getNombre() + updatedSuffix);
+    List<I18nFieldValueDto> nombreInvencionDocumento = new ArrayList<>();
+    nombreInvencionDocumento
+        .add(new I18nFieldValueDto(Language.ES, informeDocumento5.get().getNombre() + updatedSuffix));
+    toUpdate.setNombre(nombreInvencionDocumento);
     toUpdate.setDocumentoRef(informeDocumento5.get().getDocumentoRef() + updatedSuffix);
 
     final ResponseEntity<InvencionDocumentoOutput> response = restTemplate.exchange(
@@ -108,7 +117,8 @@ class InvencionDocumentoControllerIT extends BaseIT {
     Assertions.assertThat(updated).isNotNull();
     Assertions.assertThat(updated.getId()).as("id").isEqualTo(toUpdateId);
     Assertions.assertThat(updated.getDocumentoRef()).as("getDocumentoRef()").isEqualTo(updatedFromDb.getDocumentoRef());
-    Assertions.assertThat(updated.getNombre()).as("getNombre()").isEqualTo(updatedFromDb.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(updatedFromDb.getNombre(), Language.ES));
     Assertions.assertThat(updated.getInvencionId()).as("getInvencionId()").isEqualTo(updatedFromDb.getInvencionId());
   }
 
@@ -135,10 +145,13 @@ class InvencionDocumentoControllerIT extends BaseIT {
   }
 
   private InvencionDocumentoInput buildMockInvencionDocumentoInput() {
+    List<I18nFieldValueDto> nombreInvencionDocumento = new ArrayList<>();
+    nombreInvencionDocumento.add(new I18nFieldValueDto(Language.ES, "documento mock 01"));
+
     return InvencionDocumentoInput.builder()
         .documentoRef("DOC-06")
         .invencionId(1L)
-        .nombre("documento mock 01")
+        .nombre(nombreInvencionDocumento)
         .build();
   }
 }

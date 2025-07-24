@@ -2,14 +2,18 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoEnlaceNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceNombre;
 import org.crue.hercules.sgi.csp.service.TipoEnlaceService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -29,6 +33,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * TipoEnlaceControllerTest
@@ -71,8 +77,10 @@ class TipoEnlaceControllerTest extends BaseControllerTest {
         // then: new TipoEnlace is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(data.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(data.getDescripcion()))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("nombre[0].value").value(data.getNombre().iterator().next().getValue()))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(data.getDescripcion().iterator().next().getValue()))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(data.getActivo()));
   }
 
@@ -124,8 +132,10 @@ class TipoEnlaceControllerTest extends BaseControllerTest {
         // then: TipoEnlace is updated
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(data.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(data.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(data.getDescripcion()))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("nombre[0].value").value(data.getNombre().iterator().next().getValue()))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(data.getDescripcion().iterator().next().getValue()))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(data.getActivo()));
   }
 
@@ -197,8 +207,10 @@ class TipoEnlaceControllerTest extends BaseControllerTest {
         // then: return enabled TipoEnlace
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(tipoEnlace.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoEnlace.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoEnlace.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(tipoEnlace.getNombre().iterator().next().getValue()))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(tipoEnlace.getDescripcion().iterator().next().getValue()))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(Boolean.TRUE));
   }
 
@@ -243,8 +255,10 @@ class TipoEnlaceControllerTest extends BaseControllerTest {
         // then: return disabled TipoEnlace
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(idBuscado))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoEnlace.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoEnlace.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(tipoEnlace.getNombre().iterator().next().getValue()))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(tipoEnlace.getDescripcion().iterator().next().getValue()))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(Boolean.FALSE));
   }
 
@@ -351,7 +365,7 @@ class TipoEnlaceControllerTest extends BaseControllerTest {
     // containing Nombre='Nombre-31' to 'Nombre-40'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoEnlace item = actual.get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + j);
     }
   }
 
@@ -425,7 +439,7 @@ class TipoEnlaceControllerTest extends BaseControllerTest {
     // containing Nombre='Nombre-31' to 'Nombre-40'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoEnlace item = actual.get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + j);
     }
   }
 
@@ -461,7 +475,13 @@ class TipoEnlaceControllerTest extends BaseControllerTest {
    * @return TipoEnlace
    */
   private TipoEnlace generarMockTipoEnlace(Long id, Boolean activo) {
-    return TipoEnlace.builder().id(id).nombre("nombre-" + id).descripcion("descripcion-" + id).activo(activo).build();
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcion-" + id));
+
+    return TipoEnlace.builder().id(id).nombre(nombre).descripcion(descripcion).activo(activo).build();
   }
 
 }

@@ -6,8 +6,10 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
@@ -22,28 +24,47 @@ import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaAreaTematica;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumento;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumentoNombre;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumentoObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlace;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlaceDescripcion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHitoAviso;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaHitoComentario;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObjeto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientificoObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceNombre;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaAreaTematicaService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoCodigoEcService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoService;
@@ -63,6 +84,8 @@ import org.crue.hercules.sgi.csp.service.RequisitoEquipoCategoriaProfesionalServ
 import org.crue.hercules.sgi.csp.service.RequisitoEquipoNivelAcademicoService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPCategoriaProfesionalService;
 import org.crue.hercules.sgi.csp.service.RequisitoIPNivelAcademicoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -185,8 +208,13 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
     // given: existing Convocatoria
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setTitulo("titulo-modificado");
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaTitulo> tituloConvocatoria = new HashSet<>();
+    tituloConvocatoria.add(new ConvocatoriaTitulo(Language.ES, "titulo-modificado"));
+    convocatoria.setTitulo(tituloConvocatoria);
+
+    Set<ConvocatoriaObservaciones> observacionesConvocatoria = new HashSet<>();
+    observacionesConvocatoria.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(observacionesConvocatoria);
 
     BDDMockito.given(service.findById(ArgumentMatchers.<Long>any())).willReturn(convocatoriaExistente);
     BDDMockito.given(service.update(ArgumentMatchers.<Convocatoria>any())).willAnswer(new Answer<Convocatoria>() {
@@ -217,9 +245,12 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
             .value(convocatoriaExistente.getFechaProvisional().toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaConcesion")
             .value(convocatoriaExistente.getFechaConcesion().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("titulo").value(convocatoria.getTitulo()))
-        .andExpect(MockMvcResultMatchers.jsonPath("objeto").value(convocatoriaExistente.getObjeto()))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(convocatoria.getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("titulo[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoria.getTitulo(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("objeto[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoria.getObjeto(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoria.getObservaciones(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("finalidad.id").value(convocatoriaExistente.getFinalidad().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("regimenConcurrencia.id")
             .value(convocatoriaExistente.getRegimenConcurrencia().getId()))
@@ -285,10 +316,13 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
             .value(convocatoriaBorradorExistente.getFechaProvisional().toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaConcesion")
             .value(convocatoriaBorradorExistente.getFechaConcesion().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("titulo").value(convocatoriaBorradorExistente.getTitulo()))
-        .andExpect(MockMvcResultMatchers.jsonPath("objeto").value(convocatoriaBorradorExistente.getObjeto()))
+        .andExpect(MockMvcResultMatchers.jsonPath("titulo[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoriaBorradorExistente.getTitulo(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("objeto[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoriaBorradorExistente.getObjeto(), Language.ES)))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("observaciones").value(convocatoriaBorradorExistente.getObservaciones()))
+            MockMvcResultMatchers.jsonPath("observaciones[0].value")
+                .value(I18nHelper.getValueForLanguage(convocatoriaBorradorExistente.getObservaciones(), Language.ES)))
         .andExpect(
             MockMvcResultMatchers.jsonPath("finalidad.id").value(convocatoriaBorradorExistente.getFinalidad().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("regimenConcurrencia.id")
@@ -835,7 +869,8 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ConvocatoriaFaseOutput convocatoriaFase = convocatoriaFaseResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(convocatoriaFase.getObservaciones()).isEqualTo("observaciones" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaFase.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones" + i);
     }
   }
 
@@ -883,6 +918,14 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
    * @return el objeto ConvocatoriaFase
    */
   private ConvocatoriaFase generarMockConvocatoriaFase(Long id) {
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "tipoFase" + id));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcionFase" + id));
+
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    obsConvocatoriaFase.add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones" + id));
 
     ConvocatoriaFase convocatoriaFase = new ConvocatoriaFase();
     convocatoriaFase.setId(id);
@@ -890,8 +933,12 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
     convocatoriaFase.setFechaInicio(Instant.now());
     convocatoriaFase.setFechaFin(Instant.now().plus(Period.ofDays(1)));
     convocatoriaFase.setTipoFase(
-        TipoFase.builder().nombre("tipoFase" + id).descripcion("descripcionFase" + id).activo(Boolean.TRUE).build());
-    convocatoriaFase.setObservaciones("observaciones" + id);
+        TipoFase.builder()
+            .nombre(nombreTipoFase)
+            .descripcion(descripcionTipoFase)
+            .activo(Boolean.TRUE)
+            .build());
+    convocatoriaFase.setObservaciones(obsConvocatoriaFase);
 
     return convocatoriaFase;
   }
@@ -1150,7 +1197,8 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ConvocatoriaEnlace convocatoriaEnlace = convocatoriaEnlaceResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(convocatoriaEnlace.getDescripcion()).isEqualTo("descripcion-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaEnlace.getDescripcion(), Language.ES))
+          .isEqualTo("descripcion-" + i);
     }
   }
 
@@ -1229,15 +1277,16 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
    */
   private ConvocatoriaEnlace generarMockConvocatoriaEnlace(Long id, Long convocatoriaId) {
 
-    // @formatter:off
+    Set<ConvocatoriaEnlaceDescripcion> descripcionConvocatoriaEnlace = new HashSet<>();
+    descripcionConvocatoriaEnlace.add(new ConvocatoriaEnlaceDescripcion(Language.ES, "descripcion-" + id));
+
     return ConvocatoriaEnlace.builder()
         .id(id)
         .convocatoriaId(convocatoriaId)
-        .descripcion("descripcion-" + id)
+        .descripcion(descripcionConvocatoriaEnlace)
         .url("www.url" + id + ".es")
         .tipoEnlace(generarMockTipoEnlace(1L, Boolean.TRUE))
         .build();
-    // @formatter:on
   }
 
   /**
@@ -1248,11 +1297,16 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
    * @return el objeto TipoEnlace
    */
   private TipoEnlace generarMockTipoEnlace(Long id, Boolean activo) {
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcion-" + id));
 
     TipoEnlace tipoEnlace = new TipoEnlace();
     tipoEnlace.setId(id);
-    tipoEnlace.setNombre("nombre-" + id);
-    tipoEnlace.setDescripcion("descripcion-" + id);
+    tipoEnlace.setNombre(nombre);
+    tipoEnlace.setDescripcion(descripcion);
     tipoEnlace.setActivo(activo);
 
     return tipoEnlace;
@@ -1428,9 +1482,12 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
             MockMvcResultMatchers.jsonPath("fechaProvisional").value(newConvocatoria.getFechaProvisional().toString()))
         .andExpect(
             MockMvcResultMatchers.jsonPath("fechaConcesion").value(newConvocatoria.getFechaConcesion().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("titulo").value(newConvocatoria.getTitulo()))
-        .andExpect(MockMvcResultMatchers.jsonPath("objeto").value(newConvocatoria.getObjeto()))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(newConvocatoria.getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("titulo[0].value")
+            .value(I18nHelper.getValueForLanguage(newConvocatoria.getTitulo(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("objeto[0].value")
+            .value(I18nHelper.getValueForLanguage(newConvocatoria.getObjeto(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(newConvocatoria.getObservaciones(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("finalidad.id").value(newConvocatoria.getFinalidad().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("regimenConcurrencia.id")
             .value(newConvocatoria.getRegimenConcurrencia().getId()))
@@ -1503,7 +1560,9 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
     for (int i = 31; i <= 37; i++) {
       ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = convocatoriasPeriodoJustificacionesResponse
           .get(i - (page * pageSize) - 1);
-      Assertions.assertThat(convocatoriaPeriodoJustificacion.getObservaciones()).isEqualTo("observaciones-" + i);
+      Assertions
+          .assertThat(I18nHelper.getValueForLanguage(convocatoriaPeriodoJustificacion.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + i);
     }
   }
 
@@ -1555,6 +1614,9 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
     List<ConvocatoriaPeriodoSeguimientoCientifico> listaConvocatoriaPeriodoSeguimientoCientifico = new LinkedList<ConvocatoriaPeriodoSeguimientoCientifico>();
     for (int i = 1, j = 2; i <= 100; i++, j += 2) {
       // @formatter:off
+    Set<ConvocatoriaPeriodoSeguimientoCientificoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ConvocatoriaPeriodoSeguimientoCientificoObservaciones(Language.ES, "observaciones-" + i));
+
       listaConvocatoriaPeriodoSeguimientoCientifico.add(ConvocatoriaPeriodoSeguimientoCientifico
           .builder()
           .id(Long.valueOf(i))
@@ -1562,7 +1624,7 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
           .numPeriodo(i - 1)
           .mesInicial((i * 2) - 1)
           .mesFinal(j * 1)
-          .observaciones("observaciones-" + i)
+          .observaciones(observaciones)
           .build());
       // @formatter:on
     }
@@ -1671,18 +1733,25 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
   private Convocatoria generarMockConvocatoria(Long convocatoriaId, Long unidadGestionId, Long modeloEjecucionId,
       Long modeloTipoFinalidadId, Long tipoRegimenConcurrenciaId, Long tipoAmbitoGeogragicoId, Boolean activo) {
 
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(
+        new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId)));
+
     // @formatter:off
     ModeloEjecucion modeloEjecucion = (modeloEjecucionId == null) ? null
         : ModeloEjecucion.builder()
             .id(modeloEjecucionId)
-            .nombre("nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId))
+            .nombre(nombreModeloEjecucion)
             .activo(Boolean.TRUE)
             .build();
+            
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId)));
 
     TipoFinalidad tipoFinalidad = (modeloTipoFinalidadId == null) ? null
         : TipoFinalidad.builder()
             .id(modeloTipoFinalidadId)
-            .nombre("nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId))
+            .nombre(nombreTipoFinalidad)
             .activo(Boolean.TRUE)
             .build();
 
@@ -1694,19 +1763,35 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
             .activo(Boolean.TRUE)
             .build();
 
+    Set<TipoRegimenConcurrenciaNombre> tipoRegimenConcurrenciaNombre = new HashSet<>();
+    tipoRegimenConcurrenciaNombre.add(new TipoRegimenConcurrenciaNombre(Language.ES, "nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId)));
+
     TipoRegimenConcurrencia tipoRegimenConcurrencia = (tipoRegimenConcurrenciaId == null) ? null
         : TipoRegimenConcurrencia.builder()
             .id(tipoRegimenConcurrenciaId)
-            .nombre("nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId))
+            .nombre(tipoRegimenConcurrenciaNombre)
             .activo(Boolean.TRUE)
             .build();
+
+
+    Set<TipoAmbitoGeograficoNombre> nombre = new HashSet<>();
+    nombre.add(new TipoAmbitoGeograficoNombre(Language.ES, "nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId)));
 
     TipoAmbitoGeografico tipoAmbitoGeografico = (tipoAmbitoGeogragicoId == null) ? null
         : TipoAmbitoGeografico.builder()
             .id(tipoAmbitoGeogragicoId)
-            .nombre("nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId))
+            .nombre(nombre)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObjeto> convocatoriaObjeto = new HashSet<>();
+    convocatoriaObjeto.add(new ConvocatoriaObjeto(Language.ES, "objeto-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-" + String.format("%03d", convocatoriaId)));
 
     Convocatoria convocatoria = Convocatoria.builder()
         .id(convocatoriaId)
@@ -1716,9 +1801,9 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaProvisional(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaConcesion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo-" + String.format("%03d", convocatoriaId))
-        .objeto("objeto-" + String.format("%03d", convocatoriaId))
-        .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
+        .titulo(convocatoriaTitulo)
+        .objeto(convocatoriaObjeto)
+        .observaciones(convocatoriaObservaciones)
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
         .estado(Convocatoria.Estado.REGISTRADA)
@@ -1906,7 +1991,8 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ConvocatoriaHito convocatoriaHito = convocatoriaHitoResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(convocatoriaHito.getComentario()).isEqualTo("comentario-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaHito.getComentario(), Language.ES))
+          .isEqualTo("comentario-" + i);
     }
   }
 
@@ -1987,7 +2073,8 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ConvocatoriaConceptoGasto convocatoriaConceptoGasto = convocatoriaConceptoGastoResponse.get(i - 1);
-      Assertions.assertThat(convocatoriaConceptoGasto.getObservaciones()).isEqualTo("Obs-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaConceptoGasto.getObservaciones(), Language.ES))
+          .isEqualTo("Obs-" + i);
     }
   }
 
@@ -2049,7 +2136,8 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ConvocatoriaConceptoGasto convocatoriaConceptoGasto = convocatoriaConceptoGastoResponse.get(i - 1);
-      Assertions.assertThat(convocatoriaConceptoGasto.getObservaciones()).isEqualTo("Obs-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaConceptoGasto.getObservaciones(), Language.ES))
+          .isEqualTo("Obs-" + i);
     }
   }
 
@@ -2118,11 +2206,14 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
     tipoHito.setId(id == null ? 1 : id);
     tipoHito.setActivo(true);
 
+    Set<ConvocatoriaHitoComentario> comentarioConvocatoriaHito = new HashSet<>();
+    comentarioConvocatoriaHito.add(new ConvocatoriaHitoComentario(Language.ES, "comentario-" + id));
+
     ConvocatoriaHito convocatoriaHito = new ConvocatoriaHito();
     convocatoriaHito.setId(id);
     convocatoriaHito.setConvocatoriaId(id == null ? 1 : id);
     convocatoriaHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
-    convocatoriaHito.setComentario("comentario-" + id);
+    convocatoriaHito.setComentario(comentarioConvocatoriaHito);
     convocatoriaHito.setConvocatoriaHitoAviso(new ConvocatoriaHitoAviso(
         id == null ? 1 : id, id == null ? "1" : id.toString(), id == null ? "1" : id.toString(), false, false));
     convocatoriaHito.setTipoHito(tipoHito);
@@ -2141,15 +2232,21 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
     TipoFase tipoFase = TipoFase.builder().id(id).build();
     TipoDocumento tipoDocumento = TipoDocumento.builder().id(id).build();
 
+    Set<ConvocatoriaDocumentoNombre> convocatoriaDocumentonombre = new HashSet<>();
+    convocatoriaDocumentonombre.add(new ConvocatoriaDocumentoNombre(Language.ES, "nombre doc-" + id));
+
+    Set<ConvocatoriaDocumentoObservaciones> convocatoriaDocumentoObservaciones = new HashSet<>();
+    convocatoriaDocumentoObservaciones.add(new ConvocatoriaDocumentoObservaciones(Language.ES, "observaciones-" + id));
+
     // @formatter:off
     return ConvocatoriaDocumento.builder()
         .id(id)
         .convocatoriaId(1L)
         .tipoFase(tipoFase)
         .tipoDocumento(tipoDocumento)
-        .nombre("nombre doc-" + id)
+        .nombre(convocatoriaDocumentonombre)
         .publico(Boolean.TRUE)
-        .observaciones("observaciones-" + id)
+        .observaciones(convocatoriaDocumentoObservaciones)
         .documentoRef("documentoRef" + id)
         .build();
     // @formatter:on
@@ -2162,14 +2259,22 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
    * @return el objeto ConvocatoriaEnlace
    */
   private ConvocatoriaEnlace generarMockConvocatoriaEnlace(Long id) {
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "tipoEnlace" + id));
+
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcionEnlace-" + id));
+
+    Set<ConvocatoriaEnlaceDescripcion> descripcionConvocatoriaEnlace = new HashSet<>();
+    descripcionConvocatoriaEnlace.add(new ConvocatoriaEnlaceDescripcion(Language.ES, "descripcion-" + id));
 
     ConvocatoriaEnlace convocatoriaEnlace = new ConvocatoriaEnlace();
     convocatoriaEnlace.setId(id);
     convocatoriaEnlace.setConvocatoriaId(id);
-    convocatoriaEnlace.setDescripcion("descripcion-" + id);
+    convocatoriaEnlace.setDescripcion(descripcionConvocatoriaEnlace);
     convocatoriaEnlace.setUrl("www.url" + id + ".es");
-    convocatoriaEnlace.setTipoEnlace(TipoEnlace.builder().id(id).nombre("tipoEnlace" + id)
-        .descripcion("descripcionEnlace" + id).activo(Boolean.TRUE).build());
+    convocatoriaEnlace.setTipoEnlace(TipoEnlace.builder().id(id).nombre(nombre)
+        .descripcion(descripcion).activo(Boolean.TRUE).build());
 
     return convocatoriaEnlace;
   }
@@ -2210,6 +2315,10 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
    * @return el objeto ConvocatoriaPeriodoJustificacion
    */
   private ConvocatoriaPeriodoJustificacion generarMockConvocatoriaPeriodoJustificacion(Long id) {
+    Set<ConvocatoriaPeriodoJustificacionObservaciones> obsConvocatoriaPeriodoJustificacion = new HashSet<>();
+    obsConvocatoriaPeriodoJustificacion
+        .add(new ConvocatoriaPeriodoJustificacionObservaciones(Language.ES, "observaciones-" + id));
+
     ConvocatoriaPeriodoJustificacion convocatoriaPeriodoJustificacion = new ConvocatoriaPeriodoJustificacion();
     convocatoriaPeriodoJustificacion.setId(id);
     convocatoriaPeriodoJustificacion.setConvocatoriaId(id == null ? 1 : id);
@@ -2218,7 +2327,7 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
     convocatoriaPeriodoJustificacion.setMesFinal(2);
     convocatoriaPeriodoJustificacion.setFechaInicioPresentacion(Instant.parse("2020-10-10T00:00:00Z"));
     convocatoriaPeriodoJustificacion.setFechaFinPresentacion(Instant.parse("2020-11-20T23:59:59Z"));
-    convocatoriaPeriodoJustificacion.setObservaciones("observaciones-" + id);
+    convocatoriaPeriodoJustificacion.setObservaciones(obsConvocatoriaPeriodoJustificacion);
     convocatoriaPeriodoJustificacion.setTipo(TipoJustificacion.PERIODICO);
 
     return convocatoriaPeriodoJustificacion;
@@ -2235,6 +2344,10 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
     conceptoGasto.setId(id == null ? 1 : id);
     conceptoGasto.setActivo(true);
 
+    Set<ConvocatoriaConceptoGastoObservaciones> observacionesConvocatoriaConceptoGasto = new HashSet<>();
+    observacionesConvocatoriaConceptoGasto
+        .add(new ConvocatoriaConceptoGastoObservaciones(Language.ES, "Obs-" + id));
+
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = new ConvocatoriaConceptoGasto();
     convocatoriaConceptoGasto.setId(id);
     convocatoriaConceptoGasto.setConceptoGasto(conceptoGasto);
@@ -2242,7 +2355,7 @@ class ConvocatoriaControllerTest extends BaseControllerTest {
     convocatoriaConceptoGasto.setImporteMaximo(20.0);
     convocatoriaConceptoGasto.setMesInicial(1);
     convocatoriaConceptoGasto.setMesFinal(4);
-    convocatoriaConceptoGasto.setObservaciones("Obs-" + id);
+    convocatoriaConceptoGasto.setObservaciones(observacionesConvocatoriaConceptoGasto);
     convocatoriaConceptoGasto.setPermitido(permitido);
 
     return convocatoriaConceptoGasto;

@@ -1,19 +1,18 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
-import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { SgiError, ValidationError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { Estado, ESTADO_MAP, IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { SolicitudPublicService } from '@core/services/csp/solicitud-public.service';
-import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { ErrorUtils } from '@core/utils/error-utils';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
 import { Observable, of, throwError } from 'rxjs';
@@ -22,7 +21,6 @@ import { catchError, filter, map, switchMap } from 'rxjs/operators';
 const SOLICITUD_CAMBIO_ESTADO_COMENTARIO = marker('csp.solicitud.estado-solicitud.comentario');
 const SOLICITUD_CAMBIO_ESTADO_FECHA_ESTADO = marker('csp.solicitud.estado-solicitud.fecha');
 
-const MSG_FIELD_REQUIRED = marker('error.required.field');
 const MSG_DOCUMENTOS_CONVOCATORIA_REQUIRED = marker('msg.csp.solicitud.documentos-requeridos');
 const MSG_CAMBIO_ESTADO_CONFIRMACION = marker('confirmacion.csp.solicitud.cambio-estado');
 const MSG_CAMBIO_ESTADO_ERROR = marker('msg.csp.solicitud.cambio-estado.error');
@@ -155,7 +153,7 @@ export class CambioEstadoPublicModalComponent extends DialogActionComponent<IEst
       estadoActual: new FormControl({ value: this.data.estadoActual, disabled: true }),
       estadoNuevo: new FormControl(this.data.estadoNuevo, Validators.required),
       fechaEstado: new FormControl({ value: DateTime.now(), disabled: this.data.isInvestigador }, Validators.required),
-      comentario: new FormControl('', [Validators.maxLength(2000)])
+      comentario: new FormControl([], [I18nValidators.maxLength(2000)])
     });
   }
 

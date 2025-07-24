@@ -1,15 +1,17 @@
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { PlatformLocation } from '@angular/common';
 import { Component, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
+import { SelectValue } from '@core/component/select-common/select-common.component';
 import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { Module } from '@core/module';
 import { ROUTE_NAMES } from '@core/route.names';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
-import { ModeloUnidadService } from '@core/services/csp/modelo-unidad.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
+import { LanguageService } from '@core/services/language.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
@@ -48,6 +50,22 @@ export class SelectModeloEjecucionComponent extends SelectServiceExtendedCompone
   }
 
   @Input()
+  get unidadGestionRefRequired(): boolean {
+    return this._unidadGestionRefRequired;
+  }
+  set unidadGestionRefRequired(value: boolean) {
+    const newValue = coerceBooleanProperty(value);
+    const changes = this._unidadGestionRefRequired !== newValue;
+    this._unidadGestionRefRequired = newValue;
+    if (this.ready && changes) {
+      this.loadData();
+    }
+    this.stateChanges.next();
+  }
+  // tslint:disable-next-line: variable-name
+  private _unidadGestionRefRequired: boolean = false;
+
+  @Input()
   get externo(): boolean {
     return this._externo;
   }
@@ -66,24 +84,59 @@ export class SelectModeloEjecucionComponent extends SelectServiceExtendedCompone
   private _unidadGestionRef: string;
   private _externo: boolean;
 
+
+  /** Restrict values to allowed in solicitudes sin convocatoria. Default: false */
+  @Input()
+  get onlyAllowedInSolicitudesSinConvocatoria(): boolean {
+    return this._onlyAllowedInSolicitudesSinConvocatoria;
+  }
+  set onlyAllowedInSolicitudesSinConvocatoria(value: boolean) {
+    const newValue = coerceBooleanProperty(value);
+    const changes = this._onlyAllowedInSolicitudesSinConvocatoria !== newValue;
+    this._onlyAllowedInSolicitudesSinConvocatoria = newValue;
+    if (this.ready && changes) {
+      this.loadData();
+    }
+    this.stateChanges.next();
+  }
+  // tslint:disable-next-line: variable-name
+  private _onlyAllowedInSolicitudesSinConvocatoria = false;
+
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation: PlatformLocation,
     private service: ModeloEjecucionService,
     private authService: SgiAuthService,
     private unidadGestionService: UnidadGestionService,
   ) {
-    super(defaultErrorStateMatcher, ngControl, platformLocation);
+    super(defaultErrorStateMatcher, ngControl, languageService, platformLocation);
     this.addTarget = `/${Module.CSP.path}/${CSP_ROUTE_NAMES.MODELO_EJECUCION}/${ROUTE_NAMES.NEW}`;
 
+    this.sortWith = (o1: SelectValue<IModeloEjecucion>, o2: SelectValue<IModeloEjecucion>) => {
+      return o1?.displayText.localeCompare(o2?.displayText)
+    };
   }
 
   protected loadServiceOptions(): Observable<IModeloEjecucion[]> {
     const findOptions: SgiRestFindOptions = {};
 
+    if (this.unidadGestionRefRequired && !!!this.unidadGestionRef) {
+      return of([] as IModeloEjecucion[]);
+    }
+
     if (this.requestByExterno) {
       findOptions.filter = (new RSQLSgiRestFilter('externo', SgiRestFilterOperator.EQUALS, this.externo.toString()));
+    }
+
+    if (this.onlyAllowedInSolicitudesSinConvocatoria) {
+      const filter = new RSQLSgiRestFilter('solicitudSinConvocatoria', SgiRestFilterOperator.EQUALS, 'true');
+      if (findOptions.filter) {
+        findOptions.filter.and(filter);
+      } else {
+        findOptions.filter = filter;
+      }
     }
 
     if (this.requestByUnidadGestion) {

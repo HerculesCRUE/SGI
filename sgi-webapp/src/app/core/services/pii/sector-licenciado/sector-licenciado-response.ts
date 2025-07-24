@@ -1,11 +1,11 @@
-import { ISectorAplicacion } from '@core/models/pii/sector-aplicacion';
+import { ISectorAplicacionResponse } from '../sector-aplicacion/sector-aplicacion-response';
 
 export interface ISectorLicenciadoResponse {
   id: number;
   fechaInicioLicencia: string;
   fechaFinLicencia: string;
   invencionId: number;
-  sectorAplicacion: ISectorAplicacion;
+  sectorAplicacion: ISectorAplicacionResponse;
   contratoRef: string;
   paisRef: string;
   exclusividad: boolean;

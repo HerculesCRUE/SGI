@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap4_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.2 Non-application of corrective measures"
+    },
+    "fieldGroup": [
+      {
+        "template": "If corrective measures are not applied in any procedure/intervention, please justify the reason."
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "For more information on corrective measures (anaesthesia and analgesia) see Art. 26 of Royal Decree 53/13."
+      },
+      {
+        "key": "justificarRazon",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Justify",
+          "required": false
+        }
+      }
+    ]
+  }
+]

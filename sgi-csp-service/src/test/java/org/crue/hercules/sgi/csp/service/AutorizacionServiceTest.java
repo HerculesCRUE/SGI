@@ -1,17 +1,11 @@
 package org.crue.hercules.sgi.csp.service;
 
 import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
 
-import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.TimeZone;
 
-import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
-import org.crue.hercules.sgi.csp.dto.DocumentoOutput;
 import org.crue.hercules.sgi.csp.exceptions.AlreadyInEstadoAutorizacionException;
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion;
@@ -20,11 +14,8 @@ import org.crue.hercules.sgi.csp.repository.EstadoAutorizacionRepository;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiRepService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.security.test.context.support.WithMockUser;
 
 class AutorizacionServiceTest extends BaseServiceTest {
@@ -96,37 +87,6 @@ class AutorizacionServiceTest extends BaseServiceTest {
   void presentable_WithAutorizacionIdNull_ThrowsIllegalArgumentException() {
     Assertions.assertThatThrownBy(() -> this.autorizacionService.presentable(null))
         .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  void generarDocumentoAutorizacion_ReturnsDocumentoOutput() throws IOException {
-    String filename = "application.yml";
-    final Resource docFile = new ClassPathResource(filename);
-
-    final DocumentoOutput expectedDocumento = DocumentoOutput.builder()
-        .archivo(IOUtils.toByteArray(docFile.getInputStream()))
-        .documentoRef("application.yml")
-        .autorRef("user")
-        .fechaCreacion(LocalDateTime.now())
-        .nombre("application.yml")
-        .build();
-
-    BDDMockito.given(this.reportService.getInformeAutorizacion(anyLong())).willReturn(docFile);
-
-    BDDMockito.given(this.sgiConfigProperties.getTimeZone()).willReturn(TimeZone.getDefault());
-
-    BDDMockito.given(this.sgdocService.uploadInforme(anyString(), ArgumentMatchers.<Resource>any()))
-        .willReturn(expectedDocumento);
-
-    DocumentoOutput documento = autorizacionService.generarDocumentoAutorizacion(1L, null);
-
-    Assertions.assertThat(documento).isNotNull();
-    Assertions.assertThat(documento.getArchivo()).isEqualTo(expectedDocumento.getArchivo());
-    Assertions.assertThat(documento.getDocumentoRef()).isEqualTo(expectedDocumento.getDocumentoRef());
-    Assertions.assertThat(documento.getAutorRef()).isEqualTo(expectedDocumento.getAutorRef());
-    Assertions.assertThat(documento.getFechaCreacion()).isEqualTo(expectedDocumento.getFechaCreacion());
-    Assertions.assertThat(documento.getNombre()).isEqualTo(expectedDocumento.getNombre());
-
   }
 
   private EstadoAutorizacion buildMockEstadoAutorizacion(Long id, Long autorizacionId,

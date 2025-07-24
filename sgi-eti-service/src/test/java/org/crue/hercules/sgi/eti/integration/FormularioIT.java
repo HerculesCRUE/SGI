@@ -59,8 +59,7 @@ public class FormularioIT extends BaseIT {
     final Formulario formulario = response.getBody();
 
     Assertions.assertThat(formulario.getId()).isEqualTo(1L);
-    Assertions.assertThat(formulario.getNombre()).isEqualTo("M10");
-    Assertions.assertThat(formulario.getDescripcion()).isEqualTo("Formulario M10");
+    Assertions.assertThat(formulario.getTipo()).isEqualTo(Formulario.Tipo.MEMORIA);
   }
 
   @Test
@@ -84,16 +83,16 @@ public class FormularioIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("6");
 
     // Contiene de nombre='Seguimiento Anual', 'Seguimiento Final' y 'Retrospectiva'
-    Assertions.assertThat(formularios.get(0).getNombre()).isEqualTo("Seguimiento Anual");
-    Assertions.assertThat(formularios.get(1).getNombre()).isEqualTo("Seguimiento Final");
-    Assertions.assertThat(formularios.get(2).getNombre()).isEqualTo("Retrospectiva");
+    Assertions.assertThat(formularios.get(0).getTipo()).isEqualTo(Formulario.Tipo.SEGUIMIENTO_ANUAL);
+    Assertions.assertThat(formularios.get(1).getTipo()).isEqualTo(Formulario.Tipo.SEGUIMIENTO_FINAL);
+    Assertions.assertThat(formularios.get(2).getTipo()).isEqualTo(Formulario.Tipo.RETROSPECTIVA);
   }
 
   @Test
   public void findAll_WithSearchQuery_ReturnsFilteredFormularioList() throws Exception {
     // when: Búsqueda por nombre like e id equals
     Long id = 3L;
-    String query = "nombre=ke=M;id==" + id;
+    String query = "codigo=ke=M;id==" + id;
 
     URI uri = UriComponentsBuilder.fromUriString(FORMULARIO_CONTROLLER_BASE_PATH).queryParam("q", query).build(false)
         .toUri();
@@ -109,13 +108,13 @@ public class FormularioIT extends BaseIT {
     final List<Formulario> formularios = response.getBody();
     Assertions.assertThat(formularios.size()).isEqualTo(1);
     Assertions.assertThat(formularios.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(formularios.get(0).getNombre()).startsWith("M");
+    Assertions.assertThat(formularios.get(0).getTipo()).isEqualTo(Formulario.Tipo.MEMORIA);
   }
 
   @Test
   public void findAll_WithSortQuery_ReturnsOrderedFormularioList() throws Exception {
     // when: Ordenación por nombre desc
-    String query = "nombre,desc";
+    String query = "codigo,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(FORMULARIO_CONTROLLER_BASE_PATH).queryParam("s", query).build(false)
         .toUri();
@@ -131,9 +130,9 @@ public class FormularioIT extends BaseIT {
     final List<Formulario> formularios = response.getBody();
     Assertions.assertThat(formularios.size()).isEqualTo(6);
     Assertions.assertThat(formularios.get(0).getId()).isEqualTo(5);
-    Assertions.assertThat(formularios.get(0).getNombre()).isEqualTo("Seguimiento Final");
+    Assertions.assertThat(formularios.get(0).getTipo()).isEqualTo(Formulario.Tipo.SEGUIMIENTO_FINAL);
     Assertions.assertThat(formularios.get(3).getId()).isEqualTo(3);
-    Assertions.assertThat(formularios.get(3).getNombre()).isEqualTo("M30");
+    Assertions.assertThat(formularios.get(3).getTipo()).isEqualTo(Formulario.Tipo.MEMORIA);
 
   }
 
@@ -144,9 +143,9 @@ public class FormularioIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     // when: Ordena por nombre desc
-    String sort = "nombre,desc";
+    String sort = "codigo,desc";
     // when: Filtra por nombre like
-    String filter = "nombre=ke=0";
+    String filter = "codigo=ke=M";
 
     URI uri = UriComponentsBuilder.fromUriString(FORMULARIO_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -166,29 +165,10 @@ public class FormularioIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).isEqualTo("3");
 
     // Contiene nombre='M10', 'M20' y 'M30'
-    Assertions.assertThat(formularios.get(0).getNombre()).isEqualTo("M30");
-    Assertions.assertThat(formularios.get(1).getNombre()).isEqualTo("M20");
-    Assertions.assertThat(formularios.get(2).getNombre()).isEqualTo("M10");
+    Assertions.assertThat(formularios.get(0).getTipo()).isEqualTo(Formulario.Tipo.MEMORIA);
+    Assertions.assertThat(formularios.get(1).getTipo()).isEqualTo(Formulario.Tipo.MEMORIA);
+    Assertions.assertThat(formularios.get(2).getTipo()).isEqualTo(Formulario.Tipo.MEMORIA);
 
-  }
-
-  /**
-   * Función que devuelve un objeto Formulario
-   * 
-   * @param id          id del Formulario
-   * @param nombre      el nombre del Formulario
-   * @param descripcion la descripción del Formulario
-   * @return el objeto Formulario
-   */
-
-  public Formulario generarMockFormulario(Long id, String nombre, String descripcion) {
-
-    Formulario formulario = new Formulario();
-    formulario.setId(id);
-    formulario.setNombre(nombre);
-    formulario.setDescripcion(descripcion);
-
-    return formulario;
   }
 
 }

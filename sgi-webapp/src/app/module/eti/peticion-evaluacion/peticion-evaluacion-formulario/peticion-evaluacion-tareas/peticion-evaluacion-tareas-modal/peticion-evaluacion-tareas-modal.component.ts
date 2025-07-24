@@ -1,27 +1,22 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { COMITE } from '@core/models/eti/comite';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
-import { FormacionEspecifica } from '@core/models/eti/formacion-especifica';
-import { FORMULARIO } from '@core/models/eti/formulario';
 import { IMemoria } from '@core/models/eti/memoria';
 import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
 import { ITareaWithIsEliminable } from '@core/models/eti/tarea-with-is-eliminable';
-import { TipoTarea } from '@core/models/eti/tipo-tarea';
 import { IPersona } from '@core/models/sgp/persona';
-import { EquipoTrabajoService } from '@core/services/eti/equipo-trabajo.service';
 import { FormacionEspecificaService } from '@core/services/eti/formacion-especifica.service';
-import { MemoriaService } from '@core/services/eti/memoria.service';
 import { TareaService } from '@core/services/eti/tarea.service';
 import { TipoTareaService } from '@core/services/eti/tipo-tarea.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Subject, Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { BehaviorSubject, Subject } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 
 const TITLE_NEW_ENTITY = marker('title.new.entity');
 const TAREA_KEY = marker('eti.peticion-evaluacion.tarea');
@@ -33,6 +28,7 @@ const TAREA_FORMACION_ESPECIFICA_KEY = marker('eti.peticion-evaluacion.tarea.for
 const TAREA_EXPERIENCIA_KEY = marker('eti.peticion-evaluacion.tarea.experiencia');
 const TAREA_ANIO_KEY = marker('eti.peticion-evaluacion.tarea.anio');
 const TAREA_ORGANISMO_KEY = marker('eti.peticion-evaluacion.tarea.organismo');
+const SGP_NOT_FOUND = marker("error.sgp.not-found");
 
 export interface PeticionEvaluacionTareasModalComponentData {
   tarea: ITareaWithIsEliminable;
@@ -49,21 +45,13 @@ export interface PeticionEvaluacionTareasModalComponentData {
 export class PeticionEvaluacionTareasModalComponent
   extends DialogFormComponent<PeticionEvaluacionTareasModalComponentData> implements OnInit {
 
-  formaciones$: Subject<FormacionEspecifica[]> = new BehaviorSubject<FormacionEspecifica[]>([]);
+  formaciones$ = this.formacionService.findAll().pipe(map(response => response.items));
   personas$: Subject<IPersona[]> = new BehaviorSubject<IPersona[]>([]);
-  tipoTareas$: Subject<TipoTarea[]> = new BehaviorSubject<TipoTarea[]>([]);
+  tipoTareas$ = this.tipoTareaService.findAll().pipe(map(response => response.items));
 
-  mostrarOrganismo: boolean;
-  mostrarOrganismo$ = new BehaviorSubject(false);
-  mostrarOrganismoSubscription: Subscription;
-
-  mostrarOrganismoYanio: boolean;
-  mostrarOrganismoYanio$ = new BehaviorSubject(false);
-  mostrarOrganismoYanioSubscription: Subscription;
-
-  tareaYformacionTexto: boolean;
-  tareaYformacionTexto$ = new BehaviorSubject(false);
-  tareaYformacionTextoSubscription: Subscription;
+  tareaLibre = false;
+  formacionLibre = false;
+  detalleFormacion = false;
 
   title: string;
   textoAceptar: string;
@@ -72,10 +60,9 @@ export class PeticionEvaluacionTareasModalComponent
   msgParamMemoriaEntity = {};
   msgParamTareaEntity = {};
   msgParamFormacionEntity = {};
+  msgParamFormacionEspecificaEntity = {};
   msgParamAnioEntity = {};
   msgParamOrganismoEntity = {};
-
-  textoFormacionExperiencia$ = new BehaviorSubject(null);
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
@@ -85,11 +72,9 @@ export class PeticionEvaluacionTareasModalComponent
     matDialogRef: MatDialogRef<PeticionEvaluacionTareasModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: PeticionEvaluacionTareasModalComponentData,
     protected readonly tareaService: TareaService,
-    protected readonly formacionService: FormacionEspecificaService,
-    protected readonly memoriaService: MemoriaService,
-    protected readonly equipoTrabajoService: EquipoTrabajoService,
+    private readonly formacionService: FormacionEspecificaService,
     protected readonly personaService: PersonaService,
-    protected readonly tipoTareaService: TipoTareaService,
+    private readonly tipoTareaService: TipoTareaService,
     private readonly translate: TranslateService
   ) {
     super(matDialogRef, !!data.tarea?.memoria);
@@ -98,15 +83,8 @@ export class PeticionEvaluacionTareasModalComponent
   ngOnInit(): void {
     super.ngOnInit();
     this.setupI18N();
-    this.mostrarOrganismoYanioSubscription = this.mostrarOrganismoYanio$.subscribe(mostrar => {
-      this.mostrarOrganismoYanio = mostrar;
-    });
-    this.tareaYformacionTextoSubscription = this.tareaYformacionTexto$.subscribe(mostrar => {
-      this.tareaYformacionTexto = mostrar;
-    });
+
     this.onChangeMemoria(this.data.tarea?.memoria);
-    this.loadFormaciones();
-    this.loadTipoTareas();
     this.loadDatosUsuario(this.data.equiposTrabajo);
   }
 
@@ -121,15 +99,6 @@ export class PeticionEvaluacionTareasModalComponent
         BTN_OK,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.textoAceptar = value);
-      if (this.data.tarea?.memoria.comite.formulario.id === FORMULARIO.M10) {
-        this.translate.get(
-          TAREA_EXPERIENCIA_KEY
-        ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
-      } else {
-        this.translate.get(
-          TAREA_FORMACION_ESPECIFICA_KEY
-        ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
-      }
 
     } else {
       this.translate.get(
@@ -148,11 +117,6 @@ export class PeticionEvaluacionTareasModalComponent
         BTN_ADD,
         MSG_PARAMS.CARDINALIRY.SINGULAR
       ).subscribe((value) => this.textoAceptar = value);
-
-      this.translate.get(
-        TAREA_FORMACION_ESPECIFICA_KEY,
-        MSG_PARAMS.CARDINALIRY.SINGULAR
-      ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
     }
 
     this.translate.get(
@@ -172,9 +136,15 @@ export class PeticionEvaluacionTareasModalComponent
     ).subscribe((value) => this.msgParamTareaEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
-      TAREA_FORMACION_ESPECIFICA_KEY,
+      TAREA_EXPERIENCIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamFormacionEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      TAREA_FORMACION_ESPECIFICA_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) => this.msgParamFormacionEspecificaEntity =
       { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
 
     this.translate.get(
@@ -186,17 +156,6 @@ export class PeticionEvaluacionTareasModalComponent
       TAREA_ORGANISMO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamOrganismoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
-  }
-
-  /**
-   * Recupera un listado de las formaciones escíficas que hay en el sistema.
-   */
-  private loadFormaciones(): void {
-    this.subscriptions.push(this.formacionService.findAll().subscribe(
-      (response) => {
-        this.formaciones$.next(response.items);
-      }
-    ));
   }
 
   /**
@@ -214,46 +173,33 @@ export class PeticionEvaluacionTareasModalComponent
    * muestra y oculta los campos oportunos
    */
   private onChangeMemoria(memoria: IMemoria): void {
-    if (memoria?.comite?.id === COMITE.CBE || memoria?.comite?.id === COMITE.CEEA) {
-      this.mostrarOrganismoYanio$.next(true);
-      this.formGroup.controls.organismo.setValidators([Validators.required, Validators.maxLength(250)]);
-      this.formGroup.controls.anio.setValidators(Validators.required);
-    } else {
-      this.mostrarOrganismoYanio$.next(false);
-      this.formGroup.controls.organismo.clearValidators();
-      this.formGroup.controls.anio.clearValidators();
+    this.tareaLibre = !!memoria?.comite?.tareaNombreLibre;
+    this.formacionLibre = !!memoria?.comite?.tareaExperienciaLibre;
+    this.detalleFormacion = !!memoria?.comite?.tareaExperienciaDetalle;
+    if (this.tareaLibre) {
+      this.formGroup.controls.tipoTarea.disable();
+      this.formGroup.controls.nombre.enable();
     }
-
-    if (memoria?.comite?.id === COMITE.CEI || memoria?.comite?.id === COMITE.CBE) {
-      this.tareaYformacionTexto$.next(true);
-      this.formGroup.controls.tarea.setValidators([Validators.required, Validators.maxLength(250)]);
-      this.formGroup.controls.formacion.setValidators([Validators.required, Validators.maxLength(250)]);
-      this.formGroup.controls.tipoTarea.clearValidators();
-      this.formGroup.controls.formacionEspecifica.clearValidators();
-    } else {
-      this.tareaYformacionTexto$.next(false);
-      this.formGroup.controls.tipoTarea.setValidators(Validators.required);
-      this.formGroup.controls.formacionEspecifica.setValidators(Validators.required);
-      this.formGroup.controls.tarea.clearValidators();
-      this.formGroup.controls.formacion.clearValidators();
+    else {
+      this.formGroup.controls.tipoTarea.enable();
+      this.formGroup.controls.nombre.disable();
     }
-
-    if (memoria?.comite?.formulario.id === FORMULARIO.M10 || memoria?.comite?.formulario.id === FORMULARIO.M30) {
-      this.translate.get(
-        TAREA_EXPERIENCIA_KEY
-      ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
-    } else {
-      this.translate.get(
-        TAREA_FORMACION_ESPECIFICA_KEY
-      ).subscribe((value) => this.textoFormacionExperiencia$.next(value));
+    if (this.formacionLibre) {
+      this.formGroup.controls.formacionEspecifica.disable();
+      this.formGroup.controls.formacion.enable();
     }
-
-    this.formGroup.controls.anio.updateValueAndValidity();
-    this.formGroup.controls.formacion.updateValueAndValidity();
-    this.formGroup.controls.formacionEspecifica.updateValueAndValidity();
-    this.formGroup.controls.organismo.updateValueAndValidity();
-    this.formGroup.controls.tarea.updateValueAndValidity();
-    this.formGroup.controls.tipoTarea.updateValueAndValidity();
+    else {
+      this.formGroup.controls.formacionEspecifica.enable();
+      this.formGroup.controls.formacion.disable();
+    }
+    if (this.detalleFormacion) {
+      this.formGroup.controls.anio.enable();
+      this.formGroup.controls.organismo.enable();
+    }
+    else {
+      this.formGroup.controls.anio.disable();
+      this.formGroup.controls.organismo.disable();
+    }
   }
 
   /**
@@ -262,8 +208,13 @@ export class PeticionEvaluacionTareasModalComponent
    * returns persona del equipo de trabajo
    */
   displayerPersonaEquipoTrabajo = (persona: IPersona): string => {
-    return persona && persona.id ?
-      `${persona?.nombre} ${persona?.apellidos} (${this.getEmailPrincipal(persona)})` : null;
+    if (persona?.nombre) {
+      return `${persona?.nombre} ${persona?.apellidos} (${this.getEmailPrincipal(persona)})`;
+    } else if (persona?.id) {
+      return this.translate.instant(SGP_NOT_FOUND, { ids: persona.id, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    } else {
+      return null;
+    }
   }
 
   private getEmailPrincipal({ emails }: IPersona): string {
@@ -272,16 +223,6 @@ export class PeticionEvaluacionTareasModalComponent
     }
     const emailDataPrincipal = emails.find(emailData => emailData.principal);
     return emailDataPrincipal?.email ?? '';
-  }
-
-  /**
-   * Recupera un listado de los tipos de tareas que hay en el sistema.
-   */
-  private loadTipoTareas(): void {
-    this.subscriptions.push(this.tipoTareaService.findAll().subscribe(
-      (response) => {
-        this.tipoTareas$.next(response.items);
-      }));
   }
 
   /**
@@ -297,50 +238,55 @@ export class PeticionEvaluacionTareasModalComponent
         personaIds.add(equipoTrabajo?.persona?.id);
       });
 
-      this.subscriptions.push(this.personaService.findAllByIdIn([...personaIds]).subscribe((result) => {
-        this.personas$.next(result.items);
-      }));
+      const idsArray = Array.from(personaIds);
+
+      this.subscriptions.push(
+        this.personaService.findAllByIdIn(idsArray).pipe(
+          map((result) => {
+            const personasMap = new Map<string, IPersona>();
+            result.items.forEach((persona) => {
+              personasMap.set(persona.id, persona);
+            });
+
+            // Asegurar que todos los ids estén presentes
+            const personasCompletas = idsArray.map((id) => {
+              return personasMap.get(id) || { id } as IPersona;
+            });
+
+            return personasCompletas;
+          })
+        ).subscribe((personasCompletas) => {
+          this.personas$.next(personasCompletas);
+        })
+      );
     }
   }
 
   protected getValue(): PeticionEvaluacionTareasModalComponentData {
-    if (this.mostrarOrganismoYanio) {
-      this.data.tarea.organismo = this.formGroup.controls.organismo.value;
-      this.data.tarea.anio = this.formGroup.controls.anio.value;
-    } else {
-      this.data.tarea.organismo = null;
-      this.data.tarea.anio = null;
-    }
-
-    if (this.tareaYformacionTexto) {
-      this.data.tarea.tipoTarea = null;
-      this.data.tarea.formacionEspecifica = null;
-      this.data.tarea.tarea = this.formGroup.controls.tarea.value;
-      this.data.tarea.formacion = this.formGroup.controls.formacion.value;
-    } else {
-      this.data.tarea.tarea = null;
-      this.data.tarea.formacion = null;
-      this.data.tarea.tipoTarea = this.formGroup.controls.tipoTarea.value;
-      this.data.tarea.formacionEspecifica = this.formGroup.controls.formacionEspecifica.value;
-    }
-
-    this.data.tarea.memoria = this.formGroup.controls.memoria.value;
     this.data.tarea.equipoTrabajo = {} as IEquipoTrabajo;
     this.data.equiposTrabajo.filter(equipo => equipo.persona.id === this.formGroup.controls.equipoTrabajo.value.id)
       .forEach(equipoTrabajo => this.data.tarea.equipoTrabajo = equipoTrabajo);
     this.data.tarea.equipoTrabajo.persona = this.formGroup.controls.equipoTrabajo.value;
+
+    this.data.tarea.memoria = this.formGroup.controls.memoria.value;
+    this.data.tarea.nombre = this.tareaLibre ? this.formGroup.controls.nombre.value : [];
+    this.data.tarea.tipoTarea = this.tareaLibre ? null : this.formGroup.controls.tipoTarea.value;
+    this.data.tarea.formacion = this.formacionLibre ? this.formGroup.controls.formacion.value : [];
+    this.data.tarea.formacionEspecifica = this.formacionLibre ? null : this.formGroup.controls.formacionEspecifica.value;
+    this.data.tarea.organismo = this.detalleFormacion ? this.formGroup.controls.organismo.value : [];
+    this.data.tarea.anio = this.detalleFormacion ? this.formGroup.controls.anio.value : null;
 
     return this.data;
   }
 
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      tarea: new FormControl(this.data.tarea?.tarea),
-      tipoTarea: new FormControl(this.data.tarea?.tipoTarea),
-      organismo: new FormControl(this.data.tarea?.organismo),
-      anio: new FormControl(this.data.tarea?.anio),
-      formacionEspecifica: new FormControl(this.data.tarea?.formacionEspecifica),
-      formacion: new FormControl(this.data.tarea?.formacion),
+      nombre: new FormControl(this.data.tarea?.nombre ?? [], [Validators.required]),
+      tipoTarea: new FormControl(this.data.tarea?.tipoTarea, [Validators.required]),
+      organismo: new FormControl(this.data.tarea?.organismo ?? [], [I18nValidators.required, I18nValidators.maxLength(250)]),
+      anio: new FormControl(this.data.tarea?.anio, [Validators.required]),
+      formacionEspecifica: new FormControl(this.data.tarea?.formacionEspecifica, [Validators.required]),
+      formacion: new FormControl(this.data.tarea?.formacion ?? [], [I18nValidators.required]),
       memoria: new FormControl(this.data.tarea?.memoria, [Validators.required]),
       equipoTrabajo: new FormControl(this.data.tarea?.equipoTrabajo == null ? '' :
         this.data.tarea?.equipoTrabajo.persona, [Validators.required])

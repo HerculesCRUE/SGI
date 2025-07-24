@@ -56,14 +56,14 @@ export class InvencionInventorComponent extends FragmentComponent implements OnI
     private dialogService: DialogService,
     private invencionInventoriService: InvencionInventorService
   ) {
-    super(actionService.FRAGMENT.INVENCION_INVENTOR, actionService);
+    super(actionService.FRAGMENT.INVENCION_INVENTOR, actionService, translate);
     this.formPart = this.fragment as InvencionInventorFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
 
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IInvencionInventor>, property: string) => {
@@ -96,7 +96,7 @@ export class InvencionInventorComponent extends FragmentComponent implements OnI
 
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       INVENCION_INVENTOR_KEY,

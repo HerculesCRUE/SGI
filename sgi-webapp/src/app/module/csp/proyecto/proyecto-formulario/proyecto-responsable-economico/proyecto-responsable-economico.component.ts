@@ -50,13 +50,13 @@ export class ProyectoResponsableEconomicoComponent extends FragmentComponent imp
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.REPONSABLE_ECONOMICO, actionService);
+    super(actionService.FRAGMENT.REPONSABLE_ECONOMICO, actionService, translate);
     this.formPart = this.fragment as ProyectoResponsableEconomicoFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IProyectoEquipo>, property: string) => {
@@ -82,7 +82,7 @@ export class ProyectoResponsableEconomicoComponent extends FragmentComponent imp
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_EQUIPO_RESPONSABLE_ECONOMICO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

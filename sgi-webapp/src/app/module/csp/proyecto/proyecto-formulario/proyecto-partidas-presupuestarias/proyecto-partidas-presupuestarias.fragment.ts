@@ -1,5 +1,6 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { TipoPartida } from '@core/enums/tipo-partida';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
@@ -9,6 +10,7 @@ import { ConfigService } from '@core/services/csp/configuracion/config.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProyectoPartidaPresupuestariaService } from '@core/services/csp/proyecto-partida-presupuestaria/proyecto-partida-presupuestaria.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { PartidaPresupuestariaGastoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-gasto-sge.service';
 import { PartidaPresupuestariaIngresoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-ingreso-sge.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
@@ -36,7 +38,7 @@ export interface IPartidaPresupuestariaListado {
   help: HelpIcon;
   codigo: string;
   partidaSge: IPartidaPresupuestariaSge;
-  descripcion: string;
+  descripcion: I18nFieldValue[];
   tipoPartida: TipoPartida;
   canEdit: boolean;
 }
@@ -61,6 +63,7 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
     private readonly partidaPresupuestariaIngresoSgeService: PartidaPresupuestariaIngresoSgeService,
     private readonly proyectoPartidaPresupuestariaService: ProyectoPartidaPresupuestariaService,
     private readonly proyectoService: ProyectoService,
+    private readonly languageService: LanguageService,
     public readonly: boolean
   ) {
     super(key);
@@ -347,6 +350,9 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
             map((updatedPartidaPresupuestaria) => {
               const index = this.partidasPresupuestarias$.value
                 .findIndex((currentPartidaPresupuestaria) => currentPartidaPresupuestaria === partidaPresupuestariaListado);
+              const partidasPresupuestariaListado = partidaPresupuestariaListado.partidaPresupuestaria.value;
+              partidasPresupuestariaListado.id = updatedPartidaPresupuestaria.id;
+
               this.partidasPresupuestarias$.value[index] = {
                 partidaPresupuestaria: new StatusWrapper<IProyectoPartida>(updatedPartidaPresupuestaria),
                 convocatoriaPartidaPresupuestaria: this.partidasPresupuestarias$.value[index].convocatoriaPartidaPresupuestaria,
@@ -354,8 +360,11 @@ export class ProyectoPartidasPresupuestariasFragment extends Fragment {
                 partidaSge: partidaPresupuestariaListado.partidaSge,
                 descripcion: updatedPartidaPresupuestaria.descripcion,
                 tipoPartida: updatedPartidaPresupuestaria.tipoPartida,
+                canEdit: true,
                 help: this.partidasPresupuestarias$.value[index].help
               } as IPartidaPresupuestariaListado;
+              this.mapModificable.set(updatedPartidaPresupuestaria.id, true);
+              this.partidasPresupuestarias$.next(this.partidasPresupuestarias$.value);
             })
           );
       })

@@ -4,6 +4,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { IPais } from '@core/models/sgo/pais';
+import { LanguageService } from '@core/services/language.service';
 import { PaisService } from '@core/services/sgo/pais/pais.service';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
@@ -25,9 +26,10 @@ export class SelectPaisComponent extends SelectServiceComponent<IPais> {
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private paisService: PaisService
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
 
   }
 

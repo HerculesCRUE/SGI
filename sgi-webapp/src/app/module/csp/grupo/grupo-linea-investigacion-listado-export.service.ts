@@ -5,12 +5,12 @@ import { IGrupoLineaEquipoInstrumental } from '@core/models/csp/grupo-linea-equi
 import { IGrupoLineaInvestigacion } from '@core/models/csp/grupo-linea-investigacion';
 import { IGrupoLineaInvestigador } from '@core/models/csp/grupo-linea-investigador';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { IPersona } from '@core/models/sgp/persona';
 import { GrupoEquipoInstrumentalService } from '@core/services/csp/grupo-equipo-instrumental/grupo-equipo-instrumental.service';
 import { GrupoLineaInvestigacionService } from '@core/services/csp/grupo-linea-investigacion/grupo-linea-investigacion.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { LineaInvestigacionService } from '@core/services/csp/linea-investigacion/linea-investigacion.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { ClasificacionService } from '@core/services/sgo/clasificacion.service';
@@ -18,7 +18,6 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
-import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
 import { concat, from, Observable, of } from 'rxjs';
 import { catchError, concatMap, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
@@ -54,13 +53,13 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    private luxonDatePipe: LuxonDatePipe,
     private readonly grupoService: GrupoService,
     private personaService: PersonaService,
     private grupoLineaInvestigacionService: GrupoLineaInvestigacionService,
     private lineaInvestigacionService: LineaInvestigacionService,
     private clasificacionService: ClasificacionService,
-    private grupoEquipoInstrumentalService: GrupoEquipoInstrumentalService
+    private grupoEquipoInstrumentalService: GrupoEquipoInstrumentalService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -289,21 +288,21 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
         const miembros = (g.lineasInvestigador && g.lineasInvestigador.length > 0) ?
           (g.lineasInvestigador.filter(l =>
             g.lineasInvestigacion[i] && l.grupoLineaInvestigacion.id === g.lineasInvestigacion[i].id &&
-            l.grupoLineaInvestigacion.lineaInvestigacion.id === g.lineasInvestigacion[i].lineaInvestigacion.id)) : [];
+            l.grupoLineaInvestigacion.lineaInvestigacion?.id === g.lineasInvestigacion[i].lineaInvestigacion?.id)) : [];
         return miembros?.length;
       }));
       const maxClasificaciones = Math.max(...grupos.map(g => {
         const clasificaciones = (g.clasificaciones && g.clasificaciones.length > 0) ?
           (g.clasificaciones.filter(l =>
             g.lineasInvestigacion[i] && l.grupoLineaInvestigacion.id === g.lineasInvestigacion[i].id &&
-            l.grupoLineaInvestigacion.lineaInvestigacion.id === g.lineasInvestigacion[i].lineaInvestigacion.id)) : [];
+            l.grupoLineaInvestigacion.lineaInvestigacion?.id === g.lineasInvestigacion[i].lineaInvestigacion?.id)) : [];
         return clasificaciones?.length;
       }));
       const maxEquiposInstrumentales = Math.max(...grupos.map(g => {
         const miembros = (g.lineasEquiposInstrumentales && g.lineasEquiposInstrumentales.length > 0) ?
           (g.lineasEquiposInstrumentales.filter(l =>
             g.lineasInvestigacion[i] && l.grupoLineaInvestigacion.id === g.lineasInvestigacion[i].id &&
-            l.grupoLineaInvestigacion.lineaInvestigacion.id === g.lineasInvestigacion[i].lineaInvestigacion.id)) : [];
+            l.grupoLineaInvestigacion.lineaInvestigacion?.id === g.lineasInvestigacion[i].lineaInvestigacion?.id)) : [];
         return miembros?.length;
       }));
 
@@ -394,21 +393,21 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
           const miembros = (g.lineasInvestigador && g.lineasInvestigador.length > 0) ?
             (g.lineasInvestigador.filter(l =>
               g.lineasInvestigacion[i] && l.grupoLineaInvestigacion.id === g.lineasInvestigacion[i].id &&
-              l.grupoLineaInvestigacion.lineaInvestigacion.id === g.lineasInvestigacion[i].lineaInvestigacion.id)) : [];
+              l.grupoLineaInvestigacion.lineaInvestigacion?.id === g.lineasInvestigacion[i].lineaInvestigacion?.id)) : [];
           return miembros?.length;
         }));
         const maxNumClasificaciones = Math.max(...grupos.map(g => {
           const clasificaciones = (g.clasificaciones && g.clasificaciones.length > 0) ?
             (g.clasificaciones.filter(l =>
               g.lineasInvestigacion[i] && l.grupoLineaInvestigacion.id === g.lineasInvestigacion[i].id &&
-              l.grupoLineaInvestigacion.lineaInvestigacion.id === g.lineasInvestigacion[i].lineaInvestigacion.id)) : [];
+              l.grupoLineaInvestigacion.lineaInvestigacion?.id === g.lineasInvestigacion[i].lineaInvestigacion?.id)) : [];
           return clasificaciones?.length;
         }));
         const maxNumEquipoInstrumental = Math.max(...grupos.map(g => {
           const miembros = (g.lineasEquiposInstrumentales && g.lineasEquiposInstrumentales.length > 0) ?
             (g.lineasEquiposInstrumentales.filter(l =>
               g.lineasInvestigacion[i] && l.grupoLineaInvestigacion.id === g.lineasInvestigacion[i].id &&
-              l.grupoLineaInvestigacion.lineaInvestigacion.id === g.lineasInvestigacion[i].lineaInvestigacion.id)) : [];
+              l.grupoLineaInvestigacion.lineaInvestigacion?.id === g.lineasInvestigacion[i].lineaInvestigacion?.id)) : [];
           return miembros?.length;
         }));
 
@@ -418,13 +417,13 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
         const lineaInvestigacion = grupo.lineasInvestigacion[i] ?? null;
         const miembrosAdscritos = lineaInvestigacion ? grupo.lineasInvestigador.filter(lineaInvestigador =>
           lineaInvestigador.grupoLineaInvestigacion.id === lineaInvestigacion.id &&
-          lineaInvestigador.grupoLineaInvestigacion.lineaInvestigacion.id === lineaInvestigacion.lineaInvestigacion.id) : null;
+          lineaInvestigador.grupoLineaInvestigacion.lineaInvestigacion?.id === lineaInvestigacion.lineaInvestigacion?.id) : null;
         const clasificaciones = lineaInvestigacion ? grupo.clasificaciones.filter(clasificacion =>
           clasificacion.grupoLineaInvestigacion.id === lineaInvestigacion.id &&
-          clasificacion.grupoLineaInvestigacion.lineaInvestigacion.id === lineaInvestigacion.lineaInvestigacion.id) : null;
+          clasificacion.grupoLineaInvestigacion.lineaInvestigacion?.id === lineaInvestigacion.lineaInvestigacion?.id) : null;
         const equiposInstrumentales = lineaInvestigacion ? grupo.lineasEquiposInstrumentales.filter(equipoInstrumental =>
           equipoInstrumental.grupoLineaInvestigacion.id === lineaInvestigacion.id &&
-          equipoInstrumental.grupoLineaInvestigacion.lineaInvestigacion.id === lineaInvestigacion.lineaInvestigacion.id) : null;
+          equipoInstrumental.grupoLineaInvestigacion.lineaInvestigacion?.id === lineaInvestigacion.lineaInvestigacion?.id) : null;
         this.fillRowsLineaExcel(elementsRow, lineaInvestigacion, miembrosAdscritos, maxNumMiembros, clasificaciones,
           maxNumClasificaciones, maxNumNiveles, equiposInstrumentales, maxNumEquipoInstrumental);
       }
@@ -437,7 +436,7 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
     grupoLineasClasificacion: GrupoLineaClasificacionListado[], maxNumClasificaciones: number, maxNumNiveles: number,
     grupoLineasEquipoInstrumental: IGrupoLineaEquipoInstrumental[], maxNumEquipoInstrumental: number) {
     if (grupoLineaInvestigacion) {
-      elementsRow.push(grupoLineaInvestigacion?.lineaInvestigacion?.nombre ?? '');
+      elementsRow.push(grupoLineaInvestigacion?.lineaInvestigacion?.nombre ? this.languageService.getFieldValue(grupoLineaInvestigacion.lineaInvestigacion.nombre) : '');
       elementsRow.push(LuxonUtils.toBackend(grupoLineaInvestigacion.fechaInicio) ?? '');
       elementsRow.push(LuxonUtils.toBackend(grupoLineaInvestigacion.fechaFin) ?? '');
 
@@ -482,7 +481,7 @@ export class GrupoLineaInvestigacionListadoExportService extends AbstractTableEx
       for (let j = 0; j < maxNumEquipoInstrumental; j++) {
         const grupoLineaEquipoInstrumental = grupoLineasEquipoInstrumental[j];
         if (grupoLineaEquipoInstrumental) {
-          elementsRow.push(grupoLineaEquipoInstrumental.grupoEquipoInstrumental?.nombre ?? '');
+          elementsRow.push(this.languageService.getFieldValue(grupoLineaEquipoInstrumental.grupoEquipoInstrumental?.nombre));
         } else {
           elementsRow.push('');
         }

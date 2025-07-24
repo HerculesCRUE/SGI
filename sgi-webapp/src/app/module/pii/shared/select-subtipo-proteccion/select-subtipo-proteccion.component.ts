@@ -6,6 +6,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
 import { Module } from '@core/module';
+import { LanguageService } from '@core/services/language.service';
 import { TipoProteccionService } from '@core/services/pii/tipo-proteccion/tipo-proteccion.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
@@ -45,11 +46,12 @@ export class SelectSubtipoProteccionComponent extends SelectServiceExtendedCompo
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation: PlatformLocation,
+    private authService: SgiAuthService,
     private tipoProteccionService: TipoProteccionService,
-    private authService: SgiAuthService
   ) {
-    super(defaultErrorStateMatcher, ngControl, platformLocation);
+    super(defaultErrorStateMatcher, ngControl, languageService, platformLocation);
   }
 
   protected loadServiceOptions(): Observable<ITipoProteccion[]> {
@@ -59,7 +61,7 @@ export class SelectSubtipoProteccionComponent extends SelectServiceExtendedCompo
     }
     this.addTarget = `/${Module.PII.path}/${PII_ROUTE_NAMES.TIPO_PROTECCION}/${this.tipoProteccionId}/${PII_TIPO_PROTECCION_ROUTE_NAMES.SUBTIPOS}`;
     const findOptions: SgiRestFindOptions = {
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
+      sort: new RSQLSgiRestSort('nombre.value', SgiRestSortDirection.ASC)
     };
     return this.tipoProteccionService.findSubtipos(this.tipoProteccionId, findOptions).pipe(
       map(({ items }) => items));

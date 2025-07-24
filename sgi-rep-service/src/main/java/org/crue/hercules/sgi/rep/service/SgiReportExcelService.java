@@ -35,6 +35,7 @@ import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto.ColumnType;
@@ -59,7 +60,7 @@ public class SgiReportExcelService {
 
   private static final String DATE_PATTERN_DEFAULT = "dd/MM/yyyy";
   private static final String ISO_LOCAL_DATE_PATTERN = "yyyy-MM-dd'T'HH:mm:ss";
-  private static final String DEFAULT_TITLE = "Datos informe";
+  private static final String DEFAULT_TITLE_KEY_MSG = "excel.datos.informe";
   private static final String NUMBER_PATTERN_DEFAULT = "0.00";
   private static final String DEFAULT_FORMAT_DOUBLE = "#.#,0";
   private static final String DEFAULT_FORMAT_INTEGER = "#";
@@ -123,7 +124,7 @@ public class SgiReportExcelService {
       } else {
         String title = sgiReport.getTitle();
         if (sgiReport.getTitle() == null) {
-          title = DEFAULT_TITLE;
+          title = ApplicationContextSupport.getMessage(DEFAULT_TITLE_KEY_MSG);
         }
         SXSSFWorkbook workbook = new SXSSFWorkbook();
         buildCommonCellStyle(workbook);
@@ -391,7 +392,7 @@ public class SgiReportExcelService {
       return sgiApiConfService.getResource("rep-common-header-logo");
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
   }
 

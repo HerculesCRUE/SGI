@@ -7,6 +7,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaHito } from '@core/models/csp/convocatoria-hito';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
@@ -39,7 +40,8 @@ export class ConvocatoriaHitosPublicComponent extends FragmentComponent implemen
   }
 
   constructor(
-    public actionService: ConvocatoriaPublicActionService
+    public actionService: ConvocatoriaPublicActionService,
+    private readonly languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.HITOS, actionService);
     this.formPart = this.fragment as ConvocatoriaHitosPublicFragment;
@@ -54,9 +56,9 @@ export class ConvocatoriaHitosPublicComponent extends FragmentComponent implemen
           case 'fechaInicio':
             return wrapper.value.fecha;
           case 'tipoHito':
-            return wrapper.value.tipoHito.nombre;
+            return this.languageService.getFieldValue(wrapper.value.tipoHito.nombre);
           case 'comentario':
-            return wrapper.value.comentario;
+            return this.languageService.getFieldValue(wrapper.value.comentario);
           default:
             return wrapper[property];
         }
@@ -71,4 +73,5 @@ export class ConvocatoriaHitosPublicComponent extends FragmentComponent implemen
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  protected setupI18N(): void { }
 }

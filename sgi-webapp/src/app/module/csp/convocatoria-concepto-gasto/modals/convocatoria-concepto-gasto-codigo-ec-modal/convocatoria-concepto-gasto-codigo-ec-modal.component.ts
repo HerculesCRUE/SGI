@@ -149,7 +149,7 @@ export class ConvocatoriaConceptoGastoCodigoEcModalComponent
   }
 
   displayerCodigoEconomico(codigoEconomico: ICodigoEconomicoGasto) {
-    return `${codigoEconomico?.id} - ${codigoEconomico?.nombre}` ?? '';
+    return `${codigoEconomico?.id} - ${codigoEconomico?.nombre}`;
   }
 
   sorterCodigoEconomico(o1: SelectValue<ICodigoEconomicoGasto>, o2: SelectValue<ICodigoEconomicoGasto>): number {

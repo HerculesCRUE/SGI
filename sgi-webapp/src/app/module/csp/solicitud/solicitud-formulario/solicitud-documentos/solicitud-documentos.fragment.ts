@@ -1,7 +1,7 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IDocumentoRequeridoSolicitud } from '@core/models/csp/documento-requerido-solicitud';
 import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
-import { ITipoDocumento } from '@core/models/csp/tipos-configuracion';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { Fragment } from '@core/services/action-service';
 import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
@@ -13,12 +13,13 @@ import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
-const SIN_TIPO_DOCUMENTO = marker('label.csp.documento.sin-tipo');
+const SIN_TIPO_DOCUMENTO = marker('label.csp.documentos.sin-tipo-documento');
+const SIN_TIPO_FASE = marker('label.csp.documentos.sin-fase');
 
 export class NodeDocumentoSolicitud {
   parent: NodeDocumentoSolicitud;
   key: string;
-  title: string;
+  title: string | I18nFieldValue[];
   required: boolean;
   documento?: StatusWrapper<ISolicitudDocumento>;
   fichero?: IDocumento;
@@ -35,12 +36,18 @@ export class NodeDocumentoSolicitud {
   }
 
   constructor(
-    key: string, title: string, level: number, required: boolean,
-    documento?: StatusWrapper<ISolicitudDocumento>) {
+    key: string,
+    title: string | I18nFieldValue[],
+    level: number,
+    required: boolean,
+    documento?: StatusWrapper<ISolicitudDocumento>
+  ) {
     this.key = key;
     this.title = title;
     this._level = level;
     if (level === 0 && !title) {
+      this.title = SIN_TIPO_FASE;
+    } else if (level === 1 && !title) {
       this.title = SIN_TIPO_DOCUMENTO;
     }
     this.required = required;
@@ -65,15 +72,32 @@ export class NodeDocumentoSolicitud {
 
 function sortByTitle(nodes: NodeDocumentoSolicitud[]): NodeDocumentoSolicitud[] {
   return nodes.sort((a, b) => {
-    if ((a.level === 0 || b.level === 0)) {
-      if (a.key < b.key) {
-        return -1;
-      }
-      if (a.key > b.key) {
+    // Force ordering last for level 0 and key 0
+    if ((a.level === 0 || b.level === 0) && (a.key === '0' || b.key === '0')) {
+      // A is the last
+      if (a.key === '0') {
         return 1;
+      }
+      // B is the last
+      if (b.key === '0') {
+        return -1;
       }
       return 0;
     }
+
+    // Force ordering last for level 1 and key ?-0
+    if ((a.level === 1 || b.level === 1) && (a.key.endsWith('-0') || b.key.endsWith('-0'))) {
+      // A is the last
+      if (a.key.endsWith('-0')) {
+        return 1;
+      }
+      // B is the last
+      if (b.key.endsWith('-0')) {
+        return -1;
+      }
+      return 0;
+    }
+
     if (a.title < b.title) {
       return -1;
     }
@@ -91,10 +115,10 @@ export class SolicitudDocumentosFragment extends Fragment {
 
   private nodeLookup = new Map<string, NodeDocumentoSolicitud>();
 
-  private tiposDocumentosIdsRequired: string[] = [];
+  private tiposDocumentosKeysRequired: string[] = [];
 
   get hasRequiredDocumentos(): boolean {
-    return this.tiposDocumentosIdsRequired.every(tipoRequeridoId =>
+    return this.tiposDocumentosKeysRequired.every(tipoRequeridoId =>
       this.nodeLookup.get(tipoRequeridoId).childs.length > 0);
   }
 
@@ -118,20 +142,35 @@ export class SolicitudDocumentosFragment extends Fragment {
     if (this.convocatoriaId) {
       convocatoriaDocumentoRequeridoSolicitud$ =
         this.configuracionSolicitudService.findAllConvocatoriaDocumentoRequeridoSolicitud(this.convocatoriaId).pipe(
-          map((result) => result.items),
-          tap(documentosRequeridos => this.tiposDocumentosIdsRequired = documentosRequeridos.map(tipo => tipo.tipoDocumento.id.toString()))
+          map((result) => result.items)
         );
     } else {
       convocatoriaDocumentoRequeridoSolicitud$ = of([]);
     }
 
     const subscription = convocatoriaDocumentoRequeridoSolicitud$.pipe(
-      map((documentosRequeridos) => documentosRequeridos.map(
-        (documento) => this.createNode(documento.tipoDocumento, [], true))
-      ),
-      switchMap((nodes) => {
+      switchMap(documentosRequeridos => {
+        if (!documentosRequeridos.length) {
+          return of([] as ISolicitudDocumento[]);
+        }
+
+        return this.configuracionSolicitudService.findByConvocatoriaId(this.convocatoriaId).pipe(
+          map(configuracionSolicitud => {
+            return documentosRequeridos.map(
+              (documento) => {
+                const solicitudDocumento = {
+                  tipoDocumento: documento.tipoDocumento,
+                  tipoFase: configuracionSolicitud.fasePresentacionSolicitudes.tipoFase
+                } as ISolicitudDocumento
+                return solicitudDocumento;
+              })
+          }),
+          tap(documentosRequeridos => this.tiposDocumentosKeysRequired = documentosRequeridos.map(documentoRequerido => `${documentoRequerido.tipoFase.id}-${documentoRequerido.tipoDocumento.id}`))
+        )
+      }),
+      switchMap(documentosRequeridos => {
         return this.solicitudService.findDocumentos(this.solicitudId).pipe(
-          map((solicitudDocumentos) => nodes.concat(this.buildTree(solicitudDocumentos.items)))
+          map((solicitudDocumentos) => this.buildTree(documentosRequeridos.concat(solicitudDocumentos.items)))
         );
       })
     ).subscribe(
@@ -145,25 +184,29 @@ export class SolicitudDocumentosFragment extends Fragment {
     this.subscriptions.push(subscription);
   }
 
-  private createNode(tipoDocumento: ITipoDocumento, nodes: NodeDocumentoSolicitud[], required: boolean): NodeDocumentoSolicitud {
-    const keyTipoDocumento = `${tipoDocumento ? tipoDocumento.id : 0}`;
-    const tipoDocNode = new NodeDocumentoSolicitud(keyTipoDocumento, tipoDocumento?.nombre, 0, required);
-    this.nodeLookup.set(keyTipoDocumento, tipoDocNode);
-    nodes.push(tipoDocNode);
-    return tipoDocNode;
-  }
-
   private buildTree(documentos: ISolicitudDocumento[]): NodeDocumentoSolicitud[] {
     const nodes: NodeDocumentoSolicitud[] = [];
     documentos.forEach((documento: ISolicitudDocumento) => {
-      const keyTipoDocumento = `${documento.tipoDocumento ? documento.tipoDocumento?.id : 0}`;
+      const keyTipoFase = `${documento.tipoFase ? documento.tipoFase.id : 0}`;
+      const keyTipoDocumento = `${keyTipoFase}-${documento.tipoDocumento ? documento.tipoDocumento?.id : 0}`;
+      let faseNode = this.nodeLookup.get(keyTipoFase);
+      if (!faseNode) {
+        faseNode = new NodeDocumentoSolicitud(keyTipoFase, documento.tipoFase?.nombre, 0, false);
+        this.nodeLookup.set(keyTipoFase, faseNode);
+        nodes.push(faseNode);
+      }
       let tipoDocNode = this.nodeLookup.get(keyTipoDocumento);
       if (!tipoDocNode) {
-        tipoDocNode = this.createNode(documento.tipoDocumento, nodes, false);
+        tipoDocNode = new NodeDocumentoSolicitud(keyTipoDocumento, documento.tipoDocumento?.nombre, 1, !documento.id);
+        faseNode.addChild(tipoDocNode);
+        this.nodeLookup.set(keyTipoDocumento, tipoDocNode);
       }
-      const docNode = new NodeDocumentoSolicitud('', documento.nombre, 1, false,
-        new StatusWrapper<ISolicitudDocumento>(documento));
-      tipoDocNode.addChild(docNode);
+
+      if (documento.id) {
+        const docNode = new NodeDocumentoSolicitud('', documento.nombre, 2, false,
+          new StatusWrapper<ISolicitudDocumento>(documento));
+        tipoDocNode.addChild(docNode);
+      }
     });
     return nodes;
   }
@@ -175,22 +218,30 @@ export class SolicitudDocumentosFragment extends Fragment {
   }
 
   public addNode(node: NodeDocumentoSolicitud): NodeDocumentoSolicitud {
-    const keyTipoDocumento = `${node.documento.value.tipoDocumento ? node.documento.value.tipoDocumento.id : 0}`;
-    let nodeTipoDoc = this.nodeLookup.get(keyTipoDocumento);
+    const keyTipoFase = `${node.documento.value.tipoFase ? node.documento.value.tipoFase.id : 0}`;
+    const keyTipoDocumento = `${keyTipoFase}-${node.documento.value.tipoDocumento ? node.documento.value.tipoDocumento.id : 0}`;
+    let nodeFase = this.nodeLookup.get(keyTipoFase);
     let addToRoot = false;
-    if (!nodeTipoDoc) {
-      nodeTipoDoc = new NodeDocumentoSolicitud(keyTipoDocumento, node.documento.value.tipoDocumento?.nombre, 0, false);
-      this.nodeLookup.set(keyTipoDocumento, nodeTipoDoc);
+    if (!nodeFase) {
+      nodeFase = new NodeDocumentoSolicitud(keyTipoFase, node.documento.value.tipoFase?.nombre, 0, false);
+      this.nodeLookup.set(keyTipoFase, nodeFase);
       addToRoot = true;
     }
-    const nodeDocumento = new NodeDocumentoSolicitud(keyTipoDocumento, node.title, 1, false, node.documento);
+
+    let nodeTipoDoc = this.nodeLookup.get(keyTipoDocumento);
+    if (!nodeTipoDoc) {
+      nodeTipoDoc = new NodeDocumentoSolicitud(keyTipoDocumento, node.documento.value.tipoDocumento?.nombre, 1, false);
+      nodeFase.addChild(nodeTipoDoc);
+      this.nodeLookup.set(keyTipoDocumento, nodeTipoDoc);
+    }
+    const nodeDocumento = new NodeDocumentoSolicitud(keyTipoDocumento, node.title, 2, false, node.documento);
     nodeDocumento.documento.setCreated();
     nodeDocumento.fichero = node.fichero;
     nodeDocumento.documento.value.documentoRef = node.fichero?.documentoRef;
     nodeTipoDoc.addChild(nodeDocumento);
     const current = this.documentos$.value;
     if (addToRoot) {
-      current.push(nodeTipoDoc);
+      current.push(nodeFase);
     }
     this.publishNodes(current);
     this.setChanges(true);
@@ -217,10 +268,11 @@ export class SolicitudDocumentosFragment extends Fragment {
     }
 
     deleteDocumento$.subscribe(() => {
-      const keyTipoDocumento = `${node.documento.value.tipoDocumento ? node.documento.value.tipoDocumento.id : 0}`;
+      const keyTipoFase = `${node.documento.value.tipoFase ? node.documento.value.tipoFase.id : 0}`;
+      const keyTipoDocumento = `${keyTipoFase}-${node.documento.value.tipoDocumento ? node.documento.value.tipoDocumento.id : 0}`;
       let nodeTipoDoc = this.nodeLookup.get(keyTipoDocumento);
       if (!nodeTipoDoc) {
-        nodeTipoDoc = new NodeDocumentoSolicitud(keyTipoDocumento, node.documento.value.tipoDocumento?.nombre, 1, false);
+        nodeTipoDoc = new NodeDocumentoSolicitud(keyTipoDocumento, node.documento.value.tipoDocumento?.nombre, 2, false);
         this.nodeLookup.set(keyTipoDocumento, nodeTipoDoc);
       }
       // Si el padre ha cambiado limpiamos la rama y establecemos el nuevo padre

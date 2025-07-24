@@ -1,14 +1,19 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.exceptions.TipoFaseNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.TipoHitoNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoHito;
+import org.crue.hercules.sgi.csp.model.TipoHitoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoHitoNombre;
 import org.crue.hercules.sgi.csp.service.TipoHitoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -29,6 +34,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * TipoHitoControllerTest
  */
@@ -46,23 +53,33 @@ class TipoHitoControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-THITO-C" })
   void create_ReturnsTipoHito() throws Exception {
     // given: Un TipoHito nuevo
-    String tipoHitoJson = "{ \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\", \"activo\": \"true\" }";
-    BDDMockito.given(tipoHitoService.create(ArgumentMatchers.<TipoHito>any())).will((InvocationOnMock invocation) -> {
-      TipoHito tipoHitoCreado = invocation.getArgument(0);
-      tipoHitoCreado.setId(1L);
-      return tipoHitoCreado;
-    });
+    TipoHito data = generarMockTipoHito(1L, "nombre-1");
+    data.setId(null);
+
+    BDDMockito.given(tipoHitoService.create(ArgumentMatchers.<TipoHito>any()))
+        .willAnswer(new Answer<TipoHito>() {
+          @Override
+          public TipoHito answer(InvocationOnMock invocation) throws Throwable {
+            TipoHito givenData = invocation.getArgument(0, TipoHito.class);
+            TipoHito newData = new TipoHito();
+            BeanUtils.copyProperties(givenData, newData);
+            newData.setId(1L);
+            return newData;
+          }
+        });
+
     // when: Creamos un TipoHito
     mockMvc
         .perform(MockMvcRequestBuilders.post(TIPO_HITO_CONTROLLER_BASE_PATH)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(tipoHitoJson))
+            .content(mapper.writeValueAsString(data)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
+
         // then: Crea el nuevo TipoHito y lo devuelve
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -87,20 +104,22 @@ class TipoHitoControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-THITO-E" })
   void update_ReturnsTipoHito() throws Exception {
     // given: Un TipoHito a modificar
-    String tipoHitoJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
+    TipoHito data = generarMockTipoHito(1L, "nombre-1-modificado");
 
     BDDMockito.given(tipoHitoService.update(ArgumentMatchers.<TipoHito>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
+
     // when: Actualizamos el TipoHito
     mockMvc
-        .perform(MockMvcRequestBuilders.put(TIPO_HITO_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
+        .perform(MockMvcRequestBuilders.put(TIPO_HITO_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, data.getId())
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(tipoHitoJson))
+            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(data)))
         .andDo(SgiMockMvcResultHandlers.printOnError())
+
         // then: Modifica el TipoHito y lo devuelve
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1-modificado"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1-modificado"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -108,15 +127,18 @@ class TipoHitoControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-THITO-E" })
   void update_WithIdNotExist_ReturnsNotFound() throws Exception {
     // given: Un TipoHito a modificar
-    String replaceTipoHitoJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
+    TipoHito data = generarMockTipoHito(1L, "nombre-1-modificado");
+
     BDDMockito.given(tipoHitoService.update(ArgumentMatchers.<TipoHito>any())).will((InvocationOnMock invocation) -> {
-      throw new TipoHitoNotFoundException(((TipoHito) invocation.getArgument(0)).getId());
+      throw new TipoFaseNotFoundException(((TipoHito) invocation.getArgument(0)).getId());
     });
+
     // when: Actualizamos el TipoHito
     mockMvc
         .perform(MockMvcRequestBuilders.put(TIPO_HITO_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
             .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(replaceTipoHitoJson))
+            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(data)))
+        .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: No encuentra el TipoHito y devuelve un 404
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isNotFound());
   }
@@ -183,7 +205,8 @@ class TipoHitoControllerTest extends BaseControllerTest {
         });
     for (int i = 31; i <= 37; i++) {
       TipoHito tipoHito = tiposHitoResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(tipoHito.getNombre()).isEqualTo("TipoHito" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES))
+          .isEqualTo("TipoHito" + String.format("%03d", i));
     }
   }
 
@@ -258,7 +281,8 @@ class TipoHitoControllerTest extends BaseControllerTest {
         });
     for (int i = 31; i <= 37; i++) {
       TipoHito tipoHito = tiposHitoResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(tipoHito.getNombre()).isEqualTo("TipoHito" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoHito.getNombre(),
+          Language.ES)).isEqualTo("TipoHito" + String.format("%03d", i));
     }
   }
 
@@ -302,8 +326,8 @@ class TipoHitoControllerTest extends BaseControllerTest {
         // then: Devuelve TipoHito
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -329,8 +353,10 @@ class TipoHitoControllerTest extends BaseControllerTest {
         // then: return enabled TipoHito
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(tipoHito.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoHito.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoHito.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoHito.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(Boolean.TRUE));
   }
 
@@ -377,8 +403,10 @@ class TipoHitoControllerTest extends BaseControllerTest {
         // then: return disabled TipoHito
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(idBuscado))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoHito.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoHito.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoHito.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(Boolean.FALSE));
   }
 
@@ -418,10 +446,16 @@ class TipoHitoControllerTest extends BaseControllerTest {
    * @return el objeto TipoHito
    */
   TipoHito generarMockTipoHito(Long id, String nombre) {
+    Set<TipoHitoNombre> nombreTipoHito = new HashSet<>();
+    nombreTipoHito.add(new TipoHitoNombre(Language.ES, nombre));
+
+    Set<TipoHitoDescripcion> descripcionTipoHito = new HashSet<>();
+    descripcionTipoHito.add(new TipoHitoDescripcion(Language.ES, "descripcion-" + id));
+
     TipoHito tipoHito = new TipoHito();
     tipoHito.setId(id);
-    tipoHito.setNombre(nombre);
-    tipoHito.setDescripcion("descripcion-" + id);
+    tipoHito.setNombre(nombreTipoHito);
+    tipoHito.setDescripcion(descripcionTipoHito);
     tipoHito.setActivo(Boolean.TRUE);
     return tipoHito;
   }

@@ -62,4 +62,13 @@ public interface AnualidadGastoRepository
    */
   boolean existsByProyectoAnualidadProyectoId(Long proyectoId);
 
+  /**
+   * Indica si existen {@link AnualidadGasto} asociados al proyectoSgeRef
+   * 
+   * @param proyectoSgeRef identificador del proyecto en el SGE
+   * @return {@code true} si existe al menos un {@link AnualidadGasto} asociado al
+   *         proyectoSgeRef, {@code false} en caso contrario.
+   */
+  boolean existsByProyectoSgeRef(String proyectoSgeRef);
+
 }

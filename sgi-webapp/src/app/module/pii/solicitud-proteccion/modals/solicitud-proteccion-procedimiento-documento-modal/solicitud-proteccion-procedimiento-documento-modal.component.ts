@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SgiError } from '@core/errors/sgi-error';
@@ -8,6 +8,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IProcedimientoDocumento } from '@core/models/pii/procedimiento-documento';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
 import { switchMap } from 'rxjs/operators';
@@ -86,7 +87,7 @@ export class SolicitudProteccionProcedimientoDocumentoModalComponent
   protected buildFormGroup(): FormGroup {
 
     return new FormGroup({
-      nombre: new FormControl(this.procedimientoDocumento?.nombre, [Validators.maxLength(250), Validators.required]),
+      nombre: new FormControl(this.procedimientoDocumento?.nombre, [I18nValidators.maxLength(250), I18nValidators.required]),
       fichero: new FormControl(this.procedimientoDocumento?.documento, [Validators.required]),
     });
   }

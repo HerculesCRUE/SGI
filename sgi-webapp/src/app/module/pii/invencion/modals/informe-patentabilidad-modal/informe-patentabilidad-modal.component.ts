@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IInformePatentabilidad } from '@core/models/pii/informe-patentabilidad';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
 import { switchMap } from 'rxjs/operators';
@@ -74,13 +75,13 @@ export class InformePatentabilidadModalComponent extends DialogFormComponent<IIn
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       fecha: new FormControl(this.informePatentabilidad?.fecha, Validators.required),
-      nombre: new FormControl(this.informePatentabilidad?.nombre, [Validators.required, Validators.maxLength(50)]),
+      nombre: new FormControl(this.informePatentabilidad?.nombre, [I18nValidators.required, I18nValidators.maxLength(50)]),
       documento: new FormControl(this.informePatentabilidad?.documento, Validators.required),
       resultadoInformePatentabilidad: new FormControl(this.informePatentabilidad?.resultadoInformePatentabilidad, Validators.required),
       entidadCreadora: new FormControl(this.informePatentabilidad?.entidadCreadora, Validators.required),
       contactoEntidadCreadora: new FormControl(this.informePatentabilidad?.contactoEntidadCreadora, Validators.maxLength(50)),
       contactoExaminador: new FormControl(this.informePatentabilidad?.contactoExaminador, [Validators.required, Validators.maxLength(50)]),
-      comentarios: new FormControl(this.informePatentabilidad?.comentarios, Validators.maxLength(250)),
+      comentarios: new FormControl(this.informePatentabilidad?.comentarios, I18nValidators.maxLength(250)),
     });
 
     if (this.data.readonly) {

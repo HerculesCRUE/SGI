@@ -22,12 +22,12 @@
         </th>
         <td mat-cell *matCellDef="let wrapper">
           <ng-container *ngIf="wrapper.value?.entidadRelacionadaHref; else titulo">
-            <a [href]="wrapper.value?.entidadRelacionadaHref" target="_blank">
-              {{wrapper.value.entidadRelacionada?.titulo}}
-            </a>
+            <sgi-i18n-link [link]="wrapper.value.entidadRelacionada?.titulo"
+              [href]="wrapper.value?.entidadRelacionadaHref">
+            </sgi-i18n-link>
           </ng-container>
           <ng-template #titulo>
-            {{wrapper.value.entidadRelacionada?.titulo}}
+            <sgi-i18n-table-field [field]="wrapper.value.entidadRelacionada?.titulo"></sgi-i18n-table-field>
           </ng-template>
         </td>
       </ng-container>
@@ -46,8 +46,11 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.proyecto-relacion.codigo-sge' | translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoEntidadRelacionada === TipoEntidad.PROYECTO ?
-          wrapper.value.codigosSge : '' }} </td>
+        <td mat-cell *matCellDef="let wrapper">
+          {{(wrapper.value.tipoEntidadRelacionada === TipoEntidad.PROYECTO ||
+          wrapper.value.tipoEntidadRelacionada === TipoEntidad.GRUPO) ?
+          wrapper.value.codigosSge : '' }}
+        </td>
       </ng-container>
 
       <!-- Observaciones Column -->
@@ -55,7 +58,9 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.proyecto-relacion.observaciones' | translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.observaciones}} </td>
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.observaciones"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Acciones  Column -->

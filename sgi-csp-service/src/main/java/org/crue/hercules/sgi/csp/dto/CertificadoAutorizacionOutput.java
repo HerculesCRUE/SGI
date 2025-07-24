@@ -1,6 +1,10 @@
 package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.csp.model.CertificadoAutorizacionDocumentoRef;
+import org.crue.hercules.sgi.csp.model.CertificadoAutorizacionNombre;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,8 +21,8 @@ public class CertificadoAutorizacionOutput implements Serializable {
 
   private Long id;
   private Long autorizacionId;
-  private String documentoRef;
-  private String nombre;
+  private Collection<CertificadoAutorizacionDocumentoRef> documentoRef;
+  private Collection<CertificadoAutorizacionNombre> nombre;
   private Boolean visible;
 
 }

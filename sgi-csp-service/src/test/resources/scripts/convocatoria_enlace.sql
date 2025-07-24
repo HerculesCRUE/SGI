@@ -12,11 +12,16 @@ scripts = {
   }
 */
 
-INSERT INTO test.convocatoria_enlace
-(id, convocatoria_id, descripcion, url, tipo_enlace_id)
-VALUES
-(1, 1, 'enlace test 1', 'http://www.google.es', 1),
-(2, 1, 'enlace test 2', 'http://www.google.es', 1),
-(3, 1, 'enlace test 3', 'http://www.google.es', 1),
-(4, 2, 'enlace test 4', 'http://www.google.es', 1),
-(5, 2, 'enlace test 5', 'http://www.google.es', 1);
+-- CONVOCATORIA_ENLACE
+INSERT INTO test.convocatoria_enlace (id, convocatoria_id, url, tipo_enlace_id) VALUES (1, 1, 'http://www.google.es', 1);
+INSERT INTO test.convocatoria_enlace (id, convocatoria_id, url, tipo_enlace_id) VALUES (2, 1, 'http://www.google.es', 1);
+INSERT INTO test.convocatoria_enlace (id, convocatoria_id, url, tipo_enlace_id) VALUES (3, 1, 'http://www.google.es', 1);
+INSERT INTO test.convocatoria_enlace (id, convocatoria_id, url, tipo_enlace_id) VALUES (4, 2, 'http://www.google.es', 1);
+INSERT INTO test.convocatoria_enlace (id, convocatoria_id, url, tipo_enlace_id) VALUES (5, 2, 'http://www.google.es', 1);
+
+-- CONVOCATORIA_ENLACE_DESCRIPCION
+INSERT INTO test.convocatoria_enlace_descripcion (convocatoria_enlace_id, lang, value_) VALUES (1, 'es', 'enlace test 1');
+INSERT INTO test.convocatoria_enlace_descripcion (convocatoria_enlace_id, lang, value_) VALUES (2, 'es', 'enlace test 2');
+INSERT INTO test.convocatoria_enlace_descripcion (convocatoria_enlace_id, lang, value_) VALUES (3, 'es', 'enlace test 3');
+INSERT INTO test.convocatoria_enlace_descripcion (convocatoria_enlace_id, lang, value_) VALUES (4, 'es', 'enlace test 4');
+INSERT INTO test.convocatoria_enlace_descripcion (convocatoria_enlace_id, lang, value_) VALUES (5, 'es', 'enlace test 5');

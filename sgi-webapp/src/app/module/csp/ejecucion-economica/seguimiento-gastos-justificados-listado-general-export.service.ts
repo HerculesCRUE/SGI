@@ -14,6 +14,7 @@ import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto
 import { ProyectoSeguimientoEjecucionEconomicaService } from '@core/services/csp/proyecto-seguimiento-ejecucion-economica/proyecto-seguimiento-ejecucion-economica.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RequerimientoJustificacionService } from '@core/services/csp/requerimiento-justificacion/requerimiento-justificacion.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { SeguimientoJustificacionService } from '@core/services/sge/seguimiento-justificacion/seguimiento-justificacion.service';
@@ -62,7 +63,7 @@ const NUM_JUST_REINTEGRADO_KEY = marker('csp.ejecucion-economica.seguimiento-jus
 
 @Injectable()
 export class SeguimientoGastosJustificadosResumenListadoGeneralExportService
-  extends AbstractTableExportFillService<IGastoJustificadoReportData, IGastosJustificadosReportOptions>{
+  extends AbstractTableExportFillService<IGastoJustificadoReportData, IGastosJustificadosReportOptions> {
   private columns: IColumna[] = [];
   private maxResponsables = 0;
   private maxEntidades = 0;
@@ -79,8 +80,8 @@ export class SeguimientoGastosJustificadosResumenListadoGeneralExportService
     private readonly convocatoriaService: ConvocatoriaService,
     private readonly proyectoSeguimientoEjecucionEconomicaService: ProyectoSeguimientoEjecucionEconomicaService,
     private readonly gastoRequerimientoJustificacionService: GastoRequerimientoJustificacionService,
-    private readonly requerimientoJustificacionService: RequerimientoJustificacionService
-
+    private readonly requerimientoJustificacionService: RequerimientoJustificacionService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -1109,7 +1110,7 @@ export class SeguimientoGastosJustificadosResumenListadoGeneralExportService
       elementsRow.push(gasto?.proyectoId ?? '');
       elementsRow.push(gasto?.proyectoSgi?.id ?? '');
       elementsRow.push(gasto?.proyectoSgi?.codigoExterno ?? '');
-      elementsRow.push(gasto?.proyectoSgi?.titulo ?? '');
+      elementsRow.push(this.languageService.getFieldValue(gasto?.proyectoSgi?.titulo));
       elementsRow.push(LuxonUtils.toBackend(gasto?.proyectoSgi?.fechaInicio));
       elementsRow.push(LuxonUtils.toBackend(gasto?.proyectoSgi?.fechaFin));
       elementsRow.push(LuxonUtils.toBackend(gasto?.proyectoSgi?.fechaFinDefinitiva));
@@ -1117,7 +1118,7 @@ export class SeguimientoGastosJustificadosResumenListadoGeneralExportService
       // Responsables, hay que rellenar todas las columnas hayan o no datos.
       this.fillResponsablesRows(gasto?.responsables ?? [], elementsRow);
 
-      elementsRow.push(gasto?.tituloConvocatoria ?? '');
+      elementsRow.push(this.languageService.getFieldValue(gasto?.tituloConvocatoria));
 
       this.fillEntidadesFinanciadorasRows(gasto?.entidadesFinanciadoras ?? [], elementsRow);
 
@@ -1187,14 +1188,14 @@ export class SeguimientoGastosJustificadosResumenListadoGeneralExportService
     for (let i = 0; i < this.maxRequerimientos; i++) {
       if (!!requerimientos && requerimientos.length > i) {
         elementsRow.push(requerimientos[i].requerimientosJustificacionAlegacion?.numRequerimiento || '');
-        elementsRow.push(requerimientos[i].requerimientosJustificacionAlegacion?.tipoRequerimiento?.nombre || '');
+        elementsRow.push(this.languageService.getFieldValue(requerimientos[i].requerimientosJustificacionAlegacion?.tipoRequerimiento?.nombre));
         elementsRow.push(LuxonUtils.toBackend(requerimientos[i].requerimientosJustificacionAlegacion?.fechaNotificacion));
         elementsRow.push(this.notIsNullAndNotUndefined(requerimientos[i].aceptado) ? this.getI18nBooleanYesNo(requerimientos[i].aceptado) : '');
         elementsRow.push(requerimientos[i].importeAceptado);
         elementsRow.push(requerimientos[i].importeRechazado);
-        elementsRow.push(requerimientos[i].incidencia || '');
+        elementsRow.push(this.languageService.getFieldValue(requerimientos[i].incidencia));
         elementsRow.push(requerimientos[i].importeAlegado);
-        elementsRow.push(requerimientos[i].alegacion || '');
+        elementsRow.push(this.languageService.getFieldValue(requerimientos[i].alegacion));
         elementsRow.push(requerimientos[i].requerimientosJustificacionAlegacion?.importeAceptado);
         elementsRow.push(requerimientos[i].requerimientosJustificacionAlegacion?.importeAceptadoCd);
         elementsRow.push(requerimientos[i].requerimientosJustificacionAlegacion?.importeAceptadoCi);

@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.prc.model.ConfiguracionBaremo.TipoNodo;
 import org.crue.hercules.sgi.prc.repository.ConfiguracionBaremoRepository;
 import org.crue.hercules.sgi.prc.repository.specification.ConfiguracionBaremoSpecifications;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
+import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,5 +48,11 @@ public class BaremoConfiguracionBaremoValidator implements ConstraintValidator<B
     HibernateConstraintValidatorContext hibernateContext = context.unwrap(HibernateConstraintValidatorContext.class);
     hibernateContext.addMessageParameter("entity", ApplicationContextSupport.getMessage(Baremo.class));
     hibernateContext.addMessageParameter("config", ApplicationContextSupport.getMessage(ConfiguracionBaremo.class));
+
+    // Disable default message to allow binding the message to a property
+    hibernateContext.disableDefaultConstraintViolation();
+    // Build a custom message for a property using the default message
+    hibernateContext.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+        .enableExpressionLanguage(ExpressionLanguageFeatureLevel.BEAN_PROPERTIES).addConstraintViolation();
   }
 }

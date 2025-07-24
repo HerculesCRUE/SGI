@@ -5,6 +5,7 @@ import java.io.StringWriter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -56,14 +57,12 @@ public class Respuesta extends BaseEntity {
   private Long id;
 
   /** Formulario Memoria */
-  @ManyToOne
-  @JoinColumn(name = "memoria_id", nullable = false, foreignKey = @ForeignKey(name = "FK_RESPUESTA_MEMORIA"))
-  private Memoria memoria;
+  @Column(name = "memoria_id", nullable = false)
+  private Long memoriaId;
 
   /** Apartado Formulario */
-  @ManyToOne
-  @JoinColumn(name = "apartado_id", nullable = false, foreignKey = @ForeignKey(name = "FK_RESPUESTA_APARTADO"))
-  private Apartado apartado;
+  @Column(name = "apartado_id", nullable = false)
+  private Long apartadoId;
 
   /** Formulario Memoria */
   @ManyToOne
@@ -100,4 +99,20 @@ public class Respuesta extends BaseEntity {
       }
     }
   }
+
+  // Relation mappings for JPA metamodel generation only
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "memoria_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_RESPUESTA_MEMORIA"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  @EqualsAndHashCode.Exclude
+  private final Memoria memoria = null;
+
+  /** Apartado Formulario */
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "apartado_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_RESPUESTA_APARTADO"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  @EqualsAndHashCode.Exclude
+  private final Apartado apartado = null;
 }

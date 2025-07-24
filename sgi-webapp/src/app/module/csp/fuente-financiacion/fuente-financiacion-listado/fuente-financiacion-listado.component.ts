@@ -64,7 +64,7 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
     private readonly dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super();
+    super(translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -79,7 +79,7 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.formGroup = new FormGroup({
       nombre: new FormControl(''),
       ambitoGeografico: new FormControl(''),
@@ -89,7 +89,7 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
     this.filter = this.createFilter();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       FUENTE_FINANCIACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -243,8 +243,8 @@ export class FuenteFinanciacionListadoComponent extends AbstractTablePaginationC
       filter.and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value);
     }
     filter
-      .and('tipoAmbitoGeografico.nombre', SgiRestFilterOperator.LIKE_ICASE, controls.ambitoGeografico.value?.nombre)
-      .and('tipoOrigenFuenteFinanciacion.nombre', SgiRestFilterOperator.LIKE_ICASE, controls.origen.value?.nombre);
+      .and('tipoAmbitoGeografico.id', SgiRestFilterOperator.EQUALS, controls.ambitoGeografico.value?.id)
+      .and('tipoOrigenFuenteFinanciacion.id', SgiRestFilterOperator.EQUALS, controls.origen.value?.id);
 
     return filter;
   }

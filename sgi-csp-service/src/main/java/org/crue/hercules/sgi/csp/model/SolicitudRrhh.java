@@ -1,12 +1,19 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Size;
 
 import lombok.AccessLevel;
@@ -30,9 +37,6 @@ public class SolicitudRrhh extends BaseEntity {
   protected static final String TABLE_NAME = "solicitud_rrhh";
 
   public static final int ENTIDAD_REF_LENGTH = 50;
-  public static final int OBSERVACIONES_LENGTH = 4000;
-  public static final int RESUMEN_LENGTH = 4000;
-  public static final int TITULO_TRABAJO_LENGTH = 1000;
   public static final int UNIVERSIDAD_LENGTH = 250;
 
   /** Id de la Solicitud */
@@ -60,20 +64,26 @@ public class SolicitudRrhh extends BaseEntity {
   @Size(max = SolicitudRrhh.ENTIDAD_REF_LENGTH)
   private String tutorRef;
 
-  /** Titulo tarbajo */
-  @Column(name = "titulo_trabajo", length = SolicitudRrhh.TITULO_TRABAJO_LENGTH, nullable = true)
-  @Size(max = SolicitudRrhh.TITULO_TRABAJO_LENGTH)
-  private String tituloTrabajo;
+  /** Titulo trabajo */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "solicitud_rrhh_titulo_trabajo", joinColumns = @JoinColumn(name = "solicitud_rrhh_id"))
+  @Valid
+  @Builder.Default
+  private Set<SolicitudRrhhTituloTrabajo> tituloTrabajo = new HashSet<>();
 
   /** Resumen */
-  @Column(name = "resumen", length = SolicitudRrhh.RESUMEN_LENGTH, nullable = true, columnDefinition = "clob")
-  @Size(max = SolicitudRrhh.RESUMEN_LENGTH)
-  private String resumen;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "solicitud_rrhh_resumen", joinColumns = @JoinColumn(name = "solicitud_rrhh_id"))
+  @Valid
+  @Builder.Default
+  private Set<SolicitudRrhhResumen> resumen = new HashSet<>();
 
   /** Observaciones */
-  @Column(name = "observaciones", length = SolicitudRrhh.OBSERVACIONES_LENGTH, nullable = true, columnDefinition = "clob")
-  @Size(max = SolicitudRrhh.OBSERVACIONES_LENGTH)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "solicitud_rrhh_observaciones", joinColumns = @JoinColumn(name = "solicitud_rrhh_id"))
+  @Valid
+  @Builder.Default
+  private Set<SolicitudRrhhObservaciones> observaciones = new HashSet<>();
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne

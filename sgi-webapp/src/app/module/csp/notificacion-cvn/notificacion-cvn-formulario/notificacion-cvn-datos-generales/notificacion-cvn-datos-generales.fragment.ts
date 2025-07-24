@@ -1,7 +1,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { INotificacionCVNEntidadFinanciadora } from '@core/models/csp/notificacion-cvn-entidad-financiadora';
 import { INotificacionProyectoExternoCVN } from '@core/models/csp/notificacion-proyecto-externo-cvn';
-import { IDocumento } from '@core/models/sgdoc/documento';
 import { FormFragment } from '@core/services/action-service';
 import { NotificacionProyectoExternoCvnService } from '@core/services/csp/notificacion-proyecto-externo-cvn/notificacion-proyecto-externo-cvn.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
@@ -9,7 +8,7 @@ import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, from, Observable, of } from 'rxjs';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 
 export class NotificacionCvnDatosGeneralesFragment extends FormFragment<INotificacionProyectoExternoCVN> {
@@ -35,7 +34,7 @@ export class NotificacionCvnDatosGeneralesFragment extends FormFragment<INotific
   protected buildFormGroup(): FormGroup {
     return new FormGroup({
       investigador: new FormControl({ value: null, disabled: true }),
-      tituloProyecto: new FormControl({ value: null, disabled: true }),
+      tituloProyecto: new FormControl({ value: [], disabled: true }),
       acreditacion: new FormControl({ value: null, disabled: true }),
       codigoExterno: new FormControl({ value: null, disabled: true }),
       fechaInicio: new FormControl({ value: null, disabled: true }),
@@ -82,6 +81,10 @@ export class NotificacionCvnDatosGeneralesFragment extends FormFragment<INotific
             map(responsable => {
               notificacion.responsable = responsable;
               return notificacion;
+            }),
+            catchError((error) => {
+              this.logger.error(error);
+              return of(notificacion);
             })
           );
         } else {
@@ -94,6 +97,10 @@ export class NotificacionCvnDatosGeneralesFragment extends FormFragment<INotific
             map(solicitante => {
               notificacion.solicitante = solicitante;
               return notificacion;
+            }),
+            catchError((error) => {
+              this.logger.error(error);
+              return of(notificacion);
             })
           );
         } else {
@@ -109,7 +116,7 @@ export class NotificacionCvnDatosGeneralesFragment extends FormFragment<INotific
             }),
             catchError((error) => {
               this.logger.error(error);
-              return EMPTY;
+              return of(notificacion);
             }));
         } else {
           return of(notificacion);
@@ -126,6 +133,10 @@ export class NotificacionCvnDatosGeneralesFragment extends FormFragment<INotific
                       map(entidadFinanciadora => {
                         entidad.entidadFinanciadora = entidadFinanciadora;
                         return entidadFinanciadora;
+                      }),
+                      catchError((error) => {
+                        this.logger.error(error);
+                        return of(entidad);
                       })
                     );
                   } else {
@@ -152,6 +163,10 @@ export class NotificacionCvnDatosGeneralesFragment extends FormFragment<INotific
             map(entidadParticipacion => {
               notificacion.entidadParticipacion = entidadParticipacion;
               return notificacion;
+            }),
+            catchError((error) => {
+              this.logger.error(error);
+              return of(notificacion);
             })
           );
         } else {

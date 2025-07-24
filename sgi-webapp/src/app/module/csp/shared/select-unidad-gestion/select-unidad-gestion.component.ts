@@ -5,11 +5,13 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
+import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
+import { LanguageService } from '@core/services/language.service';
 import { SgiAuthService } from '@sgi/framework/auth';
-import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
+import { from, Observable } from 'rxjs';
+import { filter, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 
 @Component({
   selector: 'sgi-select-unidad-gestion',
@@ -60,12 +62,33 @@ export class SelectUnidadGestionComponent extends SelectServiceComponent<IUnidad
   // tslint:disable-next-line: variable-name
   private _authorities: string | string[];
 
+
+  /** Restrict values to allowed in solicitudes sin convocatoria. Default: false */
+  @Input()
+  get onlyAllowedInSolicitudesSinConvocatoria(): boolean {
+    return this._onlyAllowedInSolicitudesSinConvocatoria;
+  }
+  set onlyAllowedInSolicitudesSinConvocatoria(value: boolean) {
+    const newValue = coerceBooleanProperty(value);
+    const changes = this._onlyAllowedInSolicitudesSinConvocatoria !== newValue;
+    this._onlyAllowedInSolicitudesSinConvocatoria = newValue;
+    if (this.ready && changes) {
+      this.loadData();
+    }
+    this.stateChanges.next();
+  }
+  // tslint:disable-next-line: variable-name
+  private _onlyAllowedInSolicitudesSinConvocatoria = false;
+
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
+    @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private service: UnidadGestionService,
+    private modeloEjecucionService: ModeloEjecucionService,
     private authService: SgiAuthService,
-    @Self() @Optional() ngControl: NgControl) {
-    super(defaultErrorStateMatcher, ngControl);
+  ) {
+    super(defaultErrorStateMatcher, ngControl, languageService);
   }
 
   protected loadServiceOptions(): Observable<IUnidadGestion[]> {
@@ -73,7 +96,7 @@ export class SelectUnidadGestionComponent extends SelectServiceComponent<IUnidad
       sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
     };
     const find$ = this.restricted ? this.service.findAllRestringidos(findOptions) : this.service.findAll(findOptions);
-    return find$.pipe(
+    let unidadesGestion$ = find$.pipe(
       map(response => {
         if (this.filterByAuthorities) {
           const authorities = this.authorities;
@@ -89,6 +112,25 @@ export class SelectUnidadGestionComponent extends SelectServiceComponent<IUnidad
         return response.items;
       })
     );
+
+    if (this.onlyAllowedInSolicitudesSinConvocatoria) {
+      unidadesGestion$ = unidadesGestion$.pipe(
+        switchMap(unidadesGestion => from(unidadesGestion).pipe(
+          mergeMap(unidadGestion => {
+            const filterSolicitudSinConvocatoria = new RSQLSgiRestFilter('solicitudSinConvocatoria', SgiRestFilterOperator.EQUALS, 'true');
+            filterSolicitudSinConvocatoria.and('modelosUnidad.unidadGestionRef', SgiRestFilterOperator.EQUALS, unidadGestion.id.toString());
+
+            return this.modeloEjecucionService.exists(filterSolicitudSinConvocatoria).pipe(
+              filter(result => result),
+              map(() => unidadGestion)
+            )
+          }),
+          toArray()
+        ))
+      )
+    }
+
+    return unidadesGestion$;
   }
 
 }

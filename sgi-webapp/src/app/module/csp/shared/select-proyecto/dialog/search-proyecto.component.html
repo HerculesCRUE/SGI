@@ -135,11 +135,11 @@
         </td>
       </ng-container>
       <ng-container matColumnDef="titulo">
-        <th mat-header-cell *matHeaderCellDef>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.proyecto.titulo' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.titulo }}
+          <sgi-i18n-table-field [field]="element.titulo"></sgi-i18n-table-field>
         </td>
       </ng-container>
       <ng-container matColumnDef="acronimo">
@@ -187,7 +187,7 @@
           {{'csp.proyecto.modelo-ejecucion' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{element.modeloEjecucion.nombre}}
+          <sgi-i18n-table-field [field]="element.modeloEjecucion.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

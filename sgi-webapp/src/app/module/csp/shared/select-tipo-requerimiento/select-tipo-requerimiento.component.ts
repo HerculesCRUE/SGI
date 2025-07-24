@@ -5,8 +5,9 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { ITipoRequerimiento } from '@core/models/csp/tipo-requerimiento';
 import { TipoRequerimientoService } from '@core/services/csp/tipo-requerimiento/tipo-requerimiento.service';
+import { LanguageService } from '@core/services/language.service';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -25,14 +26,15 @@ export class SelectTipoRequerimientoComponent extends SelectServiceComponent<ITi
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private service: TipoRequerimientoService
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
   }
 
   protected loadServiceOptions(): Observable<ITipoRequerimiento[]> {
     const findOptions: SgiRestFindOptions = {
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
+      sort: new RSQLSgiRestSort('nombre.value', SgiRestSortDirection.ASC)
     };
     return this.service.findAll(findOptions)
       .pipe(

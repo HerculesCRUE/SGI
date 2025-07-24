@@ -22,6 +22,10 @@ export class FilterFechasComponent implements OnInit, OnDestroy {
 
   private subscriptions: Subscription[] = [];
 
+  @Input() isFechaDevengoVisible: boolean = true;
+  @Input() isFechaContabilizacionVisible: boolean = true;
+  @Input() isFechaPagoVisible: boolean = true;
+
   constructor() { }
 
   ngOnInit(): void {

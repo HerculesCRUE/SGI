@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { IAutorGrupo } from '@core/models/prc/autor-grupo';
+import { LanguageService } from '@core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 
 @Pipe({
@@ -7,14 +8,18 @@ import { TranslateService } from '@ngx-translate/core';
 })
 export class AutorGrupoEstadoTooltipPipe implements PipeTransform {
 
-  constructor(private readonly translateService: TranslateService) { }
+  constructor(
+    private readonly translateService: TranslateService,
+    private readonly languageService: LanguageService
+  ) { }
 
   transform(grupos: IAutorGrupo[]): string {
     if (!grupos) {
       return '';
     }
-    return grupos.map(autorGrupo =>
-      this.translateService.instant(autorGrupo.grupo.nombre) + ' (' + autorGrupo.grupo.codigo + ')'
-    ).join(', ');
+    const value = grupos.map(autorGrupo =>
+      this.translateService.instant(this.languageService.getFieldValue(autorGrupo.grupo.nombre)) + ' (' + autorGrupo.grupo.codigo + ')'
+    );
+    return value.join(', ');
   }
 }

@@ -1,3 +1,4 @@
+import { Language } from '@core/i18n/language';
 import { IGastoRequerimientoJustificacion } from '@core/models/csp/gasto-requerimiento-justificacion';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
@@ -6,11 +7,12 @@ import { Fragment } from '@core/services/action-service';
 import { GastoRequerimientoJustificacionService } from '@core/services/csp/gasto-requerimiento-justificacion/gasto-requerimiento-justificacion.service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
 import { RequerimientoJustificacionService } from '@core/services/csp/requerimiento-justificacion/requerimiento-justificacion.service';
+import { LanguageService } from '@core/services/language.service';
 import { SeguimientoJustificacionService } from '@core/services/sge/seguimiento-justificacion/seguimiento-justificacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { BehaviorSubject, forkJoin, from, merge, Observable, of } from 'rxjs';
-import { concatMap, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
+import { concatMap, map, mergeMap, skip, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { IColumnDefinition } from '../../../ejecucion-economica/ejecucion-economica-formulario/desglose-economico.fragment';
 
 export interface IGastoRequerimientoJustificacionTableData extends IGastoRequerimientoJustificacion {
@@ -24,9 +26,14 @@ export interface IGastoJustificadoWithProyectoPeriodoJustificacion extends IGast
 export class SeguimientoJustificacionRequerimientoGastosFragment extends Fragment {
   gastosRequerimientoTableData$ = new BehaviorSubject<StatusWrapper<IGastoRequerimientoJustificacionTableData>[]>([]);
   private gastosRequerimientoTableDataToDelete: StatusWrapper<IGastoRequerimientoJustificacionTableData>[] = [];
-
+  gastosRequerimiento: Observable<IGastoRequerimientoJustificacion[]>
   displayColumns: string[] = [];
   columns: IColumnDefinition[] = [];
+  columns$ = new BehaviorSubject<IColumnDefinition[]>([]);
+
+  private columnsLanguage: Map<Language, IColumnDefinition[]> = new Map();
+  private gastosJustificadosLanguage: Map<Language, IGastoJustificado[]> = new Map();
+
   private proyectosPeriodosJustificacionLookUp: Map<string, IProyectoPeriodoJustificacion>;
   currentRequerimientoJustificacion: IRequerimientoJustificacion;
 
@@ -37,6 +44,7 @@ export class SeguimientoJustificacionRequerimientoGastosFragment extends Fragmen
     private readonly seguimientoJustificacionService: SeguimientoJustificacionService,
     private readonly proyectoPeriodoJustificacionService: ProyectoPeriodoJustificacionService,
     private readonly gastoRequerimientoJustificacionService: GastoRequerimientoJustificacionService,
+    private readonly languageService: LanguageService
   ) {
     super(id);
     this.proyectosPeriodosJustificacionLookUp = new Map();
@@ -44,22 +52,38 @@ export class SeguimientoJustificacionRequerimientoGastosFragment extends Fragmen
   }
 
   protected onInitialize(): void | Observable<any> {
+    this.subscriptions.push(
+      this.languageService.languageChange$.pipe(
+        skip(1), // El primer valor se descarta para que se ejecute solo cuando se cambia el idioma
+        switchMap(language => forkJoin({
+          columns: this.columnsLanguage.has(language) ? of(this.columnsLanguage.get(language)) : this.getColumns(),
+          language: of(language),
+          gastosJustificados: this.getGastosJustificados(this.proyectoSgeId, language)
+        }))
+      ).subscribe(({ columns, language, gastosJustificados }) => {
+        this.columns = columns;
+        this.columnsLanguage.set(language, this.columns);
+        this.columns$.next(this.columns);
+        this.displayColumns = this.getDisplayColumns(this.columns);
+
+        // Actualiza en la tabla los valores de las columnas variables correspondientes al idioma actual 
+        this.gastosRequerimientoTableData$.next(this.gastosRequerimientoTableData$.value.map(gastoRequerimiento => {
+          gastoRequerimiento.value.gasto.columnas = gastosJustificados
+            .find(gastoJustificado => gastoJustificado.id === gastoRequerimiento.value.gasto.id)?.columnas
+          return gastoRequerimiento;
+        }))
+      })
+    );
+
     const key = this.getKey() as number;
     if (key) {
       this.subscriptions.push(
         this.getColumns().pipe(
           tap((columns) => {
             this.columns = columns;
-            this.displayColumns = [
-              'proyectoSgiId',
-              'justificacionId',
-              ...columns.map(column => column.id),
-              'aceptado',
-              'importeAceptado',
-              'importeRechazado',
-              'importeAlegado',
-              'acciones'
-            ];
+            this.columnsLanguage.set(this.languageService.getLanguage(), this.columns);
+            this.columns$.next(this.columns);
+            this.displayColumns = this.getDisplayColumns(this.columns);
           }),
           switchMap(() =>
             forkJoin(
@@ -76,6 +100,7 @@ export class SeguimientoJustificacionRequerimientoGastosFragment extends Fragmen
                         columnas: this.processColumnsValues(gastoJustificadoWithProyectoPeriodoJustificacion.columnas, this.columns)
                       }));
                   return gastosRequerimiento
+                    .filter(gastoRequerimiento => gastosJustificadosWithProyectoPeriodoJustificacionProcessed.some(g => g.id === gastoRequerimiento.gasto.id))
                     .map(gastoRequerimiento => {
                       const relatedGastoJustificadoWithProyectoPeriodoJustificacionProcessed =
                         gastosJustificadosWithProyectoPeriodoJustificacionProcessed
@@ -119,6 +144,20 @@ export class SeguimientoJustificacionRequerimientoGastosFragment extends Fragmen
       );
   }
 
+  private getGastosJustificados(proyectoSgeId: string, lang: Language): Observable<IGastoJustificado[]> {
+    if (this.gastosJustificadosLanguage.has(lang)) {
+      return of(this.gastosJustificadosLanguage.get(lang));
+    }
+
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.EQUALS, proyectoSgeId)
+    };
+    return this.seguimientoJustificacionService.findAll(options).pipe(
+      map(response => response.items),
+      tap(gastosJustificados => this.gastosJustificadosLanguage.set(lang, gastosJustificados))
+    );
+  }
+
   private getGastosJustificadosWithProyectoPeriodoJusitficacion$(
     proyectoSgeId: string): Observable<IGastoJustificadoWithProyectoPeriodoJustificacion[]> {
     const options: SgiRestFindOptions = {
@@ -127,6 +166,7 @@ export class SeguimientoJustificacionRequerimientoGastosFragment extends Fragmen
     return this.seguimientoJustificacionService.findAll(options)
       .pipe(
         map(({ items }) => items),
+        tap(gastosJustificados => this.gastosJustificadosLanguage.set(this.languageService.getLanguage(), gastosJustificados)),
         concatMap(gastosJustificados =>
           from(gastosJustificados)
             .pipe(
@@ -268,6 +308,10 @@ export class SeguimientoJustificacionRequerimientoGastosFragment extends Fragmen
     );
   }
 
+  public trackByColumnId(index, column: IColumnDefinition): string {
+    return column.id;
+  }
+
   private hasFragmentChangesPending(): boolean {
     return this.gastosRequerimientoTableDataToDelete.length > 0 ||
       this.gastosRequerimientoTableData$.value.some((value) => value.created || value.edited);
@@ -360,4 +404,18 @@ export class SeguimientoJustificacionRequerimientoGastosFragment extends Fragmen
     target.gasto = source.gasto;
     target.proyectoSgiId = source.proyectoSgiId;
   }
+
+  private getDisplayColumns(columns: IColumnDefinition[]): string[] {
+    return [
+      'proyectoSgiId',
+      'justificacionId',
+      ...columns.map(column => column.id),
+      'aceptado',
+      'importeAceptado',
+      'importeRechazado',
+      'importeAlegado',
+      'acciones'
+    ];
+  }
+
 }

@@ -1,33 +1,36 @@
 package org.crue.hercules.sgi.csp.dto;
 
+import java.io.Serializable;
+import java.time.Instant;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.csp.model.AutorizacionDatosConvocatoria;
+import org.crue.hercules.sgi.csp.model.AutorizacionObservaciones;
+import org.crue.hercules.sgi.csp.model.AutorizacionTituloProyecto;
+
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
-
-import java.time.Instant;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
-@SuperBuilder
-public class AutorizacionWithFirstEstado extends AutorizacionOutput {
-
-  /** Fecha First Estado Autorizacion */
+@Builder
+public class AutorizacionWithFirstEstado implements Serializable {
+  private Long id;
+  private Collection<AutorizacionObservaciones> observaciones;
+  private String responsableRef;
+  private String solicitanteRef;
+  private Collection<AutorizacionTituloProyecto> tituloProyecto;
+  private String entidadRef;
+  private Integer horasDedicacion;
+  private String datosResponsable;
+  private String datosEntidad;
+  private Collection<AutorizacionDatosConvocatoria> datosConvocatoria;
+  private Long convocatoriaId;
+  private Long estadoId;
   private Instant fechaFirstEstado;
-
-  public AutorizacionWithFirstEstado(Long id, String observaciones, String responsableRef,
-      String tituloProyecto, String entidadRef, String solicitanteRef,
-      Integer horasDedicacion, String datosResponsable, String datosEntidad,
-      String datosConvocatoria, Long convocatoriaId, Long estadoId, Instant fechaFirstEstado) {
-
-    super(id, observaciones, responsableRef, solicitanteRef, tituloProyecto,
-        entidadRef, horasDedicacion, datosResponsable, datosEntidad,
-        datosConvocatoria, convocatoriaId, estadoId);
-
-    this.fechaFirstEstado = fechaFirstEstado;
-  }
-
 }

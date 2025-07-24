@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap3_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.4 Esposizio mota"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Agente biologikoekiko esposizioa bi motatakoa izan daiteke.</p><br><ul><li>Agente biologiko bat nahita erabili edo manipulatzeak dakarren esposizioa, erabilera edo manipulazio hori izanik lanaren helburu nagusia. Horrelako jarduerak dira nahita infektatutako animaliekin garatzen direnak edo jarduera nagusitzat agente biologikoekin lan egitea duten laborategietan garatzen direnak. Multzo honetan sartzen dira, halaber, bioteknologiako industriekin lotutako jarduerak: industria farmazeutikoak (antibiotikoak, entzimak, txerto biralak eta abar lortzeko); elikagaien industria (garagardoa, gaztak, jogurta); etab. </li><li>Jardueraren helburu nagusian lanean dihardutenean gertatutako nahigabeko edo ustekabeko esposizioa. Kasu horretan, ez da agente biologikoa manipulatzen, ezta zuzenean ukitzen edo nahita erabiltzen ere, baina bada agente biologikoen ondorioz kutsatzeko arriskurik. Multzo honetan sartzen da gizakiekin, animaliekin edo haien produktuekin (ehunak, odola edo jariakinak) kontaktuan lan egitea, baita agente hori bizirik dagoen edo bizirik manten daitekeen elementu edo inguruneekin (materialak, ura, lurra, elikagaiak, hondakinak…) kontaktuan egotea ere; horiek izango lirateke esposizio iturria. </li></ul><p>Memoria honetan sartzen da GEOekiko esposizioa erabilera konfinatuko zereginetan. </p>"
+      }
+    ]
+  }
+]

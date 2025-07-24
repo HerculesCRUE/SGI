@@ -56,7 +56,7 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
     private convocatoriaService: ConvocatoriaService,
     private readonly translate: TranslateService
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
     this.disableRegistrar$.next(true);
     this.canEdit = this.actionService.canEdit;
     if (this.canEdit) {
@@ -78,10 +78,10 @@ export class ConvocatoriaEditarComponent extends ActionComponent implements OnIn
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

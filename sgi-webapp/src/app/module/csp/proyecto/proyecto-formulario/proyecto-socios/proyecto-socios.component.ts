@@ -57,13 +57,13 @@ export class ProyectoSociosComponent extends FragmentComponent implements OnInit
     private snackBarService: SnackBarService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.SOCIOS, actionService);
+    super(actionService.FRAGMENT.SOCIOS, actionService, translate);
     this.formPart = this.fragment as ProyectoSociosFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subscription = this.formPart.proyectoSocios$.subscribe(
       (proyectoSocios) => {
         this.dataSource.data = proyectoSocios;
@@ -72,7 +72,7 @@ export class ProyectoSociosComponent extends FragmentComponent implements OnInit
     this.subscriptions.push(subscription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_SOCIO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

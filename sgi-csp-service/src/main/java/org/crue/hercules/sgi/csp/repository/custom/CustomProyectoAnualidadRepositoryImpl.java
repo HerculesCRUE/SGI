@@ -1,13 +1,17 @@
 package org.crue.hercules.sgi.csp.repository.custom;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
@@ -17,9 +21,8 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.persistence.criteria.SetJoin;
 import javax.persistence.criteria.Subquery;
-
-import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 
 import org.crue.hercules.sgi.csp.dto.AnualidadResumen;
 import org.crue.hercules.sgi.csp.dto.ProyectoAnualidadGastosTotales;
@@ -32,12 +35,14 @@ import org.crue.hercules.sgi.csp.model.AnualidadIngreso;
 import org.crue.hercules.sgi.csp.model.AnualidadIngreso_;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto_;
+import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad_;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida_;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoAmortizacion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoAmortizacion_;
+import org.crue.hercules.sgi.csp.model.ProyectoTitulo;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
@@ -48,6 +53,8 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
+
+import com.nimbusds.oauth2.sdk.util.CollectionUtils;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -223,8 +230,7 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     List<AnualidadResumen> resultIngresos = typedQueryIngresos.getResultList();
     resultIngresos.stream().forEach(ingreso -> ingreso.setTipo(TipoPartida.INGRESO));
 
-    List<AnualidadResumen> returnValue = Stream.concat(resultGastos.stream(), resultIngresos.stream())
-        .collect(Collectors.toList());
+    List<AnualidadResumen> returnValue = Stream.concat(resultGastos.stream(), resultIngresos.stream()).toList();
 
     log.debug("getPartidasResumen(Long proyectoAnualidadId) - end");
 
@@ -291,8 +297,7 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
     // Select query
-    CriteriaQuery<ProyectoAnualidadNotificacionSge> selectQuery = cb
-        .createQuery(ProyectoAnualidadNotificacionSge.class);
+    CriteriaQuery<Tuple> selectQuery = cb.createQuery(Tuple.class);
     Root<AnualidadGasto> root = selectQuery.from(AnualidadGasto.class);
 
     // Join AnualidadGasto - ProyectoAnualidad
@@ -302,6 +307,8 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     // Join ProyectoAnualidad - Proyecto
     Join<ProyectoAnualidad, Proyecto> joinProyecto = joinProyectoAnualidad.join(ProyectoAnualidad_.proyecto,
         JoinType.INNER);
+
+    SetJoin<Proyecto, ProyectoTitulo> joinProyectoTitulo = joinProyecto.join(Proyecto_.titulo, JoinType.LEFT);
 
     // Where
     List<Predicate> listPredicates = new ArrayList<>();
@@ -343,13 +350,13 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
             cb.coalesce(queryTotalGasto.getSelection(), new BigDecimal(0)).alias(ALIAS_TOTAL_GASTOS),
             cb.literal(new BigDecimal(0)).alias(ALIAS_TOTAL_INGRESO),
             joinProyecto.get(Proyecto_.id).alias(ALIAS_PROYECTO_ID),
-            joinProyecto.get(Proyecto_.titulo).alias(ALIAS_PROYECTO_TITULO),
+            joinProyectoTitulo.alias(ALIAS_PROYECTO_TITULO),
             joinProyecto.get(Proyecto_.acronimo).alias(ALIAS_PROYECTO_ACRONIMO),
             joinProyecto.get(Proyecto_.estado).alias(ALIAS_PROYECTO_ESTADO),
             root.get(AnualidadGasto_.proyectoSgeRef).alias(AnualidadGasto_.PROYECTO_SGE_REF),
             joinProyectoAnualidad.get(ProyectoAnualidad_.enviadoSge).alias(ALIAS_ENVIADO_SGE));
 
-    return entityManager.createQuery(selectQuery).getResultList();
+    return tupleListToProyectoAnualidadNotificacionSgeList(entityManager.createQuery(selectQuery).getResultList());
   }
 
   private List<ProyectoAnualidadNotificacionSge> getProyectoAnualidadNotificacionSgeIngresos(String query,
@@ -357,8 +364,7 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
     // Select query
-    CriteriaQuery<ProyectoAnualidadNotificacionSge> selectQuery = cb
-        .createQuery(ProyectoAnualidadNotificacionSge.class);
+    CriteriaQuery<Tuple> selectQuery = cb.createQuery(Tuple.class);
     Root<AnualidadIngreso> root = selectQuery.from(AnualidadIngreso.class);
 
     // Join AnualidadIngreso - ProyectoAnualidad
@@ -368,6 +374,8 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
     // Join ProyectoAnualidad - Proyecto
     Join<ProyectoAnualidad, Proyecto> joinProyecto = joinProyectoAnualidad.join(ProyectoAnualidad_.proyecto,
         JoinType.INNER);
+
+    SetJoin<Proyecto, ProyectoTitulo> joinProyectoTitulo = joinProyecto.join(Proyecto_.titulo, JoinType.LEFT);
 
     // Where
     List<Predicate> listPredicates = new ArrayList<>();
@@ -409,13 +417,13 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
             cb.literal(new BigDecimal(0)).alias(ALIAS_TOTAL_GASTOS),
             cb.coalesce(queryTotalIngreso.getSelection(), new BigDecimal(0)).alias(ALIAS_TOTAL_INGRESO),
             joinProyecto.get(Proyecto_.id).alias(ALIAS_PROYECTO_ID),
-            joinProyecto.get(Proyecto_.titulo).alias(ALIAS_PROYECTO_TITULO),
+            joinProyectoTitulo.alias(ALIAS_PROYECTO_TITULO),
             joinProyecto.get(Proyecto_.acronimo).alias(ALIAS_PROYECTO_ACRONIMO),
             joinProyecto.get(Proyecto_.estado).alias(ALIAS_PROYECTO_ESTADO),
             root.get(AnualidadIngreso_.proyectoSgeRef).alias(AnualidadIngreso_.PROYECTO_SGE_REF),
             joinProyectoAnualidad.get(ProyectoAnualidad_.enviadoSge).alias(ALIAS_ENVIADO_SGE));
 
-    return entityManager.createQuery(selectQuery).getResultList();
+    return tupleListToProyectoAnualidadNotificacionSgeList(entityManager.createQuery(selectQuery).getResultList());
   }
 
   /**
@@ -607,4 +615,37 @@ public class CustomProyectoAnualidadRepositoryImpl implements CustomProyectoAnua
 
     return result;
   }
+
+  private List<ProyectoAnualidadNotificacionSge> tupleListToProyectoAnualidadNotificacionSgeList(
+      List<Tuple> proyectoAnualidadNotificacionSgeTuples) {
+    Map<Long, ProyectoAnualidadNotificacionSge> tuplesMap = new HashMap<>();
+    proyectoAnualidadNotificacionSgeTuples.forEach(tuple -> {
+      Long proyectoAnualidadId = tuple.get(ProyectoAnualidad_.ID, Long.class);
+
+      ProyectoAnualidadNotificacionSge proyectoAnualidad = tuplesMap.computeIfAbsent(proyectoAnualidadId,
+          key -> ProyectoAnualidadNotificacionSge.builder()
+              .id(proyectoAnualidadId)
+              .anio(tuple.get(ProyectoAnualidad_.ANIO, Integer.class))
+              .proyectoFechaInicio(tuple.get(ALIAS_PROYECTO_FECHA_INICIO, Instant.class))
+              .proyectoFechaFin(tuple.get(ALIAS_PROYECTO_FECHA_FIN, Instant.class))
+              .totalGastos(tuple.get(ALIAS_TOTAL_GASTOS, BigDecimal.class))
+              .totalIngresos(tuple.get(ALIAS_TOTAL_INGRESO, BigDecimal.class))
+              .proyectoId(tuple.get(ALIAS_PROYECTO_ID, Long.class))
+              .proyectoTitulo(new HashSet<>())
+              .proyectoAcronimo(tuple.get(ALIAS_PROYECTO_ACRONIMO, String.class))
+              .proyectoEstado(tuple.get(ALIAS_PROYECTO_ESTADO, EstadoProyecto.class))
+              .proyectoSgeRef(tuple.get(AnualidadGasto_.PROYECTO_SGE_REF, String.class))
+              .enviadoSge(tuple.get(ALIAS_ENVIADO_SGE, Boolean.class))
+              .build());
+
+      // Añade el titulo del proyecto de la tupla actual
+      ProyectoTitulo tituloProyecto = tuple.get(ALIAS_PROYECTO_TITULO, ProyectoTitulo.class);
+      if (tituloProyecto != null) {
+        proyectoAnualidad.getProyectoTitulo().add(tituloProyecto);
+      }
+    });
+
+    return tuplesMap.values().stream().toList();
+  }
+
 }

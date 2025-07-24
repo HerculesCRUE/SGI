@@ -2,6 +2,7 @@ import { Component, OnDestroy } from '@angular/core';
 import { MSG_PARAMS } from '@core/i18n';
 import { ConfigService } from '@core/services/cnf/config.service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
+import { LanguageService } from '@core/services/language.service';
 import { forkJoin, Subscription } from 'rxjs';
 import { INV_ROUTE_NAMES } from '../inv-route-names';
 
@@ -23,13 +24,13 @@ export class InvRootComponent implements OnDestroy {
   // tslint:disable-next-line: variable-name
   _urlSistemaGestionExterno: string;
   get urlSistemaGestionExterno(): string {
-    return this._urlSistemaGestionExterno;
+    return this.parseI18nValue(this._urlSistemaGestionExterno);
   }
 
   // tslint:disable-next-line: variable-name
   _nombreSistemaGestionExterno: string;
   get nombreSistemaGestionExterno(): string {
-    return this._nombreSistemaGestionExterno;
+    return this.parseI18nValue(this._nombreSistemaGestionExterno);
   }
 
   showEvaluaciones = false;
@@ -40,7 +41,8 @@ export class InvRootComponent implements OnDestroy {
 
   constructor(
     private evaluadorService: EvaluadorService,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private languageService: LanguageService
   ) {
     this.subscriptions.push(this.evaluadorService.hasAssignedEvaluaciones().subscribe((res) => this.showEvaluaciones = res));
     this.subscriptions.push(this.evaluadorService.hasAssignedEvaluacionesSeguimiento().subscribe((res) => this.showSeguimientos = res));
@@ -56,6 +58,18 @@ export class InvRootComponent implements OnDestroy {
         this._urlSistemaGestionExterno = url;
       })
     );
+  }
+
+  private parseI18nValue(value: string): string {
+    try {
+      const parsed = JSON.parse(value);
+      if (Array.isArray(parsed)) {
+        return this.languageService.getFieldValue(parsed);
+      }
+      return value;
+    } catch {
+      return value;
+    }
   }
 
   ngOnDestroy(): void {

@@ -1,0 +1,17 @@
+[
+  {
+    "key": "ap5_2_2_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.4 4. Galdera"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "Jardueran erabilitako GEOaren ezaugarri teknikoei dagokienez, adierazi:"
+      }
+    ]
+  }
+]

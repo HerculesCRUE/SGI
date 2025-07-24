@@ -4,6 +4,7 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { ESTADO_MAP, IEstadoAutorizacion } from '@core/models/csp/estado-autorizacion';
+import { LanguageService } from '@core/services/language.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
@@ -28,7 +29,8 @@ export class AutorizacionHistoricoEstadosComponent extends FragmentComponent imp
 
   constructor(
     protected snackBarService: SnackBarService,
-    private actionService: AutorizacionActionService
+    private actionService: AutorizacionActionService,
+    private languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.HISTORICO_ESTADOS, actionService);
     this.formPart = this.fragment as AutorizacionHistoricoEstadosFragment;
@@ -49,7 +51,7 @@ export class AutorizacionHistoricoEstadosComponent extends FragmentComponent imp
           case 'fechaEstado':
             return wrapper.value.fecha;
           case 'comentario':
-            return wrapper.value.comentario;
+            return this.languageService.getFieldValue(wrapper.value.comentario);
           default:
             return wrapper[property];
         }
@@ -63,4 +65,6 @@ export class AutorizacionHistoricoEstadosComponent extends FragmentComponent imp
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
+
+  protected setupI18N(): void { }
 }

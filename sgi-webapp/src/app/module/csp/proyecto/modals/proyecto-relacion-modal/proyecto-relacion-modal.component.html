@@ -23,6 +23,9 @@
             placeholder="{{'csp.proyecto-relacion.convocatoria' | translate}}" formControlName="entidadRelacionada"
             required>
           </sgi-select-convocatoria>
+          <sgi-select-dialog-grupo *ngSwitchCase="TIPO_ENTIDAD.GRUPO"
+            placeholder="{{'csp.proyecto-relacion.grupo' | translate}}" formControlName="entidadRelacionada" required>
+          </sgi-select-dialog-grupo>
           <sgi-select-invencion *ngSwitchCase="TIPO_ENTIDAD.INVENCION"
             placeholder="{{'csp.proyecto-relacion.invencion' | translate}}" formControlName="entidadRelacionada"
             required>
@@ -46,8 +49,8 @@
     <div fxLayout="row">
       <mat-form-field fxFlex>
         <mat-label>{{'csp.proyecto-relacion.observaciones' | translate}}</mat-label>
-        <textarea matInput formControlName="observaciones" id="observaciones"
-          placeholder="{{'csp.proyecto-relacion.observaciones' | translate}}"></textarea>
+        <sgi-i18n-textarea formControlName="observaciones"
+          placeholder="{{'csp.proyecto-relacion.observaciones' | translate}}"></sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamObservaciones}}
         </mat-error>

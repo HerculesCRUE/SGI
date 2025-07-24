@@ -1,8 +1,12 @@
 package org.crue.hercules.sgi.csp.service;
 
+import javax.validation.Valid;
+
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Service Interface para gestionar {@link TipoFase}.
@@ -15,7 +19,8 @@ public interface TipoFaseService {
    * @param tipoFase la entidad {@link TipoFase} a guardar.
    * @return la entidad {@link TipoFase} persistida.
    */
-  TipoFase create(TipoFase tipoFase);
+  @Validated({ BaseEntity.Create.class })
+  TipoFase create(@Valid TipoFase tipoFase);
 
   /**
    * Actualizar {@link TipoFase}.
@@ -23,7 +28,8 @@ public interface TipoFaseService {
    * @param tipoFase la entidad {@link TipoFase} a actualizar.
    * @return la entidad {@link TipoFase} persistida.
    */
-  TipoFase update(TipoFase tipoFase);
+  @Validated({ BaseEntity.Update.class })
+  TipoFase update(@Valid TipoFase tipoFase);
 
   /**
    * Obtener todas las entidades {@link TipoFase} activas paginadas y/o filtradas.
@@ -44,14 +50,6 @@ public interface TipoFaseService {
    * @return la lista de entidades {@link TipoFase} paginadas y/o filtradas.
    */
   Page<TipoFase> findAllTodos(String query, Pageable pageable);
-
-  /**
-   * Obtiene {@link TipoFase} por id.
-   *
-   * @param id el id de la entidad {@link TipoFase}.
-   * @return la entidad {@link TipoFase}.
-   */
-  TipoFase findById(Long id);
 
   /**
    * Reactiva el {@link TipoFase}.

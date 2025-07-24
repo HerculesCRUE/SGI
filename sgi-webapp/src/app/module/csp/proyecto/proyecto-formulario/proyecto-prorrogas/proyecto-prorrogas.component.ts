@@ -12,6 +12,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ROUTE_NAMES } from '@core/route.names';
 import { ProyectoProrrogaService } from '@core/services/csp/proyecto-prorroga.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -52,15 +53,16 @@ export class ProyectoProrrogasComponent extends FragmentComponent implements OnI
     public actionService: ProyectoActionService,
     private dialogService: DialogService,
     private proyectoProrrogaService: ProyectoProrrogaService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.PRORROGAS, actionService);
+    super(actionService.FRAGMENT.PRORROGAS, actionService, translate);
     this.formPart = this.fragment as ProyectoProrrogasFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subscription = this.formPart.prorrogas$.subscribe(
       (proyectoProrrogas) => {
         this.dataSource.data = proyectoProrrogas;
@@ -80,6 +82,8 @@ export class ProyectoProrrogasComponent extends FragmentComponent implements OnI
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IProyectoProrroga>, property: string) => {
         switch (property) {
+          case 'observaciones':
+            return this.languageService.getFieldValue(wrapper.value.observaciones);
           default:
             return wrapper.value[property];
         }
@@ -88,7 +92,7 @@ export class ProyectoProrrogasComponent extends FragmentComponent implements OnI
   }
 
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_PRORROGA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

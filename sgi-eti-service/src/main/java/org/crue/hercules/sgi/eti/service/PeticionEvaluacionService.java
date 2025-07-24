@@ -46,6 +46,16 @@ public interface PeticionEvaluacionService {
   PeticionEvaluacion findById(Long id);
 
   /**
+   * Comprueba la exitencia de una {@link PeticionEvaluacion} por id.
+   *
+   * @param id el id de la entidad {@link PeticionEvaluacion}.
+   * @throws PeticionEvaluacionNotFoundException si no existe una petición
+   *                                             de evaluación con ese
+   *                                             identificador
+   */
+  void existsById(Long id);
+
+  /**
    * Elimina el {@link PeticionEvaluacion} por id.
    *
    * @param id el id de la entidad {@link PeticionEvaluacion}.

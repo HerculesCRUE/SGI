@@ -1,18 +1,27 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity.OnActivar;
+import org.crue.hercules.sgi.csp.validation.UniqueNombreModeloEjecucionActivo;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -30,6 +39,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@UniqueNombreModeloEjecucionActivo(groups = { BaseEntity.Create.class, BaseEntity.Update.class, OnActivar.class })
 public class ModeloEjecucion extends BaseEntity {
 
   /**
@@ -45,15 +55,19 @@ public class ModeloEjecucion extends BaseEntity {
   private Long id;
 
   /** Nombre. */
-  @Column(name = "nombre", length = 50, nullable = false)
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "modelo_ejecucion_nombre", joinColumns = @JoinColumn(name = "modelo_ejecucion_id"))
   @NotEmpty
-  @Size(max = 50)
-  private String nombre;
+  @Valid
+  @Builder.Default
+  private Set<ModeloEjecucionNombre> nombre = new HashSet<>();
 
   /** Descripcion. */
-  @Column(name = "descripcion", length = 250, nullable = true)
-  @Size(max = 250)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "modelo_ejecucion_descripcion", joinColumns = @JoinColumn(name = "modelo_ejecucion_id"))
+  @Valid
+  @Builder.Default
+  private Set<ModeloEjecucionDescripcion> descripcion = new HashSet<>();
 
   /** Activo */
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
@@ -67,6 +81,10 @@ public class ModeloEjecucion extends BaseEntity {
   /** Contrato */
   @Column(name = "contrato", columnDefinition = "boolean default false", nullable = false)
   private Boolean contrato;
+
+  /** Permite crear solicitudes sin convocatoria */
+  @Column(name = "solicitud_sin_convocatoria", columnDefinition = "boolean default false", nullable = false)
+  private Boolean solicitudSinConvocatoria;
 
   @OneToMany(mappedBy = "modeloEjecucion")
   @Getter(AccessLevel.NONE)

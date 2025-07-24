@@ -1,0 +1,59 @@
+[
+  {
+    "key": "ap5_2_2_4_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.4.4 If a viral vector is used, supply the relevant information included as a link if it is acquired commercially"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "key": "vectorViricoOMGCheck",
+        "type": "multicheckbox",
+        "templateOptions": {
+          "label": "Choose",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "plasmidoVectorOMG",
+              "label": "Plasmid"
+            },
+            {
+              "value": "virusVectorOMG",
+              "label": "Virus"
+            }
+          ]
+        }
+      },
+      {
+        "key": "detallarPlasmidoVector",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.vectorViricoOMGCheck || !model.vectorViricoOMGCheck.some(vector => vector === 'plasmidoVectorOMG')",
+        "templateOptions": {
+          "placeholder": "Describe in detail",
+          "label": "Plasmid",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarVirusVector",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.vectorViricoOMGCheck || !model.vectorViricoOMGCheck.some(vector => vector === 'virusVectorOMG')",
+        "templateOptions": {
+          "placeholder": "Describe in detail",
+          "label": "Virus",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

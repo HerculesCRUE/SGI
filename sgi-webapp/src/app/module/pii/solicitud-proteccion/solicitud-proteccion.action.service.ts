@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IInvencion } from '@core/models/pii/invencion';
 import { ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
 import { ActionService } from '@core/services/action-service';
+import { LanguageService } from '@core/services/language.service';
 import { PaisValidadoService } from '@core/services/pii/solicitud-proteccion/pais-validado/pais-validado.service';
 import { SolicitudProteccionProcedimientoDocumentoService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion-procedimiento-documento/solicitud-proteccion-procedimiento-documento.service';
 import { SolicitudProteccionProcedimientoService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion-procedimiento/solicitud-proteccion-procedimiento.service';
@@ -46,7 +47,8 @@ export class SolicitudProteccionActionService extends ActionService {
     private paisValidadoService: PaisValidadoService,
     private solicitudProteccionProcedimientoService: SolicitudProteccionProcedimientoService,
     private procedimientoDocumentoService: SolicitudProteccionProcedimientoDocumentoService,
-    private documentoService: DocumentoService
+    private documentoService: DocumentoService,
+    private readonly languageService: LanguageService
   ) {
     super();
 

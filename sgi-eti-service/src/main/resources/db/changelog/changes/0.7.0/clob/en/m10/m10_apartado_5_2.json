@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap5_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.2 Data transfer document"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>If there are data transfer documents, such as from the professor to the student to carry out supervised research, from clinical staff to the University's research staff, from biobanks, etc., they should be included.</p>"
+      },
+      {
+        "key": "documentoCesion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": "CESION_DATOS",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

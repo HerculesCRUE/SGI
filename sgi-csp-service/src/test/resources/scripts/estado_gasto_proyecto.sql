@@ -10,8 +10,13 @@
        }
 */
 INSERT INTO test.estado_gasto_proyecto
-(id, comentario, estado, fecha_estado, gasto_proyecto_id)
+(id, estado, fecha_estado, gasto_proyecto_id)
 VALUES
-(1, 'estado gasto pro 1', 'VALIDADO', '2021-12-09T11:11:000', 1),
-(2, 'estado gasto pro 1', 'VALIDADO', '2021-12-09T11:11:000', 2),
-(3, 'estado gasto pro 1', 'VALIDADO', '2021-12-09T11:11:000', 3);
+(1, 'VALIDADO', '2021-12-09T11:11:000', 1),
+(2, 'VALIDADO', '2021-12-09T11:11:000', 2),
+(3, 'VALIDADO', '2021-12-09T11:11:000', 3);
+
+-- ESTADO_GASTO_PROYECTO_COMENTARIO
+INSERT INTO test.estado_gasto_proyecto_comentario (estado_gasto_proyecto_id, lang, value_) VALUES(1, 'es', 'estado gasto pro 1');
+INSERT INTO test.estado_gasto_proyecto_comentario (estado_gasto_proyecto_id, lang, value_) VALUES(2, 'es', 'estado gasto pro 1');
+INSERT INTO test.estado_gasto_proyecto_comentario (estado_gasto_proyecto_id, lang, value_) VALUES(3, 'es', 'estado gasto pro 1');

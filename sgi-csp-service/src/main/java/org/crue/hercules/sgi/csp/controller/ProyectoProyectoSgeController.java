@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +41,7 @@ public class ProyectoProyectoSgeController {
   public static final String REQUEST_MAPPING = PATH_DELIMITER + "proyecto-proyectos-sge";
   public static final String PATH_ID = PATH_DELIMITER + "{id}";
 
+  public static final String PATH_ELIMINABLE = PATH_ID + PATH_DELIMITER + "eliminable";
   public static final String PATH_REASIGNAR = PATH_ID + PATH_DELIMITER + "reasignar";
 
   private final ProyectoProyectoSgeService service;
@@ -108,6 +110,25 @@ public class ProyectoProyectoSgeController {
     Page<ProyectoProyectoSgeOutput> page = converter.convert(service.findAll(query, paging));
     log.debug("findAll(String query, Pageable paging) - end");
     return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
+  /**
+   * Hace las comprobaciones necesarias para determinar si el
+   * {@link ProyectoProyectoSge} puede ser eliminado.
+   * 
+   * @param id Id del {@link ProyectoProyectoSge}.
+   * @return {@link HttpStatus#OK} Si se permite /
+   *         {@link HttpStatus#NO_CONTENT} Si no se permite
+   * 
+   */
+  @RequestMapping(path = PATH_ELIMINABLE, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E')")
+  public ResponseEntity<Void> isEliminable(@PathVariable Long id) {
+    log.debug("isEliminable(Long id) - start");
+    Boolean returnValue = service.isDeletableById(id);
+    log.debug("isEliminable(Long id) - end");
+    return returnValue.booleanValue() ? new ResponseEntity<>(HttpStatus.OK)
+        : new ResponseEntity<>(HttpStatus.NO_CONTENT);
   }
 
   /**

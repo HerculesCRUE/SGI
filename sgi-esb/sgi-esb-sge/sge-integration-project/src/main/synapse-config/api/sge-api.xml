@@ -372,19 +372,19 @@
                   "disabled": true
                 },
                 "expressionProperties": {
-                  "model.proyectoSgiId": "formState.mainModel.proyecto.id"
+                  "model.proyectoSgiId": "formState.mainModel.formlyDataSGI.id"
                 }
               },
               {
                 "key": "titulo",
-                "type": "input",
+                "type": "i18n-input",
                 "templateOptions": {
                   "label": "Título proyecto",
                   "required": true,
                   "disabled": true
                 },
                 "expressionProperties": {
-                  "model.titulo": "formState.mainModel.proyecto.titulo"
+                  "model.titulo": "formState.mainModel.formlyDataSGI.titulo"
                 }
               },
               {
@@ -400,7 +400,7 @@
                       "disabled": true
                     },
                     "expressionProperties": {
-                      "model.fechaInicio": "formState.mainModel.proyecto.fechaInicio"
+                      "model.fechaInicio": "formState.mainModel.formlyDataSGI.fechaInicio"
                     }
                   },
                   {
@@ -413,7 +413,7 @@
                       "disabled": true
                     },
                     "expressionProperties": {
-                      "model.fechaFin": "formState.mainModel.proyecto.fechaFin"
+                      "model.fechaFin": "formState.mainModel.formlyDataSGI.fechaFin"
                     }
                   }
                 ]
@@ -426,12 +426,12 @@
                   "disabled": true
                 },
                 "expressionProperties": {
-                  "model.numeroDocumentoResponsable": "formState.mainModel.numeroDocumentoResponsable"
+                  "model.numeroDocumentoResponsable": "formState.mainModel.formlyDataSGI.numeroDocumentoResponsable"
                 }
               },
               {
                 "fieldGroupClassName": "row-formly",
-                "hideExpression": "formState.isGrupo === true",
+                "hideExpression": "formState.mainModel.formlyDataSGI.tipoEntidadSGI !== 'PROYECTO'",
                 "fieldGroup": [
                   {
                     "key": "modeloEjecucion",
@@ -442,11 +442,11 @@
                       "required": true,
                       "disabled": true,
                       "modelKeyCompareProp": "id",
-                      "modelKeyLabelProp": "nombre",
+                      "modelKeyLabelPropI18n": "nombre",
                       "modelKeyValueProp": "modeloEjecucion"
                     },
                     "expressionProperties": {
-                      "model.modeloEjecucion": "formState.mainModel.proyecto.modeloEjecucion"
+                      "model.modeloEjecucion": "formState.mainModel.formlyDataSGI.modeloEjecucion"
                     }
                   },
                   {
@@ -458,11 +458,11 @@
                       "required": true,
                       "disabled": true,
                       "modelKeyCompareProp": "id",
-                      "modelKeyLabelProp": "nombre",
+                      "modelKeyLabelPropI18n": "nombre",
                       "modelKeyValueProp": "tipoFinalidad"
                     },
                     "expressionProperties": {
-                      "model.tipoFinalidad": "formState.mainModel.proyecto.finalidad"
+                      "model.tipoFinalidad": "formState.mainModel.formlyDataSGI.finalidad"
                     }
                   }
                 ]
@@ -480,7 +480,7 @@
                       "min": 0
                     },
                     "expressionProperties": {
-                      "model.importeTotalGastos": "formState.mainModel.importeTotalGastos"
+                      "model.importeTotalGastos": "formState.mainModel.formlyDataSGI.importeTotalGastos"
                     }
                   },
                   {
@@ -493,7 +493,7 @@
                       "min": 0
                     },
                     "expressionProperties": {
-                      "model.importeTotalIngresos": "formState.mainModel.importeTotalIngresos"
+                      "model.importeTotalIngresos": "formState.mainModel.formlyDataSGI.importeTotalIngresos"
                     }
                   }
                 ]
@@ -512,19 +512,22 @@
                       "disabled": true
                     },
                     "expressionProperties": {
-                      "model.porIva": "formState.mainModel.porIva"
+                      "model.porIva": "formState.mainModel.formlyDataSGI.iva"
                     }
                   },
                   {
                     "key": "causaExencion",
-                    "type": "input",
+                    "type": "select-object",
                     "className": "flex-1",
                     "templateOptions": {
                       "label": "Causa exención",
-                      "disabled": true
+                      "disabled": true,
+                      "modelKeyCompareProp": "id",
+                      "modelKeyLabelProp": "descripcion",
+                      "modelKeyValueProp": "causaExencion"
                     },
                     "expressionProperties": {
-                      "model.causaExencion": "formState.mainModel.causaExencionDesc"
+                      "model.causaExencion": "formState.mainModel.formlyDataSGI.causaExencion"
                     }
                   }
                 ]
@@ -654,7 +657,7 @@
                       "disabled": true
                     },
                     "expressionProperties": {
-                      "model.proyectoSgiId": "formState.mainModel.proyecto.id"
+                      "model.proyectoSgiId": "formState.mainModel.formlyDataSGI.id"
                     }
                   },
                   {
@@ -666,21 +669,21 @@
                       "disabled": true
                     },
                     "expressionProperties": {
-                      "model.proyectoSgeId": "formState.mainModel.sgeId"
+                      "model.proyectoSgeId": "formState.mainModel.formlyDataSGI.sgeId"
                     }
                   }
                 ]
               },
               {
                 "key": "titulo",
-                "type": "input",
+                "type": "i18n-input",
                 "templateOptions": {
                   "label": "Título proyecto",
                   "required": true,
                   "disabled": true
                 },
                 "expressionProperties": {
-                  "model.titulo": "formState.mainModel.proyecto.titulo"
+                  "model.titulo": "formState.mainModel.formlyDataSGI.titulo"
                 }
               },
               {
@@ -696,7 +699,7 @@
                       "disabled": true
                     },
                     "expressionProperties": {
-                      "model.fechaInicio": "formState.mainModel.proyecto.fechaInicio"
+                      "model.fechaInicio": "formState.mainModel.formlyDataSGI.fechaInicio"
                     }
                   },
                   {
@@ -709,7 +712,7 @@
                       "disabled": true
                     },
                     "expressionProperties": {
-                      "model.fechaFin": "formState.mainModel.proyecto.fechaFin"
+                      "model.fechaFin": "formState.mainModel.formlyDataSGI.fechaFin"
                     }
                   }
                 ]
@@ -722,12 +725,12 @@
                   "disabled": true
                 },
                 "expressionProperties": {
-                  "model.numeroDocumentoResponsable": "formState.mainModel.numeroDocumentoResponsable"
+                  "model.numeroDocumentoResponsable": "formState.mainModel.formlyDataSGI.numeroDocumentoResponsable"
                 }
               },
               {
                 "fieldGroupClassName": "row-formly",
-                "hideExpression": "formState.isGrupo === true",
+                "hideExpression": "formState.mainModel.formlyDataSGI.tipoEntidadSGI !== 'PROYECTO'",
                 "fieldGroup": [
                   {
                     "key": "modeloEjecucion",
@@ -738,11 +741,11 @@
                       "required": true,
                       "disabled": true,
                       "modelKeyCompareProp": "id",
-                      "modelKeyLabelProp": "nombre",
+                      "modelKeyLabelPropI18n": "nombre",
                       "modelKeyValueProp": "modeloEjecucion"
                     },
                     "expressionProperties": {
-                      "model.modeloEjecucion": "formState.mainModel.proyecto.modeloEjecucion"
+                      "model.modeloEjecucion": "formState.mainModel.formlyDataSGI.modeloEjecucion"
                     }
                   },
                   {
@@ -754,11 +757,11 @@
                       "required": true,
                       "disabled": true,
                       "modelKeyCompareProp": "id",
-                      "modelKeyLabelProp": "nombre",
+                      "modelKeyLabelPropI18n": "nombre",
                       "modelKeyValueProp": "tipoFinalidad"
                     },
                     "expressionProperties": {
-                      "model.tipoFinalidad": "formState.mainModel.proyecto.finalidad"
+                      "model.tipoFinalidad": "formState.mainModel.formlyDataSGI.finalidad"
                     }
                   }
                 ]
@@ -776,7 +779,7 @@
                       "min": 0
                     },
                     "expressionProperties": {
-                      "model.importeTotalGastos": "formState.mainModel.importeTotalGastos"
+                      "model.importeTotalGastos": "formState.mainModel.formlyDataSGI.importeTotalGastos"
                     }
                   },
                   {
@@ -789,7 +792,7 @@
                       "min": 0
                     },
                     "expressionProperties": {
-                      "model.importeTotalIngresos": "formState.mainModel.importeTotalIngresos"
+                      "model.importeTotalIngresos": "formState.mainModel.formlyDataSGI.importeTotalIngresos"
                     }
                   }
                 ]
@@ -808,19 +811,22 @@
                       "disabled": true
                     },
                     "expressionProperties": {
-                      "model.porIva": "formState.mainModel.porIva"
+                      "model.porIva": "formState.mainModel.formlyDataSGI.iva"
                     }
                   },
                   {
                     "key": "causaExencion",
-                    "type": "input",
+                    "type": "select-object",
                     "className": "flex-1",
                     "templateOptions": {
                       "label": "Causa exención",
-                      "disabled": true
+                      "disabled": true,
+                      "modelKeyCompareProp": "id",
+                      "modelKeyLabelProp": "descripcion",
+                      "modelKeyValueProp": "causaExencion"
                     },
                     "expressionProperties": {
-                      "model.causaExencion": "formState.mainModel.causaExencionDesc"
+                      "model.causaExencion": "formState.mainModel.formlyDataSGI.causaExencion"
                     }
                   }
                 ]
@@ -1124,6 +1130,38 @@
       <send>
         <endpoint key="sge-endpoint" />
       </send>
+    </inSequence>
+    <outSequence>
+      <respond />
+    </outSequence>
+    <faultSequence>
+      <sequence key="error-handling-sequence" />
+    </faultSequence>
+  </resource>
+
+  <!-- proyectos notificar relaciones eliminadas -->
+  <resource methods="POST" uri-template="/proyectos/{id}/notificaciones/relaciones-eliminadas">
+    <inSequence>
+      <call-template target="sgi-auth-sequence-template">
+        <with-param name="requiredAuthorities" value="" />
+      </call-template>
+      <property name="HTTP_SC" scope="axis2" type="STRING" value="501"/>
+      <payloadFactory media-type="json">
+        <format>
+          {
+            "type": "urn:problem-type:unknown",
+            "title": "No implementado",
+            "detail": "La integración para notificar la eliminación de relaciones entre proyectos del SGI y el SGE no está implementada",
+            "instance": "",
+            "status": "501",
+            "errors": []
+          }
+        </format>
+        <args/>
+      </payloadFactory>
+      <property name="ContentType" value="application/problem+json" scope="transport"/>
+      <property name="messageType" value="application/problem+json" scope="axis2" type="STRING"/>
+      <respond/>
     </inSequence>
     <outSequence>
       <respond />

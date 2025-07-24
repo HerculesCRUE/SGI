@@ -1,0 +1,59 @@
+[
+  {
+    "key": "ap1_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Murriztea, ordezkatzea eta fintzea",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Aipatu ikerketan animaliak erabiltzean murriztea, ordezkatzea eta fintzea hobeto aplikatzeko mesedegarriak izan daitezkeen proposamenak: </p><p>Murriztea. </p>"
+      },
+      {
+        "key": "reduccion",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Deskribapena",
+          "label": "Deskribapena",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Ordezkatzea.</p>"
+      },
+      {
+        "key": "reemplazo",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Deskribapena",
+          "label": "Deskribapena",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Fintzea.</p>"
+      },
+      {
+        "key": "refinamiento",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Deskribapena",
+          "label": "Deskribapena",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

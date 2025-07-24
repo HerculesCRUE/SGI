@@ -18,11 +18,20 @@
   }
 */
 INSERT INTO test.proyecto_concepto_gasto
-(id, convocatoria_concepto_gasto_id, fecha_fin, fecha_inicio, importe_maximo, observaciones, permitido, proyecto_id, concepto_gasto_id)
+(id, convocatoria_concepto_gasto_id, fecha_fin, fecha_inicio, importe_maximo, permitido, proyecto_id, concepto_gasto_id)
 VALUES
-(1, NULL, '2022-01-30T00:00:00Z', '2021-12-01T00:00:00Z', 1000, 'testing 1', true, 1, 1),
-(2, NULL, '2022-02-20T00:00:00Z', '2022-01-01T00:00:00Z', 2000, 'testing 2', true, 1, 2),
-(3, NULL, '2022-03-30T00:00:00Z', '2022-02-01T00:00:00Z', 3000, 'testing 3', true, 1, 3),
-(4, NULL, '2022-04-01T00:00:00Z', '2022-02-01T00:00:00Z', 1000, 'testing 4', false, 1, 1),
-(5, NULL, '2022-04-20T00:00:00Z', '2022-03-20T00:00:00Z', 2000, 'testing 5', false, 1, 2),
-(6, NULL, '2022-05-30T00:00:00Z', '2022-03-01T00:00:00Z', 3000, 'testing 6', false, 1, 3);
+(1, NULL, '2022-01-30T00:00:00Z', '2021-12-01T00:00:00Z', 1000, true, 1, 1),
+(2, NULL, '2022-02-20T00:00:00Z', '2022-01-01T00:00:00Z', 2000, true, 1, 2),
+(3, NULL, '2022-03-30T00:00:00Z', '2022-02-01T00:00:00Z', 3000, true, 1, 3),
+(4, NULL, '2022-04-01T00:00:00Z', '2022-02-01T00:00:00Z', 1000, false, 1, 1),
+(5, NULL, '2022-04-20T00:00:00Z', '2022-03-20T00:00:00Z', 2000, false, 1, 2),
+(6, NULL, '2022-05-30T00:00:00Z', '2022-03-01T00:00:00Z', 3000, false, 1, 3);
+
+INSERT INTO test.proyecto_concepto_gasto_observaciones(proyecto_concepto_gasto_id, lang, value_)
+VALUES
+(1, 'es', 'testing 1'),
+(2, 'es', 'testing 2'),
+(3, 'es', 'testing 3'),
+(4, 'es', 'testing 4'),
+(5, 'es', 'testing 5'),
+(6, 'es', 'testing 6');

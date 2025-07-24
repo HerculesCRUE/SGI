@@ -63,11 +63,11 @@ export class ConfiguracionFormularioComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.initFormGroup();
-    this.setupI18N();
+
     this.loadConfiguracion();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       CONFIGURACION_KEY,

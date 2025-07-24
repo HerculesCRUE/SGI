@@ -1,6 +1,11 @@
 package org.crue.hercules.sgi.eer.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -12,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 
@@ -43,16 +49,23 @@ public class EmpresaDocumento extends BaseEntity {
   private Long id;
 
   /** Nombre */
-  @Column(name = "nombre", length = SHORT_TEXT_LENGTH, nullable = false)
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "empresa_documento_nombre", joinColumns = @JoinColumn(name = "empresa_documento_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<EmpresaDocumentoNombre> nombre = new HashSet<>();
 
   /** Referencia del documento */
   @Column(name = "documento_ref", length = REF_LENGTH, nullable = false)
   private String documentoRef;
 
   /** Comentarios */
-  @Column(name = "comentarios", length = LONG_TEXT_LENGTH, nullable = true)
-  private String comentarios;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "empresa_documento_comentarios", joinColumns = @JoinColumn(name = "empresa_documento_id"))
+  @Valid
+  @Builder.Default
+  private Set<EmpresaDocumentoComentarios> comentarios = new HashSet<>();
 
   /** Id de la empresa */
   @Column(name = "empresa_id", nullable = false)

@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.TipoTarea;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -58,62 +60,9 @@ public class TipoTareaIT extends BaseIT {
     final TipoTarea tipoTarea = response.getBody();
 
     Assertions.assertThat(tipoTarea.getId()).as("id").isEqualTo(1L);
-    Assertions.assertThat(tipoTarea.getNombre()).as("nombre").isEqualTo("Diseño de proyecto y procedimientos");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoTarea.getNombre(), Language.ES)).as("nombre")
+        .isEqualTo("Diseño de proyecto y procedimientos");
     Assertions.assertThat(tipoTarea.getActivo()).as("activo").isEqualTo(true);
-  }
-
-  @Test
-  public void addTipoTarea_ReturnsTipoTarea() throws Exception {
-
-    TipoTarea nuevoTipoTarea = new TipoTarea(1L, "TipoTarea1", Boolean.TRUE);
-
-    final ResponseEntity<TipoTarea> response = restTemplate.exchange(TIPO_TAREA_CONTROLLER_BASE_PATH, HttpMethod.POST,
-        buildRequest(null, nuevoTipoTarea), TipoTarea.class);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-    Assertions.assertThat(response.getBody()).isEqualTo(nuevoTipoTarea);
-  }
-
-  @Test
-  public void removeTipoTarea_Success() throws Exception {
-    // when: Delete con id existente
-    long id = 1L;
-    final ResponseEntity<TipoTarea> response = restTemplate.exchange(
-        TIPO_TAREA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.DELETE, buildRequest(null, null),
-        TipoTarea.class, id);
-
-    // then: 200
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-  }
-
-  @Test
-  public void removeTipoTarea_DoNotGetTipoTarea() throws Exception {
-    restTemplate.exchange(TIPO_TAREA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.DELETE,
-        buildRequest(null, null), TipoTarea.class, 10L);
-
-    final ResponseEntity<TipoTarea> response = restTemplate.exchange(
-        TIPO_TAREA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.GET, buildRequest(null, null), TipoTarea.class,
-        10L);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-  }
-
-  @Test
-  public void replaceTipoTarea_ReturnsTipoTarea() throws Exception {
-
-    TipoTarea replaceTipoTarea = generarMockTipoTarea(1L, "TipoTarea1");
-
-    final ResponseEntity<TipoTarea> response = restTemplate.exchange(
-        TIPO_TAREA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.PUT, buildRequest(null, replaceTipoTarea),
-        TipoTarea.class, 1L);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    final TipoTarea tipoTarea = response.getBody();
-
-    Assertions.assertThat(tipoTarea.getId()).as("id").isNotNull();
-    Assertions.assertThat(tipoTarea.getNombre()).as("nombre").isEqualTo(replaceTipoTarea.getNombre());
-    Assertions.assertThat(tipoTarea.getActivo()).as("activo").isEqualTo(replaceTipoTarea.getActivo());
   }
 
   @Test
@@ -138,15 +87,17 @@ public class TipoTareaIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");
 
     // Contiene de nombre='Diseño de proyecto y procedimientos' y 'Eutanasia'
-    Assertions.assertThat(tiposTarea.get(0).getNombre()).isEqualTo("Diseño de proyecto y procedimientos");
-    Assertions.assertThat(tiposTarea.get(1).getNombre()).isEqualTo("Eutanasia");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposTarea.get(0).getNombre(), Language.ES))
+        .isEqualTo("Diseño de proyecto y procedimientos");
+    Assertions.assertThat(
+        I18nHelper.getValueForLanguage(tiposTarea.get(1).getNombre(), Language.ES)).isEqualTo("Eutanasia");
   }
 
   @Test
   public void findAll_WithSearchQuery_ReturnsFilteredTipoTareaList() throws Exception {
     // when: Búsqueda por nombre like e id equals
     Long id = 1L;
-    String query = "nombre=ke=proyecto;id==" + id;
+    String query = "nombre.value=ke=proyecto;id==" + id;
 
     URI uri = UriComponentsBuilder.fromUriString(TIPO_TAREA_CONTROLLER_BASE_PATH).queryParam("q", query).build(false)
         .toUri();
@@ -161,13 +112,14 @@ public class TipoTareaIT extends BaseIT {
     final List<TipoTarea> tiposTarea = response.getBody();
     Assertions.assertThat(tiposTarea.size()).isEqualTo(1);
     Assertions.assertThat(tiposTarea.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(tiposTarea.get(0).getNombre()).startsWith("Diseño de proyecto y procedimientos");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposTarea.get(0).getNombre(),
+        Language.ES)).startsWith("Diseño de proyecto y procedimientos");
   }
 
   @Test
   public void findAll_WithSortQuery_ReturnsOrderedTipoTareaList() throws Exception {
     // when: Ordenación por nombre desc
-    String query = "nombre,desc";
+    String query = "nombre.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(TIPO_TAREA_CONTROLLER_BASE_PATH).queryParam("s", query).build(false)
         .toUri();
@@ -182,9 +134,11 @@ public class TipoTareaIT extends BaseIT {
     final List<TipoTarea> tiposTarea = response.getBody();
     Assertions.assertThat(tiposTarea.size()).isEqualTo(3);
     Assertions.assertThat(tiposTarea.get(0).getId()).as("0.id").isEqualTo(3);
-    Assertions.assertThat(tiposTarea.get(0).getNombre()).as("0.nombre").isEqualTo("Manipulación de animales");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposTarea.get(0).getNombre(),
+        Language.ES)).as("0.nombre").isEqualTo("Manipulación de animales");
     Assertions.assertThat(tiposTarea.get(1).getId()).as("1.id").isEqualTo(2);
-    Assertions.assertThat(tiposTarea.get(1).getNombre()).as("1.nombre").isEqualTo("Eutanasia");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposTarea.get(1).getNombre(),
+        Language.ES)).as("1.nombre").isEqualTo("Eutanasia");
   }
 
   @Test
@@ -194,9 +148,9 @@ public class TipoTareaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "4");
     // when: Ordena por nombre desc
-    String sort = "nombre,desc";
+    String sort = "nombre.value,desc";
     // when: Filtra por nombre like
-    String filter = "nombre=ke=de";
+    String filter = "nombre.value=ke=de";
 
     URI uri = UriComponentsBuilder.fromUriString(TIPO_TAREA_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -216,26 +170,12 @@ public class TipoTareaIT extends BaseIT {
 
     // Contiene nombre='Diseño de proyecto y procedimientos', 'Manipulación de
     // animales'
-    Assertions.assertThat(tiposTarea.get(0).getNombre()).as("0.nombre").isEqualTo("Manipulación de animales");
-    Assertions.assertThat(tiposTarea.get(1).getNombre()).as("1.nombre")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposTarea.get(0).getNombre(),
+        Language.ES)).as("0.nombre").isEqualTo("Manipulación de animales");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposTarea.get(1).getNombre(),
+        Language.ES)).as("1.nombre")
         .isEqualTo("Diseño de proyecto y procedimientos");
 
-  }
-
-  /**
-   * Función que devuelve un objeto TipoTarea
-   * 
-   * @param id     id del tipoTarea
-   * @param nombre la descripción del tipo de tarea
-   * @return el objeto tipo tarea
-   */
-  public TipoTarea generarMockTipoTarea(Long id, String nombre) {
-    TipoTarea tipoTarea = new TipoTarea();
-    tipoTarea.setId(id);
-    tipoTarea.setNombre(nombre);
-    tipoTarea.setActivo(Boolean.TRUE);
-
-    return tipoTarea;
   }
 
 }

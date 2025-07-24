@@ -5,12 +5,16 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ProyectoConceptoGastoCodigoEcController;
 import org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoCodigoEc;
+import org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoCodigoEcObservaciones;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -28,7 +32,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 class ProyectoConceptoGastoCodigoEcIT extends BaseIT {
 
   private static final String CONTROLLER_BASE_PATH = ProyectoConceptoGastoCodigoEcController.MAPPING;
-  private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String PATH_PARAMETER_PROYECTO_CONCEPTO_GASTO_ID = "/{proyectoConceptoGastoId}";
 
   private HttpEntity<Object> buildRequest(HttpHeaders headers, Object entity, String... roles) throws Exception {
@@ -40,46 +43,6 @@ class ProyectoConceptoGastoCodigoEcIT extends BaseIT {
 
     HttpEntity<Object> request = new HttpEntity<>(entity, headers);
     return request;
-  }
-
-  @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
-    // @formatter:off
-    "classpath:scripts/tipo_fase.sql",
-    "classpath:scripts/tipo_documento.sql",
-    "classpath:scripts/modelo_ejecucion.sql",
-    "classpath:scripts/modelo_tipo_fase.sql",
-    "classpath:scripts/modelo_tipo_documento.sql",
-    "classpath:scripts/modelo_unidad.sql",
-    "classpath:scripts/tipo_finalidad.sql",
-    "classpath:scripts/tipo_ambito_geografico.sql",
-    "classpath:scripts/tipo_regimen_concurrencia.sql",
-    "classpath:scripts/convocatoria.sql",
-    "classpath:scripts/proyecto.sql",
-    "classpath:scripts/concepto_gasto.sql",
-    "classpath:scripts/proyecto_concepto_gasto.sql",
-    "classpath:scripts/convocatoria_concepto_gasto.sql",
-    "classpath:scripts/convocatoria_concepto_gasto_codigo_ec.sql",
-    "classpath:scripts/proyecto_concepto_gasto_codigo_ec.sql"
-    // @formatter:on
-  })
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void findById_ReturnsProyectoConceptoGastoCodigoEc() throws Exception {
-    Long idToSearch = 1L;
-    String[] roles = { "AUTH" };
-
-    URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID).buildAndExpand(idToSearch)
-        .toUri();
-
-    final ResponseEntity<ProyectoConceptoGastoCodigoEc> response = restTemplate.exchange(uri, HttpMethod.GET,
-        buildRequest(null, null, roles), ProyectoConceptoGastoCodigoEc.class);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    ProyectoConceptoGastoCodigoEc proyectoConceptoGastoCodigoEc = response.getBody();
-
-    Assertions.assertThat(proyectoConceptoGastoCodigoEc).isNotNull();
-    Assertions.assertThat(proyectoConceptoGastoCodigoEc.getId()).isEqualTo(idToSearch);
   }
 
   @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -235,6 +198,10 @@ class ProyectoConceptoGastoCodigoEcIT extends BaseIT {
   private ProyectoConceptoGastoCodigoEc buildMockProyectoConceptoGastoCodigoEc(Long id, String codigoEconomicoRef,
       Long convocatoriaConceptoGastoCodigoEcId, Instant fechaFin, Instant fechaInicio, String observaciones,
       Long proyectoConceptoGastoId) {
+    Set<ProyectoConceptoGastoCodigoEcObservaciones> observacionesProyectoConceptoGastoCodigoEc = new HashSet<>();
+    observacionesProyectoConceptoGastoCodigoEc
+        .add(new ProyectoConceptoGastoCodigoEcObservaciones(Language.ES, observaciones));
+
     // @formatter:off
     return ProyectoConceptoGastoCodigoEc
     .builder()
@@ -243,7 +210,7 @@ class ProyectoConceptoGastoCodigoEcIT extends BaseIT {
     .convocatoriaConceptoGastoCodigoEcId(convocatoriaConceptoGastoCodigoEcId)
     .fechaFin(fechaFin)
     .fechaInicio(fechaInicio)
-    .observaciones(observaciones)
+    .observaciones(observacionesProyectoConceptoGastoCodigoEc)
     .proyectoConceptoGastoId(proyectoConceptoGastoId)
     .build();
     // @formatter:on

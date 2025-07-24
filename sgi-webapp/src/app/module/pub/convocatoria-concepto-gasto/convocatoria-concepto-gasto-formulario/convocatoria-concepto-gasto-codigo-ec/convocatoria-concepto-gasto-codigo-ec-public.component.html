@@ -8,7 +8,8 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.convocatoria-elegibilidad.codigo-economico.nombre' | translate}} </th>
         <td mat-cell *matCellDef="let convocatoriaConceptoGastoCodigoEc">
-          {{convocatoriaConceptoGastoCodigoEc.value.convocatoriaConceptoGasto?.conceptoGasto.nombre}}
+          <sgi-i18n-table-field
+            [field]="convocatoriaConceptoGastoCodigoEc.value.convocatoriaConceptoGasto?.conceptoGasto.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -45,7 +46,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.convocatoria-elegibilidad.codigo-economico.observaciones' | translate}} </th>
         <td mat-cell *matCellDef="let convocatoriaConceptoGastoCodigoEc">
-          {{convocatoriaConceptoGastoCodigoEc.value.observaciones}}
+          <sgi-i18n-table-field [field]="convocatoriaConceptoGastoCodigoEc.value.observaciones"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

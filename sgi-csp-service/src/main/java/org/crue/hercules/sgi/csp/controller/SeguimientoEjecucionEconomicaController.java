@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.converter.ProyectoPeriodoSeguimientoConverter;
 import org.crue.hercules.sgi.csp.converter.ProyectoSeguimientoJustificacionConverter;
@@ -51,16 +50,13 @@ public class SeguimientoEjecucionEconomicaController {
   public static final String PATH_DELIMITER = "/";
   public static final String REQUEST_MAPPING = PATH_DELIMITER + "seguimiento-ejecucion-economica";
   public static final String PATH_ID = PATH_DELIMITER + "{id}";
-  public static final String PATH_PROYECTOS = PATH_DELIMITER + PATH_ID + PATH_DELIMITER + "proyectos";
-  public static final String PATH_PERIODO_JUSTIFICACION = PATH_DELIMITER + PATH_ID + PATH_DELIMITER
-      + "periodos-justificacion";
-  public static final String PATH_PERIODO_SEGUIMIENTO = PATH_DELIMITER + PATH_ID + PATH_DELIMITER
-      + "periodos-seguimiento";
-  public static final String PATH_REQUERIMIENTO_JUSTIFICACION = PATH_DELIMITER + PATH_ID + PATH_DELIMITER
+  public static final String PATH_PROYECTOS = PATH_ID + PATH_DELIMITER + "proyectos";
+  public static final String PATH_PERIODO_JUSTIFICACION = PATH_ID + PATH_DELIMITER + "periodos-justificacion";
+  public static final String PATH_PERIODO_SEGUIMIENTO = PATH_ID + PATH_DELIMITER + "periodos-seguimiento";
+  public static final String PATH_REQUERIMIENTO_JUSTIFICACION = PATH_ID + PATH_DELIMITER
       + "requerimientos-justificacion";
-  public static final String PATH_SEGUIMIENTO_JUSTIFICACION = PATH_DELIMITER + PATH_ID + PATH_DELIMITER
-      + "seguimientos-justificacion";
-  public static final String PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD = PATH_DELIMITER + PATH_ID + PATH_DELIMITER
+  public static final String PATH_SEGUIMIENTO_JUSTIFICACION = PATH_ID + PATH_DELIMITER + "seguimientos-justificacion";
+  public static final String PATH_SEGUIMIENTO_JUSTIFICACION_ANUALIDAD = PATH_ID + PATH_DELIMITER
       + "seguimientos-justificacion-anualidad";
 
   private final ModelMapper modelMapper;
@@ -130,7 +126,7 @@ public class SeguimientoEjecucionEconomicaController {
 
   private Page<ProyectoPeriodoJustificacionOutput> convert(Page<ProyectoPeriodoJustificacion> page) {
     List<ProyectoPeriodoJustificacionOutput> content = page.getContent().stream()
-        .map(proyectoPeriodoJustificacion -> convert(proyectoPeriodoJustificacion)).collect(Collectors.toList());
+        .map(this::convert).toList();
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

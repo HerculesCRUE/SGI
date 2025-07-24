@@ -1,0 +1,74 @@
+[
+  {
+    "key": "ap3_6_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.5 Project period during which animals will be used"
+    },
+    "fieldGroup": [
+      {
+        "key": "fechaUsoAnimalesDesde",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "From"
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "date-is-between",
+              "options": {
+                "compareTo": "formStateProperties",
+                "formStateProperties": [
+                  "memoria.peticionEvaluacion.fechaInicio",
+                  "memoria.peticionEvaluacion.fechaFin"
+                ],
+                "message": "Must be between the start and end dates of the project (evaluation request general data)."
+              }
+            }
+          ]
+        }
+      },
+      {
+        "key": "fechaUsoAnimalesHasta",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "To"
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "date-is-between",
+              "options": {
+                "compareTo": "formStateProperties",
+                "formStateProperties": [
+                  "memoria.peticionEvaluacion.fechaInicio",
+                  "memoria.peticionEvaluacion.fechaFin"
+                ],
+                "message": "Must be between the start and end dates of the project (evaluation request general data)."
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "validators": {
+      "validation": [
+        {
+          "name": "date-is-after",
+          "options": {
+            "compareTo": "formStateProperty",
+            "errorPath": "fechaUsoAnimalesHasta",
+            "formStateProperty": "mainModel.ap3_6.ap3_6_5.fechaUsoAnimalesDesde",
+            "message": "End date must be later than start date"
+          }
+        }
+      ]
+    }
+  }
+]

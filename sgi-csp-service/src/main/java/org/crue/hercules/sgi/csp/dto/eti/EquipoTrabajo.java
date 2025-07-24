@@ -21,6 +21,6 @@ public class EquipoTrabajo {
   private String personaRef;
 
   /** Peticion Evaluacion */
-  private PeticionEvaluacion peticionEvaluacion;
+  private Long peticionEvaluacionId;
 
 }

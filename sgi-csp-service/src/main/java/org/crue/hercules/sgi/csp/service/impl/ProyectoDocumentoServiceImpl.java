@@ -15,7 +15,10 @@ import org.crue.hercules.sgi.csp.repository.ProyectoDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoDocumentoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoDocumentoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -33,6 +36,21 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_MODELO = "modelo";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_FIELD_VISIBLE = "visible";
+  private static final String MSG_FIELD_DOCUMENTO_REF = "documentoRef";
+  private static final String MSG_MODEL_MODELO_TIPO_DOCUMENTO = "org.crue.hercules.sgi.csp.model.ModeloTipoDocumento.message";
+  private static final String MSG_MODEL_MODELO_TIPO_FASE = "org.crue.hercules.sgi.csp.model.ModeloTipoFase.message";
+  private static final String MSG_MODEL_TIPO_DOCUMENTO = "org.crue.hercules.sgi.csp.model.TipoDocumento.message";
+  private static final String MSG_MODEL_TIPO_FASE = "org.crue.hercules.sgi.csp.model.TipoFase.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODELO_EJECUCION_INACTIVO = "org.springframework.util.Assert.entity.modeloEjecucion.inactivo.message";
+  private static final String MSG_PROYECTO_ASSIGN_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.exceptions.AssignModeloEjecucion.message";
+  private static final String MSG_PROYECTO_SIN_MODELO_ASIGNADO = "org.crue.hercules.sgi.csp.model.Proyecto.sinModeloEjecucion.message";
+  private static final String MSG_NO_DISPONIBLE_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.model.ModeloEjecucion.noDisponible.message";
 
   private final ProyectoDocumentoRepository repository;
   private final ProyectoRepository proyectoRepository;
@@ -67,8 +85,7 @@ public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
   public ProyectoDocumento create(ProyectoDocumento proyectoDocumento) {
     log.debug("create(ProyectoDocumento proyectoDocumento) - start");
 
-    Assert.isNull(proyectoDocumento.getId(),
-        "ProyectoDocumento id tiene que ser null para crear un nuevo ProyectoDocumento");
+    AssertHelper.idIsNull(proyectoDocumento.getId(), ProyectoDocumento.class);
 
     validarRequeridosProyectoDocumento(proyectoDocumento);
     validarProyectoDocumento(proyectoDocumento, null);
@@ -91,8 +108,7 @@ public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
   public ProyectoDocumento update(ProyectoDocumento proyectoDocumentoActualizar) {
     log.debug("update(ProyectoDocumento proyectoDocumentoActualizar) - start");
 
-    Assert.notNull(proyectoDocumentoActualizar.getId(),
-        "ProyectoDocumento id no puede ser null para actualizar un ProyectoDocumento");
+    AssertHelper.idNotNull(proyectoDocumentoActualizar.getId(), ProyectoDocumento.class);
 
     validarRequeridosProyectoDocumento(proyectoDocumentoActualizar);
 
@@ -124,28 +140,13 @@ public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ProyectoDocumento id no puede ser null para eliminar un ProyectoDocumento");
+    AssertHelper.idNotNull(id, ProyectoDocumento.class);
     if (!repository.existsById(id)) {
       throw new ProyectoDocumentoNotFoundException(id);
     }
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
-  }
-
-  /**
-   * Obtiene {@link ProyectoDocumento} por su id.
-   *
-   * @param id el id de la entidad {@link ProyectoDocumento}.
-   * @return la entidad {@link ProyectoDocumento}.
-   */
-  @Override
-  public ProyectoDocumento findById(Long id) {
-    log.debug("findById(Long id)  - start");
-    final ProyectoDocumento returnValue = repository.findById(id)
-        .orElseThrow(() -> new ProyectoDocumentoNotFoundException(id));
-    log.debug("findById(Long id)  - end");
-    return returnValue;
   }
 
   /**
@@ -176,15 +177,15 @@ public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
     log.debug("validarRequeridosProyectoDocumento(ProyectoDocumento datosProyectoDocumento) - start");
 
     /** Obligatorios */
-    Assert.isTrue(datosProyectoDocumento.getProyectoId() != null, "Id Proyecto no puede ser null en ProyectoDocumento");
+    AssertHelper.idNotNull(datosProyectoDocumento.getProyectoId(), Proyecto.class);
 
-    Assert.isTrue(!StringUtils.isEmpty(datosProyectoDocumento.getNombre()),
-        "Es necesario indicar el nombre del documento");
+    AssertHelper.fieldNotBlank(!StringUtils.isEmpty(datosProyectoDocumento.getNombre()),
+        ProyectoDocumento.class, AssertHelper.MESSAGE_KEY_NAME);
 
-    Assert.isTrue(datosProyectoDocumento.getVisible() != null, "Es necesario indicar si el documento es público");
+    AssertHelper.fieldNotNull(datosProyectoDocumento.getVisible() != null, ProyectoDocumento.class, MSG_FIELD_VISIBLE);
 
-    Assert.isTrue(!StringUtils.isEmpty(datosProyectoDocumento.getDocumentoRef()),
-        "Es necesario indicar la referencia al documento");
+    AssertHelper.fieldNotBlank(!StringUtils.isEmpty(datosProyectoDocumento.getDocumentoRef()), ProyectoDocumento.class,
+        MSG_FIELD_DOCUMENTO_REF);
 
     log.debug("validarRequeridosProyectoDocumento(ProyectoDocumento datosProyectoDocumento) - end");
   }
@@ -221,10 +222,14 @@ public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
           .findByModeloEjecucionIdAndTipoFaseId(modeloEjecucionId, datosProyectoDocumento.getTipoFase().getId());
 
       // TipoFase está asignado al ModeloEjecucion
-      Assert.isTrue(modeloTipoFase.isPresent(), "TipoFase '" + datosProyectoDocumento.getTipoFase().getNombre()
-          + "' no disponible para el ModeloEjecucion '"
-          + ((modeloEjecucionId != null) ? proyecto.getModeloEjecucion().getNombre() : "Proyecto sin modelo asignado")
-          + "'");
+      Assert.isTrue(modeloTipoFase.isPresent(),
+          () -> ProblemMessage.builder()
+              .key(MSG_PROYECTO_ASSIGN_MODELO_EJECUCION)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+              .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+              .parameter(MSG_KEY_MODELO, ((modeloEjecucionId != null) ? proyecto.getModeloEjecucion().getNombre()
+                  : ApplicationContextSupport.getMessage(MSG_PROYECTO_SIN_MODELO_ASIGNADO)))
+              .build());
 
       // Comprobar solamente si estamos creando o se ha modificado el TipoFase
       if (datosOriginales == null || datosOriginales.getTipoFase() == null
@@ -232,13 +237,20 @@ public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
 
         // La asignación al ModeloEjecucion está activa
         Assert.isTrue(modeloTipoFase.get().getActivo(),
-            "ModeloTipoFase '" + modeloTipoFase.get().getTipoFase().getNombre()
-                + "' no está activo para el ModeloEjecucion '" + modeloTipoFase.get().getModeloEjecucion().getNombre()
-                + "'");
+            () -> ProblemMessage.builder()
+                .key(MSG_MODELO_EJECUCION_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_FASE))
+                .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+                .parameter(MSG_KEY_MODELO, modeloTipoFase.get().getModeloEjecucion().getNombre())
+                .build());
 
         // El TipoFase está activo
         Assert.isTrue(modeloTipoFase.get().getTipoFase().getActivo(),
-            "TipoFase '" + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+                .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+                .build());
       }
       proyectoDocumentoModeloTipoFase = modeloTipoFase.get();
 
@@ -261,14 +273,13 @@ public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
 
       // Está asignado al ModeloEjecucion y ModeloTipoFase
       Assert.isTrue(modeloTipoDocumento.isPresent(),
-          "TipoDocumento '" + datosProyectoDocumento.getTipoDocumento().getNombre()
-              + "' no disponible para el ModeloEjecucion '"
-              + ((modeloEjecucionId != null) ? proyecto.getModeloEjecucion().getNombre()
-                  : "Proyecto sin modelo asignado")
-              + "' y TipoFase '"
-              + ((proyectoDocumentoModeloTipoFase != null) ? proyectoDocumentoModeloTipoFase.getTipoFase().getNombre()
-                  : "Sin Asignar")
-              + "'");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROYECTO_ASSIGN_MODELO_EJECUCION)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_DOCUMENTO))
+              .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+              .parameter(MSG_KEY_MODELO, ((modeloEjecucionId != null) ? proyecto.getModeloEjecucion().getNombre()
+                  : ApplicationContextSupport.getMessage(MSG_PROYECTO_SIN_MODELO_ASIGNADO)))
+              .build());
 
       // Comprobar solamente si estamos creando o se ha modificado el documento
       if (datosOriginales == null || datosOriginales.getTipoDocumento() == null
@@ -277,13 +288,20 @@ public class ProyectoDocumentoServiceImpl implements ProyectoDocumentoService {
 
         // La asignación al ModeloEjecucion está activa
         Assert.isTrue(modeloTipoDocumento.get().getActivo(),
-            "ModeloTipoDocumento '" + modeloTipoDocumento.get().getTipoDocumento().getNombre()
-                + "' no está activo para el ModeloEjecucion '"
-                + modeloTipoDocumento.get().getModeloEjecucion().getNombre() + "'");
+            () -> ProblemMessage.builder()
+                .key(MSG_MODELO_EJECUCION_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_DOCUMENTO))
+                .parameter(MSG_KEY_FIELD, modeloTipoDocumento.get().getTipoDocumento().getNombre())
+                .parameter(MSG_KEY_MODELO, modeloTipoDocumento.get().getModeloEjecucion().getNombre())
+                .build());
 
         // El TipoDocumento está activo
         Assert.isTrue(modeloTipoDocumento.get().getTipoDocumento().getActivo(),
-            "TipoDocumento '" + modeloTipoDocumento.get().getTipoDocumento().getNombre() + "' no está activo");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_DOCUMENTO))
+                .parameter(MSG_KEY_FIELD, modeloTipoDocumento.get().getTipoDocumento().getNombre())
+                .build());
 
       }
       datosProyectoDocumento.setTipoDocumento(modeloTipoDocumento.get().getTipoDocumento());

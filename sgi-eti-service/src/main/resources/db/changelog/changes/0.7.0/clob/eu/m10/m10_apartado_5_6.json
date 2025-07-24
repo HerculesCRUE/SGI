@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap5_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.6 Laginak transferitzeko hitzarmena"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Zure proiektuan beharrezkoa izan bada laginak edo ehunak lagatzea, baduzu dagokion transferentzia hitzarmena (MTA)?</p>"
+      },
+      {
+        "key": "acuerdoTransferenciaMuestras",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "Ez"
+            },
+            {
+              "value": "ACUERDO_TRANSFERENCIA",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

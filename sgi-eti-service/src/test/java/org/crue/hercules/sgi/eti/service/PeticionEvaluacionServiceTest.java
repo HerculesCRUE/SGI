@@ -1,29 +1,28 @@
 package org.crue.hercules.sgi.eti.service;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.PeticionEvaluacionWithIsEliminable;
 import org.crue.hercules.sgi.eti.exceptions.PeticionEvaluacionNotFoundException;
-import org.crue.hercules.sgi.eti.model.Comite;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
-import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
-import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
-import org.crue.hercules.sgi.eti.model.Retrospectiva;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
-import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
-import org.crue.hercules.sgi.eti.model.TipoMemoria;
 import org.crue.hercules.sgi.eti.repository.PeticionEvaluacionRepository;
 import org.crue.hercules.sgi.eti.service.impl.PeticionEvaluacionServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -69,7 +68,8 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
 
     Assertions.assertThat(peticionEvaluacion.getId()).isEqualTo(1L);
 
-    Assertions.assertThat(peticionEvaluacion.getTitulo()).isEqualTo("PeticionEvaluacion1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(peticionEvaluacion.getTitulo(), Language.ES))
+        .isEqualTo("PeticionEvaluacion1");
 
   }
 
@@ -96,7 +96,8 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
     // then: El PeticionEvaluacion se crea correctamente
     Assertions.assertThat(peticionEvaluacionCreado).isNotNull();
     Assertions.assertThat(peticionEvaluacionCreado.getId()).isEqualTo(1L);
-    Assertions.assertThat(peticionEvaluacionCreado.getTitulo()).isEqualTo("PeticionEvaluacionNew");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(peticionEvaluacionCreado.getTitulo(), Language.ES))
+        .isEqualTo("PeticionEvaluacionNew");
   }
 
   @Test
@@ -126,7 +127,8 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
 
     // then: El peticionEvaluacion se actualiza correctamente.
     Assertions.assertThat(peticionEvaluacionActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(peticionEvaluacionActualizado.getTitulo()).isEqualTo("PeticionEvaluacion1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(peticionEvaluacionActualizado.getTitulo(), Language.ES))
+        .isEqualTo("PeticionEvaluacion1 actualizada");
 
   }
 
@@ -275,7 +277,8 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       PeticionEvaluacion peticionEvaluacion = page.getContent().get(i);
-      Assertions.assertThat(peticionEvaluacion.getTitulo()).isEqualTo("PeticionEvaluacion" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(peticionEvaluacion.getTitulo(), Language.ES))
+          .isEqualTo("PeticionEvaluacion" + String.format("%03d", j));
     }
   }
 
@@ -338,7 +341,8 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       PeticionEvaluacionWithIsEliminable peticion = page.getContent().get(i);
-      Assertions.assertThat(peticion.getTitulo()).isEqualTo("PeticionEvaluacion" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(peticion.getTitulo(), Language.ES))
+          .isEqualTo("PeticionEvaluacion" + String.format("%03d", j));
     }
   }
 
@@ -356,19 +360,27 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> tit = new HashSet<>();
+    tit.add(new PeticionEvaluacionTitulo(Language.ES, titulo));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen" + id));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos" + id));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico" + id));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo" + id);
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico" + id);
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos" + id);
-    peticionEvaluacion.setResumen("Resumen" + id);
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria" + id);
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo(titulo);
+    peticionEvaluacion.setTitulo(tit);
     peticionEvaluacion.setPersonaRef("user-00" + id);
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
@@ -380,94 +392,4 @@ public class PeticionEvaluacionServiceTest extends BaseServiceTest {
     return new PeticionEvaluacionWithIsEliminable(generarMockPeticionEvaluacion(id, titulo), true);
   }
 
-  /**
-   * Función que devuelve un objeto Memoria.
-   * 
-   * @param id            id del memoria.
-   * @param numReferencia número de la referencia de la memoria.
-   * @param titulo        titulo de la memoria.
-   * @param version       version de la memoria.
-   * @return el objeto Memoria
-   */
-
-  private Memoria generarMockMemoria(Long id, String numReferencia, String titulo, Integer version,
-      Long idTipoEstadoMemoria) {
-
-    return new Memoria(id, numReferencia, generarMockPeticionEvaluacion(id, titulo + " PeticionEvaluacion" + id),
-        generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
-        generarMockTipoMemoria(1L, "TipoMemoria1", true),
-        generarMockTipoEstadoMemoria(idTipoEstadoMemoria, "Estado", Boolean.TRUE), Instant.now(), Boolean.TRUE,
-        generarMockRetrospectiva(1L), version, Boolean.TRUE, null);
-  }
-
-  /**
-   * Función que devuelve un objeto comité.
-   * 
-   * @param id     identificador del comité.
-   * @param comite comité.
-   * @param activo indicador de activo.
-   */
-  private Comite generarMockComite(Long id, String comite, Boolean activo) {
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    return new Comite(id, comite, "nombreInvestigacion", Genero.M, formulario, activo);
-
-  }
-
-  /**
-   * Función que devuelve un objeto tipo memoria.
-   * 
-   * @param id     identificador del tipo memoria.
-   * @param nombre nobmre.
-   * @param activo indicador de activo.
-   */
-  private TipoMemoria generarMockTipoMemoria(Long id, String nombre, Boolean activo) {
-    return new TipoMemoria(id, nombre, activo);
-
-  }
-
-  /**
-   * Función que devuelve un objeto TipoEstadoMemoria.
-   * 
-   * @param id     identificador del TipoEstadoMemoria.
-   * @param nombre nombre.
-   * @param activo indicador de activo.
-   */
-  private TipoEstadoMemoria generarMockTipoEstadoMemoria(Long id, String nombre, Boolean activo) {
-    return new TipoEstadoMemoria(id, nombre, activo);
-
-  }
-
-  /**
-   * Genera un objeto {@link Retrospectiva}
-   * 
-   * @param id
-   * @return Retrospectiva
-   */
-  private Retrospectiva generarMockRetrospectiva(Long id) {
-
-    final Retrospectiva data = new Retrospectiva();
-    data.setId(id);
-    data.setEstadoRetrospectiva(generarMockDataEstadoRetrospectiva((id % 2 == 0) ? 2L : 1L));
-    data.setFechaRetrospectiva(LocalDate.of(2020, 7, id.intValue()).atStartOfDay(ZoneOffset.UTC).toInstant());
-
-    return data;
-  }
-
-  /**
-   * Genera un objeto {@link EstadoRetrospectiva}
-   * 
-   * @param id
-   * @return EstadoRetrospectiva
-   */
-  private EstadoRetrospectiva generarMockDataEstadoRetrospectiva(Long id) {
-
-    String txt = (id % 2 == 0) ? String.valueOf(id) : "0" + String.valueOf(id);
-
-    final EstadoRetrospectiva data = new EstadoRetrospectiva();
-    data.setId(id);
-    data.setNombre("NombreEstadoRetrospectiva" + txt);
-    data.setActivo(Boolean.TRUE);
-
-    return data;
-  }
 }

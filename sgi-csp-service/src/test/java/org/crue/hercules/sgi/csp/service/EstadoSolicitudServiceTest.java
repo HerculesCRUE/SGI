@@ -2,18 +2,25 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
+import org.crue.hercules.sgi.csp.model.EstadoSolicitudComentario;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Solicitud;
+import org.crue.hercules.sgi.csp.model.Solicitud.OrigenSolicitud;
+import org.crue.hercules.sgi.csp.model.SolicitudObservaciones;
+import org.crue.hercules.sgi.csp.model.SolicitudTitulo;
 import org.crue.hercules.sgi.csp.repository.EstadoSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudExternaRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.EstadoSolicitudServiceImpl;
 import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -44,7 +51,7 @@ class EstadoSolicitudServiceTest extends BaseServiceTest {
   private EstadoSolicitudService service;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     authorityHelper = new SolicitudAuthorityHelper(solicitudRepository, solicitudExternaRepository);
     service = new EstadoSolicitudServiceImpl(repository, authorityHelper);
   }
@@ -79,7 +86,7 @@ class EstadoSolicitudServiceTest extends BaseServiceTest {
     // when: Creamos el EstadoSolicitud
     // then: Lanza una excepcion porque el EstadoSolicitud ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(solicitudModalidad)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("EstadoSolicitud id tiene que ser null para crear un EstadoSolicitud");
+        .hasMessage("Identificador de Estado Solicitud debe ser nulo");
   }
 
   @Test
@@ -91,7 +98,7 @@ class EstadoSolicitudServiceTest extends BaseServiceTest {
     // when: Creamos el EstadoSolicitud
     // then: Lanza una excepcion porque no tiene solicitud
     Assertions.assertThatThrownBy(() -> service.create(estadoSolicitud)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("idSolicitud no puede ser null para crear un EstadoSolicitud");
+        .hasMessage("Identificador de Solicitud no puede ser nulo");
   }
 
   @Test
@@ -116,8 +123,7 @@ class EstadoSolicitudServiceTest extends BaseServiceTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > estadosSolicitud.size() ? estadosSolicitud.size() : toIndex;
             List<EstadoSolicitud> content = estadosSolicitud.subList(fromIndex, toIndex);
-            Page<EstadoSolicitud> page = new PageImpl<>(content, pageable, estadosSolicitud.size());
-            return page;
+            return new PageImpl<>(content, pageable, estadosSolicitud.size());
           }
         });
 
@@ -143,10 +149,13 @@ class EstadoSolicitudServiceTest extends BaseServiceTest {
    * @return el objeto EstadoSolicitud
    */
   private EstadoSolicitud generarMockEstadoSolicitud(Long id) {
+    Set<EstadoSolicitudComentario> comentarioEstadoSolicitud = new HashSet<>();
+    comentarioEstadoSolicitud.add(new EstadoSolicitudComentario(Language.ES, "comentario"));
+
     EstadoSolicitud estadoSolicitud = new EstadoSolicitud();
     estadoSolicitud.setId(id);
     estadoSolicitud.setSolicitudId(1L);
-    estadoSolicitud.setComentario("Comentario");
+    estadoSolicitud.setComentario(comentarioEstadoSolicitud);
     estadoSolicitud.setEstado(EstadoSolicitud.Estado.BORRADOR);
     estadoSolicitud.setFechaEstado(Instant.now());
 
@@ -169,17 +178,25 @@ class EstadoSolicitudServiceTest extends BaseServiceTest {
     Programa programa = new Programa();
     programa.setId(1L);
 
+    Set<SolicitudTitulo> solicitudTitulo = new HashSet<>();
+    solicitudTitulo.add(new SolicitudTitulo(Language.ES, "titulo"));
+
+    Set<SolicitudObservaciones> solicitudObservaciones = new HashSet<>();
+    solicitudObservaciones.add(new SolicitudObservaciones(Language.ES, "observaciones-" + String.format("%03d", id)));
+
     Solicitud solicitud = new Solicitud();
     solicitud.setId(id);
-    solicitud.setTitulo("titulo");
+    solicitud.setTitulo(solicitudTitulo);
     solicitud.setCodigoExterno(null);
     solicitud.setConvocatoriaId(convocatoriaId);
     solicitud.setCreadorRef("usr-001");
     solicitud.setSolicitanteRef("usr-002");
-    solicitud.setObservaciones("observaciones-" + String.format("%03d", id));
+    solicitud.setObservaciones(solicitudObservaciones);
     solicitud.setConvocatoriaExterna(convocatoriaExterna);
     solicitud.setUnidadGestionRef("1");
     solicitud.setActivo(true);
+    solicitud.setOrigenSolicitud(
+        convocatoriaId != null ? OrigenSolicitud.CONVOCATORIA_SGI : OrigenSolicitud.CONVOCATORIA_NO_SGI);
 
     if (id != null) {
       solicitud.setEstado(estadoSolicitud);

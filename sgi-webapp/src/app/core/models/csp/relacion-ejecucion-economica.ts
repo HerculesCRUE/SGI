@@ -1,10 +1,11 @@
 import { marker } from "@biesbjerg/ngx-translate-extract-marker";
+import { I18nFieldValue } from "@core/i18n/i18n-field";
 import { DateTime } from "luxon";
 import { IProyectoSge } from "../sge/proyecto-sge";
 
 export interface IRelacionEjecucionEconomica {
   id: number;
-  nombre: string;
+  nombre: I18nFieldValue[];
   codigoExterno?: string;
   codigoInterno?: string;
   fechaInicio: DateTime;

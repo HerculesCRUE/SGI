@@ -44,7 +44,7 @@
           {{'csp.grupo.nombre' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{element.nombre}}
+          <sgi-i18n-table-field [field]="element.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

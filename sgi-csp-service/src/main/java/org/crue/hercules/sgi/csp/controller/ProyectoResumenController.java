@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.controller;
 import org.crue.hercules.sgi.csp.dto.ProyectoResumenOutput;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.service.ProyectoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,6 +56,8 @@ public class ProyectoResumenController {
   }
 
   private ProyectoResumenOutput convert(Proyecto proyecto) {
-    return modelMapper.map(proyecto, ProyectoResumenOutput.class);
+    ProyectoResumenOutput proyectoResumen = modelMapper.map(proyecto, ProyectoResumenOutput.class);
+    proyectoResumen.setTitulo(I18nHelper.getFieldValue(proyecto.getTitulo()));
+    return proyectoResumen;
   }
 }

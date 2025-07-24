@@ -1,7 +1,12 @@
 package org.crue.hercules.sgi.csp.repository.specification;
 
+import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
+import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
@@ -30,7 +35,7 @@ public class ProyectoSpecifications {
    * @return specification para obtener las {@link Proyecto} activas
    */
   public static Specification<Proyecto> activos() {
-    return (root, query, cb) -> cb.equal(root.get(Proyecto_.activo), Boolean.TRUE);
+    return (root, query, cb) -> cb.isTrue(root.get(Proyecto_.activo));
   }
 
   /**
@@ -138,6 +143,58 @@ public class ProyectoSpecifications {
       queryResponsableEconomico.select(subqRoot.get(ProyectoResponsableEconomico_.proyecto).get(Proyecto_.id))
           .where(cb.equal(subqRoot.get(ProyectoResponsableEconomico_.personaRef), investigadorId));
       return root.get(Proyecto_.id).in(queryResponsableEconomico);
+    };
+  }
+
+  /**
+   * {@link Proyecto} para los que alguna de las personas de la lista está entre
+   * los {@link ProyectoEquipo} en la fecha indicada.
+   *
+   * @param personaRefs Lista de identificadores de las personas.
+   * @param fecha       Fecha para la que se hace la comprobación.
+   * @return Specification para obtener los {@link Proyecto} en los que alguna de
+   *         las personas esté en el {@link ProyectoEquipo} en la fecha indicada.
+   */
+  public static Specification<Proyecto> byMiembrosEquipo(List<String> personaRefs, Instant fecha) {
+    return (root, query, cb) -> {
+      Join<Proyecto, ProyectoEquipo> joinEquipos = root.join(Proyecto_.equipo, JoinType.LEFT);
+
+      List<Predicate> predicatesPorPersona = new ArrayList<>();
+      for (String personaRef : personaRefs) {
+
+        Predicate personaRefEquals = cb.equal(joinEquipos.get(ProyectoEquipo_.personaRef), personaRef);
+
+        Predicate greaterThanFechaInicio = cb.or(
+            cb.lessThanOrEqualTo(joinEquipos.get(ProyectoEquipo_.fechaInicio), fecha),
+            cb.and(
+                cb.isNull(joinEquipos.get(ProyectoEquipo_.fechaInicio)),
+                cb.lessThanOrEqualTo(root.get(Proyecto_.fechaInicio), fecha)));
+
+        // Si el miembro del equipo tiene fecha de fin se usa la suya, si no se usa la
+        // fecha de fin definitiva del proyecto como fecha de fin y en caso de que no la
+        // tenga entonces se usa la fecha de fin del proyecto
+        Predicate lowerThanFechaFin = cb.or(
+
+            cb.greaterThanOrEqualTo(joinEquipos.get(ProyectoEquipo_.fechaFin), fecha),
+            cb.and(
+                cb.isNull(joinEquipos.get(ProyectoEquipo_.fechaFin)),
+                cb.or(
+                    cb.and(
+                        cb.isNotNull(root.get(Proyecto_.fechaFinDefinitiva)),
+                        cb.greaterThanOrEqualTo(root.get(Proyecto_.fechaFinDefinitiva), fecha)),
+                    cb.and(
+                        cb.isNull(root.get(Proyecto_.fechaFinDefinitiva)),
+                        cb.or(
+                            cb.isNull(root.get(Proyecto_.fechaFin)),
+                            cb.greaterThanOrEqualTo(root.get(Proyecto_.fechaFin), fecha))))));
+
+        predicatesPorPersona.add(cb.and(
+            personaRefEquals,
+            greaterThanFechaInicio,
+            lowerThanFechaFin));
+      }
+
+      return cb.or(predicatesPorPersona.toArray(new Predicate[0]));
     };
   }
 

@@ -1,0 +1,130 @@
+[
+  {
+    "key": "ap3_5_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.1 Mikroorganismoak/parasitoak"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.ap3_4_2.tareasAgentesBiologicosRadio || formState.mainModel.ap3_4.ap3_4_2.tareasAgentesBiologicosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "type": "table-crud",
+        "key": "microorganismosParasitosTable",
+        "templateOptions": {
+          "entity": "mikroorganismoa/parasitoa",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Mikroorganismoa/parasitoa"
+          },
+          "fieldGroup": [
+            {
+              "key": "nombre",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Izena",
+                "order": 10
+              }
+            },
+            {
+              "key": "tipo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Mota",
+                "order": 20,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Bakterioak eta antzekoak"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Birusak"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Parasitoak"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Onddoak"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "grupoRiesgo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Arrisku taldea",
+                "order": 30,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "1. taldea"
+                  },
+                  {
+                    "value": "2",
+                    "label": "2. taldea"
+                  },
+                  {
+                    "value": "3",
+                    "label": "3. taldea"
+                  },
+                  {
+                    "value": "4",
+                    "label": "4. taldea"
+                  }
+                ]
+              }
+            },
+            {
+              "type": "multicheckbox",
+              "key": "notasAdicionalesCheck",
+              "templateOptions": {
+                "label": "Ohar osagarriak",
+                "type": "array",
+                "order": 40,
+                "options": [
+                  {
+                    "value": "A",
+                    "label": "A: Ondorio alergiko posibleak"
+                  },
+                  {
+                    "value": "D",
+                    "label": "D: Agentearen eraginpean egondako langileen zerrenda gorde egin behar da azken esposiziotik hamar urte baino gehiago igaro arte"
+                  },
+                  {
+                    "value": "T",
+                    "label": "T: Toxina ekoizpena"
+                  },
+                  {
+                    "value": "V",
+                    "label": "V: Txerto eraginkorra eskuragai"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "volumenMaximo",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Kultibo bakoitzaren gehienezko bolumena",
+                "order": 50
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "* Ohar osagarriak: <strong>A</strong>: Ondorio alergiko posibleak; <strong>D</strong>: Agentearen eraginpean egondako langileen zerrenda gorde egin behar da azken esposiziotik hamar urte baino gehiago igaro arte; <strong>T</strong>: Toxina ekoizpena; <strong>V</strong>: Txerto eraginkorra eskuragai"
+      }
+    ]
+  }
+]

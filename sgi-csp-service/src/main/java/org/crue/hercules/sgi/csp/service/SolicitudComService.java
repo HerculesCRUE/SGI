@@ -1,9 +1,10 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.time.Instant;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.com.CspComSolicitudCambioEstadoAlegacionesData;
@@ -16,8 +17,10 @@ import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
 import org.crue.hercules.sgi.csp.dto.com.Enlace;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlace;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiCnfService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -39,7 +42,7 @@ public class SolicitudComService {
   private final SgiConfigProperties sgiConfigProperties;
 
   public void enviarComunicadoSolicitudCambioEstadoSolicitada(Long solicitudId, String solicitanteRef,
-      String unidadGestionRef, String tituloConvocatoria, Instant fechaPublicacionConvocatoria,
+      String unidadGestionRef, Set<ConvocatoriaTitulo> tituloConvocatoria, Instant fechaPublicacionConvocatoria,
       Instant fechaCambioEstadoSolicitud)
       throws JsonProcessingException {
     log.debug("enviarComunicadoSolicitudCambioEstadoSolicitada() - start");
@@ -62,7 +65,8 @@ public class SolicitudComService {
   }
 
   public void enviarComunicadoSolicitudCambioEstadoAlegaciones(Long solicitudId, String solicitanteRef,
-      String unidadGestionRef, String tituloConvocatoria, String codigoInterno, Instant fechaCambioEstadoSolicitud,
+      String unidadGestionRef, Set<ConvocatoriaTitulo> tituloConvocatoria, String codigoInterno,
+      Instant fechaCambioEstadoSolicitud,
       Instant fechaProvisionalConvocatoria) throws JsonProcessingException {
     log.debug("enviarComunicadoSolicitudCambioEstadoAlegaciones() - start");
     List<Recipient> recipients = getRecipients(unidadGestionRef, CONFIG_CSP_COM_SOL_CAMB_EST_ALEGACIONES);
@@ -85,7 +89,7 @@ public class SolicitudComService {
   }
 
   public void enviarComunicadoSolicitudCambioEstadoExclProv(Long solicitudId, String solicitanteRef,
-      String tituloConvocatoria,
+      Set<ConvocatoriaTitulo> tituloConvocatoria,
       Instant fechaProvisionalConvocatoria,
       List<ConvocatoriaEnlace> convocatoriaEnlaces) throws JsonProcessingException {
     log.debug("enviarComunicadoSolicitudCambioEstadoExclProv() - start");
@@ -108,7 +112,7 @@ public class SolicitudComService {
   }
 
   public void enviarComunicadoSolicitudCambioEstadoExclDef(Long solicitudId, String solicitanteRef,
-      String tituloConvocatoria,
+      Set<ConvocatoriaTitulo> tituloConvocatoria,
       Instant fechaConcesionConvocatoria,
       List<ConvocatoriaEnlace> convocatoriaEnlaces) throws JsonProcessingException {
     log.debug("enviarComunicadoSolicitudCambioEstadoExclDef() - start");
@@ -131,7 +135,7 @@ public class SolicitudComService {
   }
 
   public void enviarComunicadoSolicitudCambioEstadoConcProv(Long solicitudId, String solicitanteRef,
-      String tituloConvocatoria,
+      Set<ConvocatoriaTitulo> tituloConvocatoria,
       Instant fechaProvisionalConvocatoria,
       List<ConvocatoriaEnlace> convocatoriaEnlaces) throws JsonProcessingException {
     log.debug("enviarComunicadoSolicitudCambioEstadoConcProv() - start");
@@ -154,7 +158,7 @@ public class SolicitudComService {
   }
 
   public void enviarComunicadoSolicitudCambioEstadoDenProv(Long solicitudId, String solicitanteRef,
-      String tituloConvocatoria,
+      Set<ConvocatoriaTitulo> tituloConvocatoria,
       Instant fechaProvisionalConvocatoria,
       List<ConvocatoriaEnlace> convocatoriaEnlaces) throws JsonProcessingException {
     log.debug("enviarComunicadoSolicitudCambioEstadoDenProv() - start");
@@ -177,7 +181,7 @@ public class SolicitudComService {
   }
 
   public void enviarComunicadoSolicitudCambioEstadoConc(Long solicitudId, String solicitanteRef,
-      String tituloConvocatoria,
+      Set<ConvocatoriaTitulo> tituloConvocatoria,
       Instant fechaConcesionConvocatoria,
       List<ConvocatoriaEnlace> convocatoriaEnlaces) throws JsonProcessingException {
     log.debug("enviarComunicadoSolicitudCambioEstadoConc() - start");
@@ -200,7 +204,7 @@ public class SolicitudComService {
   }
 
   public void enviarComunicadoSolicitudCambioEstadoDen(Long solicitudId, String solicitanteRef,
-      String tituloConvocatoria,
+      Set<ConvocatoriaTitulo> tituloConvocatoria,
       Instant fechaConcesionConvocatoria,
       List<ConvocatoriaEnlace> convocatoriaEnlaces) throws JsonProcessingException {
     log.debug("enviarComunicadoSolicitudCambioEstadoDen() - start");
@@ -242,7 +246,8 @@ public class SolicitudComService {
     log.debug("enviarComunicadoSolicitudAltaPeticionEvaluacionEti() - end");
   }
 
-  public void enviarComunicadoSolicitudUsuarioExterno(Long solicitudId, String tituloConvocatoria, String uuid)
+  public void enviarComunicadoSolicitudUsuarioExterno(Long solicitudId,
+      Collection<? extends I18nFieldValue> tituloConvocatoria, String uuid)
       throws JsonProcessingException {
     log.debug(
         "enviarComunicadoSolicitudUsuarioExterno(Long solicitudId, String tituloConvocatoria, String uuid) - start");
@@ -287,6 +292,6 @@ public class SolicitudComService {
 
     return destinatarios.stream()
         .map(destinatario -> Recipient.builder().name(destinatario).address(destinatario).build())
-        .collect(Collectors.toList());
+        .toList();
   }
 }

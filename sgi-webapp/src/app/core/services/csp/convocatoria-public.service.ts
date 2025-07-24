@@ -1,25 +1,11 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { CONVOCATORIA_AREA_TEMATICA_CONVERTER } from '@core/converters/csp/convocatoria-area-tematica.converter';
-import { CONVOCATORIA_CONCEPTO_GASTO_CONVERTER } from '@core/converters/csp/convocatoria-concepto-gasto.converter';
-import { CONVOCATORIA_DOCUMENTO_CONVERTER } from '@core/converters/csp/convocatoria-documento.converter';
-import { CONVOCATORIA_ENLACE_CONVERTER } from '@core/converters/csp/convocatoria-enlace.converter';
-import { CONVOCATORIA_ENTIDAD_CONVOCANTE_CONVERTER } from '@core/converters/csp/convocatoria-entidad-convocante.converter';
 import { CONVOCATORIA_ENTIDAD_FINANCIADORA_CONVERTER } from '@core/converters/csp/convocatoria-entidad-financiadora.converter';
 import { CONVOCATORIA_ENTIDAD_GESTORA_CONVERTER } from '@core/converters/csp/convocatoria-entidad-gestora.converter';
-import { CONVOCATORIA_PERIODO_JUSTIFICACION_CONVERTER } from '@core/converters/csp/convocatoria-periodo-justificacion.converter';
-import { CONVOCATORIA_PERIODO_SEGUIMIENTO_CIENTIFICO_CONVERTER } from '@core/converters/csp/convocatoria-periodo-seguimiento-cientifico.converter';
-import { CONVOCATORIA_CONVERTER } from '@core/converters/csp/convocatoria.converter';
 import { IConvocatoriaAreaTematicaBackend } from '@core/models/csp/backend/convocatoria-area-tematica-backend';
-import { IConvocatoriaBackend } from '@core/models/csp/backend/convocatoria-backend';
-import { IConvocatoriaConceptoGastoBackend } from '@core/models/csp/backend/convocatoria-concepto-gasto-backend';
-import { IConvocatoriaDocumentoBackend } from '@core/models/csp/backend/convocatoria-documento-backend';
-import { IConvocatoriaEnlaceBackend } from '@core/models/csp/backend/convocatoria-enlace-backend';
-import { IConvocatoriaEntidadConvocanteBackend } from '@core/models/csp/backend/convocatoria-entidad-convocante-backend';
 import { IConvocatoriaEntidadFinanciadoraBackend } from '@core/models/csp/backend/convocatoria-entidad-financiadora-backend';
 import { IConvocatoriaEntidadGestoraBackend } from '@core/models/csp/backend/convocatoria-entidad-gestora-backend';
-import { IConvocatoriaPeriodoJustificacionBackend } from '@core/models/csp/backend/convocatoria-periodo-justificacion-backend';
-import { IConvocatoriaPeriodoSeguimientoCientificoBackend } from '@core/models/csp/backend/convocatoria-periodo-seguimiento-cientifico-backend';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IConvocatoriaAreaTematica } from '@core/models/csp/convocatoria-area-tematica';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
@@ -38,10 +24,22 @@ import { IRequisitoEquipoCategoriaProfesional } from '@core/models/csp/requisito
 import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equipo-nivel-academico';
 import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
 import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
+import { IConvocatoriaDocumentoResponse } from '@core/services/csp/convocatoria-documento/convocatoria-documento-response';
+import { IConvocatoriaEnlaceResponse } from '@core/services/csp/convocatoria-enlace/convocatoria-enlace-response';
+import { CONVOCATORIA_ENLACE_RESPONSE_CONVERTER } from '@core/services/csp/convocatoria-enlace/convocatoria-enlace-response.converter';
+import { IConvocatoriaEntidadConvocanteResponse } from '@core/services/csp/convocatoria-entidad-convocante/convocatoria-entidad-convocante-response';
+import { CONVOCATORIA_ENTIDAD_CONVOCANTE_RESPONSE_CONVERTER } from '@core/services/csp/convocatoria-entidad-convocante/convocatoria-entidad-convocante-response.converter';
+import { IConvocatoriaPeriodoJustificacionResponse } from '@core/services/csp/convocatoria-periodo-justificacion/convocatoria-periodo-justificacion-response';
+import { IConvocatoriaPeriodoSeguimientoCientificoResponse } from '@core/services/csp/convocatoria-periodo-seguimiento-cientifico/convocatoria-periodo-seguimiento-cientifico-response';
+import { IConvocatoriaResponse } from '@core/services/csp/convocatoria/convocatoria-response';
+import { CONVOCATORIA_RESPONSE_CONVERTER } from '@core/services/csp/convocatoria/convocatoria-response.converter';
 import { environment } from '@env';
 import { FindByIdCtor, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, mixinFindById } from '@sgi/framework/http/';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IConvocatoriaConceptoGastoResponse } from './convocatoria-concepto-gasto/convocatoria-concepto-gasto-response';
+import { CONVOCATORIA_CONCEPTO_GASTO_RESPONSE_CONVERTER } from './convocatoria-concepto-gasto/convocatoria-concepto-gasto-response.converter';
+import { CONVOCATORIA_DOCUMENTO_RESPONSE_CONVERTER } from './convocatoria-documento/convocatoria-documento-response.converter';
 import { IConvocatoriaFaseResponse } from './convocatoria-fase/convocatoria-fase-response';
 import { CONVOCATORIA_FASE_RESPONSE_CONVERTER } from './convocatoria-fase/convocatoria-fase-response.converter';
 import { IConvocatoriaHitoResponse } from './convocatoria-hito/convocatoria-hito-response';
@@ -50,6 +48,8 @@ import { IConvocatoriaPalabraClaveResponse } from './convocatoria-palabra-clave/
 import { CONVOCATORIA_PALABRACLAVE_RESPONSE_CONVERTER } from './convocatoria-palabra-clave/convocatoria-palabra-clave-response.converter';
 import { IConvocatoriaPartidaPresupuestariaResponse } from './convocatoria-partida-presupuestaria/convocatoria-partida-presupuestaria-response';
 import { CONVOCATORIA_PARTIDA_PRESUPUESTARIA_RESPONSE_CONVERTER } from './convocatoria-partida-presupuestaria/convocatoria-partida-presupuestaria-response.converter';
+import { CONVOCATORIA_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER } from './convocatoria-periodo-justificacion/convocatoria-periodo-justificacion-response.converter';
+import { CONVOCATORIA_PERIODO_SEGUIMIENTO_CIENTIFICO_RESPONSE_CONVERTER } from './convocatoria-periodo-seguimiento-cientifico/convocatoria-periodo-seguimiento-cientifico-response.converter';
 import { IRequisitoEquipoCategoriaProfesionalResponse } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response';
 import { REQUISITO_EQUIPO_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-equipo-categoria-profesional/requisito-equipo-categoria-profesional-response.converter';
 import { IRequisitoEquipoNivelAcademicoResponse } from './requisito-equipo-nivel-academico/requisito-equipo-nivel-academico-response';
@@ -61,10 +61,10 @@ import { REQUISITOIP_NIVELACADEMICO_RESPONSE_CONVERTER } from './requisito-ip-ni
 
 // tslint:disable-next-line: variable-name
 const _ConvocatoriaMixinBase:
-  FindByIdCtor<number, IConvocatoria, IConvocatoriaBackend> &
+  FindByIdCtor<number, IConvocatoria, IConvocatoriaResponse> &
   typeof SgiRestBaseService = mixinFindById(
     SgiRestBaseService,
-    CONVOCATORIA_CONVERTER
+    CONVOCATORIA_RESPONSE_CONVERTER
   );
 
 @Injectable({
@@ -95,10 +95,10 @@ export class ConvocatoriaPublicService extends _ConvocatoriaMixinBase {
   }
 
   findAllInvestigador(options?: SgiRestFindOptions): Observable<SgiRestListResult<IConvocatoria>> {
-    return this.find<IConvocatoriaBackend, IConvocatoria>(
+    return this.find<IConvocatoriaResponse, IConvocatoria>(
       `${this.endpointUrl}/investigador`,
       options,
-      CONVOCATORIA_CONVERTER
+      CONVOCATORIA_RESPONSE_CONVERTER
     );
   }
 
@@ -111,10 +111,10 @@ export class ConvocatoriaPublicService extends _ConvocatoriaMixinBase {
 
   findAllConvocatoriaEntidadConvocantes(id: number, options?: SgiRestFindOptions):
     Observable<SgiRestListResult<IConvocatoriaEntidadConvocante>> {
-    return this.find<IConvocatoriaEntidadConvocanteBackend, IConvocatoriaEntidadConvocante>(
+    return this.find<IConvocatoriaEntidadConvocanteResponse, IConvocatoriaEntidadConvocante>(
       `${this.endpointUrl}/${id}/convocatoriaentidadconvocantes`,
       options,
-      CONVOCATORIA_ENTIDAD_CONVOCANTE_CONVERTER
+      CONVOCATORIA_ENTIDAD_CONVOCANTE_RESPONSE_CONVERTER
     );
   }
 
@@ -135,10 +135,10 @@ export class ConvocatoriaPublicService extends _ConvocatoriaMixinBase {
   }
 
   getPeriodosJustificacion(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IConvocatoriaPeriodoJustificacion>> {
-    return this.find<IConvocatoriaPeriodoJustificacionBackend, IConvocatoriaPeriodoJustificacion>(
+    return this.find<IConvocatoriaPeriodoJustificacionResponse, IConvocatoriaPeriodoJustificacion>(
       `${this.endpointUrl}/${id}/convocatoriaperiodojustificaciones`,
       options,
-      CONVOCATORIA_PERIODO_JUSTIFICACION_CONVERTER
+      CONVOCATORIA_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER
     );
   }
 
@@ -151,27 +151,27 @@ export class ConvocatoriaPublicService extends _ConvocatoriaMixinBase {
   }
 
   findDocumentos(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IConvocatoriaDocumento>> {
-    return this.find<IConvocatoriaDocumentoBackend, IConvocatoriaDocumento>(
+    return this.find<IConvocatoriaDocumentoResponse, IConvocatoriaDocumento>(
       `${this.endpointUrl}/${id}/convocatoriadocumentos`,
       options,
-      CONVOCATORIA_DOCUMENTO_CONVERTER
+      CONVOCATORIA_DOCUMENTO_RESPONSE_CONVERTER
     );
   }
 
   findSeguimientosCientificos(id: number, options?: SgiRestFindOptions)
     : Observable<SgiRestListResult<IConvocatoriaPeriodoSeguimientoCientifico>> {
-    return this.find<IConvocatoriaPeriodoSeguimientoCientificoBackend, IConvocatoriaPeriodoSeguimientoCientifico>(
+    return this.find<IConvocatoriaPeriodoSeguimientoCientificoResponse, IConvocatoriaPeriodoSeguimientoCientifico>(
       `${this.endpointUrl}/${id}/convocatoriaperiodoseguimientocientificos`,
       options,
-      CONVOCATORIA_PERIODO_SEGUIMIENTO_CIENTIFICO_CONVERTER
+      CONVOCATORIA_PERIODO_SEGUIMIENTO_CIENTIFICO_RESPONSE_CONVERTER
     );
   }
 
   getEnlaces(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IConvocatoriaEnlace>> {
-    return this.find<IConvocatoriaEnlaceBackend, IConvocatoriaEnlace>(
+    return this.find<IConvocatoriaEnlaceResponse, IConvocatoriaEnlace>(
       `${this.endpointUrl}/${id}/convocatoriaenlaces`,
       options,
-      CONVOCATORIA_ENLACE_CONVERTER
+      CONVOCATORIA_ENLACE_RESPONSE_CONVERTER
     );
   }
 
@@ -185,18 +185,18 @@ export class ConvocatoriaPublicService extends _ConvocatoriaMixinBase {
   }
 
   findAllConvocatoriaConceptoGastosNoPermitidos(id: number): Observable<SgiRestListResult<IConvocatoriaConceptoGasto>> {
-    return this.find<IConvocatoriaConceptoGastoBackend, IConvocatoriaConceptoGasto>(
+    return this.find<IConvocatoriaConceptoGastoResponse, IConvocatoriaConceptoGasto>(
       `${this.endpointUrl}/${id}/convocatoriagastos/nopermitidos`,
       undefined,
-      CONVOCATORIA_CONCEPTO_GASTO_CONVERTER
+      CONVOCATORIA_CONCEPTO_GASTO_RESPONSE_CONVERTER
     );
   }
 
   findAllConvocatoriaConceptoGastosPermitidos(id: number): Observable<SgiRestListResult<IConvocatoriaConceptoGasto>> {
-    return this.find<IConvocatoriaConceptoGastoBackend, IConvocatoriaConceptoGasto>(
+    return this.find<IConvocatoriaConceptoGastoResponse, IConvocatoriaConceptoGasto>(
       `${this.endpointUrl}/${id}/convocatoriagastos/permitidos`,
       undefined,
-      CONVOCATORIA_CONCEPTO_GASTO_CONVERTER
+      CONVOCATORIA_CONCEPTO_GASTO_RESPONSE_CONVERTER
     );
   }
 

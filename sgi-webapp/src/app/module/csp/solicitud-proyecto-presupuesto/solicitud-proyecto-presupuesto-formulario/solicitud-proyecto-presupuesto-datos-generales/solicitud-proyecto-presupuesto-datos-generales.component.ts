@@ -6,6 +6,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { NGXLogger } from 'ngx-logger';
 import { SolicitudProyectoPresupuestoActionService } from '../../solicitud-proyecto-presupuesto.action.service';
 import { SolicitudProyectoPresupuestoDatosGeneralesFragment } from './solicitud-proyecto-presupuesto-datos-generales.fragment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'sgi-solicitud-proyecto-presupuesto-datos-generales',
@@ -21,9 +22,10 @@ export class SolicitudProyectoPresupuestoDatosGeneralesComponent extends FormFra
 
   constructor(
     protected logger: NGXLogger,
-    protected actionService: SolicitudProyectoPresupuestoActionService
+    protected actionService: SolicitudProyectoPresupuestoActionService,
+    private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as SolicitudProyectoPresupuestoDatosGeneralesFragment;
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(36%-10px)';
@@ -41,4 +43,5 @@ export class SolicitudProyectoPresupuestoDatosGeneralesComponent extends FormFra
     super.ngOnInit();
   }
 
+  protected setupI18N(): void { }
 }

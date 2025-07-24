@@ -5,9 +5,11 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
@@ -17,23 +19,26 @@ import org.crue.hercules.sgi.eti.exceptions.ConvocatoriaReunionNotFoundException
 import org.crue.hercules.sgi.eti.exceptions.EvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.MemoriaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionLugar;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionOrdenDia;
 import org.crue.hercules.sgi.eti.model.Dictamen;
-import org.crue.hercules.sgi.eti.model.EstadoMemoria;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
-import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.MemoriaTitulo;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
-import org.crue.hercules.sgi.eti.model.TipoMemoria;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.ConvocatoriaReunionRepository;
 import org.crue.hercules.sgi.eti.repository.EstadoMemoriaRepository;
@@ -42,6 +47,9 @@ import org.crue.hercules.sgi.eti.repository.MemoriaRepository;
 import org.crue.hercules.sgi.eti.repository.RetrospectivaRepository;
 import org.crue.hercules.sgi.eti.service.impl.EvaluacionServiceImpl;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
+import org.crue.hercules.sgi.framework.i18n.I18nConfig;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -49,6 +57,8 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -100,12 +110,17 @@ class EvaluacionServiceTest extends BaseServiceTest {
   @Mock
   private RetrospectivaService retrospectivaService;
 
+  @Autowired
+  private MessageSource messageSource;
+  @Autowired
+  private I18nConfig i18nConfig;
+
   @BeforeEach
   void setUp() throws Exception {
     evaluacionService = new EvaluacionServiceImpl(evaluacionRepository, memoriaService, comentarioRepository,
         convocatoriaReunionRepository, memoriaRepository,
         evaluacionConverter, reportService, sgdocService, comunicadosService, sgiConfigProperties, evaluadorService,
-        retrospectivaService);
+        retrospectivaService, messageSource, i18nConfig);
   }
 
   @Test
@@ -117,7 +132,8 @@ class EvaluacionServiceTest extends BaseServiceTest {
 
     Assertions.assertThat(evaluacion.getId()).isEqualTo(1L);
 
-    Assertions.assertThat(evaluacion.getMemoria().getTitulo()).isEqualTo("Memoria1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacion.getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria1");
     Assertions.assertThat(evaluacion.getDictamen().getNombre()).isEqualTo("Dictamen1");
     Assertions.assertThat(evaluacion.getConvocatoriaReunion().getId()).isEqualTo(1L);
     Assertions.assertThat(evaluacion.getTipoEvaluacion().getNombre()).isEqualTo("TipoEvaluacion1");
@@ -160,7 +176,8 @@ class EvaluacionServiceTest extends BaseServiceTest {
     // then: La Evaluacion se crea correctamente
     Assertions.assertThat(evaluacionCreado).isNotNull();
     Assertions.assertThat(evaluacionCreado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluacion.getMemoria().getTitulo()).isEqualTo("Memoria New");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacion.getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria New");
     Assertions.assertThat(evaluacion.getDictamen().getNombre()).isEqualTo("Dictamen New");
     Assertions.assertThat(evaluacion.getConvocatoriaReunion().getId()).isEqualTo(1L);
   }
@@ -195,7 +212,8 @@ class EvaluacionServiceTest extends BaseServiceTest {
     // then: La Evaluacion se crea correctamente
     Assertions.assertThat(evaluacionCreado).isNotNull();
     Assertions.assertThat(evaluacionCreado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluacion.getMemoria().getTitulo()).isEqualTo("Memoria New");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacion.getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria New");
     Assertions.assertThat(evaluacion.getDictamen().getNombre()).isEqualTo("Dictamen New");
     Assertions.assertThat(evaluacion.getConvocatoriaReunion().getId()).isEqualTo(1L);
   }
@@ -231,7 +249,8 @@ class EvaluacionServiceTest extends BaseServiceTest {
     // then: La Evaluacion se crea correctamente
     Assertions.assertThat(evaluacionCreado).isNotNull();
     Assertions.assertThat(evaluacionCreado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluacion.getMemoria().getTitulo()).isEqualTo("Memoria New");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacion.getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria New");
     Assertions.assertThat(evaluacion.getDictamen().getNombre()).isEqualTo("Dictamen New");
     Assertions.assertThat(evaluacion.getConvocatoriaReunion().getId()).isEqualTo(1L);
   }
@@ -285,7 +304,8 @@ class EvaluacionServiceTest extends BaseServiceTest {
 
     // then: La evaluacion se actualiza correctamente.
     Assertions.assertThat(evaluacionActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluacionActualizado.getMemoria().getTitulo()).isEqualTo("Memoria actualizado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacionActualizado.getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria actualizado");
     Assertions.assertThat(evaluacionActualizado.getDictamen().getNombre()).isEqualTo("Dictamen actualizado");
     Assertions.assertThat(evaluacionActualizado.getConvocatoriaReunion().getId()).isEqualTo(1L);
 
@@ -307,7 +327,8 @@ class EvaluacionServiceTest extends BaseServiceTest {
 
     // then: La evaluacion se actualiza correctamente.
     Assertions.assertThat(evaluacionActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluacionActualizado.getMemoria().getTitulo()).isEqualTo("Memoria actualizado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacionActualizado.getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria actualizado");
     Assertions.assertThat(evaluacionActualizado.getDictamen().getNombre()).isEqualTo("Dictamen actualizado");
     Assertions.assertThat(evaluacionActualizado.getConvocatoriaReunion().getId()).isEqualTo(1L);
 
@@ -330,7 +351,8 @@ class EvaluacionServiceTest extends BaseServiceTest {
 
     // then: La evaluacion se actualiza correctamente.
     Assertions.assertThat(evaluacionActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluacionActualizado.getMemoria().getTitulo()).isEqualTo("Memoria actualizado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacionActualizado.getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria actualizado");
     Assertions.assertThat(evaluacionActualizado.getDictamen().getNombre()).isEqualTo("Dictamen actualizado");
     Assertions.assertThat(evaluacionActualizado.getConvocatoriaReunion().getId()).isEqualTo(1L);
 
@@ -353,7 +375,8 @@ class EvaluacionServiceTest extends BaseServiceTest {
 
     // then: La evaluacion se actualiza correctamente.
     Assertions.assertThat(evaluacionActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluacionActualizado.getMemoria().getTitulo()).isEqualTo("Memoria actualizado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacionActualizado.getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria actualizado");
     Assertions.assertThat(evaluacionActualizado.getDictamen().getNombre()).isEqualTo("Dictamen actualizado");
     Assertions.assertThat(evaluacionActualizado.getConvocatoriaReunion().getId()).isEqualTo(1L);
 
@@ -474,7 +497,8 @@ class EvaluacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       Evaluacion evaluacion = page.getContent().get(i);
-      Assertions.assertThat(evaluacion.getMemoria().getTitulo()).isEqualTo("Memoria" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacion.getMemoria().getTitulo(), Language.ES))
+          .isEqualTo("Memoria" + String.format("%03d", j));
       Assertions.assertThat(evaluacion.getDictamen().getNombre()).isEqualTo("Dictamen" + String.format("%03d", j));
       Assertions.assertThat(evaluacion.getConvocatoriaReunion().getId()).isEqualTo(1L);
     }
@@ -579,11 +603,11 @@ class EvaluacionServiceTest extends BaseServiceTest {
       // when: se listar sus evaluaciones
       evaluacionService.findEvaluacionesAnterioresByMemoria(memoriaId, evaluacionId, tipoComentarioId,
           Pageable.unpaged());
-      Assertions.fail("El id de la memoria no puede ser nulo para mostrar sus evaluaciones");
+      Assertions.fail("Identificador de Memoria no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("El id de la memoria no puede ser nulo para mostrar sus evaluaciones");
+          .isEqualTo("Identificador de Memoria no puede ser nulo");
     }
   }
 
@@ -597,11 +621,11 @@ class EvaluacionServiceTest extends BaseServiceTest {
       // when: se listar sus evaluaciones
       evaluacionService.findEvaluacionesAnterioresByMemoria(memoriaId, evaluacionId, tipoComentarioId,
           Pageable.unpaged());
-      Assertions.fail("El id de la evaluación no puede ser nulo para recuperar las evaluaciones anteriores");
+      Assertions.fail("Identificador de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("El id de la evaluación no puede ser nulo para recuperar las evaluaciones anteriores");
+          .isEqualTo("Identificador de Evaluación no puede ser nulo");
     }
   }
 
@@ -699,7 +723,8 @@ class EvaluacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       Evaluacion evaluacion = page.getContent().get(i);
-      Assertions.assertThat(evaluacion.getMemoria().getTitulo()).isEqualTo("Memoria" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacion.getMemoria().getTitulo(), Language.ES))
+          .isEqualTo("Memoria" + String.format("%03d", j));
       Assertions.assertThat(evaluacion.getDictamen().getNombre()).isEqualTo("Dictamen" + String.format("%03d", j));
     }
   }
@@ -711,11 +736,11 @@ class EvaluacionServiceTest extends BaseServiceTest {
     try {
       // when: se quiere listar sus evaluaciones
       evaluacionService.findByEvaluador(personaRef, null, Pageable.unpaged());
-      Assertions.fail("El personaRef de la evaluación no puede ser nulo para mostrar sus evaluaciones");
+      Assertions.fail("Referencia Persona de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("El personaRef de la evaluación no puede ser nulo para mostrar sus evaluaciones");
+          .isEqualTo("Referencia Persona de Evaluación no puede ser nulo");
     }
   }
 
@@ -747,11 +772,11 @@ class EvaluacionServiceTest extends BaseServiceTest {
     try {
       // when: se quiere listar sus evaluaciones
       evaluacionService.findEvaluacionesEnSeguimientosByEvaluador(personaRef, null, Pageable.unpaged());
-      Assertions.fail("El personaRef de la evaluación no puede ser nulo para mostrar sus evaluaciones en seguimiento");
+      Assertions.fail("Referencia Persona de Evaluación no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("El personaRef de la evaluación no puede ser nulo para mostrar sus evaluaciones en seguimiento");
+          .isEqualTo("Referencia Persona de Evaluación no puede ser nulo");
     }
   }
 
@@ -818,7 +843,7 @@ class EvaluacionServiceTest extends BaseServiceTest {
     } catch (
 
     IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("La fecha de la convocatoria es anterior a la actual");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Fecha Actual debe ser anterior Fecha Convocatoria");
     }
 
   }
@@ -837,7 +862,7 @@ class EvaluacionServiceTest extends BaseServiceTest {
     } catch (
 
     final IllegalArgumentException e) {
-      Assertions.assertThat(e.getMessage()).isEqualTo("La evaluación no pertenece a esta convocatoria de reunión");
+      Assertions.assertThat(e.getMessage()).isEqualTo("Evaluación no pertenece a Convocatoria Reunión");
     }
 
   }
@@ -846,8 +871,17 @@ class EvaluacionServiceTest extends BaseServiceTest {
   void findAllByMemoriaId_ReturnsFullEvaluacionList() {
 
     // given: Datos existentes con memoriaId = 1
-    Memoria memoria = new Memoria(1L, "numRef-001", null, null, "Memoria", "user-001", null, null, Instant.now(),
-        Boolean.TRUE, null, 3, Boolean.TRUE, null);
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, "Memoria"));
+    Memoria memoria = new Memoria();
+    memoria.setId(1L);
+    memoria.setNumReferencia("numRef-001");
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("user-001");
+    memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setRequiereRetrospectiva(Boolean.TRUE);
+    memoria.setVersion(3);
+    memoria.setActivo(Boolean.TRUE);
 
     Long memoriaId = 1L;
     List<Evaluacion> response = new LinkedList<Evaluacion>();
@@ -872,8 +906,18 @@ class EvaluacionServiceTest extends BaseServiceTest {
   @Test
   void findAllByMemoriaId_ReturnEmptyPage() {
 
-    Memoria memoria = new Memoria(1L, "numRef-001", null, null, "Memoria", "user-001", null, null, Instant.now(),
-        Boolean.TRUE, null, 3, Boolean.TRUE, null);
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, "Memoria"));
+    Memoria memoria = new Memoria();
+    memoria.setId(1L);
+    memoria.setNumReferencia("numRef-001");
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("user-001");
+    memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setRequiereRetrospectiva(Boolean.TRUE);
+    memoria.setVersion(3);
+    memoria.setActivo(Boolean.TRUE);
+
     // given: No hay datos con memoriaId = 1
     Long memoriaId = 1L;
 
@@ -900,11 +944,11 @@ class EvaluacionServiceTest extends BaseServiceTest {
     try {
       // when: se quiere listar sus evaluaciones
       evaluacionService.findAllByMemoriaId(memoriaId, Pageable.unpaged());
-      Assertions.fail("El id de la memoria no puede ser nulo para mostrar sus evaluaciones");
+      Assertions.fail("Identificador de Memoria no puede ser nulo");
       // then: se debe lanzar una excepción
     } catch (IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("El id de la memoria no puede ser nulo para mostrar sus evaluaciones");
+          .isEqualTo("Identificador de Memoria no puede ser nulo");
     }
   }
 
@@ -918,7 +962,7 @@ class EvaluacionServiceTest extends BaseServiceTest {
    * @return el objeto Evaluacion
    */
 
-  public Evaluacion generarMockEvaluacion(final Long id, final String sufijo, final Long idTipoEstadoMemoria,
+  private Evaluacion generarMockEvaluacion(final Long id, final String sufijo, final Long idTipoEstadoMemoria,
       final Long idEstadoRetrospectiva) {
 
     final String sufijoStr = (sufijo == null ? id.toString() : sufijo);
@@ -933,30 +977,35 @@ class EvaluacionServiceTest extends BaseServiceTest {
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> peTitulo = new HashSet<>();
+    peTitulo.add(new PeticionEvaluacionTitulo(Language.ES, "PeticionEvaluacion1"));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen"));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos1"));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico1"));
     final PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo1");
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico1");
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos1");
-    peticionEvaluacion.setResumen("Resumen");
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria");
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo("PeticionEvaluacion1");
+    peticionEvaluacion.setTitulo(peTitulo);
     peticionEvaluacion.setPersonaRef("user-001");
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
-    final Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    final Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
-
-    final TipoMemoria tipoMemoria = new TipoMemoria();
-    tipoMemoria.setId(1L); // Nueva
-    tipoMemoria.setNombre("TipoMemoria1");
-    tipoMemoria.setActivo(Boolean.TRUE);
+    final Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
     final TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
     tipoEstadoMemoria.setId(idTipoEstadoMemoria); // En elaboración
@@ -964,20 +1013,43 @@ class EvaluacionServiceTest extends BaseServiceTest {
     final EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
     estadoRetrospectiva.setId(idEstadoRetrospectiva); // Pendiente
 
-    final Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr,
-        "user-00" + id, tipoMemoria, tipoEstadoMemoria, Instant.now(), Boolean.TRUE,
-        new Retrospectiva(id, estadoRetrospectiva, Instant.now()), 3, Boolean.TRUE, null);
+    final Retrospectiva retrospectiva = new Retrospectiva();
+    retrospectiva.setId(id);
+    retrospectiva.setEstadoRetrospectiva(estadoRetrospectiva);
+    retrospectiva.setFechaRetrospectiva(Instant.now());
+
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, "Memoria" + sufijoStr));
+    final Memoria memoria = new Memoria();
+    memoria.setId(1L);
+    memoria.setNumReferencia("numRef-001");
+    memoria.setPeticionEvaluacion(peticionEvaluacion);
+    memoria.setComite(comite);
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("user-00" + id);
+    memoria.setTipo(Memoria.Tipo.NUEVA);
+    memoria.setEstadoActual(tipoEstadoMemoria);
+    memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setRequiereRetrospectiva(Boolean.TRUE);
+    memoria.setRetrospectiva(retrospectiva);
+    memoria.setVersion(3);
+    memoria.setActivo(Boolean.TRUE);
 
     final TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
 
+    Set<ConvocatoriaReunionLugar> lugar = new HashSet<>();
+    lugar.add(new ConvocatoriaReunionLugar(Language.ES, "Lugar"));
+    Set<ConvocatoriaReunionOrdenDia> ordenDia = new HashSet<>();
+    ordenDia.add(new ConvocatoriaReunionOrdenDia(Language.ES,
+        "Orden del día convocatoria reunión"));
     final ConvocatoriaReunion convocatoriaReunion = new ConvocatoriaReunion();
     convocatoriaReunion.setId(1L); // Ordinaria
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.parse("2020-05-10T00:00:00Z"));
     convocatoriaReunion.setFechaLimite(Instant.now());
     convocatoriaReunion.setVideoconferencia(false);
-    convocatoriaReunion.setLugar("Lugar");
-    convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
+    convocatoriaReunion.setLugar(lugar);
+    convocatoriaReunion.setOrdenDia(ordenDia);
     convocatoriaReunion.setAnio(2020);
     convocatoriaReunion.setNumeroActa(100L);
     convocatoriaReunion.setTipoConvocatoriaReunion(tipoConvocatoriaReunion);
@@ -1013,7 +1085,7 @@ class EvaluacionServiceTest extends BaseServiceTest {
     return evaluacion;
   }
 
-  public Evaluacion generarMockEvaluacion_ConvocatoriaReuSeguimiento(final Long id, final String sufijo,
+  private Evaluacion generarMockEvaluacion_ConvocatoriaReuSeguimiento(final Long id, final String sufijo,
       final Long idTipoEstadoMemoria, final Long idEstadoRetrospectiva) {
 
     String sufijoStr = (sufijo == null ? id.toString() : sufijo);
@@ -1028,30 +1100,35 @@ class EvaluacionServiceTest extends BaseServiceTest {
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> peTitulo = new HashSet<>();
+    peTitulo.add(new PeticionEvaluacionTitulo(Language.ES, "PeticionEvaluacion1"));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen"));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos1"));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico1"));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo1");
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico1");
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos1");
-    peticionEvaluacion.setResumen("Resumen");
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria");
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo("PeticionEvaluacion1");
+    peticionEvaluacion.setTitulo(peTitulo);
     peticionEvaluacion.setPersonaRef("user-001");
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
-
-    TipoMemoria tipoMemoria = new TipoMemoria();
-    tipoMemoria.setId(1L);
-    tipoMemoria.setNombre("TipoMemoria1");
-    tipoMemoria.setActivo(Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
     TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
     tipoEstadoMemoria.setId(idTipoEstadoMemoria);
@@ -1059,20 +1136,43 @@ class EvaluacionServiceTest extends BaseServiceTest {
     EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
     estadoRetrospectiva.setId(idEstadoRetrospectiva);
 
-    Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
-        tipoMemoria, tipoEstadoMemoria, Instant.now(), Boolean.TRUE,
-        new Retrospectiva(id, estadoRetrospectiva, Instant.now()), 3, Boolean.TRUE, null);
+    Retrospectiva retrospectiva = new Retrospectiva();
+    retrospectiva.setId(id);
+    retrospectiva.setEstadoRetrospectiva(estadoRetrospectiva);
+    retrospectiva.setFechaRetrospectiva(Instant.now());
+
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, "Memoria" + sufijoStr));
+    Memoria memoria = new Memoria();
+    memoria.setId(1L);
+    memoria.setNumReferencia("numRef-001");
+    memoria.setPeticionEvaluacion(peticionEvaluacion);
+    memoria.setComite(comite);
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("user-00" + id);
+    memoria.setTipo(Memoria.Tipo.NUEVA);
+    memoria.setEstadoActual(tipoEstadoMemoria);
+    memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setRequiereRetrospectiva(Boolean.TRUE);
+    memoria.setRetrospectiva(retrospectiva);
+    memoria.setVersion(3);
+    memoria.setActivo(Boolean.TRUE);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(3L, "Seguimiento", Boolean.TRUE);
 
+    Set<ConvocatoriaReunionLugar> lugar = new HashSet<>();
+    lugar.add(new ConvocatoriaReunionLugar(Language.ES, "Lugar"));
+    Set<ConvocatoriaReunionOrdenDia> ordenDia = new HashSet<>();
+    ordenDia.add(new ConvocatoriaReunionOrdenDia(Language.ES,
+        "Orden del día convocatoria reunión"));
     ConvocatoriaReunion convocatoriaReunion = new ConvocatoriaReunion();
     convocatoriaReunion.setId(1L);
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.parse("2020-05-10T00:00:00Z"));
     convocatoriaReunion.setFechaLimite(Instant.now());
     convocatoriaReunion.setVideoconferencia(false);
-    convocatoriaReunion.setLugar("Lugar");
-    convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
+    convocatoriaReunion.setLugar(lugar);
+    convocatoriaReunion.setOrdenDia(ordenDia);
     convocatoriaReunion.setAnio(2020);
     convocatoriaReunion.setNumeroActa(100L);
     convocatoriaReunion.setTipoConvocatoriaReunion(tipoConvocatoriaReunion);
@@ -1108,23 +1208,6 @@ class EvaluacionServiceTest extends BaseServiceTest {
     return evaluacion;
   }
 
-  public List<EstadoMemoria> generarEstadosMemoria(Long id) {
-    List<EstadoMemoria> estadosMemoria = new ArrayList<EstadoMemoria>();
-    EstadoMemoria estadoMemoria = new EstadoMemoria();
-    estadoMemoria.setFechaEstado(Instant.now());
-    estadoMemoria.setId(id);
-    estadoMemoria.setMemoria(new Memoria());
-    estadosMemoria.add(estadoMemoria);
-    return estadosMemoria;
-  }
-
-  public EstadoRetrospectiva generarEstadoRetrospectiva(Long id) {
-    EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
-    estadoRetrospectiva.setActivo(true);
-    estadoRetrospectiva.setId(id);
-    return estadoRetrospectiva;
-  }
-
   /**
    * Función que devuelve un objeto Memoria.
    * 
@@ -1138,11 +1221,24 @@ class EvaluacionServiceTest extends BaseServiceTest {
   private Memoria generarMockMemoria(Long id, String numReferencia, String titulo, Integer version,
       Long idTipoEstadoMemoria) {
 
-    return new Memoria(id, numReferencia, generarMockPeticionEvaluacion(id, titulo + " PeticionEvaluacion" + id),
-        generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
-        generarMockTipoMemoria(1L, "TipoMemoria1", true),
-        generarMockTipoEstadoMemoria(idTipoEstadoMemoria, "Estado", Boolean.TRUE), Instant.now(), Boolean.TRUE,
-        generarMockRetrospectiva(1L), version, Boolean.TRUE, null);
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, titulo));
+    Memoria memoria = new Memoria();
+    memoria.setId(id);
+    memoria.setNumReferencia(numReferencia);
+    memoria.setPeticionEvaluacion(generarMockPeticionEvaluacion(id, titulo + " PeticionEvaluacion" + id));
+    memoria.setComite(generarMockComite(id, "comite" + id, true));
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("user-00" + id);
+    memoria.setTipo(Memoria.Tipo.NUEVA);
+    memoria.setEstadoActual(generarMockTipoEstadoMemoria(idTipoEstadoMemoria, "Estado", Boolean.TRUE));
+    memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setRequiereRetrospectiva(Boolean.TRUE);
+    memoria.setRetrospectiva(generarMockRetrospectiva(1L));
+    memoria.setVersion(version);
+    memoria.setActivo(Boolean.TRUE);
+
+    return memoria;
   }
 
   /**
@@ -1152,21 +1248,13 @@ class EvaluacionServiceTest extends BaseServiceTest {
    * @param comite comité.
    * @param activo indicador de activo.
    */
-  private Comite generarMockComite(Long id, String comite, Boolean activo) {
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    return new Comite(id, comite, "nombreInvestigacion", Genero.M, formulario, activo);
+  private Comite generarMockComite(Long id, String codigo, Boolean activo) {
+    Comite comite = new Comite();
+    comite.setId(id);
+    comite.setCodigo(codigo);
+    comite.setActivo(activo);
 
-  }
-
-  /**
-   * Función que devuelve un objeto tipo memoria.
-   * 
-   * @param id     identificador del tipo memoria.
-   * @param nombre nobmre.
-   * @param activo indicador de activo.
-   */
-  private TipoMemoria generarMockTipoMemoria(Long id, String nombre, Boolean activo) {
-    return new TipoMemoria(id, nombre, activo);
+    return comite;
 
   }
 
@@ -1211,19 +1299,27 @@ class EvaluacionServiceTest extends BaseServiceTest {
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> tit = new HashSet<>();
+    tit.add(new PeticionEvaluacionTitulo(Language.ES, titulo));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen" + id));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos" + id));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico" + id));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo" + id);
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico" + id);
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos" + id);
-    peticionEvaluacion.setResumen("Resumen" + id);
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria" + id);
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo(titulo);
+    peticionEvaluacion.setTitulo(tit);
     peticionEvaluacion.setPersonaRef("user-00" + id);
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);

@@ -10,7 +10,6 @@ import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { PeticionEvaluacionActionService } from '../../peticion-evaluacion.action.service';
 import { PeticionEvaluacionDatosGeneralesComponent } from './peticion-evaluacion-datos-generales.component';
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 
 describe('PeticionEvaluacionDatosGeneralesComponent', () => {
@@ -29,8 +28,7 @@ describe('PeticionEvaluacionDatosGeneralesComponent', () => {
         TestUtils.getIdiomas(),
         MaterialDesignModule,
         BrowserAnimationsModule,
-        SharedModule,
-        CKEditorModule
+        SharedModule
       ],
       providers: [
         PeticionEvaluacionActionService,

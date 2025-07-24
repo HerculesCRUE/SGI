@@ -4,8 +4,8 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.tipo-financiacion.nombre' | translate}}</mat-label>
-        <input matInput formControlName="nombre" type="text"
-          placeholder="{{'csp.tipo-financiacion.nombre' | translate}}" required>
+        <sgi-i18n-input formControlName="nombre"
+          placeholder="{{'csp.tipo-financiacion.nombre' | translate}}"></sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>
@@ -15,8 +15,8 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.tipo-financiacion.descripcion' | translate}}</mat-label>
-        <textarea matInput formControlName="descripcion"
-          placeholder="{{'csp.tipo-financiacion.descripcion' | translate}}"></textarea>
+        <sgi-i18n-textarea formControlName="descripcion"
+          placeholder="{{'csp.tipo-financiacion.descripcion' | translate}}"></sgi-i18n-textarea>
       </mat-form-field>
     </div>
   </form>

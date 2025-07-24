@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.crue.hercules.sgi.csp.exceptions.ProgramaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudModalidadNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
+import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Solicitud;
@@ -19,7 +20,9 @@ import org.crue.hercules.sgi.csp.service.SolicitudModalidadService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,7 +40,18 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class SolicitudModalidadServiceImpl implements SolicitudModalidadService {
 
-  private static final String MODALIDAD_NOT_VALID = "La modalidad seleccionada no pertenece al arbol del programa de la convocatoria";
+  private static final String MSG_NO_PERTENECE = "org.crue.hercules.sgi.csp.exceptions.entity.noPertenece.anotherEntity";
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_ANOTHER_ENTITY = "anotherEntity";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_MODEL_PROGRAMA = "org.crue.hercules.sgi.csp.model.Programa.message";
+  private static final String MSG_MODEL_SOLICITUD = "org.crue.hercules.sgi.csp.model.Solicitud.message";
+  private static final String MSG_MODEL_SOLICITUD_MODALIDAD = "org.crue.hercules.sgi.csp.model.SolicitudModalidad.message";
+  private static final String MSG_ENTITY_MODIFICABLE = "org.springframework.util.Assert.entity.modificable.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA = "org.springframework.util.Assert.accion.denegada.message";
 
   private final SolicitudModalidadRepository repository;
   private final SolicitudRepository solicitudRepository;
@@ -70,12 +84,9 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
   public SolicitudModalidad create(SolicitudModalidad solicitudModalidad) {
     log.debug("create(SolicitudModalidad solicitudModalidad) - start");
 
-    Assert.isNull(solicitudModalidad.getId(),
-        "SolicitudModalidad id tiene que ser null para crear una SolicitudModalidad");
-    Assert.notNull(solicitudModalidad.getSolicitudId(),
-        "Solicitud id no puede ser null para crear una SolicitudModalidad");
-    Assert.notNull(solicitudModalidad.getPrograma().getId(),
-        "Programa id no puede ser null para crear una SolicitudModalidad");
+    AssertHelper.idIsNull(solicitudModalidad.getId(), SolicitudModalidad.class);
+    AssertHelper.idNotNull(solicitudModalidad.getSolicitudId(), Solicitud.class);
+    AssertHelper.idNotNull(solicitudModalidad.getPrograma().getId(), Programa.class);
 
     Solicitud solicitud = solicitudRepository.findById(solicitudModalidad.getSolicitudId())
         .orElseThrow(() -> new SolicitudNotFoundException(solicitudModalidad.getSolicitudId()));
@@ -89,13 +100,17 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
         .findByConvocatoriaIdAndEntidadRefAndProgramaId(solicitud.getConvocatoriaId(),
             solicitudModalidad.getEntidadRef(), solicitudModalidad.getProgramaConvocatoriaId());
 
-    Assert.isTrue(convocatoriaEntidadConvocante.isPresent(),
-        "No existe ninguna ConvocatoriaEntidadConvocante con el entidadRef para la convocatoria seleccionada");
+    AssertHelper.entityNotExists(convocatoriaEntidadConvocante.isPresent(), Convocatoria.class,
+        ConvocatoriaEntidadConvocante.class);
 
     Assert.isTrue(
         isModalidadDescencientePrograma(solicitudModalidad.getPrograma(),
             convocatoriaEntidadConvocante.get().getPrograma()),
-        MODALIDAD_NOT_VALID);
+        () -> ProblemMessage.builder()
+            .key(MSG_NO_PERTENECE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_MODALIDAD))
+            .parameter(MSG_KEY_ANOTHER_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_PROGRAMA))
+            .build());
 
     SolicitudModalidad returnValue = repository.save(solicitudModalidad);
 
@@ -115,18 +130,20 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
   public SolicitudModalidad update(SolicitudModalidad solicitudModalidad) {
     log.debug("update(SolicitudModalidad solicitudModalidad) - start");
 
-    Assert.notNull(solicitudModalidad.getId(), "Id no puede ser null para actualizar SolicitudModalidad");
-    Assert.notNull(solicitudModalidad.getSolicitudId(),
-        "La solicitud no puede ser null para actualizar la SolicitudModalidad");
-    Assert.notNull(solicitudModalidad.getPrograma().getId(),
-        "Id Programa no puede ser null para crear la SolicitudModalidad");
+    AssertHelper.idNotNull(solicitudModalidad.getId(), SolicitudModalidad.class);
+    AssertHelper.idNotNull(solicitudModalidad.getSolicitudId(), Solicitud.class);
+    AssertHelper.idNotNull(solicitudModalidad.getPrograma().getId(), Programa.class);
 
     solicitudModalidad.setPrograma(programaRepository.findById(solicitudModalidad.getPrograma().getId())
         .orElseThrow(() -> new ProgramaNotFoundException(solicitudModalidad.getPrograma().getId())));
 
     // comprobar si la solicitud es modificable
     Assert.isTrue(solicitudService.modificable(solicitudModalidad.getSolicitudId()),
-        "No se puede modificar SolicitudModalidad");
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_MODIFICABLE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_MODALIDAD))
+            .parameter(MSG_KEY_MSG, null)
+            .build());
 
     return repository.findById(solicitudModalidad.getId()).map(data -> {
 
@@ -147,7 +164,11 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
       Assert.isTrue(
           isModalidadDescencientePrograma(solicitudModalidad.getPrograma(),
               convocatoriaEntidadConvocante.get().getPrograma()),
-          MODALIDAD_NOT_VALID);
+          () -> ProblemMessage.builder()
+              .key(MSG_NO_PERTENECE)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_MODALIDAD))
+              .parameter(MSG_KEY_ANOTHER_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_PROGRAMA))
+              .build());
 
       data.setPrograma(solicitudModalidad.getPrograma());
       SolicitudModalidad returnValue = repository.save(data);
@@ -167,28 +188,13 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "SolicitudModalidad id no puede ser null para eliminar un SolicitudModalidad");
+    AssertHelper.idNotNull(id, SolicitudModalidad.class);
     if (!repository.existsById(id)) {
       throw new SolicitudModalidadNotFoundException(id);
     }
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
-  }
-
-  /**
-   * Obtiene una entidad {@link SolicitudModalidad} por id.
-   * 
-   * @param id Identificador de la entidad {@link SolicitudModalidad}.
-   * @return solicitudModalidad la entidad {@link SolicitudModalidad}.
-   */
-  @Override
-  public SolicitudModalidad findById(Long id) {
-    log.debug("findById(Long id) - start");
-    final SolicitudModalidad returnValue = repository.findById(id)
-        .orElseThrow(() -> new SolicitudModalidadNotFoundException(id));
-    log.debug("findById(Long id) - end");
-    return returnValue;
   }
 
   /**
@@ -228,10 +234,8 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
     authorityHelper.checkExternalUserHasAuthorityModifySolicitud(solicitud);
     solicitudModalidad.setSolicitudId(solicitud.getId());
 
-    Assert.isNull(solicitudModalidad.getId(),
-        "SolicitudModalidad id tiene que ser null para crear una SolicitudModalidad");
-    Assert.notNull(solicitudModalidad.getPrograma().getId(),
-        "Programa id no puede ser null para crear una SolicitudModalidad");
+    AssertHelper.idIsNull(solicitudModalidad.getId(), SolicitudModalidad.class);
+    AssertHelper.idNotNull(solicitudModalidad.getPrograma().getId(), Programa.class);
 
     solicitudModalidad.setPrograma(programaRepository.findById(solicitudModalidad.getPrograma().getId())
         .orElseThrow(() -> new ProgramaNotFoundException(solicitudModalidad.getPrograma().getId())));
@@ -248,7 +252,11 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
     Assert.isTrue(
         isModalidadDescencientePrograma(solicitudModalidad.getPrograma(),
             convocatoriaEntidadConvocante.get().getPrograma()),
-        MODALIDAD_NOT_VALID);
+        () -> ProblemMessage.builder()
+            .key(MSG_NO_PERTENECE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_MODALIDAD))
+            .parameter(MSG_KEY_ANOTHER_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_PROGRAMA))
+            .build());
 
     SolicitudModalidad returnValue = repository.save(solicitudModalidad);
 
@@ -269,18 +277,23 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
   public SolicitudModalidad updateByExternalUser(String solicitudPublicId, SolicitudModalidad solicitudModalidad) {
     log.debug("updateByExternalUser(String solicitudPublicId, SolicitudModalidad solicitudModalidad) - start");
 
-    Assert.notNull(solicitudModalidad.getId(), "Id no puede ser null para actualizar SolicitudModalidad");
-    Assert.notNull(solicitudModalidad.getSolicitudId(),
-        "La solicitud no puede ser null para actualizar la SolicitudModalidad");
-    Assert.notNull(solicitudModalidad.getPrograma().getId(),
-        "Id Programa no puede ser null para crear la SolicitudModalidad");
+    AssertHelper.idNotNull(solicitudModalidad.getId(), SolicitudModalidad.class);
+    AssertHelper.idNotNull(solicitudModalidad.getSolicitudId(), Solicitud.class);
+    AssertHelper.idNotNull(solicitudModalidad.getPrograma().getId(), Programa.class);
 
     solicitudModalidad.setPrograma(programaRepository.findById(solicitudModalidad.getPrograma().getId())
         .orElseThrow(() -> new ProgramaNotFoundException(solicitudModalidad.getPrograma().getId())));
 
     // comprobar si la solicitud es modificable
     Assert.isTrue(solicitudService.modificable(solicitudModalidad.getSolicitudId()),
-        "No se puede modificar SolicitudModalidad");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_ACCION_DENEGADA)
+            .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                MSG_MODEL_SOLICITUD))
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_SOLICITUD_MODALIDAD))
+            .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+            .build());
 
     return repository.findById(solicitudModalidad.getId()).map(data -> {
 
@@ -302,7 +315,12 @@ public class SolicitudModalidadServiceImpl implements SolicitudModalidadService 
       Assert.isTrue(
           isModalidadDescencientePrograma(solicitudModalidad.getPrograma(),
               convocatoriaEntidadConvocante.get().getPrograma()),
-          MODALIDAD_NOT_VALID);
+          () -> ProblemMessage.builder()
+              .key(MSG_NO_PERTENECE)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_MODALIDAD))
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_MODALIDAD))
+              .parameter(MSG_KEY_ANOTHER_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_PROGRAMA))
+              .build());
 
       data.setPrograma(solicitudModalidad.getPrograma());
       SolicitudModalidad returnValue = repository.save(data);

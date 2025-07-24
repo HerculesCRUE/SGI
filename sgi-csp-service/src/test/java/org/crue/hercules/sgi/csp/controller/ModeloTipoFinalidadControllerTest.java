@@ -121,46 +121,6 @@ class ModeloTipoFinalidadControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isNotFound());
   }
 
-  @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findById_WithExistingId_ReturnsModeloTipoFinalidad() throws Exception {
-    // given: existing id
-    BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer(new Answer<ModeloTipoFinalidad>() {
-      @Override
-      public ModeloTipoFinalidad answer(InvocationOnMock invocation) throws Throwable {
-        Long id = invocation.getArgument(0, Long.class);
-        return generarModeloTipoFinalidad(id, 1L, 1L);
-      }
-    });
-
-    // when: find by existing id
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: response is OK
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        // and the requested ModeloTipoFinalidad is resturned as JSON object
-        .andExpect(MockMvcResultMatchers.jsonPath("id").value(1L));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findById_WithNoExistingId_Returns404() throws Exception {
-    // given: no existing id
-    BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
-      throw new ModeloTipoFinalidadNotFoundException(1L);
-    });
-
-    // when: find by non existing id
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError()).
-        // then: HTTP code 404 NotFound pressent
-        andExpect(MockMvcResultMatchers.status().isNotFound());
-  }
-
   /**
    * Función que devuelve un objeto ModeloTipoFinalidad
    * 

@@ -4,13 +4,13 @@ import { FlexModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
+import { I18nComponentsModule } from '@components/i18n/i18n-components.module';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthModule, SgiAuthService } from '@sgi/framework/auth';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { PlanInvestigacionActionService } from '../../plan-investigacion.action.service';
-
 import { PlanInvestigacionDatosGeneralesComponent } from './plan-investigacion-datos-generales.component';
 
 describe('PlanInvestigacionDatosGeneralesComponent', () => {
@@ -24,12 +24,13 @@ describe('PlanInvestigacionDatosGeneralesComponent', () => {
       ],
       imports: [
         TestUtils.getIdiomas(),
-        MaterialDesignModule,
         BrowserAnimationsModule,
-        HttpClientTestingModule,
-        LoggerTestingModule,
         FlexModule,
         FormsModule,
+        HttpClientTestingModule,
+        I18nComponentsModule,
+        LoggerTestingModule,
+        MaterialDesignModule,
         ReactiveFormsModule,
         RouterTestingModule,
         SgiAuthModule

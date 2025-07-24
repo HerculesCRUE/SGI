@@ -48,7 +48,7 @@ export class ModeloEjecucionTipoUnidadGestionComponent extends FragmentComponent
     actionService: ModeloEjecucionActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.UNIDAD_GESTION, actionService);
+    super(actionService.FRAGMENT.UNIDAD_GESTION, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -65,7 +65,7 @@ export class ModeloEjecucionTipoUnidadGestionComponent extends FragmentComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subscription = this.formPart.modeloUnidad$.subscribe(
       (wrappers: StatusWrapper<IModeloUnidad>[]) => {
         this.modelosTipoUnidades.data = wrappers;
@@ -87,7 +87,7 @@ export class ModeloEjecucionTipoUnidadGestionComponent extends FragmentComponent
     this.subscriptions.push(subscription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MODELO_EJECUCION_TIPO_UNIDAD_GESTION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

@@ -1,12 +1,14 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ActivatedRoute } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { IComite } from '@core/models/eti/comite';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
+import { IFormulario } from '@core/models/eti/formulario';
+import { IMemoria } from '@core/models/eti/memoria';
 import { TipoEvaluacion } from '@core/models/eti/tipo-evaluacion';
 import { FormularioService } from '@core/services/eti/formulario.service';
 import TestUtils from '@core/utils/test-utils';
@@ -32,8 +34,20 @@ describe('ComentarioModalComponent', () => {
         comite: {
           id: 1
         } as IComite,
-      },
-      evaluaciones: [] as IEvaluacion[]
+        formulario: {
+          id: 1
+        } as IFormulario
+      } as IMemoria,
+      evaluaciones: [{
+        tipoEvaluacion: {
+          id: 2
+        } as TipoEvaluacion,
+        memoria: {
+          formulario: {
+            id: 1
+          } as IFormulario
+        } as IMemoria
+      }] as IEvaluacion[]
     };
 
     TestBed.configureTestingModule({

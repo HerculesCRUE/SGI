@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { CAUSA_EXENCION_MAP } from '@core/models/csp/proyecto';
 import { TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
+import { LanguageService } from '@core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
@@ -41,9 +42,10 @@ export class ProyectosComponent extends FragmentComponent implements OnInit, OnD
 
   constructor(
     private actionService: EjecucionEconomicaActionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.PROYECTOS, actionService);
+    super(actionService.FRAGMENT.PROYECTOS, actionService, translate);
 
     this.formPart = this.fragment as ProyectosFragment;
   }
@@ -53,6 +55,14 @@ export class ProyectosComponent extends FragmentComponent implements OnInit, OnD
     this.initDisplayedColumns();
 
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor = (relacionEjecucionEconomica: IRelacionEjecucionEconomicaWithIva, property: string) => {
+      switch (property) {
+        case 'nombre':
+          return this.languageService.getFieldValue(relacionEjecucionEconomica.nombre);
+        default:
+          return relacionEjecucionEconomica[property];
+      }
+    };
     this.dataSource.sort = this.sort;
 
     this.subscriptions.push(this.formPart.relaciones$.subscribe(elements => {
@@ -63,6 +73,8 @@ export class ProyectosComponent extends FragmentComponent implements OnInit, OnD
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
+
+  protected setupI18N(): void { }
 
   private initDisplayedColumns(): void {
     this.displayedColumns = [

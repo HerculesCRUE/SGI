@@ -3,12 +3,10 @@ import { ActivatedRoute } from '@angular/router';
 import { IPrograma } from '@core/models/csp/programa';
 import { ActionService } from '@core/services/action-service';
 import { ProgramaService } from '@core/services/csp/programa.service';
+import { LanguageService } from '@core/services/language.service';
 import { NGXLogger } from 'ngx-logger';
 import { PlanInvestigacionDatosGeneralesFragment } from './plan-investigacion-formulario/plan-investigacion-datos-generales/plan-investigacion-datos-generales.fragment';
 import { PlanInvestigacionProgramaFragment } from './plan-investigacion-formulario/plan-investigacion-programas/plan-investigacion-programas.fragment';
-
-
-
 
 @Injectable()
 export class PlanInvestigacionActionService extends ActionService {
@@ -24,7 +22,8 @@ export class PlanInvestigacionActionService extends ActionService {
   constructor(
     private readonly logger: NGXLogger,
     route: ActivatedRoute,
-    programaService: ProgramaService
+    programaService: ProgramaService,
+    private readonly languageService: LanguageService
   ) {
     super();
     this.programa = {} as IPrograma;
@@ -33,10 +32,18 @@ export class PlanInvestigacionActionService extends ActionService {
       this.enableEdit();
     }
 
-    this.planInvestigacion = new PlanInvestigacionDatosGeneralesFragment(logger, this.programa?.id,
-      programaService);
-    this.programas = new PlanInvestigacionProgramaFragment(logger, this.programa?.id,
-      programaService);
+    this.planInvestigacion = new PlanInvestigacionDatosGeneralesFragment(
+      logger,
+      this.programa?.id,
+      programaService
+    );
+
+    this.programas = new PlanInvestigacionProgramaFragment(
+      logger,
+      this.programa?.id,
+      programaService,
+      languageService
+    );
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.planInvestigacion);
     this.addFragment(this.FRAGMENT.PROGRAMAS, this.programas);

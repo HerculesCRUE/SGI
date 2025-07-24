@@ -6,6 +6,7 @@ import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IFuenteFinanciacion } from '@core/models/csp/fuente-financiacion';
 import { FuenteFinanciacionService } from '@core/services/csp/fuente-financiacion/fuente-financiacion.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -29,6 +30,7 @@ export class FuenteFinanciacionModalComponent
   msgParamAmbitoEntity = {};
   msgParamNombreEntity = {};
   msgParamOrigenEntity = {};
+  msgParamDescripcionEntity = {};
   msgParamFondoEstructuralEntity = {};
   title: string;
 
@@ -107,8 +109,8 @@ export class FuenteFinanciacionModalComponent
 
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.fuenteFinanciacion?.nombre ?? ''),
-      descripcion: new FormControl(this.fuenteFinanciacion?.descripcion ?? ''),
+      nombre: new FormControl(this.fuenteFinanciacion?.nombre ?? [], [I18nValidators.required, I18nValidators.maxLength(50)]),
+      descripcion: new FormControl(this.fuenteFinanciacion?.descripcion ?? [], [I18nValidators.maxLength(250)]),
       ambitoGeografico: new FormControl(this.fuenteFinanciacion?.tipoAmbitoGeografico ?? null),
       origen: new FormControl(this.fuenteFinanciacion?.tipoOrigenFuenteFinanciacion ?? null),
       fondoEstructural: new FormControl(this.fuenteFinanciacion?.fondoEstructural ?? null),

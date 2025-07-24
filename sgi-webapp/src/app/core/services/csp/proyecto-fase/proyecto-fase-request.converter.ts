@@ -1,10 +1,11 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from "@core/i18n/i18n-field.converter";
 import { IProyectoFase } from "@core/models/csp/proyecto-fase";
-import { IProyectoFaseRequest } from "./proyecto-fase-request";
-import { SgiBaseConverter } from '@sgi/framework/core';
-import { LuxonUtils } from "@core/utils/luxon-utils";
 import { ITipoFase } from "@core/models/csp/tipos-configuracion";
-import { IProyectoFaseAvisoRequest } from "./proyecto-fase-aviso-request";
+import { LuxonUtils } from "@core/utils/luxon-utils";
+import { SgiBaseConverter } from '@sgi/framework/core';
 import { IProyectoFaseAviso } from "./proyecto-fase-aviso";
+import { IProyectoFaseAvisoRequest } from "./proyecto-fase-aviso-request";
+import { IProyectoFaseRequest } from "./proyecto-fase-request";
 
 class ProyectoFaseRequestConverter extends SgiBaseConverter<IProyectoFaseRequest, IProyectoFase> {
 
@@ -17,7 +18,7 @@ class ProyectoFaseRequestConverter extends SgiBaseConverter<IProyectoFaseRequest
         tipoFase: {
           id: value.tipoFaseId
         } as ITipoFase,
-        observaciones: value.observaciones,
+        observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.observaciones) : [],
         proyectoId: value.proyectoId,
         aviso1: this.getConvocatoriaFaseAviso(value.aviso1),
         aviso2: this.getConvocatoriaFaseAviso(value.aviso2)
@@ -31,7 +32,7 @@ class ProyectoFaseRequestConverter extends SgiBaseConverter<IProyectoFaseRequest
         tipoFaseId: value.tipoFase?.id,
         fechaInicio: LuxonUtils.toBackend(value.fechaInicio),
         fechaFin: LuxonUtils.toBackend(value.fechaFin),
-        observaciones: value.observaciones,
+        observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.observaciones) : [],
         aviso1: this.getConvocatoriaFaseAvisoRequest(value.aviso1),
         aviso2: this.getConvocatoriaFaseAvisoRequest(value.aviso2)
       }

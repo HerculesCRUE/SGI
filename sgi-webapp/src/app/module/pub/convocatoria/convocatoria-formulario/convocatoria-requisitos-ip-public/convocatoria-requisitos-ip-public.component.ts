@@ -13,6 +13,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
 import { ConvocatoriaRequisitosIPPublicFragment } from './convocatoria-requisitos-ip-public.fragment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'sgi-convocatoria-requisitos-ip-public',
@@ -46,8 +47,9 @@ export class ConvocatoriaRequisitosIPPublicComponent extends FormFragmentCompone
   constructor(
     protected actionService: ConvocatoriaPublicActionService,
     private readonly sexoService: SexoPublicService,
+    private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.REQUISITOS_IP, actionService);
+    super(actionService.FRAGMENT.REQUISITOS_IP, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaRequisitosIPPublicFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -112,4 +114,5 @@ export class ConvocatoriaRequisitosIPPublicComponent extends FormFragmentCompone
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  protected setupI18N(): void { }
 }

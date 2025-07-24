@@ -17,6 +17,7 @@ import { transformAutorNombre } from '../../../shared/autor/pipe/autor-nombre.pi
 import { IndiceImpactoTransformService } from '../../../shared/indice-impacto/indice-impacto-transform.service';
 import { ComiteEditorialActionService } from '../../comite-editorial.action.service';
 import { ComiteEditorialDatosGeneralesFragment } from './comite-editorial-datos-generales.fragment';
+import { TranslateService } from '@ngx-translate/core';
 
 const MSG_DOWNLOAD_ERROR = marker('error.file.download');
 
@@ -51,7 +52,7 @@ export class ComiteEditorialDatosGeneralesComponent extends FragmentComponent im
     private readonly logger: NGXLogger,
     private readonly snackBarService: SnackBarService,
     private readonly indiceImpactoTransformService: IndiceImpactoTransformService,
-    private readonly documentoService: DocumentoService,
+    private readonly documentoService: DocumentoService
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as ComiteEditorialDatosGeneralesFragment;
@@ -198,4 +199,6 @@ export class ComiteEditorialDatosGeneralesComponent extends FragmentComponent im
       }
     ));
   }
+
+  protected setupI18N(): void { }
 }

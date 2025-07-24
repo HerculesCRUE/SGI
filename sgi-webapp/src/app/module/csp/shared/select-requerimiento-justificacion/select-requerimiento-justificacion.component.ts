@@ -5,6 +5,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -68,11 +69,12 @@ export class SelectRequerimientoJustificacionComponent extends SelectServiceComp
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private service: ProyectoService
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
     // Override default displayWith
-    this.displayWith = (option) => formatRequerimientoJustificacionNombre(option) ?? '';
+    this.displayWith = (option) => formatRequerimientoJustificacionNombre(option, languageService) ?? '';
     this.disableWith = (option) => {
       if (this.excluded.length) {
         return this.excluded.some((excluded) => excluded.id === option.id);

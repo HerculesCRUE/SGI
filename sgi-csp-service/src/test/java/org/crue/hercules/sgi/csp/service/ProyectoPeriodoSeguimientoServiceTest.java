@@ -2,23 +2,31 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoSeguimientoNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
+import org.crue.hercules.sgi.csp.model.EstadoProyectoComentario;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoObservaciones;
+import org.crue.hercules.sgi.csp.model.ProyectoTitulo;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoSeguimientoDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoSeguimientoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoPeriodoSeguimientoServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -48,7 +56,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   private ProyectoPeriodoSeguimientoService service;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     service = new ProyectoPeriodoSeguimientoServiceImpl(repository, proyectoRepository,
         proyectoPeriodoSeguimientoDocumentoRepository);
   }
@@ -90,7 +98,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque el ProyectoPeriodoSeguimiento ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(proyectoPeriodoSeguimiento))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ProyectoPeriodoSeguimiento id tiene que ser null para crear un nuevo ProyectoPeriodoSeguimiento");
+        .hasMessage("Identificador de Proyecto Periodo Seguimiento debe ser nulo");
   }
 
   @Test
@@ -105,7 +113,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.create(proyectoPeriodoSeguimiento))
         // then: throw exception as ProyectoId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Proyecto no puede ser null para crear ProyectoPeriodoSeguimiento");
+        .hasMessage("Identificador de Proyecto no puede ser nulo");
   }
 
   @Test
@@ -120,7 +128,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.create(proyectoPeriodoSeguimiento))
         // then: throw exception as FechaInicio is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("FechaInicio no puede ser null para crear ProyectoPeriodoSeguimiento");
+        .hasMessage("Fecha inicio de Proyecto Periodo Seguimiento no puede ser nulo");
   }
 
   @Test
@@ -135,12 +143,16 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.create(proyectoPeriodoSeguimiento))
         // then: throw exception as FechaFin is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("FechaFin no puede ser null para crear ProyectoPeriodoSeguimiento");
+        .hasMessage("Fecha fin de Proyecto Periodo Seguimiento no puede ser nulo");
   }
 
   @Test
   void create_WithoutFechaInicioPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaInicioPresentacion
+    Set<EstadoProyectoComentario> estadoProyectoComentario = new HashSet<>();
+    estadoProyectoComentario
+        .add(new EstadoProyectoComentario(Language.ES, "estado-proyecto-" + String.format("%03d", 1)));
+
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
     proyectoPeriodoSeguimiento.setFechaFinPresentacion(Instant.now());
@@ -149,7 +161,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
 
     EstadoProyecto estadoProyecto = new EstadoProyecto();
     estadoProyecto.setId(1L);
-    estadoProyecto.setComentario("estado-proyecto-" + String.format("%03d", 1));
+    estadoProyecto.setComentario(estadoProyectoComentario);
     estadoProyecto.setEstado(EstadoProyecto.Estado.CONCEDIDO);
     estadoProyecto.setFechaEstado(Instant.now());
     estadoProyecto.setProyectoId(1L);
@@ -163,12 +175,16 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.create(proyectoPeriodoSeguimiento))
         // then: throw exception as FechaInicioPresentacion is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("FechaInicioPresentacion no puede ser null para crear ProyectoPeriodoSeguimiento");
+        .hasMessage("Fecha inicio de Proyecto Periodo Seguimiento no puede ser nulo");
   }
 
   @Test
   void create_WithoutFechaFinPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaFinPresentacion
+    Set<EstadoProyectoComentario> estadoProyectoComentario = new HashSet<>();
+    estadoProyectoComentario
+        .add(new EstadoProyectoComentario(Language.ES, "estado-proyecto-" + String.format("%03d", 1)));
+
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     proyectoPeriodoSeguimiento.setId(null);
     proyectoPeriodoSeguimiento.setFechaInicioPresentacion(Instant.now());
@@ -177,7 +193,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
 
     EstadoProyecto estadoProyecto = new EstadoProyecto();
     estadoProyecto.setId(1L);
-    estadoProyecto.setComentario("estado-proyecto-" + String.format("%03d", 1));
+    estadoProyecto.setComentario(estadoProyectoComentario);
     estadoProyecto.setEstado(EstadoProyecto.Estado.CONCEDIDO);
     estadoProyecto.setFechaEstado(Instant.now());
     estadoProyecto.setProyectoId(1L);
@@ -191,7 +207,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.create(proyectoPeriodoSeguimiento))
         // then: throw exception as FechaFinPresentacion is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("FechaFinPresentacion no puede ser null para crear ProyectoPeriodoSeguimiento");
+        .hasMessage("Fecha fin de Proyecto Periodo Seguimiento no puede ser nulo");
   }
 
   @Test
@@ -223,7 +239,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.create(proyectoPeriodoSeguimiento))
         // then: throw exception WithInvalidFechas
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La fecha de fin debe ser posterior a la fecha de inicio");
+        .hasMessage("La fecha de inicio no puede ser superior a la fecha de fin");
 
   }
 
@@ -243,7 +259,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.create(proyectoPeriodoSeguimiento))
         // then: throw exception WithInvalidFechas
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La fecha de fin de presentación debe ser posterior a la fecha de inicio de presentación");
+        .hasMessage("Fecha Inicio Presentación debe ser anterior Fecha Fin Presentación");
 
   }
 
@@ -252,7 +268,9 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     // given: Un nuevo ProyectoPeriodoSeguimiento con el tipoHito actualizado
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoActualizado = generarMockProyectoPeriodoSeguimiento(1L);
-    proyectoPeriodoSeguimientoActualizado.setObservaciones("obs actualizadas");
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "obs actualizadas"));
+    proyectoPeriodoSeguimientoActualizado.setObservaciones(observaciones);
 
     BDDMockito.given(proyectoRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(generarMockProyecto(1L)));
@@ -294,7 +312,9 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     // given: a ProyectoPeriodoSeguimiento without ProyectoId
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
-    proyectoPeriodoSeguimiento.setObservaciones("observaciones actualizar");
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "observaciones actualizar"));
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
     proyectoPeriodoSeguimiento.setProyectoId(null);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
@@ -305,7 +325,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.update(proyectoPeriodoSeguimiento))
         // then: throw exception as ProyectoId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Proyecto no puede ser null para actualizar ProyectoPeriodoSeguimiento");
+        .hasMessage("Identificador de Proyecto no puede ser nulo");
   }
 
   @Test
@@ -313,7 +333,9 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     // given: a ProyectoPeriodoSeguimiento without FechaInicio
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
-    proyectoPeriodoSeguimiento.setObservaciones("observaciones actualizar");
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "observaciones actualizar"));
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
     proyectoPeriodoSeguimiento.setFechaInicio(null);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
@@ -324,7 +346,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.update(proyectoPeriodoSeguimiento))
         // then: throw exception as FechaInicio is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("FechaInicio no puede ser null para actualizar ProyectoPeriodoSeguimiento");
+        .hasMessage("Fecha inicio de Proyecto Periodo Seguimiento no puede ser nulo");
   }
 
   @Test
@@ -332,7 +354,9 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     // given: a ProyectoPeriodoSeguimiento without FechaFin
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
-    proyectoPeriodoSeguimiento.setObservaciones("observaciones actualizar");
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "observaciones actualizar"));
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
     proyectoPeriodoSeguimiento.setFechaFin(null);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
@@ -343,22 +367,28 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.update(proyectoPeriodoSeguimiento))
         // then: throw exception as FechaFin is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("FechaFin no puede ser null para actualizar ProyectoPeriodoSeguimiento");
+        .hasMessage("Fecha fin de Proyecto Periodo Seguimiento no puede ser nulo");
   }
 
   @Test
   void update_WithoutFechaInicioPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaInicioPresentacion
+    Set<EstadoProyectoComentario> estadoProyectoComentario = new HashSet<>();
+    estadoProyectoComentario
+        .add(new EstadoProyectoComentario(Language.ES, "estado-proyecto-" + String.format("%03d", 1)));
+
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
-    proyectoPeriodoSeguimiento.setObservaciones("observaciones actualizar");
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "observaciones actualizar"));
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
     proyectoPeriodoSeguimiento.setFechaFinPresentacion(Instant.now());
 
     Proyecto proyecto = generarMockProyecto(1L);
 
     EstadoProyecto estadoProyecto = new EstadoProyecto();
     estadoProyecto.setId(1L);
-    estadoProyecto.setComentario("estado-proyecto-" + String.format("%03d", 1));
+    estadoProyecto.setComentario(estadoProyectoComentario);
     estadoProyecto.setEstado(EstadoProyecto.Estado.CONCEDIDO);
     estadoProyecto.setFechaEstado(Instant.now());
     estadoProyecto.setProyectoId(1L);
@@ -375,22 +405,28 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.update(proyectoPeriodoSeguimiento))
         // then: throw exception as FechaInicioPresentacion is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("FechaInicioPresentacion no puede ser null para actualizar ProyectoPeriodoSeguimiento");
+        .hasMessage("Fecha inicio de Proyecto Periodo Seguimiento no puede ser nulo");
   }
 
   @Test
   void update_WithoutFechaFinPresentacion_ThrowsIllegalArgumentException() {
     // given: a ProyectoPeriodoSeguimiento without FechaFinPresentacion
+    Set<EstadoProyectoComentario> estadoProyectoComentario = new HashSet<>();
+    estadoProyectoComentario
+        .add(new EstadoProyectoComentario(Language.ES, "estado-proyecto-" + String.format("%03d", 1)));
+
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
-    proyectoPeriodoSeguimiento.setObservaciones("observaciones actualizar");
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "observaciones actualizar"));
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
     proyectoPeriodoSeguimiento.setFechaInicioPresentacion(Instant.now());
 
     Proyecto proyecto = generarMockProyecto(1L);
 
     EstadoProyecto estadoProyecto = new EstadoProyecto();
     estadoProyecto.setId(1L);
-    estadoProyecto.setComentario("estado-proyecto-" + String.format("%03d", 1));
+    estadoProyecto.setComentario(estadoProyectoComentario);
     estadoProyecto.setEstado(EstadoProyecto.Estado.CONCEDIDO);
     estadoProyecto.setFechaEstado(Instant.now());
     estadoProyecto.setProyectoId(1L);
@@ -407,7 +443,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.update(proyectoPeriodoSeguimiento))
         // then: throw exception as FechaFinPresentacion is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("FechaFinPresentacion no puede ser null para actualizar ProyectoPeriodoSeguimiento");
+        .hasMessage("Fecha fin de Proyecto Periodo Seguimiento no puede ser nulo");
   }
 
   @Test
@@ -415,7 +451,9 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     // given: a ProyectoPeriodoSeguimiento with non existing Proyecto
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
-    proyectoPeriodoSeguimiento.setObservaciones("observaciones actualizar");
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "observaciones actualizar"));
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(proyectoPeriodoSeguimientoOriginal));
@@ -432,7 +470,9 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     // given: a ProyectoPeriodoSeguimiento WithInvalidFechas
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
-    proyectoPeriodoSeguimiento.setObservaciones("observaciones actualizar");
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "observaciones actualizar"));
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
     proyectoPeriodoSeguimiento.setFechaInicio(Instant.parse("2020-10-20T00:00:00Z"));
     proyectoPeriodoSeguimiento.setFechaFin(Instant.parse("2020-10-10T23:59:59Z"));
 
@@ -447,7 +487,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.update(proyectoPeriodoSeguimiento))
         // then: throw exception WithInvalidFechas
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La fecha de fin debe ser posterior a la fecha de inicio");
+        .hasMessage("La fecha de inicio no puede ser superior a la fecha de fin");
 
   }
 
@@ -456,7 +496,9 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     // given: a ProyectoPeriodoSeguimiento WithInvalidFechas
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoOriginal = generarMockProyectoPeriodoSeguimiento(1L);
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(1L);
-    proyectoPeriodoSeguimiento.setObservaciones("observaciones actualizar");
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "observaciones actualizar"));
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
     proyectoPeriodoSeguimiento.setFechaInicioPresentacion(Instant.parse("2020-10-20T00:00:00Z"));
     proyectoPeriodoSeguimiento.setFechaFinPresentacion(Instant.parse("2020-10-10T23:59:59Z"));
 
@@ -471,7 +513,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
         () -> service.update(proyectoPeriodoSeguimiento))
         // then: throw exception WithInvalidFechas
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La fecha de fin de presentación debe ser posterior a la fecha de inicio de presentación");
+        .hasMessage("Fecha Inicio Presentación debe ser anterior Fecha Fin Presentación");
 
   }
 
@@ -510,11 +552,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockProyectoPeriodoSeguimiento(proyectoPeriodoSeguimientoId)));
     BDDMockito.given(repository.save(ArgumentMatchers.<ProyectoPeriodoSeguimiento>any()))
-        .will((InvocationOnMock invocation) -> {
-          ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoUpdated = invocation.getArgument(0,
-              ProyectoPeriodoSeguimiento.class);
-          return proyectoPeriodoSeguimientoUpdated;
-        });
+        .will((InvocationOnMock invocation) -> invocation.getArgument(0, ProyectoPeriodoSeguimiento.class));
 
     // when: updateFechaPresentacionDocumentacion ProyectoPeriodoSeguimiento
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoUpdated = service
@@ -546,7 +584,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Long id = 1L;
 
@@ -560,7 +598,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void existsById_WithExistingId_ReturnsTRUE() throws Exception {
+  void existsById_WithExistingId_ReturnsTRUE() {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(repository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.TRUE);
@@ -573,7 +611,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void existsById_WithNoExistingId_ReturnsFALSE() throws Exception {
+  void existsById_WithNoExistingId_ReturnsFALSE() {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(repository.existsById(ArgumentMatchers.<Long>any())).willReturn(Boolean.FALSE);
@@ -601,7 +639,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findById_WithIdNotExist_ThrowsProyectoPeriodoSeguimientoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoPeriodoSeguimientoNotFoundException() {
     // given: Ningun ProyectoPeriodoSeguimiento con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -630,10 +668,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
           int toIndex = fromIndex + size;
           toIndex = toIndex > proyectosEntidadesConvocantes.size() ? proyectosEntidadesConvocantes.size() : toIndex;
           List<ProyectoPeriodoSeguimiento> content = proyectosEntidadesConvocantes.subList(fromIndex, toIndex);
-          Page<ProyectoPeriodoSeguimiento> pageResponse = new PageImpl<>(content, pageable,
-              proyectosEntidadesConvocantes.size());
-          return pageResponse;
-
+          return new PageImpl<>(content, pageable, proyectosEntidadesConvocantes.size());
         });
 
     // when: Get page=3 with pagesize=10
@@ -674,8 +709,7 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > periodosJustificacion.size() ? periodosJustificacion.size() : toIndex;
             List<ProyectoPeriodoSeguimiento> content = periodosJustificacion.subList(fromIndex, toIndex);
-            Page<ProyectoPeriodoSeguimiento> page = new PageImpl<>(content, pageable, periodosJustificacion.size());
-            return page;
+            return new PageImpl<>(content, pageable, periodosJustificacion.size());
           }
         });
 
@@ -690,14 +724,19 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       ProyectoPeriodoSeguimiento proyecto = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(proyecto.getObservaciones()).isEqualTo("obs-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyecto.getObservaciones(), Language.ES))
+          .isEqualTo("obs-" + String.format("%03d", i));
     }
   }
 
   private Proyecto generarMockProyecto(Long id) {
+    Set<EstadoProyectoComentario> estadoProyectoComentario = new HashSet<>();
+    estadoProyectoComentario.add(
+        new EstadoProyectoComentario(Language.ES, "estado-proyecto-" + String.format("%03d", id == null ? 1 : id)));
+
     EstadoProyecto estadoProyecto = new EstadoProyecto();
     estadoProyecto.setId(id == null ? 1 : id);
-    estadoProyecto.setComentario("estado-proyecto-" + String.format("%03d", id == null ? 1 : id));
+    estadoProyecto.setComentario(estadoProyectoComentario);
     estadoProyecto.setEstado(EstadoProyecto.Estado.BORRADOR);
     estadoProyecto.setFechaEstado(Instant.now());
     estadoProyecto.setProyectoId(1L);
@@ -711,11 +750,17 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
     TipoAmbitoGeografico tipoAmbitoGeografico = new TipoAmbitoGeografico();
     tipoAmbitoGeografico.setId(1L);
 
+    Set<ProyectoTitulo> tituloProyecto = new HashSet<>();
+    tituloProyecto.add(new ProyectoTitulo(Language.ES, "PRO" + (id != null ? id : 1)));
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones-" + String.format("%03d", id)));
+
     Proyecto proyecto = new Proyecto();
     proyecto.setId(id == null ? 1 : id);
-    proyecto.setTitulo("PRO" + (id != null ? id : 1));
+    proyecto.setTitulo(tituloProyecto);
     proyecto.setCodigoExterno("cod-externo-" + (id != null ? String.format("%03d", id) : "001"));
-    proyecto.setObservaciones("observaciones-" + String.format("%03d", id));
+    proyecto.setObservaciones(observacionesProyecto);
     proyecto.setUnidadGestionRef("2");
     proyecto.setFechaInicio(Instant.parse("2020-01-01T00:00:00Z"));
     proyecto.setFechaFin(Instant.parse("2021-01-01T23:59:59Z"));
@@ -736,13 +781,17 @@ class ProyectoPeriodoSeguimientoServiceTest extends BaseServiceTest {
    * @return el objeto ProyectoPeriodoSeguimiento
    */
   private ProyectoPeriodoSeguimiento generarMockProyectoPeriodoSeguimiento(Long id) {
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES,
+        "obs-" + String.format("%03d", (id != null ? id : 1))));
+
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = new ProyectoPeriodoSeguimiento();
     proyectoPeriodoSeguimiento.setId(id);
     proyectoPeriodoSeguimiento.setProyectoId(id == null ? 1 : id);
     proyectoPeriodoSeguimiento.setNumPeriodo(1);
     proyectoPeriodoSeguimiento.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     proyectoPeriodoSeguimiento.setFechaFin(Instant.parse("2020-12-19T23:59:59Z"));
-    proyectoPeriodoSeguimiento.setObservaciones("obs-" + String.format("%03d", (id != null ? id : 1)));
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
     proyectoPeriodoSeguimiento.setTipoSeguimiento(TipoSeguimiento.FINAL);
 
     return proyectoPeriodoSeguimiento;

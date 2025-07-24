@@ -2,7 +2,9 @@ package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 
+import org.crue.hercules.sgi.csp.model.ConvocatoriaHitoComentario;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 
 import lombok.AllArgsConstructor;
@@ -21,6 +23,6 @@ public class ConvocatoriaHitoOutput implements Serializable {
   private Long convocatoriaId;
   private TipoHito tipoHito;
   private Instant fecha;
-  private String comentario;
+  private Collection<ConvocatoriaHitoComentario> comentario;
   private ConvocatoriaHitoAvisoOutput aviso;
 }

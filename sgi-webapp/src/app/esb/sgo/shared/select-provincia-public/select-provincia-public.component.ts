@@ -4,6 +4,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { IProvincia } from '@core/models/sgo/provincia';
+import { LanguageService } from '@core/services/language.service';
 import { ProvinciaPublicService } from '@core/services/sgo/provincia/provincia-public.service';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -41,9 +42,10 @@ export class SelecProvinciaPublicComponent extends SelectServiceComponent<IProvi
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private provinciaService: ProvinciaPublicService
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
 
   }
 

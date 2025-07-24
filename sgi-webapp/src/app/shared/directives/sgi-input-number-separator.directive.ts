@@ -2,6 +2,7 @@ import { NumberSymbol, formatNumber, getLocaleNumberSymbol } from '@angular/comm
 import { Directive, ElementRef, HostListener, Inject, Input, LOCALE_ID } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MAT_INPUT_VALUE_ACCESSOR } from '@angular/material/input';
+import { LocaleId } from '@core/i18n/locale-id';
 
 @Directive({
   selector: 'input[sgiInputWithThousandSeparator]',
@@ -17,7 +18,7 @@ export class SgiInputWithThousandSeparator {
   constructor(
     private elementRef: ElementRef<HTMLInputElement>,
     public ngControl: NgControl,
-    @Inject(LOCALE_ID) private locale: string
+    @Inject(LOCALE_ID) private locale: LocaleId
   ) {
     ngControl.valueAccessor = this; // Remove NG_VALUE_ACCESSOR from providers to remove cyclic dependency with NgControl
   }
@@ -49,7 +50,7 @@ export class SgiInputWithThousandSeparator {
 
   @HostListener('input', ['$event'])
   onInputChange(event) {
-    const decimalSeparatorLocale = getLocaleNumberSymbol(this.locale, NumberSymbol.Decimal);
+    const decimalSeparatorLocale = getLocaleNumberSymbol(this.locale.toString(), NumberSymbol.Decimal);
     const initalValue = this.elementRef.nativeElement.value.replace(decimalSeparatorLocale, '.');
     let value = initalValue.replace(/[^0-9.]*/g, '');
     if ((value?.match(/\./g)?.length ?? 0) > 1 || (value.indexOf('.') >= 0 && value.indexOf('.') < value.length - 3)) {
@@ -81,7 +82,7 @@ export class SgiInputWithThousandSeparator {
 
   private formatValue(value: number | string | null): void {
     if (value !== null && value !== '') {
-      this.stringValue = formatNumber(+value, this.locale, '1.2-2');
+      this.stringValue = formatNumber(+value, this.locale.toString(), '1.2-2');
     } else {
       this.stringValue = '';
     }

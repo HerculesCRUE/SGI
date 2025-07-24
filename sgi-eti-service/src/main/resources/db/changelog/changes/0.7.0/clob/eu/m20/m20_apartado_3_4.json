@@ -1,0 +1,38 @@
+[
+  {
+    "key": "ap3_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.4 Proiektu mota"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Proiektu motak.</p><p>1.- I motako proiektuak: honako hiru baldintza hauek aldi berean betetzen dituzten proiektuak:<ul><li>a) &lt;&lt;Suspertzeko aukerarik gabe&gt;&gt;, &lt;&lt;arinak&gt;&gt; edo &lt;&lt;neurritsuak&gt;&gt; gisa sailkatutako prozedurak baino ez dituzte ekartzen.</li><li>b) Ez dute primaterik erabiltzen.</li><li>c) Legezko edo arauzko baldintzak betetzeko egiten dira, edo ezarritako metodoen bidez ekoizteko edo diagnosi xedeetarako.</li></ul></p><p>I motako proiektuak prozedura sinplifikatu bidez izapidetu ahal izango dira eta ez zaie atzera begirako ebaluaziorik egingo.</p></br><p>2.- II motako proiektuak: honako baldintza hauek aldi berean betetzen dituzten proiektuak:<ul><li>a) &lt;&lt;Suspertzeko aukerarik gabe&gt;&gt;, &lt;&lt;arinak&gt;&gt; edo &lt;&lt;neurritsuak&gt;&gt; gisa sailkatutako prozedurak baino ez dituzte ekartzen.</li><li>b) Ez dute primaterik erabiltzen.</li></ul></p><p>II motako proiektuak baimena emateko prozeduraren mende egongo dira eta ez da nahitaezkoa izango atzera begirako ebaluazioa egitea.</p></br><p>3.- III motako proiektuak: I edo II motakoak ez diren proiektuak. Proiektu jakin batzuk baldintzatuta egon daitezke baimen gehigarrietara eta horiek alde batera utzi gabe, III motako proiektu guztiak baimentzeko prozeduraren mende geratuko dira, eta, ondoren, atzera begirako ebaluazioa egingo zaie.</p>"
+      },
+      {
+        "key": "tipoProyecto",
+        "type": "select",
+        "templateOptions": {
+          "label": "Hautatu",
+          "required": true,
+          "options": [
+            {
+              "label": "1. mota",
+              "value": "1"
+            },
+            {
+              "label": "2. mota",
+              "value": "2"
+            },
+            {
+              "label": "3. mota",
+              "value": "3"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

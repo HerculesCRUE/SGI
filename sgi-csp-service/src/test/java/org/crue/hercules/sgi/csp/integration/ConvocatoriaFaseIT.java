@@ -2,12 +2,17 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseOutput;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,8 +94,9 @@ class ConvocatoriaFaseIT extends BaseIT {
     Assertions.assertThat(convocatoriaFaseActualizado.getId()).as("getId()").isNotNull();
     Assertions.assertThat(convocatoriaFaseActualizado.getConvocatoriaId()).as("getConvocatoriaId()")
         .isEqualTo(convocatoriaFase.getConvocatoriaId());
-    Assertions.assertThat(convocatoriaFaseActualizado.getObservaciones()).as("getObservacion()")
-        .isEqualTo(convocatoriaFase.getObservaciones());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaFaseActualizado.getObservaciones(), Language.ES))
+        .as("getObservacion()")
+        .isEqualTo(I18nHelper.getValueForLanguage(convocatoriaFase.getObservaciones(), Language.ES));
     Assertions.assertThat(convocatoriaFaseActualizado.getTipoFase().getId()).as("getTipoFase().getId()")
         .isEqualTo(convocatoriaFase.getTipoFase().getId());
   }
@@ -146,13 +152,16 @@ class ConvocatoriaFaseIT extends BaseIT {
     tipoFase.setId(id == null ? 1 : id);
     tipoFase.setActivo(true);
 
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    obsConvocatoriaFase.add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones" + id));
+
     ConvocatoriaFase convocatoriaFase = new ConvocatoriaFase();
     convocatoriaFase.setId(id);
     convocatoriaFase.setConvocatoriaId(id == null ? 1 : id);
     convocatoriaFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     convocatoriaFase.setFechaFin(Instant.parse("2020-10-28T23:59:59Z"));
     convocatoriaFase.setTipoFase(tipoFase);
-    convocatoriaFase.setObservaciones("observaciones" + id);
+    convocatoriaFase.setObservaciones(obsConvocatoriaFase);
 
     return convocatoriaFase;
   }

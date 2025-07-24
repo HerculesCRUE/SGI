@@ -26,6 +26,7 @@ const MSG_UPDATE_SUCCESS = marker('msg.update.request.entity.success');
 
 export interface SearchEmpresaModalData extends SearchModalData {
   selectedEmpresas: IEmpresa[];
+  onlyEmpresasPrincipales: boolean;
 }
 
 interface EmpresaListado {
@@ -187,9 +188,16 @@ export class SearchEmpresaModalComponent extends DialogCommonComponent implement
   private buildFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
 
-    return new RSQLSgiRestFilter('numeroIdentificacion', SgiRestFilterOperator.LIKE_ICASE, controls.datosEmpresa.value)
+    let searchFilter = new RSQLSgiRestFilter('numeroIdentificacion', SgiRestFilterOperator.LIKE_ICASE, controls.datosEmpresa.value)
       .or('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.datosEmpresa.value)
-      .or('razonSocial', SgiRestFilterOperator.LIKE_ICASE, controls.datosEmpresa.value);
+      .or('razonSocial', SgiRestFilterOperator.LIKE_ICASE, controls.datosEmpresa.value)
+
+    if (this.data.onlyEmpresasPrincipales) {
+      searchFilter = new RSQLSgiRestFilter('padreId', SgiRestFilterOperator.IS_NULL, '')
+        .and(searchFilter);
+    }
+
+    return searchFilter;
   }
 
   openEmpresaCreateModal(): void {

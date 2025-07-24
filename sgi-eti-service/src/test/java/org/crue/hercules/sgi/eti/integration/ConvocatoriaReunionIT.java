@@ -8,30 +8,41 @@ import java.time.ZoneOffset;
 import java.time.temporal.ChronoField;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.dto.ConvocatoriaReunionDatosGenerales;
 import org.crue.hercules.sgi.eti.model.Asistentes;
+import org.crue.hercules.sgi.eti.model.AsistentesMotivo;
 import org.crue.hercules.sgi.eti.model.CargoComite;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.ComiteNombre;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionLugar;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionOrdenDia;
 import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
+import org.crue.hercules.sgi.eti.model.EvaluadorResumen;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.MemoriaTitulo;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
-import org.crue.hercules.sgi.eti.model.TipoMemoria;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -56,7 +67,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = {
 // @formatter:off    
-  "classpath:scripts/tipo_memoria.sql", 
   "classpath:scripts/tipo_actividad.sql",
   "classpath:scripts/formulario.sql",
   "classpath:scripts/comite.sql", 
@@ -225,6 +235,7 @@ public class ConvocatoriaReunionIT extends BaseIT {
     // given: Entidad con un determinado Id
     final ConvocatoriaReunionDatosGenerales convocatoriaReunion = new ConvocatoriaReunionDatosGenerales(
         getMockData(3L, 1L, 1L), 1L, null);
+    convocatoriaReunion.setNumEvaluaciones(2);
 
     // when: Se busca la entidad por ese Id
     ResponseEntity<ConvocatoriaReunionDatosGenerales> response = restTemplate.exchange(
@@ -234,7 +245,7 @@ public class ConvocatoriaReunionIT extends BaseIT {
 
     // then: Se recupera la entidad con el Id
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    Assertions.assertThat(response.getBody()).isEqualTo(convocatoriaReunion);
+    Assertions.assertThat(response.getBody()).usingRecursiveComparison().isEqualTo(convocatoriaReunion);
   }
 
   @Test
@@ -518,13 +529,13 @@ public class ConvocatoriaReunionIT extends BaseIT {
     // @formatter:on
 
     List<Evaluacion> result = new ArrayList<>();
-    Evaluacion evaluacion3 = generarMockEvaluacion(Long.valueOf(3), String.format("%03d", 3), 1, 7);
+    Evaluacion evaluacion3 = generarMockEvaluacion(Long.valueOf(3), 1, 7);
     evaluacion3.setEsRevMinima(Boolean.FALSE);
     result.add(evaluacion3);
-    Evaluacion evaluacion4 = generarMockEvaluacion(Long.valueOf(4), String.format("%03d", 4), 4, 7);
+    Evaluacion evaluacion4 = generarMockEvaluacion(Long.valueOf(4), 4, 7);
     evaluacion4.setEsRevMinima(Boolean.FALSE);
     result.add(evaluacion4);
-    Evaluacion evaluacion5 = generarMockEvaluacion(Long.valueOf(5), String.format("%03d", 5), 5, 7);
+    Evaluacion evaluacion5 = generarMockEvaluacion(Long.valueOf(5), 5, 7);
     evaluacion5.setEsRevMinima(Boolean.FALSE);
     result.add(evaluacion5);
 
@@ -552,13 +563,13 @@ public class ConvocatoriaReunionIT extends BaseIT {
     // @formatter:on
 
     List<Evaluacion> result = new LinkedList<>();
-    Evaluacion evaluacion1 = generarMockEvaluacion(Long.valueOf(1), String.format("%03d", 1), 3, 7);
+    Evaluacion evaluacion1 = generarMockEvaluacion(Long.valueOf(1), 3, 7);
     evaluacion1.setEsRevMinima(Boolean.FALSE);
     result.add(evaluacion1);
-    Evaluacion evaluacion2 = generarMockEvaluacion(Long.valueOf(3), String.format("%03d", 3), 1, 7);
+    Evaluacion evaluacion2 = generarMockEvaluacion(Long.valueOf(3), 1, 7);
     evaluacion2.setEsRevMinima(Boolean.FALSE);
     result.add(evaluacion2);
-    Evaluacion evaluacion3 = generarMockEvaluacion(Long.valueOf(5), String.format("%03d", 5), 5, 7);
+    Evaluacion evaluacion3 = generarMockEvaluacion(Long.valueOf(5), 5, 7);
     evaluacion3.setEsRevMinima(Boolean.FALSE);
     result.add(evaluacion3);
 
@@ -605,13 +616,13 @@ public class ConvocatoriaReunionIT extends BaseIT {
     // @formatter:on
 
     List<Evaluacion> result = new LinkedList<>();
-    Evaluacion evaluacion3 = generarMockEvaluacion(Long.valueOf(3), String.format("%03d", 3), 1, 7);
+    Evaluacion evaluacion3 = generarMockEvaluacion(Long.valueOf(3), 1, 7);
     evaluacion3.setEsRevMinima(Boolean.FALSE);
     result.add(evaluacion3);
-    Evaluacion evaluacion4 = generarMockEvaluacion(Long.valueOf(4), String.format("%03d", 4), 4, 7);
+    Evaluacion evaluacion4 = generarMockEvaluacion(Long.valueOf(4), 4, 7);
     evaluacion4.setEsRevMinima(Boolean.FALSE);
     result.add(evaluacion4);
-    Evaluacion evaluacion5 = generarMockEvaluacion(Long.valueOf(5), String.format("%03d", 5), 5, 7);
+    Evaluacion evaluacion5 = generarMockEvaluacion(Long.valueOf(5), 5, 7);
     evaluacion5.setEsRevMinima(Boolean.FALSE);
     result.add(evaluacion5);
 
@@ -641,7 +652,41 @@ public class ConvocatoriaReunionIT extends BaseIT {
     List<Evaluacion> result = new ArrayList<>();
     Evaluacion evaluacion12 = generarMockEvaluacionId(Long.valueOf(12));
     evaluacion12.setEsRevMinima(Boolean.FALSE);
+    Evaluacion evaluacion13 = generarMockEvaluacionId(Long.valueOf(13));
+    evaluacion13.getMemoria().setId(17L);
+    evaluacion13.getMemoria().setNumReferencia("ref-017");
+    evaluacion13.getMemoria().getTitulo().stream().findFirst().get().setValue("Memoria017");
+    evaluacion13.getMemoria().setPersonaRef("userref-017");
+    evaluacion13.getMemoria().getComite().setId(2L);
+    evaluacion13.getMemoria().getComite().setCodigo("CEEA");
+    evaluacion13.getMemoria().getComite().setFormularioMemoriaId(2L);
+    evaluacion13.getMemoria().getComite().setPrefijoReferencia("M20");
+    evaluacion13.getMemoria().getComite().setRequiereRetrospectiva(Boolean.TRUE);
+    evaluacion13.getMemoria().getComite().setPermitirRatificacion(Boolean.FALSE);
+    evaluacion13.getMemoria().getComite().setTareaNombreLibre(Boolean.FALSE);
+    evaluacion13.getMemoria().getComite().setTareaExperienciaLibre(Boolean.FALSE);
+    evaluacion13.getMemoria().getComite().setTareaExperienciaDetalle(Boolean.TRUE);
+    evaluacion13.getMemoria().getComite().setMemoriaTituloLibre(Boolean.TRUE);
+    evaluacion13.getMemoria().getFormulario().setId(2L);
+    evaluacion13.getMemoria().getFormulario().setCodigo("M20/2020/001");
+    evaluacion13.getMemoria().getFormulario()
+        .setSeguimientoAnualDocumentacionTitle(Formulario.SeguimientoAnualDocumentacionTitle.TITULO_1);
+    evaluacion13.getMemoria().setRequiereRetrospectiva(Boolean.TRUE);
+    evaluacion13.getMemoria()
+        .setFormularioRetrospectiva(new Formulario(6L, Formulario.Tipo.RETROSPECTIVA, "R/2020/001", null));
+    evaluacion13.getMemoria().getEstadoActual().setId(13L);
+    evaluacion13.getMemoria().getEstadoActual().setNombre("En evaluación seguimiento anual");
+    evaluacion13.getMemoria().setFechaEnvioSecretaria(null);
+    evaluacion13.getMemoria().setRetrospectiva(new Retrospectiva(4L,
+        new EstadoRetrospectiva(2L, "EstadoRetrospectiva2", Boolean.TRUE), Instant.parse("2020-07-04T00:00:00Z")));
+    evaluacion13.getMemoria().setVersion(1);
+    evaluacion13.setVersion(1);
+    evaluacion13.setEsRevMinima(Boolean.FALSE);
+    evaluacion13.getTipoEvaluacion().setId(3L);
+    evaluacion13.getTipoEvaluacion().setNombre("TipoEvaluacion3");
+
     result.add(evaluacion12);
+    result.add(evaluacion13);
 
     // página 1 con 2 elementos por página
     HttpHeaders headers = new HttpHeaders();
@@ -650,7 +695,7 @@ public class ConvocatoriaReunionIT extends BaseIT {
     headers.add("X-Page-Size", "2");
 
     Pageable pageable = PageRequest.of(0, 2);
-    Page<Evaluacion> pageResult = new PageImpl<>(result.subList(0, 1), pageable, result.size());
+    Page<Evaluacion> pageResult = new PageImpl<>(result.subList(0, 2), pageable, result.size());
 
     // when: Se buscan los datos paginados
     final ResponseEntity<List<Evaluacion>> response = restTemplate.exchange(url, HttpMethod.GET,
@@ -704,14 +749,35 @@ public class ConvocatoriaReunionIT extends BaseIT {
    */
   private ConvocatoriaReunion getMockData(Long id, Long comiteId, Long tipoId) {
 
-    Formulario formulario = new Formulario(comiteId, "M" + comiteId + "0", "Formulario M" + comiteId + "0");
-    Comite comite = new Comite(comiteId, "CEI", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Set<ComiteNombre> nombre = new HashSet<>();
+    nombre.add(new ComiteNombre(Language.ES, "nombreInvestigacion", ComiteNombre.Genero.M));
+    Comite comite = new Comite();
+    comite.setId(comiteId);
+    comite.setCodigo("CEI");
+    comite.setNombre(nombre);
+    comite.setFormularioMemoriaId(1L);
+    comite.setFormularioSeguimientoAnualId(4L);
+    comite.setFormularioSeguimientoFinalId(5L);
+    comite.setFormularioRetrospectivaId(6L);
+    comite.setRequiereRetrospectiva(Boolean.FALSE);
+    comite.setPrefijoReferencia("M10");
+    comite.setPermitirRatificacion(Boolean.TRUE);
+    comite.setTareaNombreLibre(Boolean.TRUE);
+    comite.setTareaExperienciaLibre(Boolean.TRUE);
+    comite.setTareaExperienciaDetalle(Boolean.FALSE);
+    comite.setMemoriaTituloLibre(Boolean.FALSE);
+    comite.setActivo(Boolean.TRUE);
 
     String tipo_txt = (tipoId == 1L) ? "Ordinaria" : (tipoId == 2L) ? "Extraordinaria" : "Seguimiento";
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(tipoId, tipo_txt, Boolean.TRUE);
 
     String txt = (id % 2 == 0) ? String.valueOf(id) : "0" + String.valueOf(id);
 
+    Set<ConvocatoriaReunionLugar> lugar = new HashSet<>();
+    lugar.add(new ConvocatoriaReunionLugar(Language.ES, "Lugar " + txt));
+    Set<ConvocatoriaReunionOrdenDia> ordenDia = new HashSet<>();
+    ordenDia.add(new ConvocatoriaReunionOrdenDia(Language.ES,
+        "Orden del día convocatoria reunión " + txt));
     final ConvocatoriaReunion data = new ConvocatoriaReunion();
     data.setId(id);
     data.setComite(comite);
@@ -719,8 +785,8 @@ public class ConvocatoriaReunionIT extends BaseIT {
     data.setFechaLimite(
         LocalDate.of(2020, 8, id.intValue()).atStartOfDay(ZoneOffset.UTC).with(LocalTime.of(23, 59, 59)).toInstant());
     data.setVideoconferencia(false);
-    data.setLugar("Lugar " + txt);
-    data.setOrdenDia("Orden del día convocatoria reunión " + txt);
+    data.setLugar(lugar);
+    data.setOrdenDia(ordenDia);
     data.setAnio(2020);
     data.setNumeroActa(id);
     data.setTipoConvocatoriaReunion(tipoConvocatoriaReunion);
@@ -743,11 +809,13 @@ public class ConvocatoriaReunionIT extends BaseIT {
 
   private Asistentes generarMockAsistentes(Long id, Long evaluadorId, Long convocatoriaReunionId) {
 
+    Set<AsistentesMotivo> motivo = new HashSet<>();
+    motivo.add(new AsistentesMotivo(Language.ES, "Motivo" + id));
     Asistentes asistentes = new Asistentes();
     asistentes.setId(id);
     asistentes.setEvaluador(generarMockEvaluador(evaluadorId));
     asistentes.setConvocatoriaReunion(getMockData(convocatoriaReunionId, 1L, 2L));
-    asistentes.setMotivo("Motivo" + id);
+    asistentes.setMotivo(motivo);
     asistentes.setAsistencia(Boolean.TRUE);
 
     return asistentes;
@@ -766,16 +834,34 @@ public class ConvocatoriaReunionIT extends BaseIT {
     cargoComite.setNombre("PRESIDENTE");
     cargoComite.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Comite comite = new Comite(1L, "CEI", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Set<ComiteNombre> nombre = new HashSet<>();
+    nombre.add(new ComiteNombre(Language.ES, "nombreInvestigacion", ComiteNombre.Genero.M));
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("CEI");
+    comite.setNombre(nombre);
+    comite.setFormularioMemoriaId(1L);
+    comite.setFormularioSeguimientoAnualId(4L);
+    comite.setFormularioSeguimientoFinalId(5L);
+    comite.setFormularioRetrospectivaId(6L);
+    comite.setRequiereRetrospectiva(Boolean.FALSE);
+    comite.setPrefijoReferencia("M10");
+    comite.setPermitirRatificacion(Boolean.TRUE);
+    comite.setTareaNombreLibre(Boolean.TRUE);
+    comite.setTareaExperienciaLibre(Boolean.TRUE);
+    comite.setTareaExperienciaDetalle(Boolean.FALSE);
+    comite.setMemoriaTituloLibre(Boolean.FALSE);
+    comite.setActivo(Boolean.TRUE);
 
+    Set<EvaluadorResumen> resumen = new HashSet<>();
+    resumen.add(new EvaluadorResumen(Language.ES, "Evaluador" + id));
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
     evaluador.setCargoComite(cargoComite);
     evaluador.setComite(comite);
     evaluador.setFechaAlta(Instant.parse("2020-07-01T00:00:00Z"));
     evaluador.setFechaBaja(Instant.parse("2021-07-01T23:59:59Z"));
-    evaluador.setResumen("Evaluador" + id);
+    evaluador.setResumen(resumen);
     evaluador.setPersonaRef("user-00" + id);
     evaluador.setActivo(Boolean.TRUE);
 
@@ -792,7 +878,7 @@ public class ConvocatoriaReunionIT extends BaseIT {
    * @return el objeto Evaluacion
    */
 
-  public Evaluacion generarMockEvaluacion(Long id, String sufijo, Integer version, Integer versionMemoria) {
+  private Evaluacion generarMockEvaluacion(Long id, Integer version, Integer versionMemoria) {
 
     TipoEvaluacion tipoEvaluacionDictamen = new TipoEvaluacion(2L, "TipoEvaluacion2", Boolean.TRUE);
 
@@ -807,35 +893,86 @@ public class ConvocatoriaReunionIT extends BaseIT {
     tipoActividad.setNombre("Proyecto de investigacion");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> peTitulo = new HashSet<>();
+    peTitulo.add(new PeticionEvaluacionTitulo(Language.ES, "PeticionEvaluacion2"));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen"));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos"));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "Metodologico"));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(2L);
     peticionEvaluacion.setCodigo("Codigo");
-    peticionEvaluacion.setDisMetodologico("Metodologico");
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.parse("2021-07-09T23:59:59Z"));
     peticionEvaluacion.setFechaInicio(Instant.parse("2020-07-09T00:00:00Z"));
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos");
-    peticionEvaluacion.setResumen("Resumen");
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo("PeticionEvaluacion2");
+    peticionEvaluacion.setTitulo(peTitulo);
     peticionEvaluacion.setPersonaRef("user");
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Comite comite = new Comite(1L, "CEI", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Set<ComiteNombre> nombre = new HashSet<>();
+    nombre.add(new ComiteNombre(Language.ES, "nombreInvestigacion", ComiteNombre.Genero.M));
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("CEI");
+    comite.setNombre(nombre);
+    comite.setFormularioMemoriaId(1L);
+    comite.setFormularioSeguimientoAnualId(4L);
+    comite.setFormularioSeguimientoFinalId(5L);
+    comite.setFormularioRetrospectivaId(6L);
+    comite.setRequiereRetrospectiva(Boolean.FALSE);
+    comite.setPrefijoReferencia("M10");
+    comite.setPermitirRatificacion(Boolean.TRUE);
+    comite.setTareaNombreLibre(Boolean.TRUE);
+    comite.setTareaExperienciaLibre(Boolean.TRUE);
+    comite.setTareaExperienciaDetalle(Boolean.FALSE);
+    comite.setMemoriaTituloLibre(Boolean.FALSE);
+    comite.setActivo(Boolean.TRUE);
 
-    TipoMemoria tipoMemoria = new TipoMemoria();
-    tipoMemoria.setId(1L);
-    tipoMemoria.setNombre("TipoMemoria001");
-    tipoMemoria.setActivo(Boolean.TRUE);
+    TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
+    tipoEstadoMemoria.setId(12L);
+    tipoEstadoMemoria.setNombre("En secretaría seguimiento anual");
+    tipoEstadoMemoria.setActivo(Boolean.TRUE);
 
-    Memoria memoria = new Memoria(2L, "ref-002", peticionEvaluacion, comite, "Memoria002", "userref-002", tipoMemoria,
-        new TipoEstadoMemoria(12L, "En secretaría seguimiento anual", Boolean.TRUE),
-        Instant.parse("2020-08-01T00:00:00Z"), Boolean.FALSE, new Retrospectiva(3L,
-            new EstadoRetrospectiva(1L, "EstadoRetrospectiva01", Boolean.TRUE), Instant.parse("2020-07-03T00:00:00Z")),
-        versionMemoria, Boolean.TRUE, null);
+    Formulario formularioMemoria = new Formulario();
+    formularioMemoria.setId(1L);
+    formularioMemoria.setTipo(Formulario.Tipo.MEMORIA);
+    formularioMemoria.setCodigo("M10/2020/001");
+    formularioMemoria.setSeguimientoAnualDocumentacionTitle(Formulario.SeguimientoAnualDocumentacionTitle.TITULO_1);
+    Formulario formularioSeguimientoAnual = new Formulario();
+    formularioSeguimientoAnual.setId(4L);
+    formularioSeguimientoAnual.setTipo(Formulario.Tipo.SEGUIMIENTO_ANUAL);
+    formularioSeguimientoAnual.setCodigo("SA/2020/001");
+    Formulario formularioSeguimientoFinal = new Formulario();
+    formularioSeguimientoFinal.setId(5L);
+    formularioSeguimientoFinal.setTipo(Formulario.Tipo.SEGUIMIENTO_FINAL);
+    formularioSeguimientoFinal.setCodigo("SF/2020/001");
+
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, "Memoria002"));
+    Memoria memoria = new Memoria();
+    memoria.setId(2L);
+    memoria.setNumReferencia("ref-002");
+    memoria.setPeticionEvaluacion(peticionEvaluacion);
+    memoria.setComite(comite);
+    memoria.setFormulario(formularioMemoria);
+    memoria.setFormularioSeguimientoAnual(formularioSeguimientoAnual);
+    memoria.setFormularioSeguimientoFinal(formularioSeguimientoFinal);
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("userref-002");
+    memoria.setTipo(Memoria.Tipo.NUEVA);
+    memoria.setEstadoActual(tipoEstadoMemoria);
+    memoria.setFechaEnvioSecretaria(Instant.parse("2020-08-01T00:00:00Z"));
+    memoria.setRequiereRetrospectiva(Boolean.FALSE);
+    memoria.setVersion(versionMemoria);
+    memoria.setActivo(Boolean.TRUE);
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion();
     tipoEvaluacion.setId(2L);
@@ -865,7 +1002,7 @@ public class ConvocatoriaReunionIT extends BaseIT {
    * @return el objeto Evaluacion
    */
 
-  public Evaluacion generarMockEvaluacionId(Long id) {
+  private Evaluacion generarMockEvaluacionId(Long id) {
 
     TipoEvaluacion tipoEvaluacionDictamen = new TipoEvaluacion(2L, "TipoEvaluacion2", Boolean.TRUE);
 
@@ -880,35 +1017,86 @@ public class ConvocatoriaReunionIT extends BaseIT {
     tipoActividad.setNombre("Proyecto de investigacion");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> peTitulo = new HashSet<>();
+    peTitulo.add(new PeticionEvaluacionTitulo(Language.ES, "PeticionEvaluacion2"));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen"));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos"));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "Metodologico"));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(2L);
     peticionEvaluacion.setCodigo("Codigo");
-    peticionEvaluacion.setDisMetodologico("Metodologico");
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.parse("2021-07-09T23:59:59Z"));
     peticionEvaluacion.setFechaInicio(Instant.parse("2020-07-09T00:00:00Z"));
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos");
-    peticionEvaluacion.setResumen("Resumen");
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo("PeticionEvaluacion2");
+    peticionEvaluacion.setTitulo(peTitulo);
     peticionEvaluacion.setPersonaRef("user");
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Comite comite = new Comite(1L, "CEI", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Set<ComiteNombre> nombre = new HashSet<>();
+    nombre.add(new ComiteNombre(Language.ES, "nombreInvestigacion", ComiteNombre.Genero.M));
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("CEI");
+    comite.setNombre(nombre);
+    comite.setFormularioMemoriaId(1L);
+    comite.setFormularioSeguimientoAnualId(4L);
+    comite.setFormularioSeguimientoFinalId(5L);
+    comite.setFormularioRetrospectivaId(6L);
+    comite.setRequiereRetrospectiva(Boolean.FALSE);
+    comite.setPrefijoReferencia("M10");
+    comite.setPermitirRatificacion(Boolean.TRUE);
+    comite.setTareaNombreLibre(Boolean.TRUE);
+    comite.setTareaExperienciaLibre(Boolean.TRUE);
+    comite.setTareaExperienciaDetalle(Boolean.FALSE);
+    comite.setMemoriaTituloLibre(Boolean.FALSE);
+    comite.setActivo(Boolean.TRUE);
 
-    TipoMemoria tipoMemoria = new TipoMemoria();
-    tipoMemoria.setId(1L);
-    tipoMemoria.setNombre("TipoMemoria001");
-    tipoMemoria.setActivo(Boolean.TRUE);
+    TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
+    tipoEstadoMemoria.setId(12L);
+    tipoEstadoMemoria.setNombre("En secretaría seguimiento anual");
+    tipoEstadoMemoria.setActivo(Boolean.TRUE);
 
-    Memoria memoria = new Memoria(2L, "ref-002", peticionEvaluacion, comite, "Memoria002", "userref-002", tipoMemoria,
-        new TipoEstadoMemoria(12L, "En secretaría seguimiento anual", Boolean.TRUE),
-        Instant.parse("2020-08-01T00:00:00Z"), Boolean.FALSE, new Retrospectiva(3L,
-            new EstadoRetrospectiva(1L, "EstadoRetrospectiva01", Boolean.TRUE), Instant.parse("2020-07-03T00:00:00Z")),
-        7, Boolean.TRUE, null);
+    Formulario formularioMemoria = new Formulario();
+    formularioMemoria.setId(1L);
+    formularioMemoria.setTipo(Formulario.Tipo.MEMORIA);
+    formularioMemoria.setCodigo("M10/2020/001");
+    formularioMemoria.setSeguimientoAnualDocumentacionTitle(Formulario.SeguimientoAnualDocumentacionTitle.TITULO_1);
+    Formulario formularioSeguimientoAnual = new Formulario();
+    formularioSeguimientoAnual.setId(4L);
+    formularioSeguimientoAnual.setTipo(Formulario.Tipo.SEGUIMIENTO_ANUAL);
+    formularioSeguimientoAnual.setCodigo("SA/2020/001");
+    Formulario formularioSeguimientoFinal = new Formulario();
+    formularioSeguimientoFinal.setId(5L);
+    formularioSeguimientoFinal.setTipo(Formulario.Tipo.SEGUIMIENTO_FINAL);
+    formularioSeguimientoFinal.setCodigo("SF/2020/001");
+
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, "Memoria002"));
+    Memoria memoria = new Memoria();
+    memoria.setId(2L);
+    memoria.setNumReferencia("ref-002");
+    memoria.setPeticionEvaluacion(peticionEvaluacion);
+    memoria.setComite(comite);
+    memoria.setFormulario(formularioMemoria);
+    memoria.setFormularioSeguimientoAnual(formularioSeguimientoAnual);
+    memoria.setFormularioSeguimientoFinal(formularioSeguimientoFinal);
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("userref-002");
+    memoria.setTipo(Memoria.Tipo.NUEVA);
+    memoria.setEstadoActual(tipoEstadoMemoria);
+    memoria.setFechaEnvioSecretaria(Instant.parse("2020-08-01T00:00:00Z"));
+    memoria.setRequiereRetrospectiva(Boolean.FALSE);
+    memoria.setVersion(7);
+    memoria.setActivo(Boolean.TRUE);
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion();
     tipoEvaluacion.setId(1L);
@@ -931,94 +1119,4 @@ public class ConvocatoriaReunionIT extends BaseIT {
     return evaluacion;
   }
 
-  /**
-   * Función que devuelve un objeto Evaluacion
-   *
-   * @param id                    id del Evaluacion
-   * @param sufijo                el sufijo para título y nombre
-   * @param convocatoriaReunionId el sufijo para título y nombre
-   * @return el objeto Evaluacion
-   */
-
-  public Evaluacion generarMockEvaluacion(Long id, String sufijo, Long convocatoriaReunionId) {
-
-    TipoEvaluacion tipoEvaluacion = new TipoEvaluacion();
-    tipoEvaluacion.setId(1L);
-    tipoEvaluacion.setNombre("TipoEvaluacion1");
-    tipoEvaluacion.setActivo(Boolean.TRUE);
-
-    Dictamen dictamen = new Dictamen();
-    dictamen.setId(1L);
-    dictamen.setNombre("Dictamen1");
-    dictamen.setTipoEvaluacion(tipoEvaluacion);
-    dictamen.setActivo(Boolean.TRUE);
-
-    TipoActividad tipoActividad = new TipoActividad();
-    tipoActividad.setId(1L);
-    tipoActividad.setNombre("Proyecto de investigacion");
-    tipoActividad.setActivo(Boolean.TRUE);
-
-    PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
-    peticionEvaluacion.setId(1L);
-    peticionEvaluacion.setCodigo("Codigo1");
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico1");
-    peticionEvaluacion.setFechaFin(Instant.parse("2020-08-01T23:59:59Z"));
-    peticionEvaluacion.setFechaInicio(Instant.parse("2020-08-01T00:00:00Z"));
-    peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos1");
-    peticionEvaluacion.setResumen("Resumen");
-    peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
-    peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo("PeticionEvaluacion1");
-    peticionEvaluacion.setPersonaRef("user");
-    peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
-    peticionEvaluacion.setActivo(Boolean.TRUE);
-
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
-
-    TipoMemoria tipoMemoria = new TipoMemoria();
-    tipoMemoria.setId(1L);
-    tipoMemoria.setNombre("TipoMemoria001");
-    tipoMemoria.setActivo(Boolean.TRUE);
-
-    Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria001", "user-001", tipoMemoria,
-        new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.parse("2020-08-01T00:00:00Z"), Boolean.FALSE,
-        new Retrospectiva(1L, new EstadoRetrospectiva(1L, "EstadoRetrospectiva01", Boolean.TRUE),
-            Instant.parse("2020-08-01T00:00:00Z")),
-        3, Boolean.TRUE, null);
-
-    TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
-
-    ConvocatoriaReunion convocatoriaReunion = new ConvocatoriaReunion();
-    convocatoriaReunion.setId(convocatoriaReunionId);
-    convocatoriaReunion.setComite(comite);
-    convocatoriaReunion.setFechaEvaluacion(Instant.parse("2020-08-01T00:00:00Z"));
-    convocatoriaReunion.setFechaLimite(Instant.parse("2020-08-01T23:59:59Z"));
-    convocatoriaReunion.setVideoconferencia(false);
-    convocatoriaReunion.setLugar("Lugar");
-    convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
-    convocatoriaReunion.setAnio(2020);
-    convocatoriaReunion.setNumeroActa(100L);
-    convocatoriaReunion.setTipoConvocatoriaReunion(tipoConvocatoriaReunion);
-    convocatoriaReunion.setHoraInicio(7);
-    convocatoriaReunion.setMinutoInicio(30);
-    convocatoriaReunion.setFechaEnvio(Instant.parse("2020-08-01T00:00:00Z"));
-    convocatoriaReunion.setActivo(Boolean.TRUE);
-
-    Evaluacion evaluacion = new Evaluacion();
-    evaluacion.setId(id);
-    evaluacion.setDictamen(dictamen);
-    evaluacion.setEsRevMinima(Boolean.TRUE);
-    evaluacion.setFechaDictamen(Instant.parse("2020-08-01T00:00:00Z"));
-    evaluacion.setMemoria(memoria);
-    evaluacion.setConvocatoriaReunion(convocatoriaReunion);
-    evaluacion.setEvaluador1(generarMockEvaluador(1L));
-    evaluacion.setEvaluador2(generarMockEvaluador(2L));
-    evaluacion.setVersion(2);
-    evaluacion.setTipoEvaluacion(tipoEvaluacion);
-    evaluacion.setActivo(Boolean.TRUE);
-
-    return evaluacion;
-  }
 }

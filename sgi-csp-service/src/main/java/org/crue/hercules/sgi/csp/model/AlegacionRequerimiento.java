@@ -2,8 +2,12 @@ package org.crue.hercules.sgi.csp.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -14,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -87,8 +92,11 @@ public class AlegacionRequerimiento extends BaseEntity {
   private String justificanteReintegro;
 
   /** Observaciones */
-  @Column(name = "observaciones", nullable = true, length = DEFAULT_LONG_TEXT_LENGTH)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "alegacion_requerimiento_observaciones", joinColumns = @JoinColumn(name = "alegacion_requerimiento_id"))
+  @Valid
+  @Builder.Default
+  private Set<AlegacionRequerimientoObservaciones> observaciones = new HashSet<>();
 
   // Relation mappings for JPA metamodel generation only
   @OneToOne(fetch = FetchType.LAZY)

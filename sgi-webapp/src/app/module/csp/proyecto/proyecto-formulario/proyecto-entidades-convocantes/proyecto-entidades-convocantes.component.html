@@ -8,7 +8,8 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{ 'csp.proyecto-entidad-convocante.programa.nombre' | translate }}
         </th>
-        <td mat-cell *matCellDef="let proyectoEntidadConvocanteData">
+        <td mat-cell *matCellDef="let proyectoEntidadConvocanteData" sgempNotFoundError
+          [model]="proyectoEntidadConvocanteData.entidad">
           {{ proyectoEntidadConvocanteData.entidad.nombre }}
         </td>
       </ng-container>
@@ -29,7 +30,8 @@
           {{ 'csp.proyecto-entidad-convocante.programa.plan' | translate }}
         </th>
         <td mat-cell *matCellDef="let proyectoEntidadConvocanteData">
-          {{ proyectoEntidadConvocanteData | proyectoEntidadConvocantePlan }}
+          <sgi-i18n-table-field
+            [field]="proyectoEntidadConvocanteData | proyectoEntidadConvocantePlan"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -39,8 +41,9 @@
           {{'csp.proyecto-entidad-convocante.programa.programa-convocatoria' | translate }}
         </th>
         <td mat-cell *matCellDef="let proyectoEntidadConvocanteData">
-          {{ proyectoEntidadConvocanteData.programaConvocatoria?.padre?.id ?
-          proyectoEntidadConvocanteData.programaConvocatoria?.nombre: '' }}
+          <sgi-i18n-table-field
+            [field]="proyectoEntidadConvocanteData.programaConvocatoria?.padre?.id ? proyectoEntidadConvocanteData.programaConvocatoria?.nombre: ''">
+          </sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -50,8 +53,9 @@
           {{ 'csp.proyecto-entidad-convocante.programa.programa' | translate }}
         </th>
         <td mat-cell *matCellDef="let proyectoEntidadConvocanteData">
-          {{ proyectoEntidadConvocanteData.programa?.padre?.id ?
-          proyectoEntidadConvocanteData.programa?.nombre: '' }}
+          <sgi-i18n-table-field
+            [field]="proyectoEntidadConvocanteData.programa?.padre?.id ? proyectoEntidadConvocanteData.programa?.nombre: ''">
+          </sgi-i18n-table-field>
         </td>
       </ng-container>
 

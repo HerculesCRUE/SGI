@@ -29,6 +29,7 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
 import org.crue.hercules.sgi.csp.model.Grupo;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipoNivelAcademico;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
@@ -77,8 +78,8 @@ import org.crue.hercules.sgi.csp.service.SolicitudProyectoSocioService;
 import org.crue.hercules.sgi.csp.service.SolicitudRrhhService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
+import org.json.JSONObject;
 import org.modelmapper.ModelMapper;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -117,6 +118,7 @@ public class SolicitudController {
 
   public static final String PATH_ID = PATH_DELIMITER + "{id}";
   public static final String PATH_DOCUMENTOS = PATH_ID + PATH_DELIMITER + "solicituddocumentos";
+  public static final String PATH_HAS_DOCUMENTOS_OR_HITOS = PATH_ID + PATH_DELIMITER + "hasdocumentosorhitos";
   public static final String PATH_HISTORICO_ESTADOS = PATH_ID + PATH_DELIMITER + "estadosolicitudes";
   public static final String PATH_MODIFICABLE = PATH_ID + PATH_DELIMITER + "modificable";
   public static final String PATH_MODIFICABLE_BY_INV = PATH_MODIFICABLE + PATH_DELIMITER + "investigador";
@@ -501,7 +503,7 @@ public class SolicitudController {
    *         filtrados.
    */
   @GetMapping("/{id}/solicitudhitos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<SolicitudHitoOutput>> findAllSolicitudHito(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudHito(Long id, String query, Pageable paging) - start");
@@ -659,7 +661,7 @@ public class SolicitudController {
    *         paginados y filtrados.
    */
   @GetMapping("/{id}/solicitudproyectoentidadfinanciadoraajenas")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<SolicitudProyectoEntidadFinanciadoraAjena>> findAllSolicitudProyectoEntidadFinanciadoraAjena(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -683,7 +685,7 @@ public class SolicitudController {
    * @return {@link SolicitudProyecto}
    */
   @RequestMapping(path = "/{id}/solicitudproyecto", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER' , 'CSP-SOL-INV-BR')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER', 'CSP-SOL-INV-BR')")
   public ResponseEntity<Void> existSolictudProyectoDatos(@PathVariable Long id) {
     log.debug("existSolictudProyectoDatos(Long id) - start");
     boolean returnValue = solicitudProyectoService.existsBySolicitudId(id);
@@ -702,7 +704,7 @@ public class SolicitudController {
    *         paginados y filtrados.
    */
   @GetMapping("/{id}/solicitudproyectopresupuestos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V', 'CSP-PRO-V', 'CSP-PRO-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V', 'CSP-SOL-INV-ER', 'CSP-PRO-V', 'CSP-PRO-E')")
   public ResponseEntity<Page<SolicitudProyectoPresupuesto>> findAllSolicitudProyectoPresupuesto(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudProyectoPresupuesto(Long id, String query, Pageable paging) - start");
@@ -767,7 +769,7 @@ public class SolicitudController {
    * @return {@link SolicitudProyectoPresupuestoTotales}
    */
   @GetMapping("/{id}/solicitudproyectopresupuestos/totales")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public SolicitudProyectoPresupuestoTotales getSolicitudProyectoPresupuestoTotales(@PathVariable Long id) {
     log.debug("getSolicitudProyectoPresupuestoTotales(Long id) - start");
     SolicitudProyectoPresupuestoTotales returnValue = solicitudProyectoPresupuestoService.getTotales(id);
@@ -776,7 +778,7 @@ public class SolicitudController {
   }
 
   @GetMapping("/{id}/solicitudproyectopresupuestos/totalesconceptogasto")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<List<SolicitudProyectoPresupuestoTotalConceptoGasto>> findAllSolicitudProyectoPresupuestoTotalConceptoGastos(
       @PathVariable Long id) {
     log.debug("findAllSolicitudProyectoPresupuestoTotalConceptoGastos(Long id) - start");
@@ -1044,7 +1046,7 @@ public class SolicitudController {
    *         paginados y filtrados.
    */
   @GetMapping("/{id}/solicitudproyectoentidadfinanciadora")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<ConvocatoriaEntidadFinanciadora>> findAllSolicitudProyectoEntidadFinanciadora(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -1073,7 +1075,7 @@ public class SolicitudController {
    *         paginadas y filtradas.
    */
   @GetMapping("/{id}/solicitudproyectoentidad/tipopresupuestomixto")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<SolicitudProyectoEntidad>> findSolicitudProyectoEntidadTipoPresupuestoMixto(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -1102,7 +1104,7 @@ public class SolicitudController {
    *         paginadas y filtradas.
    */
   @GetMapping("/{id}/solicitudproyectoentidad/tipopresupuestoporentidad")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<SolicitudProyectoEntidad>> findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -1303,7 +1305,7 @@ public class SolicitudController {
    *         modificación
    */
   @RequestMapping(path = PATH_MODIFICABLE_ESTADO_DOCUMENTOS_BY_INV, method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-INV-ER' , 'CSP-SOL-INV-BR')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-INV-ER', 'CSP-SOL-INV-BR')")
   public ResponseEntity<Void> modificableEstadoAndDocumentosByInvestigador(@PathVariable Long id) {
     log.debug("modificableEstadoAndDocumentosByInvestigador(Long id) - start");
     boolean returnValue = service.modificableEstadoAndDocumentosByInvestigador(id);
@@ -1454,6 +1456,21 @@ public class SolicitudController {
     log.debug("findIdsSolicitudesModificadas(String query) - end");
     return returnValue.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
         : new ResponseEntity<>(returnValue, HttpStatus.OK);
+  }
+
+  /**
+   * Comprueba si existen o no {@link ModeloEjecucion} que cumplan con el filtro.
+   *
+   * @param id Identificador de {@link Solicitud}.
+   * @return Si existen o no {@link ModeloEjecucion} que cumplan con el filtro.
+   */
+  @RequestMapping(path = PATH_HAS_DOCUMENTOS_OR_HITOS, method = RequestMethod.HEAD)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-C', 'CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-C' ,'CSP-SOL-INV-ER')")
+  public ResponseEntity<Void> hasDocumentosOrHitos(@PathVariable Long id) {
+    log.debug("hasDocumentosOrHitos(Long id) - start");
+    boolean returnValue = service.hasDocumentosOrHitos(id);
+    log.debug("hasDocumentosOrHitos(Long id) - end");
+    return new ResponseEntity<>(returnValue ? HttpStatus.OK : HttpStatus.NO_CONTENT);
   }
 
   private Page<SolicitudPalabraClaveOutput> convertSolicitudPalabraClave(Page<SolicitudPalabraClave> page) {

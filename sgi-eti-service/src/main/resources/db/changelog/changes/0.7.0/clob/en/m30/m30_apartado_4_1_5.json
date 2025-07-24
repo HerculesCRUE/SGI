@@ -1,0 +1,47 @@
+[
+  {
+    "key": "ap4_1_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.5 Available prophylactic treatment"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Is there an effective vaccine or prophylactic treatment available?</p>"
+      },
+      {
+        "key": "vacunaEficaz",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarVacunaEficaz",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.vacunaEficaz || model.vacunaEficaz === 'no'",
+        "templateOptions": {
+          "label": "Please specify",
+          "placeholder": "Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

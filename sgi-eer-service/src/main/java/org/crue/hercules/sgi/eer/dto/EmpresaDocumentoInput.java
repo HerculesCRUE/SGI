@@ -1,10 +1,14 @@
 package org.crue.hercules.sgi.eer.dto;
 
+import java.util.List;
+
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.eer.model.BaseEntity;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,16 +23,14 @@ import lombok.NoArgsConstructor;
 @Builder
 public class EmpresaDocumentoInput {
 
-  @NotBlank
-  @Size(max = BaseEntity.SHORT_TEXT_LENGTH)
-  private String nombre;
+  @NotEmpty
+  private List<I18nFieldValueDto> nombre;
 
   @NotBlank
   @Size(max = BaseEntity.REF_LENGTH)
   private String documentoRef;
 
-  @Size(max = BaseEntity.LONG_TEXT_LENGTH)
-  private String comentarios;
+  private List<I18nFieldValueDto> comentarios;
 
   @NotNull
   private Long empresaId;

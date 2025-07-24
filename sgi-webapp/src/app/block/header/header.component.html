@@ -14,6 +14,19 @@
       <h2 *ngIf="module !== Module.INV">{{module?.title | translate}}</h2>
     </div>
 
+    <div fxLayoutAlign="center center" fxFlex="10%" fxHide.xs fxHide.sm>
+      <mat-select [value]="selectedLanguage" (selectionChange)="selectLanguage($event.value)">
+        <mat-select-trigger class="mat-option">
+          <span>{{selectedLanguage.translateKey |
+            translate}} ({{selectedLanguage.codeExtended}})</span>
+        </mat-select-trigger>
+        <mat-option *ngFor="let language of languages" [value]="language">
+          <span>{{language.translateKey |
+            translate}} ({{language.codeExtended}})</span>
+        </mat-option>
+      </mat-select>
+    </div>
+
     <!-- FIN Columna menu movil (xs-sm) y logos-->
     <div fxFlex="nogrow">
       <!-- navbar movil (xs-sm) -->

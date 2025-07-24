@@ -5,11 +5,10 @@ import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
-import org.crue.hercules.sgi.csp.repository.custom.CustomConvocatoriaPeriodoJustificacionRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface ConvocatoriaPeriodoJustificacionRepository extends CustomConvocatoriaPeriodoJustificacionRepository,
+public interface ConvocatoriaPeriodoJustificacionRepository extends
     JpaRepository<ConvocatoriaPeriodoJustificacion, Long>, JpaSpecificationExecutor<ConvocatoriaPeriodoJustificacion> {
 
   /**
@@ -30,5 +29,13 @@ public interface ConvocatoriaPeriodoJustificacionRepository extends CustomConvoc
    *         {@link Convocatoria} con el mayor numPeriodo.
    */
   Optional<ConvocatoriaPeriodoJustificacion> findFirstByConvocatoriaIdOrderByNumPeriodoDesc(Long convocatoriaId);
+
+  /**
+   * Elimina todos los registros de {@link ConvocatoriaPeriodoJustificacion} que
+   * pertenecen a una {@link Convocatoria}
+   * 
+   * @param convocatoriaId Id de la {@link Convocatoria}
+   */
+  void deleteByConvocatoriaId(Long convocatoriaId);
 
 }

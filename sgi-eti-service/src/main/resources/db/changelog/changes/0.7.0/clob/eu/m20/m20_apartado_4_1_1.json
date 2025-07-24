@@ -1,0 +1,55 @@
+[
+  {
+    "key": "ap4_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.1 Metodo alternatiboak"
+    },
+    "fieldGroup": [
+      {
+        "template": "Zergatik ez da planteatzen proposatutako metodoen metodo alternatiboak aplikatzea?"
+      },
+      {
+        "key": "metodoAlternativoMotivoRadio",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Arrazoia",
+          "required": true,
+          "options": [
+            {
+              "value": "sonMetodosAlternativos",
+              "label": "Proposatutako metodoak jada metodo alternatiboak dira."
+            },
+            {
+              "value": "existen",
+              "label": "Ez dago proposatutakoen metodo alternatiborik."
+            },
+            {
+              "value": "noValidados",
+              "label": "Badira metodo alternatiboak, baina balioztatu gabe daude."
+            },
+            {
+              "value": "otros",
+              "label": "Beste arrazoi batzuk"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarMotivo",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.metodoAlternativoMotivoRadio || model.metodoAlternativoMotivoRadio === 'sonMetodosAlternativos' || model.metodoAlternativoMotivoRadio === 'existen' || model.metodoAlternativoMotivoRadio === 'noValidados'",
+        "templateOptions": {
+          "label": "Zehaztu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

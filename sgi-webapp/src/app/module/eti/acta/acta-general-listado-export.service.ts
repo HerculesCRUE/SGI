@@ -9,6 +9,7 @@ import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { IActaReportData, IActaReportOptions } from './acta-listado-export.service';
+import { TIPO_CONVOCATORIA_REUNION_MAP } from '@core/models/eti/tipo-convocatoria-reunion';
 
 const COMITE_KEY = marker('label.eti.comite');
 const FECHA_EVALUACION_KEY = marker('eti.acta.fecha-evaluacion');
@@ -98,7 +99,7 @@ export class ActaGeneralListadoExportService
     elementsRow.push(this.luxonDatePipe.transform(
       LuxonUtils.toBackend(acta.fechaEvaluacion, true), 'shortDate') ?? '');
     elementsRow.push(acta.numeroActa ? acta.numeroActa.toString() : '');
-    elementsRow.push(acta.convocatoria ?? '');
+    elementsRow.push(acta.tipoConvocatoria?.id ? this.translate.instant(TIPO_CONVOCATORIA_REUNION_MAP.get(acta.tipoConvocatoria?.id)) : '');
     elementsRow.push(acta.numEvaluaciones ? acta.numEvaluaciones.toString() : '0');
     elementsRow.push(acta.numRevisiones ? acta.numRevisiones.toString() : '0');
     elementsRow.push(acta.numTotal ? acta.numTotal.toString() : '0');

@@ -101,8 +101,8 @@
       <ng-container *ngIf="formGroup.controls.videoconferencia?.value === false">
         <mat-form-field fxFlex="33%">
           <mat-label>{{'eti.convocatoria-reunion.lugar' | translate}}</mat-label>
-          <input matInput formControlName="lugar" id="lugar"
-            placeholder="{{'eti.convocatoria-reunion.lugar' | translate}}" required />
+          <sgi-i18n-input matInput formControlName="lugar" id="lugar"
+            placeholder="{{'eti.convocatoria-reunion.lugar' | translate}}" required></sgi-i18n-input>
           <mat-error *ngIf="formGroup.controls.lugar.errors?.required">
             {{'error.required.entity' | translate:msgParamLugarEntity}}
           </mat-error>
@@ -119,7 +119,7 @@
         <mat-label>{{'eti.convocatoria-reunion.convocantes' | translate}}</mat-label>
         <mat-select matNativeControl formControlName="convocantes" multiple required>
           <mat-option *ngFor="let convocante of formFragment.evaluadoresComite" [value]="convocante">
-            {{convocante?.persona?.nombre}} {{convocante?.persona?.apellidos}}
+            {{getPersonaConvocante(convocante.persona)}}
           </mat-option>
         </mat-select>
         <mat-error *ngIf="formGroup.controls.convocantes.errors?.required">
@@ -133,12 +133,12 @@
       <span class="ckeditor-label">{{'eti.convocatoria-reunion.orden-dia' | translate}}<span
           [class]="(formGroup.controls.ordenDia.touched && formGroup.controls.ordenDia.errors?.required) ? 'warn' : ''">
           *</span></span>
-      <ckeditor
+      <sgi-i18n-ckeditor #ordenDia
         [class]="formGroup.controls.ordenDia.touched && formGroup.controls.ordenDia.errors ? 'ck-editor-border-warn' : ''"
-        [editor]="CkEditor" [config]="configCkEditor" formControlName="ordenDia" required>
-      </ckeditor>
-      <span *ngIf="!formGroup.controls.ordenDia.errors"
-        class="ckeditor-hint">{{formGroup.controls.ordenDia?.value?.length}} / 2000</span>
+        formControlName="ordenDia" required>
+      </sgi-i18n-ckeditor>
+      <span *ngIf="!formGroup.controls.ordenDia.errors" class="ckeditor-hint">{{ordenDia.editingValue?.length}} /
+        2000</span>
       <span class="ckeditor-error"
         *ngIf="formGroup.controls.ordenDia.touched && formGroup.controls.ordenDia.errors?.required">
         {{'error.required.entity' | translate:msgParamOrdenDiaEntity}}

@@ -7,8 +7,10 @@ import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.validation.Validator;
 
@@ -18,15 +20,21 @@ import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessProyectoException;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
+import org.crue.hercules.sgi.csp.model.EstadoProyectoComentario;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
 import org.crue.hercules.sgi.csp.model.Proyecto;
-import org.crue.hercules.sgi.csp.model.Proyecto.CausaExencion;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoIVA;
+import org.crue.hercules.sgi.csp.model.ProyectoObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
+import org.crue.hercules.sgi.csp.model.ProyectoTitulo;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
+import org.crue.hercules.sgi.csp.model.Proyecto.CausaExencion;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadConvocanteRepository;
@@ -63,6 +71,8 @@ import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoServiceImpl;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgempService;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -193,7 +203,7 @@ class ProyectoServiceTest extends BaseServiceTest {
   private ProyectoService service;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     proyectoHelper = new ProyectoHelper(repository, proyectoEquipoRepository, proyectoResponsableEconomicoRepository);
     service = new ProyectoServiceImpl(sgiConfigProperties, repository, estadoProyectoRepository, modeloUnidadRepository,
         convocatoriaRepository, convocatoriaEntidadFinanciadoraRepository, proyectoEntidadFinanciadoraService,
@@ -357,53 +367,6 @@ class ProyectoServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_2" })
-  void createWithConvocatoriaAndConvocatoriaAreaTematica_ReturnsProyecto() {
-    // given: Un nuevo Proyecto
-    Proyecto proyecto = generarMockProyecto(null);
-    proyecto.setConvocatoriaId(1L);
-
-    BDDMockito.given(repository.save(ArgumentMatchers.<Proyecto>any())).will((InvocationOnMock invocation) -> {
-      Proyecto proyectoCreado = invocation.getArgument(0);
-      if (proyectoCreado.getId() == null) {
-        proyectoCreado.setId(1L);
-      }
-
-      return proyectoCreado;
-    });
-
-    BDDMockito.given(convocatoriaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
-
-    BDDMockito.given(estadoProyectoRepository.save(ArgumentMatchers.<EstadoProyecto>any()))
-        .will((InvocationOnMock invocation) -> {
-          EstadoProyecto estadoProyectoCreado = invocation.getArgument(0);
-          estadoProyectoCreado.setId(1L);
-          return estadoProyectoCreado;
-        });
-
-    ModeloUnidad modeloUnidad = new ModeloUnidad();
-    modeloUnidad.setId(1L);
-    modeloUnidad.setModeloEjecucion(proyecto.getModeloEjecucion());
-    modeloUnidad.setUnidadGestionRef(proyecto.getUnidadGestionRef());
-    modeloUnidad.setActivo(true);
-
-    BDDMockito.given(modeloUnidadRepository.findByModeloEjecucionIdAndUnidadGestionRef(ArgumentMatchers.anyLong(),
-        ArgumentMatchers.anyString())).willReturn(Optional.of(modeloUnidad));
-    // when: Creamos el Proyecto
-    Proyecto proyectoCreado = service.create(proyecto);
-
-    // then: El Proyecto se crea correctamente
-    Assertions.assertThat(proyectoCreado).as("isNotNull()").isNotNull();
-    Assertions.assertThat(proyectoCreado.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(proyectoCreado.getEstado().getId()).as("getEstado().getId()").isNotNull();
-    Assertions.assertThat(proyectoCreado.getObservaciones()).as("getObservaciones()")
-        .isEqualTo(proyecto.getObservaciones());
-    Assertions.assertThat(proyectoCreado.getUnidadGestionRef()).as("getUnidadGestionRef()")
-        .isEqualTo(proyecto.getUnidadGestionRef());
-    Assertions.assertThat(proyectoCreado.getActivo()).as("getActivo").isEqualTo(proyecto.getActivo());
-  }
-
-  @Test
-  @WithMockUser(authorities = { "CSP-PRO-C_2" })
   void create_WithConvocatoriaNotExists_ThrowsIllegalArgumentException() {
     // given: Un nuevo Proyecto
     Proyecto proyecto = generarMockProyecto(null);
@@ -414,7 +377,7 @@ class ProyectoServiceTest extends BaseServiceTest {
     // when: Creamos el Proyecto
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.create(proyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La convocatoria con id '" + proyecto.getConvocatoriaId() + "' no existe");
+        .hasMessage("Convocatoria de Proyecto no existe");
   }
 
   @Test
@@ -426,7 +389,7 @@ class ProyectoServiceTest extends BaseServiceTest {
     // when: Creamos el Proyecto
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.create(proyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Proyecto id tiene que ser null para crear un Proyecto");
+        .hasMessage("Identificador de Proyecto debe ser nulo");
   }
 
   @Test
@@ -439,7 +402,7 @@ class ProyectoServiceTest extends BaseServiceTest {
     // when: Creamos el Proyecto
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.create(proyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La Unidad de Gestión no es gestionable por el usuario");
+        .hasMessage("Proyecto pertenece a una Unidad de Gestión no gestionable por el usuario");
   }
 
   @Test
@@ -454,8 +417,8 @@ class ProyectoServiceTest extends BaseServiceTest {
     // when: Creamos el Proyecto
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.create(proyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion '" + proyecto.getModeloEjecucion().getNombre()
-            + "' no disponible para la UnidadGestion " + proyecto.getUnidadGestionRef());
+        .hasMessage("Modelo Ejecución %s no disponible para la Unidad Gestión %s",
+            proyecto.getModeloEjecucion().getNombre(), proyecto.getUnidadGestionRef());
   }
 
   @Test
@@ -464,7 +427,10 @@ class ProyectoServiceTest extends BaseServiceTest {
     // given: Un nuevo Proyecto con las observaciones actualizadas
     Proyecto proyecto = generarMockProyecto(1L);
     Proyecto proyectoObservacionesActualizadas = generarMockProyecto(1L);
-    proyectoObservacionesActualizadas.setObservaciones("observaciones actualizadas");
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones actualizadas"));
+    proyectoObservacionesActualizadas.setObservaciones(observacionesProyecto);
 
     ModeloUnidad modeloUnidad = new ModeloUnidad();
     modeloUnidad.setId(1L);
@@ -498,7 +464,10 @@ class ProyectoServiceTest extends BaseServiceTest {
     // given: Un nuevo Proyecto con las observaciones actualizadas
     Proyecto proyecto = generarMockProyecto(1L);
     Proyecto proyectoObservacionesActualizadas = generarMockProyecto(1L);
-    proyectoObservacionesActualizadas.setObservaciones("observaciones actualizadas");
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones actualizadas"));
+    proyectoObservacionesActualizadas.setObservaciones(observacionesProyecto);
     proyecto.setFechaFinDefinitiva(null);
     proyectoObservacionesActualizadas.setFechaFinDefinitiva(Instant.now().plusSeconds(3600000));
 
@@ -538,7 +507,10 @@ class ProyectoServiceTest extends BaseServiceTest {
     Proyecto proyecto = generarMockProyecto(1L);
     Proyecto proyectoObservacionesActualizadas = generarMockProyecto(2L);
     proyecto.getEstado().setId(2L);
-    proyectoObservacionesActualizadas.setObservaciones("observaciones actualizadas");
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones actualizadas"));
+    proyectoObservacionesActualizadas.setObservaciones(observacionesProyecto);
 
     ModeloUnidad modeloUnidad = new ModeloUnidad();
     modeloUnidad.setId(1L);
@@ -561,7 +533,10 @@ class ProyectoServiceTest extends BaseServiceTest {
     Proyecto proyecto = generarMockProyecto(1L);
     proyecto.setIva(buildMockProyectoIVA(1L, 11));
     Proyecto proyectoObservacionesActualizadas = generarMockProyecto(1L);
-    proyectoObservacionesActualizadas.setObservaciones("observaciones actualizadas");
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones actualizadas"));
+    proyectoObservacionesActualizadas.setObservaciones(observacionesProyecto);
     proyectoObservacionesActualizadas.setIva(this.buildMockProyectoIVA(2L, 0));
     proyectoObservacionesActualizadas.setCausaExencion(CausaExencion.NO_SUJETO);
 
@@ -610,7 +585,10 @@ class ProyectoServiceTest extends BaseServiceTest {
     proyecto.setConvocatoriaId(convocatoriaId);
     Proyecto proyectoObservacionesActualizadas = generarMockProyecto(1L);
     proyectoObservacionesActualizadas.setConvocatoriaId(convocatoriaId);
-    proyectoObservacionesActualizadas.setObservaciones("observaciones actualizadas");
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones actualizadas"));
+    proyectoObservacionesActualizadas.setObservaciones(observacionesProyecto);
 
     ModeloUnidad modeloUnidad = new ModeloUnidad();
     modeloUnidad.setId(1L);
@@ -652,7 +630,7 @@ class ProyectoServiceTest extends BaseServiceTest {
     // when: Actualizamos el Proyecto
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.update(proyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La convocatoria con id '" + proyecto.getConvocatoriaId() + "' no existe");
+        .hasMessage("Convocatoria de Proyecto no existe");
   }
 
   @Test
@@ -682,8 +660,8 @@ class ProyectoServiceTest extends BaseServiceTest {
     // when: Actualizamos el Proyecto
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.update(proyecto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion '" + proyecto.getModeloEjecucion().getNombre()
-            + "' no disponible para la UnidadGestion " + proyecto.getUnidadGestionRef());
+        .hasMessage("Modelo Ejecución %s no disponible para la Unidad Gestión %s",
+            proyecto.getModeloEjecucion().getNombre(), proyecto.getUnidadGestionRef());
   }
 
   @Test
@@ -788,14 +766,15 @@ class ProyectoServiceTest extends BaseServiceTest {
     Assertions.assertThat(proyecto).as("isNotNull()").isNotNull();
     Assertions.assertThat(proyecto.getId()).as("getId()").isEqualTo(idBuscado);
     Assertions.assertThat(proyecto.getEstado().getId()).as("getEstado().getId()").isEqualTo(1);
-    Assertions.assertThat(proyecto.getObservaciones()).as("getObservaciones()").isEqualTo("observaciones-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyecto.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("observaciones-001");
     Assertions.assertThat(proyecto.getUnidadGestionRef()).as("getUnidadGestionRef()").isEqualTo("2");
     Assertions.assertThat(proyecto.getActivo()).as("getActivo()").isTrue();
   }
 
   @Test
   @WithMockUser(authorities = { "CSP-PRO-C_2" })
-  void findById_WithIdNotExist_ThrowsProyectoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoNotFoundException() {
     // given: Ningun Proyecto con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -815,7 +794,8 @@ class ProyectoServiceTest extends BaseServiceTest {
     }
 
     BDDMockito
-        .given(repository.findAll(ArgumentMatchers.<Specification<Proyecto>>any(), ArgumentMatchers.<Pageable>any()))
+        .given(repository.findAllDistinct(ArgumentMatchers.<Specification<Proyecto>>any(),
+            ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<Proyecto>>() {
           @Override
           public Page<Proyecto> answer(InvocationOnMock invocation) throws Throwable {
@@ -826,8 +806,7 @@ class ProyectoServiceTest extends BaseServiceTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > proyectos.size() ? proyectos.size() : toIndex;
             List<Proyecto> content = proyectos.subList(fromIndex, toIndex);
-            Page<Proyecto> page = new PageImpl<>(content, pageable, proyectos.size());
-            return page;
+            return new PageImpl<>(content, pageable, proyectos.size());
           }
         });
 
@@ -842,7 +821,8 @@ class ProyectoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       Proyecto proyecto = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(proyecto.getObservaciones()).isEqualTo("observaciones-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyecto.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
 
@@ -856,7 +836,8 @@ class ProyectoServiceTest extends BaseServiceTest {
     }
 
     BDDMockito
-        .given(repository.findAll(ArgumentMatchers.<Specification<Proyecto>>any(), ArgumentMatchers.<Pageable>any()))
+        .given(repository.findAllDistinct(ArgumentMatchers.<Specification<Proyecto>>any(),
+            ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<Proyecto>>() {
           @Override
           public Page<Proyecto> answer(InvocationOnMock invocation) throws Throwable {
@@ -867,8 +848,7 @@ class ProyectoServiceTest extends BaseServiceTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > proyectos.size() ? proyectos.size() : toIndex;
             List<Proyecto> content = proyectos.subList(fromIndex, toIndex);
-            Page<Proyecto> page = new PageImpl<>(content, pageable, proyectos.size());
-            return page;
+            return new PageImpl<>(content, pageable, proyectos.size());
           }
         });
 
@@ -883,7 +863,8 @@ class ProyectoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       Proyecto proyecto = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(proyecto.getObservaciones()).isEqualTo("observaciones-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyecto.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
 
@@ -897,7 +878,8 @@ class ProyectoServiceTest extends BaseServiceTest {
     Pageable paging = PageRequest.of(0, 10);
 
     BDDMockito
-        .given(repository.findAll(ArgumentMatchers.<Specification<Proyecto>>any(), ArgumentMatchers.<Pageable>any()))
+        .given(repository.findAllDistinct(ArgumentMatchers.<Specification<Proyecto>>any(),
+            ArgumentMatchers.<Pageable>any()))
         .willReturn(proyectosPage);
 
     Page<Proyecto> pageResult = this.service.findAllActivosInvestigador(query, paging);
@@ -929,8 +911,7 @@ class ProyectoServiceTest extends BaseServiceTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > proyectos.size() ? proyectos.size() : toIndex;
             List<ProyectoSeguimientoEjecucionEconomica> content = proyectos.subList(fromIndex, toIndex);
-            Page<ProyectoSeguimientoEjecucionEconomica> page = new PageImpl<>(content, pageable, proyectos.size());
-            return page;
+            return new PageImpl<>(content, pageable, proyectos.size());
           }
         });
 
@@ -948,7 +929,8 @@ class ProyectoServiceTest extends BaseServiceTest {
     for (int i = 31; i <= 37; i++) {
       ProyectoSeguimientoEjecucionEconomica proyecto = page.getContent()
           .get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(proyecto.getNombre()).isEqualTo("Proyecto-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyecto.getNombre(), Language.ES))
+          .isEqualTo("Proyecto-" + String.format("%03d", i));
     }
   }
 
@@ -961,20 +943,38 @@ class ProyectoServiceTest extends BaseServiceTest {
   private Proyecto generarMockProyecto(Long id) {
     EstadoProyecto estadoProyecto = generarMockEstadoProyecto(1L);
 
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion"));
+
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
     modeloEjecucion.setId(1L);
+    modeloEjecucion.setNombre(nombreModeloEjecucion);
+
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad"));
 
     TipoFinalidad tipoFinalidad = new TipoFinalidad();
     tipoFinalidad.setId(1L);
+    tipoFinalidad.setNombre(nombreTipoFinalidad);
+
+    Set<TipoAmbitoGeograficoNombre> nombre = new HashSet<>();
+    nombre.add(new TipoAmbitoGeograficoNombre(Language.ES, "nombreTipoAmbitoGeografico"));
 
     TipoAmbitoGeografico tipoAmbitoGeografico = new TipoAmbitoGeografico();
     tipoAmbitoGeografico.setId(1L);
+    tipoAmbitoGeografico.setNombre(nombre);
+
+    Set<ProyectoTitulo> tituloProyecto = new HashSet<>();
+    tituloProyecto.add(new ProyectoTitulo(Language.ES, "PRO" + (id != null ? id : 1)));
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones-" + String.format("%03d", id)));
 
     Proyecto proyecto = new Proyecto();
     proyecto.setId(id);
-    proyecto.setTitulo("PRO" + (id != null ? id : 1));
+    proyecto.setTitulo(tituloProyecto);
     proyecto.setCodigoExterno("cod-externo-" + (id != null ? String.format("%03d", id) : "001"));
-    proyecto.setObservaciones("observaciones-" + String.format("%03d", id));
+    proyecto.setObservaciones(observacionesProyecto);
     proyecto.setUnidadGestionRef("2");
     proyecto.setFechaInicio(Instant.now());
     proyecto.setFechaFin(Instant.from(Instant.now().atZone(ZoneOffset.UTC).plus(Period.ofMonths(1))));
@@ -998,9 +998,12 @@ class ProyectoServiceTest extends BaseServiceTest {
    * @return el objeto EstadoProyecto
    */
   private EstadoProyecto generarMockEstadoProyecto(Long id) {
+    Set<EstadoProyectoComentario> estadoProyectoComentario = new HashSet<>();
+    estadoProyectoComentario.add(new EstadoProyectoComentario(Language.ES, "Estado-" + id));
+
     EstadoProyecto estadoProyecto = new EstadoProyecto();
     estadoProyecto.setId(id);
-    estadoProyecto.setComentario("Estado-" + id);
+    estadoProyecto.setComentario(estadoProyectoComentario);
     estadoProyecto.setEstado(EstadoProyecto.Estado.BORRADOR);
     estadoProyecto.setFechaEstado(Instant.now());
     estadoProyecto.setProyectoId(1L);
@@ -1026,9 +1029,12 @@ class ProyectoServiceTest extends BaseServiceTest {
 
   private ProyectoSeguimientoEjecucionEconomica generarMockProyectoSeguimientoEjecucionEconomica(Long id,
       String nombre) {
+    Set<ProyectoTitulo> tituloProyecto = new HashSet<>();
+    tituloProyecto.add(new ProyectoTitulo(Language.ES, nombre));
+
     return ProyectoSeguimientoEjecucionEconomica.builder()
         .id(id)
-        .nombre(nombre)
+        .nombre(tituloProyecto)
         .build();
   }
 }

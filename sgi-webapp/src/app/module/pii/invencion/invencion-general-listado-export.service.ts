@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { InvencionService } from '@core/services/pii/invencion/invencion.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
-import { PersonaService } from '@core/services/sgp/persona.service';
-import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -19,14 +17,12 @@ const TIPO_PROTECCION_KEY = marker('pii.invencion.tipo-proteccion');
 
 @Injectable()
 export class InvencionGeneralListadoExportService extends
-  AbstractTableExportFillService<IInvencionReportData, IInvencionReportOptions>{
+  AbstractTableExportFillService<IInvencionReportData, IInvencionReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    private readonly invencionService: InvencionService,
-    private readonly personaService: PersonaService,
-    private readonly vinculacionService: VinculacionService
+    protected readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -72,9 +68,9 @@ export class InvencionGeneralListadoExportService extends
 
     return [
       invencionData.id,
-      invencionData.titulo,
+      this.languageService.getFieldValue(invencionData.titulo),
       LuxonUtils.toBackend(invencionData.fechaComunicacion),
-      invencionData.tipoProteccion.nombre
+      this.languageService.getFieldValue(invencionData.tipoProteccion.nombre)
     ];
   }
 }

@@ -9,15 +9,13 @@ import org.crue.hercules.sgi.eti.exceptions.rep.GetDataReportException;
 import org.crue.hercules.sgi.eti.model.Acta;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Memoria;
-import org.crue.hercules.sgi.eti.util.AssertHelper;
-import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
-import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.framework.i18n.Language;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.client.RestTemplate;
 
@@ -43,28 +41,23 @@ public class SgiApiRepService extends SgiApiBaseService {
    *
    * @param idMemoria    Id de la memoria
    * @param idFormulario id del formulario
+   * @param lang         El {@link Language} en el que obtener el informe.
    * @return Resource informe
    */
-  public Resource getMXX(Long idMemoria, Long idFormulario) {
+  public Resource getMXX(Long idMemoria, Long idFormulario, Language lang) {
     log.debug("getMXX(Long idMemoria, Long idFormulario)- start");
-    Assert.notNull(idMemoria,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(Memoria.class))
-            .build());
+    AssertHelper.idNotNull(idMemoria, Memoria.class);
 
     Resource informe = null;
     try {
       ServiceType serviceType = ServiceType.REP;
-      String relativeUrl = "/report/eti/informe-mxx/{idMemoria}/{idFormulario}";
+      String relativeUrl = "/report/eti/informe-mxx/{idMemoria}/{idFormulario}?l={lang}";
       HttpMethod httpMethod = HttpMethod.GET;
       String mergedURL = buildUri(serviceType, relativeUrl);
 
       informe = super.<Resource>callEndpointWithCurrentUserAuthorization(mergedURL, httpMethod,
           new ParameterizedTypeReference<Resource>() {
-          }, idMemoria, idFormulario).getBody();
+          }, idMemoria, idFormulario, lang.getCode()).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();
@@ -85,13 +78,7 @@ public class SgiApiRepService extends SgiApiBaseService {
     // TODO incluir validaciones de llamada al informe
     // https://confluence.treelogic.com/pages/viewpage.action?pageId=98537005
 
-    Assert.notNull(idEvaluacion,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(Evaluacion.class))
-            .build());
+    AssertHelper.idNotNull(idEvaluacion, Evaluacion.class);
 
     Resource informe = null;
     try {
@@ -120,13 +107,7 @@ public class SgiApiRepService extends SgiApiBaseService {
    */
   public Resource getInformeEvaluador(Long idEvaluacion) {
     log.debug("getInformeEvaluador(idEvaluacion)- start");
-    Assert.notNull(idEvaluacion,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(Evaluacion.class))
-            .build());
+    AssertHelper.idNotNull(idEvaluacion, Evaluacion.class);
 
     Resource informe = null;
     try {
@@ -155,14 +136,7 @@ public class SgiApiRepService extends SgiApiBaseService {
    */
   public Resource getInformeFavorableMemoria(Long idEvaluacion) {
     log.debug("getInformeFavorableMemoria(idEvaluacion)- start");
-    Assert.notNull(idEvaluacion,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(Evaluacion.class))
-            .build());
-
+    AssertHelper.idNotNull(idEvaluacion, Evaluacion.class);
     Resource informe = null;
     try {
       ServiceType serviceType = ServiceType.REP;
@@ -186,18 +160,11 @@ public class SgiApiRepService extends SgiApiBaseService {
    * Devuelve un informe favorable ratificación en pdf
    *
    * @param idEvaluacion Id de la evaluación
-   * 
    * @return Resource informe
    */
   public Resource getInformeFavorableRatificacion(Long idEvaluacion) {
     log.debug("getInformeFavorableRatificacion(idEvaluacion)- start");
-    Assert.notNull(idEvaluacion,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(Evaluacion.class))
-            .build());
+    AssertHelper.idNotNull(idEvaluacion, Evaluacion.class);
 
     Resource informe = null;
     try {
@@ -222,18 +189,11 @@ public class SgiApiRepService extends SgiApiBaseService {
    * Devuelve un informe favorable modificación en pdf
    *
    * @param idEvaluacion Id de la evaluación
-   * 
    * @return Resource informe
    */
   public Resource getInformeFavorableModificacion(Long idEvaluacion) {
     log.debug("getInformeFavorableModificacion(idEvaluacion)- start");
-    Assert.notNull(idEvaluacion,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(Evaluacion.class))
-            .build());
+    AssertHelper.idNotNull(idEvaluacion, Evaluacion.class);
 
     Resource informe = null;
     try {
@@ -258,26 +218,22 @@ public class SgiApiRepService extends SgiApiBaseService {
    * Devuelve un informe acta en pdf
    *
    * @param idActa Id del acta
+   * @param lang   El {@link Language} en el que obtener el informe.
    * @return Resource informe
    */
-  public Resource getInformeActa(Long idActa) {
+  public Resource getInformeActa(Long idActa, Language lang) {
     log.debug("getInformeActa(idActa)- start");
-    Assert.notNull(idActa,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(Acta.class))
-            .build());
+    AssertHelper.idNotNull(idActa, Acta.class);
     Resource informe = null;
     try {
       ServiceType serviceType = ServiceType.REP;
-      String relativeUrl = "/report/eti/informe-acta/{idActa}";
+      String relativeUrl = "/report/eti/informe-acta/{idActa}?l={lang}";
       HttpMethod httpMethod = HttpMethod.GET;
       String mergedURL = buildUri(serviceType, relativeUrl);
 
       informe = super.<Resource>callEndpointWithCurrentUserAuthorization(mergedURL, httpMethod,
           new ParameterizedTypeReference<Resource>() {
-          }, idActa).getBody();
+          }, idActa, lang.getCode()).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();
@@ -292,18 +248,11 @@ public class SgiApiRepService extends SgiApiBaseService {
    *
    * @param idEvaluacion Id de la evaluación
    * @param fecha        Fecha del informe
-   * 
    * @return Resource informe
    */
   public Resource getInformeEvaluacionRetrospectiva(Long idEvaluacion, Instant fecha) {
     log.debug("getInformeEvaluacionRetrospectiva(idEvaluacion, fecha)- start");
-    Assert.notNull(idEvaluacion,
-        // Defer message resolution untill is needed
-        () -> ProblemMessage.builder().key(Assert.class, AssertHelper.PROBLEM_MESSAGE_NOTNULL)
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_FIELD, ApplicationContextSupport.getMessage(ID))
-            .parameter(AssertHelper.PROBLEM_MESSAGE_PARAMETER_ENTITY,
-                ApplicationContextSupport.getMessage(Evaluacion.class))
-            .build());
+    AssertHelper.idNotNull(idEvaluacion, Evaluacion.class);
 
     InformeEvaluacionReportInput input = InformeEvaluacionReportInput.builder().idEvaluacion(idEvaluacion).fecha(fecha)
         .build();
@@ -317,7 +266,7 @@ public class SgiApiRepService extends SgiApiBaseService {
 
       informe = super.<InformeEvaluacionReportInput, Resource>callEndpointWithCurrentUserAuthorization(mergedURL,
           httpMethod, input, new ParameterizedTypeReference<Resource>() {
-          }, idEvaluacion).getBody();
+          }).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
       throw new GetDataReportException();

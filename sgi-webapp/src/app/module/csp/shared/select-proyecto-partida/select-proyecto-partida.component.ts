@@ -7,6 +7,7 @@ import { TipoPartida } from '@core/enums/tipo-partida';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
 import { IPartidaPresupuestariaSge } from '@core/models/sge/partida-presupuestaria-sge';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { PartidaPresupuestariaGastoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-gasto-sge.service';
 import { PartidaPresupuestariaIngresoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-ingreso-sge.service';
 import { SgiRestListResult } from '@sgi/framework/http';
@@ -59,11 +60,12 @@ export class SelectProyectoPartidaComponent extends SelectServiceComponent<IProy
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private service: ProyectoService,
     private partidaPresupuestariaGastoSgeService: PartidaPresupuestariaGastoSgeService,
     private partidaPresupuestariaIngresoSgeService: PartidaPresupuestariaIngresoSgeService
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
     // Override default displayWith
     this.displayWith = (option) => option?.codigo ?? option?.partidaSge?.codigo ?? '';
   }

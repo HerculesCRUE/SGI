@@ -3,11 +3,17 @@ package org.crue.hercules.sgi.csp.integration;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionDocumento;
+import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionDocumentoComentario;
+import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -148,14 +154,16 @@ class ProyectoSocioPeriodoJustificacionDocumentoIT extends BaseIT {
     ProyectoSocioPeriodoJustificacionDocumento convocatoriaPeriodoJustificacion = response.getBody();
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getProyectoSocioPeriodoJustificacionId())
         .as("get(0).convocatoriaPeriodoJustificacion().getId()").isEqualTo(1L);
-    Assertions.assertThat(convocatoriaPeriodoJustificacion.getNombre()).as("get(0).getNombre()").isEqualTo("nombre-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaPeriodoJustificacion.getNombre(), Language.ES))
+        .as("get(0).getNombre()").isEqualTo("nombre-1");
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getDocumentoRef()).as("get(0).getDocumentoRef()")
         .isEqualTo("doc-001");
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getVisible()).as("get(0).getVisible()")
         .isEqualTo(Boolean.TRUE);
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getTipoDocumento().getId())
         .as("get(0).getTipoDocumento().getId()").isEqualTo(1L);
-    Assertions.assertThat(convocatoriaPeriodoJustificacion.getComentario()).as("get(0).getComentario()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaPeriodoJustificacion.getComentario(), Language.ES))
+        .as("get(0).getComentario()")
         .isEqualTo("comentario-1");
 
   }
@@ -167,9 +175,15 @@ class ProyectoSocioPeriodoJustificacionDocumentoIT extends BaseIT {
    * @return el objeto ProyectoSocioPeriodoJustificacionDocumento
    */
   private ProyectoSocioPeriodoJustificacionDocumento generarMockProyectoSocioPeriodoJustificacionDocumento(Long id) {
+    Set<ProyectoSocioPeriodoJustificacionDocumentoNombre> nombreDocumento = new HashSet<>();
+    nombreDocumento.add(new ProyectoSocioPeriodoJustificacionDocumentoNombre(Language.ES, "nombre-" + id));
+
+    Set<ProyectoSocioPeriodoJustificacionDocumentoComentario> comentarioDocumento = new HashSet<>();
+    comentarioDocumento.add(new ProyectoSocioPeriodoJustificacionDocumentoComentario(Language.ES, "comentario"));
+
     TipoDocumento tipoDocumento = TipoDocumento.builder().id(1L).activo(Boolean.TRUE).build();
     ProyectoSocioPeriodoJustificacionDocumento proyectoSocioPeriodoJustificacionDocumento = ProyectoSocioPeriodoJustificacionDocumento
-        .builder().id(id).nombre("nombre-" + id).comentario("comentario").documentoRef("001")
+        .builder().id(id).nombre(nombreDocumento).comentario(comentarioDocumento).documentoRef("001")
         .proyectoSocioPeriodoJustificacionId(1L).tipoDocumento(tipoDocumento).visible(Boolean.TRUE).build();
 
     return proyectoSocioPeriodoJustificacionDocumento;

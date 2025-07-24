@@ -1,12 +1,13 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_MAP, IInvencionGasto } from '@core/models/pii/invencion-gasto';
 import { ISolicitudProteccion } from '@core/models/pii/solicitud-proteccion';
 import { IDocumento } from '@core/models/sge/documento';
 import { IDatoEconomicoDetalle } from '@core/models/sgepii/dato-economico-detalle';
+import { LanguageService } from '@core/services/language.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { DocumentoService } from '@core/services/sge/documento.service';
@@ -29,7 +30,7 @@ export interface InvencionGastoModalData {
 export class InvencionGastoModalComponent extends DialogFormComponent<IInvencionGasto> {
 
   readonly solicitudesProteccion$: Observable<ISolicitudProteccion[]>;
-  readonly displayWith = (option: ISolicitudProteccion) => option?.titulo ?? '';
+  readonly displayWith = (option: ISolicitudProteccion) => this.languageService.getFieldValue(option?.titulo);
   readonly displayColumns = ['nombre', 'nombreFichero', 'acciones'];
 
   get MSG_PARAMS() {
@@ -44,7 +45,8 @@ export class InvencionGastoModalComponent extends DialogFormComponent<IInvencion
     matDialogRef: MatDialogRef<InvencionGastoModalComponent>,
     private readonly invencionService: InvencionService,
     @Inject(MAT_DIALOG_DATA) public data: InvencionGastoModalData,
-    private documentoService: DocumentoService
+    private documentoService: DocumentoService,
+    private languageService: LanguageService
   ) {
     super(matDialogRef, true);
     this.solicitudesProteccion$ = this.invencionService.findAllSolicitudesProteccion(data.selectedInvencionId).pipe(

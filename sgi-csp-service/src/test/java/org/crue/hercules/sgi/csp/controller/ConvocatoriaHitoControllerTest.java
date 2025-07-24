@@ -2,6 +2,9 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.List;
 
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoAvisoInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoAvisoInput.Destinatario;
@@ -9,9 +12,13 @@ import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoInput;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaHitoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHitoAviso;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaHitoComentario;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaHitoService;
 import org.crue.hercules.sgi.csp.service.TipoHitoService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -65,7 +72,7 @@ class ConvocatoriaHitoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
         .andExpect(MockMvcResultMatchers.jsonPath("convocatoriaId").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("fecha").value("2020-10-19T00:00:00Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value("comentario"))
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario[0].value").value("comentario"))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("aviso.tareaProgramadaRef").value("1"))
         .andExpect(MockMvcResultMatchers.jsonPath("aviso.comunicadoRef").value("1"))
@@ -96,7 +103,8 @@ class ConvocatoriaHitoControllerTest extends BaseControllerTest {
         .andExpect(
             MockMvcResultMatchers.jsonPath("convocatoriaId").value(convocatoriaHitoExistente.getConvocatoriaId()))
         .andExpect(MockMvcResultMatchers.jsonPath("fecha").value(convocatoriaHito.getFecha().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value(convocatoriaHito.getComentario()))
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoriaHito.getComentario(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(convocatoriaHito.getTipoHitoId()))
         .andExpect(MockMvcResultMatchers.jsonPath("aviso.tareaProgramadaRef").value("1"))
         .andExpect(MockMvcResultMatchers.jsonPath("aviso.comunicadoRef").value("1"))
@@ -181,7 +189,7 @@ class ConvocatoriaHitoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("convocatoriaId").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("fecha").value("2020-10-19T00:00:00Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value("comentario"))
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario[0].value").value("comentario"))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoHito.id").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("aviso.tareaProgramadaRef").value("1"))
         .andExpect(MockMvcResultMatchers.jsonPath("aviso.comunicadoRef").value("1"))
@@ -212,11 +220,14 @@ class ConvocatoriaHitoControllerTest extends BaseControllerTest {
     tipoHito.setId(id == null ? 1 : id);
     tipoHito.setActivo(true);
 
+    Set<ConvocatoriaHitoComentario> comentarioConvocatoriaHito = new HashSet<>();
+    comentarioConvocatoriaHito.add(new ConvocatoriaHitoComentario(Language.ES, "comentario"));
+
     ConvocatoriaHito convocatoriaHito = new ConvocatoriaHito();
     convocatoriaHito.setId(id);
     convocatoriaHito.setConvocatoriaId(id == null ? 1 : id);
     convocatoriaHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
-    convocatoriaHito.setComentario("comentario");
+    convocatoriaHito.setComentario(comentarioConvocatoriaHito);
     convocatoriaHito.setConvocatoriaHitoAviso(new ConvocatoriaHitoAviso(
         id == null ? 1 : id, id == null ? "1" : id.toString(), id == null ? "1" : id.toString(), false, false));
     convocatoriaHito.setTipoHito(tipoHito);
@@ -241,11 +252,14 @@ class ConvocatoriaHitoControllerTest extends BaseControllerTest {
     aviso.setIncluirIpsProyecto(false);
     aviso.setIncluirIpsSolicitud(false);
 
+    List<I18nFieldValueDto> comentarioConvocatoriaHito = new ArrayList();
+    comentarioConvocatoriaHito.add(new I18nFieldValueDto(Language.ES, "comentario"));
+
     ConvocatoriaHitoInput convocatoriaHito = new ConvocatoriaHitoInput();
     convocatoriaHito.setConvocatoriaId(1L);
     convocatoriaHito.setTipoHitoId(1L);
     convocatoriaHito.setFecha(Instant.parse("2020-10-19T00:00:00Z"));
-    convocatoriaHito.setComentario("comentario");
+    convocatoriaHito.setComentario(comentarioConvocatoriaHito);
     convocatoriaHito.setAviso(aviso);
 
     return convocatoriaHito;

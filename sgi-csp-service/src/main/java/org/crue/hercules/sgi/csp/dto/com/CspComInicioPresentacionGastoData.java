@@ -3,7 +3,10 @@ package org.crue.hercules.sgi.csp.dto.com;
 import java.io.Serializable;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -25,6 +28,7 @@ public class CspComInicioPresentacionGastoData implements Serializable {
 
   private LocalDate fecha;
   private List<Proyecto> proyectos;
+  private String enlaceAplicacion;
 
   @Data
   @EqualsAndHashCode(callSuper = false)
@@ -36,7 +40,7 @@ public class CspComInicioPresentacionGastoData implements Serializable {
     /** Serial version */
     private static final long serialVersionUID = 1L;
 
-    private String titulo;
+    private Collection<? extends I18nFieldValue> titulo;
     private Instant fechaInicio;
     private Instant fechaFin;
   }

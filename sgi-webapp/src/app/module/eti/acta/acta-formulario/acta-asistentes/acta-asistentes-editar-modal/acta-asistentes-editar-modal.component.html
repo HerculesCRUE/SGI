@@ -5,7 +5,8 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'eti.acta.asistente' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
-        <input matInput formControlName="asistente" type="text" />
+        <sgi-select-persona placeholder="{{'eti.acta.asistente' | translate}}"
+          formControlName="asistente"></sgi-select-persona>
       </mat-form-field>
     </div>
     <!-- Asistencia -->
@@ -13,7 +14,7 @@
       <mat-label>{{'eti.acta.asistente.asistencia' | translate}}</mat-label>
       <mat-radio-group class="radio-inline" name="opciones" formControlName="asistencia">
         <mat-radio-button color="primary" *ngFor="let estado of estados" name="opciones" [value]="estado.value">
-          {{estado.label}}
+          {{estado.label | translate}}
         </mat-radio-button>
       </mat-radio-group>
     </div>
@@ -21,8 +22,8 @@
     <div fxLayout="row" *ngIf="!ocultarMotivo">
       <mat-form-field>
         <mat-label>{{'eti.acta.asistente.motivo' | translate}}</mat-label>
-        <textarea matInput formControlName="motivo" type="text"
-          placeholder="{{'eti.acta.asistente.motivo' | translate}}" [required]="!ocultarMotivo"></textarea>
+        <sgi-i18n-textarea formControlName="motivo" placeholder="{{'eti.acta.asistente.motivo' | translate}}"
+          [required]="!ocultarMotivo"></sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.get('motivo').errors?.required">
           {{'error.required.entity' | translate:msgParamMotivoEntity}}
         </mat-error>

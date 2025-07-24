@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_2_3_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.4 Deskutsatzeko/desinfektatzeko metodoak"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Kutsatutako materiala deskutsatzeko/desinfektatzeko metodoak aplikatu edo aurreikusten dira?</p>"
+      },
+      {
+        "key": "metodosDesinfeccion",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Zehaztu metodoak, edo aurreikusten ez badira, justifikatu zergatik."
+      },
+      {
+        "key": "especificarLimitar",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Zehaztu:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

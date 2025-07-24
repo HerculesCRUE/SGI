@@ -55,13 +55,13 @@ export class EmpresaEquipoEmprendedorComponent extends FragmentComponent impleme
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.EQUIPO_EMPRENDEDOR, actionService);
+    super(actionService.FRAGMENT.EQUIPO_EMPRENDEDOR, actionService, translate);
     this.formPart = this.fragment as EmpresaEquipoEmprendedorFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IEmpresaEquipoEmprendedorListado>, property: string) => {
@@ -86,7 +86,7 @@ export class EmpresaEquipoEmprendedorComponent extends FragmentComponent impleme
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       EMPRESA_EQUIPO_MIEMBRO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

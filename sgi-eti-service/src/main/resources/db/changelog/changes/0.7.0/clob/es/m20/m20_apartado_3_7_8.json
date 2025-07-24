@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap3_7_8",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.8 Administración de isótopos radiactivos"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿El proceso de experimentación incluye la administración de isótopos radiactivos al animal?"
+      },
+      {
+        "key": "administracionIsotoposRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "tipoIsotopo",
+        "type": "i18n-input",
+        "hideExpression": "!model.administracionIsotoposRadio || model.administracionIsotoposRadio === 'no'",
+        "templateOptions": {
+          "label": "Tipo de isótopo",
+          "required": true,
+          "placeholder": "Tipo"
+        }
+      },
+      {
+        "key": "administracionIsotopo",
+        "type": "i18n-input",
+        "hideExpression": "!model.administracionIsotoposRadio || model.administracionIsotoposRadio === 'no'",
+        "templateOptions": {
+          "label": "Dosis y vía de administración",
+          "required": true,
+          "placeholder": "Dosis"
+        }
+      }
+    ]
+  }
+]

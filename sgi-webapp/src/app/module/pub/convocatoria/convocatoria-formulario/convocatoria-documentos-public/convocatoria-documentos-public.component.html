@@ -5,29 +5,30 @@
       <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
           <button mat-button *ngIf="(node.level === 2 && viewMode === 'new')">
-            {{node.title}}
+            <sgi-i18n-tree-field [field]="node.title"></sgi-i18n-tree-field>
           </button>
           <button mat-button *ngIf="(node.level === 2 && viewMode !== 'new' && node !== viewingNode)"
             (click)="showNodeDetails(node)">
-            {{node.title}}
+            <sgi-i18n-tree-field [field]="node.title"></sgi-i18n-tree-field>
             <mat-icon color="primary" class="mat-icon-rtl-mirror">
               {{ 'visibility'}}
             </mat-icon>
           </button>
           <button mat-button *ngIf="(node.level === 2 && viewMode !== 'new' && node === viewingNode)"
             (click)="hideNodeDetails()">
-            {{node.title}}
+            <sgi-i18n-tree-field [field]="node.title"></sgi-i18n-tree-field>
             <mat-icon color="primary" class="mat-icon-rtl-mirror">
               {{ 'visibility_off'}}
             </mat-icon>
           </button>
         </mat-tree-node>
         <mat-tree-node *matTreeNodeDef="let node; when: hasChild" matTreeNodePadding>
-          <button mat-button matTreeNodeToggle [attr.aria-label]="'Toggle ' + node.documento?.value?.nombre">
+          <button mat-button matTreeNodeToggle
+            [attr.aria-label]="'Toggle ' + getI18nValue(node.documento?.value?.nombre)">
             <mat-icon color="primary" class="mat-icon-rtl-mirror">
               {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
-            {{node.title | translate}}
+            <sgi-i18n-tree-field [field]="node.title"></sgi-i18n-tree-field>
           </button>
         </mat-tree-node>
       </mat-tree>
@@ -39,8 +40,8 @@
       <div fxLayout="column" fxLayout.xs="column" fxLayoutGap="10px">
         <mat-form-field class="input-form">
           <mat-label>{{'csp.documento.nombre' | translate}}</mat-label>
-          <input matInput type="text" placeholder="{{'csp.documento.nombre' | translate}}" formControlName="nombre"
-            required>
+          <sgi-i18n-input placeholder="{{'csp.documento.nombre' | translate}}" formControlName="nombre"
+            required></sgi-i18n-input>
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.convocatoria-documento.fichero' | translate}}</mat-label>
@@ -50,7 +51,9 @@
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.convocatoria-documento.fase' | translate}}</mat-label>
-          <input matInput formControlName="fase" placeholder="{{'csp.convocatoria-documento.fase' | translate}}">
+          <sgi-i18n-input matInput formControlName="fase"
+            placeholder="{{'csp.convocatoria-documento.fase' | translate}}">
+          </sgi-i18n-input>
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.documento.tipo' | translate}}</mat-label>
@@ -62,8 +65,11 @@
         </mat-form-field>
         <mat-form-field class="input-form">
           <mat-label>{{'csp.convocatoria-documento.observaciones' | translate}}</mat-label>
-          <textarea matInput type="text" placeholder="{{'csp.convocatoria-documento.observaciones' | translate}}"
-            formControlName="observaciones"></textarea>
+          <sgi-i18n-textarea placeholder="{{'csp.convocatoria-documento.observaciones' | translate}}"
+            formControlName="observaciones"></sgi-i18n-textarea>
+          <mat-error *ngIf="formGroup.get('observaciones').errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
+          </mat-error>
         </mat-form-field>
       </div>
       <div class="separation-button" *ngIf="group.status$ | async as status">

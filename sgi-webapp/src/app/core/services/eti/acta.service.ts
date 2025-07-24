@@ -1,34 +1,53 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ACTA_WITH_NUM_EVALUACIONES_CONVERTER } from '@core/converters/eti/acta-with-num-evaluaciones.converter';
-import { ACTA_CONVERTER } from '@core/converters/eti/acta.converter';
-import { COMENTARIO_CONVERTER } from '@core/converters/eti/comentario.converter';
 import { DOCUMENTO_CONVERTER } from '@core/converters/sgdoc/documento.converter';
 import { IActa } from '@core/models/eti/acta';
 import { IActaWithNumEvaluaciones } from '@core/models/eti/acta-with-num-evaluaciones';
-import { IActaBackend } from '@core/models/eti/backend/acta-backend';
-import { IActaWithNumEvaluacionesBackend } from '@core/models/eti/backend/acta-with-num-evaluaciones-backend';
-import { IComentarioBackend } from '@core/models/eti/backend/comentario-backend';
 import { IComentario } from '@core/models/eti/comentario';
 import { IDocumentoBackend } from '@core/models/sgdoc/backend/documento-backend';
 import { IDocumento } from '@core/models/sgdoc/documento';
+import { IActaResponse } from '@core/services/eti/acta/acta-response';
+import { ACTA_RESPONSE_CONVERTER } from '@core/services/eti/acta/acta-response.converter';
+import { IActaWithNumEvaluacionesResponse } from '@core/services/eti/acta/acta-with-num-evaluaciones-response';
+import { ACTA_WITH_NUM_EVALUACIONES_RESPONSE_CONVERTER } from '@core/services/eti/acta/acta-with-num-evaluaciones-response.converter';
+import { IComentarioResponse } from '@core/services/eti/comentario/comentario-response';
+import { COMENTARIO_RESPONSE_CONVERTER } from '@core/services/eti/comentario/comentario-response.converter';
 import { environment } from '@env';
-import { SgiMutableRestService, SgiRestFindOptions } from '@sgi/framework/http';
+import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, UpdateCtor } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+
+const _ActaServiceMixinBase:
+  CreateCtor<IActa, IActa, IActaResponse, IActaResponse> &
+  UpdateCtor<number, IActa, IActa, IActaResponse, IActaResponse> &
+  FindByIdCtor<number, IActa, IActaResponse> &
+  FindAllCtor<IActa, IActaResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinFindById(
+      mixinUpdate(
+        mixinCreate(
+          SgiRestBaseService,
+          ACTA_RESPONSE_CONVERTER,
+          ACTA_RESPONSE_CONVERTER
+        ),
+        ACTA_RESPONSE_CONVERTER,
+        ACTA_RESPONSE_CONVERTER
+      ),
+      ACTA_RESPONSE_CONVERTER
+    ),
+    ACTA_RESPONSE_CONVERTER
+  );
 
 @Injectable({
   providedIn: 'root'
 })
-export class ActaService extends SgiMutableRestService<number, IActaBackend, IActa> {
+export class ActaService extends _ActaServiceMixinBase {
   private static readonly MAPPING = '/actas';
 
   constructor(protected http: HttpClient) {
     super(
-      ActaService.name,
       `${environment.serviceServers.eti}${ActaService.MAPPING}`,
-      http,
-      ACTA_CONVERTER
+      http
     );
   }
 
@@ -38,10 +57,10 @@ export class ActaService extends SgiMutableRestService<number, IActaBackend, IAc
    * @returns listado de actas.
    */
   findActivasWithEvaluaciones(options?: SgiRestFindOptions) {
-    return this.find<IActaWithNumEvaluacionesBackend, IActaWithNumEvaluaciones>(
+    return this.find<IActaWithNumEvaluacionesResponse, IActaWithNumEvaluaciones>(
       `${this.endpointUrl}`,
       options,
-      ACTA_WITH_NUM_EVALUACIONES_CONVERTER
+      ACTA_WITH_NUM_EVALUACIONES_RESPONSE_CONVERTER
     );
   }
 
@@ -58,7 +77,7 @@ export class ActaService extends SgiMutableRestService<number, IActaBackend, IAc
    * @param idActa identificador del acta
    */
   getDocumentoActa(idActa: number): Observable<IDocumento> {
-    return this.http.get<IDocumentoBackend>(
+    return this.get<IDocumentoBackend>(
       `${this.endpointUrl}/${idActa}/documento`
     ).pipe(
       map(response => DOCUMENTO_CONVERTER.toTarget(response))
@@ -128,13 +147,13 @@ export class ActaService extends SgiMutableRestService<number, IActaBackend, IAc
  * @param options Opciones de paginación
  */
   getComentariosPersonaEvaluador(id: number, personaRef: string): Observable<IComentario[]> {
-    return this.http.get<IComentarioBackend[]>(`${this.endpointUrl}/${id}/comentarios-evaluador/${personaRef}/persona`)
+    return this.http.get<IComentarioResponse[]>(`${this.endpointUrl}/${id}/comentarios-evaluador/${personaRef}/persona`)
       .pipe(
         map(r => {
           if (r == null) {
             return [];
           }
-          return COMENTARIO_CONVERTER.toTargetArray(r);
+          return COMENTARIO_RESPONSE_CONVERTER.toTargetArray(r);
         })
       );
   }

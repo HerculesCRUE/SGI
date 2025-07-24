@@ -6,12 +6,12 @@ import org.crue.hercules.sgi.eti.repository.TipoActividadRepository;
 import org.crue.hercules.sgi.eti.repository.specification.TipoActividadSpecifications;
 import org.crue.hercules.sgi.eti.service.TipoActividadService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -37,7 +37,7 @@ public class TipoActividadServiceImpl implements TipoActividadService {
   @Transactional
   public TipoActividad create(TipoActividad tipoActividad) {
     log.debug("Petición a create TipoActividad : {} - start", tipoActividad);
-    Assert.notNull(tipoActividad.getId(), "TipoActividad id no puede ser null para crear un nuevo tipoActividad");
+    AssertHelper.idNotNull(tipoActividad.getId(), TipoActividad.class);
 
     return tipoActividadRepository.save(tipoActividad);
   }
@@ -84,7 +84,7 @@ public class TipoActividadServiceImpl implements TipoActividadService {
   @Transactional
   public void delete(Long id) throws TipoActividadNotFoundException {
     log.debug("Petición a delete TipoActividad : {}  - start", id);
-    Assert.notNull(id, "El id de TipoActividad no puede ser null.");
+    AssertHelper.idNotNull(id, TipoActividad.class);
     if (!tipoActividadRepository.existsById(id)) {
       throw new TipoActividadNotFoundException(id);
     }
@@ -119,8 +119,7 @@ public class TipoActividadServiceImpl implements TipoActividadService {
   public TipoActividad update(final TipoActividad tipoActividadActualizar) {
     log.debug("update(TipoActividad tipoActividadActualizar) - start");
 
-    Assert.notNull(tipoActividadActualizar.getId(),
-        "TipoActividad id no puede ser null para actualizar un tipo actividad");
+    AssertHelper.idNotNull(tipoActividadActualizar.getId(), TipoActividad.class);
 
     return tipoActividadRepository.findById(tipoActividadActualizar.getId()).map(tipoActividad -> {
       tipoActividad.setNombre(tipoActividadActualizar.getNombre());

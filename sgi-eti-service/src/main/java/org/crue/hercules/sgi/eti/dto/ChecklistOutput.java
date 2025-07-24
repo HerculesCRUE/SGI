@@ -35,7 +35,7 @@ import lombok.Setter;
 public class ChecklistOutput implements Serializable {
   private Long id;
   private String personaRef;
-  private Formly formly;
+  private FormlyOutput formly;
   private Instant fechaCreacion;
 
   @Getter(AccessLevel.NONE)
@@ -67,39 +67,4 @@ public class ChecklistOutput implements Serializable {
     }
   }
 
-  @Data
-  @EqualsAndHashCode(callSuper = false)
-  @NoArgsConstructor
-  @AllArgsConstructor
-  @Builder
-  public static class Formly implements Serializable {
-    private Long id;
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    private String esquema;
-
-    @JsonRawValue
-    public String getEsquema() {
-      return esquema;
-    }
-
-    public void setEsquema(final String esquema) {
-      this.esquema = esquema;
-    }
-
-    @JsonProperty(value = "esquema")
-    public void setEsquemaRaw(JsonNode jsonNode) throws IOException {
-      // this leads to non-standard json:
-
-      if (jsonNode.isNull()) {
-        setEsquema(null);
-      } else {
-        StringWriter stringWriter = new StringWriter();
-        ObjectMapper objectMapper = new ObjectMapper();
-        JsonGenerator generator = new JsonFactory(objectMapper).createGenerator(stringWriter);
-        generator.writeTree(jsonNode);
-        setEsquema(stringWriter.toString());
-      }
-    }
-  }
 }

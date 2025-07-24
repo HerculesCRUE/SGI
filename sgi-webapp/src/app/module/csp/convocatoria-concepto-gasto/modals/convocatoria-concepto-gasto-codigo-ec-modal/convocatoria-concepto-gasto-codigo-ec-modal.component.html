@@ -58,10 +58,10 @@
       <mat-form-field>
         <mat-label>{{'csp.convocatoria-elegibilidad.codigo-economico.observaciones' | translate}}
         </mat-label>
-        <textarea #obs matInput formControlName="observaciones" type="text"
+        <sgi-i18n-textarea #obs formControlName="observaciones"
           placeholder="{{'csp.convocatoria-elegibilidad.codigo-economico.observaciones' | translate}}" maxlength="250">
-                         </textarea>
-        <mat-hint>{{obs.value.length}} / 250</mat-hint>
+        </sgi-i18n-textarea>
+        <mat-hint>{{obs.editingValue.length}} / 250</mat-hint>
       </mat-form-field>
     </div>
   </form>

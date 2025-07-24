@@ -89,7 +89,7 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
     public authService: SgiAuthService,
     private readonly translate: TranslateService,
   ) {
-    super();
+    super(translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -104,7 +104,7 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.formGroup = new FormGroup({
       fechaSolicitudInicio: new FormControl(null),
@@ -115,7 +115,7 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
     this.filter = this.createFilter();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       PROYECTO_KEY,
@@ -233,12 +233,12 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
               return this.empresaService.findById(autorizacionListado?.autorizacion?.entidad?.id).pipe(
                 map((empresa) => {
                   autorizacionListado.entidadPaticipacionNombre = empresa?.nombre;
+                  autorizacionListado.autorizacion.entidad = empresa;
                   return autorizacionListado;
                 }),
                 catchError((error) => {
                   this.logger.error(error);
-                  this.processError(error);
-                  return EMPTY;
+                  return of(autorizacionListado);
                 }));
             } else {
               autorizacionListado.entidadPaticipacionNombre = autorizacionListado?.autorizacion?.datosEntidad;
@@ -268,8 +268,7 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
                 }),
                 catchError((error) => {
                   this.logger.error(error);
-                  this.processError(error);
-                  return EMPTY;
+                  return of(autorizacionListado);
                 }));
             } else {
               return of(autorizacionListado);
@@ -298,8 +297,8 @@ export class AutorizacionListadoComponent extends AbstractTablePaginationCompone
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
     return new RSQLSgiRestFilter(
-      'estado.fecha', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaSolicitudInicio.value))
-      .and('estado.fecha', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaSolicitudFin.value))
+      'fechaFirstEstado', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaSolicitudInicio.value))
+      .and('fechaFirstEstado', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaSolicitudFin.value))
       .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estado.value)
       .and('solicitanteRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value?.id);
   }

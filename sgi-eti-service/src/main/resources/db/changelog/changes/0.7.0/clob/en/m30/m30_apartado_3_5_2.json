@@ -1,0 +1,109 @@
+[
+  {
+    "key": "ap3_5_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.2 Cell cultures"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.ap3_4_2.tareasAgentesBiologicosRadio || formState.mainModel.ap3_4.ap3_4_2.tareasAgentesBiologicosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "type": "table-crud",
+        "key": "cultivosCelularesTable",
+        "templateOptions": {
+          "entity": "cell culture",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Cell culture"
+          },
+          "fieldGroup": [
+            {
+              "key": "tipoCultivo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Type of culture",
+                "order": 10,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Well-characterized cell lines of human or ape origin"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Well-characterized cell lines of non-human or non-simian origin, with low risk of endogenous infection with human pathogens"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Cell lines or strains not fully characterized or authenticated"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Cells with endogenous pathogens and deliberately infected cells"
+                  },
+                  {
+                    "value": "5",
+                    "label": "Blood cells, lymphoid cells, nervous tissue, etc. of human or ape origin"
+                  },
+                  {
+                    "value": "6",
+                    "label": "Another substance from the experimentation process"
+                  },
+                  {
+                    "value": "7",
+                    "label": "Blood cells, lymphoid cells, nervous tissue, etc., of non-human or ape origin"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "descripcionCaracteristicas",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Description/Characteristics",
+                "order": 20
+              }
+            },
+            {
+              "key": "grupoRiesgo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Risk group",
+                "order": 30,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Group 1"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Group 2"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Group 3"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Group 4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "volumenMaximo",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Maximum sample volume to be handled at any one time or number of animals",
+                "order": 40
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

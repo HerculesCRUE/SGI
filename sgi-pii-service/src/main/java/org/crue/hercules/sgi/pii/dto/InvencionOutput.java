@@ -1,8 +1,13 @@
 package org.crue.hercules.sgi.pii.dto;
 
 import java.time.Instant;
+import java.util.Collection;
 
 import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
+import org.crue.hercules.sgi.pii.model.InvencionComentarios;
+import org.crue.hercules.sgi.pii.model.InvencionDescripcion;
+import org.crue.hercules.sgi.pii.model.InvencionTitulo;
+import org.crue.hercules.sgi.pii.model.TipoProteccionNombre;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +22,10 @@ import lombok.NoArgsConstructor;
 @Builder
 public class InvencionOutput {
   private Long id;
-  private String titulo;
+  private Collection<InvencionTitulo> titulo;
   private Instant fechaComunicacion;
-  private String descripcion;
-  private String comentarios;
+  private Collection<InvencionDescripcion> descripcion;
+  private Collection<InvencionComentarios> comentarios;
   private String proyectoRef;
   private TipoProteccion tipoProteccion;
   private Boolean activo;
@@ -32,7 +37,7 @@ public class InvencionOutput {
   @Builder
   public static class TipoProteccion {
     private Long id;
-    private String nombre;
+    private Collection<TipoProteccionNombre> nombre;
     private TipoProteccion padre;
     private TipoPropiedad tipoPropiedad;
   }

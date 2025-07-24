@@ -31,7 +31,7 @@
       <mat-form-field>
         <mat-label>{{'prc.moduladores-rango.desde' | translate}}</mat-label>
         <input matInput formControlName="desde" type="number"
-          placeholder="{{'prc.moduladores-rango.desde' | translate}}">
+          placeholder="{{'prc.moduladores-rango.desde' | translate}}" required>
         <mat-error *ngIf="formGroup.controls.desde.errors?.required">
           {{'error.required.entity' | translate:msgParamDesdeEntity}}
         </mat-error>
@@ -47,7 +47,7 @@
       <mat-form-field>
         <mat-label>{{'prc.moduladores-rango.hasta' | translate}}</mat-label>
         <input matInput formControlName="hasta" type="number" id="mesFin"
-          placeholder="{{'prc.moduladores-rango.hasta' | translate}}">
+          placeholder="{{'prc.moduladores-rango.hasta' | translate}}" required>
         <mat-error *ngIf="formGroup.controls.hasta.errors?.required">
           {{'error.required.entity' | translate:msgParamHastaEntity}}
         </mat-error>

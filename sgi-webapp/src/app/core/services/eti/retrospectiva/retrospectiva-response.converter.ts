@@ -1,0 +1,31 @@
+
+import { IRetrospectiva } from '@core/models/eti/retrospectiva';
+import { LuxonUtils } from '@core/utils/luxon-utils';
+import { SgiBaseConverter } from '@sgi/framework/core';
+import { IRetrospectivaResponse } from './retrospectiva-response';
+
+class RetrospectivaResponseConverter extends SgiBaseConverter<IRetrospectivaResponse, IRetrospectiva> {
+  toTarget(value: IRetrospectivaResponse): IRetrospectiva {
+    if (!value) {
+      return value as unknown as IRetrospectiva;
+    }
+    return {
+      id: value.id,
+      estadoRetrospectiva: value.estadoRetrospectiva,
+      fechaRetrospectiva: LuxonUtils.fromBackend(value.fechaRetrospectiva)
+    };
+  }
+
+  fromTarget(value: IRetrospectiva): IRetrospectivaResponse {
+    if (!value) {
+      return value as unknown as IRetrospectivaResponse;
+    }
+    return {
+      id: value.id,
+      estadoRetrospectiva: value.estadoRetrospectiva,
+      fechaRetrospectiva: LuxonUtils.toBackend(value.fechaRetrospectiva)
+    };
+  }
+}
+
+export const RETROSPECTIVA_RESPONSE_CONVERTER = new RetrospectivaResponseConverter();

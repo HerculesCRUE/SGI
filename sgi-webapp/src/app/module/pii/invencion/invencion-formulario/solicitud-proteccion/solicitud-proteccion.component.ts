@@ -14,6 +14,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ROUTE_NAMES } from '@core/route.names';
 import { ConfigService } from '@core/services/cnf/config.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { SolicitudProteccionService } from '@core/services/pii/solicitud-proteccion/solicitud-proteccion.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
@@ -110,9 +111,10 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly cnfService: ConfigService,
-    private solicitudProteccionService: SolicitudProteccionService
+    private solicitudProteccionService: SolicitudProteccionService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.SOLICITUDES_PROTECCION, actionService);
+    super(actionService.FRAGMENT.SOLICITUDES_PROTECCION, actionService, translate);
     this.formPart = this.fragment as SolicitudProteccionFragment;
     this.elementosPagina = [5, 10, 25, 100];
     this.setupLayout();
@@ -124,7 +126,7 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     const subscription = this.formPart.solicitudesProteccion$.subscribe(
       (solicitudesProteccion) => {
@@ -145,14 +147,15 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
   ngAfterViewInit() {
     this.dataSource.sortingDataAccessor = (item: ISolicitudProteccion, property: string) => {
       switch (property) {
-        case 'viaProteccion.nombre': return item.viaProteccion.nombre;
+        case 'viaProteccion.nombre':
+          return this.languageService.getFieldValue(item.viaProteccion.nombre);
         default: return item[property];
       }
     };
     this.dataSource.sort = this.sort;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       SOLICITUD_PROTECCION_KEY,
@@ -336,6 +339,7 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
 
   public onClearFilters(): void {
     this.formGroup.reset();
+    this.onSearch();
   }
 
   private setupSearchFormGroup(): FormGroup {
@@ -362,7 +366,7 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
         LuxonUtils.toBackend(controls.fechaFinPrioridadDesde?.value))
       .and('fechaFinPriorPresFasNacRec', SgiRestFilterOperator.LOWER_OR_EQUAL,
         LuxonUtils.toBackend(controls.fechaFinPrioridadHasta?.value))
-      .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo?.value?.toString())
+      .and('titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.titulo?.value?.toString())
       .and('viaProteccion.id', SgiRestFilterOperator.EQUALS, controls.viaProteccion.value?.id?.toString())
       .and('paisProteccionRef', SgiRestFilterOperator.EQUALS, controls.pais.value?.id?.toString())
       .and('estado', SgiRestFilterOperator.EQUALS, controls.estado?.value?.toString());
@@ -396,10 +400,17 @@ export class SolicitudProteccionComponent extends FragmentComponent implements O
         index: reset ? 0 : this.paginator?.pageIndex,
         size: this.paginator?.pageSize,
       },
-      sort: new RSQLSgiRestSort(this.sort?.active, SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
+      sort: new RSQLSgiRestSort(this.resolveSortProperty(this.sort?.active), SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
       filter,
     };
     this.findOptions = options;
     return options;
+  }
+
+  private resolveSortProperty(column: string): string {
+    if (column == 'viaProteccion.nombre') {
+      return 'viaProteccion.nombre.value';
+    }
+    return column;
   }
 }

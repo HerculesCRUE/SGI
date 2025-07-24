@@ -1,3 +1,4 @@
+import { I18N_FIELD_RESPONSE_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -5,7 +6,7 @@ import { SgiBaseConverter } from '@sgi/framework/core';
 import { IProyectoPeriodoJustificacionResponse } from './proyecto-periodo-justificacion-response';
 
 class ProyectoPeriodojustificacionResponseConverter extends
-  SgiBaseConverter<IProyectoPeriodoJustificacionResponse, IProyectoPeriodoJustificacion>{
+  SgiBaseConverter<IProyectoPeriodoJustificacionResponse, IProyectoPeriodoJustificacion> {
   toTarget(value: IProyectoPeriodoJustificacionResponse): IProyectoPeriodoJustificacion {
     if (!value) {
       return value as unknown as IProyectoPeriodoJustificacion;
@@ -21,7 +22,7 @@ class ProyectoPeriodojustificacionResponseConverter extends
       fechaInicioPresentacion: LuxonUtils.fromBackend(value.fechaInicioPresentacion),
       fechaFinPresentacion: LuxonUtils.fromBackend(value.fechaFinPresentacion),
       tipoJustificacion: value.tipoJustificacion,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.observaciones) : [],
       convocatoriaPeriodoJustificacionId: value.convocatoriaPeriodoJustificacionId,
       fechaPresentacionJustificacion: LuxonUtils.fromBackend(value.fechaPresentacionJustificacion),
       identificadorJustificacion: value.identificadorJustificacion,
@@ -41,7 +42,7 @@ class ProyectoPeriodojustificacionResponseConverter extends
       fechaInicioPresentacion: LuxonUtils.toBackend(value.fechaInicioPresentacion),
       fechaFinPresentacion: LuxonUtils.toBackend(value.fechaFinPresentacion),
       tipoJustificacion: value.tipoJustificacion,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.observaciones) : [],
       convocatoriaPeriodoJustificacionId: value.convocatoriaPeriodoJustificacionId,
       fechaPresentacionJustificacion: LuxonUtils.toBackend(value.fechaPresentacionJustificacion),
       identificadorJustificacion: value.identificadorJustificacion,

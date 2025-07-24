@@ -51,13 +51,13 @@ export class ProyectoAnualidadIngresosComponent extends FragmentComponent implem
     private dialogService: DialogService,
     private readonly translate: TranslateService,
     private matDialog: MatDialog) {
-    super(actionService.FRAGMENT.INGRESOS, actionService);
+    super(actionService.FRAGMENT.INGRESOS, actionService, translate);
     this.formPart = this.fragment as ProyectoAnualidadIngresosFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.subscriptions.push(this.formPart.anualidadIngresos$.subscribe(
       (anualidadIngresos) => {
@@ -69,7 +69,7 @@ export class ProyectoAnualidadIngresosComponent extends FragmentComponent implem
     this.dataSource.sortingDataAccessor = (wrapper, property) => wrapper.value[property];
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_PARTIDA_INGRESOS_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
@@ -11,10 +13,14 @@ import org.crue.hercules.sgi.csp.exceptions.TipoEnlaceNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoEnlace;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceNombre;
 import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoEnlaceRepository;
 import org.crue.hercules.sgi.csp.repository.TipoEnlaceRepository;
 import org.crue.hercules.sgi.csp.service.impl.ModeloTipoEnlaceServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -323,7 +329,8 @@ class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       ModeloTipoEnlace modeloTipoEnlace = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(modeloTipoEnlace.getTipoEnlace().getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(modeloTipoEnlace.getTipoEnlace().getNombre(), Language.ES))
+          .isEqualTo("nombre-" + i);
     }
   }
 
@@ -335,7 +342,13 @@ class ModeloTipoEnlaceServiceTest extends BaseServiceTest {
    * @return TipoEnlace
    */
   private TipoEnlace generarMockTipoEnlace(Long id, Boolean activo) {
-    return TipoEnlace.builder().id(id).nombre("nombre-" + id).descripcion("descripcion-" + id).activo(activo).build();
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcion-" + id));
+
+    return TipoEnlace.builder().id(id).nombre(nombre).descripcion(descripcion).activo(activo).build();
   }
 
   /**

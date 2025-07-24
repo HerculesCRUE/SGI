@@ -9,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.converter.ComConverter;
+import org.crue.hercules.sgi.csp.converter.ConvocatoriaFaseObservacionesConverter;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseAvisoInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseInput;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
@@ -37,8 +38,11 @@ import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -57,7 +61,28 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
 
-  private static final String TIPO_FASE_TEMPLATE = "TipoFase '";
+  private static final String MSG_AVISO_ENVIADO = "avisoEnviado.message";
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_MODELO = "modelo";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_CREAR = "action.crear";
+  private static final String MSG_FIELD_ACTION_ELIMINAR = "action.eliminar";
+  private static final String MSG_FIELD_FECHA_ENVIO = "fechaEnvio";
+  private static final String MSG_FIELD_FECHA_ACTUAL = "fechaActual";
+  private static final String MSG_MODEL_MODELO_TIPO_FASE = "org.crue.hercules.sgi.csp.model.ModeloTipoFase.message";
+  private static final String MSG_MODEL_CONVOCATORIA = "org.crue.hercules.sgi.csp.model.Convocatoria.message";
+  private static final String MSG_MODEL_CONVOCATORIA_FASE = "org.crue.hercules.sgi.csp.model.ConvocatoriaFase.message";
+  private static final String MSG_MODEL_TIPO_FASE = "org.crue.hercules.sgi.csp.model.TipoFase.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODELO_EJECUCION_INACTIVO = "org.springframework.util.Assert.entity.modeloEjecucion.inactivo.message";
+  private static final String MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.exceptions.AssignModeloEjecucion.message";
+  private static final String MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO = "org.crue.hercules.sgi.csp.model.Convocatoria.sinModeloEjecucion.message";
+  private static final String MSG_NO_DISPONIBLE_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.model.ModeloEjecucion.noDisponible.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA_PERMISOS = "org.springframework.util.Assert.accion.denegada.permisos.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP = "org.springframework.util.Assert.date.overloap.message";
+
   private final ConvocatoriaFaseRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ConfiguracionSolicitudRepository configuracionSolicitudRepository;
@@ -70,6 +95,7 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
   private final SolicitudRepository solicitudRepository;
   private final ProyectoEquipoRepository proyectoEquipoRepository;
   private final ConvocatoriaAuthorityHelper authorityHelper;
+  private final ConvocatoriaFaseObservacionesConverter convocatoriaFaseObservacionesConverter;
 
   public ConvocatoriaFaseServiceImpl(
       ConvocatoriaFaseRepository repository,
@@ -83,7 +109,8 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
       SgiApiComService emailService,
       SgiApiTpService sgiApiTaskService,
       SgiApiSgpService personaService,
-      ConvocatoriaAuthorityHelper authorityHelper) {
+      ConvocatoriaAuthorityHelper authorityHelper,
+      ConvocatoriaFaseObservacionesConverter convocatoriaFaseObservacionesConverter) {
     this.repository = repository;
     this.convocatoriaRepository = convocatoriaRepository;
     this.configuracionSolicitudRepository = configuracionSolicitudRepository;
@@ -96,6 +123,7 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
     this.solicitudRepository = solicitudRepository;
     this.proyectoEquipoRepository = proyectoEquipoRepository;
     this.authorityHelper = authorityHelper;
+    this.convocatoriaFaseObservacionesConverter = convocatoriaFaseObservacionesConverter;
   }
 
   /**
@@ -109,20 +137,14 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
   public ConvocatoriaFase create(ConvocatoriaFaseInput convocatoriaFaseInput) {
     log.debug("create(ConvocatoriaFase convocatoriaFase) - start");
 
-    Assert.isTrue(convocatoriaFaseInput.getConvocatoriaId() != null,
-        "Id Convocatoria no puede ser null para crear ConvocatoriaFase");
+    AssertHelper.idNotNull(convocatoriaFaseInput.getConvocatoriaId(), Convocatoria.class);
+    AssertHelper.idNotNull(convocatoriaFaseInput.getTipoFaseId(), TipoFase.class);
+    AssertHelper.fieldNotNull(convocatoriaFaseInput.getFechaInicio(), ConvocatoriaFase.class,
+        AssertHelper.MESSAGE_KEY_DATE_START);
+    AssertHelper.fieldNotNull(convocatoriaFaseInput.getFechaFin(), ConvocatoriaFase.class,
+        AssertHelper.MESSAGE_KEY_DATE_END);
 
-    Assert.isTrue(convocatoriaFaseInput.getTipoFaseId() != null,
-        "Id Fase no puede ser null para crear ConvocatoriaFase");
-
-    Assert.notNull(convocatoriaFaseInput.getFechaInicio(),
-        "La fecha de inicio no puede ser null para crear ConvocatoriaFase");
-
-    Assert.notNull(convocatoriaFaseInput.getFechaFin(),
-        "La fecha de fin no puede ser null para crear ConvocatoriaFase");
-
-    Assert.isTrue(convocatoriaFaseInput.getFechaFin().compareTo(convocatoriaFaseInput.getFechaInicio()) >= 0,
-        "La fecha de fecha de fin debe ser posterior a la fecha de inicio");
+    AssertHelper.isBefore(convocatoriaFaseInput.getFechaFin().compareTo(convocatoriaFaseInput.getFechaInicio()) >= 0);
 
     Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaFaseInput.getConvocatoriaId())
         .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaFaseInput.getConvocatoriaId()));
@@ -137,27 +159,45 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
 
     // Está asignado al ModeloEjecucion
     Assert.isTrue(modeloTipoFase.isPresent(),
-        "Tipo Fase no disponible para el ModeloEjecucion '"
-            + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
-                : "Convocatoria sin modelo asignado")
-            + "'");
+        () -> ProblemMessage.builder()
+            .key(MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+            .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+            .parameter(MSG_KEY_MODELO, ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
+                : ApplicationContextSupport.getMessage(MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO)))
+            .build());
 
     // La asignación al ModeloEjecucion está activa
-    Assert.isTrue(modeloTipoFase.get().getActivo(), "ModeloTipoFase '" + modeloTipoFase.get().getTipoFase().getNombre()
-        + "' no está activo para el ModeloEjecucion '" + modeloTipoFase.get().getModeloEjecucion().getNombre() + "'");
+    Assert.isTrue(modeloTipoFase.get().getActivo(),
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_FASE))
+            .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+            .build());
 
     // El TipoFase está activo
     Assert.isTrue(modeloTipoFase.get().getTipoFase().getActivo(),
-        TIPO_FASE_TEMPLATE + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+            .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+            .build());
 
     Assert.isTrue(!existsConvocatoriaFaseConFechasSolapadas(convocatoriaFaseInput, null),
-        "Ya existe una convocatoria en ese rango de fechas");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_DATE_OVERLOAP)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_CONVOCATORIA))
+            .parameter(MSG_KEY_FIELD,
+                convocatoriaFaseInput.getConvocatoriaId())
+            .build());
 
     ConvocatoriaFase convocatoriaFase = ConvocatoriaFase.builder()
         .convocatoriaId(convocatoriaFaseInput.getConvocatoriaId())
         .fechaInicio(convocatoriaFaseInput.getFechaInicio())
         .fechaFin(convocatoriaFaseInput.getFechaFin())
-        .observaciones(convocatoriaFaseInput.getObservaciones())
+        .observaciones(
+            this.convocatoriaFaseObservacionesConverter.convertAll(convocatoriaFaseInput.getObservaciones()))
         .tipoFase(modeloTipoFase.get().getTipoFase())
         .build();
 
@@ -183,8 +223,7 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
     }
 
     Instant now = Instant.now();
-    Assert.isTrue(avisoInput.getFechaEnvio().isAfter(now),
-        "La fecha de envio debe ser anterior a " + now.toString());
+    AssertHelper.fieldBefore(avisoInput.getFechaEnvio().isAfter(now), MSG_FIELD_FECHA_ENVIO, MSG_FIELD_FECHA_ACTUAL);
 
     Long emailId = this.emailService.createConvocatoriaFaseEmail(
         convocatoriaFaseId,
@@ -223,30 +262,27 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
   public ConvocatoriaFase update(Long convocatoriaFaseId, ConvocatoriaFaseInput convocatoriaFaseActualizar) {
     log.debug("update(ConvocatoriaFase convocatoriaFaseActualizar) - start");
 
-    Assert.notNull(convocatoriaFaseId,
-        "ConvocatoriaFase id no puede ser null para actualizar un ConvocatoriaFase");
+    AssertHelper.idNotNull(convocatoriaFaseId, ConvocatoriaFase.class);
+    AssertHelper.idNotNull(convocatoriaFaseActualizar.getConvocatoriaId(), Convocatoria.class);
+    AssertHelper.idNotNull(convocatoriaFaseActualizar.getTipoFaseId(), TipoFase.class);
+    AssertHelper.fieldNotNull(convocatoriaFaseActualizar.getFechaInicio(), ConvocatoriaFase.class,
+        AssertHelper.MESSAGE_KEY_DATE_START);
+    AssertHelper.fieldNotNull(convocatoriaFaseActualizar.getFechaFin(), ConvocatoriaFase.class,
+        AssertHelper.MESSAGE_KEY_DATE_END);
 
-    Assert.isTrue(convocatoriaFaseActualizar.getConvocatoriaId() != null,
-        "Id Convocatoria no puede ser null para actualizar ConvocatoriaFase");
-
-    Assert.isTrue(convocatoriaFaseActualizar.getTipoFaseId() != null,
-        "Id Fase no puede ser null para actualizar ConvocatoriaFase");
-
-    Assert.notNull(convocatoriaFaseActualizar.getFechaInicio(),
-        "La fecha de inicio no puede ser null para actualizar ConvocatoriaFase");
-
-    Assert.notNull(convocatoriaFaseActualizar.getFechaFin(),
-        "La fecha de fin no puede ser null para crear ConvocatoriaFase");
-
-    Assert.isTrue(convocatoriaFaseActualizar.getFechaFin().compareTo(convocatoriaFaseActualizar.getFechaInicio()) >= 0,
-        "La fecha de fecha de fin debe ser posterior a la fecha de inicio");
+    AssertHelper
+        .isBefore(convocatoriaFaseActualizar.getFechaFin().compareTo(convocatoriaFaseActualizar.getFechaInicio()) >= 0);
 
     return repository.findById(convocatoriaFaseId).map(convocatoriaFase -> {
 
       // Si la fase es la asignada a la ConfiguracionSolicitud comprobar si
       // convocatoria es modificable
       Assert.isTrue(isModificable(convocatoriaFase.getConvocatoriaId(), convocatoriaFase.getId()),
-          "No se puede modificar ConvocatoriaFase. No tiene los permisos necesarios o se encuentra asignada a la ConfiguracionSolicitud de una convocatoria que está registrada y cuenta con solicitudes o proyectos asociados");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA_FASE))
+              .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_CREAR))
+              .build());
 
       // Se recupera el Id de ModeloEjecucion para las siguientes validaciones
       Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaFase.getConvocatoriaId())
@@ -260,32 +296,48 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
 
       // Está asignado al ModeloEjecucion
       Assert.isTrue(modeloTipoFase.isPresent(),
-          "Tipo Fase no disponible para el ModeloEjecucion '"
-              + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
-                  : "Convocatoria sin modelo asignado")
-              + "'");
+          () -> ProblemMessage.builder()
+              .key(MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+              .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+              .parameter(MSG_KEY_MODELO, ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
+                  : ApplicationContextSupport.getMessage(MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO)))
+              .build());
 
       // La asignación al ModeloEjecucion está activa
       Assert.isTrue(
           Objects.equals(modeloTipoFase.get().getTipoFase().getId(), convocatoriaFase.getTipoFase().getId())
               || modeloTipoFase.get().getActivo(),
-          "ModeloTipoFase '" + modeloTipoFase.get().getTipoFase().getNombre()
-              + "' no está activo para el ModeloEjecucion '" + modeloTipoFase.get().getModeloEjecucion().getNombre()
-              + "'");
+          () -> ProblemMessage.builder()
+              .key(MSG_MODELO_EJECUCION_INACTIVO)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_FASE))
+              .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+              .parameter(MSG_KEY_MODELO, modeloTipoFase.get().getModeloEjecucion().getNombre())
+              .build());
 
       // El TipoFase está activo
       Assert.isTrue(
           Objects.equals(modeloTipoFase.get().getTipoFase().getId(), convocatoriaFase.getTipoFase().getId())
               || modeloTipoFase.get().getTipoFase().getActivo(),
-          TIPO_FASE_TEMPLATE + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
+          () -> ProblemMessage.builder()
+              .key(MSG_ENTITY_INACTIVO)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+              .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+              .build());
 
       Assert.isTrue(!existsConvocatoriaFaseConFechasSolapadas(convocatoriaFaseActualizar, convocatoriaFaseId),
-          "Ya existe una convocatoria en ese rango de fechas");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_DATE_OVERLOAP)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_CONVOCATORIA))
+              .parameter(MSG_KEY_FIELD, convocatoriaFaseActualizar.getConvocatoriaId())
+              .build());
 
       convocatoriaFase.setFechaInicio(convocatoriaFaseActualizar.getFechaInicio());
       convocatoriaFase.setFechaFin(convocatoriaFaseActualizar.getFechaFin());
       convocatoriaFase.setTipoFase(modeloTipoFase.get().getTipoFase());
-      convocatoriaFase.setObservaciones(convocatoriaFaseActualizar.getObservaciones());
+      convocatoriaFase.setObservaciones(
+          this.convocatoriaFaseObservacionesConverter.convertAll(convocatoriaFaseActualizar.getObservaciones()));
 
       if (convocatoriaFaseActualizar.getAviso1() != null && convocatoriaFase.getConvocatoriaFaseAviso1() == null) {
         ConvocatoriaFaseAviso aviso1 = this.createAviso(convocatoriaFase.getId(),
@@ -326,14 +378,18 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ConvocatoriaFase id no puede ser null para eliminar un ConvocatoriaFase");
+    AssertHelper.idNotNull(id, ConvocatoriaFase.class);
 
     Optional<ConvocatoriaFase> fase = repository.findById(id);
     if (fase.isPresent()) {
       // Si la fase es la asignada a la ConfiguracionSolicitud comprobar si
       // convocatoria es modificable
       Assert.isTrue(isModificable(fase.get().getConvocatoriaId(), fase.get().getId()),
-          "No se puede eliminar ConvocatoriaFase. No tiene los permisos necesarios o se encuentra asignada a la ConfiguracionSolicitud de una convocatoria que está registrada y cuenta con solicitudes o proyectos asociados");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA_FASE))
+              .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_ELIMINAR))
+              .build());
     } else {
       throw new ConvocatoriaFaseNotFoundException(id);
     }
@@ -517,7 +573,8 @@ public class ConvocatoriaFaseServiceImpl implements ConvocatoriaFaseService {
       SgiApiInstantTaskOutput task = sgiApiTaskService
           .findInstantTaskById(Long.parseLong(convocatoriaFaseAviso.getTareaProgramadaRef()));
 
-      Assert.isTrue(task.getInstant().isAfter(Instant.now()), "El aviso ya se ha enviado.");
+      Assert.isTrue(task.getInstant().isAfter(Instant.now()),
+          ApplicationContextSupport.getMessage(MSG_AVISO_ENVIADO));
 
       sgiApiTaskService
           .deleteTask(Long.parseLong(convocatoriaFaseAviso.getTareaProgramadaRef()));

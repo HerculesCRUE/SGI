@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap3_7_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.2 Esperimentazio prozesuaren iraupena"
+    },
+    "fieldGroup": [
+      {
+        "template": "Zenbat denbora (egun) irauten du animalia bakoitzari aplikatzen zaion esperimentazio prozesuak?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Prozesuaren iraupena animalia bat esperimentazio prozesuan erabiltzeko prestatzen dutenetik ‘haren gaineko behaketa gehiago egingo ez diren’ arte eta ‘animalia hil, birkokatu edo habitat edo sistema zootekniko egoki batera itzultzen duten’ arte luzatzen da.</p>"
+      },
+      {
+        "key": "duracionProcesoExperimentacion",
+        "type": "i18n-input",
+        "templateOptions": {
+          "label": "Denbora (egunak)",
+          "placeholder": "Denbora egunetan"
+        }
+      }
+    ]
+  }
+]

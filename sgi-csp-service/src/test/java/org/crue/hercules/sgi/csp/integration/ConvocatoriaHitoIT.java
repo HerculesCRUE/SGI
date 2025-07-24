@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoOutput;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -81,8 +86,8 @@ class ConvocatoriaHitoIT extends BaseIT {
         .isEqualTo(convocatoriaHito.getFecha());
     Assertions.assertThat(convocatoriaHitoActualizado.getTipoHito().getId()).as("getTipoHito().getId()")
         .isEqualTo(convocatoriaHito.getTipoHitoId());
-    Assertions.assertThat(convocatoriaHitoActualizado.getComentario()).as("getComentario()")
-        .isEqualTo(convocatoriaHito.getComentario());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaHitoActualizado.getComentario(), Language.ES))
+        .as("getComentario()").isEqualTo(I18nHelper.getValueForLanguage(convocatoriaHito.getComentario(), Language.ES));
 
   }
 
@@ -121,10 +126,13 @@ class ConvocatoriaHitoIT extends BaseIT {
 
   private ConvocatoriaHitoInput generarMockConvocatoriaHitoInput(Long id) {
     // @formatter:off
+    List<I18nFieldValueDto> comentarioConvocatoriaHito = new ArrayList();
+    comentarioConvocatoriaHito.add(new I18nFieldValueDto(Language.ES, "comentario"+ (id == null ?1L : id)));
+
     return ConvocatoriaHitoInput.builder()
         .convocatoriaId(id == null ? 1L : id)
         .fecha(Instant.parse("2020-10-19T00:00:00Z"))
-        .comentario("comentario" + (id == null ?1L : id))
+        .comentario(comentarioConvocatoriaHito)
         .tipoHitoId(1L)
         .aviso(null)
         .build();

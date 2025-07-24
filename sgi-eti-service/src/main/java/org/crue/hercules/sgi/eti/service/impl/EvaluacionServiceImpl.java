@@ -4,7 +4,9 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -24,10 +26,12 @@ import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
+import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoComentario;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion.Tipo;
+import org.crue.hercules.sgi.eti.model.TipoInvestigacionTutelada;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.ConvocatoriaReunionRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
@@ -41,7 +45,15 @@ import org.crue.hercules.sgi.eti.service.RetrospectivaService;
 import org.crue.hercules.sgi.eti.service.SgdocService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
 import org.crue.hercules.sgi.eti.util.Constantes;
+import org.crue.hercules.sgi.framework.i18n.I18nConfig;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -61,6 +73,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class EvaluacionServiceImpl implements EvaluacionService {
+  private static final String MSG_KEY_PATH_SEPARATOR = ".";
+  private static final String MSG_FIELD_PERSONA_REF = "personaRef";
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_KEY_ANOTHER_ENTITY = "anotherEntity";
+  private static final String MSG_FIELD_ACTION_ELIMINAR = "action.eliminar";
+  private static final String MSG_FIELD_FECHA_ACTUAL = "fechaActual";
+  private static final String MSG_FIELD_FECHA_CONVOCATORIA = "fechaConvocatoria";
+  private static final String MSG_FIELD_COMENTARIOS_ASOCIADOS = "comentariosAsociados";
+  private static final String MSG_MODEL_EVALUACION = "org.crue.hercules.sgi.eti.model.Evaluacion.message";
+  private static final String MSG_MODEL_CONVOCATORIA_REUNION = "org.crue.hercules.sgi.eti.model.ConvocatoriaReunion.message";
+  private static final String MSG_NO_PERTENECE = "org.crue.hercules.sgi.eti.exceptions.entity.noPertenece.anotherEntity";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA = "org.springframework.util.Assert.accion.denegada.message";
 
   private static final String TITULO_INFORME_EVALUACION = "informeEvaluacionPdf";
   private static final String TITULO_INFORME_EVALUACION_RETROSPECTIVA = "informeEvaluacionRetrospectivaPdf";
@@ -102,6 +128,10 @@ public class EvaluacionServiceImpl implements EvaluacionService {
 
   private final RetrospectivaService retrospectivaService;
 
+  private final MessageSource messageSource;
+
+  private final I18nConfig i18nConfig;
+
   private static final String TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA = "Investigación tutelada";
 
   public EvaluacionServiceImpl(EvaluacionRepository evaluacionRepository,
@@ -109,7 +139,8 @@ public class EvaluacionServiceImpl implements EvaluacionService {
       ConvocatoriaReunionRepository convocatoriaReunionRepository, MemoriaRepository memoriaRepository,
       EvaluacionConverter evaluacionConverter, SgiApiRepService reportService, SgdocService sgdocService,
       ComunicadosService comunicadosService, SgiConfigProperties sgiConfigProperties,
-      EvaluadorService evaluadorService, RetrospectivaService retrospectivaService) {
+      EvaluadorService evaluadorService, RetrospectivaService retrospectivaService, MessageSource messageSource,
+      I18nConfig i18nConfig) {
 
     this.evaluacionRepository = evaluacionRepository;
     this.memoriaService = memoriaService;
@@ -123,6 +154,8 @@ public class EvaluacionServiceImpl implements EvaluacionService {
     this.sgiConfigProperties = sgiConfigProperties;
     this.evaluadorService = evaluadorService;
     this.retrospectivaService = retrospectivaService;
+    this.messageSource = messageSource;
+    this.i18nConfig = i18nConfig;
   }
 
   /**
@@ -141,8 +174,8 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   @Transactional
   public Evaluacion create(Evaluacion evaluacion) {
     log.debug("Petición a create Evaluacion : {} - start", evaluacion);
-    Assert.isNull(evaluacion.getId(), "Evaluacion id tiene que ser null para crear una nueva evaluacion");
-    Assert.notNull(evaluacion.getConvocatoriaReunion().getId(), "La convocatoria de reunión no puede ser nula");
+    AssertHelper.idIsNull(evaluacion.getId(), Evaluacion.class);
+    AssertHelper.idNotNull(evaluacion.getConvocatoriaReunion().getId(), ConvocatoriaReunion.class);
 
     if (!convocatoriaReunionRepository.existsById(evaluacion.getConvocatoriaReunion().getId())) {
       throw new ConvocatoriaReunionNotFoundException(evaluacion.getConvocatoriaReunion().getId());
@@ -347,8 +380,8 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   public Page<EvaluacionWithNumComentario> findEvaluacionesAnterioresByMemoria(Long idMemoria, Long idEvaluacion,
       Long idTipoComentario, Pageable pageable) {
     log.debug("findEvaluacionesAnterioresByMemoria(Long id, Pageable pageable) - start");
-    Assert.notNull(idMemoria, "El id de la memoria no puede ser nulo para mostrar sus evaluaciones");
-    Assert.notNull(idEvaluacion, "El id de la evaluación no puede ser nulo para recuperar las evaluaciones anteriores");
+    AssertHelper.idNotNull(idMemoria, Memoria.class);
+    AssertHelper.idNotNull(idEvaluacion, Evaluacion.class);
     Optional<Evaluacion> evaluacion = evaluacionRepository.findById(idEvaluacion);
     Long idTipoEvaluacion = null;
     if (evaluacion.isPresent()) {
@@ -372,7 +405,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   @Override
   public Page<Evaluacion> findByEvaluador(String personaRef, String query, Pageable pageable) {
     log.debug("findByEvaluador(String personaRef, String query, Pageable pageable) - start");
-    Assert.notNull(personaRef, "El personaRef de la evaluación no puede ser nulo para mostrar sus evaluaciones");
+    AssertHelper.fieldNotNull(personaRef, Evaluacion.class, MSG_FIELD_PERSONA_REF);
     Page<Evaluacion> returnValue = evaluacionRepository.findByEvaluador(personaRef, query, pageable);
     log.debug("findByEvaluador(String personaRef, String query, Pageable pageable) - end");
     return returnValue;
@@ -411,8 +444,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   public Page<Evaluacion> findEvaluacionesEnSeguimientosByEvaluador(String personaRef, String query,
       Pageable pageable) {
     log.debug("findEvaluacionesEnSeguimientosByEvaluador(String personaRef, String query, Pageable pageable) - start");
-    Assert.notNull(personaRef,
-        "El personaRef de la evaluación no puede ser nulo para mostrar sus evaluaciones en seguimiento");
+    AssertHelper.fieldNotNull(personaRef, Evaluacion.class, MSG_FIELD_PERSONA_REF);
     Page<Evaluacion> evaluaciones = evaluacionRepository.findEvaluacionesEnSeguimientosByEvaluador(personaRef, query,
         pageable);
     log.debug("findEvaluacionesEnSeguimientosByEvaluador(String personaRef, String query, Pageable pageable) - end");
@@ -440,7 +472,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   @Transactional
   public void delete(Long id) throws EvaluacionNotFoundException {
     log.debug("Petición a delete Evaluacion : {}  - start", id);
-    Assert.notNull(id, "El id de Evaluacion no puede ser null.");
+    AssertHelper.idNotNull(id, Evaluacion.class);
     if (!evaluacionRepository.existsById(id)) {
       throw new EvaluacionNotFoundException(id);
     }
@@ -473,7 +505,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   public Evaluacion update(final Evaluacion evaluacionActualizar) {
     log.debug("update(Evaluacion evaluacionActualizar) - start");
 
-    Assert.notNull(evaluacionActualizar.getId(), "Evaluacion id no puede ser null para actualizar una evaluacion");
+    AssertHelper.idNotNull(evaluacionActualizar.getId(), Evaluacion.class);
 
     // Si la Evaluación es de Revisión Mínima
     // se actualiza la fechaDictamen con la fecha actual
@@ -621,7 +653,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
         informePdf = reportService.getInformeEvaluacionRetrospectiva(evaluacion.getId(), Instant.now());
         tituloInforme = TITULO_INFORME_EVALUACION_RETROSPECTIVA;
       } else {
-        switch (evaluacion.getMemoria().getTipoMemoria().getTipo()) {
+        switch (evaluacion.getMemoria().getTipo()) {
           case NUEVA:
             informePdf = reportService.getInformeFavorableMemoria(evaluacion.getId());
             break;
@@ -651,7 +683,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   }
 
   /**
-   * Obtiene el documento de la ficha del Evaluador
+   * Obtiene el documento de la ficha del Evaluador en idioma solicitado
    * 
    * @param idEvaluacion id {@link Evaluacion}
    * @return El documento del informe de la ficha del Evaluador
@@ -699,15 +731,26 @@ public class EvaluacionServiceImpl implements EvaluacionService {
         .orElseThrow(() -> new EvaluacionNotFoundException(idEvaluacion));
 
     Assert.isTrue(evaluacion.getConvocatoriaReunion().getId().compareTo(idConvocatoriaReunion) == 0,
-        "La evaluación no pertenece a esta convocatoria de reunión");
+        () -> ProblemMessage.builder()
+            .key(MSG_NO_PERTENECE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_EVALUACION))
+            .parameter(MSG_KEY_ANOTHER_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA_REUNION))
+            .build());
 
-    Assert.isTrue(evaluacion.getConvocatoriaReunion().getFechaEvaluacion().isAfter(Instant.now()),
-        "La fecha de la convocatoria es anterior a la actual");
+    AssertHelper.fieldBefore(evaluacion.getConvocatoriaReunion().getFechaEvaluacion().isAfter(Instant.now()),
+        MSG_FIELD_FECHA_ACTUAL, MSG_FIELD_FECHA_CONVOCATORIA);
 
-    Assert.isNull(evaluacion.getDictamen(), "No se pueden eliminar memorias que ya contengan un dictamen");
+    AssertHelper.entityIsNull(evaluacion.getDictamen(), Evaluacion.class, Dictamen.class);
 
     Assert.isTrue(comentarioRepository.countByEvaluacionId(evaluacion.getId()) == 0L,
-        "No se puede eliminar una memoria que tenga comentarios asociados");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_ACCION_DENEGADA)
+            .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                MSG_FIELD_COMENTARIOS_ASOCIADOS))
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_EVALUACION))
+            .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_ELIMINAR))
+            .build());
 
     // Volvemos la memoria a su estado anterior
     Memoria memoria = memoriaService.getMemoriaWithEstadoAnterior(evaluacion.getMemoria());
@@ -723,7 +766,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   public Page<Evaluacion> findAllByMemoriaId(Long id, Pageable pageable) {
     log.debug("findAllByMemoriaId(Long id,Pageable paging) - start");
 
-    Assert.notNull(id, "El id de la memoria no puede ser nulo para mostrar sus evaluaciones");
+    AssertHelper.idNotNull(id, Memoria.class);
 
     return memoriaRepository.findByIdAndActivoTrue(id).map(memoria -> {
 
@@ -817,20 +860,45 @@ public class EvaluacionServiceImpl implements EvaluacionService {
     return evaluacionRepository.findFirstFechaEnvioSecretariaByIdEvaluacion(idEvaluacion);
   }
 
+  /**
+   * Se envía comunicado {@code ETI_COM_DICT_EVA_REV_MINIMA} correspondiente a
+   * asignar a la evaluación un dictamen de tipo revision mínima
+   * 
+   * @param evaluacion la {@link Evaluacion}
+   */
   private void sendComunicadoDictamenEvaluacionRevMin(Evaluacion evaluacion) {
     log.debug("sendComunicadoDictamenEvaluacionRevMin(Evaluacion evaluacion) - Start");
     try {
-      String tipoActividad;
+      List<I18nFieldValue> i18nTipoActividad = new ArrayList<>();
       if (!evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre()
           .equals(TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA)) {
-        tipoActividad = evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre();
+        String tipoActividadId = evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getId().toString();
+
+        String messageKey = TipoActividad.class.getName() + MSG_KEY_PATH_SEPARATOR + tipoActividadId;
+
+        for (Language language : i18nConfig.getEnabledLanguages()) {
+          i18nTipoActividad.add(new I18nFieldValueDto(language,
+              messageSource.getMessage(messageKey, null, Locale.forLanguageTag(language.getCode()))));
+        }
+
       } else {
-        tipoActividad = evaluacion.getMemoria().getPeticionEvaluacion().getTipoInvestigacionTutelada().getNombre();
+        String tipoInvestigacionTuteladaId = evaluacion.getMemoria().getPeticionEvaluacion()
+            .getTipoInvestigacionTutelada()
+            .getId().toString();
+
+        String messageKey = TipoInvestigacionTutelada.class.getName() + MSG_KEY_PATH_SEPARATOR
+            + tipoInvestigacionTuteladaId;
+
+        for (Language language : i18nConfig.getEnabledLanguages()) {
+          i18nTipoActividad.add(new I18nFieldValueDto(language,
+              messageSource.getMessage(messageKey, null, Locale.forLanguageTag(language.getCode()))));
+        }
       }
       this.comunicadosService.enviarComunicadoDictamenEvaluacionRevMinima(
-          evaluacion.getMemoria().getComite().getNombreInvestigacion(),
-          evaluacion.getMemoria().getComite().getGenero().toString(), evaluacion.getMemoria().getNumReferencia(),
-          tipoActividad,
+          evaluacion.getMemoria().getComite().getNombre(),
+          evaluacion.getMemoria().getComite().getCodigo(),
+          evaluacion.getMemoria().getNumReferencia(),
+          i18nTipoActividad,
           evaluacion.getMemoria().getPeticionEvaluacion().getTitulo(),
           evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef());
       log.debug("sendComunicadoDictamenEvaluacionRevMin(Evaluacion evaluacion) - End");
@@ -843,17 +911,35 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   private void sendComunicadoDictamenEvaluacionSeguimientoRevMin(Evaluacion evaluacion) {
     log.debug("sendComunicadoDictamenEvaluacionSeguimientoRevMin(Evaluacion evaluacion) - Start");
     try {
-      String tipoActividad;
+      List<I18nFieldValue> i18nTipoActividad = new ArrayList<>();
       if (!evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre()
           .equals(TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA)) {
-        tipoActividad = evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre();
+        String tipoActividadId = evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getId().toString();
+
+        String messageKey = TipoActividad.class.getName() + MSG_KEY_PATH_SEPARATOR + tipoActividadId;
+
+        for (Language language : i18nConfig.getEnabledLanguages()) {
+          i18nTipoActividad.add(new I18nFieldValueDto(language,
+              messageSource.getMessage(messageKey, null, Locale.forLanguageTag(language.getCode()))));
+        }
       } else {
-        tipoActividad = evaluacion.getMemoria().getPeticionEvaluacion().getTipoInvestigacionTutelada().getNombre();
+        String tipoInvestigacionTuteladaId = evaluacion.getMemoria().getPeticionEvaluacion()
+            .getTipoInvestigacionTutelada()
+            .getId().toString();
+
+        String messageKey = TipoInvestigacionTutelada.class.getName() + MSG_KEY_PATH_SEPARATOR
+            + tipoInvestigacionTuteladaId;
+
+        for (Language language : i18nConfig.getEnabledLanguages()) {
+          i18nTipoActividad.add(new I18nFieldValueDto(language,
+              messageSource.getMessage(messageKey, null, Locale.forLanguageTag(language.getCode()))));
+        }
       }
       this.comunicadosService.enviarComunicadoDictamenEvaluacionSeguimientoRevMinima(
-          evaluacion.getMemoria().getComite().getNombreInvestigacion(),
-          evaluacion.getMemoria().getComite().getGenero().toString(), evaluacion.getMemoria().getNumReferencia(),
-          tipoActividad,
+          evaluacion.getMemoria().getComite().getNombre(),
+          evaluacion.getMemoria().getComite().getCodigo(),
+          evaluacion.getMemoria().getNumReferencia(),
+          i18nTipoActividad,
           evaluacion.getMemoria().getPeticionEvaluacion().getTitulo(),
           evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef());
       log.debug("sendComunicadoDictamenEvaluacionSeguimientoRevMin(Evaluacion evaluacion) - End");
@@ -864,33 +950,56 @@ public class EvaluacionServiceImpl implements EvaluacionService {
     }
   }
 
+  @Override
   public void sendComunicadoInformeSeguimientoAnualPendiente() {
+    log.debug("sendComunicadoInformeSeguimientoAnualPendiente() - start");
+
     List<Evaluacion> evaluaciones = recuperaInformesAvisoSeguimientoAnualPendiente();
     if (CollectionUtils.isEmpty(evaluaciones)) {
-      log.info("No existen evaluaciones que requieran generar aviso de informe de evaluación anual pendiente.");
-    } else {
-      evaluaciones.stream().forEach(evaluacion -> {
-        String tipoActividad;
-        if (!evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre()
-            .equals(TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA)) {
-          tipoActividad = evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre();
-        } else {
-          tipoActividad = evaluacion.getMemoria().getPeticionEvaluacion().getTipoInvestigacionTutelada().getNombre();
-        }
-        try {
-          this.comunicadosService.enviarComunicadoInformeSeguimientoAnual(
-              evaluacion.getMemoria().getComite().getNombreInvestigacion(),
-              evaluacion.getMemoria().getNumReferencia(),
-              tipoActividad,
-              evaluacion.getMemoria().getPeticionEvaluacion().getTitulo(),
-              evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef());
-        } catch (Exception e) {
-          log.error("sendComunicadoInformeSeguimientoAnualPendiente(evaluacionId: {}) - Error al enviar el comunicado",
-              evaluacion.getId(), e);
-        }
-      });
+      log.info(
+          "sendComunicadoInformeSeguimientoAnualPendiente() - No existen evaluaciones que requieran generar aviso de informe de evaluación anual pendiente.");
+      return;
     }
 
+    evaluaciones.stream().forEach(evaluacion -> {
+      log.info("sendComunicadoInformeSeguimientoAnualPendiente(evaluacionId: {}) - enviando comunicado",
+          evaluacion.getId());
+
+      String messageKeyTipoActividad = null;
+      if (evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getNombre()
+          .equals(TIPO_ACTIVIDAD_INVESTIGACION_TUTELADA)) {
+
+        String tipoInvestigacionTuteladaId = evaluacion.getMemoria().getPeticionEvaluacion()
+            .getTipoInvestigacionTutelada().getId().toString();
+        messageKeyTipoActividad = TipoInvestigacionTutelada.class.getName() + MSG_KEY_PATH_SEPARATOR
+            + tipoInvestigacionTuteladaId;
+      } else {
+        String tipoActividadId = evaluacion.getMemoria().getPeticionEvaluacion().getTipoActividad().getId()
+            .toString();
+        messageKeyTipoActividad = TipoActividad.class.getName() + MSG_KEY_PATH_SEPARATOR + tipoActividadId;
+      }
+
+      List<I18nFieldValue> i18nTipoActividad = new ArrayList<>();
+      for (Language language : i18nConfig.getEnabledLanguages()) {
+        i18nTipoActividad.add(new I18nFieldValueDto(
+            language,
+            messageSource.getMessage(messageKeyTipoActividad, null, Locale.forLanguageTag(language.getCode()))));
+      }
+
+      try {
+        this.comunicadosService.enviarComunicadoInformeSeguimientoAnual(
+            evaluacion.getMemoria().getComite().getNombre(),
+            evaluacion.getMemoria().getNumReferencia(),
+            i18nTipoActividad,
+            evaluacion.getMemoria().getPeticionEvaluacion().getTitulo(),
+            evaluacion.getMemoria().getPeticionEvaluacion().getPersonaRef());
+      } catch (Exception e) {
+        log.error("sendComunicadoInformeSeguimientoAnualPendiente(evaluacionId: {}) - Error al enviar el comunicado",
+            evaluacion.getId(), e);
+      }
+    });
+
+    log.debug("sendComunicadoInformeSeguimientoAnualPendiente() - end");
   }
 
   /**
@@ -899,7 +1008,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
    * 
    * @return lista de {@link Evaluacion}
    */
-  public List<Evaluacion> recuperaInformesAvisoSeguimientoAnualPendiente() {
+  private List<Evaluacion> recuperaInformesAvisoSeguimientoAnualPendiente() {
     log.debug("recuperaInformesAvisoSeguimientoAnualPendiente() - start");
 
     Instant fechaInicio = Instant.now().atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
@@ -908,12 +1017,16 @@ public class EvaluacionServiceImpl implements EvaluacionService {
     Instant fechaFin = this.getLastInstantOfDay().minusYears(1L)
         .toInstant();
 
+    log.info(
+        "recuperaInformesAvisoSeguimientoAnualPendiente() - Recuperando evaluaciones cuya fecha de dictamen se encuentre entre {} y {}",
+        fechaInicio, fechaFin);
+
     // Se buscan evaluaciones activas con Memoria con estado Fin Evaluacion (9) y
     // Dictamen con estado Favorable(1) cuya fecha de dictamen cumpla un año durante
     // el día de hoy
     Specification<Evaluacion> specsEvaluacionByYearAvisoInformeAnualAnd = EvaluacionSpecifications.activos()
-        .and(EvaluacionSpecifications.byMemoriaEstado(9L))
-        .and(EvaluacionSpecifications.byDictamenEstado(1L))
+        .and(EvaluacionSpecifications.byMemoriaEstado(TipoEstadoMemoria.Tipo.FIN_EVALUACION.getId()))
+        .and(EvaluacionSpecifications.byDictamenEstado(Dictamen.Tipo.FAVORABLE.getId()))
         .and(EvaluacionSpecifications.byFechaDictamenBetween(fechaInicio, fechaFin));
 
     List<Evaluacion> evaluacionesPendientesAviso = evaluacionRepository
@@ -932,9 +1045,9 @@ public class EvaluacionServiceImpl implements EvaluacionService {
   public Evaluador findSecretarioEvaluacion(Long idEvaluacion) {
     log.debug("findSecretarioEvaluacion(Long idEvaluacion) - start");
     Evaluacion evaluacion = this.findById(idEvaluacion);
-    Evaluador secretario = evaluadorService.findSecretarioInFechaAndComite(
+    Evaluador secretario = evaluadorService.findSecretarioInFechaAndComiteId(
         evaluacion.getConvocatoriaReunion().getFechaEvaluacion(),
-        evaluacion.getConvocatoriaReunion().getComite().getComite());
+        evaluacion.getConvocatoriaReunion().getComite().getId());
     log.debug("findSecretarioEvaluacion(Long idEvaluacion) - end");
     return secretario;
   }

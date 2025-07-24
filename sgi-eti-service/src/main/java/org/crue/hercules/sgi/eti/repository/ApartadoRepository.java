@@ -12,7 +12,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 /**
  * Spring Data JPA repository para {@link Apartado}.
  */
-public interface ApartadoRepository extends JpaRepository<Apartado, Long>, JpaSpecificationExecutor<Apartado> {
+public interface ApartadoRepository
+    extends JpaRepository<Apartado, Long>, JpaSpecificationExecutor<Apartado> {
 
   /**
    * Obtiene las entidades {@link Apartado} filtradas y paginadas según por el id

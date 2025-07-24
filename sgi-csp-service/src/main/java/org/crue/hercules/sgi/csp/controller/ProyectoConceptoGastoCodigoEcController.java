@@ -46,21 +46,6 @@ public class ProyectoConceptoGastoCodigoEcController {
   }
 
   /**
-   * Devuelve el {@link ProyectoConceptoGastoCodigoEc} con el id indicado.
-   * 
-   * @param id Identificador de {@link ProyectoConceptoGastoCodigoEc}.
-   * @return {@link ProyectoConceptoGastoCodigoEc} correspondiente al id.
-   */
-  @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  public ProyectoConceptoGastoCodigoEc findById(@PathVariable Long id) {
-    log.debug("findById(Long id) - start");
-    ProyectoConceptoGastoCodigoEc returnValue = service.findById(id);
-    log.debug("findById(Long id) - end");
-    return returnValue;
-  }
-
-  /**
    * Devuelve una lista paginada y filtrada {@link ProyectoConceptoGastoCodigoEc}
    * activos.
    * 

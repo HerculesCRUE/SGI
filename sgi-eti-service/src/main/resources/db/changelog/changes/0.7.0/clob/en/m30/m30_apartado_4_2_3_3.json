@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_2_3_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.3 Protective measures"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Are safe measures contemplated for the handling of biological agents and/or genetically modified organisms?</p>"
+      },
+      {
+        "key": "medidasSeguras",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please specify the measures or justify why they are not contemplated if not:"
+      },
+      {
+        "key": "especificarLimitar",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Please specify:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

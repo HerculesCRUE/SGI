@@ -1,8 +1,10 @@
+import { I18nFieldValueResponse } from "@core/i18n/i18n-field-response";
+
 export interface IRolSocioResponse {
   id: number;
-  nombre: string;
-  abreviatura: string;
+  nombre: I18nFieldValueResponse[];
+  abreviatura: I18nFieldValueResponse[];
   coordinador: boolean;
-  descripcion: string;
+  descripcion: I18nFieldValueResponse[];
   activo: boolean;
 }

@@ -9,7 +9,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.solicitud-desglose-presupuesto.entidades.entidades-financiadoras.nombre' | translate}}
         </th>
-        <td mat-cell *matCellDef="let element">
+        <td mat-cell *matCellDef="let element" sgempNotFoundError [model]="element.entidadFinanciadora.empresa">
           {{element.entidadFinanciadora.empresa.nombre}}
         </td>
       </ng-container>
@@ -30,7 +30,7 @@
           {{'csp.solicitud-desglose-presupuesto.entidades.entidades-financiadoras.fuente-financiacion' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{element.entidadFinanciadora.fuenteFinanciacion?.nombre}}
+          <sgi-i18n-table-field [field]="element.entidadFinanciadora.fuenteFinanciacion?.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

@@ -1,9 +1,9 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.dto.FuenteFinanciacionInput;
@@ -11,9 +11,14 @@ import org.crue.hercules.sgi.csp.dto.FuenteFinanciacionOutput;
 import org.crue.hercules.sgi.csp.exceptions.FuenteFinanciacionNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.TipoAmbitoGeograficoNotFoundException;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
+import org.crue.hercules.sgi.csp.model.FuenteFinanciacionDescripcion;
+import org.crue.hercules.sgi.csp.model.FuenteFinanciacionNombre;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoOrigenFuenteFinanciacion;
 import org.crue.hercules.sgi.csp.service.FuenteFinanciacionService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -32,6 +37,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * FuenteFinanciacionControllerTest
@@ -70,8 +77,10 @@ class FuenteFinanciacionControllerTest extends BaseControllerTest {
         // then: new FuenteFinanciacion is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(fuenteFinanciacion.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(fuenteFinanciacion.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(fuenteFinanciacion.getNombre().iterator().next().getValue()))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(fuenteFinanciacion.getDescripcion().iterator().next().getValue()))
         .andExpect(MockMvcResultMatchers.jsonPath("fondoEstructural").value(fuenteFinanciacion.getFondoEstructural()))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoAmbitoGeografico.id")
             .value(fuenteFinanciacion.getTipoAmbitoGeograficoId()))
@@ -85,7 +94,9 @@ class FuenteFinanciacionControllerTest extends BaseControllerTest {
     // given: Existing TipoAmbitoGeografico to be updated
     Long id = 1L;
     FuenteFinanciacionInput fuenteFinanciacion = generarMockFuenteFinanciacionInput();
-    fuenteFinanciacion.setNombre("nuevo-nombre");
+    List<I18nFieldValueDto> nombre = new ArrayList<>();
+    nombre.add(new I18nFieldValueDto(Language.ES, "nuevo-nombre"));
+    fuenteFinanciacion.setNombre(nombre);
 
     BDDMockito.given(service.update(ArgumentMatchers.<FuenteFinanciacion>any()))
         .willAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -98,8 +109,10 @@ class FuenteFinanciacionControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: FuenteFinanciacion is updated
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(fuenteFinanciacion.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(fuenteFinanciacion.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(fuenteFinanciacion.getNombre().iterator().next().getValue()))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(fuenteFinanciacion.getDescripcion().iterator().next().getValue()))
         .andExpect(MockMvcResultMatchers.jsonPath("fondoEstructural").value(fuenteFinanciacion.getFondoEstructural()))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoAmbitoGeografico.id")
             .value(fuenteFinanciacion.getTipoAmbitoGeograficoId()))
@@ -252,7 +265,8 @@ class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       FuenteFinanciacionOutput fuenteFinanciacion = fuenteFinanciacionesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(fuenteFinanciacion.getNombre()).isEqualTo("FuenteFinanciacion" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(fuenteFinanciacion.getNombre(), Language.ES))
+          .isEqualTo("FuenteFinanciacion" + String.format("%03d", i));
     }
   }
 
@@ -327,7 +341,8 @@ class FuenteFinanciacionControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       FuenteFinanciacionOutput fuenteFinanciacion = fuenteFinanciacionesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(fuenteFinanciacion.getNombre()).isEqualTo("FuenteFinanciacion" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(fuenteFinanciacion.getNombre(), Language.ES))
+          .isEqualTo("FuenteFinanciacion" + String.format("%03d", i));
     }
   }
 
@@ -399,8 +414,16 @@ class FuenteFinanciacionControllerTest extends BaseControllerTest {
   }
 
   private FuenteFinanciacionInput generarMockFuenteFinanciacionInput() {
-    FuenteFinanciacionInput fuenteFinanciacion = FuenteFinanciacionInput.builder().nombre("nombre")
-        .descripcion("descripcion").fondoEstructural(true).tipoAmbitoGeograficoId(1L).tipoOrigenFuenteFinanciacionId(1L)
+    List<I18nFieldValueDto> nombre = new ArrayList<>();
+    nombre.add(new I18nFieldValueDto(Language.ES, "nombre"));
+
+    List<I18nFieldValueDto> descripcion = new ArrayList<>();
+    descripcion.add(new I18nFieldValueDto(Language.ES, "descripcion"));
+
+    FuenteFinanciacionInput fuenteFinanciacion = FuenteFinanciacionInput.builder().nombre(nombre)
+        .descripcion(
+            descripcion)
+        .fondoEstructural(true).tipoAmbitoGeograficoId(1L).tipoOrigenFuenteFinanciacionId(1L)
         .build();
 
     return fuenteFinanciacion;
@@ -413,10 +436,16 @@ class FuenteFinanciacionControllerTest extends BaseControllerTest {
     TipoOrigenFuenteFinanciacion tipoOrigenFuenteFinanciacion = new TipoOrigenFuenteFinanciacion();
     tipoOrigenFuenteFinanciacion.setId(1L);
 
+    Set<FuenteFinanciacionNombre> nombreFuenteFinanciacion = new HashSet<>();
+    nombreFuenteFinanciacion.add(new FuenteFinanciacionNombre(Language.ES, nombre));
+
+    Set<FuenteFinanciacionDescripcion> descripcionFuenteFinanciacion = new HashSet<>();
+    descripcionFuenteFinanciacion.add(new FuenteFinanciacionDescripcion(Language.ES, "descripcion-" + id));
+
     FuenteFinanciacion fuenteFinanciacion = new FuenteFinanciacion();
     fuenteFinanciacion.setId(id);
-    fuenteFinanciacion.setNombre(nombre);
-    fuenteFinanciacion.setDescripcion("descripcion-" + id);
+    fuenteFinanciacion.setNombre(nombreFuenteFinanciacion);
+    fuenteFinanciacion.setDescripcion(descripcionFuenteFinanciacion);
     fuenteFinanciacion.setFondoEstructural(true);
     fuenteFinanciacion.setTipoAmbitoGeografico(tipoAmbitoGeografico);
     fuenteFinanciacion.setTipoOrigenFuenteFinanciacion(tipoOrigenFuenteFinanciacion);

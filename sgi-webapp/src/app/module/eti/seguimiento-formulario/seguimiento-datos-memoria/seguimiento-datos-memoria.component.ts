@@ -6,6 +6,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { SeguimientoFormularioActionService } from '../seguimiento-formulario.action.service';
 import { SeguimientoListadoAnteriorMemoriaComponent } from '../seguimiento-listado-anterior-memoria/seguimiento-listado-anterior-memoria.component';
 import { SeguimientoDatosMemoriaFragment } from './seguimiento-datos-memoria.fragment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'sgi-seguimiento-datos-memoria',
@@ -22,9 +23,10 @@ export class SeguimientoDatosMemoriaComponent extends FormFragmentComponent<IMem
   formPart: SeguimientoDatosMemoriaFragment;
 
   constructor(
-    public actionService: SeguimientoFormularioActionService
+    public actionService: SeguimientoFormularioActionService,
+    private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.MEMORIA, actionService);
+    super(actionService.FRAGMENT.MEMORIA, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -50,4 +52,6 @@ export class SeguimientoDatosMemoriaComponent extends FormFragmentComponent<IMem
     this.evaluaciones.evaluacionId = this.actionService.getEvaluacion()?.id;
     this.evaluaciones.ngAfterViewInit();
   }
+
+  protected setupI18N(): void { }
 }

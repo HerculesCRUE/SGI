@@ -6,12 +6,16 @@ import org.crue.hercules.sgi.csp.exceptions.TipoFinalidadNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoEnlace;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFinalidadRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFinalidadRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ModeloTipoFinalidadSpecifications;
 import org.crue.hercules.sgi.csp.service.ModeloTipoFinalidadService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,6 +32,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ModeloTipoFinalidadServiceImpl implements ModeloTipoFinalidadService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_MODEL_TIPO_FINALIDAD = "org.crue.hercules.sgi.csp.model.TipoFinalidad.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODELO_EJECUCION_EXISTS = "org.springframework.util.Assert.entity.modeloEjecucion.exists.message";
 
   private final ModeloTipoFinalidadRepository modeloTipoFinalidadRepository;
   private final ModeloEjecucionRepository modeloEjecucionRepository;
@@ -53,22 +62,25 @@ public class ModeloTipoFinalidadServiceImpl implements ModeloTipoFinalidadServic
     log.debug("create(ModeloTipoFinalidad modeloTipoFinalidad) - start");
 
     // Id vacío al crear
-    Assert.isNull(modeloTipoFinalidad.getId(), "Id tiene que ser null para crear ModeloTipoFinalidad");
+    AssertHelper.idIsNull(modeloTipoFinalidad.getId(), ModeloTipoFinalidad.class);
 
     // ModeloEjecucion existe
-    Assert.notNull(modeloTipoFinalidad.getModeloEjecucion().getId(),
-        "Id ModeloEjecucion no puede ser null para actualizar ModeloTipoFinalidad");
+    AssertHelper.idNotNull(modeloTipoFinalidad.getModeloEjecucion().getId(), ModeloEjecucion.class);
     modeloTipoFinalidad
         .setModeloEjecucion(modeloEjecucionRepository.findById(modeloTipoFinalidad.getModeloEjecucion().getId())
             .orElseThrow(() -> new ModeloEjecucionNotFoundException(modeloTipoFinalidad.getModeloEjecucion().getId())));
 
     // TipoFinalidad existe y activo
-    Assert.notNull(modeloTipoFinalidad.getTipoFinalidad().getId(),
-        "Id TipoFinalidad no puede ser null para actualizar ModeloTipoFinalidad");
+    AssertHelper.idNotNull(modeloTipoFinalidad.getTipoFinalidad().getId(), TipoFinalidad.class);
     modeloTipoFinalidad
         .setTipoFinalidad(tipoFinalidadRepository.findById(modeloTipoFinalidad.getTipoFinalidad().getId())
             .orElseThrow(() -> new TipoFinalidadNotFoundException(modeloTipoFinalidad.getTipoFinalidad().getId())));
-    Assert.isTrue(modeloTipoFinalidad.getTipoFinalidad().getActivo(), "El TipoFinalidad debe estar Activo");
+    Assert.isTrue(modeloTipoFinalidad.getTipoFinalidad().getActivo(),
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FINALIDAD))
+            .parameter(MSG_KEY_FIELD, modeloTipoFinalidad.getTipoFinalidad().getNombre())
+            .build());
 
     // Comprobar si ya existe una relación activa entre Modelo y Tipo
     modeloTipoFinalidadRepository.findByModeloEjecucionIdAndTipoFinalidadId(
@@ -77,7 +89,10 @@ public class ModeloTipoFinalidadServiceImpl implements ModeloTipoFinalidadServic
 
           // Si ya está activa no se podrá insertar TipoFinalidad
           Assert.isTrue(!modeloTipoFinalidadExistente.getActivo(),
-              "El TipoFinalidad ya se encuentra asociado al  ModeloEjecucion");
+              () -> ProblemMessage.builder()
+                  .key(MSG_MODELO_EJECUCION_EXISTS)
+                  .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FINALIDAD))
+                  .build());
 
           // Se está desactivado se activará la relación existente
           modeloTipoFinalidad.setId(modeloTipoFinalidadExistente.getId());
@@ -103,7 +118,7 @@ public class ModeloTipoFinalidadServiceImpl implements ModeloTipoFinalidadServic
   public ModeloTipoFinalidad disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "ModeloTipoFinalidad id no puede ser null para desactivar un ModeloTipoFinalidad");
+    AssertHelper.idNotNull(id, ModeloTipoFinalidad.class);
 
     return modeloTipoFinalidadRepository.findById(id).map(modeloTipoFinalidad -> {
       modeloTipoFinalidad.setActivo(false);

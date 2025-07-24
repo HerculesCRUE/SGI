@@ -5,12 +5,14 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SelectValue } from '@core/component/select-common/select-common.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { ComiteNombreGenero } from '@core/models/eti/comite';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
 import { IEvaluacionWithIsEliminable } from '@core/models/eti/evaluacion-with-is-eliminable';
 import { IEvaluador } from '@core/models/eti/evaluador';
 import { IMemoria } from '@core/models/eti/memoria';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
+import { LanguageService } from '@core/services/language.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
@@ -71,7 +73,7 @@ export class ConvocatoriaReunionAsignacionMemoriasModalComponent extends
     return MSG_PARAMS;
   }
 
-  readonly displayerMemoria = (memoria: IMemoria): string => (memoria.numReferencia ?? '') + (memoria.titulo ? ' - ' + memoria.titulo : '');
+  readonly displayerMemoria = (memoria: IMemoria): string => (memoria.numReferencia ?? '') + (memoria.titulo?.length ? ' - ' + this.languageService.getFieldValue(memoria.titulo) : '');
 
   constructor(
     matDialogRef: MatDialogRef<ConvocatoriaReunionAsignacionMemoriasModalComponent>,
@@ -79,7 +81,8 @@ export class ConvocatoriaReunionAsignacionMemoriasModalComponent extends
     private personaService: PersonaService,
     private evaluadorService: EvaluadorService,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaReunionAsignacionMemoriasModalComponentData,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
     super(matDialogRef, !!data.evaluacion?.memoria);
 
@@ -242,8 +245,8 @@ export class ConvocatoriaReunionAsignacionMemoriasModalComponent extends
 
             if (!isActivo) {
               const comite = (this.formGroup.controls.memoria.value as IMemoriaWithLastEvaluacionModal)?.evaluacion.convocatoriaReunion.comite;
-              this.msgParamEvaludador1Asignacion.comite = comite.nombreInvestigacion;
-              this.msgParamEvaludador1Asignacion.generoComite = comite.genero === 'F' ? MSG_PARAMS.GENDER.FEMALE.gender : MSG_PARAMS.GENDER.MALE.gender;
+              this.msgParamEvaludador1Asignacion.comite = this.languageService.getFieldValue(comite.nombre);
+              this.msgParamEvaludador1Asignacion.generoComite = this.languageService.getField(comite.nombre)?.genero === ComiteNombreGenero.F ? MSG_PARAMS.GENDER.FEMALE.gender : MSG_PARAMS.GENDER.MALE.gender;
             }
           })
         )
@@ -271,8 +274,8 @@ export class ConvocatoriaReunionAsignacionMemoriasModalComponent extends
 
             if (!isActivo) {
               const comite = (this.formGroup.controls.memoria.value as IMemoriaWithLastEvaluacionModal)?.evaluacion.convocatoriaReunion.comite;
-              this.msgParamEvaludador2Asignacion.comite = comite.nombreInvestigacion;
-              this.msgParamEvaludador2Asignacion.generoComite = comite.genero === 'F' ? MSG_PARAMS.GENDER.FEMALE.gender : MSG_PARAMS.GENDER.MALE.gender;
+              this.msgParamEvaludador2Asignacion.comite = this.languageService.getFieldValue(comite.nombre)
+              this.msgParamEvaludador2Asignacion.generoComite = this.languageService.getField(comite.nombre)?.genero === ComiteNombreGenero.F ? MSG_PARAMS.GENDER.FEMALE.gender : MSG_PARAMS.GENDER.MALE.gender;
             }
           })
         )

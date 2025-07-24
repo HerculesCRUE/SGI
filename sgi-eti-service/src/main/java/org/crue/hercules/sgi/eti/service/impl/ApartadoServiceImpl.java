@@ -11,12 +11,12 @@ import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.repository.ApartadoRepository;
 import org.crue.hercules.sgi.eti.service.ApartadoService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -69,15 +69,16 @@ public class ApartadoServiceImpl implements ApartadoService {
   @Override
   public Apartado findById(final Long id) {
     log.debug("findById(final Long id) - start");
-    Assert.notNull(id, "Apartado id no puede ser null para buscar un apartado por Id");
+    AssertHelper.idNotNull(id, Apartado.class);
     final Apartado apartado = repository.findById(id).orElseThrow(() -> new ApartadoNotFoundException(id));
     log.debug("findById(final Long id) - end");
     return apartado;
   }
 
   /**
-   * Obtiene las entidades {@link Apartado} filtradas y paginadas según por el id
-   * de su {@link Bloque}. Solamente se devuelven los Apartados de primer nivel
+   * Obtiene las entidades {@link Apartado} filtradas y paginadas según el id
+   * de su {@link Bloque} y el idioma solicitado. Solamente se devuelven los
+   * Apartados de primer nivel
    * (sin padre).
    *
    * @param id       id del {@link Bloque}.
@@ -87,7 +88,7 @@ public class ApartadoServiceImpl implements ApartadoService {
   @Override
   public Page<Apartado> findByBloqueId(Long id, Pageable pageable) {
     log.debug("findByBloqueId(Long id, Pageable pageable) - start");
-    Assert.notNull(id, "Id no puede ser null para buscar un apartado por el Id de su Bloque");
+    AssertHelper.idNotNull(id, Bloque.class);
     final Page<Apartado> apartado = repository.findByBloqueIdAndPadreIsNull(id, pageable);
     log.debug("findByBloqueId(Long id, Pageable pageable) - end");
     return apartado;
@@ -95,7 +96,7 @@ public class ApartadoServiceImpl implements ApartadoService {
 
   /**
    * Obtiene las entidades {@link Apartado} filtradas y paginadas según por el id
-   * de su padre {@link Apartado}.
+   * de su padre {@link Apartado} y el idioma solicitado.
    *
    * @param id       id del {@link Apartado}.
    * @param pageable pageable
@@ -104,7 +105,7 @@ public class ApartadoServiceImpl implements ApartadoService {
   @Override
   public Page<Apartado> findByPadreId(Long id, Pageable pageable) {
     log.debug("findByPadreId(Long id, Pageable pageable) - start");
-    Assert.notNull(id, "Id no puede ser null para buscar un apartado por el Id de su padre");
+    AssertHelper.idNotNull(id, Apartado.class);
     final Page<Apartado> apartado = repository.findByPadreId(id, pageable);
     log.debug("findByPadreId(Long id, Pageable pageable) - end");
     return apartado;
@@ -112,7 +113,8 @@ public class ApartadoServiceImpl implements ApartadoService {
 
   /**
    * Obtiene las entidades {@link ApartadoTreeOutput} paginadas por el id
-   * de su {@link Bloque}. Se devuelven los Apartados de primer nivel
+   * de su {@link Bloque} en el idioma solicitado. Se devuelven los Apartados de
+   * primer nivel
    * (sin padre) con sus arboles de apartados hijos.
    *
    * @param id       id del {@link Bloque}.
@@ -121,7 +123,7 @@ public class ApartadoServiceImpl implements ApartadoService {
    */
   public Page<ApartadoTreeOutput> findApartadosTreeByBloqueId(Long id, Pageable pageable) {
     log.debug("findByPadreId(Long id, Pageable pageable) - start");
-    Assert.notNull(id, "Id no puede ser null para buscar un apartado por el Id de su padre");
+    AssertHelper.idNotNull(id, Bloque.class);
     final Page<ApartadoTreeOutput> apartados = repository.findByBloqueIdAndPadreIsNull(id, pageable)
         .map(apartadoTreeConverter::convert)
         .map(this::fillApartadoTreeHijosRecursive);

@@ -1,9 +1,11 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
+import { Language } from '@core/i18n/language';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
@@ -36,16 +38,16 @@ describe('ConvocatoriaConceptoGastoCodigoEcModalComponent', () => {
       {
         conceptoGasto: {
           id: 1,
-          nombre: 'conceptoGasto1'
-        } as IConceptoGasto,
+          nombre: [{ lang: Language.ES, value: 'conceptoGasto1' }] as unknown as I18nFieldValue
+        } as unknown as IConceptoGasto,
         id: 1,
         permitido: true
       },
       {
         conceptoGasto: {
           id: 1,
-          nombre: 'conceptoGasto1'
-        } as IConceptoGasto,
+          nombre: [{ lang: Language.ES, value: 'conceptoGasto1' }] as unknown as I18nFieldValue
+        } as unknown as IConceptoGasto,
         id: 2,
         permitido: true
       }

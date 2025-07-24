@@ -1,0 +1,34 @@
+[
+  {
+    "key": "ap5_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.2 Albaitariaren txostena"
+    },
+    "fieldGroup": [
+      {
+        "template": "Albaitariaren txostena behar da, animaliak aurretik edo ondoren berrerabiltzeagatik metatutako laztasuna baloratzeko?"
+      },
+      {
+        "key": "informeVeterinario",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "Ez"
+            },
+            {
+              "value": "INFORME_VETERINARIO",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

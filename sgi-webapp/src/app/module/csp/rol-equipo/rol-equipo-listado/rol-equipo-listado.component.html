@@ -61,14 +61,18 @@
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.rol-equipo.nombre' | translate}}
         </th>
-        <td mat-cell *matCellDef="let rolEquipo">{{rolEquipo.nombre}}</td>
+        <td mat-cell *matCellDef="let rolEquipo">
+          <sgi-i18n-table-field [field]="rolEquipo.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Abreviatura -->
       <ng-container matColumnDef="abreviatura">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.rol-equipo.abreviatura' | translate}}
         </th>
-        <td mat-cell *matCellDef="let rolEquipo">{{rolEquipo.abreviatura}}</td>
+        <td mat-cell *matCellDef="let rolEquipo">
+          <sgi-i18n-table-field [field]="rolEquipo.abreviatura"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Equipo -->

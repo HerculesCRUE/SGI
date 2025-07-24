@@ -1,0 +1,40 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <property name="schemaPrefix" value="" />
+  <property name="defaultLang" value="es" />
+
+  <changeSet author="master" id="0.3.0-1">
+    <createTable tableName="relacion_observaciones">
+      <column name="relacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="relacion_observaciones" columnNames="relacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="relacion_id"
+      baseTableName="relacion_observaciones"
+      constraintName="FK_RELACIONOBSERVACIONES_RELACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="relacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}relacion_observaciones(relacion_id, value_, lang) SELECT id,
+      observaciones, '${defaultLang}' FROM ${schemaPrefix}relacion WHERE observaciones IS NOT NULL
+      AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="relacion" />
+  </changeSet>
+</databaseChangeLog>

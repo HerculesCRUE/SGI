@@ -3,10 +3,8 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEntidadConvocanteNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.EntidadConvocanteDuplicatedException;
 import org.crue.hercules.sgi.csp.exceptions.ProgramaNotFoundException;
@@ -25,7 +23,9 @@ import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadConvocanteService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +45,14 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEntidadConvocanteService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_CREAR = "action.crear";
+  private static final String MSG_MODEL_PROGRAMA = "org.crue.hercules.sgi.csp.model.Programa.message";
+  private static final String MSG_MODEL_CONVOCATORIA_ENTIDAD_CONVOCANTE = "org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA_PERMISOS = "org.springframework.util.Assert.accion.denegada.permisos.message";
 
   private final ConvocatoriaEntidadConvocanteRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
@@ -97,7 +105,12 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
                 .setPrograma(programaRepository.findById(entidadConvocante.getPrograma().getId())
                     .orElseThrow(
                         () -> new ProgramaNotFoundException(entidadConvocante.getPrograma().getId())));
-            Assert.isTrue(entidadConvocante.getPrograma().getActivo(), "El Programa debe estar Activo");
+            Assert.isTrue(entidadConvocante.getPrograma().getActivo(),
+                () -> ProblemMessage.builder()
+                    .key(MSG_ENTITY_INACTIVO)
+                    .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_PROGRAMA))
+                    .parameter(MSG_KEY_FIELD, entidadConvocante.getPrograma().getNombre())
+                    .build());
           }
 
           entidadConvocante.setConvocatoriaId(convocatoriaId);
@@ -115,7 +128,11 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
                 ConvocatoriaAuthorityHelper.CSP_CON_C,
                 ConvocatoriaAuthorityHelper.CSP_CON_E
             }),
-        "No se puede crear ConvocatoriaEntidadConvocante. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA_ENTIDAD_CONVOCANTE))
+            .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_CREAR))
+            .build());
 
     Specification<ConvocatoriaEntidadConvocante> specs = ConvocatoriaEntidadConvocanteSpecifications
         .byConvocatoriaId(convocatoriaId);
@@ -154,157 +171,6 @@ public class ConvocatoriaEntidadConvocanteServiceImpl implements ConvocatoriaEnt
 
     log.debug(
         "updateEntidadesConvocantesConvocatoria(Long convocatoriaId, List<ConvocatoriaEntidadConvocante> entidadesConvocantes) - end");
-    return returnValue;
-  }
-
-  /**
-   * Guardar un nuevo {@link ConvocatoriaEntidadConvocante}.
-   *
-   * @param convocatoriaEntidadConvocante la entidad
-   *                                      {@link ConvocatoriaEntidadConvocante} a
-   *                                      guardar.
-   * @return la entidad {@link ConvocatoriaEntidadConvocante} persistida.
-   */
-  @Override
-  @Transactional
-  public ConvocatoriaEntidadConvocante create(ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante) {
-    log.debug("create(ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante) - start");
-
-    Assert.isNull(convocatoriaEntidadConvocante.getId(),
-        "ConvocatoriaEntidadConvocante id tiene que ser null para crear un nuevo ConvocatoriaEntidadConvocante");
-
-    Assert.notNull(convocatoriaEntidadConvocante.getConvocatoriaId(),
-        "Id Convocatoria no puede ser null para crear ConvocatoriaEntidadGestora");
-
-    Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaEntidadConvocante.getConvocatoriaId())
-        .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaEntidadConvocante.getConvocatoriaId()));
-
-    // comprobar si convocatoria es modificable
-    Assert.isTrue(
-        convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaEntidadConvocante.getConvocatoriaId(),
-            convocatoria.getUnidadGestionRef(), new String[] {
-                ConvocatoriaAuthorityHelper.CSP_CON_C,
-                ConvocatoriaAuthorityHelper.CSP_CON_E
-            }),
-        "No se puede crear ConvocatoriaEntidadConvocante. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
-
-    Assert.isTrue(
-        !repository.findByConvocatoriaIdAndEntidadRefAndProgramaId(
-            convocatoriaEntidadConvocante.getConvocatoriaId(),
-            convocatoriaEntidadConvocante.getEntidadRef(),
-            convocatoriaEntidadConvocante.getPrograma().getId()).isPresent(),
-        "Ya existe una asociación activa para esa Convocatoria y Entidad");
-
-    if (convocatoriaEntidadConvocante.getPrograma() != null) {
-      if (convocatoriaEntidadConvocante.getPrograma().getId() == null) {
-        convocatoriaEntidadConvocante.setPrograma(null);
-      } else {
-        convocatoriaEntidadConvocante
-            .setPrograma(programaRepository.findById(convocatoriaEntidadConvocante.getPrograma().getId())
-                .orElseThrow(() -> new ProgramaNotFoundException(convocatoriaEntidadConvocante.getPrograma().getId())));
-        Assert.isTrue(convocatoriaEntidadConvocante.getPrograma().getActivo(), "El Programa debe estar Activo");
-      }
-    }
-
-    ConvocatoriaEntidadConvocante returnValue = repository.save(convocatoriaEntidadConvocante);
-
-    log.debug("create(ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante) - end");
-    return returnValue;
-  }
-
-  /**
-   * Actualizar {@link ConvocatoriaEntidadConvocante}.
-   *
-   * @param convocatoriaEntidadConvocanteActualizar la entidad
-   *                                                {@link ConvocatoriaEntidadConvocante}
-   *                                                a actualizar.
-   * @return la entidad {@link ConvocatoriaEntidadConvocante} persistida.
-   */
-  @Override
-  @Transactional
-  public ConvocatoriaEntidadConvocante update(ConvocatoriaEntidadConvocante convocatoriaEntidadConvocanteActualizar) {
-    log.debug("update(ConvocatoriaEntidadConvocante convocatoriaEntidadConvocanteActualizar) - start");
-
-    Assert.notNull(convocatoriaEntidadConvocanteActualizar.getId(),
-        "ConvocatoriaEntidadConvocante id no puede ser null para actualizar un ConvocatoriaEntidadConvocante");
-
-    return repository.findById(convocatoriaEntidadConvocanteActualizar.getId()).map(convocatoriaEntidadConvocante -> {
-
-      // comprobar si convocatoria es modificable
-      Assert.isTrue(
-          convocatoriaService.isRegistradaConSolicitudesOProyectos(convocatoriaEntidadConvocante.getConvocatoriaId(),
-              null, new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E }),
-          "No se puede modificar ConvocatoriaEntidadConvocante. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
-
-      repository
-          .findByConvocatoriaIdAndEntidadRefAndProgramaId(
-              convocatoriaEntidadConvocanteActualizar.getConvocatoriaId(),
-              convocatoriaEntidadConvocanteActualizar.getEntidadRef(),
-              convocatoriaEntidadConvocanteActualizar.getPrograma().getId())
-          .ifPresent(convocatoriaR -> Assert.isTrue(convocatoriaEntidadConvocante.getId().equals(convocatoriaR.getId()),
-              "Ya existe una asociación activa para esa Convocatoria y Entidad"));
-
-      if (convocatoriaEntidadConvocanteActualizar.getPrograma() != null) {
-        if (convocatoriaEntidadConvocanteActualizar.getPrograma().getId() == null) {
-          convocatoriaEntidadConvocanteActualizar.setPrograma(null);
-        } else {
-          convocatoriaEntidadConvocanteActualizar.setPrograma(
-              programaRepository.findById(convocatoriaEntidadConvocanteActualizar.getPrograma().getId()).orElseThrow(
-                  () -> new ProgramaNotFoundException(convocatoriaEntidadConvocanteActualizar.getPrograma().getId())));
-          Assert.isTrue(convocatoriaEntidadConvocanteActualizar.getPrograma().getActivo(),
-              "El Programa debe estar Activo");
-        }
-      }
-
-      convocatoriaEntidadConvocante.setPrograma(convocatoriaEntidadConvocanteActualizar.getPrograma());
-
-      ConvocatoriaEntidadConvocante returnValue = repository.save(convocatoriaEntidadConvocante);
-      log.debug("update(ConvocatoriaEntidadConvocante convocatoriaEntidadConvocanteActualizar) - end");
-      return returnValue;
-    }).orElseThrow(
-        () -> new ConvocatoriaEntidadConvocanteNotFoundException(convocatoriaEntidadConvocanteActualizar.getId()));
-  }
-
-  /**
-   * Elimina el {@link ConvocatoriaEntidadConvocante}.
-   *
-   * @param id Id del {@link ConvocatoriaEntidadConvocante}.
-   */
-  @Override
-  @Transactional
-  public void delete(Long id) {
-    log.debug("delete(Long id) - start");
-
-    Assert.notNull(id,
-        "ConvocatoriaEntidadConvocante id no puede ser null para desactivar un ConvocatoriaEntidadConvocante");
-
-    Optional<ConvocatoriaEntidadConvocante> entidadConvocante = repository.findById(id);
-    if (entidadConvocante.isPresent()) {
-      // comprobar si convocatoria es modificable
-      Assert.isTrue(
-          convocatoriaService.isRegistradaConSolicitudesOProyectos(entidadConvocante.get().getConvocatoriaId(),
-              null, new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E }),
-          "No se puede eliminar ConvocatoriaEntidadConvocante. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
-    } else {
-      throw new ConvocatoriaEntidadConvocanteNotFoundException(id);
-    }
-
-    repository.deleteById(id);
-    log.debug("delete(Long id) - end");
-  }
-
-  /**
-   * Obtiene {@link ConvocatoriaEntidadConvocante} por su id.
-   *
-   * @param id el id de la entidad {@link ConvocatoriaEntidadConvocante}.
-   * @return la entidad {@link ConvocatoriaEntidadConvocante}.
-   */
-  @Override
-  public ConvocatoriaEntidadConvocante findById(Long id) {
-    log.debug("findById(Long id)  - start");
-    final ConvocatoriaEntidadConvocante returnValue = repository.findById(id)
-        .orElseThrow(() -> new ConvocatoriaEntidadConvocanteNotFoundException(id));
-    log.debug("findById(Long id)  - end");
     return returnValue;
   }
 

@@ -1,4 +1,6 @@
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
+import { ITipoHitoResponse } from '../tipo-hito/tipo-hito-response';
+import { I18nFieldValueResponse } from '@core/i18n/i18n-field-response';
 
 export interface IConvocatoriaHitoResponse {
   /** Id */
@@ -6,9 +8,9 @@ export interface IConvocatoriaHitoResponse {
   /** Fecha inicio  */
   fecha: string;
   /** Tipo de hito */
-  tipoHito: ITipoHito;
+  tipoHito: ITipoHitoResponse;
   /** Comentario */
-  comentario: string;
+  comentario: I18nFieldValueResponse[];
   /** Id de Convocatoria */
   convocatoriaId: number;
   aviso: {

@@ -1,9 +1,9 @@
-import { Dedicacion } from "@core/models/csp/grupo-equipo";
+import { I18nFieldValueResponse } from "@core/i18n/i18n-field-response";
 
 export interface IGrupoEquipoInstrumentalResponse {
   id: number;
   grupoId: number;
-  nombre: string;
+  nombre: I18nFieldValueResponse[];
   numRegistro: string;
-  descripcion: string;
+  descripcion: I18nFieldValueResponse[];
 }

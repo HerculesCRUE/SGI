@@ -5,6 +5,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { IGrupo } from '@core/models/csp/grupo';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
+import { LanguageService } from '@core/services/language.service';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -54,9 +55,10 @@ export class SelectGrupoComponent extends SelectServiceComponent<IGrupo> {
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private grupoService: GrupoService
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
 
     this.disableWith = (option) => {
       if (this.excluded.length) {
@@ -74,7 +76,7 @@ export class SelectGrupoComponent extends SelectServiceComponent<IGrupo> {
     }
 
     const findOptions: SgiRestFindOptions = {
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC),
+      sort: new RSQLSgiRestSort('nombre.value', SgiRestSortDirection.ASC),
       filter: new RSQLSgiRestFilter('responsable', SgiRestFilterOperator.EQUALS, this.personaRef)
         .or(new RSQLSgiRestFilter('personaAutorizada', SgiRestFilterOperator.EQUALS, this.personaRef))
     };

@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.eti.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
@@ -67,8 +73,10 @@ public class Evaluador extends BaseEntity {
   private Instant fechaBaja;
 
   /** Resumen */
-  @Column(name = "resumen", length = 4000, columnDefinition = "clob")
-  private String resumen;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "evaluador_resumen", joinColumns = @JoinColumn(name = "evaluador_id"))
+  @Valid
+  private Set<EvaluadorResumen> resumen = new HashSet<>();
 
   /** Referencia persona */
   @Column(name = "persona_ref", length = 250, nullable = false)

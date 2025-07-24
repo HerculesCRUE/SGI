@@ -1,0 +1,152 @@
+[
+  {
+    "key": "ap4_3_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.2 Berrerabiltzea"
+    },
+    "fieldGroup": [
+      {
+        "template": "Animaliak beste ikerketa proiektu batean berrerabili dira edo berrerabiliko dira?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Lehendik erabili duten animalia bat ezingo da beste prozesu esperimental edo prozedura batean erabili, baldin eta haren ordez inongo prozedura/esku hartze aplikatu ez zaion beste animalia bat erabil badaiteke. Salbuespena izango dira honako egoera hauek: <br><ul><li>a) Aurreko esku hartzeen laztasuna <u>arina</u> edo <u>ertaina</u> izatea.</li><li>b) Animaliaren osasun egoera orokorra eta ongizatea erabat leheneratu direla frogatzea.</li><li>c) Prozedura/esku hartze berriak <u>arin</u>, <u>ertain</u> edo <u>suspertzeko aukerarik gabeko</u> gisa sailkatuta egotea.</li><li>d) Albaitariak iradokitzea, animaliaren bizitzako esperientzia kontuan hartuta.</li></ul><br> a) letran xedatutakoa gorabehera, salbuespenezko egoeretan, eta albaitariak animalia aztertu ondoren, agintaritza eskudunak animalia bat berrerabiltzeko baimena eman ahal izango du, baldin eta animalia horri ez bazaio behin baino gehiagotan aplikatu estutasuna eta min larria edo antzeko sufrimenduren bat eragin dion prozedura/esku hartze bat.<br>Animalien berrerabilpenari buruzko informazio gehiagorako, ikusi 53-13 EDren 29. art., eta X. eranskina."
+      },
+      {
+        "key": "reutilizacionRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Berrerabilia",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "key": "anteriorPosteriorCheck",
+        "type": "multicheckbox",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Hautatu",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "anterior",
+              "label": "AURREKO proiektu batetik datoz."
+            },
+            {
+              "value": "posterior",
+              "label": "ONDORENGO proiektu batean erabili ahal izango dira."
+            }
+          ]
+        }
+      },
+      {
+        "template": "Aurreko proiektuaren erreferentzia kodea",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'anterior')"
+      },
+      {
+        "key": "codigoRefProyectoAnterior",
+        "type": "i18n-input",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'anterior')",
+        "templateOptions": {
+          "label": "Kodea",
+          "placeholder": "Kodea"
+        }
+      },
+      {
+        "template": "Aurreko proiektuaren laztasun maila orokorra",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'anterior')"
+      },
+      {
+        "key": "gradoSeveridadProyectoAnterior",
+        "type": "select",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'anterior')",
+        "templateOptions": {
+          "label": "Hautatu",
+          "options": [
+            {
+              "label": "Suspertzeko aukerarik gabe",
+              "value": "1"
+            },
+            {
+              "label": "Arina",
+              "value": "2"
+            },
+            {
+              "label": "Ertaina",
+              "value": "3"
+            },
+            {
+              "label": "Larria",
+              "value": "4"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Ondorengo proiektuaren erreferentzia kodea",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'posterior')"
+      },
+      {
+        "key": "codigoRefProyectoPosterior",
+        "type": "i18n-input",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'posterior')",
+        "templateOptions": {
+          "label": "Kodea",
+          "placeholder": "Kodea"
+        }
+      },
+      {
+        "template": "Ondorengo proiektuaren laztasun maila orokorra",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'posterior')"
+      },
+      {
+        "key": "gradoSeveridadProyectoPosterior",
+        "type": "select",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'posterior')",
+        "templateOptions": {
+          "label": "Hautatu",
+          "options": [
+            {
+              "label": "Suspertzeko aukerarik gabe",
+              "value": "1"
+            },
+            {
+              "label": "Arina",
+              "value": "2"
+            },
+            {
+              "label": "Ertaina",
+              "value": "3"
+            },
+            {
+              "label": "Larria",
+              "value": "4"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: albaitariaren txostena behar du, eta 5.2 atalean erantsi behar da.</p>"
+      }
+    ]
+  }
+]

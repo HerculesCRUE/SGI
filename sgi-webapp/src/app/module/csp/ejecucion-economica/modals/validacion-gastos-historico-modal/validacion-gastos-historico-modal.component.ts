@@ -1,5 +1,5 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
@@ -8,6 +8,7 @@ import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_MAP, IEstadoGastoProyecto } from '@core/models/csp/estado-gasto-proyecto';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
+import { LanguageService } from '@core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -40,6 +41,7 @@ export class ValidacionGastosHistoricoModalComponent extends DialogCommonCompone
     matDialogRef: MatDialogRef<ValidacionGastosHistoricoModalComponent>,
     private gastoProyectoService: GastoProyectoService,
     private readonly translate: TranslateService,
+    private readonly languageService: LanguageService,
     @Inject(MAT_DIALOG_DATA) public data: number
   ) {
     super(matDialogRef);
@@ -49,6 +51,15 @@ export class ValidacionGastosHistoricoModalComponent extends DialogCommonCompone
     super.ngOnInit();
     this.setupI18N();
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor =
+      (estado: IEstadoGastoProyecto, property: string) => {
+        switch (property) {
+          case 'comentario':
+            return this.languageService.getFieldValue(estado.comentario);
+          default:
+            return estado[property];
+        }
+      };
     this.dataSource.sort = this.sort;
 
     if (this.data) {

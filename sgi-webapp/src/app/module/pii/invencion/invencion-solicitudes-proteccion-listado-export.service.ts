@@ -15,6 +15,7 @@ import { NGXLogger } from 'ngx-logger';
 import { from, Observable, of } from 'rxjs';
 import { map, mergeMap, switchMap } from 'rxjs/operators';
 import { IInvencionReportData, IInvencionReportOptions, ISolicitudProteccionReport } from './invencion-listado-export.service';
+import { LanguageService } from '@core/services/language.service';
 
 const SOLICITUD_PROTECCION_ESTADO_FIELD = 'estado';
 const SOLICITUD_PROTECCION_FECHA_PRIORIDAD_FIELD = 'fechaPrioridad';
@@ -41,13 +42,14 @@ const SOLICITUD_PROTECCION_NUMERO_REGISTRO_KEY = marker('pii.solicitud-proteccio
 
 @Injectable()
 export class InvencionSolicitudesProteccionListadoExportService extends
-  AbstractTableExportFillService<IInvencionReportData, IInvencionReportOptions>{
+  AbstractTableExportFillService<IInvencionReportData, IInvencionReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     private readonly invencionService: InvencionService,
-    private readonly paisService: PaisService
+    private readonly paisService: PaisService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -204,7 +206,7 @@ export class InvencionSolicitudesProteccionListadoExportService extends
   private fillRowsExcel(elementsRow: any[], solicitud: ISolicitudProteccionReport) {
     if (solicitud) {
       elementsRow.push(LuxonUtils.toBackend(solicitud.fechaPrioridadSolicitud) ?? '');
-      elementsRow.push(solicitud.viaProteccion?.nombre ?? '');
+      elementsRow.push(this.languageService.getFieldValue(solicitud.viaProteccion?.nombre));
       elementsRow.push(solicitud.pais?.nombre ?? '');
       elementsRow.push(solicitud.numeroSolicitud ? solicitud.numeroSolicitud.toString() : '');
       elementsRow.push(this.translate.instant(ESTADO_MAP.get(solicitud.estado)) ?? '');

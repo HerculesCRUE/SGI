@@ -64,6 +64,8 @@ export interface IExportService<T> {
 // tslint:disable-next-line: directive-class-suffix
 export abstract class AbstractTableExportService<T, R extends IReportOptions> implements IExportService<R> {
 
+  protected DEFAULT_CONCURRENT = 5;
+
   constructor(
     protected reportService: ReportService
   ) { }

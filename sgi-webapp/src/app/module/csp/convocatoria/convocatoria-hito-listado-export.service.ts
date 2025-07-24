@@ -6,6 +6,7 @@ import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -31,7 +32,8 @@ export class ConvocatoriaHitoListadoExportService extends AbstractTableExportFil
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     private luxonDatePipe: LuxonDatePipe,
-    private convocatoriaService: ConvocatoriaService
+    private convocatoriaService: ConvocatoriaService,
+    private languageService: LanguageService
   ) {
     super(translate);
   }
@@ -126,7 +128,7 @@ export class ConvocatoriaHitoListadoExportService extends AbstractTableExportFil
     convocatoria.hitos?.forEach(convocatoriaHito => {
       const hitoElementsRow: any[] = [];
 
-      let hitoContent = convocatoriaHito?.tipoHito ? convocatoriaHito.tipoHito?.nombre ?? '' : '';
+      let hitoContent = convocatoriaHito.tipoHito ? this.languageService.getFieldValue(convocatoriaHito.tipoHito?.nombre) ?? '' : '';
       hitoContent += ' - ';
       hitoContent += this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoriaHito?.fecha, false), 'short') ?? '';
 
@@ -145,7 +147,7 @@ export class ConvocatoriaHitoListadoExportService extends AbstractTableExportFil
 
   private fillRowsEntidadExcel(elementsRow: any[], convocatoriaHito: IConvocatoriaHito) {
     if (convocatoriaHito) {
-      elementsRow.push(convocatoriaHito.tipoHito ? convocatoriaHito.tipoHito?.nombre ?? '' : '');
+      elementsRow.push(convocatoriaHito.tipoHito ? this.languageService.getFieldValue(convocatoriaHito.tipoHito?.nombre) ?? '' : '');
       elementsRow.push(this.luxonDatePipe.transform(LuxonUtils.toBackend(convocatoriaHito?.fecha, false), 'short') ?? '');
     } else {
       elementsRow.push('');

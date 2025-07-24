@@ -1,0 +1,57 @@
+[
+  {
+    "key": "ap3_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.6 Datos de carácter personal"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>¿En esta actividad se utilizan datos de carácter personal?</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Dato personal es cualquier información numérica, alfabética, gráfica, fotográfica, acústica o de cualquier otro tipo sobre los posibles participantes.</p>"
+      },
+      {
+        "key": "caracterPersonalRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Elige opción:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "key": "numeroDatosCaracterPersonal",
+        "type": "i18n-input",
+        "hideExpression": "!model.caracterPersonalRadio || model.caracterPersonalRadio === 'no'",
+        "templateOptions": {
+          "label": "Indicar el número de datos",
+          "required": true,
+          "placeholder": "Número de datos"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>AYUDA: El Reglamento UE 2016/679 y la Ley Orgánica 3/2018, de Protección de Datos Personales y garantía de los derechos digitales, obligan a registrar un Tratamiento de Datos. Póngase en contacto con la Secretaría Técnica del Comité de Ética para informarse sobre los procedimientos que rigen en la Universidad.</p>"
+      }
+    ]
+  }
+]

@@ -18,4 +18,5 @@ public interface AreaTematicaRepository
    *         {@link AreaTematica} de la lista de ids.
    */
   List<AreaTematica> findByPadreIdInAndActivoIsTrue(List<Long> ids);
+
 }

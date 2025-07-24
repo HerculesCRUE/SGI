@@ -9,13 +9,13 @@ import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoDocumento;
 import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoSeguimientoDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoPeriodoSeguimientoDocumentoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoDocumentoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoPeriodoSeguimientoDocumentoServiceImpl implements ProyectoPeriodoSeguimientoDocumentoService {
+  private static final String MSG_KEY_DOCUMENTO_REF = "documentoRef";
 
   private final ProyectoPeriodoSeguimientoDocumentoRepository repository;
 
@@ -49,16 +50,13 @@ public class ProyectoPeriodoSeguimientoDocumentoServiceImpl implements ProyectoP
       ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoDocumento) {
     log.debug("create(ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoDocumento) - start");
 
-    Assert.isNull(proyectoPeriodoSeguimientoDocumento.getId(),
-        "Id tiene que ser null para crear la ProyectoPeriodoSeguimientoDocumento");
-
-    Assert.notNull(proyectoPeriodoSeguimientoDocumento.getProyectoPeriodoSeguimientoId(),
-        "ProyectoPeriodoSeguimiento id no puede ser null para crear una ProyectoPeriodoSeguimientoModalidad");
-
-    Assert.notNull(proyectoPeriodoSeguimientoDocumento.getNombre(),
-        "Nombre documento no puede ser null para crear la ProyectoPeriodoSeguimientoDocumento");
-    Assert.notNull(proyectoPeriodoSeguimientoDocumento.getDocumentoRef(),
-        "La referencia del documento no puede ser null para crear la ProyectoPeriodoSeguimientoDocumento");
+    AssertHelper.idIsNull(proyectoPeriodoSeguimientoDocumento.getId(), ProyectoPeriodoSeguimientoDocumento.class);
+    AssertHelper.idNotNull(proyectoPeriodoSeguimientoDocumento.getProyectoPeriodoSeguimientoId(),
+        ProyectoPeriodoSeguimiento.class);
+    AssertHelper.fieldNotNull(proyectoPeriodoSeguimientoDocumento.getNombre(),
+        ProyectoPeriodoSeguimientoDocumento.class, AssertHelper.MESSAGE_KEY_NAME);
+    AssertHelper.fieldNotNull(proyectoPeriodoSeguimientoDocumento.getDocumentoRef(),
+        ProyectoPeriodoSeguimientoDocumento.class, MSG_KEY_DOCUMENTO_REF);
 
     ProyectoPeriodoSeguimientoDocumento returnValue = repository.save(proyectoPeriodoSeguimientoDocumento);
 
@@ -80,16 +78,13 @@ public class ProyectoPeriodoSeguimientoDocumentoServiceImpl implements ProyectoP
       ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoDocumento) {
     log.debug("update(ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoDocumento) - start");
 
-    Assert.notNull(proyectoPeriodoSeguimientoDocumento.getId(),
-        "Id no puede ser null para actualizar ProyectoPeriodoSeguimientoDocumento");
-
-    Assert.notNull(proyectoPeriodoSeguimientoDocumento.getProyectoPeriodoSeguimientoId(),
-        "ProyectoPeriodoSeguimiento id no puede ser null para crear una ProyectoPeriodoSeguimientoModalidad");
-
-    Assert.notNull(proyectoPeriodoSeguimientoDocumento.getNombre(),
-        "Nombre documento no puede ser null para actualizar la ProyectoPeriodoSeguimientoDocumento");
-    Assert.notNull(proyectoPeriodoSeguimientoDocumento.getDocumentoRef(),
-        "La referencia del documento no puede ser null para actualizar la ProyectoPeriodoSeguimientoDocumento");
+    AssertHelper.idNotNull(proyectoPeriodoSeguimientoDocumento.getId(), ProyectoPeriodoSeguimientoDocumento.class);
+    AssertHelper.idNotNull(proyectoPeriodoSeguimientoDocumento.getProyectoPeriodoSeguimientoId(),
+        ProyectoPeriodoSeguimiento.class);
+    AssertHelper.fieldNotNull(proyectoPeriodoSeguimientoDocumento.getNombre(),
+        ProyectoPeriodoSeguimientoDocumento.class, AssertHelper.MESSAGE_KEY_NAME);
+    AssertHelper.fieldNotNull(proyectoPeriodoSeguimientoDocumento.getDocumentoRef(),
+        ProyectoPeriodoSeguimientoDocumento.class, MSG_KEY_DOCUMENTO_REF);
 
     return repository.findById(proyectoPeriodoSeguimientoDocumento.getId())
         .map((proyectoPeriodoSeguimientoDocumentoExistente) -> {
@@ -138,8 +133,7 @@ public class ProyectoPeriodoSeguimientoDocumentoServiceImpl implements ProyectoP
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id,
-        "ProyectoPeriodoSeguimientoDocumento id no puede ser null para eliminar un ProyectoPeriodoSeguimientoDocumento");
+    AssertHelper.idNotNull(id, ProyectoPeriodoSeguimientoDocumento.class);
     if (!repository.existsById(id)) {
       throw new ProyectoPeriodoSeguimientoDocumentoNotFoundException(id);
     }

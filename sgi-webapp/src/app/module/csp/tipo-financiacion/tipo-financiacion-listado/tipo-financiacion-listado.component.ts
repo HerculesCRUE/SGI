@@ -60,7 +60,7 @@ export class TipoFinanciacionListadoComponent extends AbstractTablePaginationCom
     private readonly translate: TranslateService,
     private authService: SgiAuthService
   ) {
-    super();
+    super(translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -75,14 +75,14 @@ export class TipoFinanciacionListadoComponent extends AbstractTablePaginationCom
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.formGroup = new FormGroup({
       activo: new FormControl('true')
     });
     this.filter = this.createFilter();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       TIPO_FINANCIACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

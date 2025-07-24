@@ -54,7 +54,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.proyecto-concepto-gasto-codigo-economico.observaciones' | translate}} </th>
         <td mat-cell *matCellDef="let element">
-          {{element.observaciones}}
+          <sgi-i18n-table-field [field]="element.observaciones"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

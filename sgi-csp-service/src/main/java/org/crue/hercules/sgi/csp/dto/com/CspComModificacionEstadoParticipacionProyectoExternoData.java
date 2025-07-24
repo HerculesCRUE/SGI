@@ -2,6 +2,9 @@ package org.crue.hercules.sgi.csp.dto.com;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,7 +18,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CspComModificacionEstadoParticipacionProyectoExternoData implements Serializable {
-  private String tituloProyecto;
+  private Collection<? extends I18nFieldValue> tituloProyecto;
   private Instant fecha;
   private String nombreSolicitante;
+  private String enlaceAplicacion;
 }

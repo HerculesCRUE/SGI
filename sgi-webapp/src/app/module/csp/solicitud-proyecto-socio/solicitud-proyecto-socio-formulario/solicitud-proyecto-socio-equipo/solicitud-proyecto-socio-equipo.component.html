@@ -33,7 +33,8 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-socio.equipo.rol-proyecto'
           | translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.rolProyecto.nombre | translate}}
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.rolProyecto.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -43,6 +44,8 @@
         </th>
         <td mat-cell *matCellDef="let wrapper; let i = index">
           <ng-container>
+            <sgi-icon-view-persona-detail [personaId]="wrapper.value.persona?.id">
+            </sgi-icon-view-persona-detail>
             <button color="primary" mat-icon-button matTooltip="{{'btn.view' | translate}}"
               (click)="openModal(wrapper,i)" *ngIf="this.formPart.readonly">
               <mat-icon>visibility</mat-icon>

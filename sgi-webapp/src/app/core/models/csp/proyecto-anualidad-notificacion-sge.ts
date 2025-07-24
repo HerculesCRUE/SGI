@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 
 export interface IProyectoAnualidadNotificacionSge {
@@ -8,7 +9,7 @@ export interface IProyectoAnualidadNotificacionSge {
   totalGastos: number;
   totalIngresos: number;
   proyectoId: number;
-  proyectoTitulo: string;
+  proyectoTitulo: I18nFieldValue[];
   proyectoAcronimo: string;
   proyectoEstado: string;
   proyectoSgeRef: string;

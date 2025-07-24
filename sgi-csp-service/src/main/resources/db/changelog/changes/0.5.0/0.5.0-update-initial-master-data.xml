@@ -8,7 +8,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
   <changeSet context="!test" author="master"
-    id="0.5.0-configuracion-validacion_clasificacion_gastos-postgresql" dbms="postgresql">
+    id="0.5.0-configuracion-validacion_clasificacion_gastos-postgresql" dbms="postgresql, h2">
     <update tableName="configuracion">
       <column name="validacion_clasificacion_gastos" value="VALIDACION" />
       <where>validacion_gastos IS true</where>
@@ -20,7 +20,7 @@
   </changeSet>
 
   <changeSet context="!test" author="master"
-    id="0.5.0-configuracion-validacion_clasificacion_gastos" dbms="!postgresql">
+    id="0.5.0-configuracion-validacion_clasificacion_gastos" dbms="!postgresql, !h2">
     <update tableName="configuracion">
       <column name="validacion_clasificacion_gastos" value="VALIDACION" />
       <where>validacion_gastos = 1</where>

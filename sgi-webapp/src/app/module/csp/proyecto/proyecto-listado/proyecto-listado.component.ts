@@ -118,18 +118,25 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     private readonly cnfService: ConfigService,
     private readonly cspConfigService: CspConfigService
   ) {
-    super();
+    super(translate);
     if (route.snapshot.queryParamMap.get(CONVOCATORIA_ACTION_LINK_KEY)) {
       this.convocatoriaId = Number(route.snapshot.queryParamMap.get(CONVOCATORIA_ACTION_LINK_KEY));
     }
     if (route.snapshot.queryParamMap.get(SOLICITUD_ACTION_LINK_KEY)) {
       this.solicitudId = Number(route.snapshot.queryParamMap.get(SOLICITUD_ACTION_LINK_KEY));
     }
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'titulo') {
+        return 'titulo.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.loadForm();
 
@@ -199,7 +206,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     this.filter = this.createFilter();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -358,7 +365,7 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
     const controls = this.formGroup.controls;
 
     const filter = new RSQLSgiRestFilter('id', SgiRestFilterOperator.EQUALS, controls.id.value)
-      .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
+      .and('titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estado.value)
       .and('codigoExterno', SgiRestFilterOperator.LIKE_ICASE, controls.codigoExterno.value)
       .and('codigoInterno', SgiRestFilterOperator.LIKE_ICASE, controls.codigoInterno.value);
@@ -398,22 +405,10 @@ export class ProyectoListadoComponent extends AbstractTablePaginationComponent<I
 
     const palabrasClave = controls.palabrasClave.value as string[];
     if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
-      filter.and(this.createPalabrasClaveFilter(palabrasClave));
+      filter.and('palabrasClave', SgiRestFilterOperator.IN, palabrasClave);
     }
 
     return filter;
-  }
-
-  private createPalabrasClaveFilter(palabrasClave: string[]): SgiRestFilter {
-    let palabrasClaveFilter: SgiRestFilter;
-    palabrasClave.forEach(palabraClave => {
-      if (palabrasClaveFilter) {
-        palabrasClaveFilter.or('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
-      } else {
-        palabrasClaveFilter = new RSQLSgiRestFilter('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
-      }
-    });
-    return palabrasClaveFilter;
   }
 
   /**

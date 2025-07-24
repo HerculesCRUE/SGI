@@ -6,10 +6,9 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
-import { COMITE } from '@core/models/eti/comite';
 import { ESTADO_RETROSPECTIVA } from '@core/models/eti/estado-retrospectiva';
 import { IMemoria } from '@core/models/eti/memoria';
-import { ESTADO_MEMORIA } from '@core/models/eti/tipo-estado-memoria';
+import { ESTADO_MEMORIA, ESTADO_MEMORIA_MAP } from '@core/models/eti/tipo-estado-memoria';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
@@ -79,6 +78,10 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
     return this.listadoFragment.isModuleInv;
   }
 
+  get ESTADO_MEMORIA_MAP() {
+    return ESTADO_MEMORIA_MAP;
+  }
+
   constructor(
     private readonly logger: NGXLogger,
     protected readonly dialogService: DialogService,
@@ -89,13 +92,13 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
     private readonly translate: TranslateService,
     private authService: SgiAuthService
   ) {
-    super(actionService.FRAGMENT.MEMORIAS, actionService);
+    super(actionService.FRAGMENT.MEMORIAS, actionService, translate);
     this.listadoFragment = this.fragment as MemoriasListadoFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.datasource.paginator = this.paginator;
     this.datasource.sort = this.sort;
     this.subscriptions.push(this.listadoFragment.memorias$.subscribe((memorias) => {
@@ -111,7 +114,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
       (wrapper: StatusWrapper<IMemoriaPeticionEvaluacionWithLastEvaluacion>, property: string) => {
         switch (property) {
           case 'comite':
-            return wrapper.value.comite?.comite;
+            return wrapper.value.comite?.codigo;
           case 'estadoActual':
             return wrapper.value.estadoActual?.nombre;
           default:
@@ -120,7 +123,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
       };
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MEMORIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -266,7 +269,7 @@ export class MemoriasListadoComponent extends FragmentComponent implements OnIni
   hasPermisoEnviarSecretariaRetrospectiva(memoria: IMemoria): boolean {
     // Si la retrospectiva ya está 'En secretaría' no se muestra el botón.
     // El estado de la memoria debe de ser mayor a FIN_EVALUACION
-    return this.isUserSolicitantePeticionEvaluacion() && (memoria.estadoActual.id >= ESTADO_MEMORIA.FIN_EVALUACION && memoria.comite.id === COMITE.CEEA && memoria.requiereRetrospectiva
+    return this.isUserSolicitantePeticionEvaluacion() && (memoria.estadoActual.id >= ESTADO_MEMORIA.FIN_EVALUACION && memoria.comite.requiereRetrospectiva && memoria.requiereRetrospectiva
       && memoria.retrospectiva.estadoRetrospectiva.id === ESTADO_RETROSPECTIVA.COMPLETADA);
   }
 

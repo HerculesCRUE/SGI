@@ -1,3 +1,4 @@
+import { I18nFieldValue } from "@core/i18n/i18n-field";
 import { DateTime } from "luxon";
 
 export interface IFacturaPrevista {
@@ -8,6 +9,6 @@ export interface IFacturaPrevista {
   fechaEmision: DateTime;
   importeBase: number;
   porcentajeIVA: number;
-  comentario: string;
-  tipoFacturacion: string;
+  comentario: I18nFieldValue[];
+  tipoFacturacion: I18nFieldValue[];
 }

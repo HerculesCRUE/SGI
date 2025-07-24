@@ -3,8 +3,10 @@ import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
-import { TipoEvaluacion, TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
+import { TIPO_EVALUACION, TIPO_EVALUACION_MAP, TipoEvaluacion } from '@core/models/eti/tipo-evaluacion';
 import { TipoEvaluacionService } from '@core/services/eti/tipo-evaluacion.service';
+import { LanguageService } from '@core/services/language.service';
+import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -40,9 +42,14 @@ export class SelectTipoEvaluacionComponent extends SelectServiceComponent<TipoEv
 
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
+    @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private service: TipoEvaluacionService,
-    @Self() @Optional() ngControl: NgControl) {
-    super(defaultErrorStateMatcher, ngControl);
+    private translateService: TranslateService
+  ) {
+    super(defaultErrorStateMatcher, ngControl, languageService);
+    this.displayWith = (option) => option?.id ? (TIPO_EVALUACION_MAP.get(option.id) ? this.translateService.instant(TIPO_EVALUACION_MAP.get(option.id)) : (option?.nombre ?? '')) : (option?.nombre ?? '');
+    this.subscriptions.push(this.translateService.onLangChange.subscribe(() => this.refreshDisplayValue()));
   }
 
   protected loadServiceOptions(): Observable<TipoEvaluacion[]> {

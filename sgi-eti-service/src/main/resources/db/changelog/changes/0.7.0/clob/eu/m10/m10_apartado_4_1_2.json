@@ -1,0 +1,49 @@
+[
+  {
+    "key": "ap4_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.1.2 Arrisku edo eragozpenak baloratzea"
+    },
+    "hideExpression": "formState.mainModel.ap4_1.ap4_1_1 && formState.mainModel.ap4_1.ap4_1_1.tipoRiesgosOMolestiasCheck && formState.mainModel.ap4_1.ap4_1_1.tipoRiesgosOMolestiasCheck.find((c) => c === 'sinRiesgoPorTratarseDeDatos')",
+    "fieldGroup": [
+      {
+        "template": "<p>Kontuan hartuta ikerketako subjektuei egingo zaizkien esku hartzeak eta probak (3.4.3 atalean deskribatu dira), nola baloratuko zenituzke arrisku edo eragozpen posibleak, honako definizio hauen arabera?</p>"
+      },
+      {
+        "key": "valoracionRiesgosMolestiasCheck",
+        "type": "multicheckbox",
+        "templateOptions": {
+          "label": "Aukerak:",
+          "type": "array",
+          "options": [
+            {
+              "value": "riegosMinimo",
+              "label": "Gutxieneko arriskua: arrisku honen probabilitatea edo larritasuna ez da ohiko jardueran (ohiko azterketa fisiko edo psikologikoak barne) espero daitekeen arriskuarena baino handiagoa."
+            },
+            {
+              "value": "riesgoSuperior",
+              "label": "Gutxienekoa baino arrisku handiagoa: kasu honetan, ohiko jardueran baino aukera handiagoa dago kalte fisiko edo psikologikoak edo pribatutasunaren edo konfidentzialtasunaren inbasioarekin lotutako kalteak jasateko."
+            }
+          ]
+        }
+      },
+      {
+        "key": "riesgoSuperiorTexto",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.valoracionRiesgosMolestiasCheck || !model.valoracionRiesgosMolestiasCheck.find((c) => c === 'riesgoSuperior')",
+        "templateOptions": {
+          "label": "Justifikatu azterketaren egokitasuna eta zergatik ez dauden edo ez diren erabiltzen eraginkortasun bertsuko beste aukera batzuk.",
+          "placeholder": "Justifikatu azterketaren egokitasuna eta zergatik ez dauden edo ez diren erabiltzen eraginkortasun bertsuko beste aukera batzuk.",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

@@ -108,4 +108,6 @@ export class ObraArtisticaListadoComponent extends AbstractTablePaginationCompon
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
   }
+
+  protected setupI18N(): void { }
 }

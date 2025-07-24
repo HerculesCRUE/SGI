@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.converter;
 
 import javax.annotation.PostConstruct;
 
+import org.crue.hercules.sgi.csp.dto.GrupoDto;
 import org.crue.hercules.sgi.csp.dto.GrupoInput;
 import org.crue.hercules.sgi.csp.dto.GrupoOutput;
 import org.crue.hercules.sgi.csp.dto.GrupoResumenOutput;
@@ -52,6 +53,10 @@ public class GrupoConverter {
 
   public GrupoResumenOutput convertToGrupoResumenOutput(Grupo grupo) {
     return modelMapper.map(grupo, GrupoResumenOutput.class);
+  }
+
+  public GrupoDto convertToDto(Grupo entity) {
+    return modelMapper.map(entity, GrupoDto.class);
   }
 
 }

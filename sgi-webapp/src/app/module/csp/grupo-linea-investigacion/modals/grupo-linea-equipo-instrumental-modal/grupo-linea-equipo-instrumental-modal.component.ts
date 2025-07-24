@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -8,6 +8,7 @@ import { IGrupo } from '@core/models/csp/grupo';
 import { IGrupoEquipoInstrumental } from '@core/models/csp/grupo-equipo-instrumental';
 import { IGrupoLineaEquipoInstrumental } from '@core/models/csp/grupo-linea-equipo-instrumental';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
+import { LanguageService } from '@core/services/language.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
@@ -52,6 +53,7 @@ export class GrupoLineaEquipoInstrumentalModalComponent extends DialogFormCompon
     private readonly translate: TranslateService,
     private grupoService: GrupoService,
     private personaService: PersonaService,
+    private readonly languageService: LanguageService
   ) {
     super(matDialogRef, !!data?.isEdit);
 
@@ -124,10 +126,14 @@ export class GrupoLineaEquipoInstrumentalModalComponent extends DialogFormCompon
   displayerEquipoInstrumental(equipoInstrumental: StatusWrapper<IGrupoEquipoInstrumental> | IGrupoEquipoInstrumental): string {
     const eq = equipoInstrumental as IGrupoEquipoInstrumental;
     if (eq?.nombre) {
-      return eq?.nombre ? (eq?.nombre + (eq?.numRegistro ? (' - ' + eq?.numRegistro) : '')) : '';
+      const nombreTraducido = this.languageService.getFieldValue(eq?.nombre);
+      return nombreTraducido
+        ? (nombreTraducido + (eq?.numRegistro ? ` - ${eq.numRegistro}` : '')) : '';
     } else {
       const wrapperEq = equipoInstrumental as StatusWrapper<IGrupoEquipoInstrumental>;
-      return wrapperEq?.value?.nombre ? (wrapperEq?.value?.nombre + (wrapperEq?.value?.numRegistro ? (' - ' + wrapperEq?.value?.numRegistro) : '')) : '';
+      const nombreTraducido = this.languageService.getFieldValue(wrapperEq?.value?.nombre);
+      return nombreTraducido
+        ? (nombreTraducido + (wrapperEq?.value?.numRegistro ? ` - ${wrapperEq.value.numRegistro}` : '')) : '';
     }
   }
 

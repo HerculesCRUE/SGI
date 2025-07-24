@@ -1,0 +1,70 @@
+[
+  {
+    "key": "ap3_7_7",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.7 Agentes biológicos"
+    },
+    "fieldGroup": [
+      {
+        "template": "¿El proceso de experimentación incluye la inoculación de agentes biológicos?"
+      },
+      {
+        "key": "agentesBiologicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Elige opción:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Si el proceso de experimentación requiere trabajar con agentes biológicos (AB) u organismos modificados genéticamente (OMG) en un laboratorio de nivel de contención 2 o superior, es necesario solicitar la evaluación al #nombre_comite_M30_es#.</p>"
+      },
+      {
+        "key": "tipoAgenteBiologico",
+        "type": "i18n-input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Tipo de agente biológico",
+          "required": true,
+          "placeholder": "Tipo"
+        }
+      },
+      {
+        "key": "nivelBioseguridad",
+        "type": "i18n-input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Nivel de bioseguridad",
+          "required": true,
+          "placeholder": "Nivel"
+        }
+      },
+      {
+        "key": "administracion",
+        "type": "i18n-input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Dosis y vía de administración",
+          "required": true,
+          "placeholder": "Dosis"
+        }
+      }
+    ]
+  }
+]

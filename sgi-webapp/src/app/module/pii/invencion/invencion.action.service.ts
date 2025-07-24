@@ -1,4 +1,3 @@
-import { T } from '@angular/cdk/keycodes';
 import { Injectable } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TipoPropiedad } from '@core/enums/tipo-propiedad';
@@ -6,6 +5,7 @@ import { IInvencion } from '@core/models/pii/invencion';
 import { IInvencionInventor } from '@core/models/pii/invencion-inventor';
 import { ActionService } from '@core/services/action-service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { InformePatentabilidadService } from '@core/services/pii/informe-patentabilidad/informe-patentabilidad.service';
 import { InvencionDocumentoService } from '@core/services/pii/invencion/invencion-documento/invencion-documento.service';
 import { InvencionGastoService } from '@core/services/pii/invencion/invencion-gasto/invencion-gasto.service';
@@ -96,7 +96,8 @@ export class InvencionActionService extends ActionService {
     sectorLicenciadoService: SectorLicenciadoService,
     relacionService: RelacionService,
     paisService: PaisService,
-    palabraClaveService: PalabraClaveService
+    palabraClaveService: PalabraClaveService,
+    private readonly languageService: LanguageService
   ) {
     super();
 
@@ -140,12 +141,24 @@ export class InvencionActionService extends ActionService {
         this.data.tipoPropiedad, paisService, logger);
       this.addFragment(this.FRAGMENT.SOLICITUDES_PROTECCION, this.solicitudesProteccion);
 
-      this.invencionGastos =
-        new InvencionGastosFragment(this.id, gastosInvencionService, invencionGastosService, invencionService, solicitudProteccionService);
+      this.invencionGastos = new InvencionGastosFragment(
+        this.id,
+        gastosInvencionService,
+        invencionGastosService,
+        invencionService,
+        solicitudProteccionService,
+        languageService
+      );
       this.addFragment(this.FRAGMENT.GASTOS, this.invencionGastos);
 
       this.invencionIngresos = new InvencionIngresosFragment(
-        this.data.invencion, ingresosInvencionService, invencionService, relacionService, proyectoService);
+        this.data.invencion,
+        ingresosInvencionService,
+        invencionService,
+        relacionService,
+        proyectoService,
+        languageService
+      );
       this.addFragment(this.FRAGMENT.INGRESOS, this.invencionIngresos);
 
       this.periodosTitularidad = new PeriodoTitularidadFragment(this.id, logger, periodoTitularidadService, invencionService,
@@ -153,7 +166,7 @@ export class InvencionActionService extends ActionService {
       this.addFragment(this.FRAGMENT.PERIODOS_TITULARIDAD, this.periodosTitularidad);
 
       this.contratos = new InvencionContratosFragment(
-        this.id, this.canEdit, sectorLicenciadoService, relacionService, proyectoService, empresaService, personaService, paisService);
+        this.id, logger, this.canEdit, sectorLicenciadoService, relacionService, proyectoService, empresaService, personaService, paisService);
       this.addFragment(this.FRAGMENT.CONTRATOS, this.contratos);
 
       this.repartos = new InvencionRepartosFragment(

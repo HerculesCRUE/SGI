@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap5_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.1 Accreditations"
+    },
+    "fieldGroup": [
+      {
+        "template": "Please remember that you need to provide a copy of all the research team's accreditations so that they are archived along with the project report."
+      },
+      {
+        "key": "acreditaciones",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": "ACREDITACIONES",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

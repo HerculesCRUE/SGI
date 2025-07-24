@@ -1,0 +1,306 @@
+[
+  {
+    "key": "ap1_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "1.1.1 Proiektuaren xede espezifikoa"
+    },
+    "fieldGroup": [
+      {
+        "template": "Adierazi proiektuaren xede espezifikoa:"
+      },
+      {
+        "key": "finEspecificoProyecto",
+        "type": "select",
+        "templateOptions": {
+          "label": "Hautatu",
+          "required": true,
+          "options": [
+            {
+              "label": " [PB1] Oinarrizko ikerketa. Onkologia",
+              "value": "PB1"
+            },
+            {
+              "label": " [PB2] Oinarrizko ikerketa. Sistema kardiobaskularra, odol sistema eta sistema linfatikoa",
+              "value": "PB2"
+            },
+            {
+              "label": " [PB3] Oinarrizko ikerketa. Nerbio sistema",
+              "value": "PB3"
+            },
+            {
+              "label": " [PB4] Oinarrizko ikerketa. Arnas sistema",
+              "value": "PB4"
+            },
+            {
+              "label": " [PB5] Oinarrizko ikerketa. Sistema gastrointestinala, gibela barne",
+              "value": "PB5"
+            },
+            {
+              "label": " [PB6] Oinarrizko ikerketa. Hezur eta muskulu sistema",
+              "value": "PB6"
+            },
+            {
+              "label": " [PB7] Oinarrizko ikerketa. Immunitate sistema",
+              "value": "PB7"
+            },
+            {
+              "label": " [PB8] Oinarrizko ikerketa. Sistema urogenitala eta ugalketakoa",
+              "value": "PB8"
+            },
+            {
+              "label": " [PB9] Oinarrizko ikerketa. Zentzumen organoak (azala/begiak/belarriak)",
+              "value": "PB9"
+            },
+            {
+              "label": " [PB10] Oinarrizko ikerketa. Sistema endokrinoa/metabolismoa",
+              "value": "PB10"
+            },
+            {
+              "label": " [PB11] Oinarrizko ikerketa. Sistema anitzeko sistema",
+              "value": "PB11"
+            },
+            {
+              "label": " [PB12] Oinarrizko ikerketa. Etologia/Animalien portaera/Animalien biologia",
+              "value": "PB12"
+            },
+            {
+              "label": " [PB13] Oinarrizko ikerketa. Beste batzuk",
+              "value": "PB13"
+            },
+            {
+              "label": " [PT21] Ikerketa translazionala eta aplikatua. Giza minbizia",
+              "value": "PT21"
+            },
+            {
+              "label": " [PT22] Ikerketa translazionala eta aplikatua. Giza gaixotasun infekziosoak",
+              "value": "PT22"
+            },
+            {
+              "label": " [PT23] Ikerketa translazionala eta aplikatua. Giza gaixotasun kardiobaskularrak",
+              "value": "PT23"
+            },
+            {
+              "label": " [PT24] Ikerketa translazionala eta aplikatua. Gizaki gaixotasun nerbiosoak eta mentalak",
+              "value": "PT24"
+            },
+            {
+              "label": " [PT25] Ikerketa translazionala eta aplikatua. Gizakien arnasketa gaixotasunak",
+              "value": "PT25"
+            },
+            {
+              "label": " [PT26] Ikerketa translazionala eta aplikatua. Gaixotasun gastrointestinalak, hepatikoak barne",
+              "value": "PT26"
+            },
+            {
+              "label": " [PT27] Ikerketa translazionala eta aplikatua. Gizakien muskulu eta eskeletoetako gaixotasunak",
+              "value": "PT27"
+            },
+            {
+              "label": " [PT28] Ikerketa translazionala eta aplikatua. Giza gaixotasun immunologikoak",
+              "value": "PT28"
+            },
+            {
+              "label": " [PT29] Ikerketa translazionala eta aplikatua. Giza gaixotasun urogenitalak eta ugalketa aparatuko gaixotasunak",
+              "value": "PT29"
+            },
+            {
+              "label": " [PT30] Ikerketa translazionala eta aplikatua. Zentzumen organoetako (azala/begiak/belarriak) giza gaixotasunak",
+              "value": "PT30"
+            },
+            {
+              "label": " [PT31] Ikerketa translazionala eta aplikatua. Giza gaixotasun endokrinoak eta metabolikoak",
+              "value": "PT31"
+            },
+            {
+              "label": " [PT32] Ikerketa translazionala eta aplikatua. Beste giza gaixotasun batzuk",
+              "value": "PT32"
+            },
+            {
+              "label": " [PT33] Ikerketa translazionala eta aplikatua. Animalien gaixotasunak",
+              "value": "PT33"
+            },
+            {
+              "label": " [PT34] Ikerketa translazionala eta aplikatua. Animalien ongizatea",
+              "value": "PT34"
+            },
+            {
+              "label": " [PT35] Ikerketa translazionala eta aplikatua. Gaixotasunen diagnostikoa",
+              "value": "PT35"
+            },
+            {
+              "label": " [PT36] Ikerketa translazionala eta aplikatua. Landareen gaixotasunak",
+              "value": "PT36"
+            },
+            {
+              "label": " [PT37] Ikerketa translazionala eta aplikatua. Arauzkoak ez diren toxikologia eta ekotoxikologia ",
+              "value": "PT37"
+            },
+            {
+              "label": "[PE40] Ingumen naturalaren babesa gizakien edo animalien osasunaren edo ongizatearen mesederako",
+              "value": "PE40"
+            },
+            {
+              "label": "[PS41] Espezieen babesa",
+              "value": "PS41"
+            },
+            {
+              "label": "[PE42] Goi mailako irakaskuntza edo gaitasun profesionalak eskuratu, mantendu edo hobetzeko formakuntza",
+              "value": "PE42"
+            },
+            {
+              "label": "[PF43] Ikerketa forentseak",
+              "value": "PF43"
+            },
+            {
+              "label": "[PG43] Beste prozedura batzuetan erabiltzen ez diren genetikoki eraldatutako animalien koloniak mantentzea ",
+              "value": "PG43"
+            },
+            {
+              "label": " [PR51] Arauzko erabilera eta ohiko ekoizpena. Odol produktuak",
+              "value": "PR51"
+            },
+            {
+              "label": " [PR52] Arauzko erabilera eta ohiko ekoizpena. Antigorputz monoklonalak",
+              "value": "PR52"
+            },
+            {
+              "label": " [PR53] Arauzko erabilera eta ohiko ekoizpena. Beste batzuk",
+              "value": "PR53"
+            },
+            {
+              "label": " [PR61] Arauzko erabilera/kalitate kontrola. Sorten segurtasun saiakuntzak ",
+              "value": "PR61"
+            },
+            {
+              "label": " [PR62] Arauzko erabilera/kalitate kontrola. Pirogenotasun saiakuntzak ",
+              "value": "PR62"
+            },
+            {
+              "label": " [PR63] Arauzko erabilera/kalitate kontrola. Sorten potentzia saiakuntzak ",
+              "value": "PR63"
+            },
+            {
+              "label": " [PR64] Arauzko erabilera/kalitate kontrola. Beste kalitate kontrol batzuk ",
+              "value": "PR64"
+            },
+            {
+              "label": " [PR71] Arauzko erabilera. Beste efikazia eta tolerantzia kontrol batzuk",
+              "value": "PR71"
+            },
+            {
+              "label": " [PR81] Arauzko erabilera/Toxikotasuna eta segurtasuna/akutua eta subakutua. LD50, LC50",
+              "value": "PR81"
+            },
+            {
+              "label": " [PR82] Arauzko erabilera/Toxikotasuna eta segurtasuna/akutua eta subakutua. Beste metodo hilgarri batzuk",
+              "value": "PR82"
+            },
+            {
+              "label": " [PR83] Arauzko erabilera/Toxikotasuna eta segurtasuna/Akutua eta subakutua. Metodo ez-hilgarriak",
+              "value": "PR83"
+            },
+            {
+              "label": " [PR84] Arauzko erabilera/Toxikotasuna eta segurtasuna. Larruazalaren narritadura/korrosioa",
+              "value": "PR84"
+            },
+            {
+              "label": " [PR85] Arauzko erabilera/Toxikotasuna eta segurtasuna. Larruazalaren sentsibilizazioa",
+              "value": "PR85"
+            },
+            {
+              "label": " [PR86] Arauzko erabilera/Toxikotasuna eta segurtasuna. Begiaren narritadura/korrosioa",
+              "value": "PR86"
+            },
+            {
+              "label": " [PR87] Arauzko erabilera/Toxikotasuna eta segurtasuna/Dosi errepikatuengatiko toxikotasuna. Gehienez 28 egun",
+              "value": "PR87"
+            },
+            {
+              "label": " [PR88] Arauzko erabilera/Toxikotasuna eta segurtasuna/Dosi errepikatuengatiko toxikotasuna. 29-90 egun",
+              "value": "PR88"
+            },
+            {
+              "label": " [PR89] Arauzko erabilera/Toxikotasuna eta segurtasuna/Dosi errepikatuengatiko toxikotasuna. 90 egun baino gehiago",
+              "value": "PR89"
+            },
+            {
+              "label": " [PR90] Arauzko erabilera/Toxikotasuna eta segurtasuna/Kartzinogenotasuna",
+              "value": "PR90"
+            },
+            {
+              "label": " [PR91] Arauzko erabilera/Toxikotasuna eta segurtasuna. Genotoxikotasuna",
+              "value": "PR91"
+            },
+            {
+              "label": " [PR92] Arauzko erabilera/Toxikotasuna eta segurtasuna. Ugalketako toxikotasuna",
+              "value": "PR92"
+            },
+            {
+              "label": " [PR93] Arauzko erabilera/Toxikotasuna eta segurtasuna. Garapenaren toxikotasuna",
+              "value": "PR93"
+            },
+            {
+              "label": " [PR94] Arauzko erabilera/Toxikotasuna eta segurtasuna. Neurotoxikotasuna",
+              "value": "PR94"
+            },
+            {
+              "label": " [PR95] Arauzko erabilera/Toxikotasuna eta segurtasuna. Zinetika",
+              "value": "PR95"
+            },
+            {
+              "label": " [PR96] Arauzko erabilera/Toxikotasuna eta segurtasuna. Farmakodinamika (segurtasun farmakologia barne)",
+              "value": "PR96"
+            },
+            {
+              "label": " [PR97] Arauzko erabilera/Toxikotasuna eta segurtasuna. Fototoxikotasuna",
+              "value": "PR97"
+            },
+            {
+              "label": " [PR98] Arauzko erabilera/Toxikotasuna eta segurtasuna/Ekotoxikotasuna. Toxikotasun akutua",
+              "value": "PR98"
+            },
+            {
+              "label": " [PR99] Arauzko erabilera/Toxikotasuna eta segurtasuna/Ekotoxikotasuna. Toxikotasun kronikoa",
+              "value": "PR99"
+            },
+            {
+              "label": " [PR100] Arauzko erabilera/Toxikotasuna eta segurtasuna/Ekotoxikotasuna. Ugalketako toxikotasuna",
+              "value": "PR100"
+            },
+            {
+              "label": " [PR101] Arauzko erabilera/Toxikotasuna eta segurtasuna/Ekotoxikotasuna. Jarduera endokrinoa",
+              "value": "PR101"
+            },
+            {
+              "label": " [PR102] Arauzko erabilera/Toxikotasuna eta segurtasuna/Ekotoxikotasuna. Bioakumulazioa",
+              "value": "PR102"
+            },
+            {
+              "label": " [PR103] Arauzko erabilera/Toxikotasuna eta segurtasuna/Ekotoxikotasuna. Beste batzuk",
+              "value": "PR103"
+            },
+            {
+              "label": " [PR104] Arauzko erabilera/Toxikotasuna eta segurtasuna. Segurtasun saiakuntzak gizakien eta animalien elikaduraren esparruan",
+              "value": "PR104"
+            },
+            {
+              "label": " [PR105] Arauzko erabilera/Toxikotasuna eta segurtasuna. Animalia hartzaileen segurtasuna",
+              "value": "PR105"
+            },
+            {
+              "label": " [PR106] Arauzko erabilera/Toxikotasuna eta segurtasuna. Beste batzuk",
+              "value": "PR106"
+            },
+            {
+              "label": "[PN107] EBtik kanpoko xedeak",
+              "value": "PN107"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

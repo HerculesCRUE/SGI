@@ -1,14 +1,19 @@
 package org.crue.hercules.sgi.eti.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.FormacionEspecificaNotFoundException;
 import org.crue.hercules.sgi.eti.model.FormacionEspecifica;
+import org.crue.hercules.sgi.eti.model.FormacionEspecificaNombre;
 import org.crue.hercules.sgi.eti.repository.FormacionEspecificaRepository;
 import org.crue.hercules.sgi.eti.service.impl.FormacionEspecificaServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -46,7 +51,8 @@ public class FormacionEspecificaServiceTest extends BaseServiceTest {
 
     Assertions.assertThat(formacionEspecifica.getId()).isEqualTo(1L);
 
-    Assertions.assertThat(formacionEspecifica.getNombre()).isEqualTo("FormacionEspecifica1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecifica.getNombre(), Language.ES))
+        .isEqualTo("FormacionEspecifica1");
 
   }
 
@@ -56,132 +62,6 @@ public class FormacionEspecificaServiceTest extends BaseServiceTest {
 
     Assertions.assertThatThrownBy(() -> formacionEspecificaService.findById(1L))
         .isInstanceOf(FormacionEspecificaNotFoundException.class);
-  }
-
-  @Test
-  public void create_ReturnsFormacionEspecifica() {
-    // given: Un nuevo FormacionEspecifica
-    FormacionEspecifica formacionEspecificaNew = generarMockFormacionEspecifica(1L, "FormacionEspecificaNew");
-
-    FormacionEspecifica formacionEspecifica = generarMockFormacionEspecifica(1L, "FormacionEspecificaNew");
-
-    BDDMockito.given(formacionEspecificaRepository.save(formacionEspecificaNew)).willReturn(formacionEspecifica);
-
-    // when: Creamos la formación específica
-    FormacionEspecifica formacionEspecificaCreado = formacionEspecificaService.create(formacionEspecificaNew);
-
-    // then: La formación específica se crea correctamente
-    Assertions.assertThat(formacionEspecificaCreado).isNotNull();
-    Assertions.assertThat(formacionEspecificaCreado.getId()).isEqualTo(1L);
-    Assertions.assertThat(formacionEspecificaCreado.getNombre()).isEqualTo("FormacionEspecificaNew");
-  }
-
-  @Test
-  public void create_FormacionEspecificaWithoutId_ThrowsIllegalArgumentException() {
-    // given: Una nueva formación específica que no tiene id
-    FormacionEspecifica formacionEspecificaNew = generarMockFormacionEspecifica(null, "FormacionEspecificaNew");
-
-    // when: Creamos la formación específica
-    // then: Lanza una excepcion porque la formación específica no tiene id
-    Assertions.assertThatThrownBy(() -> formacionEspecificaService.create(formacionEspecificaNew))
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  public void update_ReturnsFormacionEspecifica() {
-    // given: Una nueva formación específica con el servicio actualizado
-    FormacionEspecifica formacionEspecificaServicioActualizado = generarMockFormacionEspecifica(1L,
-        "FormacionEspecifica1 actualizada");
-
-    FormacionEspecifica formacionEspecifica = generarMockFormacionEspecifica(1L, "FormacionEspecifica1");
-
-    BDDMockito.given(formacionEspecificaRepository.findById(1L)).willReturn(Optional.of(formacionEspecifica));
-    BDDMockito.given(formacionEspecificaRepository.save(formacionEspecifica))
-        .willReturn(formacionEspecificaServicioActualizado);
-
-    // when: Actualizamos la formación específica
-    FormacionEspecifica formacionEspecificaActualizado = formacionEspecificaService.update(formacionEspecifica);
-
-    // then: La formación específica se actualiza correctamente.
-    Assertions.assertThat(formacionEspecificaActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(formacionEspecificaActualizado.getNombre()).isEqualTo("FormacionEspecifica1 actualizada");
-
-  }
-
-  @Test
-  public void update_ThrowsFormacionEspecificaNotFoundException() {
-    // given: Una nueva formación específica a actualizar
-    FormacionEspecifica formacionEspecifica = generarMockFormacionEspecifica(1L, "FormacionEspecifica");
-
-    // then: Lanza una excepcion porque la formación específica no existe
-    Assertions.assertThatThrownBy(() -> formacionEspecificaService.update(formacionEspecifica))
-        .isInstanceOf(FormacionEspecificaNotFoundException.class);
-
-  }
-
-  @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
-
-    // given: Una FormacionEspecifica que venga sin id
-    FormacionEspecifica formacionEspecifica = generarMockFormacionEspecifica(null, "FormacionEspecifica");
-
-    Assertions.assertThatThrownBy(
-        // when: update FormacionEspecifica
-        () -> formacionEspecificaService.update(formacionEspecifica))
-        // then: Lanza una excepción, el id es necesario
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() {
-    // given: Sin id
-    Assertions.assertThatThrownBy(
-        // when: Delete sin id
-        () -> formacionEspecificaService.delete(null))
-        // then: Lanza una excepción
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  public void delete_NonExistingId_ThrowsFormacionEspecificaNotFoundException() {
-    // given: Id no existe
-    BDDMockito.given(formacionEspecificaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
-
-    Assertions.assertThatThrownBy(
-        // when: Delete un id no existente
-        () -> formacionEspecificaService.delete(1L))
-        // then: Lanza FormacionEspecificaNotFoundException
-        .isInstanceOf(FormacionEspecificaNotFoundException.class);
-  }
-
-  @Test
-  public void delete_WithExistingId_DeletesFormacionEspecifica() {
-    // given: Id existente
-    BDDMockito.given(formacionEspecificaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
-    BDDMockito.doNothing().when(formacionEspecificaRepository).deleteById(ArgumentMatchers.anyLong());
-
-    Assertions.assertThatCode(
-        // when: Delete con id existente
-        () -> formacionEspecificaService.delete(1L))
-        // then: No se lanza ninguna excepción
-        .doesNotThrowAnyException();
-  }
-
-  @Test
-  public void deleteAll_DeleteAllFormacionEspecifica() {
-    // given: One hundred FormacionEspecifica
-    List<FormacionEspecifica> formacionEspecificas = new ArrayList<>();
-    for (int i = 1; i <= 100; i++) {
-      formacionEspecificas
-          .add(generarMockFormacionEspecifica(Long.valueOf(i), "FormacionEspecifica" + String.format("%03d", i)));
-    }
-    BDDMockito.doNothing().when(formacionEspecificaRepository).deleteAll();
-
-    Assertions.assertThatCode(
-        // when: Delete all
-        () -> formacionEspecificaService.deleteAll())
-        // then: No se lanza ninguna excepción
-        .doesNotThrowAnyException();
   }
 
   @Test
@@ -242,7 +122,7 @@ public class FormacionEspecificaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       FormacionEspecifica formacionEspecifica = page.getContent().get(i);
-      Assertions.assertThat(formacionEspecifica.getNombre())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecifica.getNombre(), Language.ES))
           .isEqualTo("FormacionEspecifica" + String.format("%03d", j));
     }
   }
@@ -254,12 +134,13 @@ public class FormacionEspecificaServiceTest extends BaseServiceTest {
    * @param nombre nombre de la formación específica
    * @return el objeto tipo Memoria
    */
+  private FormacionEspecifica generarMockFormacionEspecifica(Long id, String nombre) {
 
-  public FormacionEspecifica generarMockFormacionEspecifica(Long id, String nombre) {
-
+    Set<FormacionEspecificaNombre> nom = new HashSet<>();
+    nom.add(new FormacionEspecificaNombre(Language.ES, nombre));
     FormacionEspecifica formacionEspecifica = new FormacionEspecifica();
     formacionEspecifica.setId(id);
-    formacionEspecifica.setNombre(nombre);
+    formacionEspecifica.setNombre(nom);
     formacionEspecifica.setActivo(Boolean.TRUE);
 
     return formacionEspecifica;

@@ -1,0 +1,16 @@
+[
+  {
+    "key": "ap5_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.3 Seguro de accidentes y responsabilidad civil"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Participar en una actividad de investigación que implique riesgo biológico puede suponer riesgos para el ser humano y el medio ambiente. Consulte con la Secretaría Técnica del Comité de Ética la necesidad de contratación de un seguro de responsabilidad civil.</p>"
+      }
+    ]
+  }
+]

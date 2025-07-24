@@ -27,14 +27,6 @@ public interface ModeloTipoDocumentoService {
   ModeloTipoDocumento disable(Long id);
 
   /**
-   * Obtiene una entidad {@link ModeloTipoDocumento} por id.
-   * 
-   * @param id Identificador de la entidad {@link ModeloTipoDocumento}.
-   * @return la entidad {@link ModeloTipoDocumento}.
-   */
-  ModeloTipoDocumento findById(final Long id);
-
-  /**
    * Obtiene los {@link ModeloTipoDocumento} activos para un
    * {@link ModeloEjecucion}.
    *

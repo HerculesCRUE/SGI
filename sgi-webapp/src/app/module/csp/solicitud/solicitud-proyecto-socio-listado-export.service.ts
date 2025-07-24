@@ -3,10 +3,9 @@ import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { ISolicitudProyectoSocio } from '@core/models/csp/solicitud-proyecto-socio';
-import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
@@ -37,7 +36,7 @@ const SOCIO_IMPORTE_SOLICITADO_FIELD = 'importeSolicitadoSocio';
 const PROYECTO_KEY = marker('menu.csp.solicitudes.datos-proyecto');
 
 @Injectable()
-export class SolicitudProyectoSocioListadoExportService extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions>{
+export class SolicitudProyectoSocioListadoExportService extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -45,6 +44,7 @@ export class SolicitudProyectoSocioListadoExportService extends AbstractTableExp
     private readonly solicitudService: SolicitudService,
     private empresaService: EmpresaService,
     private readonly decimalPipe: DecimalPipe,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -84,39 +84,7 @@ export class SolicitudProyectoSocioListadoExportService extends AbstractTableExp
     solicitudes: ISolicitudReportData[],
     reportConfig: IReportConfig<ISolicitudReportOptions>
   ): ISgiColumnReport[] {
-
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsSocioNotExcel();
-    } else {
-      return this.getColumnsSocioExcel(solicitudes);
-    }
-  }
-
-  private getColumnsSocioNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: SOCIO_FIELD,
-      title: this.translate.instant(SOCIO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(PROYECTO_KEY) + ': ' + this.translate.instant(SOCIO_KEY, MSG_PARAMS.CARDINALIRY.PLURAL) +
-      ' (' + this.translate.instant(SOCIO_NOMBRE_KEY) +
-      ' - ' + this.translate.instant(SOCIO_CIF_KEY) +
-      ' - ' + this.translate.instant(SOCIO_ROL_KEY) +
-      ' - ' + this.translate.instant(SOCIO_NUM_INVESTIGADORES_KEY) +
-      ' - ' + this.translate.instant(SOCIO_FECHA_INICIO_KEY) +
-      ' - ' + this.translate.instant(SOCIO_FECHA_FIN_KEY) +
-      ' - ' + this.translate.instant(SOCIO_IMPORTE_PRESUPUESTADO_KEY) +
-      ' - ' + this.translate.instant(SOCIO_IMPORTE_SOLICITADO_KEY) +
-      ')';
-    const columnSocio: ISgiColumnReport = {
-      name: SOCIO_FIELD,
-      title: titleI18n,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns
-    };
-    return [columnSocio];
+    return this.getColumnsSocioExcel(solicitudes);
   }
 
   private getColumnsSocioExcel(solicitudes: ISolicitudReportData[]): ISgiColumnReport[] {
@@ -186,61 +154,21 @@ export class SolicitudProyectoSocioListadoExportService extends AbstractTableExp
   }
 
   public fillRows(solicitudes: ISolicitudReportData[], index: number, reportConfig: IReportConfig<ISolicitudReportOptions>): any[] {
-
     const solicitud = solicitudes[index];
     const elementsRow: any[] = [];
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      this.fillRowsSocioNotExcel(solicitud, elementsRow);
-    } else {
-      const maxNumSocio = Math.max(...solicitudes.map(s => s.socios ? s.socios?.length : 0));
-      for (let i = 0; i < maxNumSocio; i++) {
-        const socio = solicitud.socios && solicitud.socios.length > 0 ? solicitud.socios[i] : null;
-        this.fillRowsSocioExcel(elementsRow, socio);
-      }
+    const maxNumSocio = Math.max(...solicitudes.map(s => s.socios ? s.socios?.length : 0));
+    for (let i = 0; i < maxNumSocio; i++) {
+      const socio = solicitud.socios && solicitud.socios.length > 0 ? solicitud.socios[i] : null;
+      this.fillRowsSocioExcel(elementsRow, socio);
     }
     return elementsRow;
-  }
-
-  private fillRowsSocioNotExcel(solicitud: ISolicitudReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-
-    solicitud.socios?.forEach(socio => {
-      const socioElementsRow: any[] = [];
-
-      let socioTable = socio?.empresa?.nombre;
-      socioTable += '\n';
-      socioTable += socio?.empresa?.numeroIdentificacion ?? '';
-      socioTable += '\n';
-      socioTable += socio?.rolSocio?.nombre ?? '';
-      socioTable += '\n';
-      socioTable += socio?.numInvestigadores ?? '';
-      socioTable += '\n';
-      socioTable += socio?.mesInicio ?? '';
-      socioTable += '\n';
-      socioTable += socio?.mesFin ?? '';
-      socioTable += '\n';
-      socioTable += socio?.importePresupuestado ?? '';
-      socioTable += '\n';
-      socioTable += socio?.importeSolicitado ?? '';
-
-      socioElementsRow.push(socioTable);
-
-      const rowReport: ISgiRowReport = {
-        elements: socioElementsRow
-      };
-      rowsReport.push(rowReport);
-    });
-
-    elementsRow.push({
-      rows: rowsReport
-    });
   }
 
   private fillRowsSocioExcel(elementsRow: any[], socio: ISolicitudProyectoSocio) {
     if (socio) {
       elementsRow.push(socio.empresa?.nombre ?? '');
       elementsRow.push(socio.empresa?.numeroIdentificacion ?? '');
-      elementsRow.push(socio.rolSocio?.nombre ?? '');
+      elementsRow.push(this.languageService.getFieldValue(socio.rolSocio?.nombre));
       elementsRow.push(socio.numInvestigadores ? socio.numInvestigadores.toString() : '');
       elementsRow.push(socio.mesInicio?.toString() ?? '');
       elementsRow.push(socio.mesFin?.toString() ?? '');

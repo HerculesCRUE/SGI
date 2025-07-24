@@ -114,4 +114,6 @@ export class CongresoListadoComponent extends AbstractTablePaginationComponent<I
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
   }
+
+  protected setupI18N(): void { }
 }

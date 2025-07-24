@@ -54,13 +54,13 @@ export class SolicitudRrhhTutorPublicComponent extends FormFragmentComponent<ISo
     public readonly actionService: SolicitudPublicActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.TUTOR, actionService);
+    super(actionService.FRAGMENT.TUTOR, actionService, translate);
     this.formPart = this.fragment as SolicitudRrhhTutorPublicFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.loadEmails();
   }
 
@@ -75,7 +75,7 @@ export class SolicitudRrhhTutorPublicComponent extends FormFragmentComponent<ISo
     ));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       SOLICITUD_RRHH_TUTOR_KEY

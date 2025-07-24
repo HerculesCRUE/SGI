@@ -31,7 +31,7 @@ class ModeloTipoFinalidadIT extends BaseIT {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization",
-        String.format("bearer %s", tokenBuilder.buildToken("user", "AUTH", "CSP-ME-E", "CSP-ME-C")));
+        String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-ME-E", "CSP-ME-C")));
 
     HttpEntity<ModeloTipoFinalidad> request = new HttpEntity<>(entity, headers);
     return request;
@@ -74,23 +74,6 @@ class ModeloTipoFinalidadIT extends BaseIT {
     // then: ModeloTipoFinalidad is disabled
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 
-  }
-
-  @Sql
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void findById_ReturnsModeloTipoFinalidad() throws Exception {
-    Long id = 1L;
-
-    final ResponseEntity<ModeloTipoFinalidad> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-        HttpMethod.GET, buildRequest(null, null), ModeloTipoFinalidad.class, id);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    ModeloTipoFinalidad responseData = response.getBody();
-    Assertions.assertThat(responseData.getId()).as("getId()").isEqualTo(id);
-    Assertions.assertThat(responseData.getModeloEjecucion().getId()).as("getModeloEjecucion().getId()").isEqualTo(1L);
-    Assertions.assertThat(responseData.getTipoFinalidad().getId()).as("getTipoFinalidad().getId()").isEqualTo(1L);
-    Assertions.assertThat(responseData.getActivo()).as("getActivo()").isEqualTo(Boolean.TRUE);
   }
 
   /**

@@ -1,0 +1,25 @@
+[
+  {
+    "key": "ap3_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.3 References from scientific publications"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Please cite in full (author, title, publication, date, etc.) the most relevant references used for drafting the project (maximum 10 references)</p>"
+      },
+      {
+        "key": "referenciasPublicaciones",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "References",
+          "required": true
+        }
+      }
+    ]
+  }
+]

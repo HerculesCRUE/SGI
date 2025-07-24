@@ -2,13 +2,14 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { AreaTematicaService } from '@core/services/csp/area-tematica.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -35,30 +36,24 @@ class NodeAreaTematica {
   get childs(): NodeAreaTematica[] {
     return this._childs;
   }
+  // tslint:disable-next-line: variable-name
+  _sortChildsWith: (a1: NodeAreaTematica, a2: NodeAreaTematica) => number;
 
-  constructor(areaTematica: StatusWrapper<IAreaTematica>) {
+  constructor(areaTematica: StatusWrapper<IAreaTematica>, sortChildsWith: (a1: NodeAreaTematica, a2: NodeAreaTematica) => number) {
     this.areaTematica = areaTematica;
     this._childs = [];
+    this._sortChildsWith = sortChildsWith;
   }
 
   sortChildsByName(): void {
-    this._childs = sortByName(this._childs);
+    this._childs = sortNodes(this._childs, this._sortChildsWith);
   }
 }
 
-function sortByName(nodes: NodeAreaTematica[]): NodeAreaTematica[] {
-  return nodes.sort((a, b) => {
-    if (a.areaTematica.value.nombre < b.areaTematica.value.nombre) {
-      return -1;
-    }
-    if (a.areaTematica.value.nombre > b.areaTematica.value.nombre) {
-      return 1;
-    }
-    return 0;
-  });
+function sortNodes(nodes: NodeAreaTematica[], sortWith: (a1: NodeAreaTematica, a2: NodeAreaTematica) => number): NodeAreaTematica[] {
+  return nodes.sort(sortWith);
 }
 
-const MSG_ERROR_AREA_TEMATICA = marker('error.load');
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
 
@@ -84,11 +79,18 @@ export class ProyectoContextoModalComponent extends DialogFormComponent<Proyecto
 
   hasChild = (_: number, node: NodeAreaTematica) => node.childs.length > 0;
 
+  private sortNodesByAreaNombre: (a1: NodeAreaTematica, a2: NodeAreaTematica) => number = (a1, a2) => {
+    const nombreA = this.languageService.getFieldValue(a1.areaTematica?.value?.nombre);
+    const nombreB = this.languageService.getFieldValue(a2.areaTematica?.value?.nombre);
+    return nombreA.localeCompare(nombreB);
+  };
+
   constructor(
     private readonly logger: NGXLogger,
     matDialogRef: MatDialogRef<ProyectoContextoModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ProyectoContextoModalData,
     private areaTematicaService: AreaTematicaService,
+    private readonly languageService: LanguageService,
     private readonly translate: TranslateService
   ) {
     super(matDialogRef, !!data?.areaTematicaProyecto);
@@ -193,7 +195,7 @@ export class ProyectoContextoModalComponent extends DialogFormComponent<Proyecto
         switchMap(response => {
           return from(response.items).pipe(
             mergeMap((areaTematica) => {
-              const node = new NodeAreaTematica(new StatusWrapper<IAreaTematica>(areaTematica));
+              const node = new NodeAreaTematica(new StatusWrapper<IAreaTematica>(areaTematica), this.sortNodesByAreaNombre);
               this.nodeMap.set(node.areaTematica.value.id, node);
               return this.getChilds(node).pipe(map(() => node));
             })
@@ -264,7 +266,7 @@ export class ProyectoContextoModalComponent extends DialogFormComponent<Proyecto
       map((result) => {
         const childs: NodeAreaTematica[] = result.items.map(
           (areaTematica) => {
-            const child = new NodeAreaTematica(new StatusWrapper<IAreaTematica>(areaTematica));
+            const child = new NodeAreaTematica(new StatusWrapper<IAreaTematica>(areaTematica), this.sortNodesByAreaNombre);
             child.parent = parent;
             this.nodeMap.set(child.areaTematica.value.id, child);
             return child;
@@ -291,7 +293,7 @@ export class ProyectoContextoModalComponent extends DialogFormComponent<Proyecto
 
   private publishNodes(rootNodes?: NodeAreaTematica[]) {
     let nodes = rootNodes ? rootNodes : this.dataSource.data;
-    nodes = sortByName(nodes);
+    nodes = sortNodes(nodes, this.sortNodesByAreaNombre);
     this.dataSource.data = nodes;
   }
 

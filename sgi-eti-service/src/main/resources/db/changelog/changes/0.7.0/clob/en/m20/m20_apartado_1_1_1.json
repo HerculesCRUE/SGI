@@ -1,0 +1,306 @@
+[
+  {
+    "key": "ap1_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "1.1.1 Specific purpose of the project"
+    },
+    "fieldGroup": [
+      {
+        "template": "Please indicate the specific purpose of the project:"
+      },
+      {
+        "key": "finEspecificoProyecto",
+        "type": "select",
+        "templateOptions": {
+          "label": "Please choose",
+          "required": true,
+          "options": [
+            {
+              "label": "[PB1] Basic Research. Oncology",
+              "value": "PB1"
+            },
+            {
+              "label": "[PB2] Basic Research. Cardiovascular, blood and lymphatic system",
+              "value": "PB2"
+            },
+            {
+              "label": "[PB3] Basic Research. Nervous system",
+              "value": "PB3"
+            },
+            {
+              "label": "[PB4] Basic Research. Respiratory system",
+              "value": "PB4"
+            },
+            {
+              "label": "[PB5] Basic Research. Gastrointestinal system, including liver",
+              "value": "PB5"
+            },
+            {
+              "label": "[PB6] Basic Research. Musculoskeletal system",
+              "value": "PB6"
+            },
+            {
+              "label": "[PB7] Basic Research. Immune system",
+              "value": "PB7"
+            },
+            {
+              "label": "[PB8] Basic Research. Urogenital-reproductive system",
+              "value": "PB8"
+            },
+            {
+              "label": "[PB9] Basic Research. Sensory organs (skin/eyes/ears)",
+              "value": "PB9"
+            },
+            {
+              "label": "[PB10] Basic Research. Endocrine system/metabolism",
+              "value": "PB10"
+            },
+            {
+              "label": "[PB11] Basic Research. Multi-system system",
+              "value": "PB11"
+            },
+            {
+              "label": "[PB12] Basic Research. Ethology/Animal Behaviour/Animal Biology",
+              "value": "PB12"
+            },
+            {
+              "label": "[PB13] Basic Research. Other",
+              "value": "PB13"
+            },
+            {
+              "label": "[PT21] Translational and applied research. Human cancer",
+              "value": "PT21"
+            },
+            {
+              "label": "[PT22] Translational and applied research. Human infectious diseases",
+              "value": "PT22"
+            },
+            {
+              "label": "[WP23] Translational and applied research. Human cardiovascular diseases",
+              "value": "PT23"
+            },
+            {
+              "label": "[PT24] Translational and applied research. Human nervous and mental diseases",
+              "value": "PT24"
+            },
+            {
+              "label": "[PT25] Translational and applied research. Human respiratory diseases",
+              "value": "PT25"
+            },
+            {
+              "label": "[PT26] Translational and applied research. Gastrointestinal diseases, including liver diseases",
+              "value": "PT26"
+            },
+            {
+              "label": "[PT27] Translational and applied research. Human musculoskeletal diseases",
+              "value": "PT27"
+            },
+            {
+              "label": "[PT28] Translational and applied research. Human immunological diseases",
+              "value": "PT28"
+            },
+            {
+              "label": "[PT29] Translational and applied research. Human urogenital and reproductive system diseases",
+              "value": "PT29"
+            },
+            {
+              "label": "[PT30] Translational and applied research. Human diseases of the sense organs (skin/eyes/ears)",
+              "value": "PT30"
+            },
+            {
+              "label": "[PT31] Translational and applied research. Human endocrine and metabolic diseases",
+              "value": "PT31"
+            },
+            {
+              "label": "[PT32] Translational and applied research. Other human diseases",
+              "value": "PT32"
+            },
+            {
+              "label": "[PT33] Translational and applied research. Animal diseases",
+              "value": "PT33"
+            },
+            {
+              "label": "[PT34] Translational and applied research. Animal welfare",
+              "value": "PT34"
+            },
+            {
+              "label": "[PT35] Translational and applied research. Diagnosis of diseases",
+              "value": "PT35"
+            },
+            {
+              "label": "[PT36] Translational and applied research. Plant diseases",
+              "value": "PT36"
+            },
+            {
+              "label": "[PT37] Translational and applied research. Non-regulatory toxicology and ecotoxicology",
+              "value": "PT37"
+            },
+            {
+              "label": "[PE40] Protection of the natural environment in the interests of human or animal health or welfare",
+              "value": "PE40"
+            },
+            {
+              "label": "[PS41] Species preservation",
+              "value": "PS41"
+            },
+            {
+              "label": "[PE42] Higher education or training for the acquisition, maintenance or upgrading of vocational competences",
+              "value": "PE42"
+            },
+            {
+              "label": "[PF43] Forensic investigations",
+              "value": "PF43"
+            },
+            {
+              "label": "[PG43] Maintenance of colonies of genetically altered animals, not used in other processes",
+              "value": "PG43"
+            },
+            {
+              "label": "[PR51] Regulatory use and routine production. Blood products",
+              "value": "PR51"
+            },
+            {
+              "label": "[PR52] Regulatory use and routine production. Monoclonal antibodies",
+              "value": "PR52"
+            },
+            {
+              "label": "[PR53] Regulatory use and routine production. Other",
+              "value": "PR53"
+            },
+            {
+              "label": "[PR61] Regulatory use/quality control. Batch safety testing",
+              "value": "PR61"
+            },
+            {
+              "label": "[PR62] Regulatory use/quality control. Pyrogenicity tests",
+              "value": "PR62"
+            },
+            {
+              "label": "[PR63] Regulatory use/quality control. Batch potency tests",
+              "value": "PR63"
+            },
+            {
+              "label": "[PR64] Regulatory use/quality control. Other quality controls",
+              "value": "PR64"
+            },
+            {
+              "label": "[PR71] Regulatory use. Other efficacy and tolerance controls",
+              "value": "PR71"
+            },
+            {
+              "label": "[PR81] Regulatory use/Toxicity and safety/acute and sub-acute. LD50, LC50",
+              "value": "PR81"
+            },
+            {
+              "label": "[PR82] Regulatory use/Toxicity and safety/acute and sub-acute. Other lethal methods",
+              "value": "PR82"
+            },
+            {
+              "label": "[PR83] Regulatory use/Toxicity and safety/Acute and sub-acute. Non-lethal methods",
+              "value": "PR83"
+            },
+            {
+              "label": "[PR84] Regulatory use/Toxicity and safety. Skin irritation/corrosion",
+              "value": "PR84"
+            },
+            {
+              "label": "[PR85] Regulatory use/Toxicity and safety. Skin sensitisation",
+              "value": "PR85"
+            },
+            {
+              "label": "[PR86] Regulatory use/Toxicity and safety. Eye irritation/corrosion",
+              "value": "PR86"
+            },
+            {
+              "label": "[PR87] Regulatory use/Toxicity and safety/Repetitive dose toxicity. Up to 28 days",
+              "value": "PR87"
+            },
+            {
+              "label": "[PR88] Regulatory use/Toxicity and safety/Repetitive dose toxicity. Between 29 and 90 days",
+              "value": "PR88"
+            },
+            {
+              "label": "[PR89] Regulatory use/Toxicity and safety/Repetitive dose toxicity. More than 90 days",
+              "value": "PR89"
+            },
+            {
+              "label": "[PR90] Regulatory use/Toxicity and safety. Carcinogenicity",
+              "value": "PR90"
+            },
+            {
+              "label": "[PR91] Regulatory use/Toxicity and safety. Genotoxicity",
+              "value": "PR91"
+            },
+            {
+              "label": "[PR92] Regulatory use/Toxicity and safety. Reproductive toxicity",
+              "value": "PR92"
+            },
+            {
+              "label": "[PR93] Regulatory use/Toxicity and safety. Developmental toxicity",
+              "value": "PR93"
+            },
+            {
+              "label": "[PR94] Regulatory use/Toxicity and safety. Neurotoxicity",
+              "value": "PR94"
+            },
+            {
+              "label": "[PR95] Regulatory use/Toxicity and safety. Kinetics",
+              "value": "PR95"
+            },
+            {
+              "label": "[PR96] Regulatory use/Toxicity and safety. Pharmacodynamics (including safety pharmacology)",
+              "value": "PR96"
+            },
+            {
+              "label": "[PR97] Regulatory use/Toxicity and safety. Phototoxicity",
+              "value": "PR97"
+            },
+            {
+              "label": "[PR98] Regulatory use/Toxicity and safety/Ecotoxicity. Acute toxicity",
+              "value": "PR98"
+            },
+            {
+              "label": "[PR99] Regulatory use/Toxicity and safety/Ecotoxicity. Chronic toxicity",
+              "value": "PR99"
+            },
+            {
+              "label": "[PR100] Regulatory use/Toxicity and safety/Ecotoxicity. Reproductive toxicity",
+              "value": "PR100"
+            },
+            {
+              "label": "[PR101] Regulatory use/Toxicity and safety/Ecotoxicity. Endocrine activity",
+              "value": "PR101"
+            },
+            {
+              "label": "[PR102] Regulatory use/Toxicity and safety/Ecotoxicity. Bioaccumulation",
+              "value": "PR102"
+            },
+            {
+              "label": "[PR103] Regulatory use/Toxicity and safety/Ecotoxicity. Other",
+              "value": "PR103"
+            },
+            {
+              "label": "[PR104] Regulatory use/Toxicity and safety. Food and feed safety testing",
+              "value": "PR104"
+            },
+            {
+              "label": "[PR105] Regulatory use/Toxicity and safety. Safety of target animals",
+              "value": "PR105"
+            },
+            {
+              "label": "[PR106] Regulatory use/Toxicity and safety. Other",
+              "value": "PR106"
+            },
+            {
+              "label": "[PN107] Non-EU Purposes",
+              "value": "PN107"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

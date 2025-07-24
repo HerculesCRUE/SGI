@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon';
 import { ISexo } from '../sgp/sexo';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 
 export interface IConvocatoriaRequisito {
   /** Id */
@@ -29,5 +30,5 @@ export interface IConvocatoriaRequisito {
   /** Número máximo proyectos NO competitivos activos */
   numMaximoNoCompetitivosActivos: number;
   /** Otros requisitos */
-  otrosRequisitos: string;
+  otrosRequisitos: I18nFieldValue[];
 }

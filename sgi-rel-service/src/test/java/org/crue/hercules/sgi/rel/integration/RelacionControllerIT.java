@@ -1,11 +1,15 @@
 package org.crue.hercules.sgi.rel.integration;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.rel.dto.RelacionInput;
 import org.crue.hercules.sgi.rel.dto.RelacionOutput;
 import org.crue.hercules.sgi.rel.model.Relacion;
@@ -102,7 +106,8 @@ class RelacionControllerIT extends BaseIT {
     Assertions.assertThat(output.getId()).isEqualTo(relacion.getId());
     Assertions.assertThat(output.getEntidadDestinoRef()).isEqualTo(relacion.getEntidadDestinoRef());
     Assertions.assertThat(output.getEntidadOrigenRef()).isEqualTo(relacion.getEntidadOrigenRef());
-    Assertions.assertThat(output.getObservaciones()).isEqualTo(relacion.getObservaciones());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getObservaciones(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(relacion.getObservaciones(), Language.ES));
     Assertions.assertThat(output.getTipoEntidadDestino()).isEqualTo(relacion.getTipoEntidadDestino());
     Assertions.assertThat(output.getTipoEntidadOrigen()).isEqualTo(relacion.getTipoEntidadOrigen());
   }
@@ -203,10 +208,12 @@ class RelacionControllerIT extends BaseIT {
   }
 
   private RelacionInput buildMockRelacionInput() {
+    List<I18nFieldValueDto> relacionObservaciones = new ArrayList<>();
+    relacionObservaciones.add(new I18nFieldValueDto(Language.ES, "testing"));
     return RelacionInput.builder()
         .entidadDestinoRef("00001")
         .entidadOrigenRef("00002")
-        .observaciones("testing")
+        .observaciones(relacionObservaciones)
         .tipoEntidadDestino(Relacion.TipoEntidad.PROYECTO)
         .tipoEntidadOrigen(Relacion.TipoEntidad.PROYECTO)
         .build();

@@ -51,13 +51,13 @@ export class ProyectoSocioPeriodoJustificacionComponent extends FragmentComponen
     private readonly translate: TranslateService,
     private readonly proyectoSocioPeriodoJustificacion: ProyectoSocioPeriodoJustificacionService
   ) {
-    super(actionService.FRAGMENT.PERIODO_JUSTIFICACION, actionService);
+    super(actionService.FRAGMENT.PERIODO_JUSTIFICACION, actionService, translate);
     this.formPart = this.fragment as ProyectoSocioPeriodoJustificacionFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subcription = this.formPart.periodoJustificaciones$.subscribe(
       (periodoJustificaciones) => {
         this.dataSource.data = periodoJustificaciones;
@@ -68,7 +68,7 @@ export class ProyectoSocioPeriodoJustificacionComponent extends FragmentComponen
     this.dataSource.sortingDataAccessor = (wrapper, property) => wrapper.value[property];
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_SOCIO_PERIODO_JUSTIFICACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

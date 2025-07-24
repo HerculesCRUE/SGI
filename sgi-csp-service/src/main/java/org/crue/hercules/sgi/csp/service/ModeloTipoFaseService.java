@@ -29,14 +29,6 @@ public interface ModeloTipoFaseService {
   ModeloTipoFase update(ModeloTipoFase modeloTipoFase);
 
   /**
-   * Obtiene {@link ModeloTipoFase} por id.
-   *
-   * @param id el id de la entidad {@link ModeloTipoFase}.
-   * @return la entidad {@link ModeloTipoFase}.
-   */
-  ModeloTipoFase findById(Long id);
-
-  /**
    * Desactiva el {@link ModeloTipoFase} por id.
    *
    * @param id el id de la entidad {@link ModeloTipoFase}.
@@ -54,30 +46,5 @@ public interface ModeloTipoFaseService {
    *         {@link ModeloEjecucion} paginadas.
    */
   Page<ModeloTipoFase> findAllByModeloEjecucion(Long idModeloEjecucion, String query, Pageable pageable);
-
-  /**
-   * Obtiene los {@link ModeloTipoFase} activos para convocatorias para un
-   * {@link ModeloEjecucion}.
-   *
-   * @param idModeloEjecucion el id de la entidad {@link ModeloEjecucion}.
-   * @param query             la información del filtro.
-   * @param pageable          la información de la paginación.
-   * @return la lista de entidades {@link ModeloTipoFase} del
-   *         {@link ModeloEjecucion} paginadas.
-   */
-  Page<ModeloTipoFase> findAllByModeloEjecucionActivosConvocatoria(Long idModeloEjecucion, String query,
-      Pageable pageable);
-
-  /**
-   * Obtiene los {@link ModeloTipoFase} activos para proyectos para un
-   * {@link ModeloEjecucion}.
-   *
-   * @param idModeloEjecucion el id de la entidad {@link ModeloEjecucion}.
-   * @param query             la información del filtro.
-   * @param pageable          la información de la paginación.
-   * @return la lista de entidades {@link ModeloTipoFase} del
-   *         {@link ModeloEjecucion} paginadas.
-   */
-  Page<ModeloTipoFase> findAllByModeloEjecucionActivosProyecto(Long idModeloEjecucion, String query, Pageable pageable);
 
 }

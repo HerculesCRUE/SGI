@@ -37,7 +37,7 @@ export class ProyectoAgrupacionGastoDatosGeneralesComponent extends FormFragment
     protected actionService: ProyectoAgrupacionGastoActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as ProyectoAgrupacionGastoDatosGeneralesFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -54,7 +54,7 @@ export class ProyectoAgrupacionGastoDatosGeneralesComponent extends FormFragment
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.subscriptions.push(
       this.formGroup.get('nombre').valueChanges
         .pipe(
@@ -63,7 +63,7 @@ export class ProyectoAgrupacionGastoDatosGeneralesComponent extends FormFragment
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_AGRUPACION_GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

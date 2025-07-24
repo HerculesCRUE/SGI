@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SOLICITUD_DOCUMENTO_CONVERTER } from '@core/converters/csp/solicitud-documento.converter';
-import { ISolicitudDocumentoBackend } from '@core/models/csp/backend/solicitud-documento-backend';
+import { SOLICITUD_DOCUMENTO_RESPONSE_CONVERTER } from '@core/services/csp/solicitud-documento/solicitud-documento-response.converter';
+import { ISolicitudDocumentoResponse } from '@core/services/csp/solicitud-documento/solicitud-documento-response';
 import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
 import { environment } from '@env';
 import { SgiRestBaseService } from '@sgi/framework/http';
@@ -24,11 +24,11 @@ export class SolicitudDocumentoPublicService extends SgiRestBaseService {
   }
 
   create(solicitudPublicId: string, solicitudDocumento: ISolicitudDocumento): Observable<ISolicitudDocumento> {
-    return this.http.post<ISolicitudDocumentoBackend>(
+    return this.http.post<ISolicitudDocumentoResponse>(
       `${this.getEndpointUrl(solicitudPublicId)}`,
-      SOLICITUD_DOCUMENTO_CONVERTER.fromTarget(solicitudDocumento)
+      SOLICITUD_DOCUMENTO_RESPONSE_CONVERTER.fromTarget(solicitudDocumento)
     ).pipe(
-      map(response => SOLICITUD_DOCUMENTO_CONVERTER.toTarget(response))
+      map(response => SOLICITUD_DOCUMENTO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -37,11 +37,11 @@ export class SolicitudDocumentoPublicService extends SgiRestBaseService {
     solicitudDocumentoId: number,
     solicitudDocumento: ISolicitudDocumento
   ): Observable<ISolicitudDocumento> {
-    return this.http.put<ISolicitudDocumentoBackend>(
+    return this.http.put<ISolicitudDocumentoResponse>(
       `${this.getEndpointUrl(solicitudPublicId)}/${solicitudDocumentoId}`,
-      SOLICITUD_DOCUMENTO_CONVERTER.fromTarget(solicitudDocumento)
+      SOLICITUD_DOCUMENTO_RESPONSE_CONVERTER.fromTarget(solicitudDocumento)
     ).pipe(
-      map(response => SOLICITUD_DOCUMENTO_CONVERTER.toTarget(response))
+      map(response => SOLICITUD_DOCUMENTO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 

@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
+import { Language } from '@core/i18n/language';
 import { IInvencion } from '@core/models/pii/invencion';
 import { IInvencionGasto } from '@core/models/pii/invencion-gasto';
-import { IInvencionIngreso } from '@core/models/pii/invencion-ingreso';
 import { IInvencionInventor } from '@core/models/pii/invencion-inventor';
 import { Estado, IReparto } from '@core/models/pii/reparto';
 import { IRepartoEquipoInventor } from '@core/models/pii/reparto-equipo-inventor';
@@ -12,6 +12,7 @@ import { IDatoEconomico } from '@core/models/sgepii/dato-economico';
 import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { InvencionInventorService } from '@core/services/pii/invencion-inventor/invencion-inventor.service';
 import { InvencionGastoService } from '@core/services/pii/invencion/invencion-gasto/invencion-gasto.service';
 import { InvencionIngresoService } from '@core/services/pii/invencion/invencion-ingreso/invencion-ingreso.service';
@@ -26,9 +27,10 @@ import { NumberUtils } from '@core/utils/number.utils';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { BehaviorSubject, combineLatest, forkJoin, from, merge, Observable, of, Subject } from 'rxjs';
-import { catchError, concatMap, filter, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
+import { catchError, concatMap, distinctUntilChanged, filter, map, mergeMap, skip, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { IColumnDefinition } from 'src/app/module/csp/ejecucion-economica/ejecucion-economica-formulario/desglose-economico.fragment';
 import { InvencionRepartoDataResolverService } from '../../services/invencion-reparto-data-resolver.service';
+import { NGXLogger } from 'ngx-logger';
 
 export interface IRepartoEquipoInventorTableData {
   repartoEquipoInventor: IRepartoEquipoInventor;
@@ -48,8 +50,6 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
   private tramoReparto$ = new Subject<ITramoReparto>();
   private repartoEquipoInventorTableData$ = new BehaviorSubject<StatusWrapper<IRepartoEquipoInventorTableData>[]>([]);
   private readonly$: BehaviorSubject<boolean>;
-  private gastosInvencion: IDatoEconomico[];
-  private ingresosInvencion: IDatoEconomico[];
   private importeRepartoEquipoInventor = 0;
   private initialImporteEquipoInventor: number;
   private updatedRepartoEstado: Estado;
@@ -57,16 +57,21 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
   importeTotalSumEquipoInventorRoundingErrorParam = {};
   importeTotalSumEquipoInventor = 0;
   isRightTotalSumImporteTotalInventor = true;
-  displayGastosColumns: string[] = [];
-  gastosColumns: IColumnDefinition[] = [];
-  displayIngresosColumns: string[] = [];
-  ingresosColumns: IColumnDefinition[] = [];
+
+  displayColumnsGastos: string[] = [];
+  columnsGastos: IColumnDefinition[] = [];
+  columnsGastos$ = new BehaviorSubject<IColumnDefinition[]>([]);
+  private columnsGastosLanguage: Map<Language, IColumnDefinition[]> = new Map();
+  private datosEconomicosGastosLanguage: Map<Language, IDatoEconomico[]> = new Map();
+
+  displayColumnsIngresos: string[] = [];
+  columnsIngresos: IColumnDefinition[] = [];
+  columnsIngresos$ = new BehaviorSubject<IColumnDefinition[]>([]);
+  private columnsIngresosLanguage: Map<Language, IColumnDefinition[]> = new Map();
+  private datosEconomicosIngresosLanguage: Map<Language, IDatoEconomico[]> = new Map();
+
   displayEquipoInventorColumns: string[] = [];
-  private _displayEquipoInventorColumns = ['nombre', 'apellidos', 'persona',
-    'entidad', 'participacion', 'porcentajeRepartoInventor', 'importeNomina',
-    'importeProyecto', 'importeOtros', 'importeTotal'];
   displayEquipoInventorFooterColumns: string[] = [];
-  private _displayEquipoInventorFooterColumns: string[] = ['totalRepartoEquipoInventorCaption', 'importeTotal'];
 
   get importeEquipoInventor(): number {
     return this.reparto?.importeEquipoInventor;
@@ -81,6 +86,7 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
   }
 
   constructor(
+    private readonly logger: NGXLogger,
     private readonly invencion: IInvencion,
     private reparto: IReparto,
     private readonly dataResolverService: InvencionRepartoDataResolverService,
@@ -95,6 +101,7 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
     private readonly empresaService: EmpresaService,
     private readonly proyectoService: ProyectoService,
     private readonly repartoEquipoInventorService: RepartoEquipoInventorService,
+    private readonly languageService: LanguageService,
     private readonly decimalPipe: DecimalPipe
   ) {
     super(reparto?.id);
@@ -106,39 +113,106 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
     this.initializeGastos();
     this.initializeIngresos();
     this.initializeRepartoResultado();
+    this.initializeLanguageChangeSubscriptions();
+  }
+
+  public trackByColumnId(index, column: IColumnDefinition): string {
+    return column.id;
+  }
+
+  private initializeLanguageChangeSubscriptions(): void {
+    this.subscriptions.push(
+      this.languageService.languageChange$.pipe(
+        skip(1), // El primer valor se descarta para que se ejecute solo cuando se cambia el idioma
+        switchMap(language => forkJoin({
+          columnsGastos: this.getColumnasGastosReparto(this.invencion.id, language),
+          columnsIngresos: this.getColumnasIngresosReparto(language),
+          datosEconomicosGastos: this.getGastosReparto$(this.invencion.id, language),
+          datosEconomicosIngresos: this.getIngresosReparto$(this.invencion.id, language)
+        }))
+      ).subscribe(({ columnsGastos, columnsIngresos, datosEconomicosGastos, datosEconomicosIngresos }) => {
+        this.columnsGastos = columnsGastos;
+        this.columnsGastos$.next(this.columnsGastos);
+        this.displayColumnsGastos = this.getDisplayColumnsGastos(this.columnsGastos);
+
+        this.columnsIngresos = columnsIngresos;
+        this.columnsIngresos$.next(this.columnsIngresos);
+        this.displayColumnsIngresos = this.getDisplayColumnsIngresos(this.columnsIngresos);
+
+        // Actualiza en las tablas los valores de las columnas variables correspondientes al idioma actual 
+        this.repartoGastos$.next(this.repartoGastos$.value.map(repartoGasto => {
+          repartoGasto.invencionGasto.gasto.columnas = datosEconomicosGastos
+            .find(datoEconomicoGasto => datoEconomicoGasto.id === repartoGasto.invencionGasto.gasto.id)?.columnas
+          return repartoGasto;
+        }));
+
+        this.repartoIngresos$.next(this.repartoIngresos$.value.map(repartoIngreso => {
+          repartoIngreso.invencionIngreso.ingreso.columnas = datosEconomicosIngresos
+            .find(datoEconomicoIngreso => datoEconomicoIngreso.id === repartoIngreso.invencionIngreso.ingreso.id)?.columnas
+          return repartoIngreso;
+        }));
+      })
+    );
   }
 
   private initializeGastos(): void {
-    const invencionIdQueryParam = this.invencion.id.toString();
     this.subscriptions.push(
-      this.dataResolverService.getGastosColumns(invencionIdQueryParam).pipe(
-        tap((columns) => {
-          this.gastosColumns = columns;
-          this.displayGastosColumns = [
-            ...columns.map(column => column.id),
-            'solicitudProteccion',
-            'importePendienteDeducir',
-            'importeADeducir',
-          ];
+      forkJoin({
+        columnsGastos: this.getColumnasGastosReparto(this.invencion.id, this.languageService.getLanguage()),
+        repartoGastos: this.findRepartoGastos(this.reparto.id),
+        datosEconomicosGastos: this.getGastosReparto$(this.invencion.id, this.languageService.getLanguage())
+      }).pipe(
+        tap(({ columnsGastos }) => {
+          this.columnsGastos = columnsGastos;
+          this.columnsGastos$.next(this.columnsGastos);
+          this.displayColumnsGastos = this.getDisplayColumnsGastos(this.columnsGastos);
         }),
-        switchMap(() =>
-          forkJoin({
-            repartoGastos: this.repartoService.findGastos(this.reparto.id),
-            gastosInvencion: this.dataResolverService.getGastosReparto(invencionIdQueryParam)
-          })),
-        tap(({ gastosInvencion }) => this.proccessGastosInvencion(gastosInvencion)),
-        map(({ repartoGastos }) => repartoGastos.items),
-        switchMap(repartoGastos => this.fillRepartoGastosAdditionalData$(repartoGastos))
+        map(({ columnsGastos, datosEconomicosGastos, repartoGastos }) =>
+          this.proccessRepartoGastos(columnsGastos, datosEconomicosGastos, repartoGastos)
+        )
       ).subscribe(repartoGastos =>
         this.repartoGastos$.next(repartoGastos)
-      ));
+      )
+    );
   }
 
-  private proccessGastosInvencion(gastosInvencion: IDatoEconomico[]) {
-    this.gastosInvencion = gastosInvencion.map(gastoInvencion => ({
-      ...gastoInvencion,
-      columnas: this.processColumnsValues(gastoInvencion.columnas, this.gastosColumns)
+  private getColumnasGastosReparto(invencionId: number, lang: Language): Observable<IColumnDefinition[]> {
+    if (this.columnsGastosLanguage.has(lang)) {
+      return of(this.columnsGastosLanguage.get(lang));
+    }
+
+    return this.dataResolverService.getGastosColumns(invencionId).pipe(
+      tap(columns => this.columnsGastosLanguage.set(lang, columns))
+    );
+  }
+
+  private findRepartoGastos(repartoId: number): Observable<IRepartoGasto[]> {
+    return this.repartoService.findGastos(repartoId).pipe(
+      map((repartoGastos) => repartoGastos.items),
+      mergeMap(repartoGastos => this.fillRepartoGastosAdditionalData$(repartoGastos))
+    );
+  }
+
+  private getGastosReparto$(invencionId: number, lang: Language): Observable<IDatoEconomico[]> {
+    if (this.datosEconomicosGastosLanguage.has(lang)) {
+      return of(this.datosEconomicosGastosLanguage.get(lang));
+    }
+
+    return this.dataResolverService.getGastosReparto(invencionId).pipe(
+      tap(gastos => this.datosEconomicosGastosLanguage.set(lang, gastos))
+    );
+  }
+
+  private proccessRepartoGastos(columnsGastos: IColumnDefinition[], datosEconomicosGastos: IDatoEconomico[], repartoGastos: IRepartoGasto[]): IRepartoGasto[] {
+    const gastosInvencionProcessed = datosEconomicosGastos.map(datoEconomico => ({
+      ...datoEconomico,
+      columnas: this.processColumnsValues(datoEconomico.columnas, columnsGastos)
     }));
+
+    return repartoGastos.map(repartoGasto => {
+      repartoGasto.invencionGasto.gasto = gastosInvencionProcessed.find(gastoInvencion => gastoInvencion.id === repartoGasto.invencionGasto.gasto.id);
+      return repartoGasto;
+    });
   }
 
   private fillRepartoGastosAdditionalData$(repartoGastos: IRepartoGasto[]): Observable<IRepartoGasto[]> {
@@ -150,9 +224,9 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
 
   private fillRepartoGastoAdditionalData$(repartoGasto: IRepartoGasto): Observable<IRepartoGasto> {
     return this.invencionGastoService.findById(repartoGasto.invencionGasto.id).pipe(
-      mergeMap(invencionGasto =>
-        invencionGasto.solicitudProteccion?.id ? this.fillRelatedSolicitudProteccion(invencionGasto) : of(invencionGasto)),
-      map(invencionGasto => this.fillRelatedGasto(invencionGasto)),
+      switchMap(invencionGasto =>
+        invencionGasto.solicitudProteccion?.id ? this.fillRelatedSolicitudProteccion(invencionGasto) : of(invencionGasto)
+      ),
       map(invencionGasto => {
         repartoGasto.invencionGasto = invencionGasto;
         return repartoGasto;
@@ -170,61 +244,75 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
     );
   }
 
-  private fillRelatedGasto(invencionGasto: IInvencionGasto): IInvencionGasto {
-    // No existe en la API de Murcia el findById del InvencionGasto
-    invencionGasto.gasto = this.gastosInvencion.find(gastoInvencion => gastoInvencion.id === invencionGasto.gasto.id);
-    return invencionGasto;
-  }
-
   private initializeIngresos(): void {
     this.subscriptions.push(
-      this.dataResolverService.getIngresosColumns()
-        .pipe(
-          tap((columns) => {
-            this.ingresosColumns = columns;
-            this.displayIngresosColumns = [
-              ...columns.map((column) => column.id),
-              'importePendienteRepartir',
-              'importeARepartir',
-            ];
-          }),
-          switchMap(() =>
-            forkJoin({
-              repartoIngreso: this.repartoService.findIngresos(this.reparto.id),
-              ingresosInvencion: this.dataResolverService.getIngresosByInvencionId(this.invencion.id),
-            })
-          ),
-          tap(({ ingresosInvencion }) => this.proccessIngresosInvencion(ingresosInvencion)),
-          map(({ repartoIngreso }) => repartoIngreso.items),
-          switchMap(repartoIngreso => this.fillRepartoIngresosAdditionalData$(repartoIngreso))
+      forkJoin({
+        columnsIngresos: this.getColumnasIngresosReparto(this.languageService.getLanguage()),
+        repartoIngresos: this.findRepartoIngresos(this.reparto.id),
+        datosEconomicosIngresos: this.getIngresosReparto$(this.invencion.id, this.languageService.getLanguage())
+      }).pipe(
+        tap(({ columnsIngresos }) => {
+          this.columnsIngresos = columnsIngresos;
+          this.columnsIngresos$.next(this.columnsIngresos);
+          this.displayColumnsIngresos = this.getDisplayColumnsIngresos(this.columnsIngresos);
+        }),
+        map(({ columnsIngresos, datosEconomicosIngresos, repartoIngresos }) =>
+          this.proccessRepartoIngresos(columnsIngresos, datosEconomicosIngresos, repartoIngresos)
         )
-        .subscribe(repartoIngreso =>
-          this.repartoIngresos$.next(repartoIngreso)
-        ));
+      ).subscribe(repartoIngreso =>
+        this.repartoIngresos$.next(repartoIngreso)
+      )
+    );
   }
 
-  private proccessIngresosInvencion(ingresosInvencion: IDatoEconomico[]) {
-    this.ingresosInvencion = ingresosInvencion.map(
-      (ingresoInvencion) => ({
-        ...ingresoInvencion,
-        columnas: this.processColumnsValues(
-          ingresoInvencion.columnas,
-          this.ingresosColumns
-        ),
-      })
+  private getColumnasIngresosReparto(lang: Language): Observable<IColumnDefinition[]> {
+    if (this.columnsIngresosLanguage.has(lang)) {
+      return of(this.columnsIngresosLanguage.get(lang));
+    }
+
+    return this.dataResolverService.getIngresosColumns().pipe(
+      tap(columns => this.columnsIngresosLanguage.set(lang, columns))
     );
+  }
+
+  private findRepartoIngresos(repartoId: number): Observable<IRepartoIngreso[]> {
+    return this.repartoService.findIngresos(repartoId).pipe(
+      map((repartoIngresos) => repartoIngresos.items),
+      mergeMap(repartoIngresos => this.fillRepartoIngresosAdditionalData$(repartoIngresos))
+    );
+  }
+
+  private getIngresosReparto$(invencionId: number, lang: Language): Observable<IDatoEconomico[]> {
+    if (this.datosEconomicosIngresosLanguage.has(lang)) {
+      return of(this.datosEconomicosIngresosLanguage.get(lang));
+    }
+
+    return this.dataResolverService.getIngresosByInvencionId(invencionId).pipe(
+      tap(gastos => this.datosEconomicosIngresosLanguage.set(lang, gastos))
+    );
+  }
+
+  private proccessRepartoIngresos(columnsIngresos: IColumnDefinition[], datosEconomicosIngresos: IDatoEconomico[], repartoIngresos: IRepartoIngreso[]): IRepartoIngreso[] {
+    const ingresosInvencionProcessed = datosEconomicosIngresos.map(datoEconomico => ({
+      ...datoEconomico,
+      columnas: this.processColumnsValues(datoEconomico.columnas, columnsIngresos)
+    }));
+
+    return repartoIngresos.map(repartoIngreso => {
+      repartoIngreso.invencionIngreso.ingreso = ingresosInvencionProcessed.find(ingresoInvencion => ingresoInvencion.id === repartoIngreso.invencionIngreso.ingreso.id);
+      return repartoIngreso;
+    });
   }
 
   private fillRepartoIngresosAdditionalData$(repartoIngresos: IRepartoIngreso[]): Observable<IRepartoIngreso[]> {
     return from(repartoIngresos).pipe(
-      mergeMap(ingreso => this.fillRepartoIngresoAdditionalData$(ingreso)),
+      mergeMap(ingreso => this.fillRepartoIngresoInvencionIngreso$(ingreso)),
       toArray()
     );
   }
 
-  private fillRepartoIngresoAdditionalData$(repartoIngreso: IRepartoIngreso): Observable<IRepartoIngreso> {
+  private fillRepartoIngresoInvencionIngreso$(repartoIngreso: IRepartoIngreso): Observable<IRepartoIngreso> {
     return this.invencionIngresoService.findById(repartoIngreso.invencionIngreso.id).pipe(
-      map(invencionIngreso => this.fillRelatedIngreso(invencionIngreso)),
       map(invencionIngreso => {
         repartoIngreso.invencionIngreso = invencionIngreso;
         return repartoIngreso;
@@ -232,27 +320,20 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
     );
   }
 
-  private fillRelatedIngreso(invencionIngreso: IInvencionIngreso): IInvencionIngreso {
-    // No existe en la API de Murcia el findById del InvencionIngreso
-    invencionIngreso.ingreso = this.ingresosInvencion.find(ingresoInvencion => ingresoInvencion.id === invencionIngreso.ingreso.id);
-    return invencionIngreso;
-  }
-
   private initializeRepartoResultado(): void {
-    this.displayEquipoInventorColumns = this.isRepartoEjecutado ?
-      this._displayEquipoInventorColumns :
-      ['helpIcon', ...this._displayEquipoInventorColumns, 'acciones'];
-    this.displayEquipoInventorFooterColumns = this.isRepartoEjecutado ?
-      this._displayEquipoInventorFooterColumns :
-      [...this._displayEquipoInventorFooterColumns, 'acciones'];
-    this.subscriptions.push(this.getTotalRepartir$().pipe(
-      map(({ importeGastos, importeIngresos }) => importeIngresos - importeGastos),
-      filter(totalReparto => NumberUtils.roundNumber(totalReparto) > 0),
-      switchMap(totalReparto => forkJoin({
-        tramoReparto: this.getTramoReparto(totalReparto),
-        equiposInventor: this.getEquiposInventor(),
-      }),
-      )).subscribe(({ tramoReparto, equiposInventor }) => {
+    this.displayEquipoInventorColumns = this.getDisplayColumnsEquipoInventor();
+    this.displayEquipoInventorFooterColumns = this.getDisplayFooterColumnsEquipoInventor();
+
+    this.subscriptions.push(
+      this.getTotalRepartir$().pipe(
+        map(({ importeGastos, importeIngresos }) => importeIngresos - importeGastos),
+        filter(totalReparto => NumberUtils.roundNumber(totalReparto) > 0),
+        switchMap(totalReparto => forkJoin({
+          tramoReparto: this.getTramoReparto(totalReparto),
+          equiposInventor: this.getEquiposInventor(),
+        }),
+        )
+      ).subscribe(({ tramoReparto, equiposInventor }) => {
         const participacionTotal = equiposInventor.reduce(
           (accum, equipoIventor) => accum + equipoIventor.invencionInventor.participacion,
           0
@@ -267,7 +348,8 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
           return new StatusWrapper(equipoInventorTableData);
         }));
         this.tramoReparto$.next(tramoReparto);
-      }));
+      })
+    );
   }
 
   private calculatePorcentajeRepartoInventor(equipoInventor: IRepartoEquipoInventor, participacionTotal: number): number {
@@ -397,6 +479,10 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
       map(inventor => {
         invencionInventor.inventor = inventor;
         return invencionInventor;
+      }),
+      catchError(err => {
+        this.logger.error(err);
+        return of(invencionInventor);
       })
     );
   }
@@ -406,7 +492,11 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
       map(entidad => {
         inventor.entidad = entidad;
         return inventor;
-      })
+      }),
+      catchError(err => {
+        this.logger.error(err);
+        return of(inventor);
+      }),
     );
   }
 
@@ -448,7 +538,8 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
       map(repartoGastos => repartoGastos.reduce((accum, current) => {
         const importe = current.importeADeducir ?? 0;
         return accum + importe;
-      }, 0))
+      }, 0)),
+      distinctUntilChanged()
     );
   }
 
@@ -458,7 +549,8 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
       map(repartoIngresos => repartoIngresos.reduce((accum, current) => {
         const importe = current.importeARepartir ?? 0;
         return accum + importe;
-      }, 0))
+      }, 0)),
+      distinctUntilChanged()
     );
   }
 
@@ -598,9 +690,9 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
     return this.repartoService.ejecutar(this.reparto.id)
       .pipe(
         tap(() => {
-          this.displayEquipoInventorColumns = this._displayEquipoInventorColumns;
-          this.displayEquipoInventorFooterColumns = this._displayEquipoInventorFooterColumns;
           this.reparto.estado = Estado.EJECUTADO;
+          this.displayEquipoInventorColumns = this.getDisplayColumnsEquipoInventor();
+          this.displayEquipoInventorFooterColumns = this.getDisplayColumnsEquipoInventor();
           this.readonly$.next(true);
         }),
         catchError(error => {
@@ -711,4 +803,63 @@ export class InvencionRepartoEquipoInventorFragment extends Fragment {
     });
     return values;
   }
+
+  private getDisplayColumnsGastos(columns: IColumnDefinition[]): string[] {
+    return [
+      ...columns.map(column => column.id),
+      'solicitudProteccion',
+      'importePendienteDeducir',
+      'importeADeducir'
+    ];
+  }
+
+  private getDisplayColumnsIngresos(columns: IColumnDefinition[]): string[] {
+    return [
+      ...columns.map((column) => column.id),
+      'importePendienteRepartir',
+      'importeARepartir'
+    ];
+  }
+
+  private getDisplayColumnsEquipoInventor(): string[] {
+    const displayEquipoInventorColumns = [
+      'nombre',
+      'apellidos',
+      'persona',
+      'entidad',
+      'participacion',
+      'porcentajeRepartoInventor',
+      'importeNomina',
+      'importeProyecto',
+      'importeOtros',
+      'importeTotal'
+    ];
+
+    if (this.isRepartoEjecutado) {
+      return displayEquipoInventorColumns;
+    }
+
+    return [
+      'helpIcon',
+      ...displayEquipoInventorColumns,
+      'acciones'
+    ];
+  }
+
+  private getDisplayFooterColumnsEquipoInventor(): string[] {
+    const displayEquipoInventorFooterColumns = [
+      'totalRepartoEquipoInventorCaption',
+      'importeTotal'
+    ];
+
+    if (this.isRepartoEjecutado) {
+      return displayEquipoInventorFooterColumns;
+    }
+
+    return [
+      ...displayEquipoInventorFooterColumns,
+      'acciones'
+    ];
+  }
+
 }

@@ -18,7 +18,7 @@
         <mat-icon class="warning">feedback</mat-icon>
       </div>
       <div fxFlex>
-        {{ to.comentario?.texto }}
+        <sgi-i18n-display-field [field]="to.comentario?.texto"></sgi-i18n-display-field>
       </div>
     </div>
     <ng-container #fieldComponent></ng-container>

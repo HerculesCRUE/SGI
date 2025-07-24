@@ -7,7 +7,7 @@
                       http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-  <changeSet context="!test" author="master" id="0.5.0-solicitud-proyecto">
+  <changeSet context="!test" author="master" id="0.5.0-solicitud-proyecto" dbms="!h2">
     <update tableName="solicitud_proyecto">
       <column name="rol_universidad"
         valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Socio')" />
@@ -20,7 +20,20 @@
     </update>
   </changeSet>
 
-  <changeSet context="!test" author="master" id="0.5.0-proyecto">
+  <changeSet context="!test" author="master" id="0.5.0-solicitud-proyecto" dbms="h2">
+    <update tableName="solicitud_proyecto">
+      <column name="rol_universidad"
+        valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Socio')" />
+      <where>coordinador_externo = true</where>
+    </update>
+    <update tableName="solicitud_proyecto">
+      <column name="rol_universidad"
+        valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Coordinador')" />
+      <where>coordinador_externo = false</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0.5.0-proyecto" dbms="!h2">
     <update tableName="proyecto">
       <column name="rol_universidad"
         valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Socio')" />
@@ -30,6 +43,23 @@
       <column name="rol_universidad"
         valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Coordinador')" />
       <where>coordinador_externo = '0'</where>
+    </update>
+    <update tableName="proyecto">
+      <column name="fecha_inicio_started" valueBoolean="true" />
+      <where>fecha_inicio IS NOT NULL</where>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="0.5.0-proyecto" dbms="h2">
+    <update tableName="proyecto">
+      <column name="rol_universidad"
+        valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Socio')" />
+      <where>coordinador_externo = true</where>
+    </update>
+    <update tableName="proyecto">
+      <column name="rol_universidad"
+        valueComputed="(select id from ${schemaPrefix}rol_socio WHERE nombre = 'Coordinador')" />
+      <where>coordinador_externo = false</where>
     </update>
     <update tableName="proyecto">
       <column name="fecha_inicio_started" valueBoolean="true" />

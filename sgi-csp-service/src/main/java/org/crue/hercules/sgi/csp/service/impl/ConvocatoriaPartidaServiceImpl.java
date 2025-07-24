@@ -10,9 +10,12 @@ import org.crue.hercules.sgi.csp.repository.ConfiguracionRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPartidaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaPartidaSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPartidaService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -31,6 +34,12 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @Validated
 public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaService {
+
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_MODEL_CONVOCATORIA_PARTIDA = "org.crue.hercules.sgi.csp.model.ConvocatoriaPartida.message";
+  private static final String MSG_ENTITY_MODIFICABLE = "org.springframework.util.Assert.entity.modificable.message";
+  private static final String MSG_MODIFICABLE_DESCRIPCION = "convocatoriaPartida.modificable.descripcion";
 
   private final ConvocatoriaPartidaRepository repository;
   private final ConfiguracionRepository configuracionRepository;
@@ -56,10 +65,9 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
   public ConvocatoriaPartida create(@Valid ConvocatoriaPartida convocatoriaPartida) {
     log.debug("create(ConvocatoriaPartida convocatoriaPartida) - start");
 
-    Assert.isNull(convocatoriaPartida.getId(), "Id tiene que ser null para crear ConvocatoriaPartida");
+    AssertHelper.idIsNull(convocatoriaPartida.getId(), ConvocatoriaPartida.class);
+    AssertHelper.idNotNull(convocatoriaPartida.getConvocatoriaId(), Convocatoria.class);
 
-    Assert.notNull(convocatoriaPartida.getConvocatoriaId(),
-        "Id Convocatoria no puede ser null para crear ConvocatoriaPartida");
     this.validate(convocatoriaPartida);
 
     ConvocatoriaPartida returnValue = repository.save(convocatoriaPartida);
@@ -81,8 +89,7 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
   public ConvocatoriaPartida update(@Valid ConvocatoriaPartida convocatoriaPartidaActualizar) {
     log.debug("update(ConvocatoriaPartida convocatoriaPartidaActualizar) - start");
 
-    Assert.notNull(convocatoriaPartidaActualizar.getId(),
-        "ConvocatoriaPartida id no puede ser null para actualizar un ConvocatoriaPartida");
+    AssertHelper.idNotNull(convocatoriaPartidaActualizar.getId(), ConvocatoriaPartida.class);
     this.validate(convocatoriaPartidaActualizar);
 
     // Restricción de convocatorias asociadas a proyectos con presupuesto
@@ -105,7 +112,7 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ConvocatoriaPartida id no puede ser null para eliminar un ConvocatoriaPartida");
+    AssertHelper.idNotNull(id, ConvocatoriaPartida.class);
 
     if (!repository.existsById(id)) {
       throw new ConvocatoriaPartidaNotFoundException(id);
@@ -163,17 +170,21 @@ public class ConvocatoriaPartidaServiceImpl implements ConvocatoriaPartidaServic
   private void validate(ConvocatoriaPartida convocatoriaPartida) {
     log.debug("validate(ConvocatoriaPartida convocatoriaPartida) - start");
 
-    Assert.isTrue(convocatoriaPartida.getConvocatoriaId() != null,
-        "Id Convocatoria no puede ser null para realizar la acción sobre ConvocatoriaPartida");
+    AssertHelper.idNotNull(convocatoriaPartida.getConvocatoriaId(), Convocatoria.class);
 
     configuracionRepository.findFirstByOrderByIdAsc()
         .ifPresent(configuracion -> Assert.isTrue(
-            Boolean.TRUE.equals(configuracion.getPartidasPresupuestariasSGE()) ||
+            Boolean.TRUE.equals(configuracion.getPartidasPresupuestariasSgeEnabled()) ||
                 convocatoriaPartida.getCodigo().matches(configuracion.getFormatoPartidaPresupuestaria()),
-            "Formato de codigo no valido"));
+            ApplicationContextSupport.getMessage("formato.codigo.invalido")));
 
-    Assert.isTrue(this.modificable(convocatoriaPartida.getId(), ConvocatoriaAuthorityHelper.CSP_CON_E),
-        "No se puede modificar ConvocatoriaPartida. No tiene los permisos necesarios o el proyecto de la convocatoria tiene presupuestos anuales asignados.");
+    Assert.isTrue(this.modificable(convocatoriaPartida.getId(),
+        ConvocatoriaAuthorityHelper.CSP_CON_E),
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_MODIFICABLE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA_PARTIDA))
+            .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_MODIFICABLE_DESCRIPCION))
+            .build());
 
     log.debug("validate(ConvocatoriaPartida convocatoriaPartida) - end");
   }

@@ -6,6 +6,7 @@ import { FormFragment } from '@core/services/action-service';
 import { ProyectoProrrogaService } from '@core/services/csp/proyecto-prorroga.service';
 import { DialogService } from '@core/services/dialog.service';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { DateTime } from 'luxon';
 import { NEVER, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -47,7 +48,7 @@ export class ProyectoProrrogaDatosGeneralesFragment extends FormFragment<IProyec
         ]),
         fechaFin: new FormControl({ value: null, disabled: true }),
         importe: new FormControl({ value: '', disabled: true }),
-        observaciones: new FormControl('', [Validators.maxLength(250)]),
+        observaciones: new FormControl([], [I18nValidators.maxLength(2000)]),
         fechaUltimaConcesion: new FormControl(this.fechaUltimaConcesion)
       },
       {

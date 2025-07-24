@@ -61,15 +61,25 @@ export class TipoProteccionListadoComponent extends AbstractTablePaginationCompo
     private readonly dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super();
+    super(translate);
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'nombre') {
+        return 'nombre.value';
+      }
+      if (column === 'descripcion') {
+        return 'descripcion.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       TIPO_PROTECCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

@@ -1,15 +1,16 @@
-import { DateTime } from 'luxon';
-import { IInvencion } from './invencion';
-import { IViaProteccion } from './via-proteccion';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
-import { ITipoCaducidad } from './tipo-caducidad';
-import { IPais } from '../sgo/pais';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
+import { DateTime } from 'luxon';
 import { IEmpresa } from '../sgemp/empresa';
+import { IPais } from '../sgo/pais';
+import { IInvencion } from './invencion';
+import { ITipoCaducidad } from './tipo-caducidad';
+import { IViaProteccion } from './via-proteccion';
 
 export interface ISolicitudProteccion {
   id: number;
   invencion: IInvencion;
-  titulo: string;
+  titulo: I18nFieldValue[];
   fechaPrioridadSolicitud: DateTime;
   fechaFinPriorPresFasNacRec: DateTime;
   fechaPublicacion: DateTime;
@@ -24,7 +25,7 @@ export interface ISolicitudProteccion {
   tipoCaducidad: ITipoCaducidad;
   agentePropiedad: IEmpresa;
   paisProteccion: IPais;
-  comentarios: string;
+  comentarios: I18nFieldValue[];
 }
 
 export enum Estado {

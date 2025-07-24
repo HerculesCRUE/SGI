@@ -9,6 +9,7 @@ import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { StringValidator } from '@core/validators/string-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
@@ -174,7 +175,7 @@ export class ProyectoPeriodoJustificacionModalComponent
       ),
       fechaInicioPresentacion: new FormControl(this.data.proyectoPeriodoJustificacion?.fechaInicioPresentacion),
       fechaFinPresentacion: new FormControl(this.data.proyectoPeriodoJustificacion?.fechaFinPresentacion),
-      observaciones: new FormControl(this.data.proyectoPeriodoJustificacion?.observaciones, Validators.maxLength(2000)),
+      observaciones: new FormControl(this.data.proyectoPeriodoJustificacion?.observaciones, I18nValidators.maxLength(2000)),
 
       /*Convocatoria*/
       numPeriodoConvocatoria: new FormControl({ value: this.data.convocatoriaPeriodoJustificacion?.numPeriodo, disabled: true }),

@@ -15,6 +15,7 @@ import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { CspSharedModule } from '../../../shared/csp-shared.module';
 import { GrupoActionService } from '../../grupo.action.service';
 import { GrupoDatosGeneralesComponent } from './grupo-datos-generales.component';
+import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 describe('GrupoDatosGeneralesComponent', () => {
   let component: GrupoDatosGeneralesComponent;
@@ -39,7 +40,8 @@ describe('GrupoDatosGeneralesComponent', () => {
         SgempSharedModule,
         SgpSharedModule,
         CspSharedModule,
-        SgeSharedModule
+        SgeSharedModule,
+        CKEditorModule
       ],
       providers: [
         GrupoActionService,

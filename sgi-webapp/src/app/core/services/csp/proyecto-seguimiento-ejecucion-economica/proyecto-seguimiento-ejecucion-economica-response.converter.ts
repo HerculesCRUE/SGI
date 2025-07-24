@@ -1,10 +1,11 @@
+import { I18N_FIELD_RESPONSE_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IProyectoSeguimientoEjecucionEconomica } from '@core/models/csp/proyecto-seguimiento-ejecucion-economica';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IProyectoSeguimientoEjecucionEconomicaResponse } from './proyecto-seguimiento-ejecucion-economica-response';
 
 class ProyectoSeguimientoEjecucionEconomicaResponseConverter
-  extends SgiBaseConverter<IProyectoSeguimientoEjecucionEconomicaResponse, IProyectoSeguimientoEjecucionEconomica>{
+  extends SgiBaseConverter<IProyectoSeguimientoEjecucionEconomicaResponse, IProyectoSeguimientoEjecucionEconomica> {
   toTarget(value: IProyectoSeguimientoEjecucionEconomicaResponse): IProyectoSeguimientoEjecucionEconomica {
     if (!value) {
       return value as unknown as IProyectoSeguimientoEjecucionEconomica;
@@ -17,10 +18,10 @@ class ProyectoSeguimientoEjecucionEconomicaResponseConverter
       fechaFinDefinitiva: LuxonUtils.fromBackend(value.fechaFinDefinitiva),
       importeConcedido: value.importeConcedido,
       importeConcedidoCostesIndirectos: value.importeConcedidoCostesIndirectos,
-      nombre: value.nombre,
+      nombre: value.nombre ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.nombre) : [],
       proyectoId: value.proyectoId,
       proyectoSgeRef: value.proyectoSgeRef,
-      tituloConvocatoria: value.tituloConvocatoria
+      tituloConvocatoria: value.tituloConvocatoria ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.tituloConvocatoria) : []
     };
   }
   fromTarget(value: IProyectoSeguimientoEjecucionEconomica): IProyectoSeguimientoEjecucionEconomicaResponse {
@@ -35,10 +36,10 @@ class ProyectoSeguimientoEjecucionEconomicaResponseConverter
       fechaFinDefinitiva: LuxonUtils.toBackend(value.fechaFinDefinitiva),
       importeConcedido: value.importeConcedido,
       importeConcedidoCostesIndirectos: value.importeConcedidoCostesIndirectos,
-      nombre: value.nombre,
+      nombre: value.nombre ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.nombre) : [],
       proyectoId: value.proyectoId,
       proyectoSgeRef: value.proyectoSgeRef,
-      tituloConvocatoria: value.tituloConvocatoria
+      tituloConvocatoria: value.tituloConvocatoria ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.tituloConvocatoria) : []
     };
   }
 }

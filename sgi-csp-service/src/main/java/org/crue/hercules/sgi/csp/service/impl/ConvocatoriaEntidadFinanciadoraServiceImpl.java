@@ -16,8 +16,11 @@ import org.crue.hercules.sgi.csp.repository.TipoFinanciacionRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaEntidadFinanciadoraSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEntidadFinanciadoraService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,6 +38,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaEntidadFinanciadoraService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_CREAR = "action.crear";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_FIELD_ACTION_ELIMINAR = "action.eliminar";
+  private static final String MSG_FIELD_PORCENTAJE_NEGATIVO = "porcentajeFinanciacion.negativo";
+  private static final String MSG_MODEL_CONVOCATORIA_ENTIDAD_FINANCIADORA = "org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA_PERMISOS = "org.springframework.util.Assert.accion.denegada.permisos.message";
+  private static final String MSG_MODEL_FUENTE_FINANCIACION = "org.crue.hercules.sgi.csp.model.FuenteFinanciacion.message";
+  private static final String MSG_MODEL_TIPO_FINANCIACION = "org.crue.hercules.sgi.csp.model.TipoFinanciacion.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
 
   private final ConvocatoriaEntidadFinanciadoraRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
@@ -69,16 +84,13 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
   public ConvocatoriaEntidadFinanciadora create(ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora) {
     log.debug("create(ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadora) - start");
 
-    Assert.isNull(convocatoriaEntidadFinanciadora.getId(),
-        "ConvocatoriaEntidadFinanciadora id tiene que ser null para crear un nuevo ConvocatoriaEntidadFinanciadora");
-
-    Assert.notNull(convocatoriaEntidadFinanciadora.getConvocatoriaId(),
-        "Id Convocatoria no puede ser null para crear ConvocatoriaEntidadFinanciadora");
+    AssertHelper.idIsNull(convocatoriaEntidadFinanciadora.getId(), ConvocatoriaEntidadFinanciadora.class);
+    AssertHelper.idNotNull(convocatoriaEntidadFinanciadora.getConvocatoriaId(), Convocatoria.class);
 
     Assert.isTrue(
         convocatoriaEntidadFinanciadora.getPorcentajeFinanciacion() == null
             || convocatoriaEntidadFinanciadora.getPorcentajeFinanciacion().floatValue() >= 0,
-        "PorcentajeFinanciacion no puede ser negativo");
+        ApplicationContextSupport.getMessage(MSG_FIELD_PORCENTAJE_NEGATIVO));
 
     Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaEntidadFinanciadora.getConvocatoriaId())
         .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaEntidadFinanciadora.getConvocatoriaId()));
@@ -90,7 +102,12 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
                 ConvocatoriaAuthorityHelper.CSP_CON_C,
                 ConvocatoriaAuthorityHelper.CSP_CON_E
             }),
-        "No se puede crear ConvocatoriaEntidadFinanciadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+            .parameter(MSG_KEY_ENTITY,
+                ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA_ENTIDAD_FINANCIADORA))
+            .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_CREAR))
+            .build());
 
     if (convocatoriaEntidadFinanciadora.getFuenteFinanciacion() != null) {
       if (convocatoriaEntidadFinanciadora.getFuenteFinanciacion().getId() == null) {
@@ -101,7 +118,11 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
                 .orElseThrow(() -> new FuenteFinanciacionNotFoundException(
                     convocatoriaEntidadFinanciadora.getFuenteFinanciacion().getId())));
         Assert.isTrue(convocatoriaEntidadFinanciadora.getFuenteFinanciacion().getActivo(),
-            "La FuenteFinanciacion debe estar Activo");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_FUENTE_FINANCIACION))
+                .parameter(MSG_KEY_FIELD, convocatoriaEntidadFinanciadora.getFuenteFinanciacion().getNombre())
+                .build());
       }
     }
 
@@ -114,7 +135,11 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
                 .orElseThrow(() -> new TipoFinanciacionNotFoundException(
                     convocatoriaEntidadFinanciadora.getTipoFinanciacion().getId())));
         Assert.isTrue(convocatoriaEntidadFinanciadora.getTipoFinanciacion().getActivo(),
-            "El TipoFinanciacion debe estar Activo");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_FUENTE_FINANCIACION))
+                .parameter(MSG_KEY_FIELD, convocatoriaEntidadFinanciadora.getFuenteFinanciacion().getNombre())
+                .build());
       }
     }
 
@@ -138,13 +163,12 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
       ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadoraActualizar) {
     log.debug("update(ConvocatoriaEntidadFinanciadora convocatoriaEntidadFinanciadoraActualizar) - start");
 
-    Assert.notNull(convocatoriaEntidadFinanciadoraActualizar.getId(),
-        "ConvocatoriaEntidadFinanciadora id no puede ser null para actualizar un ConvocatoriaEntidadFinanciadora");
+    AssertHelper.idNotNull(convocatoriaEntidadFinanciadoraActualizar.getId(), ConvocatoriaEntidadFinanciadora.class);
 
     Assert.isTrue(
         convocatoriaEntidadFinanciadoraActualizar.getPorcentajeFinanciacion() == null
             || convocatoriaEntidadFinanciadoraActualizar.getPorcentajeFinanciacion().floatValue() >= 0,
-        "PorcentajeFinanciacion no puede ser negativo");
+        ApplicationContextSupport.getMessage(MSG_FIELD_PORCENTAJE_NEGATIVO));
 
     if (convocatoriaEntidadFinanciadoraActualizar.getFuenteFinanciacion() != null) {
       if (convocatoriaEntidadFinanciadoraActualizar.getFuenteFinanciacion().getId() == null) {
@@ -176,7 +200,11 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
                     && Objects.equals(convocatoriaEntidadFinanciadora.getFuenteFinanciacion()
                         .getId(), convocatoriaEntidadFinanciadoraActualizar.getFuenteFinanciacion().getId()))
                     || convocatoriaEntidadFinanciadoraActualizar.getFuenteFinanciacion().getActivo(),
-                "La FuenteFinanciacion debe estar Activo");
+                () -> ProblemMessage.builder()
+                    .key(MSG_ENTITY_INACTIVO)
+                    .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_FUENTE_FINANCIACION))
+                    .parameter(MSG_KEY_FIELD, convocatoriaEntidadFinanciadora.getFuenteFinanciacion().getNombre())
+                    .build());
           }
 
           if (convocatoriaEntidadFinanciadoraActualizar.getTipoFinanciacion() != null) {
@@ -185,7 +213,12 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
                     && Objects.equals(convocatoriaEntidadFinanciadora.getTipoFinanciacion()
                         .getId(), convocatoriaEntidadFinanciadoraActualizar.getTipoFinanciacion().getId()))
                     || convocatoriaEntidadFinanciadoraActualizar.getTipoFinanciacion().getActivo(),
-                "El TipoFinanciacion debe estar Activo");
+                () -> ProblemMessage.builder()
+                    .key(MSG_ENTITY_INACTIVO)
+                    .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FINANCIACION))
+                    .parameter(MSG_KEY_FIELD,
+                        convocatoriaEntidadFinanciadoraActualizar.getTipoFinanciacion().getNombre())
+                    .build());
           }
 
           // comprobar si convocatoria es modificable
@@ -193,7 +226,12 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
               convocatoriaService.isRegistradaConSolicitudesOProyectos(
                   convocatoriaEntidadFinanciadora.getConvocatoriaId(), null,
                   new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E }),
-              "No se puede modificar ConvocatoriaEntidadFinanciadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+              () -> ProblemMessage.builder()
+                  .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+                  .parameter(MSG_KEY_ENTITY,
+                      ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA_ENTIDAD_FINANCIADORA))
+                  .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+                  .build());
 
           convocatoriaEntidadFinanciadora
               .setFuenteFinanciacion(convocatoriaEntidadFinanciadoraActualizar.getFuenteFinanciacion());
@@ -221,8 +259,7 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id,
-        "ConvocatoriaEntidadFinanciadora id no puede ser null para desactivar un ConvocatoriaEntidadFinanciadora");
+    AssertHelper.idNotNull(id, ConvocatoriaEntidadFinanciadora.class);
 
     Optional<ConvocatoriaEntidadFinanciadora> entidadFinanciadora = repository.findById(id);
     if (entidadFinanciadora.isPresent()) {
@@ -230,7 +267,12 @@ public class ConvocatoriaEntidadFinanciadoraServiceImpl implements ConvocatoriaE
       Assert.isTrue(
           convocatoriaService.isRegistradaConSolicitudesOProyectos(entidadFinanciadora.get().getConvocatoriaId(),
               null, new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E }),
-          "No se puede eliminar ConvocatoriaEntidadFinanciadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+              .parameter(MSG_KEY_ENTITY,
+                  ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA_ENTIDAD_FINANCIADORA))
+              .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_ELIMINAR))
+              .build());
     } else {
       throw new ConvocatoriaEntidadFinanciadoraNotFoundException(id);
     }

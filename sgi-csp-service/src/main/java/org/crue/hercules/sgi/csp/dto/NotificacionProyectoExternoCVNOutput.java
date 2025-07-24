@@ -2,6 +2,9 @@ package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVNTitulo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NotificacionProyectoExternoCVNOutput implements Serializable {
   private Long id;
-  private String titulo;
+  private Collection<NotificacionProyectoExternoCVNTitulo> titulo;
   private Long autorizacionId;
   private Long proyectoId;
   private String ambitoGeografico;

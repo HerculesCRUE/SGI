@@ -2,13 +2,15 @@ import { NgxMatDatetimePickerModule } from '@angular-material-components/datetim
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nComponentsModule } from '@components/i18n/i18n-components.module';
 import { requiredRowTable } from '@formly-forms/validators/utils.validator';
 import { MaterialDesignModule } from '@material/material-design.module';
-import { FormlyModule } from '@ngx-formly/core';
+import { FORMLY_CONFIG, FormlyModule } from '@ngx-formly/core';
 import { FormlySelectModule } from '@ngx-formly/core/select';
 import { FormlyMaterialModule } from '@ngx-formly/material';
 import { FormlyMatDatepickerModule } from '@ngx-formly/material/datepicker';
-import { TranslateModule } from '@ngx-translate/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { SharedModule } from '@shared/shared.module';
 import { DateTimePickerTypeComponent } from './types/datetimepicker.type';
 import { SelectAttributesTypeComponent } from './types/select-attributes.type';
@@ -18,6 +20,9 @@ import { TableCRUDModalComponent } from './types/table-crud/table-crud-modal/tab
 import { TableCRUDTypeComponent } from './types/table-crud/table-crud.type';
 import { GlobalWrapperComponent } from './wrappers/global/global.wrapper';
 import { MatCardGroupWrapperComponent } from './wrappers/mat-card-group/mat-card-group.wrapper';
+
+const MSG_FORMLY_VALIDATIONS_ONE_ROW_REQUIRED = marker('msg.formly.validations.oneRowRequired');
+const MSG_FORMLY_VALIDATIONS_REQUIRED = marker('msg.formly.validations.required');
 
 @NgModule({
   declarations: [
@@ -41,6 +46,7 @@ import { MatCardGroupWrapperComponent } from './wrappers/mat-card-group/mat-card
     FormlyMatDatepickerModule,
     FormlySelectModule,
     FormlyMaterialModule,
+    I18nComponentsModule,
     FormlyModule.forChild({
       types: [
         {
@@ -84,10 +90,6 @@ import { MatCardGroupWrapperComponent } from './wrappers/mat-card-group/mat-card
       ],
       validators: [
         { name: 'oneRowRequired', validation: requiredRowTable },
-      ],
-      validationMessages: [
-        { name: 'required', message: 'El campo es obligatorio' },
-        { name: 'oneRowRequired', message: 'La tabla debe contener al menos una fila' },
       ]
     })
   ],
@@ -100,6 +102,27 @@ import { MatCardGroupWrapperComponent } from './wrappers/mat-card-group/mat-card
     DateTimePickerTypeComponent,
     MatCardGroupWrapperComponent,
     GlobalWrapperComponent
+  ],
+  providers: [
+    {
+      provide: FORMLY_CONFIG,
+      useFactory: (translate: TranslateService) => {
+        return {
+          validationMessages: [
+            {
+              name: 'oneRowRequired',
+              message: () => translate.get(MSG_FORMLY_VALIDATIONS_ONE_ROW_REQUIRED)
+            },
+            {
+              name: 'required',
+              message: () => translate.get(MSG_FORMLY_VALIDATIONS_REQUIRED)
+            }
+          ]
+        };
+      },
+      deps: [TranslateService],
+      multi: true
+    }
   ]
 })
 export class SharedFormlyFormsModule { }

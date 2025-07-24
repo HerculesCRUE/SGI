@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,9 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity.OnActivar;
+import org.crue.hercules.sgi.csp.validation.UniqueNombreProgramaActivo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,15 +36,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@UniqueNombreProgramaActivo(groups = { BaseEntity.Create.class, BaseEntity.Update.class, OnActivar.class })
 public class Programa extends BaseEntity {
 
   /**
    * Serial version
    */
   private static final long serialVersionUID = 1L;
-
-  public static final int NOMBRE_LENGTH = 200;
-  public static final int DESCRIPCION_LENGTH = 4000;
 
   /** Id. */
   @Id
@@ -45,15 +52,19 @@ public class Programa extends BaseEntity {
   private Long id;
 
   /** Nombre. */
-  @Column(name = "nombre", length = Programa.NOMBRE_LENGTH, nullable = false)
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "programa_nombre", joinColumns = @JoinColumn(name = "programa_id"))
   @NotEmpty
-  @Size(max = Programa.NOMBRE_LENGTH)
-  private String nombre;
+  @Valid
+  @Builder.Default
+  private Set<ProgramaNombre> nombre = new HashSet<>();
 
   /** Descripcion. */
-  @Column(name = "descripcion", length = Programa.DESCRIPCION_LENGTH, nullable = true, columnDefinition = "clob")
-  @Size(max = Programa.DESCRIPCION_LENGTH)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "programa_descripcion", joinColumns = @JoinColumn(name = "programa_id"))
+  @Valid
+  @Builder.Default
+  private Set<ProgramaDescripcion> descripcion = new HashSet<>();
 
   /** Programa padre. */
   @ManyToOne

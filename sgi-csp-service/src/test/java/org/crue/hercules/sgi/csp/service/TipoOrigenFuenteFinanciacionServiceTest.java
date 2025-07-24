@@ -1,11 +1,15 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoOrigenFuenteFinanciacion;
+import org.crue.hercules.sgi.csp.model.TipoOrigenFuenteFinanciacionNombre;
 import org.crue.hercules.sgi.csp.repository.TipoOrigenFuenteFinanciacionRepository;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -120,11 +124,13 @@ class TipoOrigenFuenteFinanciacionServiceTest extends BaseServiceTest {
    * @return el objeto TipoOrigenFuenteFinanciacion
    */
   TipoOrigenFuenteFinanciacion generarMockTipoOrigenFuenteFinanciacion(Long id, String nombre) {
+    Set<TipoOrigenFuenteFinanciacionNombre> tipoOrigenFuenteFinanciacionNombre = new HashSet<>();
+    tipoOrigenFuenteFinanciacionNombre.add(new TipoOrigenFuenteFinanciacionNombre(Language.ES, nombre));
 
     TipoOrigenFuenteFinanciacion tipoOrigenFuenteFinanciacion = new TipoOrigenFuenteFinanciacion();
     tipoOrigenFuenteFinanciacion.setId(id);
     tipoOrigenFuenteFinanciacion.setActivo(true);
-    tipoOrigenFuenteFinanciacion.setNombre(nombre);
+    tipoOrigenFuenteFinanciacion.setNombre(tipoOrigenFuenteFinanciacionNombre);
 
     return tipoOrigenFuenteFinanciacion;
   }

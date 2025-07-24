@@ -9,6 +9,7 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { PROYECTO_SOCIO_DATA_KEY } from '../../proyecto-socio-data.resolver';
 import { IProyectoSocioData, ProyectoSocioActionService } from '../../proyecto-socio.action.service';
 import { ProyectoSocioEquipoComponent } from './proyecto-socio-equipo.component';
@@ -40,7 +41,8 @@ describe('ProyectoSocioEquipoComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
-        SharedModule
+        SharedModule,
+        SgpSharedModule
       ],
       providers: [
         ProyectoSocioActionService,

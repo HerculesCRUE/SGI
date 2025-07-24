@@ -1,0 +1,463 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <property name="defaultLang" value="es" />
+
+  <changeSet context="!test" author="master" id="00.08.00-resources-new-es">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <changeLogPropertyDefined property="defaultLang" value="es" />
+      </not>
+    </preConditions>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-csp-certificado-autorizacion-proyecto-externo-docx-es" />
+      <column name="description"
+        value="Informe del certificado de autorización del proyecto externo en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-acta-docx-es" />
+      <column name="description"
+        value="Informe del acta en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-eti-acta.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-acta.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-acta-docx-es" />
+      <column name="description"
+        value="Informe de los bloques apartados acta en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-eti-bloque-apartado-acta.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-bloque-apartado-acta.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-ficha-evaluador-docx-es" />
+      <column name="description"
+        value="Informe de los bloques apartados de la ficha de evaluador en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-docx-es" />
+      <column name="description"
+        value="Informe bloques apartados de las evaluaciones en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-eti-bloque-apartado.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-bloque-apartado.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-modificacion-docx-es" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria de modificación en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx-es" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria nueva en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx-es" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria de ratificación en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-retrospectiva-docx-es" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria de retrospectiva en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-retrospectiva.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-retrospectiva.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-docx-es" />
+      <column name="description"
+        value="Informe de evaluación en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-ficha-evaluador-docx-es" />
+      <column name="description"
+        value="Informe de la ficha de evaluador en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-eti-ficha-evaluador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-ficha-evaluador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-detalle-grupo-docx-es" />
+      <column name="description"
+        value="Informe del detalle de grupo en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-prc-detalle-grupo.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-prc-detalle-grupo.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-detalle-produccion-investigador-docx-es" />
+      <column name="description"
+        value="Informe del detalle de grupos de producción por investigador en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-prc-detalle-produccion-investigador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-prc-detalle-produccion-investigador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-resumen-puntuacion-grupos-docx-es" />
+      <column name="description"
+        value="Informe del resumen de puntuación de grupos en español" />
+      <column name="value"
+        valueBlobFile="blob/rep/es/rep-prc-resumen-puntuacion-grupos.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-prc-resumen-puntuacion-grupos.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-i18n-es" />
+      <column name="description" value="i18n es" />
+      <column name="value" valueBlobFile="blob/web/web-i18n-es.json" />
+      <column name="default_value" valueBlobFile="blob/web/web-i18n-es.json" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.08.00-resources-update-es">
+    <preConditions onFail="MARK_RAN">
+      <changeLogPropertyDefined property="defaultLang" value="es" />
+    </preConditions>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-csp-certificado-autorizacion-proyecto-externo-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-csp-certificado-autorizacion-proyecto-externo-docx-es" />
+      <column
+        name="description"
+        value="Informe del certificado de autorización del proyecto externo en español" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/es/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-csp-certificado-autorizacion-proyecto-externo-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-eti-acta-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-eti-acta.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-eti-acta-docx-es" />
+      <column name="description"
+        value="Informe del acta en español" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-acta.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-acta-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-eti-bloque-apartado-acta-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-eti-bloque-apartado-acta.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-acta-docx-es" />
+      <column name="description"
+        value="Informe de los bloques apartados acta en español" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-bloque-apartado-acta.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-acta-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-eti-bloque-apartado-ficha-evaluador-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-ficha-evaluador-docx-es" />
+      <column
+        name="description"
+        value="Informe de los bloques apartados de la ficha de evaluador en español" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-ficha-evaluador-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-eti-bloque-apartado-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-eti-bloque-apartado.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-docx-es" />
+      <column name="description"
+        value="Informe bloques apartados de las evaluaciones en español" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-bloque-apartado.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-eti-evaluacion-favorable-memoria-modificacion-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-modificacion-docx-es" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria de modificación en español" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-modificacion-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-eti-evaluacion-favorable-memoria-nueva-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx-es" />
+      <column
+        name="description" value="Informe de evaluación favorable de memoria nueva en español" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx-es" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria de ratificación en español" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-eti-evaluacion-retrospectiva-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-eti-evaluacion-retrospectiva.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-retrospectiva-docx-es" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria de retrospectiva en español" />
+      <column
+        name="default_value" valueBlobFile="blob/rep/es/rep-eti-evaluacion-retrospectiva.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-retrospectiva-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-eti-evaluacion-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-eti-evaluacion.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-docx-es" />
+      <column name="description"
+        value="Informe de evaluación en español" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-evaluacion.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-eti-ficha-evaluador-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-eti-ficha-evaluador.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-eti-ficha-evaluador-docx-es" />
+      <column name="description"
+        value="Informe de la ficha de evaluador en español" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-eti-ficha-evaluador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-ficha-evaluador-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-prc-detalle-grupo-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-prc-detalle-grupo.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-prc-detalle-grupo-docx-es" />
+      <column name="description"
+        value="Informe del detalle de grupo en español" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/es/rep-prc-detalle-grupo.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-prc-detalle-grupo-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-prc-detalle-produccion-investigador-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-prc-detalle-produccion-investigador.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-prc-detalle-produccion-investigador-docx-es" />
+      <column
+        name="description"
+        value="Informe del detalle de grupos de producción por investigador en español" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/es/rep-prc-detalle-produccion-investigador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-prc-detalle-produccion-investigador-docx" />
+      </whereParams>
+    </update>
+
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-prc-resumen-puntuacion-grupos-docx" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/es/rep-prc-resumen-puntuacion-grupos.docx" />
+    </customChange>
+    <update tableName="resources">
+      <column name="name" value="rep-prc-resumen-puntuacion-grupos-docx-es" />
+      <column
+        name="description" value="Informe del resumen de puntuación de grupos en español" />
+      <column
+        name="default_value" valueBlobFile="blob/rep/es/rep-prc-resumen-puntuacion-grupos.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-prc-resumen-puntuacion-grupos-docx" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.08.00-resources-web-es">
+    <insert tableName="resources">
+      <column name="name" value="rep-font-es" />
+      <column name="description" value="Fuente para los informes en español" />
+      <column name="value" valueBlobFile="blob/fonts/EHUSans.otf" />
+      <column name="default_value" valueBlobFile="blob/fonts/EHUSans.otf" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

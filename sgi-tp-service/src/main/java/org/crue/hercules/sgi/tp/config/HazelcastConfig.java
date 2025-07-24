@@ -1,13 +1,14 @@
 package org.crue.hercules.sgi.tp.config;
 
-import com.hazelcast.config.Config;
-import com.hazelcast.config.EvictionPolicy;
-import com.hazelcast.config.MapConfig;
-import com.hazelcast.config.MaxSizeConfig;
-
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import com.hazelcast.config.Config;
+import com.hazelcast.config.EvictionConfig;
+import com.hazelcast.config.EvictionPolicy;
+import com.hazelcast.config.MapConfig;
+import com.hazelcast.config.MaxSizePolicy;
 
 @Configuration
 @EnableCaching
@@ -22,8 +23,12 @@ public class HazelcastConfig {
     Config config = new Config();
     config.setInstanceName(HAZELCAST_INSTANCE_NAME)
         .addMapConfig(new MapConfig().setName(HAZELCAST_CONFIGMAP_NAME)
-            .setMaxSizeConfig(new MaxSizeConfig(HAZELCAST_MAX_SIZE_CONFIG, MaxSizeConfig.MaxSizePolicy.FREE_HEAP_SIZE))
-            .setEvictionPolicy(EvictionPolicy.LRU).setTimeToLiveSeconds(HAZELCAST_TTL));
+            .setEvictionConfig(new EvictionConfig().setSize(
+                HAZELCAST_MAX_SIZE_CONFIG).setMaxSizePolicy(
+                    MaxSizePolicy.FREE_HEAP_SIZE)
+                .setEvictionPolicy(
+                    EvictionPolicy.LRU))
+            .setTimeToLiveSeconds(HAZELCAST_TTL));
     return config;
   }
 }

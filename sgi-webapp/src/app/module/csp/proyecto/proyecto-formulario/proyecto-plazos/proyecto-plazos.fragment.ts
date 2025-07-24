@@ -128,6 +128,7 @@ export class ProyectoPlazosFragment extends Fragment {
           map((updatedPlazos) => {
             const index = this.plazos$.value.findIndex((currentPlazos) => currentPlazos === wrappedPlazos);
             this.plazos$.value[index] = new StatusWrapper<IProyectoFase>(updatedPlazos);
+            this.plazos$.next(this.plazos$.value);
           })
         );
       })

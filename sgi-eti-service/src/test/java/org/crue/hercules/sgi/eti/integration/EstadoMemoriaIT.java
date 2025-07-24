@@ -5,21 +5,27 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.EstadoMemoria;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
-import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.MemoriaTitulo;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
-import org.crue.hercules.sgi.eti.model.TipoMemoria;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -43,7 +49,6 @@ import org.springframework.web.util.UriComponentsBuilder;
   "classpath:scripts/formulario.sql",
   "classpath:scripts/comite.sql",
   "classpath:scripts/tipo_actividad.sql",
-  "classpath:scripts/tipo_memoria.sql",
   "classpath:scripts/tipo_estado_memoria.sql",
   "classpath:scripts/estado_retrospectiva.sql",
   "classpath:scripts/retrospectiva.sql",
@@ -82,7 +87,8 @@ public class EstadoMemoriaIT extends BaseIT {
     final EstadoMemoria estadoMemoria = response.getBody();
 
     Assertions.assertThat(estadoMemoria.getId()).isEqualTo(3L);
-    Assertions.assertThat(estadoMemoria.getMemoria().getTitulo()).isEqualTo("Memoria003");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(estadoMemoria.getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria003");
     Assertions.assertThat(estadoMemoria.getTipoEstadoMemoria().getNombre()).isEqualTo("En secretaría");
   }
 
@@ -164,7 +170,8 @@ public class EstadoMemoriaIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("6");
 
     // Contiene la 'Memoria8' y tipo estado memoria nombre='No procede evaluar'
-    Assertions.assertThat(estadoMemorias.get(0).getMemoria().getTitulo()).isEqualTo("Memoria008");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(estadoMemorias.get(0).getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria008");
     Assertions.assertThat(estadoMemorias.get(0).getTipoEstadoMemoria().getNombre()).isEqualTo("No procede evaluar");
   }
 
@@ -172,7 +179,7 @@ public class EstadoMemoriaIT extends BaseIT {
   public void findAll_WithSearchQuery_ReturnsFilteredEstadoMemoriaList() throws Exception {
     // when: Búsqueda por titulo like e id equals
     Long id = 5L;
-    String query = "memoria.titulo=ke=Memoria;id==" + id;
+    String query = "memoria.titulo.value=ke=Memoria;id==" + id;
 
     URI uri = UriComponentsBuilder.fromUriString(ESTADO_MEMORIA_CONTROLLER_BASE_PATH).queryParam("q", query)
         .build(false).toUri();
@@ -188,7 +195,8 @@ public class EstadoMemoriaIT extends BaseIT {
     final List<EstadoMemoria> estadoMemorias = response.getBody();
     Assertions.assertThat(estadoMemorias).hasSize(1);
     Assertions.assertThat(estadoMemorias.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(estadoMemorias.get(0).getMemoria().getTitulo()).startsWith("Memoria");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(estadoMemorias.get(0).getMemoria().getTitulo(), Language.ES))
+        .startsWith("Memoria");
     Assertions.assertThat(estadoMemorias.get(0).getTipoEstadoMemoria().getNombre()).startsWith("En evaluación");
   }
 
@@ -213,7 +221,8 @@ public class EstadoMemoriaIT extends BaseIT {
     for (int i = 0; i < 6; i++) {
       EstadoMemoria estadoMemoria = estadoMemorias.get(i);
       Assertions.assertThat(estadoMemoria.getId()).isEqualTo(8 - i);
-      Assertions.assertThat(estadoMemoria.getMemoria().getTitulo()).isEqualTo("Memoria" + String.format("%03d", 8 - i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(estadoMemoria.getMemoria().getTitulo(), Language.ES))
+          .isEqualTo("Memoria" + String.format("%03d", 8 - i));
     }
   }
 
@@ -226,7 +235,7 @@ public class EstadoMemoriaIT extends BaseIT {
     // when: Ordena por memoria titulo desc
     String sort = "id,desc";
     // when: Filtra por titulo like e id equals
-    String filter = "memoria.titulo=ke=Memoria";
+    String filter = "memoria.titulo.value=ke=Memoria";
 
     URI uri = UriComponentsBuilder.fromUriString(ESTADO_MEMORIA_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -246,11 +255,13 @@ public class EstadoMemoriaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).isEqualTo("6");
 
     // Contiene titulo='Memoria8', 'Memoria7', 'Memoria6'
-    Assertions.assertThat(estadoMemorias.get(0).getMemoria().getTitulo())
+    Assertions.assertThat(I18nHelper.getValueForLanguage(estadoMemorias.get(0).getMemoria().getTitulo(), Language.ES))
         .isEqualTo("Memoria" + String.format("%03d", 8));
-    Assertions.assertThat(estadoMemorias.get(1).getMemoria().getTitulo())
+    Assertions.assertThat(I18nHelper.getValueForLanguage(estadoMemorias.get(1).getMemoria().getTitulo(),
+        Language.ES))
         .isEqualTo("Memoria" + String.format("%03d", 7));
-    Assertions.assertThat(estadoMemorias.get(2).getMemoria().getTitulo())
+    Assertions.assertThat(I18nHelper.getValueForLanguage(estadoMemorias.get(2).getMemoria().getTitulo(),
+        Language.ES))
         .isEqualTo("Memoria" + String.format("%03d", 6));
 
   }
@@ -283,12 +294,24 @@ public class EstadoMemoriaIT extends BaseIT {
    */
 
   private Memoria generarMockMemoria(Long id, String numReferencia, String titulo, Integer version) {
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, titulo));
+    Memoria memoria = new Memoria();
+    memoria.setId(id);
+    memoria.setNumReferencia(numReferencia);
+    memoria.setPeticionEvaluacion(generarMockPeticionEvaluacion(id, titulo + " PeticionEvaluacion" + id));
+    memoria.setComite(generarMockComite(id, "comite" + id, true));
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("user-00" + id);
+    memoria.setTipo(Memoria.Tipo.NUEVA);
+    memoria.setEstadoActual(generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE));
+    memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setRequiereRetrospectiva(Boolean.TRUE);
+    memoria.setRetrospectiva(generarMockRetrospectiva(1L));
+    memoria.setVersion(version);
+    memoria.setActivo(Boolean.TRUE);
 
-    return new Memoria(id, numReferencia, generarMockPeticionEvaluacion(id, titulo + " PeticionEvaluacion" + id),
-        generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
-        generarMockTipoMemoria(1L, "TipoMemoria1", true),
-        generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.TRUE,
-        generarMockRetrospectiva(1L), version, Boolean.TRUE, null);
+    return memoria;
   }
 
   /**
@@ -304,19 +327,27 @@ public class EstadoMemoriaIT extends BaseIT {
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> tit = new HashSet<>();
+    tit.add(new PeticionEvaluacionTitulo(Language.ES, titulo));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen" + id));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos" + id));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico" + id));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo" + id);
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico" + id);
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos" + id);
-    peticionEvaluacion.setResumen("Resumen" + id);
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria" + id);
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo(titulo);
+    peticionEvaluacion.setTitulo(tit);
     peticionEvaluacion.setPersonaRef("user-00" + id);
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
@@ -331,9 +362,12 @@ public class EstadoMemoriaIT extends BaseIT {
    * @param comite comité.
    * @param activo indicador de activo.
    */
-  private Comite generarMockComite(Long id, String comite, Boolean activo) {
-    Formulario formulario = new Formulario(id, "M" + id + "0", "Descripcion");
-    return new Comite(id, comite, "nombreInvestigacion", Genero.M, formulario, activo);
+  private Comite generarMockComite(Long id, String codigo, Boolean activo) {
+    Comite comite = new Comite();
+    comite.setId(id);
+    comite.setCodigo(codigo);
+    comite.setActivo(activo);
+    return comite;
 
   }
 
@@ -346,18 +380,6 @@ public class EstadoMemoriaIT extends BaseIT {
    */
   private TipoEstadoMemoria generarMockTipoEstadoMemoria(Long id, String nombre, Boolean activo) {
     return new TipoEstadoMemoria(id, nombre, activo);
-
-  }
-
-  /**
-   * Función que devuelve un objeto tipo memoria.
-   * 
-   * @param id     identificador del tipo memoria.
-   * @param nombre nobmre.
-   * @param activo indicador de activo.
-   */
-  private TipoMemoria generarMockTipoMemoria(Long id, String nombre, Boolean activo) {
-    return new TipoMemoria(id, nombre, activo);
 
   }
 

@@ -14,6 +14,7 @@ import org.crue.hercules.sgi.eti.model.Comentario;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.ComentarioService;
+import org.crue.hercules.sgi.framework.spring.context.i18n.SgiLocaleContextHolder;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -169,7 +170,6 @@ public class ActaController {
   @PutMapping("/{id}/finalizar")
   @PreAuthorize("hasAuthorityForAnyUO('ETI-ACT-FIN')")
   public void finishActa(@PathVariable Long id) {
-
     log.debug("finalizarActa(Long id) - start");
     service.finishActa(id);
     log.debug("finalizarActa(Long id) - end");
@@ -230,7 +230,7 @@ public class ActaController {
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-DES', 'ETI-ACT-DESR', 'ETI-ACT-INV-DESR')")
   public ResponseEntity<DocumentoOutput> documentoActa(@PathVariable Long idActa) {
     log.debug("documentoActa(@PathVariable Long idActa) - start");
-    DocumentoOutput documento = service.generarDocumentoActa(idActa);
+    DocumentoOutput documento = service.generarDocumentoActa(idActa, SgiLocaleContextHolder.getLanguage());
     log.debug("documentoActa(@PathVariable Long idActa) - end");
     return new ResponseEntity<>(documento, HttpStatus.OK);
   }
@@ -266,7 +266,9 @@ public class ActaController {
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-ACT-V','ETI-ACT-INV-ER','ETI-ACT-ER')")
   public ResponseEntity<?> confirmarRegistroBlockchain(@PathVariable Long id) {
     log.debug("Acta confirmarRegistroBlockchain(Long id) - start");
-    if (service.confirmarRegistroBlockchain(id).booleanValue()) {
+    if (service.confirmarRegistroBlockchain(id, SgiLocaleContextHolder
+        .getLanguage())
+        .booleanValue()) {
       log.debug("Acta confirmarRegistroBlockchain(Long id) - end");
       return new ResponseEntity<>(HttpStatus.OK);
     }

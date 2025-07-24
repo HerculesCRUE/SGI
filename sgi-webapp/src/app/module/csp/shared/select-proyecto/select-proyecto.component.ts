@@ -2,11 +2,12 @@ import { FocusMonitor } from '@angular/cdk/a11y';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
-import { MatFormField, MatFormFieldControl, MAT_FORM_FIELD } from '@angular/material/form-field';
+import { MAT_FORM_FIELD, MatFormField, MatFormFieldControl } from '@angular/material/form-field';
 import { SearchResult, SelectDialogComponent } from '@core/component/select-dialog/select-dialog.component';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IPersona } from '@core/models/sgp/persona';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -62,10 +63,11 @@ export class SelectProyectoComponent extends SelectDialogComponent<SearchProyect
     @Self() @Optional() ngControl: NgControl,
     dialog: MatDialog,
     focusMonitor: FocusMonitor,
-    private readonly proyectoService: ProyectoService
+    private readonly proyectoService: ProyectoService,
+    private readonly languageService: LanguageService
   ) {
     super(changeDetectorRef, elementRef, parentFormField, ngControl, dialog, SearchProyectoModalComponent, focusMonitor);
-    this.displayWith = (option) => option.titulo;
+    this.displayWith = (option) => this.languageService.getFieldValue(option.titulo);
   }
 
   protected getDialogData(): SearchProyectoModalData {
@@ -81,7 +83,7 @@ export class SelectProyectoComponent extends SelectDialogComponent<SearchProyect
         index: 0,
         size: 10
       },
-      sort: new RSQLSgiRestSort('titulo', SgiRestSortDirection.ASC),
+      sort: new RSQLSgiRestSort('titulo.value', SgiRestSortDirection.ASC),
       filter: this.buildFilter(term)
     };
     return this.proyectoService.findAll(options).pipe(
@@ -95,10 +97,10 @@ export class SelectProyectoComponent extends SelectDialogComponent<SearchProyect
   }
 
   private buildFilter(term: string): SgiRestFilter {
-    const filter = new RSQLSgiRestFilter('titulo', SgiRestFilterOperator.LIKE_ICASE, term);
+    const filter = new RSQLSgiRestFilter('titulo.value', SgiRestFilterOperator.LIKE_ICASE, term);
 
-    if (this._personas) {
-      filter.and('equipo.personaRef', SgiRestFilterOperator.IN, this._personas.map(persona => persona.id));
+    if (this._personas?.length) {
+      filter.and('miembrosEquipoActuales', SgiRestFilterOperator.IN, this._personas.map(persona => persona.id));
     }
     return filter;
   }

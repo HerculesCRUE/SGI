@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.pii.dto;
 
 import java.io.Serializable;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.pii.model.TipoCaducidadDescripcion;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +19,6 @@ import lombok.NoArgsConstructor;
 public class TipoCaducidadOutput implements Serializable {
 
   private Long id;
-  private String descripcion;
+  private Collection<TipoCaducidadDescripcion> descripcion;
 
 }

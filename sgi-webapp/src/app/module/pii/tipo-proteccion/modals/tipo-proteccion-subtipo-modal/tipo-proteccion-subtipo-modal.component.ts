@@ -6,6 +6,7 @@ import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 
 const SUBTIPO_PROTECCION_KEY = marker('pii.subtipo-proteccion');
@@ -73,8 +74,8 @@ export class TipoProteccionSubtipoModalComponent extends DialogFormComponent<Sta
 
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.data?.value.nombre, [Validators.maxLength(50)]),
-      descripcion: new FormControl(this.data?.value.descripcion, [Validators.maxLength(250)]),
+      nombre: new FormControl(this.data?.value.nombre ?? [], [I18nValidators.maxLength(50)]),
+      descripcion: new FormControl(this.data?.value.descripcion ?? [], [I18nValidators.maxLength(250)]),
     });
 
     return formGroup;

@@ -9,6 +9,7 @@ import {
   EvaluacionListadoAnteriorMemoriaComponent
 } from '../evaluacion-listado-anterior-memoria/evaluacion-listado-anterior-memoria.component';
 import { EvaluacionDatosMemoriaFragment } from './evaluacion-datos-memoria.fragment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'sgi-evaluacion-datos-memoria',
@@ -29,9 +30,10 @@ export class EvaluacionDatosMemoriaComponent extends FormFragmentComponent<IMemo
   formPart: EvaluacionDatosMemoriaFragment;
 
   constructor(
-    public actionService: EvaluacionFormularioActionService
+    public actionService: EvaluacionFormularioActionService,
+    private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.MEMORIA, actionService);
+    super(actionService.FRAGMENT.MEMORIA, actionService, translate);
 
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
@@ -58,4 +60,6 @@ export class EvaluacionDatosMemoriaComponent extends FormFragmentComponent<IMemo
     this.evaluaciones.evaluacionId = this.actionService.getEvaluacion()?.id;
     this.evaluaciones.ngAfterViewInit();
   }
+
+  protected setupI18N(): void { }
 }

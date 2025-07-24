@@ -78,7 +78,7 @@ class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque el ProyectoEntidadGestora ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(proyectoEntidadGestora))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ProyectoEntidadGestora id tiene que ser null para crear un nuevo ProyectoEntidadGestora");
+        .hasMessage("Identificador de Proyecto Entidad Gestora debe ser nulo");
   }
 
   @Test
@@ -93,7 +93,7 @@ class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
         () -> service.create(proyectoEntidadGestora))
         // then: throw exception as ProyectoId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Proyecto no puede ser null para realizar la acción sobre ProyectoEntidadGestora");
+        .hasMessage("Identificador de Proyecto no puede ser nulo");
   }
 
   @Test
@@ -108,7 +108,7 @@ class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
         () -> service.create(proyectoEntidadGestora))
         // then: throw exception as Nombre is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("EntidadRef no puede ser null para realizar la acción sobre ProyectoEntidadGestora");
+        .hasMessage("Referencia Entidad de Proyecto Entidad Gestora no puede ser nulo");
   }
 
   @Test
@@ -141,7 +141,7 @@ class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
         () -> service.create(proyectoEntidadGestora))
         // then: IllegalArgumentException is thrown
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe una asociación activa para ese Proyecto y Entidad");
+        .hasMessage("Referencia Entidad de Proyecto ya existe");
   }
 
   @Test
@@ -186,7 +186,7 @@ class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
         () -> service.update(proyectoEntidadGestora))
         // then: throw exception as ProyectoId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Proyecto no puede ser null para realizar la acción sobre ProyectoEntidadGestora");
+        .hasMessage("Identificador de Proyecto no puede ser nulo");
   }
 
   @Test
@@ -200,7 +200,7 @@ class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
         () -> service.update(proyectoEntidadGestora))
         // then: throw exception as EntidadRef is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("EntidadRef no puede ser null para realizar la acción sobre ProyectoEntidadGestora");
+        .hasMessage("Referencia Entidad de Proyecto Entidad Gestora no puede ser nulo");
   }
 
   @Test
@@ -241,7 +241,7 @@ class ProyectoEntidadGestoraServiceTest extends BaseServiceTest {
         () -> service.update(proyectoEntidadGestora))
         // then: throw exception as nombre is duplicated
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe una asociación activa para ese Proyecto y Entidad");
+        .hasMessage("Referencia Entidad de Proyecto ya existe");
   }
 
   @Test

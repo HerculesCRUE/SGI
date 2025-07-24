@@ -55,11 +55,11 @@
       matSortDisableClear>
       <!-- Nombre Column -->
       <ng-container matColumnDef="nombre">
-        <th mat-header-cell *matHeaderCellDef>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.grupo.nombre' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{element.nombre}}
+          <sgi-i18n-table-field [field]="element.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
       <!-- Investigador principal Column -->
@@ -74,7 +74,7 @@
       </ng-container>
       <!-- Codigo Column -->
       <ng-container matColumnDef="codigo">
-        <th mat-header-cell *matHeaderCellDef>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.grupo.codigo' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
@@ -83,7 +83,7 @@
       </ng-container>
       <!-- Fecha Inicio Column -->
       <ng-container matColumnDef="fechaInicio">
-        <th mat-header-cell *matHeaderCellDef>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'label.fecha-inicio' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
@@ -92,7 +92,7 @@
       </ng-container>
       <!-- Fecha Fin Column -->
       <ng-container matColumnDef="fechaFin">
-        <th mat-header-cell *matHeaderCellDef>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'label.fecha-fin' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
@@ -101,7 +101,7 @@
       </ng-container>
       <!-- Tipo Column -->
       <ng-container matColumnDef="tipo">
-        <th mat-header-cell *matHeaderCellDef>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.grupo.tipo-grupo' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">

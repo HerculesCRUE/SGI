@@ -20,7 +20,7 @@ describe('ConvocatoriaEnlaceModalComponent', () => {
   const convocatoriaEnlace: IConvocatoriaEnlace = {
     activo: true,
     convocatoriaId: 1,
-    descripcion: '',
+    descripcion: [],
     id: 1,
     tipoEnlace: undefined,
     url: ''

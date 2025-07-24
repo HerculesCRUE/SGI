@@ -5,6 +5,7 @@ import { Directive, Input, Optional, Self, TemplateRef } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
+import { LanguageService } from '@core/services/language.service';
 import { EntityKey, SelectServiceComponent } from '../select-service/select-service.component';
 
 /** Base select component for selects of SGI entities. Allow loading options from a service */
@@ -36,10 +37,11 @@ export abstract class SelectServiceExtendedComponent<T extends EntityKey> extend
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation?: PlatformLocation,
     private dialog?: MatDialog
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
 
     if (platformLocation) {
       this._baseUrl = `${platformLocation.protocol}//${platformLocation.hostname}`;

@@ -1,0 +1,31 @@
+[
+  {
+    "key": "ap5_9",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "hideExpression": "formState.memoria.tipo !== 'RATIFICACION'",
+    "templateOptions": {
+      "label": "5.9 Report of the Committee or Commission of the external agency"
+    },
+    "fieldGroup": [
+      {
+        "template": "Please remember that you need to attach the approval report granted by the respective committee or commission of the external agency with which the project is developed."
+      },
+      {
+        "key": "informeRatificacion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": "INFORME_EXTERNO",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

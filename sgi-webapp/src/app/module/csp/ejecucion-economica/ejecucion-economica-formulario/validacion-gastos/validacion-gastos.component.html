@@ -79,7 +79,7 @@
             {{'sge.dato-economico.proyecto' | translate}}
           </mat-header-cell>
           <mat-cell mat-cell *matCellDef="let element">
-            {{element.proyecto?.titulo }}
+            <sgi-i18n-table-field [field]="element.proyecto?.titulo"></sgi-i18n-table-field>
           </mat-cell>
         </ng-container>
 
@@ -89,7 +89,7 @@
             {{'sge.dato-economico.concepto-gasto' | translate}}
           </mat-header-cell>
           <mat-cell mat-cell *matCellDef="let element">
-            {{ element.conceptoGasto?.nombre }}
+            <sgi-i18n-table-field [field]="element.conceptoGasto?.nombre"></sgi-i18n-table-field>
           </mat-cell>
         </ng-container>
 
@@ -134,7 +134,8 @@
         </ng-container>
 
         <!-- Columnas dinamicas -->
-        <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+        <ng-container *ngFor="let column of formPart.columns$ | async; trackBy: formPart.trackByColumnId"
+          [matColumnDef]="column.id">
           <mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
             {{column.name}}
           </mat-header-cell>

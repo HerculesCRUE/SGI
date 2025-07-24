@@ -1,19 +1,26 @@
 package org.crue.hercules.sgi.eer.model;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -23,6 +30,7 @@ import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -102,9 +110,11 @@ public class Empresa extends BaseActivableEntity {
   private String solicitanteRef;
 
   /** Nombre */
-  @Column(name = "nombre_razon_social", length = Empresa.NOMBRE_RAZON_SOCIAL_LENGTH, nullable = true)
-  @Size(max = Empresa.NOMBRE_RAZON_SOCIAL_LENGTH)
-  private String nombreRazonSocial;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "empresa_nombre_razon_social", joinColumns = @JoinColumn(name = "empresa_id"))
+  @Valid
+  @Builder.Default
+  private Set<EmpresaNombreRazonSocial> nombreRazonSocial = new HashSet<>();
 
   /** EntidadRef */
   @Column(name = "entidad_ref", length = Empresa.REFERENCIAS_LENGTH, nullable = true)
@@ -112,16 +122,20 @@ public class Empresa extends BaseActivableEntity {
   private String entidadRef;
 
   /** Objeto social */
-  @Column(name = "objeto_social", length = Empresa.OBJETO_SOCIAL_LENGTH, nullable = false)
-  @Size(max = Empresa.OBJETO_SOCIAL_LENGTH)
-  @NotBlank
-  private String objetoSocial;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "empresa_objeto_social", joinColumns = @JoinColumn(name = "empresa_id"))
+  @Valid
+  @NotEmpty
+  @Builder.Default
+  private Set<EmpresaObjetoSocial> objetoSocial = new HashSet<>();
 
   /** Conocimiento tecnologica */
-  @Column(name = "conocimiento_tecnologia", length = Empresa.CONOCIMIENTO_TECNOLOGIA_LENGTH, nullable = false)
-  @Size(max = Empresa.CONOCIMIENTO_TECNOLOGIA_LENGTH)
-  @NotBlank
-  private String conocimientoTecnologia;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "empresa_conocimiento_tecnologia", joinColumns = @JoinColumn(name = "empresa_id"))
+  @Valid
+  @NotEmpty
+  @Builder.Default
+  private Set<EmpresaConocimientoTecnologia> conocimientoTecnologia = new HashSet<>();
 
   /** Número protocolo */
   @Column(name = "numero_protocolo", length = Empresa.NUMERO_PROTOCOLO_LENGTH, nullable = true)
@@ -129,9 +143,11 @@ public class Empresa extends BaseActivableEntity {
   private String numeroProtocolo;
 
   /** Notario */
-  @Column(name = "notario", length = Empresa.NOTARIO_LENGTH, nullable = true)
-  @Size(max = Empresa.NOTARIO_LENGTH)
-  private String notario;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "empresa_notario", joinColumns = @JoinColumn(name = "empresa_id"))
+  @Valid
+  @Builder.Default
+  private Set<EmpresaNotario> notario = new HashSet<>();
 
   /** Fecha constitución */
   @Column(name = "fecha_constitucion", nullable = true)
@@ -154,9 +170,11 @@ public class Empresa extends BaseActivableEntity {
   private Instant fechaCese;
 
   /** Observaciones */
-  @Column(name = "observaciones", length = Empresa.OBSERVACIONES_LENGTH, nullable = true)
-  @Size(max = Empresa.OBSERVACIONES_LENGTH)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "empresa_observaciones", joinColumns = @JoinColumn(name = "empresa_id"))
+  @Valid
+  @Builder.Default
+  private Set<EmpresaObservaciones> observaciones = new HashSet<>();
 
   /** Estado empresa */
   @Column(name = "estado", length = Empresa.ESTADO_EMPRESA_LENGTH, nullable = false)

@@ -1,0 +1,25 @@
+[
+  {
+    "key": "ap1_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "1.2 Animalien erabilera justifikatzea"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Azaldu labur-labur zergatik erabili behar diren animaliak.</p>"
+      },
+      {
+        "key": "justificacion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Justifikazioa",
+          "required": true
+        }
+      }
+    ]
+  }
+]

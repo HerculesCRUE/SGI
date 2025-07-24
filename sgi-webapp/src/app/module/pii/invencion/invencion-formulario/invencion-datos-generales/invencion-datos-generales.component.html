@@ -19,8 +19,8 @@
         [fxFlex.gt-md]="fxFlexProperties66.gtMd" [fxFlexOrder]="fxFlexProperties66.order">
         <mat-form-field fxFill>
           <mat-label>{{'pii.invencion.titulo' | translate}}</mat-label>
-          <input matInput formControlName="titulo" type="text" id="titulo"
-            placeholder="{{'pii.invencion.titulo' | translate}}" required>
+          <sgi-i18n-input formControlName="titulo" placeholder="{{'pii.invencion.titulo' | translate}}"
+            required></sgi-i18n-input>
           <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
             {{'error.required.entity' | translate:msgParamTituloEntity}}
           </mat-error>
@@ -51,8 +51,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'pii.invencion.descripcion' | translate}}</mat-label>
-          <textarea matInput formControlName="descripcion" id="descripcion"
-            placeholder="{{'pii.invencion.descripcion' | translate}}" required></textarea>
+          <sgi-i18n-textarea formControlName="descripcion" placeholder="{{'pii.invencion.descripcion' | translate}}"
+            required></sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.descripcion.errors?.required">
             {{'error.required.entity' | translate:msgParamDescripcionEntity}}
           </mat-error>
@@ -119,7 +119,9 @@
                 <th mat-header-cell *matHeaderCellDef mat-sort-header>
                   {{'pii.invencion.sector' | translate}}
                 </th>
-                <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.sectorAplicacion.nombre}} </td>
+                <td mat-cell *matCellDef="let wrapper">
+                  <sgi-i18n-table-field [field]="wrapper.value.sectorAplicacion.nombre"></sgi-i18n-table-field>
+                </td>
               </ng-container>
 
               <!-- Acciones Column -->
@@ -297,8 +299,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'pii.invencion.comentarios' | translate}}</mat-label>
-          <textarea matInput formControlName="comentarios" id="comentarios"
-            placeholder="{{'pii.invencion.comentarios' | translate}}"></textarea>
+          <sgi-i18n-textarea formControlName="comentarios"
+            placeholder="{{'pii.invencion.comentarios' | translate}}"></sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
             {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
           </mat-error>

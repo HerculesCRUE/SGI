@@ -7,8 +7,6 @@ import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.ComiteNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
-import org.crue.hercules.sgi.eti.model.Formulario;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.ComiteRepository;
 import org.crue.hercules.sgi.eti.service.impl.ComiteServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,10 +41,14 @@ public class ComiteServiceTest extends BaseServiceTest {
   public void findAll_ReturnsComiteList() {
 
     // given: dos comites
-    Formulario formulario1 = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario1, Boolean.TRUE);
-    Formulario formulario2 = new Formulario(1L, "M20", "Descripcion");
-    Comite comite2 = new Comite(2L, "Comite2", "nombreInvestigacion", Genero.M, formulario2, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
+    Comite comite2 = new Comite();
+    comite2.setId(2L);
+    comite2.setCodigo("Comite2");
+    comite2.setActivo(Boolean.TRUE);
 
     List<Comite> comiteResponseList = new ArrayList<Comite>();
     comiteResponseList.add(comite);
@@ -88,16 +90,20 @@ public class ComiteServiceTest extends BaseServiceTest {
   public void findById_WithId_ReturnsComite() throws ComiteNotFoundException {
     // given: El id de un comité
 
+    Comite comiteMock = new Comite();
+    comiteMock.setId(1L);
+    comiteMock.setCodigo("Comite1");
+    comiteMock.setActivo(Boolean.TRUE);
+
     BDDMockito.given(comiteRepository.findById(1L))
-        .willReturn(Optional.of(new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M,
-            new Formulario(1L, "M10", "Descripcion"), Boolean.TRUE)));
+        .willReturn(Optional.of(comiteMock));
 
     // when: Buscamos por id
     Comite comite = comiteService.findById(1L);
 
     // then: Recuperamos el comité
     Assertions.assertThat(comite.getId()).isEqualTo(1L);
-    Assertions.assertThat(comite.getComite()).isEqualTo("Comite1");
+    Assertions.assertThat(comite.getCodigo()).isEqualTo("Comite1");
 
   }
 
@@ -115,146 +121,16 @@ public class ComiteServiceTest extends BaseServiceTest {
   }
 
   @Test
-  public void create_ReturnsComite() {
-
-    // given: Un comité
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(null, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
-
-    BDDMockito.given(comiteRepository.save(comite)).will((InvocationOnMock invocation) -> {
-      Comite comiteCreada = invocation.getArgument(0);
-      comiteCreada.setId(1L);
-      return comiteCreada;
-    });
-    // when: Creamos el comité
-    Comite comiteCreada = comiteService.create(comite);
-
-    // then: El comité se crea correctamente.
-    Assertions.assertThat(comiteCreada.getId()).isEqualTo(1L);
-    Assertions.assertThat(comiteCreada.getComite()).isEqualTo("Comite1");
-
-  }
-
-  @Test
-  public void create_ComiteWithId_ThrowsIllegalArgumentException() {
-
-    // given: Un nuevo comité que ya tiene id
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
-
-    // then: Lanza una excepcion porque el comité ya tiene id
-    Assertions.assertThatThrownBy(() -> comiteService.create(comite)).isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  public void update_ReturnsComite() throws ComiteNotFoundException {
-
-    // given: Un nuevo comité con el servicio actualizado
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comiteServicioActualizado = new Comite(1L, "Comite1 Actualizado", "nombreInvestigacion", Genero.M,
-        formulario, Boolean.TRUE);
-
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
-
-    BDDMockito.given(comiteRepository.findById(1L)).willReturn(Optional.of(comite));
-    BDDMockito.given(comiteRepository.save(comite)).willReturn(comiteServicioActualizado);
-
-    // when: Actualizamos el comité
-    Comite comiteActualizado = comiteService.update(comite);
-
-    // then: El comité se actualiza correctamente.
-    Assertions.assertThat(comiteActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(comiteActualizado.getComite()).isEqualTo("Comite1 Actualizado");
-
-  }
-
-  @Test
-  public void update_ThrowsComiteNotFoundException() {
-
-    // given: Un nuevo comité a actualizar
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
-
-    // then: Lanza una excepcion porque el comité no existe
-    Assertions.assertThatThrownBy(() -> comiteService.update(comite)).isInstanceOf(ComiteNotFoundException.class);
-
-  }
-
-  @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
-
-    // given: Un Comite que venga sin id
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(null, "Comite", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
-
-    Assertions.assertThatThrownBy(
-        // when: update Comite
-        () -> comiteService.update(comite))
-        // then: Lanza una excepción, el id es necesario
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() {
-    // given: Sin id
-    Assertions.assertThatThrownBy(
-        // when: Delete sin id
-        () -> comiteService.deleteById(null))
-        // then: Lanza una excepción
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  public void delete_NonExistingId_ThrowsComiteNotFoundException() {
-    // given: Id no existe
-    BDDMockito.given(comiteRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
-
-    Assertions.assertThatThrownBy(
-        // when: Delete un id no existente
-        () -> comiteService.deleteById(1L))
-        // then: Lanza ComiteNotFoundException
-        .isInstanceOf(ComiteNotFoundException.class);
-  }
-
-  @Test
-  public void delete_WithExistingId_DeletesComite() {
-    // given: Id existente
-    BDDMockito.given(comiteRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
-    BDDMockito.doNothing().when(comiteRepository).deleteById(ArgumentMatchers.anyLong());
-
-    Assertions.assertThatCode(
-        // when: Delete con id existente
-        () -> comiteService.deleteById(1L))
-        // then: No se lanza ninguna excepción
-        .doesNotThrowAnyException();
-  }
-
-  @Test
-  public void deleteAll_DeleteAllComite() {
-    // given: One hundred Comites
-    List<Comite> comites = new ArrayList<>();
-    for (int i = 1; i <= 100; i++) {
-      comites.add(generarMockComite(Long.valueOf(i), String.format("Comite%03d", i), Boolean.TRUE));
-    }
-
-    BDDMockito.doNothing().when(comiteRepository).deleteAll();
-
-    Assertions.assertThatCode(
-        // when: Delete all
-        () -> comiteService.deleteAll())
-        // then: No se lanza ninguna excepción
-        .doesNotThrowAnyException();
-  }
-
-  @Test
   public void findAll_WithPaging_ReturnsPage() {
 
     // given: Cien Comite
     List<Comite> comiteList = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
-      Formulario formulario = new Formulario(Long.valueOf(i), "M" + i, "Descripcion");
-      comiteList.add(new Comite(Long.valueOf(i), "Comite" + String.format("%03d", i), "nombreInvestigacion", Genero.M,
-          formulario, Boolean.TRUE));
+      Comite comite = new Comite();
+      comite.setId(Long.valueOf(i));
+      comite.setCodigo("Comite" + String.format("%03d", i));
+      comite.setActivo(Boolean.TRUE);
+      comiteList.add(comite);
     }
 
     BDDMockito
@@ -287,20 +163,8 @@ public class ComiteServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       Comite comite = page.getContent().get(i);
-      Assertions.assertThat(comite.getComite()).isEqualTo("Comite" + String.format("%03d", j));
+      Assertions.assertThat(comite.getCodigo()).isEqualTo("Comite" + String.format("%03d", j));
     }
   }
 
-  /**
-   * Función que devuelve un objeto comité.
-   * 
-   * @param id     identificador del comité.
-   * @param comite comité.
-   * @param activo indicador de activo.
-   */
-  private Comite generarMockComite(Long id, String comite, Boolean activo) {
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    return new Comite(id, comite, "nombreInvestigacion", Genero.M, formulario, activo);
-
-  }
 }

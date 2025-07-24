@@ -1,9 +1,15 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,6 +17,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -69,9 +76,11 @@ public class ProyectoPartida extends BaseEntity {
   private String codigo;
 
   /** Descripcion */
-  @Column(name = "descripcion", length = 250, nullable = true)
-  @Size(max = 250)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "proyecto_partida_descripcion", joinColumns = @JoinColumn(name = "proyecto_partida_id"))
+  @Valid
+  @Builder.Default
+  private Set<ProyectoPartidaDescripcion> descripcion = new HashSet<>();
 
   /** Tipo partida */
   @Column(name = "tipo_partida", length = 50, nullable = false)

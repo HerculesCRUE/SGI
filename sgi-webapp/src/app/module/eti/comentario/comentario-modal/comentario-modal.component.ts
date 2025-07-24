@@ -16,7 +16,9 @@ import { ActionService } from '@core/services/action-service';
 import { ApartadoService } from '@core/services/eti/apartado.service';
 import { BloqueService } from '@core/services/eti/bloque.service';
 import { FormularioService } from '@core/services/eti/formulario.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -127,7 +129,8 @@ export class ComentarioModalComponent extends DialogFormComponent<ComentarioModa
     private apartadoService: ApartadoService,
     matDialogRef: MatDialogRef<ComentarioModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ComentarioModalData,
-    private translate: TranslateService
+    private translate: TranslateService,
+    private languageService: LanguageService
   ) {
     super(matDialogRef, !!data.comentario);
     if (this.data?.comentario) {
@@ -209,7 +212,7 @@ export class ComentarioModalComponent extends DialogFormComponent<ComentarioModa
   private loadBloques(evaluacion: IEvaluacion): void {
     this.bloques$ = forkJoin({
       bloquesFormulario: this.formularioService.getBloques(resolveFormularioByTipoEvaluacionAndComite
-        (evaluacion?.tipoEvaluacion?.id, evaluacion?.memoria?.comite)),
+        (evaluacion?.tipoEvaluacion?.id, evaluacion?.memoria).id),
       bloqueComentariosGenerales: this.bloqueService.getBloqueComentariosGenerales()
     }).pipe(
       map(({ bloquesFormulario, bloqueComentariosGenerales }) => bloquesFormulario.items.concat([bloqueComentariosGenerales])),
@@ -308,16 +311,12 @@ export class ComentarioModalComponent extends DialogFormComponent<ComentarioModa
     this.checkedNode = $event.checked ? node : undefined;
   }
 
-  getNombreBloque(bloque: IBloque): string {
-    return bloque?.nombre;
-  }
-
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       bloque: new FormControl(this.data?.comentario?.apartado?.bloque, [Validators.required]),
       apartado: new FormControl(this.data.comentario?.apartado, [Validators.required]),
-      comentario: new FormControl(this.data?.comentario?.texto, [
-        Validators.required, Validators.maxLength(2000)]),
+      comentario: new FormControl(this.data?.comentario?.texto ?? [], [
+        I18nValidators.required, I18nValidators.maxLength(2000)]),
       evaluacion: new FormControl(this.data?.evaluaciones?.length === 1 ? this.data?.evaluaciones[0] : this.data?.comentario ? this.data?.evaluaciones.filter(ev => ev.memoria.id === this.data.comentario?.memoria?.id)[0] : null, [Validators.required, IsEntityValidator.isValid()])
     });
 
@@ -348,8 +347,8 @@ export class ComentarioModalComponent extends DialogFormComponent<ComentarioModa
     return evaluacion.memoria?.numReferencia;
   }
 
-  displayerBloque(bloque: IBloque): string {
-    return bloque.orden + ' ' + bloque.nombre;
+  readonly displayerBloque = (bloque: IBloque): string => {
+    return bloque.orden + ' ' + this.languageService.getFieldValue(bloque.nombre);
   }
 
 }

@@ -1,5 +1,6 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -80,15 +81,25 @@ public class ConvocatoriaClonerService {
    */
   public Convocatoria cloneBasicConvocatoriaData(Convocatoria toClone) {
 
-    return Convocatoria.builder().activo(Boolean.TRUE).titulo(toClone.getTitulo())
-        .unidadGestionRef(toClone.getUnidadGestionRef()).modeloEjecucion(toClone.getModeloEjecucion())
-        .finalidad(toClone.getFinalidad()).codigo(toClone.getCodigo()).fechaConcesion(toClone.getFechaConcesion())
-        .fechaProvisional(toClone.getFechaProvisional()).fechaPublicacion(toClone.getFechaPublicacion())
-        .duracion(toClone.getDuracion()).excelencia(toClone.getExcelencia())
+    return Convocatoria.builder()
+        .activo(Boolean.TRUE)
+        .titulo(new HashSet<>(toClone.getTitulo()))
+        .unidadGestionRef(toClone.getUnidadGestionRef())
+        .modeloEjecucion(toClone.getModeloEjecucion())
+        .finalidad(toClone.getFinalidad())
+        .codigo(toClone.getCodigo())
+        .fechaConcesion(toClone.getFechaConcesion())
+        .fechaProvisional(toClone.getFechaProvisional())
+        .fechaPublicacion(toClone.getFechaPublicacion())
+        .duracion(toClone.getDuracion())
+        .excelencia(toClone.getExcelencia())
         .ambitoGeografico(toClone.getAmbitoGeografico())
-        .formularioSolicitud(toClone.getFormularioSolicitud()).regimenConcurrencia(toClone.getRegimenConcurrencia())
-        .clasificacionCVN(toClone.getClasificacionCVN()).objeto(toClone.getObjeto())
-        .observaciones(toClone.getObservaciones()).estado(Convocatoria.Estado.BORRADOR).build();
+        .formularioSolicitud(toClone.getFormularioSolicitud())
+        .regimenConcurrencia(toClone.getRegimenConcurrencia())
+        .clasificacionCVN(toClone.getClasificacionCVN())
+        .objeto(new HashSet<>(toClone.getObjeto()))
+        .observaciones(new HashSet<>(toClone.getObservaciones()))
+        .estado(Convocatoria.Estado.BORRADOR).build();
   }
 
   /**
@@ -104,7 +115,7 @@ public class ConvocatoriaClonerService {
         .findByConvocatoriaId(convocatoriaId).stream()
         .forEach(convocatoriaAreaTematica -> this.convocatoriaAreaTematicaRepository
             .save(ConvocatoriaAreaTematica.builder().areaTematica(convocatoriaAreaTematica.getAreaTematica())
-                .convocatoriaId(cloned.getId()).observaciones(cloned.getObservaciones()).build()));
+                .convocatoriaId(cloned.getId()).observaciones(convocatoriaAreaTematica.getObservaciones()).build()));
   }
 
   /**
@@ -213,7 +224,8 @@ public class ConvocatoriaClonerService {
                 .fechaInicioPresentacion(periodo.getFechaInicioPresentacion())
                 .fechaFinPresentacion(periodo.getFechaFinPresentacion()).mesInicial(periodo.getMesInicial())
                 .mesFinal(periodo.getMesFinal()).numPeriodo(periodo.getNumPeriodo())
-                .tipoSeguimiento(periodo.getTipoSeguimiento()).observaciones(periodo.getObservaciones()).build()));
+                .tipoSeguimiento(periodo.getTipoSeguimiento()).observaciones(new HashSet<>(periodo.getObservaciones()))
+                .build()));
   }
 
   /**
@@ -430,14 +442,15 @@ public class ConvocatoriaClonerService {
         .convocatoriaConceptoGastoId(clonedConvocatoriaConceptoGasto.getId())
         .codigoEconomicoRef(convConceptoGastoCodEc.getCodigoEconomicoRef())
         .fechaInicio(convConceptoGastoCodEc.getFechaInicio()).fechaFin(convConceptoGastoCodEc.getFechaFin())
-        .observaciones(convConceptoGastoCodEc.getObservaciones()).build();
+        .observaciones(new HashSet<>(convConceptoGastoCodEc.getObservaciones())).build();
   }
 
   private ConvocatoriaConceptoGasto createConvocatoriaConceptoGasto(Long convocatoriaClonedId,
       ConvocatoriaConceptoGasto convConceptoGasto) {
     return ConvocatoriaConceptoGasto.builder().convocatoriaId(convocatoriaClonedId)
         .mesInicial(convConceptoGasto.getMesInicial()).mesFinal(convConceptoGasto.getMesFinal())
-        .importeMaximo(convConceptoGasto.getImporteMaximo()).observaciones(convConceptoGasto.getObservaciones())
+        .importeMaximo(convConceptoGasto.getImporteMaximo())
+        .observaciones(new HashSet<>(convConceptoGasto.getObservaciones()))
         .permitido(convConceptoGasto.getPermitido()).conceptoGasto(convConceptoGasto.getConceptoGasto()).build();
   }
 
@@ -456,7 +469,11 @@ public class ConvocatoriaClonerService {
 
     this.convocatoriaPartidaRepository.findByConvocatoriaId(convocatoriaToCloneId).stream()
         .forEach(partida -> this.convocatoriaPartidaRepository
-            .save(ConvocatoriaPartida.builder().convocatoriaId(convocatoriaClonedId).codigo(partida.getCodigo())
-                .descripcion(partida.getDescripcion()).tipoPartida(partida.getTipoPartida()).build()));
+            .save(ConvocatoriaPartida.builder()
+                .convocatoriaId(convocatoriaClonedId)
+                .codigo(partida.getCodigo())
+                .descripcion(new HashSet<>(partida.getDescripcion()))
+                .tipoPartida(partida.getTipoPartida())
+                .build()));
   }
 }

@@ -10,6 +10,7 @@ import org.crue.hercules.sgi.csp.repository.GrupoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoSpecifications;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.hibernate.validator.constraintvalidation.HibernateConstraintValidatorContext;
+import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
 
 import lombok.RequiredArgsConstructor;
 
@@ -50,6 +51,7 @@ public class UniqueCodigoGrupoActivoValidator implements ConstraintValidator<Uni
     hibernateContext.disableDefaultConstraintViolation();
     // Build a custom message for a property using the default message
     hibernateContext.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
+        .enableExpressionLanguage(ExpressionLanguageFeatureLevel.BEAN_PROPERTIES)
         .addPropertyNode(ApplicationContextSupport.getMessage(field)).addConstraintViolation();
   }
 

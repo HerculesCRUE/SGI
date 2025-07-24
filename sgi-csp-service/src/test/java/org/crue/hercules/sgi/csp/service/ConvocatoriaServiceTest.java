@@ -3,9 +3,11 @@ package org.crue.hercules.sgi.csp.service;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
@@ -17,15 +19,24 @@ import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToCreateConvocatori
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObjeto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
 import org.crue.hercules.sgi.csp.repository.AutorizacionRepository;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoJustificacionRepository;
@@ -41,6 +52,7 @@ import org.crue.hercules.sgi.csp.repository.TipoRegimenConcurrenciaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaServiceImpl;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -96,7 +108,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
   private SgiConfigProperties sgiConfigProperties;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     authorityHelper = new ConvocatoriaAuthorityHelper(repository, configuracionSolicitudRepository);
     service = new ConvocatoriaServiceImpl(repository, convocatoriaPeriodoJustificacionRepository,
         modeloUnidadRepository, modeloTipoFinalidadRepository, tipoRegimenConcurrenciaRepository,
@@ -168,15 +180,17 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
   void create_WithMinimumRequiredData_ReturnsConvocatoria() {
     // given: new Convocatoria with minimum required data
-    // @formatter:off
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
     Convocatoria convocatoria = Convocatoria.builder()
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo")
         .unidadGestionRef("2")
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo)
         .build();
-    // @formatter:on
+
     BDDMockito.given(repository.save(ArgumentMatchers.<Convocatoria>any())).willAnswer(new Answer<Convocatoria>() {
       @Override
       public Convocatoria answer(InvocationOnMock invocation) throws Throwable {
@@ -200,8 +214,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Assertions.assertThat(created.getFechaProvisional()).isEqualTo(convocatoria.getFechaProvisional());
     Assertions.assertThat(created.getFechaConcesion()).isEqualTo(convocatoria.getFechaConcesion());
     Assertions.assertThat(created.getTitulo()).isEqualTo(convocatoria.getTitulo());
-    Assertions.assertThat(created.getObjeto()).isNull();
-    Assertions.assertThat(created.getObservaciones()).isNull();
+    Assertions.assertThat(created.getObjeto()).isEmpty();
+    Assertions.assertThat(created.getObservaciones()).isEmpty();
     Assertions.assertThat(created.getFinalidad()).isNull();
     Assertions.assertThat(created.getRegimenConcurrencia()).isNull();
     Assertions.assertThat(created.getEstado()).isEqualTo(Convocatoria.Estado.BORRADOR);
@@ -222,7 +236,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // when: create Convocatoria
         () -> service.create(convocatoria))
         // then: throw exception as id can't be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Id tiene que ser null para crear la Convocatoria");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Identificador de Convocatoria debe ser nulo");
   }
 
   @Test
@@ -237,7 +251,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.create(convocatoria))
         // then: throw exception as UnidadRef is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("UnidadGestionRef no puede ser null en la Convocatoria");
+        .hasMessage("Referencia Unidad Gestión de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -271,7 +285,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // then: throw exception as ModeloEjecucion is not asigned to given
         // UnidadGestion
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion '%s' no disponible para la UnidadGestion %s",
+        .hasMessage("Modelo Ejecución %s no disponible para la Unidad Gestión %s",
             convocatoria.getModeloEjecucion().getNombre(), convocatoria.getUnidadGestionRef());
   }
 
@@ -293,7 +307,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.create(convocatoria))
         // then: throw exception as ModeloUnidad is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion '%s' no está activo para la UnidadGestion %s",
+        .hasMessage("%s de Modelo Unidad no está activo",
             convocatoria.getModeloEjecucion().getNombre(), convocatoria.getUnidadGestionRef());
   }
 
@@ -316,7 +330,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.create(convocatoria))
         // then: throw exception as ModeloEjecucion is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion '%s' no está activo", convocatoria.getModeloEjecucion().getNombre());
+        .hasMessage("%s de Modelo Ejecución no está activo", convocatoria.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -331,7 +345,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // when: create Convocatoria
         () -> service.create(convocatoria))
         // then: throw exception as Titulo is not present
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Titulo no puede ser null en la Convocatoria");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Título de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -346,7 +360,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.create(convocatoria))
         // then: throw exception as ModeloEjecucion is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion requerido para obtener TipoFinalidad");
+        .hasMessage("Modelo Ejecución de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -371,8 +385,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // then: throw exception as TipoFinalidad is not asigned to given
         // ModeloEjecucion
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFinalidad '%s' no disponible para el ModeloEjecucion %s",
-            convocatoria.getFinalidad().getNombre(), convocatoria.getModeloEjecucion().getNombre());
+        .hasMessage("Tipo Finalidad no disponible para el Modelo Ejecución %s",
+            convocatoria.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -397,7 +411,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.create(convocatoria))
         // then: throw exception as ModeloTipoFinalidad is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoFinalidad '%s' no está activo para el ModeloEjecucion %s",
+        .hasMessage("%s de Modelo Tipo Finalidad no está activo para el modelo ejecución %s",
             convocatoria.getFinalidad().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -425,7 +439,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.create(convocatoria))
         // then: throw exception as TipoFinalidad is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFinalidad '%s' no está activo", convocatoria.getFinalidad().getNombre());
+        .hasMessage("%s de Tipo Finalidad no está activo", convocatoria.getFinalidad().getNombre());
   }
 
   @Test
@@ -454,7 +468,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.create(convocatoria))
         // then: throw exception as TipoRegimenConcurrencia does not exist
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("RegimenConcurrencia '%s' no disponible", convocatoria.getRegimenConcurrencia().getNombre());
+        .hasMessage("Ya existe Tipo de régimen de concurrencia con el valor %s",
+            convocatoria.getRegimenConcurrencia().getNombre());
   }
 
   @Test
@@ -484,7 +499,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.create(convocatoria))
         // then: throw exception as TipoRegimenConcurrencia is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("RegimenConcurrencia '%s' no está activo", convocatoria.getRegimenConcurrencia().getNombre());
+        .hasMessage("%s de Tipo de régimen de concurrencia no está activo",
+            convocatoria.getRegimenConcurrencia().getNombre());
   }
 
   @Test
@@ -515,7 +531,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.create(convocatoria))
         // then: throw exception as TipoAmbitoGeografico does not exist
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("AmbitoGeografico '%s' no disponible", convocatoria.getAmbitoGeografico().getNombre());
+        .hasMessage("Tipo de Ámbito Geográfico de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -548,7 +564,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.create(convocatoria))
         // then: throw exception as TipoAmbitoGeografico is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("AmbitoGeografico '%s' no está activo", convocatoria.getAmbitoGeografico().getNombre());
+        .hasMessage("%s de Tipo de Ámbito Geográfico no está activo", convocatoria.getAmbitoGeografico().getNombre());
   }
 
   @Test
@@ -622,7 +638,10 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // required data
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.setEstado(Convocatoria.Estado.BORRADOR);
-    // @formatter:off
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
     Convocatoria convocatoriaBorrador = Convocatoria.builder()
         .id(convocatoria.getId())
         .estado(Convocatoria.Estado.BORRADOR)
@@ -630,9 +649,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         .unidadGestionRef("2")
         .formularioSolicitud(FormularioSolicitud.PROYECTO)
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo)
         .build();
-    // @formatter:on
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
     BDDMockito.given(repository.save(ArgumentMatchers.any())).willReturn(convocatoriaBorrador);
@@ -648,8 +666,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Assertions.assertThat(updated.getCodigo()).isEqualTo(convocatoriaBorrador.getCodigo());
     Assertions.assertThat(updated.getFechaPublicacion()).isEqualTo(convocatoriaBorrador.getFechaPublicacion());
     Assertions.assertThat(updated.getTitulo()).isEqualTo(convocatoriaBorrador.getTitulo());
-    Assertions.assertThat(updated.getObjeto()).isNull();
-    Assertions.assertThat(updated.getObservaciones()).isNull();
+    Assertions.assertThat(updated.getObjeto()).isEmpty();
+    Assertions.assertThat(updated.getObservaciones()).isEmpty();
     Assertions.assertThat(updated.getFinalidad()).isNull();
     Assertions.assertThat(updated.getRegimenConcurrencia()).isNull();
     Assertions.assertThat(updated.getEstado()).isEqualTo(Convocatoria.Estado.BORRADOR);
@@ -661,7 +679,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  void update_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void update_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
@@ -683,7 +701,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // when: update Convocatoria
         () -> service.update(convocatoria))
         // then: throw exception as id must be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Id no puede ser null para actualizar Convocatoria");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Identificador de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -692,7 +710,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria Registrada without UnidadRef
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, null, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
 
@@ -701,7 +721,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as UnidadRef is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("UnidadGestionRef no puede ser null en la Convocatoria");
+        .hasMessage("Referencia Unidad Gestión de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -712,7 +732,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     convocatoriaExistente.setEstado(Convocatoria.Estado.BORRADOR);
     Convocatoria convocatoria = generarMockConvocatoria(1L, null, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.setEstado(Convocatoria.Estado.BORRADOR);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
 
@@ -721,7 +743,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as UnidadRef is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("UnidadGestionRef no puede ser null en la Convocatoria");
+        .hasMessage("Referencia Unidad Gestión de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -745,7 +767,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede modificar la unidad de gestión al existir registros dependientes en las pantallas Enlaces, Plazos y fases, Hitos o Documentos");
+            "No se puede Modificar Unidad Gestión para Convocatoria");
   }
 
   @Test
@@ -769,7 +791,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede modificar el modelo de ejecución al existir registros dependientes en las pantallas Enlaces, Plazos y fases, Hitos o Documentos");
+            "No se puede Modificar Unidad Gestión para Convocatoria");
   }
 
   @Test
@@ -778,7 +800,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria Registrada without ModeloEjecucion
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, null, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
 
@@ -787,7 +811,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as ModeloEjecucion is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion no puede ser null en la Convocatoria");
+        .hasMessage("Modelo Ejecución de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -796,7 +820,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria with ModeloEjecucion not asigned to given UnidadGestion
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -813,7 +839,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // then: throw exception as ModeloEjecucion is not asigned to given
         // UnidadGestion
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion '%s' no disponible para la UnidadGestion %s",
+        .hasMessage("Modelo Ejecución %s no disponible para la Unidad Gestión %s",
             convocatoriaExistente.getModeloEjecucion().getNombre(), convocatoria.getUnidadGestionRef());
   }
 
@@ -823,7 +849,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria with the same ModeloUnidad disabled
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -863,7 +891,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria with updated ModeloEjecucion ModeloUnidad disabled
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 2L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -883,7 +913,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // then: throw exception as ModeloUnidad with updated ModeloEjecucion is
         // disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion '%s' no está activo para la UnidadGestion %s",
+        .hasMessage("%s de Modelo Unidad no está activo",
             convocatoria.getModeloEjecucion().getNombre(), convocatoria.getUnidadGestionRef());
   }
 
@@ -894,7 +924,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.getModeloEjecucion().setActivo(Boolean.FALSE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -935,7 +967,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 2L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.getModeloEjecucion().setActivo(Boolean.FALSE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -954,7 +988,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as updated ModeloEjecucion is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion '%s' no está activo", convocatoria.getModeloEjecucion().getNombre());
+        .hasMessage("%s de Modelo Ejecución no está activo", convocatoria.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -964,14 +998,16 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.setTitulo(null);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
     Assertions.assertThatThrownBy(
         // when: update Convocatoria
         () -> service.update(convocatoria))
         // then: throw exception as Titulo is not present
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Titulo no puede ser null en la Convocatoria");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Título de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -983,7 +1019,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.setEstado(Convocatoria.Estado.BORRADOR);
     convocatoria.setTitulo(null);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
 
@@ -991,7 +1029,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // when: update Convocatoria
         () -> service.update(convocatoria))
         // then: throw exception as Titulo is not present
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Titulo no puede ser null en la Convocatoria");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Título de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -1000,7 +1038,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria Registrada without ModeloTipoFinalidad
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, null, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
 
@@ -1008,7 +1048,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // when: update Convocatoria
         () -> service.update(convocatoria))
         // then: throw exception as ModeloTipoFinalidad is not present
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Finalidad no puede ser null en la Convocatoria");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Tipo Finalidad de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -1019,7 +1059,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     convocatoriaExistente.setEstado(Convocatoria.Estado.BORRADOR);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, null, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.setEstado(Convocatoria.Estado.BORRADOR);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
 
@@ -1028,7 +1070,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as ModeloEjecucion is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion requerido para obtener TipoFinalidad");
+        .hasMessage("Modelo Ejecución de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -1037,7 +1079,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria with TipoFinalidad not asigned to given ModeloEjecucion
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1060,8 +1104,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // then: throw exception as TipoFinalidad is not asigned to given
         // ModeloEjecucion
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFinalidad '%s' no disponible para el ModeloEjecucion %s",
-            convocatoria.getFinalidad().getNombre(), convocatoria.getModeloEjecucion().getNombre());
+        .hasMessage("Tipo Finalidad no disponible para el Modelo Ejecución %s",
+            convocatoria.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -1071,7 +1115,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.getFinalidad().setActivo(Boolean.FALSE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1112,7 +1158,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 2L, 1L, 1L, Boolean.TRUE);
     convocatoria.getFinalidad().setActivo(Boolean.FALSE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1136,7 +1184,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as updated ModeloTipoFinalidad is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoFinalidad '%s' no está activo para el ModeloEjecucion %s",
+        .hasMessage("%s de Modelo Tipo Finalidad no está activo para el modelo ejecución %s",
             convocatoria.getFinalidad().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -1147,7 +1195,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.getFinalidad().setActivo(Boolean.FALSE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1188,7 +1238,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 2L, 1L, 1L, Boolean.TRUE);
     convocatoria.getFinalidad().setActivo(Boolean.FALSE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1212,7 +1264,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as updated TipoFinalidad is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFinalidad '%s' no está activo", convocatoria.getFinalidad().getNombre());
+        .hasMessage("%s de Tipo Finalidad no está activo", convocatoria.getFinalidad().getNombre());
   }
 
   @Test
@@ -1221,7 +1273,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria with no existing TipoRegimenConcurrencia
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1248,7 +1302,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as TipoRegimenConcurrencia does not exist
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("RegimenConcurrencia '%s' no disponible", convocatoria.getRegimenConcurrencia().getNombre());
+        .hasMessage("Ya existe Tipo de régimen de concurrencia con el valor %s",
+            convocatoria.getRegimenConcurrencia().getNombre());
   }
 
   @Test
@@ -1258,7 +1313,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.getRegimenConcurrencia().setActivo(Boolean.FALSE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1304,7 +1361,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 2L, 1L, Boolean.TRUE);
     convocatoria.getRegimenConcurrencia().setActivo(Boolean.FALSE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1331,7 +1390,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as TipoRegimenConcurrencia is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("RegimenConcurrencia '%s' no está activo", convocatoria.getRegimenConcurrencia().getNombre());
+        .hasMessage("%s de Tipo de régimen de concurrencia no está activo",
+            convocatoria.getRegimenConcurrencia().getNombre());
   }
 
   @Test
@@ -1340,7 +1400,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria Registrada without TipoAmbitoGeografico
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, null, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
 
@@ -1349,7 +1411,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as TipoAmbitoGeografico is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("AmbitoGeografico no puede ser null en la Convocatoria");
+        .hasMessage("Tipo de Ámbito Geográfico de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -1358,7 +1420,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria with no existing TipoAmbitoGeografico
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1387,7 +1451,8 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as TipoAmbitoGeografico does not exist
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("AmbitoGeografico '%s' no disponible", convocatoria.getAmbitoGeografico().getNombre());
+        .hasMessage("Tipo de Ámbito Geográfico de Convocatoria no puede ser nulo",
+            convocatoria.getAmbitoGeografico().getNombre());
   }
 
   @Test
@@ -1397,7 +1462,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.getAmbitoGeografico().setActivo(Boolean.FALSE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1438,7 +1505,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 2L, Boolean.TRUE);
     convocatoria.getAmbitoGeografico().setActivo(Boolean.FALSE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
@@ -1468,7 +1537,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as updated TipoAmbitoGeografico is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("AmbitoGeografico '%s' no está activo", convocatoria.getAmbitoGeografico().getNombre());
+        .hasMessage("%s de Tipo de Ámbito Geográfico no está activo", convocatoria.getAmbitoGeografico().getNombre());
   }
 
   @Test
@@ -1588,7 +1657,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria Registrada without ConfiguracionSolicitud
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoriaExistente));
 
@@ -1609,7 +1680,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // ConfiguracionSolicitud
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
     configuracionSolicitud.setTramitacionSGI(null);
 
@@ -1623,7 +1696,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as TramitacionSGI is not present
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Habilitar presentacion SGI no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
+            "Tramitación SGI de Configuración solicitud no puede ser nulo");
   }
 
   @Test
@@ -1634,7 +1707,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // ConfiguracionSolicitud
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
     configuracionSolicitud.setTramitacionSGI(Boolean.TRUE);
     configuracionSolicitud.setFasePresentacionSolicitudes(null);
@@ -1649,7 +1724,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.update(convocatoria))
         // then: throw exception as FasePresentacionSolicitudes is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Plazo presentación solicitudes no puede ser null cuando se establece presentacion SGI");
+        .hasMessage("Presentación SGI de Convocatoria Fase no puede ser nulo");
   }
 
   @Test
@@ -1660,7 +1735,9 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // ConfiguracionSolicitud
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoriaExistente, 1L);
     configuracionSolicitud.setTramitacionSGI(Boolean.FALSE);
     configuracionSolicitud.setFasePresentacionSolicitudes(null);
@@ -1709,14 +1786,16 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
     // given: a Convocatoria Registrada without FormularioSolicitud
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.setFormularioSolicitud(null);
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(convocatoriaObservaciones);
 
     Assertions.assertThatThrownBy(
         // when: update Convocatoria
         () -> service.update(convocatoria))
         // then: throw exception as FormularioSolicitud is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("FormularioSolicitud no puede ser null para actualizar Convocatoria");
+        .hasMessage("Formulario Solicitud de Convocatoria no puede ser nulo");
   }
 
   /**
@@ -1770,7 +1849,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-R" })
-  void enable_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void enable_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.FALSE);
 
@@ -1830,7 +1909,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-B" })
-  void disable_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void disable_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
 
@@ -1858,7 +1937,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.disable(convocatoria.getId()))
         // then:Exception is thrown
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede eliminar Convocatoria. No tiene los permisos necesarios o está registrada y cuenta con solicitudes o proyectos asociados");
+            "No se puede Eliminar Convocatoria. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test
@@ -1912,7 +1991,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrar_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void registrar_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
 
@@ -1934,7 +2013,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // when: registrar Convocatoria
         () -> service.registrar(convocatoria.getId()))
         // then: throw exception as id must be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Id no puede ser null para registrar Convocatoria");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Identificador de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -1967,7 +2046,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.registrar(convocatoria.getId()))
         // then: throw exception as UnidadGestion is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("UnidadGestionRef no puede ser null en la Convocatoria");
+        .hasMessage("Referencia Unidad Gestión de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -1983,7 +2062,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.registrar(convocatoria.getId()))
         // then: throw exception as ModeloEjecucion is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloEjecucion no puede ser null en la Convocatoria");
+        .hasMessage("Modelo Ejecución de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -1999,7 +2078,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // when: registrar Convocatoria
         () -> service.registrar(convocatoria.getId()))
         // then: throw exception as Titulo is not present
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Titulo no puede ser null en la Convocatoria");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Título de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -2014,7 +2093,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         // when: registrar Convocatoria
         () -> service.registrar(convocatoria.getId()))
         // then: throw exception as TipoFinalidad is not present
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Finalidad no puede ser null en la Convocatoria");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Tipo Finalidad de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -2030,7 +2109,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.registrar(convocatoria.getId()))
         // then: throw exception as TipoAmbitoGeografico is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("AmbitoGeografico no puede ser null en la Convocatoria");
+        .hasMessage("Tipo de Ámbito Geográfico de Convocatoria no puede ser nulo");
   }
 
   /**
@@ -2074,7 +2153,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.registrar(convocatoria.getId()))
         // then: throw exception as TramitacionSGI is not present
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Habilitar presentacion SGI no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
+            "Tramitación SGI de Configuración solicitud no puede ser nulo");
   }
 
   @Test
@@ -2097,7 +2176,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.registrar(convocatoria.getId()))
         // then: throw exception as FasePresentacionSolicitudes is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Plazo presentación solicitudes no puede ser null cuando se establece presentacion SGI");
+        .hasMessage("Presentación SGI de Convocatoria Fase no puede ser nulo");
   }
 
   @Test
@@ -2145,7 +2224,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         () -> service.registrar(convocatoria.getId()))
         // then: throw exception as FormularioSolicitud is not present
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("FormularioSolicitud no puede ser null en la Convocatoria");
+        .hasMessage("Formulario Solicitud de Convocatoria no puede ser nulo");
   }
 
   /**
@@ -2154,7 +2233,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  void modificable_ConvocatoriaIdWithoutSolicitudesOrProyectos_ReturnsTRUE() throws Exception {
+  void modificable_ConvocatoriaIdWithoutSolicitudesOrProyectos_ReturnsTRUE() {
     // given: existing id modificable
     Long id = 1L;
     String unidadGestionRef = "2";
@@ -2172,7 +2251,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
-  void modificable_ConvocatoriaIdWithSolicitudesOrProyectos_ReturnsFALSE() throws Exception {
+  void modificable_ConvocatoriaIdWithSolicitudesOrProyectos_ReturnsFALSE() {
     // given: given: existing id not modificable
     Long id = 1L;
     String unidadGestionRef = "2";
@@ -2190,7 +2269,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WhenIsRegistrable_ReturnsTRUE() throws Exception {
+  void registrable_WhenIsRegistrable_ReturnsTRUE() {
     // given: existing id registrable
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2211,7 +2290,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutId_ReturnsFalse() throws Exception {
+  void registrable_WithoutId_ReturnsFalse() {
     // given: no id
     Long id = null;
 
@@ -2224,7 +2303,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithNoExistingId_ReturnsFalse() throws Exception {
+  void registrable_WithNoExistingId_ReturnsFalse() {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.empty());
@@ -2238,7 +2317,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithEstadoRegistrada_ReturnsFalse() throws Exception {
+  void registrable_WithEstadoRegistrada_ReturnsFalse() {
     // given: existing id with Estado Registrada
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2255,7 +2334,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutUnidadGestionRef_ReturnsFalse() throws Exception {
+  void registrable_WithoutUnidadGestionRef_ReturnsFalse() {
     // given: existing id without UnidadGestionRef
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2273,7 +2352,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutModeloEjecucion_ReturnsFalse() throws Exception {
+  void registrable_WithoutModeloEjecucion_ReturnsFalse() {
     // given: existing id without ModeloEjecucion
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2291,7 +2370,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutFechaPublicacion_ReturnsFalse() throws Exception {
+  void registrable_WithoutFechaPublicacion_ReturnsFalse() {
     // given: existing id without FechaPublicacion
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2309,7 +2388,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutTitulo_ReturnsFalse() throws Exception {
+  void registrable_WithoutTitulo_ReturnsFalse() {
     // given: existing id without Titulo
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2327,7 +2406,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutFinalidad_ReturnsFalse() throws Exception {
+  void registrable_WithoutFinalidad_ReturnsFalse() {
     // given: existing id without Finalidad
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2345,7 +2424,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutAmbitoGeografico_ReturnsFalse() throws Exception {
+  void registrable_WithoutAmbitoGeografico_ReturnsFalse() {
     // given: existing id without AmbitoGeografico
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2363,7 +2442,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutConfiguracionSolicitud_ReturnsFalse() throws Exception {
+  void registrable_WithoutConfiguracionSolicitud_ReturnsFalse() {
     // given: existing id without ConfiguracionSolicitud
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2382,7 +2461,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutTramitacionSGI_ReturnsFalse() throws Exception {
+  void registrable_WithoutTramitacionSGI_ReturnsFalse() {
     // given: existing id without TramitacionSGI
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2403,7 +2482,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutFormularioSolicitud_ReturnsFalse() throws Exception {
+  void registrable_WithoutFormularioSolicitud_ReturnsFalse() {
     // given: existing id without FormularioSolicitud
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2420,7 +2499,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-C" })
-  void registrable_WithoutFasePresentacionSolicitudesWhenTramitacionSGIIsTrue_ReturnsFalse() throws Exception {
+  void registrable_WithoutFasePresentacionSolicitudesWhenTramitacionSGIIsTrue_ReturnsFalse() {
     // given: existing id without BaremacionRef
     Long id = 1L;
     Convocatoria convocatoria = generarMockConvocatoria(id, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
@@ -2441,7 +2520,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void existsById_WithExistingId_ReturnsTRUE() throws Exception {
+  void existsById_WithExistingId_ReturnsTRUE() {
     // given: existing id
     Long id = 1L;
     BDDMockito.given(repository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
@@ -2454,7 +2533,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void existsById_WithNoExistingId_ReturnsFALSE() throws Exception {
+  void existsById_WithNoExistingId_ReturnsFALSE() {
     // given: no existing id
     Long id = 1L;
     BDDMockito.given(repository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
@@ -2468,7 +2547,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  void findById_WithExistingId_ReturnsConvocatoria() throws Exception {
+  void findById_WithExistingId_ReturnsConvocatoria() {
     // given: existing Convocatoria
     Convocatoria convocatoriaExistente = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
 
@@ -2504,7 +2583,7 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-CON-V" })
-  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.empty());
 
@@ -2619,42 +2698,72 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
    */
   private Convocatoria generarMockConvocatoria(Long convocatoriaId, Long unidadGestionId, Long modeloEjecucionId,
       Long modeloTipoFinalidadId, Long tipoRegimenConcurrenciaId, Long tipoAmbitoGeogragicoId, Boolean activo) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(
+        new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId)));
 
     ModeloEjecucion modeloEjecucion = (modeloEjecucionId == null) ? null
         : ModeloEjecucion.builder().id(modeloEjecucionId)
-            .nombre("nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId)).activo(Boolean.TRUE).build();
+            .nombre(nombreModeloEjecucion).activo(Boolean.TRUE).build();
+
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(
+        new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId)));
 
     TipoFinalidad tipoFinalidad = (modeloTipoFinalidadId == null) ? null
-        : TipoFinalidad.builder().id(modeloTipoFinalidadId)
-            .nombre("nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId)).activo(Boolean.TRUE).build();
+        : TipoFinalidad.builder()
+            .id(modeloTipoFinalidadId)
+            .nombre(nombreTipoFinalidad)
+            .activo(Boolean.TRUE)
+            .build();
 
     ModeloTipoFinalidad modeloTipoFinalidad = (modeloTipoFinalidadId == null) ? null
         : ModeloTipoFinalidad.builder().id(modeloTipoFinalidadId).modeloEjecucion(modeloEjecucion)
             .tipoFinalidad(tipoFinalidad).activo(Boolean.TRUE).build();
 
+    Set<TipoRegimenConcurrenciaNombre> tipoRegimenConcurrenciaNombres = new HashSet<>();
+    tipoRegimenConcurrenciaNombres.add(new TipoRegimenConcurrenciaNombre(Language.ES,
+        "nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId)));
+
     TipoRegimenConcurrencia tipoRegimenConcurrencia = (tipoRegimenConcurrenciaId == null) ? null
         : TipoRegimenConcurrencia.builder().id(tipoRegimenConcurrenciaId)
-            .nombre("nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId))
+            .nombre(
+                tipoRegimenConcurrenciaNombres)
             .activo(Boolean.TRUE).build();
+
+    Set<TipoAmbitoGeograficoNombre> nombre = new HashSet<>();
+    nombre.add(new TipoAmbitoGeograficoNombre(Language.ES,
+        "nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId)));
 
     TipoAmbitoGeografico tipoAmbitoGeografico = (tipoAmbitoGeogragicoId == null) ? null
         : TipoAmbitoGeografico.builder().id(tipoAmbitoGeogragicoId)
-            .nombre("nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId)).activo(Boolean.TRUE)
+            .nombre(nombre).activo(Boolean.TRUE)
             .build();
 
-    Convocatoria convocatoria = Convocatoria.builder().id(convocatoriaId)
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObjeto> convocatoriaObjeto = new HashSet<>();
+    convocatoriaObjeto.add(new ConvocatoriaObjeto(Language.ES, "objeto-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones
+        .add(new ConvocatoriaObservaciones(Language.ES, "observaciones-" + String.format("%03d", convocatoriaId)));
+
+    return Convocatoria.builder()
+        .id(convocatoriaId)
         .unidadGestionRef((unidadGestionId == null) ? null : "2").modeloEjecucion(modeloEjecucion)
         .codigo("codigo-" + String.format("%03d", convocatoriaId))
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z")).fechaProvisional(Instant.parse("2021-08-01T00:00:00Z"))
-        .fechaConcesion(Instant.parse("2021-08-01T00:00:00Z")).titulo("titulo-" + String.format("%03d", convocatoriaId))
-        .objeto("objeto-" + String.format("%03d", convocatoriaId))
-        .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
+        .fechaConcesion(Instant.parse("2021-08-01T00:00:00Z"))
+        .titulo(convocatoriaTitulo)
+        .objeto(convocatoriaObjeto)
+        .observaciones(convocatoriaObservaciones)
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .formularioSolicitud(FormularioSolicitud.PROYECTO).regimenConcurrencia(tipoRegimenConcurrencia)
         .estado(Convocatoria.Estado.REGISTRADA).duracion(12).ambitoGeografico(tipoAmbitoGeografico)
         .clasificacionCVN(ClasificacionCVN.AYUDAS).activo(activo).build();
 
-    return convocatoria;
   }
 
   /**
@@ -2698,12 +2807,17 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
   private ConfiguracionSolicitud generarMockConfiguracionSolicitud(Long configuracionSolicitudId,
       Convocatoria convocatoria, Long convocatoriaFaseId) {
 
-    // @formatter:off
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-1"));
+
     TipoFase tipoFase = TipoFase.builder()
         .id(convocatoriaFaseId)
-        .nombre("nombre-1")
+        .nombre(nombreTipoFase)
         .activo(Boolean.TRUE)
         .build();
+
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    obsConvocatoriaFase.add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones"));
 
     ConvocatoriaFase convocatoriaFase = ConvocatoriaFase.builder()
         .id(convocatoriaFaseId)
@@ -2711,19 +2825,16 @@ class ConvocatoriaServiceTest extends BaseServiceTest {
         .tipoFase(tipoFase)
         .fechaInicio(Instant.parse("2020-10-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-10-15T00:00:00Z"))
-        .observaciones("observaciones")
+        .observaciones(obsConvocatoriaFase)
         .build();
 
-    ConfiguracionSolicitud configuracionSolicitud = ConfiguracionSolicitud.builder()
+    return ConfiguracionSolicitud.builder()
         .id(configuracionSolicitudId)
         .convocatoriaId(convocatoria.getId())
         .tramitacionSGI(Boolean.TRUE)
         .fasePresentacionSolicitudes(convocatoriaFase)
         .importeMaximoSolicitud(BigDecimal.valueOf(12345))
         .build();
-    // @formatter:on
-
-    return configuracionSolicitud;
   }
 
 }

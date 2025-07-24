@@ -1,22 +1,31 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoHitoNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoHito;
+import org.crue.hercules.sgi.csp.model.TipoHitoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoHitoNombre;
 import org.crue.hercules.sgi.csp.repository.TipoHitoRepository;
 import org.crue.hercules.sgi.csp.service.impl.TipoHitoServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,17 +35,15 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * TipoHitoServiceTest
  */
+@Import({ TipoHitoServiceImpl.class })
 class TipoHitoServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private TipoHitoRepository tipoHitoRepository;
 
+  // This bean must be created by Spring so validations can be applied
+  @Autowired
   private TipoHitoService tipoHitoService;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    tipoHitoService = new TipoHitoServiceImpl(tipoHitoRepository);
-  }
 
   @Test
   void find_WithId_ReturnsTipoHito() {
@@ -45,7 +52,7 @@ class TipoHitoServiceTest extends BaseServiceTest {
     TipoHito tipoHito = tipoHitoService.findById(1L);
     Assertions.assertThat(tipoHito.getId()).isEqualTo(1L);
     Assertions.assertThat(tipoHito.getActivo()).isEqualTo(Boolean.TRUE);
-    Assertions.assertThat(tipoHito.getNombre()).isEqualTo("TipoHito1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES)).isEqualTo("TipoHito1");
 
   }
 
@@ -61,7 +68,8 @@ class TipoHitoServiceTest extends BaseServiceTest {
     // given: Un nuevo TipoHito
     TipoHito tipoHito = generarMockTipoHito(null);
 
-    BDDMockito.given(tipoHitoRepository.findByNombreAndActivoIsTrue(tipoHito.getNombre())).willReturn(Optional.empty());
+    BDDMockito.given(tipoHitoRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any())).willReturn(Optional.empty());
 
     BDDMockito.given(tipoHitoRepository.save(tipoHito)).will((InvocationOnMock invocation) -> {
       TipoHito tipoHitoCreado = invocation.getArgument(0);
@@ -75,7 +83,8 @@ class TipoHitoServiceTest extends BaseServiceTest {
     // then: El TipoHito se crea correctamente
     Assertions.assertThat(tipoHitoCreado).as("isNotNull()").isNotNull();
     Assertions.assertThat(tipoHitoCreado.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(tipoHitoCreado.getNombre()).as("getNombre").isEqualTo(tipoHito.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoHitoCreado.getNombre(), Language.ES)).as("getNombre")
+        .isEqualTo(I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES));
     Assertions.assertThat(tipoHitoCreado.getActivo()).as("getActivo").isEqualTo(tipoHito.getActivo());
   }
 
@@ -88,7 +97,7 @@ class TipoHitoServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque el TipoHito ya tiene id
     Assertions.assertThatThrownBy(() -> tipoHitoService.create(tipoHitoNew))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoHito id tiene que ser null para crear un nuevo tipoHito");
+        .hasMessage("Identificador de Tipo Hito debe ser nulo");
   }
 
   @Test
@@ -106,7 +115,8 @@ class TipoHitoServiceTest extends BaseServiceTest {
 
     // then: El tipo Hito se actualiza correctamente.
     Assertions.assertThat(tipoHitoActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(tipoHitoActualizado.getNombre()).isEqualTo("TipoHito1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoHitoActualizado.getNombre(), Language.ES))
+        .isEqualTo("TipoHito1 actualizada");
 
   }
 
@@ -129,15 +139,17 @@ class TipoHitoServiceTest extends BaseServiceTest {
     BeanUtils.copyProperties(givenData, newTHito);
     newTHito.setId(null);
 
-    BDDMockito.given(tipoHitoRepository.findByNombreAndActivoIsTrue(ArgumentMatchers.anyString()))
+    BDDMockito.given(tipoHitoRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(givenData));
 
     Assertions.assertThatThrownBy(
         // when: create TipoHito
         () -> tipoHitoService.create(newTHito))
         // then: throw exception as Nombre already exists
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoHito activo con el nombre '%s'", newTHito.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un tipo de hito con el nombre '%s'",
+            I18nHelper.getValueForLanguage(newTHito.getNombre(), Language.ES));
   }
 
   @Test
@@ -146,14 +158,16 @@ class TipoHitoServiceTest extends BaseServiceTest {
     TipoHito tipoHitoUpdated = generarMockTipoHito(1L, "nombreRepetido");
     TipoHito tipoHito = generarMockTipoHito(2L, "nombreRepetido");
 
-    BDDMockito.given(tipoHitoRepository.findByNombreAndActivoIsTrue(tipoHitoUpdated.getNombre()))
+    BDDMockito.given(tipoHitoRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(tipoHito));
 
     // when: Actualizamos el TipoHito
     // then: Lanza una excepcion porque ya existe otro TipoHito con ese nombre
     Assertions.assertThatThrownBy(() -> tipoHitoService.update(tipoHitoUpdated))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoHito activo con el nombre '%s'", tipoHito.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un tipo de hito con el nombre '%s'",
+            I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES));
   }
 
   @Test
@@ -192,7 +206,8 @@ class TipoHitoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoHito tipoHito = page.getContent().get(i);
-      Assertions.assertThat(tipoHito.getNombre()).isEqualTo("TipoHito" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES))
+          .isEqualTo("TipoHito" + String.format("%03d", j));
     }
   }
 
@@ -232,7 +247,8 @@ class TipoHitoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoHito tipoHito = page.getContent().get(i);
-      Assertions.assertThat(tipoHito.getNombre()).isEqualTo("TipoHito" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES))
+          .isEqualTo("TipoHito" + String.format("%03d", j));
     }
   }
 
@@ -258,7 +274,8 @@ class TipoHitoServiceTest extends BaseServiceTest {
     // then: El TipoHito se activa correctamente.
     Assertions.assertThat(tipoHitoActualizado).as("isNotNull()").isNotNull();
     Assertions.assertThat(tipoHitoActualizado.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(tipoHitoActualizado.getNombre()).as("getNombre()").isEqualTo(tipoHito.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoHitoActualizado.getNombre(), Language.ES))
+        .as("getNombre()").isEqualTo(I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES));
     Assertions.assertThat(tipoHitoActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(tipoHito.getDescripcion());
     Assertions.assertThat(tipoHitoActualizado.getActivo()).as("getActivo()").isEqualTo(Boolean.TRUE);
@@ -284,14 +301,16 @@ class TipoHitoServiceTest extends BaseServiceTest {
     tipoHito.setActivo(Boolean.FALSE);
 
     BDDMockito.given(tipoHitoRepository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(tipoHito));
-    BDDMockito.given(tipoHitoRepository.findByNombreAndActivoIsTrue(ArgumentMatchers.<String>any()))
+    BDDMockito.given(tipoHitoRepository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(tipoHitoExistente));
 
     // when: activamos el TipoHito
     // then: Lanza una excepcion porque el TipoHito no existe
     Assertions.assertThatThrownBy(() -> tipoHitoService.enable(tipoHito.getId()))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoHito activo con el nombre '%s'", tipoHito.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un tipo de hito con el nombre '%s'",
+            I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES));
 
   }
 
@@ -316,7 +335,8 @@ class TipoHitoServiceTest extends BaseServiceTest {
     // then: El TipoHito se desactiva correctamente.
     Assertions.assertThat(tipoHitoActualizado).as("isNotNull()").isNotNull();
     Assertions.assertThat(tipoHitoActualizado.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(tipoHitoActualizado.getNombre()).as("getNombre()").isEqualTo(tipoHito.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoHitoActualizado.getNombre(), Language.ES))
+        .as("getNombre()").isEqualTo(I18nHelper.getValueForLanguage(tipoHito.getNombre(), Language.ES));
     Assertions.assertThat(tipoHitoActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(tipoHito.getDescripcion());
     Assertions.assertThat(tipoHitoActualizado.getActivo()).as("getActivo()").isFalse();
@@ -351,10 +371,16 @@ class TipoHitoServiceTest extends BaseServiceTest {
    * @return el objeto TipoHito
    */
   TipoHito generarMockTipoHito(Long id, String nombre) {
+    Set<TipoHitoNombre> nombreTipoHito = new HashSet<>();
+    nombreTipoHito.add(new TipoHitoNombre(Language.ES, nombre));
+
+    Set<TipoHitoDescripcion> descripcionTipoHito = new HashSet<>();
+    descripcionTipoHito.add(new TipoHitoDescripcion(Language.ES, "descripcion-" + id));
+
     TipoHito tipoHito = new TipoHito();
     tipoHito.setId(id);
-    tipoHito.setNombre(nombre);
-    tipoHito.setDescripcion("descripcion-" + id);
+    tipoHito.setNombre(nombreTipoHito);
+    tipoHito.setDescripcion(descripcionTipoHito);
     tipoHito.setActivo(Boolean.TRUE);
     return tipoHito;
   }

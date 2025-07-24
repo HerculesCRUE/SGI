@@ -13,6 +13,7 @@ import {
 import { EMPTY, merge, Observable, of, Subscription } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { AbstractMenuContentComponent } from './abstract-menu-content.component';
+import { TranslateService } from '@ngx-translate/core';
 
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
@@ -21,26 +22,28 @@ export abstract class AbstractTablePaginationComponent<T> extends AbstractMenuCo
   elementosPagina: number[];
   totalElementos: number;
   filter: SgiRestFilter;
-  suscripciones: Subscription[];
   formGroup: FormGroup;
   findOptions: SgiRestFindOptions;
 
   @ViewChild(MatSort, { static: true }) sort: MatSort;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-  protected constructor(
-  ) {
-    super();
+  protected resolveSortProperty: (string) => string = (column: string) => column;
+
+  protected constructor(translateService?: TranslateService) {
+    super(translateService);
     this.elementosPagina = [5, 10, 25, 100];
   }
 
   ngOnInit(): void {
     this.totalElementos = 0;
     this.suscripciones = [];
+    super.ngOnInit();
     this.initColumns();
   }
 
   ngOnDestroy(): void {
+    super.ngOnDestroy();
     this.suscripciones.forEach(x => x.unsubscribe());
   }
 
@@ -134,7 +137,7 @@ export abstract class AbstractTablePaginationComponent<T> extends AbstractMenuCo
         index: reset ? 0 : this.paginator?.pageIndex,
         size: this.paginator?.pageSize,
       },
-      sort: new RSQLSgiRestSort(this.sort?.active, SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
+      sort: new RSQLSgiRestSort(this.resolveSortProperty(this.sort?.active), SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
       filter: this.filter,
     };
     this.findOptions = options;

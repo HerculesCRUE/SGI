@@ -10,6 +10,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { SolicitudProteccionActionService } from '../../solicitud-proteccion.action.service';
 import { SolicitudProteccionDatosGeneralesFragment } from './solicitud-proteccion-datos-generales.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 const SOLICITUD_PROTECCION_TITULO_KEY = marker('pii.solicitud-proteccion.titulo');
 const SOLICITUD_PROTECCION_VIA_PROTECCION_KEY = marker('pii.solicitud-proteccion.via-proteccion');
@@ -76,9 +77,10 @@ export class SolicitudProteccionDatosGeneralesComponent extends FormFragmentComp
 
   constructor(
     protected actionService: SolicitudProteccionActionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as SolicitudProteccionDatosGeneralesFragment;
   }
 
@@ -88,14 +90,14 @@ export class SolicitudProteccionDatosGeneralesComponent extends FormFragmentComp
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
   public displayTextTipoCaducidad(tipoCaducidad: ITipoCaducidad) {
-    return tipoCaducidad?.descripcion ?? '';
+    return this.languageService.getFieldValue(tipoCaducidad?.descripcion) ?? '';
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       SOLICITUD_PROTECCION_TITULO_KEY,

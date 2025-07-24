@@ -1,9 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DEFAULT_PREFIX_RECIPIENTS_CSP_CONV_HITOS } from '@core/models/cnf/config-keys';
 import { IGenericEmailText } from '@core/models/com/generic-email-text';
 import { IConvocatoriaHito } from '@core/models/csp/convocatoria-hito';
@@ -13,6 +14,7 @@ import { ConfigService } from '@core/services/cnf/config.service';
 import { EmailTplService } from '@core/services/com/email-tpl/email-tpl.service';
 import { EmailService } from '@core/services/com/email/email.service';
 import { SgiApiTaskService } from '@core/services/tp/sgiapitask/sgi-api-task.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TipoHitoValidator } from '@core/validators/tipo-hito-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
@@ -37,7 +39,7 @@ export interface ConvocatoriaHitosModalComponentData {
   readonly: boolean;
   canEdit: boolean;
   unidadGestionId: number;
-  tituloConvocatoria: string;
+  tituloConvocatoria: I18nFieldValue[];
 }
 
 @Component({
@@ -164,10 +166,10 @@ export class ConvocatoriaHitosModalComponent extends DialogFormComponent<Convoca
       }
     );
     this.emailTplService.processConvocatoriaHitoTemplate(
-      this.data.tituloConvocatoria,
+      this.data.tituloConvocatoria ?? [],
       this.formGroup.get('fechaInicio').value ?? DateTime.now(),
-      this.formGroup.get('tipoHito').value?.nombre ?? '',
-      this.formGroup.get('comentario').value ?? ''
+      this.formGroup.get('tipoHito').value?.nombre ?? [],
+      this.formGroup.get('comentario').value ?? []
     ).subscribe(
       (template) => {
         this.formGroup.get('aviso.asunto').setValue(template.subject);
@@ -357,7 +359,7 @@ export class ConvocatoriaHitosModalComponent extends DialogFormComponent<Convoca
     const formGroup = new FormGroup({
       tipoHito: new FormControl(this.data?.hito?.tipoHito, Validators.required),
       fechaInicio: new FormControl(this.data?.hito?.fecha, Validators.required),
-      comentario: new FormControl(this.data?.hito?.comentario, Validators.maxLength(250)),
+      comentario: new FormControl(this.data?.hito?.comentario, I18nValidators.maxLength(2000)),
       generaAviso: new FormControl(!!this.data?.hito?.aviso),
       aviso: new FormGroup({
         fechaEnvio: new FormControl(this.data?.hito?.aviso?.task?.instant, Validators.required),

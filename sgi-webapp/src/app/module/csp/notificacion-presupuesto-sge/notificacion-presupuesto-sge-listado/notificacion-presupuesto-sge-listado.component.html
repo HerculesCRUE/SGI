@@ -127,7 +127,7 @@
 
     <!-- Listado de presupuestos -->
     <table mat-table class="mat-elevation-z8 table-unidad" [dataSource]="dataSource" matSort
-      matSortActive="proyectoAnualidad.proyecto.titulo" matSortDirection="asc" matSortDisableClear>
+      matSortActive="proyectoAnualidad.proyecto.titulo.value" matSortDirection="asc" matSortDisableClear>
 
       <ng-container matColumnDef="seleccionar">
         <th mat-header-cell *matHeaderCellDef>
@@ -148,7 +148,9 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.notificacion-presupuesto-sge.titulo-proyecto' | translate}}
         </th>
-        <td mat-cell *matCellDef="let presupuesto">{{presupuesto.proyectoTitulo}}</td>
+        <td mat-cell *matCellDef="let presupuesto">
+          <sgi-i18n-table-field [field]="presupuesto.proyectoTitulo"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Acrónimo -->

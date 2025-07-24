@@ -2,11 +2,16 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoDescripcion;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoNombre;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -227,11 +232,17 @@ class ConvocatoriaConceptoGastoIT extends BaseIT {
    * @return el objeto ConvocatoriaConceptoGasto
    */
   private ConvocatoriaConceptoGasto generarMockConvocatoriaConceptoGasto(Long id, Boolean permitido) {
+    Set<ConceptoGastoNombre> nombreConceptoGasto = new HashSet<>();
+    nombreConceptoGasto.add(new ConceptoGastoNombre(Language.ES, "nombre-00" + (id == null ? 1 : id)));
+
+    Set<ConceptoGastoDescripcion> descripcionConceptoGasto = new HashSet<>();
+    descripcionConceptoGasto.add(new ConceptoGastoDescripcion(Language.ES, "descripcion-00" + (id == null ? 1 : id)));
+
     ConceptoGasto conceptoGasto = new ConceptoGasto();
     conceptoGasto.setId(id == null ? 1 : id);
     conceptoGasto.setActivo(true);
-    conceptoGasto.setDescripcion("descripcion-00" + (id == null ? 1 : id));
-    conceptoGasto.setNombre("nombre-00" + (id == null ? 1 : id));
+    conceptoGasto.setDescripcion(descripcionConceptoGasto);
+    conceptoGasto.setNombre(nombreConceptoGasto);
 
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = new ConvocatoriaConceptoGasto();
     convocatoriaConceptoGasto.setId(id);

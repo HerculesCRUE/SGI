@@ -1,0 +1,5 @@
+databaseChangeLog:
+  - include:
+      file: classpath*:db/changelog/changes/0.6.0/00.06.00-fixup-initial-database.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.6.0/00.06.00-update-initial-database.xml

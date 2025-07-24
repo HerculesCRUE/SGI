@@ -2,6 +2,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { IActa } from '@core/models/eti/acta';
 import { FormFragment } from '@core/services/action-service';
 import { ActaService } from '@core/services/eti/acta.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TimeValidator } from '@core/validators/time-validator';
 import { EMPTY, merge, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
@@ -29,7 +30,7 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
       fechaFin: [null],
       horaInicio: [null],
       horaFin: [null],
-      resumen: ['', [Validators.required, Validators.maxLength(4000)]]
+      resumen: [[], [I18nValidators.required, I18nValidators.maxLength(4000)]]
     });
 
     const horaInicio = fb.controls.horaInicio;
@@ -65,7 +66,7 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
     return this.service.findById(key).pipe(
       switchMap((value) => {
         this.acta = value;
-        this.acta.convocatoriaReunion.codigo = `ACTA${value.numero}/${value.convocatoriaReunion.fechaEvaluacion.year}/${value.convocatoriaReunion.comite.comite}`;
+        this.acta.convocatoriaReunion.codigo = `ACTA${value.numero}/${value.convocatoriaReunion.fechaEvaluacion.year}/${value.convocatoriaReunion.comite.codigo}`;
         return of(this.acta);
       }),
       catchError(() => {
@@ -112,7 +113,7 @@ export class ActaDatosGeneralesFragment extends FormFragment<IActa> {
     return obs.pipe(
       map((value) => {
         this.acta = value;
-        this.acta.convocatoriaReunion.codigo = `ACTA${value.numero}/${value.convocatoriaReunion.fechaEvaluacion.year}/${value.convocatoriaReunion.comite.comite}`;
+        this.acta.convocatoriaReunion.codigo = `ACTA${value.numero}/${value.convocatoriaReunion.fechaEvaluacion.year}/${value.convocatoriaReunion.comite.codigo}`;
         return this.acta.id;
       })
     );

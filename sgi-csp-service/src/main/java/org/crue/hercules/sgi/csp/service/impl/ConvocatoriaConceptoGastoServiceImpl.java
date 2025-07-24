@@ -16,8 +16,11 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaConceptoGastoCodigoEcSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaConceptoGastoSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -35,7 +38,18 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConceptoGastoService {
 
-  private static final String MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA = "El número de meses no puede ser mayor a la duración de meses de la convocatoria";
+  private static final String MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA = "numMeses.mayor.convocatoria";
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_OTHER_ENTITY = "otherEntity";
+  private static final String MSG_FIELD_MES_INICIAL = "mesInicial";
+  private static final String MSG_FIELD_MES_FINAL = "mesFinal";
+  private static final String MSG_FIELD_CODIGO_ECONOMICO = "codigoEconomico";
+  private static final String MSG_MODEL_CONCEPTO_GASTO = "org.crue.hercules.sgi.csp.model.ConceptoGasto.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP = "org.springframework.util.Assert.date.overloap.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP_OTHER_ENTITY = "org.springframework.util.Assert.date.overloap.other.entity.message";
+
   private final ConvocatoriaConceptoGastoRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ConceptoGastoRepository conceptoGastoRepository;
@@ -66,38 +80,45 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
   public ConvocatoriaConceptoGasto create(ConvocatoriaConceptoGasto convocatoriaConceptoGasto) {
     log.debug("create(ConvocatoriaConceptoGasto convocatoriaConceptoGasto) - start");
 
-    Assert.isNull(convocatoriaConceptoGasto.getId(), "Id tiene que ser null para crear ConvocatoriaConceptoGasto");
-
-    Assert.notNull(convocatoriaConceptoGasto.getConvocatoriaId(),
-        "Id Convocatoria no puede ser null para crear ConvocatoriaConceptoGasto");
+    AssertHelper.idIsNull(convocatoriaConceptoGasto.getId(), ConvocatoriaConceptoGasto.class);
+    AssertHelper.idNotNull(convocatoriaConceptoGasto.getConvocatoriaId(), Convocatoria.class);
 
     convocatoriaConceptoGasto.setConceptoGasto(
         conceptoGastoRepository.findById(convocatoriaConceptoGasto.getConceptoGasto().getId()).orElseThrow(
             () -> new ConceptoGastoNotFoundException(convocatoriaConceptoGasto.getConceptoGasto().getId())));
-    Assert.isTrue(convocatoriaConceptoGasto.getConceptoGasto().getActivo(), "El ConceptoGasto debe estar activo");
+    Assert.isTrue(convocatoriaConceptoGasto.getConceptoGasto().getActivo(),
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CONCEPTO_GASTO))
+            .parameter(MSG_KEY_FIELD, convocatoriaConceptoGasto.getConceptoGasto().getNombre())
+            .build());
 
     Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaConceptoGasto.getConvocatoriaId())
         .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaConceptoGasto.getConvocatoriaId()));
 
     if (convocatoriaConceptoGasto.getMesInicial() != null && convocatoria.getDuracion() != null) {
       if (convocatoriaConceptoGasto.getMesFinal() != null) {
-        Assert.isTrue(convocatoriaConceptoGasto.getMesInicial() < convocatoriaConceptoGasto.getMesFinal(),
-            "El MesInicial debe ser anterior al MesFinal");
+        AssertHelper.fieldBefore(convocatoriaConceptoGasto.getMesInicial() < convocatoriaConceptoGasto.getMesFinal(),
+            MSG_FIELD_MES_INICIAL, MSG_FIELD_MES_FINAL);
         Assert.isTrue(
             (convocatoriaConceptoGasto.getMesFinal() - convocatoriaConceptoGasto.getMesInicial()) <= convocatoria
                 .getDuracion(),
-            MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA);
+            ApplicationContextSupport.getMessage(MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA));
       } else {
         Assert.isTrue((12 - convocatoriaConceptoGasto.getMesInicial()) <= convocatoria.getDuracion(),
-            MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA);
+            ApplicationContextSupport.getMessage(MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA));
       }
     }
 
     // se comprueba que no exista la convocatoria concepto gasto en el mismo rango
     // de meses que las que ya hay en bd
     Assert.isTrue(!existsConvocatoriaConceptoGastoConMesesSolapados(convocatoriaConceptoGasto),
-        "El concepto de gasto '" + convocatoriaConceptoGasto.getConceptoGasto()
-            + "' ya está presente y tiene un periodo de vigencia que se solapa con el indicado");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_DATE_OVERLOAP)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_CONCEPTO_GASTO))
+            .parameter(MSG_KEY_FIELD, convocatoriaConceptoGasto.getConceptoGasto().getNombre())
+            .build());
 
     ConvocatoriaConceptoGasto returnValue = repository.save(convocatoriaConceptoGasto);
 
@@ -119,11 +140,8 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
   public ConvocatoriaConceptoGasto update(ConvocatoriaConceptoGasto convocatoriaConceptoGastoActualizar) {
     log.debug("update(ConvocatoriaConceptoGasto convocatoriaConceptoGastoActualizar) - start");
 
-    Assert.notNull(convocatoriaConceptoGastoActualizar.getId(),
-        "ConvocatoriaConceptoGasto id no puede ser null para actualizar un ConvocatoriaConceptoGasto");
-
-    Assert.notNull(convocatoriaConceptoGastoActualizar.getConvocatoriaId(),
-        "Id Convocatoria no puede ser null para actualizar ConvocatoriaConceptoGasto");
+    AssertHelper.idNotNull(convocatoriaConceptoGastoActualizar.getId(), ConvocatoriaConceptoGasto.class);
+    AssertHelper.idNotNull(convocatoriaConceptoGastoActualizar.getConvocatoriaId(), Convocatoria.class);
 
     convocatoriaConceptoGastoActualizar.setConceptoGasto(
         conceptoGastoRepository.findById(convocatoriaConceptoGastoActualizar.getConceptoGasto().getId())
@@ -135,16 +153,16 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
 
     if (convocatoriaConceptoGastoActualizar.getMesInicial() != null && convocatoria.getDuracion() != null) {
       if (convocatoriaConceptoGastoActualizar.getMesFinal() != null) {
-        Assert.isTrue(
+        AssertHelper.fieldBefore(
             convocatoriaConceptoGastoActualizar.getMesInicial() < convocatoriaConceptoGastoActualizar.getMesFinal(),
-            "El MesInicial debe ser anterior al MesFinal");
+            MSG_FIELD_MES_INICIAL, MSG_FIELD_MES_FINAL);
         Assert.isTrue(
             (convocatoriaConceptoGastoActualizar.getMesFinal()
                 - convocatoriaConceptoGastoActualizar.getMesInicial()) <= convocatoria.getDuracion(),
-            MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA);
+            ApplicationContextSupport.getMessage(MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA));
       } else {
         Assert.isTrue((12 - convocatoriaConceptoGastoActualizar.getMesInicial()) <= convocatoria.getDuracion(),
-            MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA);
+            ApplicationContextSupport.getMessage(MESSAGE_NUMBERO_MESES_MAYOR_DURACION_CONVOCATORIA));
       }
 
     }
@@ -152,13 +170,23 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
     // se comprueba que no exista la convocatoria concepto gasto en el mismo rango
     // de meses que las que ya hay en bd
     Assert.isTrue(!existsConvocatoriaConceptoGastoConMesesSolapados(convocatoriaConceptoGastoActualizar),
-        "El concepto de gasto '" + convocatoriaConceptoGastoActualizar.getConceptoGasto()
-            + "' ya está presente y tiene un periodo de vigencia que se solapa con el indicado");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_DATE_OVERLOAP)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_CONCEPTO_GASTO))
+            .parameter(MSG_KEY_FIELD, convocatoriaConceptoGastoActualizar.getConceptoGasto().getNombre())
+            .build());
 
     Assert.isTrue(
         !existsConvocatoriaConceptoGastoAndCodigoEconomicoConMesesSolapados(convocatoriaConceptoGastoActualizar),
-        "El concepto gasto '" + convocatoriaConceptoGastoActualizar.getConceptoGasto()
-            + "' tiene códigos económicos que se solapan con otros códigos económicos de la convocatoria");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_DATE_OVERLOAP_OTHER_ENTITY)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_CONCEPTO_GASTO))
+            .parameter(MSG_KEY_FIELD, convocatoriaConceptoGastoActualizar.getConceptoGasto().getNombre())
+            .parameter(MSG_KEY_OTHER_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_FIELD_CODIGO_ECONOMICO))
+            .build());
 
     return repository.findById(convocatoriaConceptoGastoActualizar.getId()).map(convocatoriaConceptoGasto -> {
 
@@ -188,7 +216,7 @@ public class ConvocatoriaConceptoGastoServiceImpl implements ConvocatoriaConcept
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ConvocatoriaConceptoGasto id no puede ser null para eliminar un ConvocatoriaConceptoGasto");
+    AssertHelper.idNotNull(id, ConvocatoriaConceptoGasto.class);
 
     if (!repository.existsById(id)) {
       throw new ConvocatoriaConceptoGastoNotFoundException(id);

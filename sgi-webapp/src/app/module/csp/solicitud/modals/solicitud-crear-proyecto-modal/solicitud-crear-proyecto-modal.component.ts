@@ -1,25 +1,27 @@
-import { Component, Inject, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { ESTADO_MAP } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { ISolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
-import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { merge, Observable, of } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { delay, map, switchMap, tap } from 'rxjs/operators';
 
 const MSG_ACEPTAR = marker('btn.ok');
 const SOLICITUD_PROYECTO_FECHA_INICIO_KEY = marker('csp.solicitud-proyecto.fecha-inicio');
@@ -44,7 +46,7 @@ interface IProyectoData extends IProyecto {
   styleUrls: ['./solicitud-crear-proyecto-modal.component.scss']
 })
 
-export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<IProyecto> implements OnInit {
+export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<IProyecto> implements OnInit, AfterViewInit, OnDestroy {
 
   textSaveOrUpdate: string;
 
@@ -52,14 +54,12 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
   elementosPagina = [5, 10, 25, 100];
   totalElements = 0;
 
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
-  @ViewChild(MatPaginator, { static: false }) paginator: MatPaginator;
+  @ViewChild(MatSort, { static: true }) private sort: MatSort;
+  @ViewChild(MatPaginator, { static: false }) private paginator: MatPaginator;
 
   get ESTADO_MAP() {
     return ESTADO_MAP;
   }
-
-  private convocatoria: IConvocatoria;
 
   msgParamFechaFinEntity = {};
   msgParamFechaInicioEntity = {};
@@ -73,7 +73,7 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
     public data: ISolicitudCrearProyectoModalData,
     private readonly proyectoService: ProyectoService,
     private readonly translate: TranslateService,
-    private convocatoriaService: ConvocatoriaService
+    private readonly languageService: LanguageService
   ) {
     super(matDialogRef, false);
 
@@ -84,16 +84,27 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
     super.ngOnInit();
     this.setupI18N();
 
-    if (this.data.solicitud.convocatoriaId) {
-      this.subscriptions.push(this.convocatoriaService.findById(this.data.solicitud.convocatoriaId).subscribe(
-        (convocatoria => {
-          this.formGroup.controls.modeloEjecucion.setValue(convocatoria.modeloEjecucion);
-          this.formGroup.controls.modeloEjecucion.disable();
-        })
-      ));
-    }
-
     this.proyectos$ = this.getProyectos();
+
+    this.subscriptions.push(
+      this.initialized$.pipe(delay(0)).subscribe(() => {
+        this.formGroup.updateValueAndValidity();
+      })
+    );
+  }
+
+  ngAfterViewInit(): void {
+    super.ngAfterViewInit();
+    merge(
+      this.paginator?.page,
+      this.sort?.sortChange
+    ).pipe(
+      tap(() => this.proyectos$ = this.getProyectos())
+    ).subscribe();
+  }
+
+  ngOnDestroy(): void {
+    this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
   private setupI18N(): void {
@@ -137,30 +148,49 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
   }
 
   protected buildFormGroup(): FormGroup {
-    let titulo: string;
+    let titulo: I18nFieldValue[];
     if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO) {
       titulo = this.data.solicitud.titulo;
     } else if (this.data.solicitud.formularioSolicitud === FormularioSolicitud.RRHH) {
-      const camposTitulo: string[] = [];
+
       if (!!this.data?.convocatoria?.titulo) {
-        camposTitulo.push(this.data.convocatoria.titulo);
+        titulo = this.data.convocatoria.titulo;
+      } else if (!!this.data?.convocatoria?.anio || !!this.data?.convocatoria?.fechaPublicacion || !!this.data?.nombreSolicitante) {
+        titulo = [
+          {
+            lang: this.languageService.getLanguage(),
+            value: ''
+          }
+        ];
       }
-      if (!!this.data?.convocatoria?.fechaPublicacion) {
-        camposTitulo.push(this.data.convocatoria.fechaPublicacion.year.toString());
+
+      if (!!titulo) {
+        titulo.forEach(t => {
+          const camposTitulo: string[] = [];
+
+          camposTitulo.push(t.value);
+
+          if (!!this.data?.convocatoria?.anio) {
+            camposTitulo.push(this.data.convocatoria.anio.toString());
+          } else if (!!this.data?.convocatoria?.fechaPublicacion) {
+            camposTitulo.push(this.data.convocatoria.fechaPublicacion.year.toString());
+          }
+
+          if (!!this.data?.nombreSolicitante) {
+            camposTitulo.push(this.data.nombreSolicitante);
+          }
+
+          t.value = camposTitulo.join(' - ');
+        })
       }
-      if (!!this.data?.nombreSolicitante) {
-        camposTitulo.push(this.data.nombreSolicitante);
-      }
-      titulo = camposTitulo.join(' - ');
     }
 
     const formGroup = new FormGroup(
       {
-        titulo: new FormControl(titulo || null, [Validators.required, Validators.maxLength(250)]),
+        titulo: new FormControl(titulo || [], [I18nValidators.required, I18nValidators.maxLength(250)]),
         fechaInicio: new FormControl(null),
         fechaFin: new FormControl(null),
-        modeloEjecucion: new FormControl(null, [Validators.required]
-        )
+        modeloEjecucion: new FormControl(this.data.solicitud.modeloEjecucion, [Validators.required])
       },
       {
         validators: [
@@ -176,7 +206,7 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
       })
     );
 
-    if (this.convocatoria?.modeloEjecucion) {
+    if (this.data.solicitud.modeloEjecucion) {
       formGroup.controls.modeloEjecucion.disable();
     }
 
@@ -196,11 +226,23 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
 
   protected getProyectos(): Observable<IProyectoData[]> {
     const filters = new RSQLSgiRestFilter('solicitudId', SgiRestFilterOperator.EQUALS, this.data.solicitud.id.toString());
-    const filter: SgiRestFindOptions = {
-      filter: filters
+    const options: SgiRestFindOptions = {
+      filter: filters,
+      ...(this.paginator?.pageIndex && this.paginator?.pageSize && {
+        page: {
+          index: this.paginator.pageIndex,
+          size: this.paginator.pageSize,
+        },
+      }),
+      ...(this.sort?.active && this.sort?.direction && {
+        sort: new RSQLSgiRestSort(
+          this.resolveSortProperty(this.sort.active),
+          SgiRestSortDirection.fromSortDirection(this.sort.direction)
+        ),
+      }),
     };
 
-    return this.proyectoService.findTodos(filter).pipe(
+    return this.proyectoService.findTodos(options).pipe(
       map((response) => {
         this.totalElements = response.items.length;
         return response.items as IProyectoData[];
@@ -244,4 +286,11 @@ export class SolicitudCrearProyectoModalComponent extends DialogActionComponent<
     return this.proyectoService.crearProyectoBySolicitud(this.data.solicitud.id, this.getValue());
   }
 
+
+  private resolveSortProperty(column: string): string {
+    if (column === 'titulo') {
+      return 'titulo.value';
+    }
+    return column;
+  }
 }

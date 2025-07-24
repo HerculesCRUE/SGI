@@ -6,8 +6,8 @@ import { GrupoLineaInvestigadorService } from '@core/services/csp/grupo-linea-in
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, from, Observable } from 'rxjs';
-import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { BehaviorSubject, from, Observable, of } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export class GrupoLineaInvestigadorFragment extends Fragment {
   lineasInvestigadores$ = new BehaviorSubject<StatusWrapper<IGrupoLineaInvestigador>[]>([]);
@@ -41,6 +41,10 @@ export class GrupoLineaInvestigadorFragment extends Fragment {
                   map(persona => {
                     element.persona = persona;
                     return element;
+                  }),
+                  catchError((err) => {
+                    this.logger.error(err);
+                    return of(element);
                   })
                 );
               }),

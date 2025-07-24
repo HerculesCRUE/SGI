@@ -15,7 +15,10 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRep
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaConceptoGastoCodigoEcSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoCodigoEcService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,6 +35,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements ConvocatoriaConceptoGastoCodigoEcService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_KEY_OTHER_ENTITY = "otherEntity";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_FIELD_CODIGO_ECONOMICO = "codigoEconomico";
+  private static final String MSG_MODEL_CONVOCATORIA_CONCEPTO_GASTO = "org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto.message";
+  private static final String MSG_MODEL_CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC = "org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA = "org.springframework.util.Assert.accion.denegada.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP = "org.springframework.util.Assert.date.overloap.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP_OTHER_ENTITY = "org.springframework.util.Assert.date.overloap.other.entity.message";
 
   private final ConvocatoriaConceptoGastoCodigoEcRepository repository;
   private final ConvocatoriaConceptoGastoRepository convocatoriaConceptoGastoRepository;
@@ -43,21 +57,6 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
     this.repository = repository;
     this.convocatoriaConceptoGastoRepository = convocatoriaConceptoGastoRepository;
     this.authorityHelper = authorityHelper;
-  }
-
-  /**
-   * Obtiene {@link ConvocatoriaConceptoGastoCodigoEc} por su id.
-   *
-   * @param id el id de la entidad {@link ConvocatoriaConceptoGastoCodigoEc}.
-   * @return la entidad {@link ConvocatoriaConceptoGastoCodigoEc}.
-   */
-  @Override
-  public ConvocatoriaConceptoGastoCodigoEc findById(Long id) {
-    log.debug("findById(Long id)  - start");
-    final ConvocatoriaConceptoGastoCodigoEc returnValue = repository.findById(id)
-        .orElseThrow(() -> new ConvocatoriaConceptoGastoCodigoEcNotFoundException(id));
-    log.debug("findById(Long id)  - end");
-    return returnValue;
   }
 
   /**
@@ -288,15 +287,21 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
             Objects.equals(convocatoriaConceptoGastoCodigoEcBD.getConvocatoriaConceptoGastoId(),
                 convocatoriaConceptoGastoCodigoEc
                     .getConvocatoriaConceptoGastoId()),
-            "No se puede modificar el convocatoriaConceptoGasto del ConvocatoriaConceptoGastoCodigoEc");
+            () -> ProblemMessage.builder()
+                .key(MSG_PROBLEM_ACCION_DENEGADA)
+                .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_CONVOCATORIA_CONCEPTO_GASTO))
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC))
+                .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+                .build());
       }
 
       if (convocatoriaConceptoGastoCodigoEc.getFechaInicio() != null
           && convocatoriaConceptoGastoCodigoEc.getFechaFin() != null) {
-        Assert.isTrue(
+        AssertHelper.isBefore(
             convocatoriaConceptoGastoCodigoEc.getFechaInicio()
-                .isBefore(convocatoriaConceptoGastoCodigoEc.getFechaFin()),
-            "La fecha fin no puede ser superior a la fecha de inicio");
+                .isBefore(convocatoriaConceptoGastoCodigoEc.getFechaFin()));
 
       }
 
@@ -304,15 +309,25 @@ public class ConvocatoriaConceptoGastoCodigoEcServiceImpl implements Convocatori
       Assert.isTrue(
           !existsConvocatoriaConceptoGastoCodigoEcConFechasSolapadas(convocatoriaConceptoGastoCodigoEc,
               convocatoriaConceptoGasto.getPermitido()),
-          "El código económico '" + convocatoriaConceptoGastoCodigoEc.getCodigoEconomicoRef()
-              + "' ya está presente y tiene un periodo de vigencia que se solapa con el indicado");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_DATE_OVERLOAP)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_FIELD_CODIGO_ECONOMICO))
+              .parameter(MSG_KEY_FIELD, convocatoriaConceptoGastoCodigoEc.getCodigoEconomicoRef())
+              .build());
 
       Assert.isTrue(
           !existsConvocatoriaConceptoGastoCodigoEcAndConceptoGastoConFechasSolapadas(convocatoriaConceptoGastoCodigoEc,
               convocatoriaConceptoGasto.getMesInicial(), convocatoriaConceptoGasto.getMesFinal(),
               convocatoriaConceptoGasto.getConvocatoriaId()),
-          "El código económico '" + convocatoriaConceptoGastoCodigoEc.getCodigoEconomicoRef()
-              + "' ya está presente en otro concepto gasto de la convocatoria y tiene un periodo de vigencia que se solapa con el indicado");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_DATE_OVERLOAP_OTHER_ENTITY)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_FIELD_CODIGO_ECONOMICO))
+              .parameter(MSG_KEY_FIELD, convocatoriaConceptoGastoCodigoEc.getCodigoEconomicoRef())
+              .parameter(MSG_KEY_OTHER_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_CONVOCATORIA_CONCEPTO_GASTO))
+              .build());
 
       returnValue.add(repository.save(convocatoriaConceptoGastoCodigoEc));
     }

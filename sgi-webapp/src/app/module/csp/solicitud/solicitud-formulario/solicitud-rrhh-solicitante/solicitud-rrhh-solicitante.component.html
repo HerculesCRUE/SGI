@@ -2,7 +2,8 @@
   title="{{'menu.csp.solicitud.solicitud-rrhh' | translate}} - {{'menu.csp.solicitud.solicitud-rrhh.solicitante' | translate}}">
 
   <form [formGroup]="formGroup" fxLayout="column">
-    <div fxFlex fxLayout="row" fxLayoutGap="10px" *ngIf="!this.formPart.isInvestigador">
+    <div fxFlex fxLayout="row" fxLayoutGap="10px"
+      *ngIf="!this.formPart.isInvestigador || this.formPart.errorPersonaRefInvestigador">
       <!-- Solicitante -->
       <mat-form-field fxFlex="0 1 calc((100% - 10px) / 2)">
         <mat-label>{{'csp.solicitud.solicitud-rrhh.solicitante' | translate}}</mat-label>
@@ -234,7 +235,8 @@
       <!-- Universidad text -->
       <mat-form-field fxFlex="0 1 calc((100% - (10px * 2)) / 3)">
         <mat-label>{{'csp.solicitud.solicitud-rrhh.universidad-text' | translate}}</mat-label>
-        <input matInput type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.universidad-text' | translate}}"
+        <input [ngClass]="{ 'not-found-error': formGroup.controls.universidadText.hasError('universidadNotFound')}"
+          matInput type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.universidad-text' | translate}}"
           formControlName="universidadText">
       </mat-form-field>
     </div>

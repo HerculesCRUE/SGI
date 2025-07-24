@@ -1,0 +1,10 @@
+<ng-container *ngFor="let value of values, last as isLast">
+  <span>
+    <sup class="prefix"
+      *ngIf="value && value.lang !== languageService.getLanguage(); else empty">{{value.lang?.codeExtended}}</sup>{{value?.value}}<span
+      *ngIf="!isLast">, </span>
+  </span>
+</ng-container>
+<ng-template #empty>
+  <sup></sup>
+</ng-template>

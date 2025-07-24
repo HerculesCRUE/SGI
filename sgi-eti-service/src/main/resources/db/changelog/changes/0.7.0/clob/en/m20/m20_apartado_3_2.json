@@ -1,0 +1,41 @@
+[
+  {
+    "key": "ap3_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.2 Methodological design of the project"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "This section is completed automatically based on the data entered in the field <b>Methodological design</b> of the section <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/datos-generales' target='_blank'><b>General data</b></a> of the <b>Evaluation Request</b>. Access this menu item to make the necessary modifications.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "key": "disenoMetodologico",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Methodological design",
+          "disabled": true,
+          "required": true,
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.disMetodologico"
+        }
+      },
+      {
+        "template": "<h5>Experimentation process</h5><p>The sections below will help specify the experimentation process to which the animal is subjected. In cases where the complexity of the project so requires (for example if several different species of animals are used or if there are several groups of animals subjected to different experimental processes) several reports can be used.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "To add a new report you need to access the <b>Reports</b> section of the <b>Evaluation request</b>"
+      }
+    ]
+  }
+]

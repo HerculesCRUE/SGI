@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -12,6 +13,9 @@ import org.crue.hercules.sgi.csp.dto.GastoRequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.dto.IncidenciaDocumentacionRequerimientoOutput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionInput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -44,8 +48,7 @@ class RequerimientoJustificacionIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s",
         tokenBuilder.buildToken("usr-002", roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-    return request;
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -80,7 +83,8 @@ class RequerimientoJustificacionIT extends BaseIT {
     final RequerimientoJustificacionOutput responseData = response.getBody();
     Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData.getId()).as("getId()").isEqualTo(requerimientoJustificacionId);
-    Assertions.assertThat(responseData.getObservaciones()).as("getObservaciones()").isEqualTo("obs-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("obs-001");
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -247,8 +251,9 @@ class RequerimientoJustificacionIT extends BaseIT {
     Assertions.assertThat(output.getId()).as("getId()").isNotNull();
     Assertions.assertThat(output.getNumRequerimiento()).as("getNumRequerimiento()")
         .isEqualTo(1);
-    Assertions.assertThat(output.getObservaciones()).as("getObservaciones()")
-        .isEqualTo(input.getObservaciones());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getObservaciones(), Language.ES))
+        .as("getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getObservaciones(), Language.ES));
     Assertions.assertThat(output.getProyectoProyectoSgeId()).as("getProyectoProyectoSgeId()")
         .isEqualTo(input.getProyectoProyectoSgeId());
     Assertions.assertThat(output.getTipoRequerimiento().getId()).as("getTipoRequerimiento().getId()")
@@ -291,8 +296,9 @@ class RequerimientoJustificacionIT extends BaseIT {
         .isEqualTo(requerimientoJustificacionId);
     Assertions.assertThat(output.getNumRequerimiento()).as("getNumRequerimiento()")
         .isEqualTo(2);
-    Assertions.assertThat(output.getObservaciones()).as("getObservaciones()")
-        .isEqualTo(input.getObservaciones());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getObservaciones(), Language.ES))
+        .as("getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getObservaciones(), Language.ES));
     Assertions.assertThat(output.getProyectoProyectoSgeId()).as("getProyectoProyectoSgeId()")
         .isEqualTo(input.getProyectoProyectoSgeId());
     Assertions.assertThat(output.getTipoRequerimiento().getId()).as("getTipoRequerimiento().getId()")
@@ -323,7 +329,7 @@ class RequerimientoJustificacionIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "incidencia,desc";
+    String sort = "incidencia.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_INCIDENCIAS_DOCUMENTACION)
         .queryParam("s", sort).buildAndExpand(requerimientoJustificacionId).toUri();
@@ -341,11 +347,14 @@ class RequerimientoJustificacionIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(responseData.get(0).getIncidencia()).as("get(0).getIncidencia())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getIncidencia(), Language.ES))
+        .as("get(0).getIncidencia())")
         .isEqualTo("incidencia-003");
-    Assertions.assertThat(responseData.get(1).getIncidencia()).as("get(0).getIncidencia())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getIncidencia(), Language.ES))
+        .as("get(0).getIncidencia())")
         .isEqualTo("incidencia-002");
-    Assertions.assertThat(responseData.get(2).getIncidencia()).as("get(1).getIncidencia())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getIncidencia(), Language.ES))
+        .as("get(1).getIncidencia())")
         .isEqualTo("incidencia-001");
   }
 
@@ -373,7 +382,7 @@ class RequerimientoJustificacionIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "incidencia,desc";
+    String sort = "incidencia.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_GASTOS)
         .queryParam("s", sort).buildAndExpand(requerimientoJustificacionId).toUri();
@@ -391,11 +400,14 @@ class RequerimientoJustificacionIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(responseData.get(0).getIncidencia()).as("get(0).getIncidencia())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getIncidencia(), Language.ES))
+        .as("get(0).getIncidencia())")
         .isEqualTo("incidencia-003");
-    Assertions.assertThat(responseData.get(1).getIncidencia()).as("get(0).getIncidencia())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getIncidencia(), Language.ES))
+        .as("get(0).getIncidencia())")
         .isEqualTo("incidencia-002");
-    Assertions.assertThat(responseData.get(2).getIncidencia()).as("get(1).getIncidencia())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getIncidencia(), Language.ES))
+        .as("get(1).getIncidencia())")
         .isEqualTo("incidencia-001");
   }
 
@@ -433,16 +445,26 @@ class RequerimientoJustificacionIT extends BaseIT {
     Assertions.assertThat(responseData).isNotNull();
     Assertions.assertThat(responseData.getRequerimientoJustificacionId()).as("getId()")
         .isEqualTo(requerimientoJustificacionId);
-    Assertions.assertThat(responseData.getObservaciones()).as("getObservaciones()").isEqualTo("Observacion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("Observacion-001");
   }
 
   private RequerimientoJustificacionInput generarMockRequerimientoJustificacionInput(String observaciones,
       Instant fechaNotificacion) {
-    return generarMockRequerimientoJustificacionInput(fechaNotificacion, observaciones, 1L, null, 1L);
+    List<I18nFieldValueDto> observacionesRequerimientoJustificacion = new ArrayList<I18nFieldValueDto>();
+    observacionesRequerimientoJustificacion.add(new I18nFieldValueDto(Language.ES, observaciones));
+
+    return generarMockRequerimientoJustificacionInput(
+        fechaNotificacion,
+        observacionesRequerimientoJustificacion,
+        1L,
+        null,
+        1L);
   }
 
   private RequerimientoJustificacionInput generarMockRequerimientoJustificacionInput(Instant fechaNotificacion,
-      String observaciones, Long proyectoProyectoSgeId, Long requerimientoPrevioId, Long tipoRequerimientoId) {
+      List<I18nFieldValueDto> observaciones, Long proyectoProyectoSgeId, Long requerimientoPrevioId,
+      Long tipoRequerimientoId) {
     return RequerimientoJustificacionInput.builder()
         .fechaNotificacion(fechaNotificacion)
         .observaciones(observaciones)

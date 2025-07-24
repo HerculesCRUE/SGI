@@ -13,8 +13,9 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.solicitud-modalidad.plan' | translate}}</mat-label>
-        <input matInput formControlName="plan" type="text" placeholder="{{'csp.solicitud-modalidad.plan' | translate}}"
-          maxlength="100">
+        <sgi-i18n-input matInput formControlName="plan" type="text"
+          placeholder="{{'csp.solicitud-modalidad.plan' | translate}}" maxlength="100">
+        </sgi-i18n-input>
       </mat-form-field>
     </div>
     <!-- Modalidad -->
@@ -25,12 +26,12 @@
             <li class="mat-tree-node">
               <button mat-icon-button disabled></button>
               <mat-label *ngIf="node.programa.id === data.programa?.id">
-                {{node.programa.nombre}}
+                <sgi-i18n-tree-field [field]="node.programa.nombre" class="break-spaces"></sgi-i18n-tree-field>
               </mat-label>
               <mat-checkbox *ngIf="node.programa.id !== data.programa?.id" class="checkbox" color="primary"
                 [checked]="node === checkedNode" (change)="onCheckNode(node, $event)" [disabled]="this.data.readonly"
-                matTooltip="{{node.programa.descripcion}}">
-                <span class="break-spaces">{{node.programa.nombre}}</span>
+                matTooltip="{{node.programa.descripcion | i18nFieldTooltip}}">
+                <sgi-i18n-tree-field [field]="node.programa.nombre" class="break-spaces"></sgi-i18n-tree-field>
               </mat-checkbox>
             </li>
           </mat-tree-node>
@@ -43,14 +44,14 @@
                   </mat-icon>
                 </button>
 
-                <mat-label *ngIf="node === rootNode" matTooltip="{{node.programa.descripcion}}">
-                  {{node.programa.nombre}}
+                <mat-label *ngIf="node === rootNode" matTooltip="{{node.programa.descripcion | i18nFieldTooltip}}">
+                  <sgi-i18n-tree-field [field]="node.programa.nombre" class="break-spaces"></sgi-i18n-tree-field>
                 </mat-label>
 
                 <mat-checkbox *ngIf="node !== rootNode" class="checkbox" color="primary"
                   [checked]="node === checkedNode" (change)="onCheckNode(node, $event)" [disabled]="this.data.readonly"
-                  matTooltip="{{node.programa.descripcion}}">
-                  <span class="break-spaces">{{node.programa.nombre}}</span>
+                  matTooltip="{{node.programa.descripcion | i18nFieldTooltip}}">
+                  <sgi-i18n-tree-field [field]="node.programa.nombre" class="break-spaces"></sgi-i18n-tree-field>
                 </mat-checkbox>
               </div>
               <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
@@ -68,6 +69,7 @@
     *ngIf="!data.readonly">
     <mat-icon class="save-icon">save</mat-icon>{{'btn.ok' | translate}}
   </button>
-  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
-    translate}}</button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
 </mat-dialog-actions>

@@ -1,0 +1,51 @@
+[
+  {
+    "key": "ap1_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "1.1 Social value of the project"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "This section is completed automatically based on the data entered in the field <b>Social value</b> of the section <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/datos-generales' target='_blank'><b>General data</b></a> of the <b>Evaluation Request</b>. Access this menu item to make the necessary modifications.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "template": "<p>Below is the main purpose of the project: the topic in which an increase in knowledge or an ultimate social benefit is expected that justifies its implementation.</p>"
+      },
+      {
+        "key": "valorSocial",
+        "type": "tipo-valor-social",
+        "templateOptions": {
+          "label": "Social value",
+          "placeholder": "",
+          "required": true,
+          "disabled": true,
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.valorSocial"
+        }
+      },
+      {
+        "key": "otroValorSocial",
+        "type": "i18n-textarea",
+        "hideExpression": "formState.memoria.peticionEvaluacion.valorSocial !== 'OTRA_FINALIDAD'",
+        "templateOptions": {
+          "placeholder": "Please specify",
+          "label": "Please specify",
+          "disabled": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10",
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.otroValorSocial"
+        }
+      }
+    ]
+  }
+]

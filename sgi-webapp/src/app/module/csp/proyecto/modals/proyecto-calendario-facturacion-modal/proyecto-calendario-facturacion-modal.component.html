@@ -68,9 +68,9 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.proyecto-calendario-facturacion.comentario' | translate}}</mat-label>
-        <textarea matInput formControlName="comentario" type="text"
+        <sgi-i18n-textarea formControlName="comentario"
           placeholder="{{'csp.proyecto-calendario-facturacion.comentario' | translate}}">
-            </textarea>
+        </sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.get('comentario').errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamComentarioEntity}}
         </mat-error>
@@ -122,8 +122,9 @@
     <div fxLayout="row" *ngIf="DIALOG_ACTION.VALIDAR_IP === data.action && showMensajeMotivoRechazo$ | async">
       <mat-form-field>
         <mat-label>{{'csp.proyecto-calendario-facturacion.motivo-rechazo' | translate}}</mat-label>
-        <textarea matInput formControlName="mensajeMotivoRechazo" type="text"
-          placeholder="{{'csp.proyecto-calendario-facturacion.motivo-rechazo' | translate}}" required></textarea>
+        <sgi-i18n-textarea formControlName="mensajeMotivoRechazo"
+          placeholder="{{'csp.proyecto-calendario-facturacion.motivo-rechazo' | translate}}" required>
+        </sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.get('mensajeMotivoRechazo').errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamMotivoRechazoEntity}}
         </mat-error>
@@ -133,20 +134,35 @@
       </mat-form-field>
     </div>
 
-    <!-- Identificador SGE -->
-    <div fxLayout="row"
-      *ngIf="data.isCalendarioFacturacionSgeEnabled && (DIALOG_ACTION.VALIDAR_IP === data.action || DIALOG_ACTION.EDIT === data.action) && showIndentificadorSge$ | async">
-      <mat-form-field>
-        <mat-label>{{'csp.proyecto-calendario-facturacion.identificador-sge' | translate}}</mat-label>
-        <sgi-select formControlName="identificadorSge" [options]=" data.proyectosSge" required
-          [displayWith]="displayerIdentificadorSge" [compareWith]="comparerIdentificadorSge"
-          [sortWith]="sorterIdentificadorSge">
-        </sgi-select>
-        <mat-error *ngIf="formGroup.controls.identificadorSge.errors?.required">
-          {{'error.required.entity' | translate:msgParamIdentificadorSge}}
-        </mat-error>
-      </mat-form-field>
-    </div>
+    <ng-container *ngIf="(this.isCalendarioFacturacionSgeWriteIntegrationEnabled || this.isCalendarioFacturacionSgeIntegrationDisabled) 
+      && (DIALOG_ACTION.VALIDAR_IP === data.action || DIALOG_ACTION.EDIT === data.action) 
+      && showIndentificadorSge$ | async">
+      <!-- Identificador SGE -->
+      <div fxLayout="row">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-calendario-facturacion.identificador-sge' | translate}}</mat-label>
+          <sgi-select formControlName="identificadorSge" [options]=" data.proyectosSge" required
+            [displayWith]="displayerIdentificadorSge" [compareWith]="comparerIdentificadorSge"
+            [sortWith]="sorterIdentificadorSge">
+          </sgi-select>
+          <mat-error *ngIf="formGroup.controls.identificadorSge.errors?.required">
+            {{'error.required.entity' | translate:msgParamIdentificadorSge}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Nº factura emitida -->
+      <div fxLayout="row" *ngIf="this.isCalendarioFacturacionSgeIntegrationDisabled">
+        <mat-form-field>
+          <mat-label>{{'csp.proyecto-calendario-facturacion.numero-factura-emitida' | translate}}</mat-label>
+          <input matInput formControlName="numeroFacturaEmitida" type="text">
+          <mat-error *ngIf="formGroup.get('numeroFacturaEmitida').errors?.maxlength">
+            {{'error.maxlength.entity' | translate:msgParamNumeroFacturaEmitidaEntity}}
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </ng-container>
+
   </form>
 </sgi-dialog-content>
 <mat-dialog-actions>

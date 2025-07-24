@@ -2,6 +2,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DateTime } from 'luxon';
 import { IEmpresa } from '../sgemp/empresa';
 import { IPersona } from '../sgp/persona';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 
 export enum TipoEmpresa {
   EBT = 'EBT',
@@ -35,18 +36,18 @@ export interface IEmpresaExplotacionResultados {
   fechaSolicitud: DateTime;
   tipoEmpresa: TipoEmpresa;
   solicitante: IPersona;
-  nombreRazonSocial: string;
+  nombreRazonSocial: I18nFieldValue[];
   entidad: IEmpresa;
-  objetoSocial: string;
-  conocimientoTecnologia: string;
+  objetoSocial: I18nFieldValue[];
+  conocimientoTecnologia: I18nFieldValue[];
   numeroProtocolo: string;
-  notario: string;
+  notario: I18nFieldValue[];
   fechaConstitucion: DateTime;
   fechaAprobacionCG: DateTime;
   fechaIncorporacion: DateTime;
   fechaDesvinculacion: DateTime;
   fechaCese: DateTime;
-  observaciones: string;
+  observaciones: I18nFieldValue[];
   estado: EstadoEmpresa;
   activo: boolean;
 }

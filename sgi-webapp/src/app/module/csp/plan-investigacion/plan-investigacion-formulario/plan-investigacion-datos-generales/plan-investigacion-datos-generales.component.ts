@@ -28,7 +28,7 @@ export class PlanInvestigacionDatosGeneralesComponent extends FormFragmentCompon
     readonly actionService: PlanInvestigacionActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
     this.fxFlexProperties.md = '0 1 calc(100%-10px)';
@@ -43,10 +43,10 @@ export class PlanInvestigacionDatosGeneralesComponent extends FormFragmentCompon
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PLAN_INVESTIGACION_NOMBRE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

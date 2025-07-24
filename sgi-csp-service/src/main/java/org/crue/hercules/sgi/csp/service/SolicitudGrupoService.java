@@ -122,8 +122,7 @@ public class SolicitudGrupoService {
     Solicitud solicitud = solicitudRepository.findById(solicitudId)
         .orElseThrow(() -> new SolicitudNotFoundException(solicitudId));
 
-    Specification<Grupo> specs = GrupoSpecifications.distinct()
-        .and(GrupoSpecifications.activos())
+    Specification<Grupo> specs = GrupoSpecifications.activos()
         .and(GrupoSpecifications.byId(grupoId))
         .and(GrupoSpecifications.byResponsable(solicitud.getSolicitanteRef(), fechaActual)
             .or(GrupoSpecifications.byPersonaAutorizada(solicitud.getSolicitanteRef(), fechaActual)));

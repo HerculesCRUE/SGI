@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { IResultadoInformePatentibilidad } from '@core/models/pii/resultado-informe-patentabilidad';
+import { LanguageService } from '@core/services/language.service';
 import { ResultadoInformePatentabilidadService } from '@core/services/pii/resultado-informe-patentabilidad/resultado-informe-patentabilidad.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
@@ -29,18 +30,19 @@ export class SelectResultadoInformePatentabilidadComponent extends SelectService
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation: PlatformLocation,
     dialog: MatDialog,
-    private resultadoInformePatentabilidadService: ResultadoInformePatentabilidadService,
-    private authService: SgiAuthService
+    private authService: SgiAuthService,
+    private resultadoInformePatentabilidadService: ResultadoInformePatentabilidadService
   ) {
-    super(defaultErrorStateMatcher, ngControl, platformLocation, dialog);
+    super(defaultErrorStateMatcher, ngControl, languageService, platformLocation, dialog);
     this.addTarget = ResultadoInformePatentabilidadModalComponent;
   }
 
   protected loadServiceOptions(): Observable<IResultadoInformePatentibilidad[]> {
     const findOptions: SgiRestFindOptions = {
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
+      sort: new RSQLSgiRestSort('nombre.value', SgiRestSortDirection.ASC)
     };
     return this.resultadoInformePatentabilidadService.findAll(findOptions).pipe(map(({ items }) => items));
   }

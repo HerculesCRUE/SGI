@@ -1,18 +1,16 @@
 package org.crue.hercules.sgi.csp.model;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,7 +20,16 @@ import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.time.Instant;
+import javax.validation.Valid;
+
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = EstadoValidacionIP.TABLE_NAME)
@@ -36,8 +43,6 @@ public class EstadoValidacionIP extends BaseEntity {
   protected static final String TABLE_NAME = "estado_validacion_ip";
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";
 
-  public static final int COMENTARIO_MAX_LENGTH = 1024;
-
   public enum TipoEstadoValidacion {
     PENDIENTE, NOTIFICADA, VALIDADA, RECHAZADA
   }
@@ -47,8 +52,11 @@ public class EstadoValidacionIP extends BaseEntity {
   @SequenceGenerator(name = SEQUENCE_NAME, sequenceName = SEQUENCE_NAME, allocationSize = 1)
   private Long id;
 
-  @Column(name = "comentario", length = COMENTARIO_MAX_LENGTH)
-  private String comentario;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "estado_validacion_ip_comentario", joinColumns = @JoinColumn(name = "estado_validacion_ip_id"))
+  @Valid
+  @Builder.Default
+  private Set<ProyectoFacturacionComentario> comentario = new HashSet<>();
 
   @Column(name = "estado", nullable = false)
   @Enumerated(EnumType.STRING)

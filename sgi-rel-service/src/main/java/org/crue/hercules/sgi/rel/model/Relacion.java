@@ -1,14 +1,22 @@
 package org.crue.hercules.sgi.rel.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,7 +43,9 @@ public class Relacion extends BaseEntity {
     /** Convocatoria */
     CONVOCATORIA,
     /** Invencion */
-    INVENCION
+    INVENCION,
+    /** GRUPO */
+    GRUPO
   }
 
   /** Id */
@@ -64,6 +74,9 @@ public class Relacion extends BaseEntity {
   private String entidadDestinoRef;
 
   /** Observaciones */
-  @Column(name = "observaciones", length = LONG_TEXT_LENGTH, nullable = true)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "relacion_observaciones", joinColumns = @JoinColumn(name = "relacion_id"))
+  @Valid
+  @Builder.Default
+  private Set<RelacionObservaciones> observaciones = new HashSet<>();
 }

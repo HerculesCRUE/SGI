@@ -64,13 +64,13 @@ export class SolicitudRrhhSolitanteComponent extends FormFragmentComponent<ISoli
     public authService: SgiAuthService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.SOLICITANTE, actionService);
+    super(actionService.FRAGMENT.SOLICITANTE, actionService, translate);
     this.formPart = this.fragment as SolicitudRrhhSolitanteFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.loadAreasAnep();
     this.loadEmails();
     this.loadTelefonos();
@@ -98,7 +98,7 @@ export class SolicitudRrhhSolitanteComponent extends FormFragmentComponent<ISoli
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       SOLICITUD_RRHH_SOLICITANTE_KEY

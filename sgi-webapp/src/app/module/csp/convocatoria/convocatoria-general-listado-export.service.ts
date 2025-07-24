@@ -5,18 +5,21 @@ import { ESTADO_MAP } from '@core/models/csp/convocatoria';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
+import { toString } from '@core/utils/string-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IConvocatoriaReportData, IConvocatoriaReportOptions } from './convocatoria-listado-export.service';
 
+
 const TITLE_KEY = marker('csp.convocatoria.titulo');
-const REFERENCIA_KEY = marker('csp.convocatoria.referencia');
+const REFERENCIA_EXTERNA_KEY = marker('csp.convocatoria.codigo-externo');
 const ESTADO_KEY = marker('csp.convocatoria.estado');
 const UNIDAD_GESTION_KEY = marker('csp.convocatoria.unidad-gestion');
 const MODELO_EJECUCION_KEY = marker('csp.convocatoria.modelo-ejecucion');
@@ -29,14 +32,17 @@ const DURACION_KEY = marker('csp.convocatoria.duracion');
 const AMBITO_GEOGRAFICO_KEY = marker('csp.convocatoria.ambito-geografico');
 const REGIMEN_CONCURRENCIA_KEY = marker('csp.convocatoria.regimen-concurrencia');
 const ENTIDAD_GESTORA_KEY = marker('csp.convocatoria.entidad-gestora-nombre-numero-identificacion');
+const REFERENCIA_INTERNA_KEY = marker('csp.convocatoria.codigo-interno');
+const ANIO_KEY = marker('csp.convocatoria.anio');
 
 @Injectable()
 export class ConvocatoriaGeneralListadoExportService
-  extends AbstractTableExportFillService<IConvocatoriaReportData, IConvocatoriaReportOptions>{
+  extends AbstractTableExportFillService<IConvocatoriaReportData, IConvocatoriaReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
+    private readonly languageService: LanguageService,
     private readonly convocatoriaService: ConvocatoriaService,
     private empresaService: EmpresaService,
     private unidadGestionService: UnidadGestionService
@@ -116,8 +122,18 @@ export class ConvocatoriaGeneralListadoExportService
         type: ColumnType.STRING
       },
       {
-        title: this.translate.instant(REFERENCIA_KEY),
-        name: 'identificacion',
+        title: this.translate.instant(REFERENCIA_INTERNA_KEY),
+        name: 'codigoInterno',
+        type: ColumnType.STRING
+      },
+      {
+        title: this.translate.instant(REFERENCIA_EXTERNA_KEY),
+        name: 'codigoExterno',
+        type: ColumnType.STRING
+      },
+      {
+        title: this.translate.instant(ANIO_KEY),
+        name: 'anio',
         type: ColumnType.STRING
       },
       {
@@ -164,20 +180,22 @@ export class ConvocatoriaGeneralListadoExportService
     const convocatoria = resultados[index];
 
     const elementsRow: any[] = [];
-    elementsRow.push(convocatoria.convocatoria?.titulo ?? '');
+    elementsRow.push(this.languageService.getFieldValue(convocatoria.convocatoria?.titulo));
     elementsRow.push(convocatoria.convocatoria?.estado ? this.translate.instant(ESTADO_MAP.get(convocatoria.convocatoria.estado)) : '');
     elementsRow.push(convocatoria.convocatoria?.formularioSolicitud ?
       this.translate.instant(FORMULARIO_SOLICITUD_MAP.get(convocatoria.convocatoria?.formularioSolicitud)) : '');
     elementsRow.push(convocatoria.convocatoria?.unidadGestion?.nombre ?? '');
-    elementsRow.push(convocatoria.convocatoria?.modeloEjecucion?.nombre ?? '');
-    elementsRow.push(convocatoria.convocatoria?.finalidad?.nombre ?? '');
+    elementsRow.push(convocatoria.convocatoria?.modeloEjecucion?.nombre ? this.languageService.getFieldValue(convocatoria.convocatoria?.modeloEjecucion?.nombre) : '');
+    elementsRow.push(convocatoria.convocatoria?.finalidad?.nombre ? this.languageService.getFieldValue(convocatoria.convocatoria.finalidad.nombre) ?? '' : '');
+    elementsRow.push(convocatoria.convocatoria?.codigoInterno ?? '');
     elementsRow.push(convocatoria.convocatoria?.codigo ?? '');
+    elementsRow.push(toString(convocatoria.convocatoria?.anio));
     elementsRow.push(convocatoria.convocatoria?.fechaPublicacion ? LuxonUtils.toBackend(convocatoria.convocatoria?.fechaPublicacion) : '');
     elementsRow.push(convocatoria.convocatoria?.fechaProvisional ? LuxonUtils.toBackend(convocatoria.convocatoria?.fechaProvisional) : '');
     elementsRow.push(convocatoria.convocatoria?.fechaConcesion ? LuxonUtils.toBackend(convocatoria.convocatoria?.fechaConcesion) : '');
-    elementsRow.push(convocatoria.convocatoria?.duracion ? convocatoria.convocatoria?.duracion.toString() : '');
-    elementsRow.push(convocatoria.convocatoria?.ambitoGeografico?.nombre ?? '');
-    elementsRow.push(convocatoria.convocatoria?.regimenConcurrencia?.nombre ?? '');
+    elementsRow.push(toString(convocatoria.convocatoria?.duracion));
+    elementsRow.push(convocatoria.convocatoria?.ambitoGeografico?.nombre ? this.languageService.getFieldValue(convocatoria.convocatoria?.ambitoGeografico?.nombre) : '');
+    elementsRow.push(convocatoria.convocatoria?.regimenConcurrencia?.nombre ? this.languageService.getFieldValue(convocatoria.convocatoria?.regimenConcurrencia?.nombre) : '');
     elementsRow.push(convocatoria.entidadGestora?.empresa ? (convocatoria.entidadGestora?.empresa.nombre + ' - ' + convocatoria.entidadGestora?.empresa.numeroIdentificacion) : '');
 
     return elementsRow;

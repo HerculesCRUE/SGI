@@ -1,29 +1,31 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
+import { DEFAULT_PREFIX_RECIPIENTS_CSP_PRO_FASES } from '@core/models/cnf/config-keys';
 import { IGenericEmailText } from '@core/models/com/generic-email-text';
+import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IProyectoFase } from '@core/models/csp/proyecto-fase';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { ISendEmailTask } from '@core/models/tp/send-email-task';
 import { ConfigService } from '@core/services/cnf/config.service';
 import { EmailTplService } from '@core/services/com/email-tpl/email-tpl.service';
 import { EmailService } from '@core/services/com/email/email.service';
+import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { IProyectoFaseAviso } from '@core/services/csp/proyecto-fase/proyecto-fase-aviso';
 import { SgiApiTaskService } from '@core/services/tp/sgiapitask/sgi-api-task.service';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NullIdValidador } from '@core/validators/null-id-validador';
 import { IRange, RangeValidator } from '@core/validators/range-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
-import { map, pairwise, startWith, switchMap } from 'rxjs/operators';
-import { DEFAULT_PREFIX_RECIPIENTS_CSP_PRO_FASES } from '@core/models/cnf/config-keys';
 import { Observable, of } from 'rxjs';
-import { IConvocatoria } from '@core/models/csp/convocatoria';
-import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { map, pairwise, startWith, switchMap } from 'rxjs/operators';
 
 const MSG_ANADIR = marker('btn.add');
 const MSG_ACEPTAR = marker('btn.ok');
@@ -44,7 +46,7 @@ export interface ProyectoPlazosModalComponentData {
   idModeloEjecucion: number;
   readonly: boolean;
   unidadGestionId: number;
-  tituloProyecto: string;
+  tituloProyecto: I18nFieldValue[];
   convocatoriaId: number;
 }
 
@@ -239,7 +241,7 @@ export class ProyectoPlazosModalComponent extends DialogFormComponent<ProyectoPl
       fechaInicio: new FormControl(this.data?.plazo?.fechaInicio, [Validators.required]),
       fechaFin: new FormControl(this.data?.plazo?.fechaFin, Validators.required),
       tipoFase: new FormControl(this.data?.plazo?.tipoFase, [Validators.required, new NullIdValidador().isValid()]),
-      observaciones: new FormControl(this.data?.plazo?.observaciones, [Validators.maxLength(250)]),
+      observaciones: new FormControl(this.data?.plazo?.observaciones, I18nValidators.maxLength(250)),
       generaAviso1: new FormControl(!!this.data?.plazo?.aviso1),
       generaAviso2: new FormControl(!!this.data?.plazo?.aviso2),
       aviso1: new FormGroup({
@@ -332,7 +334,7 @@ export class ProyectoPlazosModalComponent extends DialogFormComponent<ProyectoPl
     }
   }
 
-  private fillDefaultAviso(fgAviso: FormGroup, tituloConvocatoria: string): void {
+  private fillDefaultAviso(fgAviso: FormGroup, tituloConvocatoria: I18nFieldValue[]): void {
     fgAviso.get('fechaEnvio').setValue(this.formGroup.get('fechaInicio').value);
     this.configService.getEmailRecipients(DEFAULT_PREFIX_RECIPIENTS_CSP_PRO_FASES + this.data.unidadGestionId).subscribe(
       (destinatarios) => {
@@ -340,12 +342,13 @@ export class ProyectoPlazosModalComponent extends DialogFormComponent<ProyectoPl
       }
     );
     this.emailTplService.processProyectoFaseTemplate(
-      this.data.tituloProyecto,
-      tituloConvocatoria,
+      this.data.tituloProyecto ?? [],
+      tituloConvocatoria ?? [],
       this.formGroup.get('fechaInicio').value ?? DateTime.now(),
       this.formGroup.get('fechaFin').value ?? DateTime.now(),
-      this.formGroup.get('tipoFase').value?.nombre ?? '',
-      this.formGroup.get('observaciones').value ?? ''
+      this.formGroup.get('tipoFase').value?.nombre ?? [],
+      this.formGroup.get('observaciones').value ?? [],
+
     ).subscribe(
       (template) => {
         fgAviso.get('asunto').setValue(template.subject);
@@ -417,7 +420,7 @@ export class ProyectoPlazosModalComponent extends DialogFormComponent<ProyectoPl
           if (fgAviso.disabled) {
             fgAviso.enable();
           }
-          this.getTituloConvocatoria().subscribe((titulo: string) => this.fillDefaultAviso(fgAviso, titulo));
+          this.getTituloConvocatoria().subscribe((titulo: I18nFieldValue[]) => this.fillDefaultAviso(fgAviso, titulo));
           if (generaAvisoCtrl === this.formGroup.controls?.generaAviso2) {
             this.avisosTabGroup.selectedIndex = 1;
           }
@@ -455,9 +458,9 @@ export class ProyectoPlazosModalComponent extends DialogFormComponent<ProyectoPl
     }
   }
 
-  private getTituloConvocatoria(): Observable<string> {
+  private getTituloConvocatoria(): Observable<I18nFieldValue[]> {
     if (!this.data.convocatoriaId) {
-      return of('');
+      return of([]);
     }
     return this.convocatoriaService.findById(this.data.convocatoriaId).pipe(
       map((convocatoria: IConvocatoria) => convocatoria.titulo)

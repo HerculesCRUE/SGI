@@ -1,11 +1,17 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ModeloTipoEnlaceNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoEnlace;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceNombre;
 import org.crue.hercules.sgi.csp.service.ModeloTipoEnlaceService;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -187,7 +193,13 @@ class ModeloTipoEnlaceControllerTest extends BaseControllerTest {
    * @return TipoEnlace
    */
   private TipoEnlace generarMockTipoEnlace(Long id, Boolean activo) {
-    return TipoEnlace.builder().id(id).nombre("nombre-" + id).descripcion("descripcion-" + id).activo(activo).build();
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcion-" + id));
+
+    return TipoEnlace.builder().id(id).nombre(nombre).descripcion(descripcion).activo(activo).build();
   }
 
   /**

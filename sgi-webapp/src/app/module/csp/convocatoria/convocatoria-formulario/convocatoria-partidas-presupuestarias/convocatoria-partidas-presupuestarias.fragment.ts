@@ -200,6 +200,7 @@ export class ConvocatoriaPartidaPresupuestariaFragment extends Fragment {
               updatedPartidaPresupuestaria.partidaSge = wrappedPartidaPresupuestaria.value.partidaSge;
               this.partidasPresupuestarias$.value[index] = new StatusWrapper<IConvocatoriaPartidaPresupuestaria>(
                 updatedPartidaPresupuestaria);
+              this.partidasPresupuestarias$.next(this.partidasPresupuestarias$.value);
             })
           );
       })

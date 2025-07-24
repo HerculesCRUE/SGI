@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProcedimiento } from '@core/models/pii/procedimiento';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
 
@@ -77,10 +78,10 @@ export class SolicitudProteccionProcedimientoModalComponent
     const formGroup = new FormGroup(
       {
         accionATomar: new FormControl(this.data?.procedimiento.value.accionATomar, [
-          Validators.maxLength(this.ACCIONES_A_TOMAR_MAX_LENGTH)
+          I18nValidators.maxLength(this.ACCIONES_A_TOMAR_MAX_LENGTH)
         ]),
         comentarios: new FormControl(this.data?.procedimiento.value.comentarios, [
-          Validators.maxLength(this.COMENTARIOS_MAX_LENGTH)
+          I18nValidators.maxLength(this.COMENTARIOS_MAX_LENGTH)
         ]),
         fecha: new FormControl(this.data?.procedimiento.value.fecha, [
           Validators.required,
@@ -120,10 +121,10 @@ export class SolicitudProteccionProcedimientoModalComponent
     return formGroup.controls.generarAviso.valueChanges.subscribe((value: boolean) => {
       if (value) {
         formGroup.controls.fechaLimiteAccion.setValidators([Validators.required]);
-        formGroup.controls.accionATomar.setValidators([Validators.required, Validators.maxLength(this.ACCIONES_A_TOMAR_MAX_LENGTH)]);
+        formGroup.controls.accionATomar.setValidators([I18nValidators.required, I18nValidators.maxLength(this.ACCIONES_A_TOMAR_MAX_LENGTH)]);
       } else {
         formGroup.controls.fechaLimiteAccion.setValidators([]);
-        formGroup.controls.accionATomar.setValidators([Validators.maxLength(this.ACCIONES_A_TOMAR_MAX_LENGTH)]);
+        formGroup.controls.accionATomar.setValidators([I18nValidators.maxLength(this.ACCIONES_A_TOMAR_MAX_LENGTH)]);
       }
       formGroup.controls.fechaLimiteAccion.updateValueAndValidity({ onlySelf: true });
       formGroup.controls.accionATomar.updateValueAndValidity({ onlySelf: true });

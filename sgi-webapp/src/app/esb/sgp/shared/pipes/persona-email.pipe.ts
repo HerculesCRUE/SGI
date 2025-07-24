@@ -18,6 +18,10 @@ export function getPersonaEmailListConcatenated({ emails }: IPersona): string {
 export class PersonaEmailPipe implements PipeTransform {
 
   transform(persona: IPersona): string {
+    if (!persona?.emails) {
+      return '';
+    }
+
     return getPersonaEmailListConcatenated(persona);
   }
 }

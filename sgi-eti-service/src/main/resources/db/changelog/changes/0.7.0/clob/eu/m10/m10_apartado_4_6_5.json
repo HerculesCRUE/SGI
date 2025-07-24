@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap4_6_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.5 Irakastorduen erabilera"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Ikasleek ikerketako subjektu gisa parte hartuko duten probak irakastorduetan egingo dira?</p>"
+      },
+      {
+        "key": "usoTiempoLectivoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Hautatu aukera bat:",
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Ordutegia eta iraupena",
+        "hideExpression": "!model.usoTiempoLectivoRadio || model.usoTiempoLectivoRadio === 'no'"
+      },
+      {
+        "key": "horarioYduracion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.usoTiempoLectivoRadio || model.usoTiempoLectivoRadio === 'no'",
+        "templateOptions": {
+          "label": "Zehaztu",
+          "placeholder": "Zehaztu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

@@ -10,6 +10,7 @@ import { ESTADO_MAP, Estado } from '@core/models/csp/estado-proyecto';
 import { CAUSA_EXENCION_MAP, IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoIVA } from '@core/models/csp/proyecto-iva';
 import { ConfigService } from '@core/services/csp/configuracion/config.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -17,27 +18,28 @@ import { switchMap } from 'rxjs/operators';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { ProyectoFichaGeneralFragment } from './proyecto-ficha-general.fragment';
 
+const MSG_PROYECTO_VALUE_CONVOCATORIA = marker('msg.csp.proyecto.value-convocatoria');
 const PROYECTO_ACRONIMO_KEY = marker('csp.proyecto.acronimo');
 const PROYECTO_AMBITO_GEOGRAFICO_KEY = marker('csp.proyecto.ambito-geografico');
-const PROYECTO_CODIGO_INTERNO_KEY = marker('csp.proyecto.codigo-interno');
+const PROYECTO_CAUSA_EXENCION_KEY = marker('csp.proyecto.causa-exencion');
 const PROYECTO_CODIGO_EXTERNO_KEY = marker('csp.proyecto.codigo-externo');
+const PROYECTO_CODIGO_INTERNO_FORMATO_KEY = marker('csp.proyecto.codigo-interno.formato-tooltip');
+const PROYECTO_CODIGO_INTERNO_KEY = marker('csp.proyecto.codigo-interno');
 const PROYECTO_CONFIDENCIAL_KEY = marker('csp.proyecto.confidencial');
-const PROYECTO_ROL_UNIVERSIDAD_KEY = marker('csp.proyecto.rol-participacion-universidad');
 const PROYECTO_CONVOCATORIA_EXTERNA_KEY = marker('csp.proyecto.convocatoria-externa');
-const PROYECTO_FECHA_FIN_KEY = marker('csp.proyecto.fecha-fin');
 const PROYECTO_FECHA_FIN_DEFINITIVA_KEY = marker('csp.proyecto.fecha-fin-definitiva');
+const PROYECTO_FECHA_FIN_KEY = marker('csp.proyecto.fecha-fin');
 const PROYECTO_FECHA_INICIO_KEY = marker('csp.proyecto.fecha-inicio');
 const PROYECTO_FINALIDAD_KEY = marker('csp.proyecto.finalidad');
-const PROYECTO_IVA_KEY = marker('csp.proyecto.iva');
 const PROYECTO_HORAS_ANUALES_KEY = marker('csp.proyecto.horas-anuales');
-const PROYECTO_CAUSA_EXENCION_KEY = marker('csp.proyecto.causa-exencion');
+const PROYECTO_IVA_KEY = marker('csp.proyecto.iva');
 const PROYECTO_MODELO_EJECUCION_KEY = marker('csp.proyecto.modelo-ejecucion');
+const PROYECTO_OBSERVACIONES_KEY = marker('csp.proyecto.observaciones');
 const PROYECTO_PAQUETE_TRABAJO_KEY = marker('csp.proyecto-paquete-trabajo');
 const PROYECTO_PROYECTO_COORDINADO_KEY = marker('csp.proyecto.proyecto-coordinado');
+const PROYECTO_ROL_UNIVERSIDAD_KEY = marker('csp.proyecto.rol-participacion-universidad');
 const PROYECTO_TITULO_KEY = marker('csp.proyecto.titulo');
 const PROYECTO_UNIDAD_GESTION_KEY = marker('csp.proyecto.unidad-gestion');
-const MSG_PROYECTO_VALUE_CONVOCATORIA = marker('msg.csp.proyecto.value-convocatoria');
-const PROYECTO_CODIGO_INTERNO_FORMATO_KEY = marker('csp.proyecto.codigo-interno.formato-tooltip');
 
 @Component({
   selector: 'sgi-proyecto-ficha-general',
@@ -57,30 +59,31 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
 
   private subscriptions = [] as Subscription[];
 
-  msgParamAmbitoGeograficoEntity = {};
   msgParamAcronimoEntity = {};
+  msgParamAmbitoGeograficoEntity = {};
+  msgParamCausaExencionEntity = {};
+  msgParamCodigoExternoEntity = {};
   msgParamCodigoInternoEntity = {};
   msgParamCodigoInternoFormato = {};
-  msgParamCodigoExternoEntity = {};
   msgParamConfidencialEntity = {};
-  msgParamRolUniversidadEntity = {};
   msgParamConvocatoriaExternaEntity = {};
+  msgParamFechaFinDefinitivaEntity = {};
   msgParamFechaFinEntity = {};
   msgParamFechaInicioEntity = {};
   msgParamFinalidadEntity = {};
   msgParamHorasAnualesEntity = {};
   msgParamIvaEntity = {};
-  msgParamCausaExencionEntity = {};
   msgParamModeloEjecucionEntity = {};
+  msgParamObservacionesEntity = {};
   msgParamPaqueteTrabajoEntity = {};
+  msgParamProyectoCoordinadoEntity = {};
+  msgParamRolUniversidadEntity = {};
   msgParamTituloEntity = {};
   msgParamUnidadGestionEntity = {};
-  msgParamFechaFinDefinitivaEntity = {};
-  msgParamProyectoCoordinadoEntity = {};
   textoInfoAmbitoGeograficoConvocatoria: string;
   textoInfoFinalidadConvocatoria: string;
-  textoInfoUnidadGestionConvocatoria: string;
   textoInfoModeloEjecucionConvocatoria: string;
+  textoInfoUnidadGestionConvocatoria: string;
 
   get CLASIFICACION_CVN_MAP() {
     return CLASIFICACION_CVN_MAP;
@@ -101,16 +104,17 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
   constructor(
     protected actionService: ProyectoActionService,
     private configService: ConfigService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.FICHA_GENERAL, actionService);
+    super(actionService.FRAGMENT.FICHA_GENERAL, actionService, translate);
     this.formPart = this.fragment as ProyectoFichaGeneralFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
 
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -173,7 +177,7 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
       ));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       PROYECTO_TITULO_KEY,
@@ -288,6 +292,12 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
       PROYECTO_IVA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamIvaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+
+    this.translate.get(
+      PROYECTO_OBSERVACIONES_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).subscribe((value) => this.msgParamObservacionesEntity =
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
   }
 
 
@@ -297,7 +307,7 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
 
   setTextoInfoFinalidadConvocatoria() {
     this.translate.get(
-      this.formPart.finalidadConvocatoria.nombre,
+      this.languageService.getFieldValue(this.formPart.finalidadConvocatoria.nombre),
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
       switchMap((value) => {
@@ -311,7 +321,7 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
 
   setTextoInfoAmbitoGeograficoConvocatoria() {
     this.translate.get(
-      this.formPart.ambitoGeograficoConvocatoria.nombre,
+      this.languageService.getFieldValue(this.formPart.ambitoGeograficoConvocatoria.nombre),
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
       switchMap((value) => {
@@ -339,7 +349,7 @@ export class ProyectoFichaGeneralComponent extends FormFragmentComponent<IProyec
 
   setTextoInfoModeloEjecucionConvocatoria() {
     this.translate.get(
-      this.formPart.modeloEjecucionConvocatoria.nombre,
+      this.languageService.getFieldValue(this.formPart.modeloEjecucionConvocatoria.nombre),
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
       switchMap((value) => {

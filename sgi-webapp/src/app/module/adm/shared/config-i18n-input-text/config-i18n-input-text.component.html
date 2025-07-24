@@ -1,0 +1,20 @@
+<form [formGroup]="formGroup" fxLayout="column">
+
+  <div fxFlex fxLayout="row" fxLayoutGap="10px">
+    <mat-form-field>
+      <mat-label>{{label | translate}}</mat-label>
+      <sgi-i18n-input placeholder="{{label | translate:labelParams}}" [matTooltip]="description | translate"
+        matTooltipShowDelay="200" formControlName="configValue" [required]="required"></sgi-i18n-input>
+      <mat-error *ngIf="formGroup.controls.configValue.errors?.required">
+        {{ 'error.required.field' | translate:msgParamLabel }}
+      </mat-error>
+    </mat-form-field>
+    <sgi-field-info [visible]="info" matSuffix message="{{info | translate}}">
+    </sgi-field-info>
+    <button [disabled]="!formGroup.valid || !hasChanges()" color="primary" mat-icon-button (click)="save()"
+      matTooltip="{{'btn.save' | translate}}">
+      <mat-icon>save</mat-icon>
+    </button>
+  </div>
+
+</form>

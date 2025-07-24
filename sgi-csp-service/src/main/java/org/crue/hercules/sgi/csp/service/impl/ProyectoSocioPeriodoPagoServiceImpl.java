@@ -15,7 +15,9 @@ import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoPagoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoSocioPeriodoPagoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioPeriodoPagoService;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,6 +34,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoSocioPeriodoPagoServiceImpl implements ProyectoSocioPeriodoPagoService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_MODEL_PROYECTO_SOCIO = "org.crue.hercules.sgi.csp.model.ProyectoSocio.message";
+  private static final String MSG_MODEL_PROYECTO_SOCIO_PERIODO_PAGO = "org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoPago.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA = "org.springframework.util.Assert.accion.denegada.message";
 
   /** Repository {@link ProyectoSocioPeriodoPagoRepository} */
   private final ProyectoSocioPeriodoPagoRepository repository;
@@ -107,7 +116,14 @@ public class ProyectoSocioPeriodoPagoServiceImpl implements ProyectoSocioPeriodo
         Assert.isTrue(
             Objects.equals(proyectoSocioPeriodoPagoBD.getProyectoSocioId(),
                 proyectoSocioPeriodoPago.getProyectoSocioId()),
-            "No se puede modificar el proyecto socio del ProyectoSocioPeriodoPago");
+            () -> ProblemMessage.builder()
+                .key(MSG_PROBLEM_ACCION_DENEGADA)
+                .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_PROYECTO_SOCIO))
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_PROYECTO_SOCIO_PERIODO_PAGO))
+                .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+                .build());
       }
     }
 

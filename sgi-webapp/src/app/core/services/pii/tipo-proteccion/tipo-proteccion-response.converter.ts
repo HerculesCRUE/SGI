@@ -1,18 +1,19 @@
+import { I18N_FIELD_RESPONSE_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { ITipoProteccionResponse } from './tipo-proteccion-response';
 
-class TipoProteccionResponseConverter extends SgiBaseConverter<ITipoProteccionResponse, ITipoProteccion>{
+class TipoProteccionResponseConverter extends SgiBaseConverter<ITipoProteccionResponse, ITipoProteccion> {
   toTarget(value: ITipoProteccionResponse): ITipoProteccion {
     if (!value) {
       return value as unknown as ITipoProteccion;
     }
     return {
       id: value.id,
-      nombre: value.nombre,
-      descripcion: value.descripcion,
+      nombre: value.nombre ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.nombre) : [],
+      descripcion: value.descripcion ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.descripcion) : [],
       tipoPropiedad: value.tipoPropiedad,
-      padre: { id: value.padre?.id, nombre: value.padre?.nombre, descripcion: value.padre?.descripcion } as ITipoProteccion,
+      padre: value.padre ? TIPO_PROTECCION_RESPONSE_CONVERTER.toTarget(value.padre) : null,
       activo: value.activo
     };
   }
@@ -22,10 +23,10 @@ class TipoProteccionResponseConverter extends SgiBaseConverter<ITipoProteccionRe
     }
     return {
       id: value.id,
-      nombre: value.nombre,
-      descripcion: value.descripcion,
+      nombre: value.nombre ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.nombre) : [],
+      descripcion: value.descripcion ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.descripcion) : [],
       tipoPropiedad: value.tipoPropiedad,
-      padre: value.padre,
+      padre: value.padre ? TIPO_PROTECCION_RESPONSE_CONVERTER.fromTarget(value.padre) : null,
       activo: value.activo
     };
   }

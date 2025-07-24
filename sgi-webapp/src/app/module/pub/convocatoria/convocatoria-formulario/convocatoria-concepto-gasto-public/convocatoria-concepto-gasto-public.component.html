@@ -8,7 +8,8 @@
       <ng-container matColumnDef="conceptoGasto.nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.convocatoria-concepto-gasto.nombre' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.conceptoGasto.nombre}}
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.conceptoGasto.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -17,7 +18,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.convocatoria-concepto-gasto.descripcion' | translate}} </th>
         <td mat-cell *matCellDef="let wrapper">
-          {{wrapper.value.conceptoGasto.descripcion}}
+          <sgi-i18n-table-field [field]="wrapper.value.conceptoGasto.descripcion"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -57,7 +58,8 @@
       <ng-container matColumnDef="observaciones">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.convocatoria-concepto-gasto.observaciones' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.observaciones}}
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.observaciones"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -91,7 +93,8 @@
       <ng-container matColumnDef="conceptoGasto.nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.convocatoria-concepto-gasto.nombre' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.conceptoGasto.nombre}}
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.conceptoGasto.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -100,7 +103,7 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.convocatoria-concepto-gasto.descripcion' | translate}} </th>
         <td mat-cell *matCellDef="let wrapper">
-          {{wrapper.value.conceptoGasto.descripcion}}
+          <sgi-i18n-table-field [field]="wrapper.value.conceptoGasto.descripcion"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -132,7 +135,8 @@
       <ng-container matColumnDef="observaciones">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.convocatoria-concepto-gasto.observaciones' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.observaciones}}
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.observaciones"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

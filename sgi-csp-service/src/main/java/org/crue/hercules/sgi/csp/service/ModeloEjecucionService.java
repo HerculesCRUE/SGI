@@ -2,9 +2,13 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Service Interface para gestionar {@link ModeloEjecucion}.
@@ -17,7 +21,8 @@ public interface ModeloEjecucionService {
    * @param modeloEjecucion la entidad {@link ModeloEjecucion} a guardar.
    * @return la entidad {@link ModeloEjecucion} persistida.
    */
-  ModeloEjecucion create(ModeloEjecucion modeloEjecucion);
+  @Validated({ BaseEntity.Create.class })
+  ModeloEjecucion create(@Valid ModeloEjecucion modeloEjecucion);
 
   /**
    * Actualizar {@link ModeloEjecucion}.
@@ -26,7 +31,8 @@ public interface ModeloEjecucionService {
    *                                  actualizar.
    * @return la entidad {@link ModeloEjecucion} persistida.
    */
-  ModeloEjecucion update(ModeloEjecucion modeloEjecucionActualizar);
+  @Validated({ BaseEntity.Update.class })
+  ModeloEjecucion update(@Valid ModeloEjecucion modeloEjecucionActualizar);
 
   /**
    * Reactiva el {@link ModeloEjecucion}.
@@ -80,5 +86,13 @@ public interface ModeloEjecucionService {
    * @return true si existe algun proyecto asociado y false si no tiene ninguno.
    */
   Boolean hasProyectosAsociados(Long id);
+
+  /**
+   * Comprueba si existen o no {@link ModeloEjecucion} que cumplan con el filtro.
+   *
+   * @param query la información del filtro.
+   * @return Si existen o no {@link ModeloEjecucion} que cumplan con el filtro.
+   */
+  boolean exists(String query);
 
 }

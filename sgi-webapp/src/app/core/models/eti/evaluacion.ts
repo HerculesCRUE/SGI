@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IComite } from './comite';
 import { IConvocatoriaReunion } from './convocatoria-reunion';
@@ -30,7 +31,7 @@ export interface IEvaluacion {
   /** Es revisión mínima */
   esRevMinima: boolean;
   /** Comentario */
-  comentario: string;
+  comentario: I18nFieldValue[];
   /** Activo */
   activo: boolean;
 }

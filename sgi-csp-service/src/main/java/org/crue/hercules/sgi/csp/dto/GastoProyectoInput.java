@@ -3,12 +3,14 @@ package org.crue.hercules.sgi.csp.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.model.EstadoGastoProyecto.TipoEstadoGasto;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.crue.hercules.sgi.csp.model.GastoProyecto;
 
 import lombok.AllArgsConstructor;
@@ -37,8 +39,7 @@ public class GastoProyectoInput implements Serializable {
   @Min(GastoProyecto.IMPORTE_INSCRIPCION_MIN)
   private BigDecimal importeInscripcion;
 
-  @Size(max = GastoProyecto.OBSERVACIONES_LENGTH)
-  private String observaciones;
+  private List<I18nFieldValueDto> observaciones;
 
   private EstadoGastoProyecto estado;
 
@@ -51,7 +52,7 @@ public class GastoProyectoInput implements Serializable {
     private Long id;
     private TipoEstadoGasto estado;
     private Instant fechaEstado;
-    private String comentario;
+    private List<I18nFieldValueDto> comentario;
   }
 
 }

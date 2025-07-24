@@ -409,7 +409,9 @@ public class BeanMethodTaskService {
     log.debug("disablePast() - start");
     log.info("Disabling Past BeanMethodTasks...");
     List<Long> ids = new ArrayList<>();
-    List<BeanMethodTask> pastInstantTasks = repository.findAll(BeanMehtodTaskSpecifications.pastInstantTasks());
+    Specification<BeanMethodTask> enabled = BeanMehtodTaskSpecifications.enabled();
+    Specification<BeanMethodTask> pastTasks = BeanMehtodTaskSpecifications.pastInstantTasks();
+    List<BeanMethodTask> pastInstantTasks = repository.findAll(enabled.and(pastTasks));
     for (BeanMethodTask task : pastInstantTasks) {
       task.setDisabled(Boolean.TRUE);
       update(task);

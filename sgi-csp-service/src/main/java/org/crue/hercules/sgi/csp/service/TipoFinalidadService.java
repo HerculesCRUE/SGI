@@ -2,9 +2,13 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Service Interface para gestionar {@link TipoFinalidad}.
@@ -18,7 +22,8 @@ public interface TipoFinalidadService {
    * @param tipoFinalidad la entidad {@link TipoFinalidad} a guardar.
    * @return TipoFinalidad la entidad {@link TipoFinalidad} persistida.
    */
-  TipoFinalidad create(TipoFinalidad tipoFinalidad);
+  @Validated({ BaseEntity.Create.class })
+  TipoFinalidad create(@Valid TipoFinalidad tipoFinalidad);
 
   /**
    * Actualiza los datos del {@link TipoFinalidad}.
@@ -27,7 +32,8 @@ public interface TipoFinalidadService {
    *                                actualizados.
    * @return TipoFinalidad {@link TipoFinalidad} actualizado.
    */
-  TipoFinalidad update(final TipoFinalidad tipoFinalidadActualizar);
+  @Validated({ BaseEntity.Update.class })
+  TipoFinalidad update(@Valid final TipoFinalidad tipoFinalidadActualizar);
 
   /**
    * Reactiva el {@link TipoFinalidad}.

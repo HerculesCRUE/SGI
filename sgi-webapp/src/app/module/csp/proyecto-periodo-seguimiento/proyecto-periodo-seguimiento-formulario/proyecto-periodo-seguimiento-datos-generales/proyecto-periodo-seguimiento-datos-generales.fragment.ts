@@ -7,6 +7,7 @@ import { IProyectoPeriodoSeguimiento } from '@core/models/csp/proyecto-periodo-s
 import { FormFragment } from '@core/services/action-service';
 import { ProyectoPeriodoSeguimientoService } from '@core/services/csp/proyecto-periodo-seguimiento.service';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { StringValidator } from '@core/validators/string-validator';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
@@ -47,7 +48,7 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesFragment extends FormFragme
         ]),
         fechaInicioPresentacion: new FormControl(null),
         fechaFinPresentacion: new FormControl(null),
-        observaciones: new FormControl('', [Validators.maxLength(250)]),
+        observaciones: new FormControl([], [I18nValidators.maxLength(2000)]),
         tipoSeguimiento: new FormControl('', [Validators.required]),
         fechaInicioConvocatoria: new FormControl({ value: null, disabled: true }),
         fechaFinConvocatoria: new FormControl({ value: null, disabled: true }),

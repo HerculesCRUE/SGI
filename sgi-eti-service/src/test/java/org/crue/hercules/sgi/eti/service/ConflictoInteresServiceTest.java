@@ -1,10 +1,11 @@
 package org.crue.hercules.sgi.eti.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.ConflictoInteresNotFoundException;
@@ -12,20 +13,20 @@ import org.crue.hercules.sgi.eti.model.CargoComite;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres;
 import org.crue.hercules.sgi.eti.model.Evaluador;
-import org.crue.hercules.sgi.eti.model.Formulario;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.eti.model.EvaluadorResumen;
 import org.crue.hercules.sgi.eti.repository.ConflictoInteresRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluadorRepository;
 import org.crue.hercules.sgi.eti.service.impl.ConflictoInteresServiceImpl;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.domain.PageImpl;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 /**
  * ConflictoInteresServiceTest
@@ -226,22 +227,26 @@ public class ConflictoInteresServiceTest extends BaseServiceTest {
    * @param resumen el resumen de Evaluador
    * @return el objeto Evaluador
    */
-  public Evaluador generarMockEvaluador(Long id, String resumen) {
+  private Evaluador generarMockEvaluador(Long id, String resumen) {
     CargoComite cargoComite = new CargoComite();
     cargoComite.setId(1L);
     cargoComite.setNombre("CargoComite1");
     cargoComite.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
+    Set<EvaluadorResumen> res = new HashSet<>();
+    res.add(new EvaluadorResumen(Language.ES, resumen));
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
     evaluador.setCargoComite(cargoComite);
     evaluador.setComite(comite);
     evaluador.setFechaAlta(Instant.now());
     evaluador.setFechaBaja(Instant.now());
-    evaluador.setResumen(resumen);
+    evaluador.setResumen(res);
     evaluador.setPersonaRef("user-00" + (id != null ? id : "1"));
     evaluador.setActivo(Boolean.TRUE);
 
@@ -255,7 +260,7 @@ public class ConflictoInteresServiceTest extends BaseServiceTest {
    * @param personaConflictoRef la persona del conflicto de interés
    * @return el objeto ConflictoInteres
    */
-  public ConflictoInteres generarMockConflictoInteres(Long id, String personaConflictoInteres) {
+  private ConflictoInteres generarMockConflictoInteres(Long id, String personaConflictoInteres) {
     ConflictoInteres conflicto = new ConflictoInteres();
     conflicto.setId(id);
     conflicto.setEvaluador(generarMockEvaluador(id, "Resumen" + (id != null ? id : "1")));

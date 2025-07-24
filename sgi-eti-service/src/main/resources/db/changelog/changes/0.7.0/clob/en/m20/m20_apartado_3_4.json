@@ -1,0 +1,38 @@
+[
+  {
+    "key": "ap3_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.4 Project type"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Project types.</p><p>1.- Type I projects: Projects in which the following three circumstances simultaneously coexist:<ul><li>a) Involving exclusively procedures classified as 'non-recovery', 'mild' or 'moderate'.</li><li>b) Not using primates.</li><li>c) Being performed to meet legal or regulatory requirements, or for production or diagnostic purposes by established methods.</li></ul></p><p>Type I projects may be processed under a simplified procedure and not be subject to retrospective evaluation.</p></br><p>2.- Type II projects: Projects in which the following circumstances simultaneously coexist:<ul><li>a) Involving exclusively procedures classified as 'non-recovery', 'mild' or 'moderate'.</li><li>b) Not using primates.</li></ul></p><p>Type II projects will be subject to the authorisation procedure and may not be subject to retrospective evaluation.</p></br><p>3.- Type III projects: Projects other than Type I or II. Without prejudice to any additional authorisations to which certain projects may be subject, all Type III projects will be subject to the authorisation procedure and will subsequently be subject to a retrospective evaluation.</p>"
+      },
+      {
+        "key": "tipoProyecto",
+        "type": "select",
+        "templateOptions": {
+          "label": "Please choose",
+          "required": true,
+          "options": [
+            {
+              "label": "Type 1",
+              "value": "1"
+            },
+            {
+              "label": "Type 2",
+              "value": "2"
+            },
+            {
+              "label": "Type 3",
+              "value": "3"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

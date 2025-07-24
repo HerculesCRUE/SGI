@@ -1,8 +1,14 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.crue.hercules.sgi.csp.exceptions.ContextoProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ContextoProyecto;
+import org.crue.hercules.sgi.csp.model.ContextoProyectoIntereses;
 import org.crue.hercules.sgi.csp.service.ContextoProyectoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -52,7 +58,8 @@ class ContextoProyectoControllerTest extends BaseControllerTest {
         // then: new ContextoProyecto is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("intereses").value(contextoProyecto.getIntereses()));
+        .andExpect(MockMvcResultMatchers.jsonPath("intereses[0].value")
+            .value(I18nHelper.getValueForLanguage(contextoProyecto.getIntereses(), Language.ES)));
   }
 
   @Test
@@ -80,7 +87,9 @@ class ContextoProyectoControllerTest extends BaseControllerTest {
     // given: Existing ContextoProyecto to be updated
     ContextoProyecto contextoProyectoExistente = generarMockContextoProyecto(1L);
     ContextoProyecto contextoProyecto = generarMockContextoProyecto(1L);
-    contextoProyecto.setIntereses("INTERESES");
+    Set<ContextoProyectoIntereses> interesesContextoProyecto = new HashSet<>();
+    interesesContextoProyecto.add(new ContextoProyectoIntereses(Language.ES, "INTERESES"));
+    contextoProyecto.setIntereses(interesesContextoProyecto);
 
     BDDMockito.given(service.findByProyecto(ArgumentMatchers.<Long>any())).willReturn(contextoProyectoExistente);
     BDDMockito.given(service.update(ArgumentMatchers.<ContextoProyecto>any(), ArgumentMatchers.<Long>any()))
@@ -96,7 +105,8 @@ class ContextoProyectoControllerTest extends BaseControllerTest {
         // then: ContextoProyecto is updated
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(contextoProyectoExistente.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("intereses").value(contextoProyecto.getIntereses()));
+        .andExpect(MockMvcResultMatchers.jsonPath("intereses[0].value")
+            .value(I18nHelper.getValueForLanguage(contextoProyecto.getIntereses(), Language.ES)));
   }
 
   @Test
@@ -176,10 +186,12 @@ class ContextoProyectoControllerTest extends BaseControllerTest {
    * @return el objeto ContextoProyecto
    */
   private ContextoProyecto generarMockContextoProyecto(Long id) {
+    Set<ContextoProyectoIntereses> interesesContextoProyecto = new HashSet<>();
+    interesesContextoProyecto.add(new ContextoProyectoIntereses(Language.ES, "intereses"));
     ContextoProyecto contextoProyecto = new ContextoProyecto();
     contextoProyecto.setId(id);
     contextoProyecto.setProyectoId(id);
-    contextoProyecto.setIntereses("intereses");
+    contextoProyecto.setIntereses(interesesContextoProyecto);
     return contextoProyecto;
   }
 

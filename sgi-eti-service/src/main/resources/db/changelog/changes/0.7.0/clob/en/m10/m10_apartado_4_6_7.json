@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap4_6_7",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.7 Privacy protection"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>What measures will be adopted to ensure the privacy of each source student in front of the group during the</p><p>data collection, testing and/or revocation of consent?</p>"
+      },
+      {
+        "key": "proteccionPrivacidad",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Measures",
+          "placeholder": "Measures",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

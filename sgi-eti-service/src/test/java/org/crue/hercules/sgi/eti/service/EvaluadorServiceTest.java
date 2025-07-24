@@ -4,8 +4,10 @@ import java.time.Instant;
 import java.time.Period;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
@@ -13,10 +15,11 @@ import org.crue.hercules.sgi.eti.exceptions.EvaluadorNotFoundException;
 import org.crue.hercules.sgi.eti.model.CargoComite;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Evaluador;
-import org.crue.hercules.sgi.eti.model.Formulario;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.eti.model.EvaluadorResumen;
 import org.crue.hercules.sgi.eti.repository.EvaluadorRepository;
 import org.crue.hercules.sgi.eti.service.impl.EvaluadorServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -54,7 +57,7 @@ public class EvaluadorServiceTest extends BaseServiceTest {
 
     Assertions.assertThat(evaluador.getId()).isEqualTo(1L);
 
-    Assertions.assertThat(evaluador.getResumen()).isEqualTo("Evaluador1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluador.getResumen(), Language.ES)).isEqualTo("Evaluador1");
 
   }
 
@@ -80,7 +83,8 @@ public class EvaluadorServiceTest extends BaseServiceTest {
     // then: El Evaluador se crea correctamente
     Assertions.assertThat(evaluadorCreado).isNotNull();
     Assertions.assertThat(evaluadorCreado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluadorCreado.getResumen()).isEqualTo("EvaluadorNew");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadorCreado.getResumen(), Language.ES))
+        .isEqualTo("EvaluadorNew");
   }
 
   @Test
@@ -188,7 +192,8 @@ public class EvaluadorServiceTest extends BaseServiceTest {
 
     // then: El evaluador se actualiza correctamente.
     Assertions.assertThat(evaluadorActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluadorActualizado.getResumen()).isEqualTo("Evaluador1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadorActualizado.getResumen(), Language.ES))
+        .isEqualTo("Evaluador1 actualizada");
 
   }
 
@@ -211,7 +216,8 @@ public class EvaluadorServiceTest extends BaseServiceTest {
 
     // then: El evaluador se actualiza correctamente.
     Assertions.assertThat(evaluadorActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluadorActualizado.getResumen()).isEqualTo("Evaluador1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadorActualizado.getResumen(), Language.ES))
+        .isEqualTo("Evaluador1 actualizada");
 
   }
 
@@ -234,7 +240,8 @@ public class EvaluadorServiceTest extends BaseServiceTest {
 
     // then: El evaluador se actualiza correctamente.
     Assertions.assertThat(evaluadorActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluadorActualizado.getResumen()).isEqualTo("Evaluador1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadorActualizado.getResumen(), Language.ES))
+        .isEqualTo("Evaluador1 actualizada");
 
   }
 
@@ -257,7 +264,8 @@ public class EvaluadorServiceTest extends BaseServiceTest {
 
     // then: El evaluador se actualiza correctamente.
     Assertions.assertThat(evaluadorActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluadorActualizado.getResumen()).isEqualTo("Evaluador1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadorActualizado.getResumen(), Language.ES))
+        .isEqualTo("Evaluador1 actualizada");
 
   }
 
@@ -280,7 +288,8 @@ public class EvaluadorServiceTest extends BaseServiceTest {
 
     // then: El evaluador se actualiza correctamente.
     Assertions.assertThat(evaluadorActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(evaluadorActualizado.getResumen()).isEqualTo("Evaluador1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadorActualizado.getResumen(), Language.ES))
+        .isEqualTo("Evaluador1 actualizada");
 
   }
 
@@ -401,7 +410,8 @@ public class EvaluadorServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       Evaluador evaluador = page.getContent().get(i);
-      Assertions.assertThat(evaluador.getResumen()).isEqualTo("Evaluador" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(evaluador.getResumen(), Language.ES))
+          .isEqualTo("Evaluador" + String.format("%03d", j));
     }
   }
 
@@ -447,7 +457,8 @@ public class EvaluadorServiceTest extends BaseServiceTest {
     Assertions.assertThat(result.size()).isEqualTo(10);
     for (int i = 0, j = 1; i < 10; i++, j++) {
       Evaluador evaluador = result.get(i);
-      Assertions.assertThat(evaluador.getResumen()).isEqualTo("Evaluador" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(evaluador.getResumen(), Language.ES))
+          .isEqualTo("Evaluador" + String.format("%03d", j));
     }
   }
 
@@ -459,42 +470,50 @@ public class EvaluadorServiceTest extends BaseServiceTest {
    * @return el objeto Evaluador
    */
 
-  public Evaluador generarMockEvaluador(Long id, String resumen) {
+  private Evaluador generarMockEvaluador(Long id, String resumen) {
     CargoComite cargoComite = new CargoComite();
     cargoComite.setId(1L);
     cargoComite.setNombre("CargoComite1");
     cargoComite.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
+    Set<EvaluadorResumen> res = new HashSet<>();
+    res.add(new EvaluadorResumen(Language.ES, resumen));
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
     evaluador.setCargoComite(cargoComite);
     evaluador.setComite(comite);
     evaluador.setFechaAlta(Instant.now());
     evaluador.setFechaBaja(Instant.now());
-    evaluador.setResumen(resumen);
+    evaluador.setResumen(res);
     evaluador.setPersonaRef("user-00" + id);
     evaluador.setActivo(Boolean.TRUE);
 
     return evaluador;
   }
 
-  public Evaluador generarMockEvaluadorWithCargoComiteAndFechaBaja(Long id, String resumen, Long cargoComiteId,
+  private Evaluador generarMockEvaluadorWithCargoComiteAndFechaBaja(Long id, String resumen, Long cargoComiteId,
       String cargoComiteNombre, Instant fecha) {
     CargoComite cargoComite = new CargoComite(cargoComiteId, cargoComiteNombre, Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
+    Set<EvaluadorResumen> res = new HashSet<>();
+    res.add(new EvaluadorResumen(Language.ES, resumen));
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
     evaluador.setCargoComite(cargoComite);
     evaluador.setComite(comite);
     evaluador.setFechaAlta(Instant.now());
     evaluador.setFechaBaja(fecha);
-    evaluador.setResumen(resumen);
+    evaluador.setResumen(res);
     evaluador.setPersonaRef("user-00" + id);
     evaluador.setActivo(Boolean.TRUE);
 

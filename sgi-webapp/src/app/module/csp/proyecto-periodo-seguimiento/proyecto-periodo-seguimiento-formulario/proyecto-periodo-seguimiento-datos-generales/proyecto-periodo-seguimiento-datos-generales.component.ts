@@ -43,7 +43,7 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesComponent extends FormFragm
     protected actionService: ProyectoPeriodoSeguimientoActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as ProyectoPeriodoSeguimientoDatosGeneralesFragment;
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
@@ -66,7 +66,7 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesComponent extends FormFragm
   ngOnInit(): void {
     super.ngOnInit();
 
-    this.setupI18N();
+
 
     this.subscriptions.push(
       merge(
@@ -92,7 +92,7 @@ export class ProyectoPeriodoSeguimientoDatosGeneralesComponent extends FormFragm
     this.formGroup.markAllAsTouched();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PERIODO_SEGUIMIENTO_CIENTIFICO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

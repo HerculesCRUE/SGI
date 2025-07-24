@@ -5,10 +5,9 @@
     .arbol {
       .mat-tree-node {
         .break-spaces {
-          width: 90%;
+          padding-left: 2em;
+          text-indent: -2em;
           white-space: break-spaces;
-          text-align: left;
-          height: auto;
         }
       }
     }

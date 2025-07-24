@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap4_6_6",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.6 Alternative activities"
+    },
+    "hideExpression": "(!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no') || (formState.mainModel.ap4_6.ap4_6_5 && formState.mainModel.ap4_6.ap4_6_5.usoTiempoLectivoRadio && formState.mainModel.ap4_6.ap4_6_5.usoTiempoLectivoRadio === 'no')",
+    "fieldGroup": [
+      {
+        "template": "What alternative activities are offered for students who do not wish to participate in research?"
+      },
+      {
+        "key": "actividadesAlternativas",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Activities",
+          "placeholder": "Activities",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

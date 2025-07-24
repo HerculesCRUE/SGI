@@ -14,12 +14,12 @@ import org.crue.hercules.sgi.framework.security.web.exception.handler.WebSecurit
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.security.SecurityProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -28,19 +28,20 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * A {@link WebSecurityConfigurerAdapter} that configures {@link HttpSecurity}
+ * A Configuration bean that configures {@link HttpSecurity}
  * based on configuration properties.
  */
 @Configuration
 @Order(SecurityProperties.BASIC_AUTH_ORDER)
 @Slf4j
-public class SgiWebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class SgiWebSecurityConfig {
   @Value("${spring.security.oauth2.enable-login:false}")
   private boolean loginEnabled;
 
@@ -53,88 +54,85 @@ public class SgiWebSecurityConfig extends WebSecurityConfigurerAdapter {
   @Value("${spring.security.frameoptions.enable:true}")
   private boolean frameoptionsEnabled;
 
-  @Autowired
   private JwtDecoder jwtDecoder;
 
-  @Autowired(required = false)
-  WebSecurityExceptionHandler webSecurityExceptionHandler;
+  private WebSecurityExceptionHandler webSecurityExceptionHandler;
 
-  @Override
-  protected void configure(HttpSecurity http) throws Exception {
+  @Autowired
+  public void setJwtDecoder(JwtDecoder jwtDecoder) {
+    this.jwtDecoder = jwtDecoder;
+  }
+
+  @Autowired(required = false)
+  public void setWebSecurityExceptionHandler(WebSecurityExceptionHandler webSecurityExceptionHandler) {
+    this.webSecurityExceptionHandler = webSecurityExceptionHandler;
+  }
+
+  @Bean
+  public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     log.debug("configure(HttpSecurity http) - start");
     // @formatter:off
-      http
-        // Configure session management as a basis for a classic, server side rendered application
-        .sessionManagement()
-        .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
-      .and()
-        // Require authentication for all requests except for error, health checks and public endpoints
-        .authorizeRequests()
-        .antMatchers("/error", "/actuator/health/liveness", "/actuator/health/readiness").permitAll()
+    http
+      // Configure session management as a basis for a classic, server side rendered application
+      .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+      // Require authentication for all requests except for error, health checks and public endpoints
+      .authorizeHttpRequests(authz -> 
+        authz.antMatchers("/error", "/actuator/health/liveness", "/actuator/health/readiness").permitAll()
         .antMatchers("/public/**", "/config/time-zone").permitAll()
         .antMatchers("/**").authenticated()
-      .and()
-        // Validate tokens through configured OpenID Provider
-        .oauth2ResourceServer()
-          .jwt()
-          .jwtAuthenticationConverter(jwtAuthenticationConverter())
-        .and()
-      .and();
-      // @formatter:on
+      )
+      // Validate tokens through configured OpenID Provider
+      .oauth2ResourceServer(ors -> 
+        ors.jwt().jwtAuthenticationConverter(jwtAuthenticationConverter())
+      );
+    // @formatter:on
 
     if (csrfEnabled) {
       // @formatter:off
-        http
-          // CSRF protection by cookie
-          .csrf()
-          .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
-        // @formatter:on
+      http
+        // CSRF protection by cookie
+        .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()));
+      // @formatter:on
     } else {
       // @formatter:off
-        http
-          // CSRF protection disabled
-          .csrf()
-          .disable();
-        // @formatter:on
+      http
+        // CSRF protection disabled
+        .csrf(csrf -> csrf.disable());
+      // @formatter:on
     }
 
     if (!frameoptionsEnabled) {
       // @formatter:off
-        http
-          .headers()
-          // Disable X-Frame-Options
-          .frameOptions().disable();
-        // @formatter:on
+      http
+        // Disable X-Frame-Options
+        .headers( h -> h.frameOptions().disable());
+      // @formatter:on
     }
 
     if (loginEnabled) {
       // @formatter:off
-        http
-            // This is the point where OAuth2 login of Spring 5 gets enabled
-            .oauth2Login()
-              .userInfoEndpoint()
-              .oidcUserService(keycloakOidcUserService())
-            .and()
-          .and()
-            // Propagate logouts via /logout to Keycloak
-            .logout()
-            .addLogoutHandler(keycloakLogoutHandler());
-        // @formatter:on
+      http
+        // This is the point where OAuth2 login of Spring 5 gets enabled
+        .oauth2Login(ol -> ol.userInfoEndpoint().oidcUserService(keycloakOidcUserService()))
+        // Propagate logouts via /logout to Keycloak
+        .logout(l -> l.addLogoutHandler(keycloakLogoutHandler()));
+      // @formatter:on
     }
 
     if (webSecurityExceptionHandler != null) {
       if (loginEnabled) {
         http
             // Handle Spring Security exceptions
-            .exceptionHandling().accessDeniedHandler(webSecurityExceptionHandler);
+            .exceptionHandling(ah -> ah.accessDeniedHandler(webSecurityExceptionHandler));
       } else {
         http
             // Handle Spring Security exceptions
-            .exceptionHandling().accessDeniedHandler(webSecurityExceptionHandler)
-            .authenticationEntryPoint(webSecurityExceptionHandler);
+            .exceptionHandling(ah -> ah.accessDeniedHandler(webSecurityExceptionHandler)
+                .authenticationEntryPoint(webSecurityExceptionHandler));
       }
     }
     log.debug("configure(HttpSecurity http) - end");
+    return http.build();
   }
 
   /**

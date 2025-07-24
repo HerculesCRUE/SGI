@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceNombre;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,7 +28,9 @@ class TipoEnlaceRepositoryTest extends BaseRepositoryTest {
     entityManager.persistAndFlush(generarMockTipoEnlace(1L, Boolean.FALSE));
 
     // when: find given nombre
-    TipoEnlace dataFound = repository.findByNombreAndActivoIsTrue(data.getNombre()).get();
+    TipoEnlaceNombre nombre = data.getNombre().iterator().next();
+    TipoEnlace dataFound = repository.findByNombreLangAndNombreValueAndActivoIsTrue(nombre.getLang(), nombre.getValue())
+        .get();
 
     // then: TipoEnlace with given name is found
     Assertions.assertThat(dataFound).isNotNull();
@@ -41,7 +48,9 @@ class TipoEnlaceRepositoryTest extends BaseRepositoryTest {
     entityManager.persistAndFlush(generarMockTipoEnlace(1L, Boolean.FALSE));
 
     // when: find given nombre
-    Optional<TipoEnlace> dataFound = repository.findByNombreAndActivoIsTrue(data.getNombre());
+    TipoEnlaceNombre nombre = data.getNombre().iterator().next();
+    Optional<TipoEnlace> dataFound = repository
+        .findByNombreLangAndNombreValueAndActivoIsTrue(nombre.getLang(), nombre.getValue());
 
     // then: TipoEnlace with given name is not found
     Assertions.assertThat(dataFound).isEqualTo(Optional.empty());
@@ -55,6 +64,12 @@ class TipoEnlaceRepositoryTest extends BaseRepositoryTest {
    * @return TipoEnlace
    */
   private TipoEnlace generarMockTipoEnlace(Long id, Boolean activo) {
-    return TipoEnlace.builder().nombre("nombre-" + id).descripcion("descripcion-" + id).activo(activo).build();
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcion-" + id));
+
+    return TipoEnlace.builder().nombre(nombre).descripcion(descripcion).activo(activo).build();
   }
 }

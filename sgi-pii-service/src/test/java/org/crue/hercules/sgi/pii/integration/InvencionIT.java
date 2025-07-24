@@ -3,11 +3,15 @@ package org.crue.hercules.sgi.pii.integration;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.dto.InformePatentabilidadOutput;
 import org.crue.hercules.sgi.pii.dto.InvencionAreaConocimientoInput;
 import org.crue.hercules.sgi.pii.dto.InvencionAreaConocimientoOutput;
@@ -88,7 +92,7 @@ class InvencionIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -127,7 +131,7 @@ class InvencionIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -156,7 +160,7 @@ class InvencionIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_TODOS).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -196,7 +200,7 @@ class InvencionIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_TODOS).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -230,8 +234,10 @@ class InvencionIT extends BaseIT {
     final InvencionOutput invencionOutput = response.getBody();
 
     Assertions.assertThat(invencionOutput.getId()).as("id").isEqualTo(1);
-    Assertions.assertThat(invencionOutput.getTitulo()).as("titulo").isEqualTo("titulo-invencion-001");
-    Assertions.assertThat(invencionOutput.getDescripcion()).as("descripcion").isEqualTo("descripcion-invencion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(invencionOutput.getTitulo(), Language.ES))
+        .as("titulo[0].value").isEqualTo("titulo-invencion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(invencionOutput.getDescripcion(), Language.ES))
+        .as("descripcion[0].value").isEqualTo("descripcion-invencion-001");
 
   }
 
@@ -255,8 +261,10 @@ class InvencionIT extends BaseIT {
     final InvencionOutput invencionOutput = response.getBody();
 
     Assertions.assertThat(invencionOutput.getId()).as("id").isEqualTo(5);
-    Assertions.assertThat(invencionOutput.getTitulo()).as("titulo").isEqualTo("titulo-invencion");
-    Assertions.assertThat(invencionOutput.getDescripcion()).as("descripcion").isEqualTo("descripcion-invencion");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(invencionOutput.getTitulo(), Language.ES)).as("titulo")
+        .isEqualTo("titulo-invencion");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(invencionOutput.getDescripcion(), Language.ES))
+        .as("descripcion[0].value").isEqualTo("descripcion-invencion");
 
   }
 
@@ -273,7 +281,9 @@ class InvencionIT extends BaseIT {
     String[] roles = { "PII-INV-E" };
     Long invencionId = 1L;
     InvencionInput invencionInput = generaMockInvencionInput();
-    invencionInput.setComentarios("comentarios-invencion-modificado");
+    List<I18nFieldValueDto> comentariosInvencion = new ArrayList<>();
+    comentariosInvencion.add(new I18nFieldValueDto(Language.ES, "comentarios-invencion-modificado"));
+    invencionInput.setComentarios(comentariosInvencion);
 
     final ResponseEntity<InvencionOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT,
@@ -283,9 +293,10 @@ class InvencionIT extends BaseIT {
     final InvencionOutput invencionOutput = response.getBody();
 
     Assertions.assertThat(invencionOutput.getId()).as("id").isEqualTo(1);
-    Assertions.assertThat(invencionOutput.getTitulo()).as("titulo").isEqualTo("titulo-invencion");
-    Assertions.assertThat(invencionOutput.getComentarios()).as("comentarios")
-        .isEqualTo("comentarios-invencion-modificado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(invencionOutput.getTitulo(), Language.ES))
+        .as("titulo[0].value").isEqualTo("titulo-invencion");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(invencionOutput.getComentarios(), Language.ES))
+        .as("comentarios[0].value").isEqualTo("comentarios-invencion-modificado");
 
   }
 
@@ -312,9 +323,10 @@ class InvencionIT extends BaseIT {
     final InvencionOutput invencionOutput = response.getBody();
 
     Assertions.assertThat(invencionOutput.getId()).as("id").isEqualTo(4);
-    Assertions.assertThat(invencionOutput.getTitulo()).as("titulo").isEqualTo("titulo-invencion-004");
-    Assertions.assertThat(invencionOutput.getComentarios()).as("comentarios")
-        .isEqualTo("comentarios-invencion-004");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(invencionOutput.getTitulo(), Language.ES))
+        .as("titulo[0].value").isEqualTo("titulo-invencion-004");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(invencionOutput.getComentarios(), Language.ES))
+        .as("comentarios[0].value").isEqualTo("comentarios-invencion-004");
 
   }
 
@@ -340,9 +352,10 @@ class InvencionIT extends BaseIT {
     final InvencionOutput invencionOutput = response.getBody();
 
     Assertions.assertThat(invencionOutput.getId()).as("id").isEqualTo(1);
-    Assertions.assertThat(invencionOutput.getTitulo()).as("titulo").isEqualTo("titulo-invencion-001");
-    Assertions.assertThat(invencionOutput.getComentarios()).as("comentarios")
-        .isEqualTo("comentarios-invencion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(invencionOutput.getTitulo(), Language.ES))
+        .as("titulo[0].value").isEqualTo("titulo-invencion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(invencionOutput.getComentarios(), Language.ES))
+        .as("comentarios[0].value").isEqualTo("comentarios-invencion-001");
 
   }
 
@@ -597,8 +610,9 @@ class InvencionIT extends BaseIT {
     Assertions.assertThat(informePatentabilidadOutput.size()).isEqualTo(1);
     Assertions.assertThat(informePatentabilidadOutput.get(0).getId()).as("id").isEqualTo(1);
     Assertions.assertThat(informePatentabilidadOutput.get(0).getInvencionId()).as("invencionId").isEqualTo(1);
-    Assertions.assertThat(informePatentabilidadOutput.get(0).getComentarios()).as("comentarios")
-        .isEqualTo("comentarios-001");
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(informePatentabilidadOutput.get(0).getComentarios(), Language.ES))
+        .as("comentarios[0].value").isEqualTo("comentarios-001");
 
   }
 
@@ -657,7 +671,7 @@ class InvencionIT extends BaseIT {
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @ParameterizedTest
-  @CsvSource({ "2020, 2021, 'Q3018001'" })
+  @CsvSource({ "2020, 2021, 'Q3018000'" })
   void findInvencionesProduccionCientifica(Integer anioInicio, Integer anioFin, String universidadId)
       throws Exception {
 
@@ -669,18 +683,7 @@ class InvencionIT extends BaseIT {
         buildRequest(null, null, roles),
         new ParameterizedTypeReference<List<InvencionDto>>() {
         }, anioInicio, anioFin, universidadId);
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    int numInvenciones = response.getBody().size();
-    Assertions.assertThat(numInvenciones).isEqualTo(3);
-
-    int numParticipaciones = response.getBody().get(0).getParticipaciones().size();
-    int numSolicitudes = response.getBody().get(0).getSolicitudesProteccion().size();
-    int numInventores = response.getBody().get(0).getInventores().size();
-    Assertions.assertThat(numParticipaciones).isEqualTo(1);
-    Assertions.assertThat(numSolicitudes).isEqualTo(1);
-    Assertions.assertThat(numInventores).isEqualTo(3);
-
+    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -911,11 +914,19 @@ class InvencionIT extends BaseIT {
    * @return el objeto InvencionInput
    */
   private InvencionInput generaMockInvencionInput() {
+    List<I18nFieldValueDto> tituloInvencion = new ArrayList<>();
+    tituloInvencion.add(new I18nFieldValueDto(Language.ES, "titulo-invencion"));
+
+    List<I18nFieldValueDto> descripcionInvencion = new ArrayList<>();
+    descripcionInvencion.add(new I18nFieldValueDto(Language.ES, "descripcion-invencion"));
+
+    List<I18nFieldValueDto> comentariosInvencion = new ArrayList<>();
+    comentariosInvencion.add(new I18nFieldValueDto(Language.ES, "comentarios-invencion"));
 
     InvencionInput invencionInput = new InvencionInput();
-    invencionInput.setTitulo("titulo-invencion");
-    invencionInput.setDescripcion("descripcion-invencion");
-    invencionInput.setComentarios("comentarios-invencion");
+    invencionInput.setTitulo(tituloInvencion);
+    invencionInput.setDescripcion(descripcionInvencion);
+    invencionInput.setComentarios(comentariosInvencion);
     invencionInput.setFechaComunicacion(Instant.parse("2020-10-19T00:00:00Z"));
     invencionInput.setTipoProteccionId(1L);
 

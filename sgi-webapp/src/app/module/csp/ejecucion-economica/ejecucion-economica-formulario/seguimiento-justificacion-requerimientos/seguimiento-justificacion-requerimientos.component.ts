@@ -8,6 +8,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
 import { ROUTE_NAMES } from '@core/route.names';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -52,15 +53,16 @@ export class SeguimientoJustificacionRequerimientosComponent extends FragmentCom
   constructor(
     private readonly actionService: EjecucionEconomicaActionService,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languagerService: LanguageService
   ) {
-    super(actionService.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS, actionService);
+    super(actionService.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS, actionService, translate);
     this.formPart = this.fragment as SeguimientoJustificacionRequerimientosFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.subscriptions.push(this.formPart?.getRequerimientosJustificacion$().subscribe(
       (requerimientosJustificacion) => {
         this.dataSource.data = requerimientosJustificacion;
@@ -76,9 +78,9 @@ export class SeguimientoJustificacionRequerimientosComponent extends FragmentCom
           case 'proyectoPeriodoJustificacion.identificadorJustificacion':
             return requerimiento.value.proyectoPeriodoJustificacion?.identificadorJustificacion;
           case 'tipoRequerimiento.nombre':
-            return requerimiento.value.tipoRequerimiento?.nombre;
+            return this.languagerService.getFieldValue(requerimiento.value.tipoRequerimiento?.nombre);
           case 'requerimientoPrevio':
-            return formatRequerimientoJustificacionNombre(requerimiento.value.requerimientoPrevio);
+            return formatRequerimientoJustificacionNombre(requerimiento.value.requerimientoPrevio, this.languagerService);
           default:
             return requerimiento.value[property];
         }
@@ -105,7 +107,7 @@ export class SeguimientoJustificacionRequerimientosComponent extends FragmentCom
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       REQUERIMIENTO_JUSTIFICACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

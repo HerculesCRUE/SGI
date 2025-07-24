@@ -73,14 +73,12 @@ export class SolicitudRrhhRequisitosConvocatoriaPublicComponent extends Fragment
     private readonly documentoService: DocumentoPublicService,
     private snackBarService: SnackBarService
   ) {
-    super(actionService.FRAGMENT.REQUISITOS_CONVOCATORIA, actionService);
+    super(actionService.FRAGMENT.REQUISITOS_CONVOCATORIA, actionService, translate);
     this.formPart = this.fragment as SolicitudRrhhRequisitosConvocatoriaPublicFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
-
 
     this.dataSourceCategoriasProfesionalesSolicitante.sortingDataAccessor =
       (wrapper: StatusWrapper<RequisitoCategoriaProfesionalExigidoAndAcreditado>, property: string) => {
@@ -98,7 +96,6 @@ export class SolicitudRrhhRequisitosConvocatoriaPublicComponent extends Fragment
 
     this.dataSourceCategoriasProfesionalesSolicitante.sort = this.sortCategoriasProfesionalesSolicitante;
 
-
     this.dataSourceCategoriasProfesionalesTutor.sortingDataAccessor =
       (wrapper: StatusWrapper<RequisitoCategoriaProfesionalExigido>, property: string) => {
         switch (property) {
@@ -115,7 +112,6 @@ export class SolicitudRrhhRequisitosConvocatoriaPublicComponent extends Fragment
 
     this.dataSourceNivelesAcademicosTutor.sort = this.sortCategoriasProfesionalesTutor;
 
-
     this.dataSourceNivelesAcademicosSolicitante.sortingDataAccessor =
       (wrapper: StatusWrapper<RequisitoNivelAcademicoExigidoAndAcreditado>, property: string) => {
         switch (property) {
@@ -131,7 +127,6 @@ export class SolicitudRrhhRequisitosConvocatoriaPublicComponent extends Fragment
       };
 
     this.dataSourceNivelesAcademicosSolicitante.sort = this.sortNivelesAcademicosSolicitante;
-
 
     this.dataSourceNivelesAcademicosTutor.sortingDataAccessor =
       (wrapper: StatusWrapper<RequisitoNivelAcademicoExigido>, property: string) => {
@@ -166,7 +161,7 @@ export class SolicitudRrhhRequisitosConvocatoriaPublicComponent extends Fragment
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_RRHH_REQUISITOS_ACREDITACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

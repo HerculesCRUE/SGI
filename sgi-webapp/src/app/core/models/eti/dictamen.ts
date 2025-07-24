@@ -1,3 +1,4 @@
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { TipoEvaluacion } from './tipo-evaluacion';
 
 export enum DICTAMEN {
@@ -13,6 +14,20 @@ export enum DICTAMEN {
   DESFAVORABLE_RETROSPECTIVA = 10,
   DESFAVORABLE = 11
 }
+
+export const DICTAMEN_MAP: Map<DICTAMEN, string> = new Map([
+  [DICTAMEN.FAVORABLE, marker(`eti.dictamen.FAVORABLE`)],
+  [DICTAMEN.FAVORABLE_PDTE_REV_MINIMA, marker(`eti.dictamen.FAVORABLE_PDTE_REV_MINIMA`)],
+  [DICTAMEN.PDTE_CORRECCIONES, marker(`eti.dictamen.PDTE_CORRECCIONES`)],
+  [DICTAMEN.NO_PROCEDE_EVALUAR, marker(`eti.dictamen.NO_PROCEDE_EVALUAR`)],
+  [DICTAMEN.FAVORABLE_SEG_ANUAL, marker(`eti.dictamen.FAVORABLE_SEG_ANUAL`)],
+  [DICTAMEN.SOLICITUD_MODIFICACIONES_SEG_ANUAL, marker(`eti.dictamen.SOLICITUD_MODIFICACIONES_SEG_ANUAL`)],
+  [DICTAMEN.FAVORABLE_SEG_FINAL, marker(`eti.dictamen.FAVORABLE_SEG_FINAL`)],
+  [DICTAMEN.SOLICITUD_ACLARACIONES_SEG_FINAL, marker(`eti.dictamen.SOLICITUD_ACLARACIONES_SEG_FINAL`)],
+  [DICTAMEN.FAVORABLE_RETROSPECTIVA, marker(`eti.dictamen.FAVORABLE_RETROSPECTIVA`)],
+  [DICTAMEN.DESFAVORABLE_RETROSPECTIVA, marker(`eti.dictamen.DESFAVORABLE_RETROSPECTIVA`)],
+  [DICTAMEN.DESFAVORABLE, marker(`eti.dictamen.DESFAVORABLE`)]
+]);
 
 export interface IDictamen {
   /** Id */

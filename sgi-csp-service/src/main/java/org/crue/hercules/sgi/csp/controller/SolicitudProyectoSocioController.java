@@ -76,7 +76,7 @@ public class SolicitudProyectoSocioController {
    * @return Nuevo {@link SolicitudProyectoSocio} creado.
    */
   @PostMapping
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<SolicitudProyectoSocio> create(
       @Valid @RequestBody SolicitudProyectoSocio solicitudProyectoSocio) {
     log.debug("create(SolicitudProyectoSocio solicitudProyectoSocio) - start");
@@ -94,7 +94,7 @@ public class SolicitudProyectoSocioController {
    * @return SolicitudProyectoSocio {@link SolicitudProyectoSocio} actualizado
    */
   @PutMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public SolicitudProyectoSocio update(@Valid @RequestBody SolicitudProyectoSocio solicitudProyectoSocio,
       @PathVariable Long id) {
     log.debug("update(SolicitudProyectoSocio solicitudProyectoSocio, Long id) - start");
@@ -113,7 +113,7 @@ public class SolicitudProyectoSocioController {
    * @return HTTP 200 si existe y HTTP 204 si no.
    */
   @RequestMapping(path = "/{id}", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Void> exists(@PathVariable Long id) {
     log.debug("SolicitudProyectoSocio exists(Long id) - start");
     if (service.existsById(id)) {
@@ -132,7 +132,7 @@ public class SolicitudProyectoSocioController {
    *         al id
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public SolicitudProyectoSocio findById(@PathVariable Long id) {
     log.debug("SolicitudProyectoSocio findById(Long id) - start");
     SolicitudProyectoSocio returnValue = service.findById(id);
@@ -146,7 +146,7 @@ public class SolicitudProyectoSocioController {
    * @param id Identificador de {@link SolicitudProyectoSocio}.
    */
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
@@ -164,7 +164,7 @@ public class SolicitudProyectoSocioController {
    *         paginadas y filtradas.
    */
   @GetMapping("/{id}/solicitudproyectosocioperiodopago")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<SolicitudProyectoSocioPeriodoPago>> findAllSolicitudProyectoSocioPeriodoPago(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -192,7 +192,7 @@ public class SolicitudProyectoSocioController {
    * @param paging pageable.
    */
   @GetMapping("/{id}/solicitudproyectosocioequipo")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<SolicitudProyectoSocioEquipo>> findAllSolicitudProyectoSocioEquipo(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudProyectoSocioEquipo(Long id, String query, Pageable paging) - start");
@@ -220,7 +220,7 @@ public class SolicitudProyectoSocioController {
    * @param paging pageable.
    */
   @GetMapping("/{id}/solicitudproyectosocioperiodojustificaciones")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<SolicitudProyectoSocioPeriodoJustificacion>> findAllSolicitudProyectoSocioPeriodoJustificacion(
       @PathVariable Long id, @RequestParam(name = "q", required = false) String query,
       @RequestPageable(sort = "s") Pageable paging) {
@@ -250,7 +250,7 @@ public class SolicitudProyectoSocioController {
    *         false
    */
   @RequestMapping(path = "/{id}/vinculaciones", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Boolean> vinculaciones(@PathVariable Long id) {
     log.debug("vinculaciones(Long id) - start");
     Boolean returnValue = service.vinculaciones(id);

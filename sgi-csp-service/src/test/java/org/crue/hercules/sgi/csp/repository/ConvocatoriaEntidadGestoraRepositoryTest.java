@@ -1,17 +1,27 @@
 package org.crue.hercules.sgi.csp.repository;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObjeto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -67,18 +77,22 @@ class ConvocatoriaEntidadGestoraRepositoryTest extends BaseRepositoryTest {
    * @return el objeto ConvocatoriaEntidadGestora
    */
   private ConvocatoriaEntidadGestora generarConvocatoriaEntidadGestora(String suffix) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion" + suffix));
 
-    // @formatter:off
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
-        .nombre("nombreModeloEjecucion" + suffix)
+        .nombre(nombreModeloEjecucion)
         .activo(Boolean.TRUE)
         .externo(Boolean.FALSE)
         .contrato(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad" + suffix));
+
     TipoFinalidad tipoFinalidad = TipoFinalidad.builder()
-        .nombre("nombreTipoFinalidad" + suffix)
+        .nombre(nombreTipoFinalidad)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(tipoFinalidad);
@@ -90,17 +104,33 @@ class ConvocatoriaEntidadGestoraRepositoryTest extends BaseRepositoryTest {
         .build();
     entityManager.persistAndFlush(modeloTipoFinalidad);
 
+    Set<TipoRegimenConcurrenciaNombre> tipoRegimenConcurrenciaNombre = new HashSet<>();
+    tipoRegimenConcurrenciaNombre
+        .add(new TipoRegimenConcurrenciaNombre(Language.ES, "nombreTipoRegimenConcurrencia" + suffix));
+
     TipoRegimenConcurrencia tipoRegimenConcurrencia = TipoRegimenConcurrencia.builder()
-        .nombre("nombreTipoRegimenConcurrencia" + suffix)
+        .nombre(tipoRegimenConcurrenciaNombre)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(tipoRegimenConcurrencia);
 
+    Set<TipoAmbitoGeograficoNombre> tipoAmbitoGeograficoNombre = new HashSet<>();
+    tipoAmbitoGeograficoNombre.add(new TipoAmbitoGeograficoNombre(Language.ES, "nombreTipoAmbitoGeografico" + suffix));
+
     TipoAmbitoGeografico tipoAmbitoGeografico = TipoAmbitoGeografico.builder()
-        .nombre("nombreTipoAmbitoGeografico" + suffix)
+        .nombre(tipoAmbitoGeograficoNombre)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(tipoAmbitoGeografico);
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo-" + suffix));
+
+    Set<ConvocatoriaObjeto> convocatoriaObjeto = new HashSet<>();
+    convocatoriaObjeto.add(new ConvocatoriaObjeto(Language.ES, "objeto-" + suffix));
+
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-" + suffix));
 
     Convocatoria convocatoria = Convocatoria.builder()
         .unidadGestionRef("unidad" + suffix)
@@ -109,9 +139,9 @@ class ConvocatoriaEntidadGestoraRepositoryTest extends BaseRepositoryTest {
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaProvisional(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaConcesion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo" + suffix)
-        .objeto("objeto" + suffix)
-        .observaciones("observaciones" + suffix)
+        .titulo(convocatoriaTitulo)
+        .objeto(convocatoriaObjeto)
+        .observaciones(convocatoriaObservaciones)
         .finalidad(modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
         .estado(Convocatoria.Estado.REGISTRADA)
@@ -126,7 +156,6 @@ class ConvocatoriaEntidadGestoraRepositoryTest extends BaseRepositoryTest {
         .convocatoriaId(convocatoria.getId())
         .entidadRef("entidad" + suffix)
         .build();
-    // @formatter:on
     return entityManager.persistAndFlush(convocatoriaEntidadGestora);
   }
 }

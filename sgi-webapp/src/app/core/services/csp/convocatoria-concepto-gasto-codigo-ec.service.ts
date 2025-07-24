@@ -1,26 +1,23 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC_CONVERTER } from '@core/converters/csp/convocatoria-concepto-gasto-codigo-ec.converter';
-import { IConvocatoriaConceptoGastoCodigoEcBackend } from '@core/models/csp/backend/convocatoria-concepto-gasto-codigo-ec-backend';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
+import { IConvocatoriaConceptoGastoCodigoEcResponse } from '@core/services/csp/convocatoria-concepto-gasto-codigo-ec/convocatoria-concepto-gasto-codigo-ec-response';
+import { CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC_RESPONSE_CONVERTER } from '@core/services/csp/convocatoria-concepto-gasto-codigo-ec/convocatoria-concepto-gasto-codigo-ec-response.converter';
 import { environment } from '@env';
-import { SgiReadOnlyMutableRestService } from '@sgi/framework/http';
+import { SgiRestBaseService } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ConvocatoriaConceptoGastoCodigoEcService extends
-  SgiReadOnlyMutableRestService<number, IConvocatoriaConceptoGastoCodigoEcBackend, IConvocatoriaConceptoGastoCodigoEc> {
+export class ConvocatoriaConceptoGastoCodigoEcService extends SgiRestBaseService {
   private static readonly MAPPING = '/convocatoriaconceptogastocodigoecs';
 
   constructor(protected http: HttpClient) {
     super(
-      ConvocatoriaConceptoGastoCodigoEcService.name,
       `${environment.serviceServers.csp}${ConvocatoriaConceptoGastoCodigoEcService.MAPPING}`,
-      http,
-      CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC_CONVERTER
+      http
     );
   }
 
@@ -31,12 +28,11 @@ export class ConvocatoriaConceptoGastoCodigoEcService extends
    * @param entities Listado de IConvocatoriaConceptoGastoCodigoEc
    */
   updateList(id: number, entities: IConvocatoriaConceptoGastoCodigoEc[]): Observable<IConvocatoriaConceptoGastoCodigoEc[]> {
-
-    return this.http.patch<IConvocatoriaConceptoGastoCodigoEcBackend[]>(
+    return this.http.patch<IConvocatoriaConceptoGastoCodigoEcResponse[]>(
       `${this.endpointUrl}/${id}`,
-      this.converter.fromTargetArray(entities)
+      CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC_RESPONSE_CONVERTER.fromTargetArray(entities)
     ).pipe(
-      map((response => this.converter.toTargetArray(response)))
+      map((response => CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC_RESPONSE_CONVERTER.toTargetArray(response)))
     );
   }
 

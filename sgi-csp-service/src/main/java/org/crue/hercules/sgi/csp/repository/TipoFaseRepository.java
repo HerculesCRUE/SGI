@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -15,11 +16,13 @@ import org.springframework.stereotype.Repository;
 public interface TipoFaseRepository extends JpaRepository<TipoFase, Long>, JpaSpecificationExecutor<TipoFase> {
 
   /**
-   * Busca un {@link TipoFase} activo por nombre.
-   * 
-   * @param nombre Nombre del {@link TipoFase}.
-   * @return un {@link TipoFase} si tiene el nombre buscado.
+   * Obtiene la entidad {@link TipoFase} activa con el nombre e idioma
+   * indicados
+   *
+   * @param lang   el language sobre el que buscar
+   * @param nombre el nombre del {@link TipoFase}.
+   * @return el {@link TipoFase} activo con el nombre indicado
    */
-  Optional<TipoFase> findByNombreAndActivoIsTrue(String nombre);
+  Optional<TipoFase> findByNombreLangAndNombreValueAndActivoIsTrue(Language lang, String nombre);
 
 }

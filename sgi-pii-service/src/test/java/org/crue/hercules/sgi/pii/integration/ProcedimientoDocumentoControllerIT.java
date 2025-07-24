@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.pii.integration;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.dto.ProcedimientoDocumentoInput;
 import org.crue.hercules.sgi.pii.dto.ProcedimientoDocumentoOutput;
 import org.junit.jupiter.api.Test;
@@ -63,7 +68,8 @@ class ProcedimientoDocumentoControllerIT extends BaseIT {
 
     ProcedimientoDocumentoOutput output = response.getBody();
     Assertions.assertThat(output.getId()).isNotNull();
-    Assertions.assertThat(output.getNombre()).isEqualTo("Documento 3 Procedimiento 2");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getNombre(), Language.ES))
+        .isEqualTo("Documento 3 Procedimiento 2");
     Assertions.assertThat(output.getProcedimientoId()).isEqualTo(2L);
     Assertions.assertThat(output.getDocumentoRef()).isEqualTo("61f34b61-0e67-40a6-a581-2e188c1cbd78");
   }
@@ -96,7 +102,7 @@ class ProcedimientoDocumentoControllerIT extends BaseIT {
 
     ProcedimientoDocumentoOutput output = response.getBody();
     Assertions.assertThat(output.getId()).isNotNull();
-    Assertions.assertThat(output.getNombre()).isEqualTo(docName);
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getNombre(), Language.ES)).isEqualTo(docName);
     Assertions.assertThat(output.getProcedimientoId()).isEqualTo(procedimientoId);
     Assertions.assertThat(output.getDocumentoRef()).isEqualTo(input.getDocumentoRef());
   }
@@ -133,7 +139,7 @@ class ProcedimientoDocumentoControllerIT extends BaseIT {
     ProcedimientoDocumentoOutput output = response.getBody();
     Assertions.assertThat(output.getId()).isNotNull();
     Assertions.assertThat(output.getId()).isEqualTo(procedimientoDocumentoId);
-    Assertions.assertThat(output.getNombre()).isEqualTo(docName);
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getNombre(), Language.ES)).isEqualTo(docName);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -165,9 +171,12 @@ class ProcedimientoDocumentoControllerIT extends BaseIT {
   }
 
   private ProcedimientoDocumentoInput buildMockProcedimientoDocumentoInput(String nombre, Long procedimientoId) {
+    List<I18nFieldValueDto> nombreProcedimientoDocumento = new ArrayList<>();
+    nombreProcedimientoDocumento.add(new I18nFieldValueDto(Language.ES, nombre));
+
     return ProcedimientoDocumentoInput.builder()
         .documentoRef("documentoRef")
-        .nombre(nombre)
+        .nombre(nombreProcedimientoDocumento)
         .procedimientoId(procedimientoId)
         .build();
   }

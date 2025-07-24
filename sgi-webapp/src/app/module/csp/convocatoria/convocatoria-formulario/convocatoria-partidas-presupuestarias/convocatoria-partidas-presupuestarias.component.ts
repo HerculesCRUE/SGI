@@ -9,6 +9,7 @@ import { TIPO_PARTIDA_MAP } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -52,14 +53,15 @@ export class ConvocatoriaPartidaPresupuestariaComponent extends FragmentComponen
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.PARTIDAS_PRESUPUESTARIAS, actionService);
+    super(actionService.FRAGMENT.PARTIDAS_PRESUPUESTARIAS, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaPartidaPresupuestariaFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IConvocatoriaPartidaPresupuestaria>, property: string) => {
@@ -67,7 +69,7 @@ export class ConvocatoriaPartidaPresupuestariaComponent extends FragmentComponen
           case 'codigo':
             return wrapper.value.codigo;
           case 'descripcion':
-            return wrapper.value.descripcion;
+            return this.languageService.getFieldValue(wrapper.value.descripcion);
           case 'tipoPartida':
             return wrapper.value.tipoPartida;
           default:
@@ -80,7 +82,7 @@ export class ConvocatoriaPartidaPresupuestariaComponent extends FragmentComponen
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_PARTIDA_PRESUPUESTARIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

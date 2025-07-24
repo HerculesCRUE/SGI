@@ -23,6 +23,7 @@ import { SolicitiudPresupuestoModalComponent, SolicitudPresupuestoModalData } fr
 import { SOLICITUD_ROUTE_NAMES } from '../../solicitud-route-names';
 import { SolicitudActionService } from '../../solicitud.action.service';
 import { SolicitudProyectoPresupuestoGlobalFragment } from './solicitud-proyecto-presupuesto-global.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const SOLICITUD_PROYECTO_PRESUPUESTO_GLOBAL_PARTIDA_GASTO_KEY = marker('csp.partida-gasto');
@@ -70,9 +71,10 @@ export class SolicitudProyectoPresupuestoGlobalComponent extends FormFragmentCom
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly translate: TranslateService,
-    private solicitudService: SolicitudService
+    private solicitudService: SolicitudService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DESGLOSE_PRESUPUESTO_GLOBAL, actionService);
+    super(actionService.FRAGMENT.DESGLOSE_PRESUPUESTO_GLOBAL, actionService, translate);
     this.formPart = this.fragment as SolicitudProyectoPresupuestoGlobalFragment;
 
     this.fxLayoutProperties = new FxLayoutProperties();
@@ -86,7 +88,7 @@ export class SolicitudProyectoPresupuestoGlobalComponent extends FormFragmentCom
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.actionService.datosProyectoComplete$.pipe(
       take(1)
     ).subscribe(
@@ -103,13 +105,14 @@ export class SolicitudProyectoPresupuestoGlobalComponent extends FormFragmentCom
       (partidaGasto: StatusWrapper<ISolicitudProyectoPresupuesto>, property: string) => {
         switch (property) {
           case 'conceptoGasto':
-            return partidaGasto.value.conceptoGasto?.nombre;
+            return partidaGasto.value.conceptoGasto?.nombre ? this.languageService.getFieldValue(partidaGasto.value.conceptoGasto.nombre) : '';
           case 'anualidad':
             return partidaGasto.value.anualidad;
           case 'importe':
             return partidaGasto.value.importeSolicitado;
           case 'observaciones':
-            return partidaGasto.value.observaciones;
+            return this.languageService.getFieldValue(partidaGasto.value.observaciones);
+
           default:
             return partidaGasto[property];
         }
@@ -123,7 +126,7 @@ export class SolicitudProyectoPresupuestoGlobalComponent extends FormFragmentCom
     this.subscriptions.push(subcription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_PROYECTO_PRESUPUESTO_GLOBAL_PARTIDA_GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

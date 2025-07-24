@@ -6,6 +6,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { VALIDACION_REQUISITOS_EQUIPO_IP_MAP } from '@core/enums/validaciones-requisitos-equipo-ip';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
@@ -13,9 +14,10 @@ import { Module } from '@core/module';
 import { ActionService } from '@core/services/action-service';
 import { ConfigService } from '@core/services/csp/configuracion/config.service';
 import { ContextoProyectoService } from '@core/services/csp/contexto-proyecto.service';
-import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
-import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
+import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo/convocatoria-requisito-equipo.service';
+import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip/convocatoria-requisito-ip.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { ProyectoAgrupacionGastoService } from '@core/services/csp/proyecto-agrupacion-gasto/proyecto-agrupacion-gasto.service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
@@ -47,6 +49,7 @@ import { TipoAmbitoGeograficoService } from '@core/services/csp/tipo-ambito-geog
 import { TipoFinalidadService } from '@core/services/csp/tipo-finalidad.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
@@ -105,6 +108,7 @@ import { ProyectoRelacionFragment } from './proyecto-formulario/proyecto-relacio
 import { ProyectoResponsableEconomicoFragment } from './proyecto-formulario/proyecto-responsable-economico/proyecto-responsable-economico.fragment';
 import { ProyectoSociosFragment } from './proyecto-formulario/proyecto-socios/proyecto-socios.fragment';
 import { PROYECTO_ROUTE_PARAMS } from './proyecto-route-params';
+import { SnackBarService } from '@core/services/snack-bar.service';
 
 const MSG_SOLICITUDES = marker('csp.solicitud');
 const MSG_CONVOCATORIAS = marker('csp.convocatoria');
@@ -240,7 +244,7 @@ export class ProyectoActionService extends ActionService {
     return this.fichaGeneral.getValue().unidadGestion?.id;
   }
 
-  get titulo(): string {
+  get titulo(): I18nFieldValue[] {
     return this.fichaGeneral.getValue().titulo;
   }
 
@@ -313,7 +317,10 @@ export class ProyectoActionService extends ActionService {
     private readonly tipoFinalidadService: TipoFinalidadService,
     private readonly translate: TranslateService,
     private readonly unidadGestionService: UnidadGestionService,
-    private readonly viculacionService: VinculacionService
+    private readonly viculacionService: VinculacionService,
+    private readonly grupoService: GrupoService,
+    private readonly languageService: LanguageService,
+    private readonly snackBarService: SnackBarService,
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_DATA_KEY];
@@ -343,7 +350,8 @@ export class ProyectoActionService extends ActionService {
       palabraClaveService,
       sgiAuthService,
       configService,
-      rolSocioService
+      rolSocioService,
+      this.languageService
     );
     this.addFragment(this.FRAGMENT.FICHA_GENERAL, this.fichaGeneral);
 
@@ -385,7 +393,7 @@ export class ProyectoActionService extends ActionService {
 
     } else {
       if (this.isEdit()) {
-        this.entidadesFinanciadoras = new ProyectoEntidadesFinanciadorasFragment(
+        this.entidadesFinanciadoras = new ProyectoEntidadesFinanciadorasFragment(logger,
           id, this.data.proyecto?.solicitudId, proyectoService, proyectoEntidadFinanciadoraService, empresaService, solicitudService,
           false);
         this.socios = new ProyectoSociosFragment(id, empresaService, proyectoService, proyectoSocioService,
@@ -422,6 +430,7 @@ export class ProyectoActionService extends ActionService {
           datosPersonalesService
         );
         this.entidadGestora = new ProyectoEntidadGestoraFragment(
+          logger,
           fb,
           id,
           proyectoService,
@@ -471,24 +480,37 @@ export class ProyectoActionService extends ActionService {
           partidaPresupuestariaIngresoSgeService,
           proyectoPartidaPresupuestariaService,
           proyectoService,
+          languageService,
           this.readonly
         );
-        this.elegibilidad = new ProyectoConceptosGastoFragment(id, this.data.proyecto, proyectoService, proyectoConceptoGastoService,
-          convocatoriaService, this.readonly, this.data?.isVisor);
+        this.elegibilidad = new ProyectoConceptosGastoFragment(
+          id,
+          this.data.proyecto,
+          proyectoService,
+          proyectoConceptoGastoService,
+          convocatoriaService,
+          this.readonly,
+          this.data?.isVisor
+        );
         this.presupuesto = new ProyectoPresupuestoFragment(logger, id, proyectoService, proyectoAnualidadService,
           solicitudService, this.readonly, this.data?.isVisor);
-        this.responsableEconomico = new ProyectoResponsableEconomicoFragment(id, proyectoService, proyectoResponsableEconomicoService,
+        this.responsableEconomico = new ProyectoResponsableEconomicoFragment(logger, id, proyectoService, proyectoResponsableEconomicoService,
           personaService, this.readonly);
         this.proyectoAgrupacionGasto = new ProyectoAgrupacionGastoFragment(this.data?.proyecto?.id, proyectoService,
           proyectoAgrupacionGastoService, this.readonly, this.data?.isVisor);
         this.proyectoCalendarioJustificacion = new ProyectoCalendarioJustificacionFragment(this.data?.proyecto?.id, this.data?.proyecto,
-          this.readonly, proyectoService, proyectoPeriodoJustificacionService, convocatoriaService);
-        this.amortizacionFondos = new ProyectoAmortizacionFondosFragment(this.data?.proyecto?.id, this.data?.proyecto?.anualidades,
+          this.readonly, proyectoService, proyectoPeriodoJustificacionService, convocatoriaService, languageService);
+        this.amortizacionFondos = new ProyectoAmortizacionFondosFragment(logger, this.data?.proyecto?.id, this.data?.proyecto?.anualidades,
           this.data.proyecto?.solicitudId, proyectoPeriodoAmortizacionService, proyectoEntidadFinanciadoraService, empresaService,
           proyectoAnualidadService, periodoAmortizacionService, configService);
-        this.consultaPresupuesto = new ProyectoConsultaPresupuestoFragment(this.data?.proyecto?.id, this.proyectoService);
+        this.consultaPresupuesto = new ProyectoConsultaPresupuestoFragment(
+          this.data?.proyecto?.id,
+          this.proyectoService,
+          translate,
+          languageService
+        );
         this.relaciones = new ProyectoRelacionFragment(
-          id, this.data.proyecto, this.readonly, relacionService, convocatoriaService, invencionService, proyectoService, sgiAuthService);
+          id, this.data.proyecto, this.readonly, relacionService, convocatoriaService, invencionService, proyectoService, grupoService, sgiAuthService);
         this.proyectoCalendarioFacturacion = new ProyectoCalendarioFacturacionFragment(
           this.data?.proyecto?.id,
           this.data?.proyecto,

@@ -1,0 +1,61 @@
+[
+  {
+    "key": "ap3_7",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.7 Trayectoria completa de los agentes biológicos y/u organismos modificados genéticamente"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Describir a continuación el recorrido que siguen los agentes biológicos, organismos modificados genéticamente desde su obtención hasta su eliminación:</p>"
+      },
+      {
+        "key": "mododeObtencion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Modo de obtención",
+          "required": true
+        }
+      },
+      {
+        "key": "transporte",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Transporte",
+          "required": true
+        }
+      },
+      {
+        "key": "recepcion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Recepción",
+          "required": true
+        }
+      },
+      {
+        "key": "almacenamiento",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Almacenamiento",
+          "required": true
+        }
+      },
+      {
+        "key": "eliminacion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Eliminación",
+          "required": true
+        }
+      }
+    ]
+  }
+]

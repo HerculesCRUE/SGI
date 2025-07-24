@@ -20,7 +20,9 @@ public class RelacionOutput implements Serializable {
     /** Convocatoria */
     CONVOCATORIA,
     /** Invencion */
-    INVENCION
+    INVENCION,
+    /** Grupo */
+    GRUPO
   }
 
   private Long id;

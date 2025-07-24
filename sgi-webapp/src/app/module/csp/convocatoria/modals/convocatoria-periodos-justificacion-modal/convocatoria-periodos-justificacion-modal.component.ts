@@ -8,6 +8,7 @@ import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria-periodo-justificacion';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NumberValidator } from '@core/validators/number-validator';
 import { RangeValidator } from '@core/validators/range-validator';
 import { StringValidator } from '@core/validators/string-validator';
@@ -146,7 +147,7 @@ export class ConvocatoriaPeriodosJustificacionModalComponent
       hastaMes: new FormControl(this.data.convocatoriaPeriodoJustificacion?.mesFinal, [Validators.required, Validators.min(1)]),
       fechaInicio: new FormControl(this.data.convocatoriaPeriodoJustificacion?.fechaInicioPresentacion),
       fechaFin: new FormControl(this.data.convocatoriaPeriodoJustificacion?.fechaFinPresentacion),
-      observaciones: new FormControl(this.data.convocatoriaPeriodoJustificacion?.observaciones, Validators.maxLength(2000))
+      observaciones: new FormControl(this.data.convocatoriaPeriodoJustificacion?.observaciones, I18nValidators.maxLength(2000))
     }, {
       validators: [
         this.isFinalUltimoPeriodo(ultimoPeriodoJustificacionNoFinal?.value.mesFinal),

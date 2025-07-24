@@ -1,3 +1,4 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IIncidenciaDocumentacionRequerimiento } from '@core/models/csp/incidencia-documentacion-requerimiento';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IIncidenciaDocumentacionRequerimientoRequest } from './incidencia-documentacion-requerimiento-request';
@@ -14,8 +15,8 @@ class IncidenciaDocumentacionRequerimientoIncidenciaRequestConverter
       return value as unknown as IIncidenciaDocumentacionRequerimientoRequest;
     }
     return {
-      incidencia: value.incidencia,
-      nombreDocumento: value.nombreDocumento,
+      incidencia: value.incidencia ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.incidencia) : [],
+      nombreDocumento: value.nombreDocumento ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.nombreDocumento) : [],
       requerimientoJustificacionId: value.requerimientoJustificacion?.id
     };
   }

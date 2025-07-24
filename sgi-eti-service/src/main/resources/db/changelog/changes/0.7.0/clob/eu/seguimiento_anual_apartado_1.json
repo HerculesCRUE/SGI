@@ -1,0 +1,29 @@
+[
+  {
+    "key": "ap1_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Ikerketa jardueraren hasiera data",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Bete puntu hau zure txostena zer batzorderentzat den kontuan hartuta:<ul><li>#nombre_comite_M10_eu#: parte hartzaileak biltzeko prozesuaren hasiera data.</li><li>#nombre_comite_M20_eu#: esperimentaziorako animalien erabileraren hasiera data.</li><li>#nombre_comite_M30_eu#: GEO, SKA, SE edo agente biologikoen manipulazioaren hasiera data.</li></ul></p>"
+      },
+      {
+        "key": "fechaInicio",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Data"
+        }
+      }
+    ]
+  }
+]

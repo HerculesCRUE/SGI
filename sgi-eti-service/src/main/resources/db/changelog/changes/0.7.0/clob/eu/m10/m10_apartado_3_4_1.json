@@ -1,0 +1,62 @@
+[
+  {
+    "key": "ap3_4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.4.1 Parte hartzaileak biltzeko prozesua"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Deskribatu parte hartzaileak biltzeko prozesua: proiektua aurkeztea eta informazio iturri den subjektuaren edo/eta haren legezko ordezkariaren baimena lortzea, eskema honen arabera: </p><ul><li>nork (arduraduna, bat edo batzuk)</li><li>nola (elkarrizketa, bideoa, liburuxka..) </li><li>non (informazioa eman eta dokumentuak sinatzeko lekua)</li><li>noiz egingo diren (adibidez, parte hartzailea kontsultara joatean). </li></ul>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Azterketan ikerketako subjektu gisa parte hartuko duten pertsonak lortzeko egiten diren ekintza guztiek osatzen dute ‘parte hartzaileak biltzeko prozesua’. </p><p>Prozesu horretan sartzen da balizko parte hartzaileari informazioa ematea, hura konbentzitzea eta ondoren baimena lortu eta sinatzea. </p><p>Diseinu metodologikoa prestatzean inklusio eta bazterketa irizpideak erabiliz lagina definitu ostean egiten da prozesua. </p><p>Parte hartzaileak biltzeko prozesua ikerketaren funtsezko zatia da, eragin zuzena baitu zenbait alderdi etikotan, hala nola borondatezkotasunean, ekitatean eta errespetuan. </p>"
+      },
+      {
+        "key": "descripcionProcesoReclutamiento",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Parte hartzaileak biltzeko prozesua",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Prozesua hasteko aurreikusitako data</p>"
+      },
+      {
+        "key": "fechaReclutamiento",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Aurreikusitako data"
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "date-is-after",
+              "options": {
+                "compareTo": "formStateProperty",
+                "formStateProperty": "memoria.peticionEvaluacion.fechaInicio",
+                "message": "Proiektuaren hasiera data baino geroagokoa izan behar du (ebaluazio eskaeraren datu orokorrak)"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: Erantsi '5.7 Dokumentazio osagarria' atalean azterketarako subjektuak biltzeko erabiliko diren dokumentu guztiak (adibidez, iragarkiak, triptikoak eta abar, testua osorik ageri dela). </p><p>Prozesua unibertsitateko instalazioetatik kanpo egingo bada, erantsi '5.3' atalean dagokion zentro edo aretoaren (ospitaleak, hezkuntza zentroak, osasun zentroak, etab.) baimen dokumentua. </p><p>Gogoratu proiektua <strong>ezin dela hasi batzordearen aldeko txostena jaso gabe</strong>; hortaz, datek koherenteak izan behar dute. Parte hartzaileak biltzeko prozesuaren hasiera data ezin da izan aldeko txostenaren lorpen data baino lehenagokoa. </p></div>"
+      }
+    ]
+  }
+]

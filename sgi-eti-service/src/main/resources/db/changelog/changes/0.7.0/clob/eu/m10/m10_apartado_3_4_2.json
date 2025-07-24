@@ -1,0 +1,78 @@
+[
+  {
+    "key": "ap3_4_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.4.2 Parte hartzaileak ikertzaile taldeaz kanpoko langileek biltzea"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Ikertzaile taldekoa ez den norbait arduratuko da parte hartzaileak biltzeaz?</p>"
+      },
+      {
+        "key": "reclutamientoPersonalAjenoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>Ordainen bat jasotzen du?</p>",
+        "hideExpression": "!model.reclutamientoPersonalAjenoRadio || model.reclutamientoPersonalAjenoRadio === 'no'"
+      },
+      {
+        "key": "tipoCompensacionRadio",
+        "type": "radio",
+        "hideExpression": "!model.reclutamientoPersonalAjenoRadio || model.reclutamientoPersonalAjenoRadio === 'no'",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "key": "tipoCompensacionTexto",
+        "type": "i18n-textarea",
+        "hideExpression": "(!model.reclutamientoPersonalAjenoRadio || model.reclutamientoPersonalAjenoRadio === 'no') || ((!model.reclutamientoPersonalAjenoRadio || model.reclutamientoPersonalAjenoRadio === 'si') && (!model.tipoCompensacionRadio || model.tipoCompensacionRadio === 'no'))",
+        "templateOptions": {
+          "label": "Ordain mota",
+          "placeholder": "Ordain mota",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: parte hartzaileen bilketa Unibertsitateaz kanpoko zentro batetik egiten bada eta zentro horrek, gainera, proiektua bere instalazioetan eta bere bazkideekin egitea baimentzen badu, zentroaren baimen dokumentua erantsi behar duzu ‘5.3’ atalean; bertan zehaztuta egongo da parte hartzaileak biltzeko lana. </p>"
+      }
+    ]
+  }
+]

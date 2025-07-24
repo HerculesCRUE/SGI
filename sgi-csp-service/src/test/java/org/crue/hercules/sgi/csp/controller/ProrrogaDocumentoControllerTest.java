@@ -1,9 +1,16 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.crue.hercules.sgi.csp.exceptions.ProrrogaDocumentoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ProrrogaDocumento;
+import org.crue.hercules.sgi.csp.model.ProrrogaDocumentoComentario;
+import org.crue.hercules.sgi.csp.model.ProrrogaDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.service.ProrrogaDocumentoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -57,11 +64,13 @@ class ProrrogaDocumentoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
         .andExpect(
             MockMvcResultMatchers.jsonPath("proyectoProrrogaId").value(prorrogaDocumento.getProyectoProrrogaId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(prorrogaDocumento.getNombre()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(prorrogaDocumento.getNombre(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("documentoRef").value(prorrogaDocumento.getDocumentoRef()))
         .andExpect(
             MockMvcResultMatchers.jsonPath("tipoDocumento.id").value(prorrogaDocumento.getTipoDocumento().getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value(prorrogaDocumento.getComentario()))
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario[0].value")
+            .value(I18nHelper.getValueForLanguage(prorrogaDocumento.getComentario(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("visible").value(prorrogaDocumento.getVisible()));
   }
 
@@ -90,7 +99,9 @@ class ProrrogaDocumentoControllerTest extends BaseControllerTest {
     // given: Existing ProrrogaDocumento to be updated
     ProrrogaDocumento prorrogaDocumentoExistente = generarMockProrrogaDocumento(1L, 1L, 1L);
     ProrrogaDocumento prorrogaDocumento = generarMockProrrogaDocumento(1L, 1L, 1L);
-    prorrogaDocumento.setComentario("comentario-modificado");
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario.add(new ProrrogaDocumentoComentario(Language.ES, "comentario-modificado"));
+    prorrogaDocumento.setComentario(prorrogaDocumentoComentario);
 
     BDDMockito.given(service.update(ArgumentMatchers.<ProrrogaDocumento>any()))
         .willAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -107,11 +118,13 @@ class ProrrogaDocumentoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(prorrogaDocumentoExistente.getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("proyectoProrrogaId")
             .value(prorrogaDocumentoExistente.getProyectoProrrogaId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(prorrogaDocumentoExistente.getNombre()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(prorrogaDocumentoExistente.getNombre(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("documentoRef").value(prorrogaDocumentoExistente.getDocumentoRef()))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoDocumento.id")
             .value(prorrogaDocumentoExistente.getTipoDocumento().getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario").value(prorrogaDocumento.getComentario()))
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario[0].value")
+            .value(I18nHelper.getValueForLanguage(prorrogaDocumento.getComentario(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("visible").value(prorrogaDocumentoExistente.getVisible()));
   }
 
@@ -191,11 +204,12 @@ class ProrrogaDocumentoControllerTest extends BaseControllerTest {
         // and the requested ProrrogaDocumento is resturned as JSON object
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(id))
         .andExpect(MockMvcResultMatchers.jsonPath("proyectoProrrogaId").value(1L))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("prorroga-documento-" + String.format("%03d", id)))
+        .andExpect(
+            MockMvcResultMatchers.jsonPath("nombre[0].value").value("prorroga-documento-" + String.format("%03d", id)))
         .andExpect(MockMvcResultMatchers.jsonPath("documentoRef").value("documentoRef-" + String.format("%03d", id)))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoDocumento.id").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("visible").value(Boolean.TRUE)).andExpect(MockMvcResultMatchers
-            .jsonPath("comentario").value("comentario-prorroga-documento-" + String.format("%03d", id)));
+            .jsonPath("comentario[0].value").value("comentario-prorroga-documento-" + String.format("%03d", id)));
 
   }
 
@@ -224,15 +238,22 @@ class ProrrogaDocumentoControllerTest extends BaseControllerTest {
    * @return el objeto ProrrogaDocumento
    */
   private ProrrogaDocumento generarMockProrrogaDocumento(Long id, Long proyectoProrrogaId, Long tipoDocumentoId) {
+    Set<ProrrogaDocumentoNombre> prorrogaDocumentoNombre = new HashSet<>();
+    prorrogaDocumentoNombre.add(new ProrrogaDocumentoNombre(Language.ES,
+        "prorroga-documento-" + (id == null ? "" : String.format("%03d", id))));
+
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario.add(new ProrrogaDocumentoComentario(Language.ES,
+        "comentario-prorroga-documento-" + (id == null ? "" : String.format("%03d", id))));
 
     // @formatter:off
     return ProrrogaDocumento.builder()
         .id(id)
         .proyectoProrrogaId(proyectoProrrogaId)
-        .nombre("prorroga-documento-" + (id == null ? "" : String.format("%03d", id)))
+        .nombre(prorrogaDocumentoNombre)
         .documentoRef("documentoRef-" + (id == null ? "" : String.format("%03d", id)))
         .tipoDocumento(TipoDocumento.builder().id(tipoDocumentoId).build())
-        .comentario("comentario-prorroga-documento-" + (id == null ? "" : String.format("%03d", id)))
+        .comentario(prorrogaDocumentoComentario)
         .visible(Boolean.TRUE)
         .build();
     // @formatter:on

@@ -1,0 +1,150 @@
+[
+  {
+    "key": "ap5_2_2_4_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.4.2 Donor organism(s): Specify the scientific and common name"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Note: Do not complete this point if no donor organisms exists or if it is the same as the recipient organism."
+      },
+      {
+        "key": "organismoDonanteOMGCheck",
+        "type": "multicheckbox",
+        "templateOptions": {
+          "label": "Choose",
+          "required": false,
+          "type": "array",
+          "options": [
+            {
+              "value": "humanoDonanteOMG",
+              "label": "Human"
+            },
+            {
+              "value": "animalDonanteOMG",
+              "label": "Animal"
+            },
+            {
+              "value": "plantaDonanteOMG",
+              "label": "Plant"
+            },
+            {
+              "value": "bacteriaDonanteOMG",
+              "label": "Bacteria"
+            },
+            {
+              "value": "hongoDonanteOMG",
+              "label": "Fungus"
+            },
+            {
+              "value": "virusDonanteOMG",
+              "label": "Virus"
+            },
+            {
+              "value": "protozoosDonanteOMG",
+              "label": "Protozoa"
+            }
+          ]
+        }
+      },
+      {
+        "key": "detallarHumanoDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'humanoDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Describe in detail",
+          "label": "Human",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarAnimalDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'animalDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Describe in detail",
+          "label": "Animal",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarPlantaDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'plantaDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Describe in detail",
+          "label": "Plant",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarBacteriaDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'bacteriaDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Describe in detail",
+          "label": "Bacteria",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarHongoDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'hongoDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Describe in detail",
+          "label": "Fungus",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarVirusDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'virusDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Describe in detail",
+          "label": "Virus",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarProtozoosDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'protozoosDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Describe in detail",
+          "label": "Protozoa",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

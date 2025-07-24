@@ -1,10 +1,14 @@
 package org.crue.hercules.sgi.pii.integration;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.dto.TipoProcedimientoInput;
 import org.crue.hercules.sgi.pii.dto.TipoProcedimientoOutput;
 import org.crue.hercules.sgi.pii.model.TipoProcedimiento;
@@ -64,7 +68,7 @@ class TipoProcedimientoIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_TODOS).queryParam("s", sort)
         .queryParam("q", filter).build(false)
@@ -82,9 +86,12 @@ class TipoProcedimientoIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");
 
-    Assertions.assertThat(tipoProcedimientoOutput.get(0).getNombre()).isEqualTo("nombre-003");
-    Assertions.assertThat(tipoProcedimientoOutput.get(1).getNombre()).isEqualTo("nombre-002");
-    Assertions.assertThat(tipoProcedimientoOutput.get(2).getNombre()).isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProcedimientoOutput.get(0).getNombre(), Language.ES))
+        .isEqualTo("nombre-003");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProcedimientoOutput.get(1).getNombre(), Language.ES))
+        .isEqualTo("nombre-002");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProcedimientoOutput.get(2).getNombre(), Language.ES))
+        .isEqualTo("nombre-001");
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -110,9 +117,10 @@ class TipoProcedimientoIT extends BaseIT {
     TipoProcedimientoOutput tipoProcedimientoOutput = response.getBody();
 
     Assertions.assertThat(tipoProcedimientoOutput.getId()).as("id").isNotNull();
-    Assertions.assertThat(tipoProcedimientoOutput.getNombre()).as("nombre").isEqualTo("nombre-tipo-procedimiento");
-    Assertions.assertThat(tipoProcedimientoOutput.getDescripcion()).as("descripcion")
-        .isEqualTo("descripcion-tipo-procedimiento");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProcedimientoOutput.getNombre(), Language.ES))
+        .as("nombre[0].value").isEqualTo("nombre-tipo-procedimiento");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProcedimientoOutput.getDescripcion(), Language.ES))
+        .as("descripcion[0].value").isEqualTo("descripcion-tipo-procedimiento");
 
   }
 
@@ -130,7 +138,7 @@ class TipoProcedimientoIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false)
@@ -149,9 +157,12 @@ class TipoProcedimientoIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");
 
-    Assertions.assertThat(tiposProcedimientoOutput.get(0).getNombre()).isEqualTo("nombre-003");
-    Assertions.assertThat(tiposProcedimientoOutput.get(1).getNombre()).isEqualTo("nombre-002");
-    Assertions.assertThat(tiposProcedimientoOutput.get(2).getNombre()).isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposProcedimientoOutput.get(0).getNombre(), Language.ES))
+        .isEqualTo("nombre-003");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposProcedimientoOutput.get(1).getNombre(), Language.ES))
+        .isEqualTo("nombre-002");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tiposProcedimientoOutput.get(2).getNombre(), Language.ES))
+        .isEqualTo("nombre-001");
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -180,8 +191,10 @@ class TipoProcedimientoIT extends BaseIT {
     TipoProcedimientoOutput output = response.getBody();
     Assertions.assertThat(output.getId()).isEqualTo(toSearchId);
     Assertions.assertThat(output.getActivo()).isEqualTo(expected.getActivo());
-    Assertions.assertThat(output.getDescripcion()).isEqualTo(expected.getDescripcion());
-    Assertions.assertThat(output.getNombre()).isEqualTo(expected.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getDescripcion(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(expected.getDescripcion(), Language.ES));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getNombre(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(expected.getNombre(), Language.ES));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -274,8 +287,10 @@ class TipoProcedimientoIT extends BaseIT {
 
     TipoProcedimientoOutput output = response.getBody();
     Assertions.assertThat(output.getId()).isEqualTo(toUpdateId);
-    Assertions.assertThat(output.getDescripcion()).isEqualTo(input.getDescripcion());
-    Assertions.assertThat(output.getNombre()).isEqualTo(input.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getDescripcion(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getDescripcion(), Language.ES));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getNombre(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getNombre(), Language.ES));
   }
 
   /**
@@ -285,9 +300,15 @@ class TipoProcedimientoIT extends BaseIT {
    * @return el objeto TipoProcedimientoInput
    */
   private TipoProcedimientoInput buildMockTipoProcedimientoInput() {
+    List<I18nFieldValueDto> nombreTipoProcedimiento = new ArrayList<>();
+    nombreTipoProcedimiento.add(new I18nFieldValueDto(Language.ES, "nombre-tipo-procedimiento"));
+
+    List<I18nFieldValueDto> descripcionTipoProcedimiento = new ArrayList<>();
+    descripcionTipoProcedimiento.add(new I18nFieldValueDto(Language.ES, "descripcion-tipo-procedimiento"));
+
     TipoProcedimientoInput tipoProcedimientoInput = new TipoProcedimientoInput();
-    tipoProcedimientoInput.setNombre("nombre-tipo-procedimiento");
-    tipoProcedimientoInput.setDescripcion("descripcion-tipo-procedimiento");
+    tipoProcedimientoInput.setNombre(nombreTipoProcedimiento);
+    tipoProcedimientoInput.setDescripcion(descripcionTipoProcedimiento);
 
     return tipoProcedimientoInput;
   }

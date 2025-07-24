@@ -1,11 +1,11 @@
 package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.NotEmpty;
 
-import org.crue.hercules.sgi.csp.model.SolicitudRrhh;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,15 +20,12 @@ import lombok.NoArgsConstructor;
 @Builder
 public class SolicitudRrhhMemoriaInput implements Serializable {
 
-  @Size(max = SolicitudRrhh.TITULO_TRABAJO_LENGTH)
-  @NotBlank
-  private String tituloTrabajo;
+  @NotEmpty
+  private List<I18nFieldValueDto> tituloTrabajo;
 
-  @Size(max = SolicitudRrhh.RESUMEN_LENGTH)
-  @NotBlank
-  private String resumen;
+  @NotEmpty
+  private List<I18nFieldValueDto> resumen;
 
-  @Size(max = SolicitudRrhh.OBSERVACIONES_LENGTH)
-  private String observaciones;
+  private List<I18nFieldValueDto> observaciones;
 
 }

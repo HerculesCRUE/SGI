@@ -1,14 +1,15 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort, MatSortable } from '@angular/material/sort';
+import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IActa } from '@core/models/eti/acta';
-import { DICTAMEN } from '@core/models/eti/dictamen';
+import { DICTAMEN, DICTAMEN_MAP } from '@core/models/eti/dictamen';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
-import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
+import { MemoriaTipo } from '@core/models/eti/memoria';
+import { TIPO_EVALUACION, TIPO_EVALUACION_MAP } from '@core/models/eti/tipo-evaluacion';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
@@ -55,6 +56,14 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
 
   get isInvestigador(): boolean {
     return this.actionService.isModuleInv();
+  }
+
+  get TIPO_EVALUACION_MAP() {
+    return TIPO_EVALUACION_MAP;
+  }
+
+  get DICTAMEN_MAP() {
+    return DICTAMEN_MAP;
   }
 
   constructor(
@@ -151,6 +160,15 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
   }
 
   /**
+   * Comprueba si la se ha de deshabilitar la visualización del informe
+   * @param wrapper Elemento del listado
+   * @returns true si se ha de deshabilitar la visualización del informe
+   */
+  isVisualizarInformeDisabled(wrapper: StatusWrapper<IEvaluacion>): boolean {
+    return (wrapper.value?.memoria?.tipo === MemoriaTipo.NUEVA || wrapper.value?.memoria?.tipo === MemoriaTipo.RATIFICACION) && (wrapper.value?.dictamen?.id !== 1 && wrapper.value?.dictamen?.id !== 9)
+  }
+
+  /**
  * Visualiza el informe del evaluador a partir de su evaluación
  */
   visualizarInformeEvaluador(idEvaluacion: number): void {
@@ -169,4 +187,5 @@ export class MemoriaEvaluacionesComponent extends FragmentComponent implements O
     this.subscriptions?.forEach(x => x.unsubscribe());
   }
 
+  protected setupI18N(): void { }
 }

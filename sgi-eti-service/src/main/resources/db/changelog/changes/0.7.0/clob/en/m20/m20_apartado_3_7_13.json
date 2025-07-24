@@ -1,0 +1,31 @@
+[
+  {
+    "key": "ap3_7_13",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.13 Maintained alive"
+    },
+    "hideExpression": "!formState.mainModel.ap3_7.ap3_7_11.destinoFinalCheck || !formState.mainModel.ap3_7.ap3_7_11.destinoFinalCheck.some(destino => destino === 'mantenimiento')",
+    "fieldGroup": [
+      {
+        "template": "Please describe the conditions for rehoming or reintegration into a suitable habitat or husbandry system."
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>In order for an animal that has been used in experimentation to be kept alive, the conditions described in article 30 of Royal Decree 53/2013 are to be met:</p><ul><li>a) That your state of health allows it.</li><li>b) That it does not pose a danger to public health, animal health or the environment.</li><li>c) That appropriate measures have been taken to safeguard the good condition of the animal.</li><li>d) That in the case of rehoming or adoption, breeders, suppliers and users have a suitable programme that guarantees their socialization.</li><li>e) That in the case of release of wild animals in their habitat, a suitable adaptation programme is available.</li></ul>"
+      },
+      {
+        "key": "mantenimientoConVida",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Description",
+          "required": true
+        }
+      }
+    ]
+  }
+]

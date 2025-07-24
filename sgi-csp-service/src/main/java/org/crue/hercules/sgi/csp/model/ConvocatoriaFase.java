@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
@@ -31,7 +37,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class ConvocatoriaFase extends BaseEntity {
 
   /**
@@ -68,8 +73,11 @@ public class ConvocatoriaFase extends BaseEntity {
   private Instant fechaFin;
 
   /** Observaciones. */
-  @Column(name = "observaciones", length = 2000)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "convocatoria_fase_observaciones", joinColumns = @JoinColumn(name = "convocatoria_fase_id"))
+  @Valid
+  @Builder.Default
+  private Set<ConvocatoriaFaseObservaciones> observaciones = new HashSet<>();
 
   /** Aviso 1 */
   @OneToOne

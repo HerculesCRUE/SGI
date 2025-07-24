@@ -19,13 +19,16 @@
       <!-- Tipo de fase Column -->
       <ng-container matColumnDef="tipoFase">
         <th mat-header-cell *matHeaderCellDef> {{'csp.proyecto.plazo.tipo-fase' | translate}} </th>
-        <td mat-cell *matCellDef="let plazo">{{plazo.value.tipoFase.nombre}}</td>
+        <td mat-cell *matCellDef="let plazo">
+          <sgi-i18n-table-field [field]="plazo.value.tipoFase.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Observaciones -->>
       <ng-container matColumnDef="observaciones">
         <th mat-header-cell *matHeaderCellDef>{{'csp.proyecto.plazo.observaciones' | translate}}</th>
-        <td mat-cell *matCellDef="let plazo">{{plazo.value.observaciones}}</td>
+        <td mat-cell *matCellDef="let plazo"><sgi-i18n-table-field
+            [field]="plazo.value.observaciones"></sgi-i18n-table-field></td>
       </ng-container>
 
       <!-- Aviso Column -->

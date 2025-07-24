@@ -3,31 +3,42 @@ package org.crue.hercules.sgi.eti.integration;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.CargoComite;
 import org.crue.hercules.sgi.eti.model.Comentario;
+import org.crue.hercules.sgi.eti.model.ComentarioTexto;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionLugar;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionOrdenDia;
 import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
+import org.crue.hercules.sgi.eti.model.EvaluadorResumen;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.MemoriaTitulo;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoComentario;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
-import org.crue.hercules.sgi.eti.model.TipoMemoria;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -53,7 +64,6 @@ import org.springframework.web.util.UriComponentsBuilder;
   "classpath:scripts/bloque.sql", 
   "classpath:scripts/apartado.sql",
   "classpath:scripts/tipo_actividad.sql", 
-  "classpath:scripts/tipo_memoria.sql",
   "classpath:scripts/tipo_estado_memoria.sql", 
   "classpath:scripts/estado_retrospectiva.sql",
   "classpath:scripts/tipo_convocatoria_reunion.sql", 
@@ -120,7 +130,8 @@ public class EvaluacionIT extends BaseIT {
     final Evaluacion evaluacion = response.getBody();
 
     Assertions.assertThat(evaluacion.getId()).isEqualTo(2L);
-    Assertions.assertThat(evaluacion.getMemoria().getTitulo()).isEqualTo("Memoria002");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluacion.getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria002");
     Assertions.assertThat(evaluacion.getDictamen().getNombre()).isEqualTo("Favorable");
     Assertions.assertThat(evaluacion.getTipoEvaluacion().getNombre()).isEqualTo("TipoEvaluacion1");
   }
@@ -221,13 +232,18 @@ public class EvaluacionIT extends BaseIT {
     Assertions.assertThat(evaluaciones.size()).isEqualTo(5);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("1");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
-    Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("11");
+    Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("12");
 
-    Assertions.assertThat(evaluaciones.get(0).getMemoria().getTitulo()).isEqualTo("Memoria014");
-    Assertions.assertThat(evaluaciones.get(1).getMemoria().getTitulo()).isEqualTo("Memoria007");
-    Assertions.assertThat(evaluaciones.get(2).getMemoria().getTitulo()).isEqualTo("Memoria008");
-    Assertions.assertThat(evaluaciones.get(3).getMemoria().getTitulo()).isEqualTo("Memoria009");
-    Assertions.assertThat(evaluaciones.get(4).getMemoria().getTitulo()).isEqualTo("Memoria010");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(0).getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria014");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(1).getMemoria().getTitulo(),
+        Language.ES)).isEqualTo("Memoria007");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(2).getMemoria().getTitulo(),
+        Language.ES)).isEqualTo("Memoria008");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(3).getMemoria().getTitulo(),
+        Language.ES)).isEqualTo("Memoria009");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(4).getMemoria().getTitulo(),
+        Language.ES)).isEqualTo("Memoria010");
   }
 
   @Test
@@ -254,7 +270,8 @@ public class EvaluacionIT extends BaseIT {
     final List<Evaluacion> evaluaciones = response.getBody();
     Assertions.assertThat(evaluaciones.size()).isEqualTo(1);
     Assertions.assertThat(evaluaciones.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(evaluaciones.get(0).getMemoria().getTitulo()).startsWith("Memoria");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(0).getMemoria().getTitulo(), Language.ES))
+        .startsWith("Memoria");
     Assertions.assertThat(evaluaciones.get(0).getDictamen().getNombre()).startsWith("Favorable");
   }
 
@@ -279,10 +296,10 @@ public class EvaluacionIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<Evaluacion> evaluaciones = response.getBody();
-    Assertions.assertThat(evaluaciones.size()).isEqualTo(11);
+    Assertions.assertThat(evaluaciones.size()).isEqualTo(12);
     for (int i = 0; i < 11; i++) {
       Evaluacion evaluacion = evaluaciones.get(i);
-      Assertions.assertThat(evaluacion.getId()).isEqualTo(12 - i);
+      Assertions.assertThat(evaluacion.getId()).isEqualTo(13 - i);
     }
   }
 
@@ -318,7 +335,8 @@ public class EvaluacionIT extends BaseIT {
 
     // Contiene memoria.titulo='Memoria002'
     // Contiene dictamen.nombre='Favorable'
-    Assertions.assertThat(evaluaciones.get(0).getMemoria().getTitulo()).isEqualTo("Memoria002");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(0).getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria002");
     Assertions.assertThat(evaluaciones.get(0).getDictamen().getNombre()).isEqualTo("Favorable");
 
   }
@@ -348,7 +366,8 @@ public class EvaluacionIT extends BaseIT {
 
     // Contiene memoria.titulo='Memoria009'
     // Contiene dictamen.nombre='Favorable pendiente de revisión mínima'
-    Assertions.assertThat(evaluaciones.get(0).getMemoria().getTitulo()).isEqualTo("Memoria009");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(0).getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria009");
     Assertions.assertThat(evaluaciones.get(0).getDictamen().getNombre())
         .isEqualTo("Favorable pendiente de revisión mínima");
   }
@@ -378,7 +397,8 @@ public class EvaluacionIT extends BaseIT {
     final List<Evaluacion> evaluaciones = response.getBody();
     Assertions.assertThat(evaluaciones.size()).isEqualTo(1);
     Assertions.assertThat(evaluaciones.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(evaluaciones.get(0).getMemoria().getTitulo()).isEqualTo("Memoria009");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(0).getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria009");
     Assertions.assertThat(evaluaciones.get(0).getDictamen().getNombre())
         .isEqualTo("Favorable pendiente de revisión mínima");
   }
@@ -406,7 +426,8 @@ public class EvaluacionIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<Evaluacion> evaluaciones = response.getBody();
     Assertions.assertThat(evaluaciones.size()).isEqualTo(1);
-    Assertions.assertThat(evaluaciones.get(0).getMemoria().getTitulo()).isEqualTo("Memoria" + String.format("%03d", 9));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(0).getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria" + String.format("%03d", 9));
     Assertions.assertThat(evaluaciones.get(0).getDictamen().getNombre())
         .isEqualTo("Favorable pendiente de revisión mínima");
   }
@@ -444,18 +465,14 @@ public class EvaluacionIT extends BaseIT {
 
     // Contiene memoria.titulo='Memoria009'
     // Contiene dictamen.nombre='Favorable pendiente de revisión mínima'
-    Assertions.assertThat(evaluaciones.get(0).getMemoria().getTitulo()).isEqualTo("Memoria" + String.format("%03d", 9));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(0).getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria" + String.format("%03d", 9));
     Assertions.assertThat(evaluaciones.get(0).getDictamen().getNombre())
         .isEqualTo("Favorable pendiente de revisión mínima");
 
   }
 
   @Test
-  @Sql(scripts = {
-  // @formatter:off  
-  "classpath:scripts/evaluacion_seguimiento.sql",
-// @formatter:on  
-  })
   public void findByEvaluacionesEnSeguimientoFinal_ReturnsEvaluacionList() throws Exception {
     // when: Obtiene la page=0 con pagesize=5
     HttpHeaders headers = new HttpHeaders();
@@ -481,7 +498,8 @@ public class EvaluacionIT extends BaseIT {
 
     // Contiene de memoria.titulo='Memoria010'
 
-    Assertions.assertThat(evaluaciones.get(0).getMemoria().getTitulo()).isEqualTo("Memoria016");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluaciones.get(0).getMemoria().getTitulo(), Language.ES))
+        .isEqualTo("Memoria017");
 
   }
 
@@ -529,17 +547,22 @@ public class EvaluacionIT extends BaseIT {
     Apartado apartado = new Apartado();
     apartado.setId(1L);
 
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Bloque Bloque = new Bloque(1L, formulario, "Bloque 1", 1);
-    apartado.setBloque(Bloque);
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
+    apartado.setBloque(bloque);
 
     Memoria memoria = new Memoria();
     memoria.setId(2L);
 
+    Set<ComentarioTexto> texto = new HashSet<>();
+    texto.add(new ComentarioTexto(Language.ES, "comentario1"));
     Comentario comentario = new Comentario();
     comentario.setApartado(apartado);
     comentario.setMemoria(memoria);
-    comentario.setTexto("comentario1");
+    comentario.setTexto(texto);
 
     // Authorization
     HttpHeaders headers = new HttpHeaders();
@@ -560,14 +583,19 @@ public class EvaluacionIT extends BaseIT {
     Apartado apartado = new Apartado();
     apartado.setId(1L);
 
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Bloque Bloque = new Bloque(1L, formulario, "Bloque 1", 1);
-    apartado.setBloque(Bloque);
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
 
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
+    apartado.setBloque(bloque);
+
+    Set<ComentarioTexto> texto = new HashSet<>();
+    texto.add(new ComentarioTexto(Language.ES, "comentario1"));
     Comentario comentario = new Comentario();
     comentario.setApartado(apartado);
     comentario.setEvaluacion(evaluacion);
-    comentario.setTexto("comentario1");
+    comentario.setTexto(texto);
 
     // Authorization
     HttpHeaders headers = new HttpHeaders();
@@ -588,17 +616,22 @@ public class EvaluacionIT extends BaseIT {
     Apartado apartado = new Apartado();
     apartado.setId(1L);
 
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Bloque Bloque = new Bloque(1L, formulario, "Bloque 1", 1);
-    apartado.setBloque(Bloque);
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
+    apartado.setBloque(bloque);
 
     Memoria memoria = new Memoria();
     memoria.setId(2L);
 
+    Set<ComentarioTexto> texto = new HashSet<>();
+    texto.add(new ComentarioTexto(Language.ES, "comentario1"));
     Comentario comentario = new Comentario();
     comentario.setApartado(apartado);
     comentario.setMemoria(memoria);
-    comentario.setTexto("comentario1");
+    comentario.setTexto(texto);
 
     // Authorization
     HttpHeaders headers = new HttpHeaders();
@@ -620,14 +653,19 @@ public class EvaluacionIT extends BaseIT {
     Apartado apartado = new Apartado();
     apartado.setId(1L);
 
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Bloque Bloque = new Bloque(1L, formulario, "Bloque 1", 1);
-    apartado.setBloque(Bloque);
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
 
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
+    apartado.setBloque(bloque);
+
+    Set<ComentarioTexto> texto = new HashSet<>();
+    texto.add(new ComentarioTexto(Language.ES, "comentario1"));
     Comentario comentario = new Comentario();
     comentario.setApartado(apartado);
     comentario.setEvaluacion(evaluacion);
-    comentario.setTexto("comentario1");
+    comentario.setTexto(texto);
 
     // Authorization
     HttpHeaders headers = new HttpHeaders();
@@ -648,19 +686,24 @@ public class EvaluacionIT extends BaseIT {
     Apartado apartado = new Apartado();
     apartado.setId(1L);
 
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Bloque Bloque = new Bloque(1L, formulario, "Bloque 1", 1);
-    apartado.setBloque(Bloque);
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
+    apartado.setBloque(bloque);
 
     TipoComentario tipoComentario = new TipoComentario();
     tipoComentario.setId(1L);
 
+    Set<ComentarioTexto> texto = new HashSet<>();
+    texto.add(new ComentarioTexto(Language.ES, "Actualizado"));
     Comentario comentarioReplace = new Comentario();
     comentarioReplace.setId(7L);
     comentarioReplace.setApartado(apartado);
     comentarioReplace.setEvaluacion(evaluacion);
     comentarioReplace.setTipoComentario(tipoComentario);
-    comentarioReplace.setTexto("Actualizado");
+    comentarioReplace.setTexto(texto);
 
     // Authorization
     HttpHeaders headers = new HttpHeaders();
@@ -676,7 +719,7 @@ public class EvaluacionIT extends BaseIT {
 
     Assertions.assertThat(comentario.getId()).isNotNull();
     Assertions.assertThat(comentario.getEvaluacion().getId()).isEqualTo(8L);
-    Assertions.assertThat(comentario.getTexto()).isEqualTo("Actualizado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(comentario.getTexto(), Language.ES)).isEqualTo("Actualizado");
   }
 
   @Test
@@ -686,19 +729,24 @@ public class EvaluacionIT extends BaseIT {
     Apartado apartado = new Apartado();
     apartado.setId(1L);
 
-    Formulario formulario = new Formulario(1L, "M10", "Formulario M10");
-    Bloque Bloque = new Bloque(1L, formulario, "Bloque 1", 1);
-    apartado.setBloque(Bloque);
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+
+    Bloque bloque = new Bloque(1L, formulario, 1, null);
+    apartado.setBloque(bloque);
 
     TipoComentario tipoComentario = new TipoComentario();
     tipoComentario.setId(2L);
 
+    Set<ComentarioTexto> texto = new HashSet<>();
+    texto.add(new ComentarioTexto(Language.ES, "Actualizado"));
     Comentario comentarioReplace = new Comentario();
     comentarioReplace.setId(1L);
     comentarioReplace.setApartado(apartado);
     comentarioReplace.setEvaluacion(evaluacion);
     comentarioReplace.setTipoComentario(tipoComentario);
-    comentarioReplace.setTexto("Actualizado");
+    comentarioReplace.setTexto(texto);
 
     // Authorization
     HttpHeaders headers = new HttpHeaders();
@@ -715,7 +763,7 @@ public class EvaluacionIT extends BaseIT {
 
     Assertions.assertThat(comentario.getId()).isNotNull();
     Assertions.assertThat(comentario.getEvaluacion().getId()).isEqualTo(3L);
-    Assertions.assertThat(comentario.getTexto()).isEqualTo("Actualizado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(comentario.getTexto(), Language.ES)).isEqualTo("Actualizado");
   }
 
   @Test
@@ -761,7 +809,7 @@ public class EvaluacionIT extends BaseIT {
    * @return el objeto Evaluacion
    */
 
-  public Evaluacion generarMockEvaluacion(Long id, String sufijo) {
+  private Evaluacion generarMockEvaluacion(Long id, String sufijo) {
 
     String sufijoStr = (sufijo == null ? id.toString() : sufijo);
 
@@ -781,46 +829,83 @@ public class EvaluacionIT extends BaseIT {
     tipoActividad.setNombre("Proyecto de investigacion");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> peTitulo = new HashSet<>();
+    peTitulo.add(new PeticionEvaluacionTitulo(Language.ES, "PeticionEvaluacion1"));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen"));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos1"));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico1"));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(2L);
     peticionEvaluacion.setCodigo("Codigo1");
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico1");
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos1");
-    peticionEvaluacion.setResumen("Resumen");
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria");
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo("PeticionEvaluacion1");
+    peticionEvaluacion.setTitulo(peTitulo);
     peticionEvaluacion.setPersonaRef("user-001");
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "CEI", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("CEI");
+    comite.setActivo(Boolean.TRUE);
 
-    TipoMemoria tipoMemoria = new TipoMemoria();
-    tipoMemoria.setId(1L);
-    tipoMemoria.setNombre("TipoMemoria001");
-    tipoMemoria.setActivo(Boolean.TRUE);
+    TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
+    tipoEstadoMemoria.setId(1L);
+    tipoEstadoMemoria.setNombre("En elaboración");
+    tipoEstadoMemoria.setActivo(Boolean.TRUE);
 
-    Memoria memoria = new Memoria(11L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
-        tipoMemoria, new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.FALSE,
-        new Retrospectiva(3L, new EstadoRetrospectiva(3L, "En evaluación", Boolean.TRUE), Instant.now()), 3,
-        Boolean.TRUE, null);
+    EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
+    estadoRetrospectiva.setId(3L);
+    estadoRetrospectiva.setNombre("En evaluación");
+    estadoRetrospectiva.setActivo(Boolean.TRUE);
+
+    Retrospectiva retrospectiva = new Retrospectiva();
+    retrospectiva.setId(3L);
+    retrospectiva.setEstadoRetrospectiva(estadoRetrospectiva);
+    retrospectiva.setFechaRetrospectiva(Instant.now());
+
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, "Memoria" + sufijoStr));
+    Memoria memoria = new Memoria();
+    memoria.setId(11L);
+    memoria.setNumReferencia("numRef-001");
+    memoria.setPeticionEvaluacion(peticionEvaluacion);
+    memoria.setComite(comite);
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("user-00" + id);
+    memoria.setTipo(Memoria.Tipo.NUEVA);
+    memoria.setEstadoActual(tipoEstadoMemoria);
+    memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setRequiereRetrospectiva(Boolean.FALSE);
+    memoria.setRetrospectiva(retrospectiva);
+    memoria.setVersion(3);
+    memoria.setActivo(Boolean.TRUE);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
 
+    Set<ConvocatoriaReunionLugar> lugar = new HashSet<>();
+    lugar.add(new ConvocatoriaReunionLugar(Language.ES, "Lugar"));
+    Set<ConvocatoriaReunionOrdenDia> ordenDia = new HashSet<>();
+    ordenDia.add(new ConvocatoriaReunionOrdenDia(Language.ES,
+        "Orden del día convocatoria reunión"));
     ConvocatoriaReunion convocatoriaReunion = new ConvocatoriaReunion();
     convocatoriaReunion.setId(2L);
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.now());
     convocatoriaReunion.setFechaLimite(Instant.now());
     convocatoriaReunion.setVideoconferencia(false);
-    convocatoriaReunion.setLugar("Lugar");
-    convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
+    convocatoriaReunion.setLugar(lugar);
+    convocatoriaReunion.setOrdenDia(ordenDia);
     convocatoriaReunion.setTipoConvocatoriaReunion(tipoConvocatoriaReunion);
     convocatoriaReunion.setHoraInicio(7);
     convocatoriaReunion.setMinutoInicio(30);
@@ -832,9 +917,11 @@ public class EvaluacionIT extends BaseIT {
     cargoComite.setNombre("CargoComite1");
     cargoComite.setActivo(Boolean.TRUE);
 
+    Set<EvaluadorResumen> resumenEvaluador1 = new HashSet<>();
+    resumenEvaluador1.add(new EvaluadorResumen(Language.ES, "Evaluador2"));
     Evaluador evaluador1 = new Evaluador();
     evaluador1.setId(2L);
-    evaluador1.setResumen("Evaluador2");
+    evaluador1.setResumen(resumenEvaluador1);
     evaluador1.setComite(comite);
     evaluador1.setCargoComite(cargoComite);
     evaluador1.setFechaAlta(Instant.parse("2020-07-01T00:00:00Z"));
@@ -842,9 +929,11 @@ public class EvaluacionIT extends BaseIT {
     evaluador1.setPersonaRef("user-001");
     evaluador1.setActivo(Boolean.TRUE);
 
+    Set<EvaluadorResumen> resumenEvaluador2 = new HashSet<>();
+    resumenEvaluador2.add(new EvaluadorResumen(Language.ES, "Evaluador3"));
     Evaluador evaluador2 = new Evaluador();
     evaluador2.setId(3L);
-    evaluador2.setResumen("Evaluador3");
+    evaluador2.setResumen(resumenEvaluador2);
     evaluador2.setComite(comite);
     evaluador2.setCargoComite(cargoComite);
     evaluador2.setFechaAlta(Instant.parse("2020-07-01T00:00:00Z"));

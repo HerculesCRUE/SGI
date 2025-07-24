@@ -1,0 +1,40 @@
+[
+  {
+    "key": "ap5_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.4 Egoera bereziak, salbuespenezkoak edo legezko babesak"
+    },
+    "fieldGroup": [
+      {
+        "template": "Proiektuak egoera bereziei, salbuespenei edo legezko babesei buruzko eskaera behar du? "
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Egoera berezi edo salbuespen orotan, proiektuaren arduradunak Eskaera Arrazoitu bat (lehen Aurretiko eta Berariazko Eskaera) idatzi beharko du, salbuespenaren arrazoia eta justifikazioa azaltzeko, eta eskaera hori Batzorde Gaituari eta Organo Eskudunari igorriko zaie.</p><p>Egoera horiek aurreikusita daude 53/2013 Errege Dekretuan (6., 7., 9.1., 19., 20., 21., 22., 23., 25.3. eta 25.5., 26. eta 29. artikuluak), eta, oro har, honako hauekin dute zerikusia:</p><ul><li>Prozedurarekin lortu nahi diren emaitzekin bateraezinak izateagatik edo kontraindikatuta egoteagatik anestesia, analgesia edo mina, sufrimendua edo estutasuna arintzeko beste metodo batzuk erabiltzen ez dituzten prozedurak egitea.</li><li>53/2013 EDren <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#ani'>I. eranskinean</a> ageri diren animalia espezieak erabiltzea, baina ez direnak jaio eta hazi ofizialki aitortutako zentroetan.</li><li>53/2013 EDren <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#ani'>I. eranskinean</a> ageri ez diren espezieetakoak diren eta hazkuntza edo hornikuntza zentroetatik ez datozen animaliak erabiltzea.</li><li>Prozedurak zentro erabiltzaileetatik kanpo gauzatzea.</li><li>Prozeduran zehar animaliak askatzea.</li><li>Naturan harrapatutako animalia basatiak, kaleko animaliak, babes zentro ofizialetako animaliak edo babestuta edo galzorian dauden animaliak erabiltzea.</li><li>Animaliari min larri edo luzea eragin diezaioketen prozedurak gauzatzea.</li><li>Animaliak jatorrizko ingurunera askatzea, naturan harrapatutako animaliak erabili dituzten prozedurak amaitutakoan.</li><li>Gizakiak ez diren primateak erabiltzea.></ul>"
+      },
+      {
+        "key": "solicitudSituacionesEspeciales",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "Ez"
+            },
+            {
+              "value": "SOLICITUD_RAZONADA",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

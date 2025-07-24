@@ -3,10 +3,12 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTableWithoutPaginationComponent } from '@core/component/abstract-table-without-pagination.component';
 import { IDocumentacionMemoria } from '@core/models/eti/documentacion-memoria';
 import { IInforme } from '@core/models/eti/informe';
+import { IInformeDocumento } from '@core/models/eti/informe-documento';
 import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
@@ -26,7 +28,7 @@ interface IDocumentacionMemoriaWithInformeAndFichaEvaluador extends IDocumentaci
 })
 
 export class DocumentacionMemoriaListadoMemoriaComponent
-  extends AbstractTableWithoutPaginationComponent<IDocumentacionMemoriaWithInformeAndFichaEvaluador>  {
+  extends AbstractTableWithoutPaginationComponent<IDocumentacionMemoriaWithInformeAndFichaEvaluador> {
   documentacionMemoria$: Observable<IDocumentacionMemoriaWithInformeAndFichaEvaluador[]>;
   @Input() memoriaId: number;
   @Input() tipoEvaluacion: number;
@@ -36,7 +38,8 @@ export class DocumentacionMemoriaListadoMemoriaComponent
   constructor(
     private readonly memoriaService: MemoriaService,
     private readonly documentoService: DocumentoService,
-    private readonly evaluacionService: EvaluacionService
+    private readonly evaluacionService: EvaluacionService,
+    private readonly languageService: LanguageService
   ) {
     super();
   }
@@ -111,6 +114,23 @@ export class DocumentacionMemoriaListadoMemoriaComponent
   }
 
   /**
+ * Visualiza el informe de evaluación seleccionado.
+ * @param documentos referencia del los documentos en varios idiomas
+ */
+  visualizarInformeDocumentos(documentos: IInformeDocumento[]): void {
+    const documentoRef = documentos.find(doc => doc.lang === this.languageService.getLanguage()).documentoRef;
+    const documento: IDocumento = {} as IDocumento;
+    this.documentoService.getInfoFichero(documentoRef).pipe(
+      switchMap((documentoInfo: IDocumento) => {
+        documento.nombre = documentoInfo.nombre;
+        return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+      })
+    ).subscribe(response => {
+      triggerDownloadToUser(response, documento.nombre);
+    });
+  }
+
+  /**
    * Visualiza el informe del evaluador a partir de su evaluación
    */
   visualizarInformeEvaluador(): void {
@@ -146,9 +166,9 @@ export class DocumentacionMemoriaListadoMemoriaComponent
     }
     switch (this.tipoEvaluacion) {
       case TIPO_EVALUACION.MEMORIA:
-        return `${documento.tipoDocumento.nombre}: ${documento.nombre}`;
+        return `${this.languageService.getFieldValue(documento.tipoDocumento.nombre)}: ${this.languageService.getFieldValue(documento.nombre)}`;
       default:
-        return documento.nombre;
+        return this.languageService.getFieldValue(documento.nombre);
     }
   }
 }

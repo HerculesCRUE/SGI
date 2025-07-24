@@ -1,7 +1,9 @@
+import { I18nFieldValueRequest } from "@core/i18n/i18n-field-request";
+
 export interface IRolSocioRequest {
-  nombre: string;
-  abreviatura: string;
+  nombre: I18nFieldValueRequest[];
+  abreviatura: I18nFieldValueRequest[];
   coordinador: boolean;
-  descripcion: string;
+  descripcion: I18nFieldValueRequest[];
 }
 

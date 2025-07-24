@@ -7,13 +7,13 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
+import { SgeEjecucionEconomicaFiltros, ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
-import { ConfigService } from '@core/services/cnf/config.service';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
 import { DialogService } from '@core/services/dialog.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription, of } from 'rxjs';
 import { filter, map, switchMap } from 'rxjs/operators';
 import { EjecucionEconomicaActionService } from '../../ejecucion-economica.action.service';
@@ -26,6 +26,7 @@ import { ViajesDietasFragment } from './viajes-dietas.fragment';
 
 const MODAL_CLASIFICACION_TITLE_KEY = marker('title.csp.ejecucion-economica.viajes-dietas');
 const MSG_ACCEPT_CLASIFICACION = marker('csp.ejecucion-economica.clasificacion-gastos.aceptar');
+const ANUALIDAD_KEY = marker('csp.proyecto-presupuesto.anualidad');
 
 @Component({
   selector: 'sgi-viajes-dietas',
@@ -33,14 +34,17 @@ const MSG_ACCEPT_CLASIFICACION = marker('csp.ejecucion-economica.clasificacion-g
   styleUrls: ['./viajes-dietas.component.scss']
 })
 export class ViajesDietasComponent extends FragmentComponent implements OnInit, OnDestroy {
+  SGE_EJECUCION_ECONOMICA_FILTROS = SgeEjecucionEconomicaFiltros;
+
   private subscriptions: Subscription[] = [];
   formPart: ViajesDietasFragment;
 
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
 
+  msgParamAnualidadesEntity = {};
+
   private totalElementos = 0;
-  private limiteRegistrosExportacionExcel: string;
 
   readonly dataSourceDesglose = new MatTableDataSource<RowTreeDesglose<IDesglose>>();
   @ViewChild('anualSel') selectAnualidades: MatSelect;
@@ -59,12 +63,12 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
   }
 
   constructor(
-    actionService: EjecucionEconomicaActionService,
+    private actionService: EjecucionEconomicaActionService,
     private ejecucionEconomicaService: EjecucionEconomicaService,
     private gastoProyectoService: GastoProyectoService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly cnfService: ConfigService
+    private translate: TranslateService
   ) {
     super(actionService.FRAGMENT.VIAJES_DIETAS, actionService);
 
@@ -78,11 +82,6 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
       this.dataSourceDesglose.data = elements;
       this.totalElementos = elements.length;
     }));
-
-    this.subscriptions.push(
-      this.cnfService.getLimiteRegistrosExportacionExcel('csp-exp-max-num-registros-excel-viajes-dietas').subscribe(value => {
-        this.limiteRegistrosExportacionExcel = value;
-      }));
   }
 
   ngOnDestroy(): void {
@@ -202,7 +201,7 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
           columns: exportData?.columns,
           data: exportData?.data,
           totalRegistrosExportacionExcel: this.totalElementos,
-          limiteRegistrosExportacionExcel: Number(this.limiteRegistrosExportacionExcel),
+          limiteRegistrosExportacionExcel: this.formPart.limiteRegistrosExportacionExcel,
           rowConfig: this.formPart.rowConfig
         };
 
@@ -220,6 +219,17 @@ export class ViajesDietasComponent extends FragmentComponent implements OnInit, 
     this.formPart.clearRangos();
     this.selectAnualidades.options.forEach((item: MatOption) => item.deselect());
     this.formPart.clearDesglose();
+  }
+
+  protected setupI18N(): void {
+    this.translate.get(
+      ANUALIDAD_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).subscribe((value) => this.msgParamAnualidadesEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
+  }
+
+  isSgeEjecucionEconomicaFiltroEnabled(opcion: SgeEjecucionEconomicaFiltros): boolean {
+    return this.actionService.isSgeEjecucionEconomicaFiltroEnabled(opcion);
   }
 
 }

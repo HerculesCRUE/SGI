@@ -35,7 +35,6 @@ import { ConvocatoriaRequisitosEquipoComponent } from './convocatoria-formulario
 import { ConvocatoriaRequisitosIPComponent } from './convocatoria-formulario/convocatoria-requisitos-ip/convocatoria-requisitos-ip.component';
 import { ConvocatoriaSeguimientoCientificoComponent } from './convocatoria-formulario/convocatoria-seguimiento-cientifico/convocatoria-seguimiento-cientifico.component';
 import { ConvocatoriaGeneralListadoExportService } from './convocatoria-general-listado-export.service';
-import { ConvocatoriaHeaderListadoExportService } from './convocatoria-header-listado-export.service';
 import { ConvocatoriaHitoListadoExportService } from './convocatoria-hito-listado-export.service';
 import { ConvocatoriaListadoExportService } from './convocatoria-listado-export.service';
 import { ConvocatoriaListadoComponent } from './convocatoria-listado/convocatoria-listado.component';
@@ -111,7 +110,6 @@ import { NivelAcademicoModalComponent } from './modals/nivel-academico-modal/niv
     ConvocatoriaFaseListadoExportService,
     ConvocatoriaFooterListadoExportService,
     ConvocatoriaGeneralListadoExportService,
-    ConvocatoriaHeaderListadoExportService,
     ConvocatoriaHitoListadoExportService,
     ConvocatoriaListadoExportService,
     ConvocatoriaPartidaPresupuestariaListadoExportService,

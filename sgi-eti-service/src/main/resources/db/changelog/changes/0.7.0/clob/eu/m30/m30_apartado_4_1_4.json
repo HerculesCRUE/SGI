@@ -1,0 +1,25 @@
+[
+  {
+    "key": "ap4_1_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.4 Agenteak edo/eta material biologikoa erabiltzeak eragin ditzakeen efektu kaltegarriak "
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Deskribatu labur-labur zer gaixotasun edo efektu kaltegarri eragin ditzakeen agente edo/eta material biologikoa erabiltzeak.</p>"
+      },
+      {
+        "key": "efectosNocivos",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Deskribatu ",
+          "required": true
+        }
+      }
+    ]
+  }
+]

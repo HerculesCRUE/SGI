@@ -1,13 +1,21 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.dto.ProyectoHitoAvisoInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoHitoInput;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
+import org.crue.hercules.sgi.csp.model.ProyectoHitoComentario;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -78,8 +86,13 @@ class ProyectoHitoIT extends BaseIT {
   @Test
   void update_ReturnsProyectoHito() throws Exception {
     Long idProyectoHito = 1L;
+
+    List<I18nFieldValueDto> proyectoHitoComentario = new ArrayList<I18nFieldValueDto>();
+    proyectoHitoComentario
+        .add(new I18nFieldValueDto(Language.ES, "comentario modificado"));
+
     ProyectoHitoInput proyectoHito = generarMockProyectoHito(1L, 1L);
-    proyectoHito.setComentario("comentario modificado");
+    proyectoHito.setComentario(proyectoHitoComentario);
     proyectoHito.setAviso(null);
 
     final ResponseEntity<ProyectoHito> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -95,8 +108,9 @@ class ProyectoHitoIT extends BaseIT {
     Assertions.assertThat(proyectoHitoActualizado.getFecha()).as("getFecha()").isEqualTo(proyectoHito.getFecha());
     Assertions.assertThat(proyectoHitoActualizado.getTipoHito().getId()).as("getTipoHito().getId()")
         .isEqualTo(proyectoHito.getTipoHitoId());
-    Assertions.assertThat(proyectoHitoActualizado.getComentario()).as("getComentario()")
-        .isEqualTo(proyectoHito.getComentario());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoHitoActualizado.getComentario(), Language.ES))
+        .as("getComentario()")
+        .isEqualTo(I18nHelper.getValueForLanguage(proyectoHito.getComentario(), Language.ES));
 
   }
 
@@ -158,7 +172,8 @@ class ProyectoHitoIT extends BaseIT {
     Assertions.assertThat(proyectoHito.getId()).as("getId()").isNotNull();
     Assertions.assertThat(proyectoHito.getTipoHito().getId()).as("getTipoHito().getId()").isEqualTo(1L);
     Assertions.assertThat(proyectoHito.getProyectoId()).as("getProyectoId()").isEqualTo(1L);
-    Assertions.assertThat(proyectoHito.getComentario()).as("comentario")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoHito.getComentario(),
+        Language.ES)).as("comentario")
         .isEqualTo("comentario-proyecto-hito-" + String.format("%03d", idProyectoHito));
     Assertions.assertThat(proyectoHito.getFecha()).as("getFecha()").isEqualTo("2020-10-01T00:00:00Z");
 
@@ -166,12 +181,16 @@ class ProyectoHitoIT extends BaseIT {
 
   private ProyectoHitoInput generarMockProyectoHito(Long tipoHitoId, Long proyectoId) {
 
+    List<I18nFieldValueDto> proyectoHitoComentario = new ArrayList<I18nFieldValueDto>();
+    proyectoHitoComentario
+        .add(new I18nFieldValueDto(Language.ES, "comentario-proyecto-hito-"));
+
     // @formatter:off
     return ProyectoHitoInput.builder()
         .tipoHitoId(1L)
         .proyectoId(proyectoId)
         .fecha(Instant.parse("2020-10-01T00:00:00Z"))
-        .comentario("comentario-proyecto-hito-")
+        .comentario(proyectoHitoComentario)
         .aviso(ProyectoHitoAvisoInput.builder().build())
         .build();
     // @formatter:on

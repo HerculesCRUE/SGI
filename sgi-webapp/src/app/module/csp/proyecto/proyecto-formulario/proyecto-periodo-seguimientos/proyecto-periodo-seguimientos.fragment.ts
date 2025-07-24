@@ -1,5 +1,6 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { TipoSeguimiento } from '@core/enums/tipo-seguimiento';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoriaPeriodoSeguimientoCientifico } from '@core/models/csp/convocatoria-periodo-seguimiento-cientifico';
 import { Estado } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
@@ -39,7 +40,7 @@ export interface IPeriodoSeguimientoListado {
   fechaInicioPresentacion: DateTime;
   fechaFinPresentacion: DateTime;
   tipoSeguimiento: TipoSeguimiento;
-  observaciones: string;
+  observaciones: I18nFieldValue[];
 }
 
 export class ProyectoPeriodoSeguimientosFragment extends Fragment {

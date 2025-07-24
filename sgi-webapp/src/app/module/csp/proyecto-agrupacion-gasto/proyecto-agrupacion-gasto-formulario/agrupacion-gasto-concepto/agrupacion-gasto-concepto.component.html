@@ -7,7 +7,9 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'title.csp.concepto-gasto' |
           translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
         </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.conceptoGasto.nombre}} </td>
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.conceptoGasto.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Acciones Column -->

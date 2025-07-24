@@ -1,3 +1,4 @@
+import { I18nFieldValueRequest } from "@core/i18n/i18n-field-request";
 
 export interface IFacturaPrevistaRequest {
   proyectoIdSGI: number;
@@ -6,6 +7,6 @@ export interface IFacturaPrevistaRequest {
   fechaEmision: string;
   importeBase: number;
   porcentajeIVA: number;
-  comentario: string;
-  tipoFacturacion: string;
+  comentario: I18nFieldValueRequest[];
+  tipoFacturacion: I18nFieldValueRequest[];
 }

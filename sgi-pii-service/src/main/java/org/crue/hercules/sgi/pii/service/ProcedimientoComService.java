@@ -6,7 +6,6 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.pii.config.SgiConfigProperties;
 import org.crue.hercules.sgi.pii.dto.com.EmailOutput;
@@ -35,18 +34,34 @@ public class ProcedimientoComService {
   private final SgiApiComService emailService;
   private final SgiConfigProperties sgiConfigProperties;
 
+  /**
+   * Envia los comunicados {@code PII_COM_FECHA_LIMITE_PROCEDIMIENTO} para los
+   * {@link Procedimiento} cuya fecha limite acción este tres dias habiles después
+   * de la fecha actual y que tengan configurado el envio de avisos
+   */
   public void enviarComunicadoFechaLimiteProcedimiento() {
+    log.debug("enviarComunicadoFechaLimiteProcedimiento() - start");
+
     this.getDateThreeWorkableDaysAfter().forEach(date -> {
       Instant fechaLimiteFrom = date.atZone(this.sgiConfigProperties.getTimeZone().toZoneId())
           .with(LocalTime.MIN).toInstant();
       Instant fechaLimiteTo = date;
 
+      log.info(
+          "enviarComunicadoFechaLimiteProcedimiento() - Recuperando procedimientos cuya fecha limite accion este entre {} y {}",
+          fechaLimiteFrom, fechaLimiteTo);
+
       this.procedimientoRepository.findByFechaLimiteAccionBetweenAndGenerarAvisoTrue(fechaLimiteFrom, fechaLimiteTo)
           .forEach(procedimiento -> {
+            log.info("enviarComunicadoFechaLimiteProcedimiento() - procedimientoId: {} - enviando comunicado",
+                procedimiento.getId());
+
             EmailOutput comunicado = this.buildComunicadoFechaLimiteProcedimiento(procedimiento);
             this.emailService.sendEmail(comunicado.getId());
           });
     });
+
+    log.debug("enviarComunicadoFechaLimiteProcedimiento() - end");
   }
 
   private EmailOutput buildComunicadoFechaLimiteProcedimiento(Procedimiento procedimiento) {
@@ -61,9 +76,10 @@ public class ProcedimientoComService {
 
     try {
       comunicado = this.emailService.createComunicadoFechaLimiteProcedimiento(data, getRecipientsPreconfigurados());
-    } catch (JsonProcessingException e) {
+    } catch (Exception e) {
       log.error(e.getMessage(), e);
     }
+
     return comunicado;
   }
 
@@ -90,9 +106,7 @@ public class ProcedimientoComService {
         dates.add(saturday.toInstant());
         dates.add(sunday.toInstant());
         break;
-      case WEDNESDAY:
-      case THURSDAY:
-      case FRIDAY:
+      case WEDNESDAY, THURSDAY, FRIDAY:
         dates.add(now.plusDays(5).toInstant());
         break;
       default:
@@ -109,12 +123,14 @@ public class ProcedimientoComService {
 
   private List<Recipient> getRecipientsPreconfigurados() throws JsonProcessingException {
     List<String> destinatarios = configService
-        .findStringListByName(
-            CONFIG_PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS);
+        .findStringListByName(CONFIG_PII_COM_FECHA_LIMITE_PROCEDIMIENTO_DESTINATARIOS);
 
     return destinatarios.stream()
-        .map(destinatario -> Recipient.builder().name(destinatario).address(destinatario)
+        .map(destinatario -> Recipient.builder()
+            .name(destinatario)
+            .address(destinatario)
             .build())
-        .collect(Collectors.toList());
+        .toList();
   }
+
 }

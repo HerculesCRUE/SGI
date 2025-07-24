@@ -1,0 +1,67 @@
+[
+  {
+    "key": "ap3_7_10",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.10 Jatekorik edo/eta edatekorik ez ematea"
+    },
+    "fieldGroup": [
+      {
+        "template": "Animalia jatekorik edo/eta edatekorik gabe utziko da uneren batean?"
+      },
+      {
+        "key": "privacionRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "key": "tipoPrivacionCheck",
+        "type": "multicheckbox",
+        "hideExpression": "!model.privacionRadio || model.privacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Hautatu",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "privacionAlimento",
+              "label": "Jatekorik gabe"
+            },
+            {
+              "value": "privacionAgua",
+              "label": "Urik gabe"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Deskribatu jatekorik edo/eta urik gabe uzteko pauta, eta adierazi hasiera ordua eta iraupena (ordutan).",
+        "hideExpression": "!model.privacionRadio || model.privacionRadio === 'no'"
+      },
+      {
+        "key": "describirPrivacion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.privacionRadio || model.privacionRadio === 'no'",
+        "templateOptions": {
+          "name": "Deskribatu ",
+          "required": true
+        }
+      }
+    ]
+  }
+]

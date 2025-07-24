@@ -3,9 +3,9 @@ package org.crue.hercules.sgi.csp.controller;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoSocioNotFoundException;
@@ -14,11 +14,13 @@ import org.crue.hercules.sgi.csp.model.RolSocio;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioEquipo;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoPago;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoSocioEquipoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoSocioPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoSocioPeriodoPagoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoSocioService;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -38,6 +40,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * SolicitudProyectoSocioControllerTest
@@ -555,6 +559,8 @@ class SolicitudProyectoSocioControllerTest extends BaseControllerTest {
    */
   private SolicitudProyectoSocioPeriodoJustificacion generarMockSolicitudProyectoSocioPeriodoJustificacion(Long id,
       Integer mesInicial, Integer mesFinal, Long solicitudProyectoId) {
+    Set<SolicitudProyectoSocioPeriodoJustificacionObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new SolicitudProyectoSocioPeriodoJustificacionObservaciones(Language.ES, "observaciones-" + id));
     SolicitudProyectoSocioPeriodoJustificacion solicitudProyectoSocioPeriodoJustificacion = new SolicitudProyectoSocioPeriodoJustificacion();
     solicitudProyectoSocioPeriodoJustificacion.setId(id);
     solicitudProyectoSocioPeriodoJustificacion
@@ -564,7 +570,7 @@ class SolicitudProyectoSocioControllerTest extends BaseControllerTest {
     solicitudProyectoSocioPeriodoJustificacion.setMesFinal(mesFinal);
     solicitudProyectoSocioPeriodoJustificacion.setFechaInicio(Instant.parse("2020-10-10T00:00:00Z"));
     solicitudProyectoSocioPeriodoJustificacion.setFechaFin(Instant.parse("2020-11-20T23:59:59Z"));
-    solicitudProyectoSocioPeriodoJustificacion.setObservaciones("observaciones-" + id);
+    solicitudProyectoSocioPeriodoJustificacion.setObservaciones(observaciones);
 
     return solicitudProyectoSocioPeriodoJustificacion;
   }

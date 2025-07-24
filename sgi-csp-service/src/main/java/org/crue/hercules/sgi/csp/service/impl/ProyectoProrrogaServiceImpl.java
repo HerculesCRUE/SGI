@@ -16,6 +16,7 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoProrrogaWithRelatedProyectoF
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
+import org.crue.hercules.sgi.csp.model.GrupoTipo.Tipo;
 import org.crue.hercules.sgi.csp.repository.ProrrogaDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoFacturacionRepository;
@@ -23,8 +24,11 @@ import org.crue.hercules.sgi.csp.repository.ProyectoProrrogaRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoProrrogaSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoProrrogaService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -43,6 +47,18 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_FIELD_NUM_PRORROGA = "numProrroga";
+  private static final String MSG_FIELD_FECHA_INICIO_PROYECTO = "fechaInicioProyecto";
+  private static final String MSG_FIELD_FECHA_FIN_PROYECTO = "fechaFinProyecto";
+  private static final String MSG_FIELD_FECHA_ULTIMA_PRORROGA = "fechaUltimaProrroga";
+  private static final String MSG_FIELD_FECHA_CONCESION = "fechaConcesion";
+  private static final String MSG_FIELD_IMPORTE = "importe";
+  private static final String MSG_MODEL_PROYECTO_PRORROGA = "org.crue.hercules.sgi.csp.model.ProyectoProrroga.message";
+  private static final String MSG_PERMISO_ELIMINAR_ULTIMA_PRORROGA = "proyectoProrroga.permiso.eliminar.ultimaProrroga";
+  private static final String MSG_PERMISO_MODIFICAR_ULTIMA_PRORROGA = "proyectoProrroga.permiso.modificar.ultimaProrroga";
+  private static final String MSG_PROBLEM_NOT_EMPTY = "org.springframework.util.Assert.notEmpty.message";
 
   private final ProyectoProrrogaRepository repository;
   private final ProyectoRepository proyectoRepository;
@@ -62,8 +78,7 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
   public ProyectoProrroga create(ProyectoProrroga proyectoProrroga) {
     log.debug("create(ProyectoProrroga ProyectoProrroga) - start");
 
-    Assert.isNull(proyectoProrroga.getId(),
-        "ProyectoProrroga id tiene que ser null para crear un nuevo ProyectoProrroga");
+    AssertHelper.idIsNull(proyectoProrroga.getId(), ProyectoProrroga.class);
 
     this.validarRequeridosProyectoProrroga(proyectoProrroga);
     this.validarProyectoProrroga(proyectoProrroga, null);
@@ -95,8 +110,7 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
   public ProyectoProrroga update(ProyectoProrroga proyectoProrrogaActualizar) {
     log.debug("update(ProyectoProrroga ProyectoProrrogaActualizar) - start");
 
-    Assert.notNull(proyectoProrrogaActualizar.getId(),
-        "ProyectoProrroga id no puede ser null para actualizar un ProyectoProrroga");
+    AssertHelper.idNotNull(proyectoProrrogaActualizar.getId(), ProyectoProrroga.class);
 
     this.validarRequeridosProyectoProrroga(proyectoProrrogaActualizar);
 
@@ -140,7 +154,7 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ProyectoProrroga id no puede ser null para eliminar un ProyectoProrroga");
+    AssertHelper.idNotNull(id, ProyectoProrroga.class);
 
     ProyectoProrroga proyectoProrrogaToDelete = repository.findById(id).map(proyectoProrroga -> {
 
@@ -152,7 +166,7 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
       if (ultimoProyectoProrroga.isPresent()
           && !ultimoProyectoProrroga.get().getId().equals(proyectoProrroga.getId())) {
         Assert.isTrue(Objects.equals(proyectoProrroga.getId(), ultimoProyectoProrroga.get().getId()),
-            "Sólo se permite eliminar la última prórroga");
+            ApplicationContextSupport.getMessage(MSG_PERMISO_ELIMINAR_ULTIMA_PRORROGA));
       }
       return proyectoProrroga;
     }).orElseThrow(() -> new ProyectoProrrogaNotFoundException(id));
@@ -253,10 +267,10 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
 
     Optional<Proyecto> proyecto = proyectoRepository.findById(proyectoId);
 
-    Assert.isTrue(
+    AssertHelper.fieldBefore(
         proyecto.isPresent() && ((fechaFinNew != null
             && fechaFinNew.compareTo(proyecto.get().getFechaInicio()) >= 0) || fechaFinNew == null),
-        "La fecha de fin debe ser posterior a la fecha de inicio del proyecto");
+        MSG_FIELD_FECHA_INICIO_PROYECTO, AssertHelper.MESSAGE_KEY_DATE_END);
 
     // Se actualizan los miembros de equipo cuya fecha de fin coincida con la fecha
     // de fin del proyecto o sea mayor a la nueva fecha de fin del proyecto
@@ -323,8 +337,8 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
     // valida que sea posterior a la fecha de fin del proyecto
     if (datosProyectoProrroga.getFechaFin() != null
         && (datosOriginales == null || !datosProyectoProrroga.getFechaFin().equals(datosOriginales.getFechaFin()))) {
-      Assert.isTrue(datosProyectoProrroga.getFechaFin().isAfter(fechaFinProyecto),
-          "Fecha de fin debe ser posterior a la fecha de fin del proyecto");
+      AssertHelper.fieldBefore(datosProyectoProrroga.getFechaFin().isAfter(fechaFinProyecto),
+          MSG_FIELD_FECHA_FIN_PROYECTO, AssertHelper.MESSAGE_KEY_DATE_END);
     }
 
     // Se recupera el ProyectoProrroga con la última fecha de concesión
@@ -338,23 +352,23 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
       if (datosOriginales == null) {
         datosProyectoProrroga.setNumProrroga(ultimoProyectoProrroga.get().getNumProrroga() + 1);
         // fecha de concesión debe ser posterior a la de la última prórroga
-        Assert.isTrue(
+        AssertHelper.fieldBefore(
             datosProyectoProrroga.getFechaConcesion().compareTo(ultimoProyectoProrroga.get().getFechaConcesion()) > 0,
-            "Fecha de concesión debe ser posterior a la de la última prórroga");
+            MSG_FIELD_FECHA_ULTIMA_PRORROGA, MSG_FIELD_FECHA_CONCESION);
       } else {
         // Se trata de una modificación
         Assert.isTrue(Objects.equals(datosProyectoProrroga.getId(), ultimoProyectoProrroga.get().getId()),
-            "Sólo se permite modificar la última prórroga");
+            ApplicationContextSupport.getMessage(MSG_PERMISO_MODIFICAR_ULTIMA_PRORROGA));
 
         // Se recupera el ProyectoProrroga inmediatamente anterior
         Optional<ProyectoProrroga> anteriorProyectoProrroga = repository
             .findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc(datosProyectoProrroga.getId(), proyectoId);
         if (anteriorProyectoProrroga.isPresent()) {
           // fecha de concesión debe ser posterior a la de la última prórroga
-          Assert.isTrue(
+          AssertHelper.fieldBefore(
               datosProyectoProrroga.getFechaConcesion()
                   .compareTo(anteriorProyectoProrroga.get().getFechaConcesion()) > 0,
-              "Fecha de concesión debe ser posterior a la de la última prórroga");
+              MSG_FIELD_FECHA_ULTIMA_PRORROGA, MSG_FIELD_FECHA_CONCESION);
         }
       }
 
@@ -377,23 +391,20 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
   private void validarRequeridosProyectoProrroga(ProyectoProrroga datosProyectoProrroga) {
     log.debug("validarRequeridosProyectoProrroga(ProyectoProrroga datosProyectoProrroga) - start");
 
-    Assert.isTrue(datosProyectoProrroga.getProyectoId() != null,
-        "Id Proyecto no puede ser null para realizar la acción sobre ProyectoProrroga");
+    AssertHelper.idNotNull(datosProyectoProrroga.getProyectoId(), Proyecto.class);
 
-    Assert.notNull(datosProyectoProrroga.getNumProrroga(),
-        "Número de prórroga no puede ser null para realizar la acción sobre ProyectoProrroga");
+    AssertHelper.fieldNotNull(datosProyectoProrroga.getNumProrroga(), ProyectoProrroga.class, MSG_FIELD_NUM_PRORROGA);
 
-    Assert.notNull(datosProyectoProrroga.getTipo(),
-        "Tipo prórroga no puede ser null para realizar la acción sobre ProyectoProrroga");
+    AssertHelper.entityNotNull(datosProyectoProrroga.getTipo(), ProyectoProrroga.class, Tipo.class);
 
-    Assert.notNull(datosProyectoProrroga.getFechaConcesion(),
-        "Fecha concesión no puede ser null para realizar la acción sobre ProyectoProrroga");
+    AssertHelper.fieldNotNull(datosProyectoProrroga.getFechaConcesion(), ProyectoProrroga.class,
+        AssertHelper.MESSAGE_KEY_DATE);
 
     // Será obligatorio si se ha seleccionado en el campo TipoProrroga "Tiempo" o
     // "Tiempo e importe"
     if (datosProyectoProrroga.getTipo() != ProyectoProrroga.Tipo.IMPORTE) {
-      Assert.isTrue(datosProyectoProrroga.getFechaFin() != null,
-          "Nueva fecha fin proyecto no puede ser null para  para realizar la acción sobre ProyectoProrroga");
+      AssertHelper.fieldNotNull(datosProyectoProrroga.getFechaFin(), ProyectoProrroga.class,
+          AssertHelper.MESSAGE_KEY_DATE_END);
     }
 
     // Será obligatorio si se ha seleccionado en el campo TipoProrroga "Importe" o
@@ -402,7 +413,13 @@ public class ProyectoProrrogaServiceImpl implements ProyectoProrrogaService {
       Assert.isTrue(
           datosProyectoProrroga.getImporte() != null
               && datosProyectoProrroga.getImporte().compareTo(BigDecimal.ZERO) >= 0,
-          "Importe debe tener un valor para realizar la acción sobre ProyectoProrroga");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_NOT_EMPTY)
+              .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                  MSG_FIELD_IMPORTE))
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_PROYECTO_PRORROGA))
+              .build());
     }
 
     log.debug("validarRequeridosProyectoProrroga(ProyectoProrroga datosProyectoProrroga) - end");

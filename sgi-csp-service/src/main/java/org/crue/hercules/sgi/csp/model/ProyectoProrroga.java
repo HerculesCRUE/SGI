@@ -2,12 +2,17 @@ package org.crue.hercules.sgi.csp.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -17,9 +22,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -93,9 +98,11 @@ public class ProyectoProrroga extends BaseEntity {
   private BigDecimal importe;
 
   /** Observaciones */
-  @Column(name = "observaciones", length = 2000)
-  @Size(max = 2000)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "proyecto_prorroga_observaciones", joinColumns = @JoinColumn(name = "proyecto_prorroga_id"))
+  @Valid
+  @Builder.Default
+  private Set<ProyectoProrrogaObservaciones> observaciones = new HashSet<>();
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne

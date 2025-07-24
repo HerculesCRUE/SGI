@@ -1,9 +1,13 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,7 +27,9 @@ class TipoRegimenConcurrenciaRepositoryTest extends BaseRepositoryTest {
     entityManager.persistAndFlush(generarMockTipoRegimenConcurrencia(3L, Boolean.TRUE));
 
     // when: find given nombre
-    TipoRegimenConcurrencia dataFound = repository.findByNombre(data.getNombre()).get();
+    TipoRegimenConcurrencia dataFound = repository
+        .findByNombreLangAndNombreValueAndActivoIsTrue(Language.ES, data.getNombre().iterator().next().getValue())
+        .get();
 
     // then: TipoRegimenConcurrencia with given name is found
     Assertions.assertThat(dataFound).isNotNull();
@@ -40,7 +46,8 @@ class TipoRegimenConcurrenciaRepositoryTest extends BaseRepositoryTest {
     entityManager.persistAndFlush(generarMockTipoRegimenConcurrencia(3L, Boolean.TRUE));
 
     // when: find given nombre
-    Optional<TipoRegimenConcurrencia> dataFound = repository.findByNombre(data.getNombre());
+    Optional<TipoRegimenConcurrencia> dataFound = repository
+        .findByNombreLangAndNombreValueAndActivoIsTrue(Language.ES, data.getNombre().iterator().next().getValue());
 
     // then: TipoRegimenConcurrencia with given name is not found
     Assertions.assertThat(dataFound).isEqualTo(Optional.empty());
@@ -54,6 +61,9 @@ class TipoRegimenConcurrenciaRepositoryTest extends BaseRepositoryTest {
    * @return TipoRegimenConcurrencia
    */
   private TipoRegimenConcurrencia generarMockTipoRegimenConcurrencia(Long id, Boolean activo) {
-    return TipoRegimenConcurrencia.builder().nombre("nombre-" + id).activo(activo).build();
+    Set<TipoRegimenConcurrenciaNombre> nombre = new HashSet<>();
+    nombre.add(new TipoRegimenConcurrenciaNombre(Language.ES, "nombre-" + id));
+
+    return TipoRegimenConcurrencia.builder().nombre(nombre).activo(activo).build();
   }
 }

@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IProyectoPeriodoJustificacion } from './proyecto-periodo-justificacion';
 import { IProyectoProyectoSge } from './proyecto-proyecto-sge';
@@ -21,7 +22,7 @@ export interface IRequerimientoJustificacion {
   importeReintegrarCi: number;
   interesesReintegrar: number;
   numRequerimiento: number;
-  observaciones: string;
+  observaciones: I18nFieldValue[];
   proyectoPeriodoJustificacion: IProyectoPeriodoJustificacion;
   proyectoProyectoSge: IProyectoProyectoSge;
   recursoEstimado: boolean;

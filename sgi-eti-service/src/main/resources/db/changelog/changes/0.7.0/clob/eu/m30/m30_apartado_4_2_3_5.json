@@ -1,0 +1,89 @@
+[
+  {
+    "key": "ap4_2_3_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.5 Hondakinen kudeaketa"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Hondakin arriskutsuen edo biologikoen kanpo kudeaketa aurreikusten da?</p>"
+      },
+      {
+        "key": "gestionResiduos",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Erantzuna baiezkoa bada, zehaztu edo justifikatu kanpo kudeaketa.",
+        "hideExpression": "!model.gestionResiduos || model.gestionResiduos === 'no'"
+      },
+      {
+        "key": "residuosGenerar",
+        "type": "multicheckbox",
+        "hideExpression": "!model.gestionResiduos || model.gestionResiduos === 'no'",
+        "templateOptions": {
+          "label": "Hauetako zein?",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "biosanitarios",
+              "label": "Hondakin biosanitarioak"
+            },
+            {
+              "value": "quimicos",
+              "label": "Jatorri kimikoko hondakinak"
+            },
+            {
+              "value": "radiactivos",
+              "label": "Hondakin erradioaktiboak"
+            },
+            {
+              "value": "animales",
+              "label": "Esperimentazio animalien hondakinak"
+            },
+            {
+              "value": "otros",
+              "label": "Beste batzuk. Zehaztu"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otrasTexto",
+        "type": "i18n-textarea",
+        "hideExpression": "model.gestionResiduos === 'no' || (!model.residuosGenerar || !model.residuosGenerar.find((c) => c === 'otros'))",
+        "templateOptions": {
+          "placeholder": "Beste batzuk. Zehaztu",
+          "label": "Beste batzuk. Zehaztu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Hondakin bat arriskutsutzat hartzen dugu, baldin eta arriskugarritasun ezaugarri hauetako bat edo batzuk baditu: leherkorra, kantzerigenoa, erregarria, korrosiboa, sukoia, infekziosoa, narritagarria, toxikoa, kaltegarria, mutagenoa edo/eta ekotoxikoa. Hondakin batek ez badu ezaugarri horietako bat bera ere, ez da hondakin arriskutsutzat joko, eta, horrenbestez, gainerako hiri hondakinekin batera kudeatuko da. <br><br>Unibertsitateko irakaskuntza eta ikerketa laborategietan sortzen diren hondakin arriskutsuen barruan, nabarmentzekoak dira jatorri kimikoko hondakinak, III. taldeko hondakin biosanitarioak edo biologikoak, hondakin erradioaktiboak eta esperimentazio animalien hondakinak <strong>(SANDACH)</strong>.</p>"
+      }
+    ]
+  }
+]

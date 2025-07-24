@@ -1,9 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -15,9 +19,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -66,9 +70,11 @@ public class ProyectoConceptoGasto extends BaseEntity {
   private ConceptoGasto conceptoGasto;
 
   /** Observaciones */
-  @Column(name = "observaciones", length = 250, nullable = true)
-  @Size(max = 250)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "proyecto_concepto_gasto_observaciones", joinColumns = @JoinColumn(name = "proyecto_concepto_gasto_id"))
+  @Valid
+  @Builder.Default
+  private Set<ProyectoConceptoGastoObservaciones> observaciones = new HashSet<>();
 
   /** Importe máximo */
   @Column(name = "importe_maximo", nullable = true)

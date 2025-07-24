@@ -58,13 +58,13 @@ export class EmpresaAdministracionSociedadComponent extends FragmentComponent im
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.ADMINISTRACION_SOCIEDAD, actionService);
+    super(actionService.FRAGMENT.ADMINISTRACION_SOCIEDAD, actionService, translate);
     this.formPart = this.fragment as EmpresaAdministracionSociedadFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IEmpresaAdministracionSociedad>, property: string) => {
@@ -85,7 +85,7 @@ export class EmpresaAdministracionSociedadComponent extends FragmentComponent im
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       EMPRESA_EQUIPO_MIEMBRO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

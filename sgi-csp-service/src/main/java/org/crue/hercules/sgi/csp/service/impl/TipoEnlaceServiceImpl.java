@@ -1,19 +1,29 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
+
 import org.crue.hercules.sgi.csp.exceptions.TipoEnlaceNotFoundException;
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity;
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
 import org.crue.hercules.sgi.csp.repository.TipoEnlaceRepository;
 import org.crue.hercules.sgi.csp.repository.specification.TipoEnlaceSpecifications;
 import org.crue.hercules.sgi.csp.service.TipoEnlaceService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -22,13 +32,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Validated
 public class TipoEnlaceServiceImpl implements TipoEnlaceService {
 
   private final TipoEnlaceRepository repository;
 
-  public TipoEnlaceServiceImpl(TipoEnlaceRepository repository) {
-    this.repository = repository;
-  }
+  private final Validator validator;
 
   /**
    * Guarda la entidad {@link TipoEnlace}.
@@ -38,12 +48,11 @@ public class TipoEnlaceServiceImpl implements TipoEnlaceService {
    */
   @Override
   @Transactional
-  public TipoEnlace create(TipoEnlace tipoEnlace) {
+  @Validated({ BaseEntity.Create.class })
+  public TipoEnlace create(@Valid TipoEnlace tipoEnlace) {
     log.debug("create(TipoEnlace tipoEnlace) - start");
 
-    Assert.isNull(tipoEnlace.getId(), "Id tiene que ser null para crear TipoEnlace");
-    Assert.isTrue(!(repository.findByNombreAndActivoIsTrue(tipoEnlace.getNombre()).isPresent()),
-        "Ya existe un TipoEnlace activo con el nombre '" + tipoEnlace.getNombre() + "'");
+    AssertHelper.idIsNull(tipoEnlace.getId(), TipoEnlace.class);
 
     tipoEnlace.setActivo(Boolean.TRUE);
     TipoEnlace returnValue = repository.save(tipoEnlace);
@@ -61,13 +70,11 @@ public class TipoEnlaceServiceImpl implements TipoEnlaceService {
    */
   @Override
   @Transactional
-  public TipoEnlace update(TipoEnlace tipoEnlace) {
+  @Validated({ BaseEntity.Update.class })
+  public TipoEnlace update(@Valid TipoEnlace tipoEnlace) {
     log.debug("update(TipoEnlace tipoEnlace) - start");
 
-    Assert.notNull(tipoEnlace.getId(), "Id no puede ser null para actualizar TipoEnlace");
-    repository.findByNombreAndActivoIsTrue(tipoEnlace.getNombre())
-        .ifPresent(tipoEnlaceExistente -> Assert.isTrue(Objects.equals(tipoEnlace.getId(), tipoEnlaceExistente.getId()),
-            "Ya existe un TipoEnlace activo con el nombre '" + tipoEnlaceExistente.getNombre() + "'"));
+    AssertHelper.idNotNull(tipoEnlace.getId(), TipoEnlace.class);
 
     return repository.findById(tipoEnlace.getId()).map(data -> {
       data.setNombre(tipoEnlace.getNombre());
@@ -90,15 +97,20 @@ public class TipoEnlaceServiceImpl implements TipoEnlaceService {
   public TipoEnlace enable(Long id) {
     log.debug("enable(Long id) - start");
 
-    Assert.notNull(id, "TipoEnlace id no puede ser null para reactivar un TipoEnlace");
+    AssertHelper.idNotNull(id, TipoEnlace.class);
 
     return repository.findById(id).map(tipoEnlace -> {
       if (Boolean.TRUE.equals(tipoEnlace.getActivo())) {
         return tipoEnlace;
       }
 
-      Assert.isTrue(!(repository.findByNombreAndActivoIsTrue(tipoEnlace.getNombre()).isPresent()),
-          "Ya existe un TipoEnlace activo con el nombre '" + tipoEnlace.getNombre() + "'");
+      // Invocar validaciones asociadas a OnActivar
+      Set<ConstraintViolation<TipoEnlace>> result = validator.validate(
+          tipoEnlace,
+          BaseActivableEntity.OnActivar.class);
+      if (!result.isEmpty()) {
+        throw new ConstraintViolationException(result);
+      }
 
       tipoEnlace.setActivo(true);
       TipoEnlace returnValue = repository.save(tipoEnlace);
@@ -118,7 +130,7 @@ public class TipoEnlaceServiceImpl implements TipoEnlaceService {
   public TipoEnlace disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "TipoEnlace id no puede ser null para desactivar un TipoEnlace");
+    AssertHelper.idNotNull(id, TipoEnlace.class);
 
     return repository.findById(id).map(tipoEnlace -> {
       if (Boolean.FALSE.equals(tipoEnlace.getActivo())) {

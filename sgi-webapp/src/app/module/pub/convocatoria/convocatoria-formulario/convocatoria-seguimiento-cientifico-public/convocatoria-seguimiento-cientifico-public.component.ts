@@ -9,6 +9,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
 import { ConvocatoriaSeguimientoCientificoPublicFragment } from './convocatoria-seguimiento-cientifico-public.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'sgi-convocatoria-seguimiento-cientifico-public',
@@ -31,7 +32,8 @@ export class ConvocatoriaSeguimientoCientificoPublicComponent extends FragmentCo
   }
 
   constructor(
-    protected actionService: ConvocatoriaPublicActionService
+    protected actionService: ConvocatoriaPublicActionService,
+    private readonly languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.SEGUIMIENTO_CIENTIFICO, actionService);
     this.formPart = this.fragment as ConvocatoriaSeguimientoCientificoPublicFragment;
@@ -55,6 +57,8 @@ export class ConvocatoriaSeguimientoCientificoPublicComponent extends FragmentCo
             return wrapper.value.fechaFinPresentacion;
           case 'tipoSeguimiento':
             return wrapper.value.tipoSeguimiento;
+          case 'observaciones':
+            return this.languageService.getFieldValue(wrapper.value.observaciones);
           default:
             return wrapper[property];
         }
@@ -70,4 +74,5 @@ export class ConvocatoriaSeguimientoCientificoPublicComponent extends FragmentCo
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  protected setupI18N(): void { }
 }

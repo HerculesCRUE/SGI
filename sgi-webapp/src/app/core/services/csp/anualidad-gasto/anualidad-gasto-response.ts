@@ -1,11 +1,9 @@
+import { IConceptoGastoResponse } from "../concepto-gasto/concepto-gasto-response";
+
 export interface IAnualidadGastoResponse {
   id: number;
   proyectoAnualidadId: number;
-  conceptoGasto: {
-    id: number;
-    nombre: string;
-    costesIndirectos: boolean;
-  };
+  conceptoGasto: IConceptoGastoResponse,
   codigoEconomicoRef: string;
   proyectoPartida: {
     id: number;

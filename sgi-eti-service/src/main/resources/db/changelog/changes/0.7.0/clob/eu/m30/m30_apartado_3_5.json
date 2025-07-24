@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap3_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.5 Agente biologikoei, substantzia kimiko arriskutsuei, substantzia erradioaktiboei edo/eta nanopartikulei buruzko datuak "
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Langileak gizakiengan edozein infekzio, alergia edo toxikotasun mota sor dezaketen zer agente biologiko motaren eraginpean dauden edo egon daitezkeen sailkatzeko <a href='https://www.boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#anii' target='_blank'>664/1997 Errege Dekretuaren II. eranskineko</a> taula eta irizpideak eta horien eguneraketak hartzen dira kontuan. <p>Agente bat ez bada taula horretan ageri, definizio hauen arabera balioetsi beharko da haren infekzio arriskua: </p><br><ul><li><b>1. taldea: </b> probabilitate gutxi du gizakiengan, animaliengan edo/eta ingurumenean gaixotasun bat eragiteko. </li><li><b>2. taldea: </b> gaixotasun bat eragin dezake gizakiengan, animaliengan edo/eta ingurumenean, eta arriskutsua izan daiteke haren eraginpean dauden pertsonentzat, baina ez da oso probablea gizartera hedatzea; gainera, haren aurkako profilaxi edo tratamendu eraginkorra dago. </li><li><b>3. taldea: </b> gaixotasun larri bat eragin dezake gizakiengan, animaliengan edo/eta ingurumenean, eta oso arriskutsua da haren eraginpean dauden pertsonentzat; gizartera hedatu daiteke, eta haren aurkako profilaxi edo tratamendu eraginkorra dago. </li><li><b>4. taldea: </b> gaixotasun larri bat eragiten du gizakiengan, animaliengan edo/eta ingurumenean; oso arriskutsua da haren eraginpean dauden pertsonentzat, eta gizartera hedatzeko probabilitate handia du; ez dago haren aurkako profilaxi edo tratamendu eraginkorrik. </li></ul>Bi talderen artean zalantza izanez gero, <b>arriskugarritasun handieneko</b> multzoan sailkatu beharko da.<p>Animalia jatorriko agente patogeno ez-zoonotikoak sailkatzeko, Animalia Osasunaren Mundu Erakundearen irizpideak erabiltzen dira (OIE, 2010a,b). </p><p>Landare jatorriko agente patogenoak sailkatzeko, landare jatorriko izurrien kontrako babes neurriei buruzko 739/2021 EDren irizpideak erabiltzen dira. </p><p>OIE (WORLD ORGANISATION FOR ANIMAL HEALTH) (2010a). Handbook on Import Risk Analysis for Animals and Animal Products. Volume 1: Introduction and qualitative risk analysis, Second Edition. OIE, Paris, France. </p><p>OIE (WORLD ORGANISATION FOR ANIMAL HEALTH) (2010b). Handbook on Import Risk Analysis for Animals and Animal Products. Volume 2: Quantitative Risk Assessment, Second Edition. OIE, Paris, France. </p>"
+      }
+    ]
+  }
+]

@@ -13,6 +13,7 @@ import { ROUTE_NAMES } from '@core/route.names';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -80,8 +81,9 @@ export class AutorizacionListadoInvComponent extends AbstractTablePaginationComp
     private documentoService: DocumentoService,
     public authService: SgiAuthService,
     private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super();
+    super(translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -96,7 +98,7 @@ export class AutorizacionListadoInvComponent extends AbstractTablePaginationComp
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.formGroup = new FormGroup({
       fechaSolicitudInicio: new FormControl(null),
@@ -107,7 +109,7 @@ export class AutorizacionListadoInvComponent extends AbstractTablePaginationComp
     this.filter = this.createFilter();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       PROYECTO_KEY,
@@ -218,12 +220,12 @@ export class AutorizacionListadoInvComponent extends AbstractTablePaginationComp
               return this.empresaService.findById(autorizacionListado?.autorizacion?.entidad?.id).pipe(
                 map((empresa) => {
                   autorizacionListado.entidadPaticipacionNombre = empresa?.nombre;
+                  autorizacionListado.autorizacion.entidad = empresa;
                   return autorizacionListado;
                 }),
                 catchError((error) => {
                   this.logger.error(error);
-                  this.processError(error);
-                  return EMPTY;
+                  return of(autorizacionListado);
                 }));
             } else {
               autorizacionListado.entidadPaticipacionNombre = autorizacionListado?.autorizacion?.datosEntidad;
@@ -268,8 +270,8 @@ export class AutorizacionListadoInvComponent extends AbstractTablePaginationComp
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
     return new RSQLSgiRestFilter(
-      'estado.fecha', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaSolicitudInicio.value))
-      .and('estado.fecha', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaSolicitudFin.value))
+      'fechaFirstEstado', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaSolicitudInicio.value))
+      .and('fechaFirstEstado', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaSolicitudFin.value))
       .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estado.value)
       .and('solicitanteRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value?.id);
   }
@@ -309,10 +311,11 @@ export class AutorizacionListadoInvComponent extends AbstractTablePaginationComp
   }
 
   downloadFile(value: IAutorizacionListado): void {
+    const documentoRef = this.languageService.getFieldValue(value.certificadoVisible.documentoRef);
     this.subscriptions.push(
       forkJoin({
-        documento: this.documentoService.getInfoFichero(value.certificadoVisible.documento.documentoRef),
-        fichero: this.documentoService.downloadFichero(value.certificadoVisible.documento.documentoRef),
+        documento: this.documentoService.getInfoFichero(documentoRef),
+        fichero: this.documentoService.downloadFichero(documentoRef),
       }).subscribe(
         ({ documento, fichero }) => {
           triggerDownloadToUser(fichero, documento.nombre);

@@ -3,19 +3,28 @@ package org.crue.hercules.sgi.csp.controller;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import org.crue.hercules.sgi.csp.converter.ConvocatoriaFaseConverter;
+import org.crue.hercules.sgi.csp.converter.ConvocatoriaFaseObservacionesConverter;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseOutput;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaFaseNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaFaseService;
 import org.crue.hercules.sgi.csp.service.TipoFaseService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -40,6 +49,9 @@ class ConvocatoriaFaseControllerTest extends BaseControllerTest {
 
   @MockBean
   private ConvocatoriaFaseConverter convocatoriaFaseConverter;
+
+  @MockBean
+  private ConvocatoriaFaseObservacionesConverter convocatoriaFaseObservacionesConverter;
 
   private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriafases";
@@ -80,8 +92,6 @@ class ConvocatoriaFaseControllerTest extends BaseControllerTest {
     ConvocatoriaFase convocatoriaFase = generarMockConvocatoriaFase(1L);
     convocatoriaFase.setTipoFase(TipoFase.builder().id(1L).build());
 
-    BDDMockito.given(service.findById(ArgumentMatchers.<Long>any()))
-        .willReturn(generarMockConvocatoriaFase(1L, convocatoriaFaseExistente));
     BDDMockito.given(service.update(anyLong(), ArgumentMatchers.<ConvocatoriaFaseInput>any()))
         .willReturn(convocatoriaFase);
 
@@ -216,13 +226,16 @@ class ConvocatoriaFaseControllerTest extends BaseControllerTest {
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id == null ? 1 : id);
 
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    obsConvocatoriaFase.add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones" + id));
+
     ConvocatoriaFase convocatoriaFase = new ConvocatoriaFase();
     convocatoriaFase.setId(id);
     convocatoriaFase.setConvocatoriaId(id == null ? 1 : id);
     convocatoriaFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     convocatoriaFase.setFechaFin(Instant.parse("2020-10-28T23:59:59Z"));
     convocatoriaFase.setTipoFase(tipoFase);
-    convocatoriaFase.setObservaciones("observaciones" + id);
+    convocatoriaFase.setObservaciones(obsConvocatoriaFase);
 
     return convocatoriaFase;
   }
@@ -237,7 +250,7 @@ class ConvocatoriaFaseControllerTest extends BaseControllerTest {
     convocatoriaFase.setFechaInicio(input.getFechaInicio());
     convocatoriaFase.setFechaFin(input.getFechaFin());
     convocatoriaFase.setTipoFase(tipoFase);
-    convocatoriaFase.setObservaciones(input.getObservaciones());
+    convocatoriaFase.setObservaciones(convocatoriaFaseObservacionesConverter.convertAll(input.getObservaciones()));
 
     return convocatoriaFase;
   }
@@ -258,12 +271,15 @@ class ConvocatoriaFaseControllerTest extends BaseControllerTest {
   }
 
   private ConvocatoriaFaseInput generarMockConvocatoriaFaseInput() {
+    List<I18nFieldValueDto> obsConvocatoriaFase = new ArrayList();
+    obsConvocatoriaFase.add(new I18nFieldValueDto(Language.ES, "observaciones" + 1L));
+
     ConvocatoriaFaseInput convocatoriaFase = new ConvocatoriaFaseInput();
     convocatoriaFase.setConvocatoriaId(1L);
     convocatoriaFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     convocatoriaFase.setFechaFin(Instant.parse("2020-10-28T23:59:59Z"));
     convocatoriaFase.setTipoFaseId(1L);
-    convocatoriaFase.setObservaciones("observaciones" + 1L);
+    convocatoriaFase.setObservaciones(obsConvocatoriaFase);
 
     return convocatoriaFase;
   }

@@ -2,15 +2,15 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioEquipoNotFoundException;
-import org.crue.hercules.sgi.csp.model.ProyectoSocio;
-import org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo;
-import org.crue.hercules.sgi.csp.model.RolProyecto;
-import org.crue.hercules.sgi.csp.model.RolSocio;
+import org.crue.hercules.sgi.csp.model.*;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioEquipoService;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -155,21 +155,39 @@ class ProyectoSocioEquipoControllerTest extends BaseControllerTest {
    * @return el ProyectoSocioEquipo
    */
   private ProyectoSocioEquipo generarMockProyectoSocioEquipo(Long id) {
+    Set<RolSocioAbreviatura> rolSocioAbreviatura = new HashSet<>();
+    rolSocioAbreviatura.add(new RolSocioAbreviatura(Language.ES, "001"));
+    
+    Set<RolSocioNombre> rolSocioNombre = new HashSet<>();
+    rolSocioNombre.add(new RolSocioNombre(Language.ES, "nombre-001"));
+    
+    Set<RolSocioDescripcion> rolSocioDescripcion = new HashSet<>();
+    rolSocioDescripcion.add(new RolSocioDescripcion(Language.ES, "descripcion-001"));
+    
     // @formatter:off
     RolSocio rolSocio = RolSocio.builder()
         .id(id)
-        .abreviatura("001")
-        .nombre("nombre-001")
-        .descripcion("descripcion-001")
+        .abreviatura(rolSocioAbreviatura)
+        .nombre(rolSocioNombre)
+        .descripcion(rolSocioDescripcion)
         .coordinador(Boolean.FALSE)
         .activo(Boolean.TRUE)
         .build();
 
+    Set<RolProyectoNombre> nombre = new HashSet<>();
+    nombre.add(new RolProyectoNombre(Language.ES, "nombre-001"));
+
+    Set<RolProyectoDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new RolProyectoDescripcion(Language.ES, "descripcion-001"));
+
+    Set<RolProyectoAbreviatura> abreviatura = new HashSet<>();
+    abreviatura.add(new RolProyectoAbreviatura(Language.ES, "001"));
+    
     RolProyecto rolProyecto = RolProyecto.builder()
         .id(id)
-        .abreviatura("001")
-        .nombre("nombre-001")
-        .descripcion("descripcion-001")
+        .abreviatura(abreviatura)
+        .nombre(nombre)
+        .descripcion(descripcion)
         .rolPrincipal(Boolean.FALSE)
         .equipo(RolProyecto.Equipo.INVESTIGACION)
         .activo(Boolean.TRUE)

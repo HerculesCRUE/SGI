@@ -9,12 +9,12 @@ import org.crue.hercules.sgi.eti.repository.ConflictoInteresRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluadorRepository;
 import org.crue.hercules.sgi.eti.service.ConflictoInteresService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,8 +43,7 @@ public class ConflictoInteresServiceImpl implements ConflictoInteresService {
   @Transactional
   public ConflictoInteres create(ConflictoInteres conflictoInteres) {
     log.debug("Petición a create ConflictoInteres : {} - start", conflictoInteres);
-    Assert.notNull(conflictoInteres.getEvaluador().getId(),
-        "ConflictoInteres el id de evaluador no puede ser null para crear un nuevo conflictoInteres");
+    AssertHelper.idNotNull(conflictoInteres.getEvaluador().getId(), ConflictoInteres.class);
     Optional<Evaluador> evaluador = evaluadorRepository.findById(conflictoInteres.getEvaluador().getId());
     if (!evaluador.isPresent()) {
       throw new ConflictoInteresNotFoundException(conflictoInteres.getId());
@@ -97,7 +96,7 @@ public class ConflictoInteresServiceImpl implements ConflictoInteresService {
   @Transactional
   public void delete(Long id) throws ConflictoInteresNotFoundException {
     log.debug("Petición a delete ConflictoInteres : {}  - start", id);
-    Assert.notNull(id, "El id de ConflictoInteres no puede ser null.");
+    AssertHelper.idNotNull(id, ConflictoInteres.class);
     if (!conflictoInteresRepository.existsById(id)) {
       throw new ConflictoInteresNotFoundException(id);
     }
@@ -133,8 +132,7 @@ public class ConflictoInteresServiceImpl implements ConflictoInteresService {
   public ConflictoInteres update(final ConflictoInteres conflictoInteresActualizar) {
     log.debug("update(ConflictoInteres ConflictoInteresActualizar) - start");
 
-    Assert.notNull(conflictoInteresActualizar.getId(),
-        "ConflictoInteres id no puede ser null para actualizar un conflicto de interés");
+    AssertHelper.idNotNull(conflictoInteresActualizar.getId(), ConflictoInteres.class);
 
     return conflictoInteresRepository.findById(conflictoInteresActualizar.getId()).map(conflictoInteres -> {
       conflictoInteres.setEvaluador(conflictoInteresActualizar.getEvaluador());

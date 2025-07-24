@@ -1,0 +1,146 @@
+[
+  {
+    "template": "<p>My research involves the collection of personal data from human beings (through questionnaires, interviews, focus groups, audio or video recordings, photographs...).</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_1",
+    "templateOptions": {
+      "label": "Response",
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Yes",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  },
+  {
+    "template": "<p>My research allows participants to be identified (or allows them to become identifiable from the data collected).</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_2",
+    "templateOptions": {
+      "label": "Response",
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Yes",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  },
+  {
+    "template": "<p>My research involves studying experimental animals.</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_3",
+    "templateOptions": {
+      "label": "Response",
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Yes",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  },
+  {
+    "template": "<p>My research involves the collection and processing of biological samples - human or animal - (saliva, blood, hair, tissues...).</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_4",
+    "templateOptions": {
+      "label": "Response",
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Yes",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  },
+  {
+    "template": "<p>My investigation has a favourable report but changes are going to be made.</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_5",
+    "templateOptions": {
+      "label": "Response",
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Yes",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  },
+  {
+    "template": "<p>My research involves working with people.</p>"
+  },
+  {
+    "type": "radio",
+    "key": "pregunta_6",
+    "templateOptions": {
+      "label": "Response",
+      "color": "primary",
+      "options": [
+        {
+          "label": "No",
+          "value": false
+        },
+        {
+          "label": "Yes",
+          "value": true
+        }
+      ]
+    },
+    "expressionProperties": {
+      "templateOptions.required": "formState.solicitud.estado.estado!=='BORRADOR' && formState.solicitud.estado.estado!=='DESISTIDA' && formState.solicitud.estado.estado!=='RENUNCIADA'"
+    }
+  }
+]

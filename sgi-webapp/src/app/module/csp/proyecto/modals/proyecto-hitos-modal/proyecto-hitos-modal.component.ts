@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DEFAULT_PREFIX_RECIPIENTS_CSP_PRO_HITOS } from '@core/models/cnf/config-keys';
 import { IGenericEmailText } from '@core/models/com/generic-email-text';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
@@ -16,6 +17,7 @@ import { EmailTplService } from '@core/services/com/email-tpl/email-tpl.service'
 import { EmailService } from '@core/services/com/email/email.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { SgiApiTaskService } from '@core/services/tp/sgiapitask/sgi-api-task.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TipoHitoValidator } from '@core/validators/tipo-hito-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -40,7 +42,7 @@ export interface ProyectoHitosModalComponentData {
   idModeloEjecucion: number;
   readonly: boolean;
   unidadGestionId: number;
-  tituloProyecto: string;
+  tituloProyecto: I18nFieldValue[];
   convocatoriaId: number;
 }
 @Component({
@@ -119,7 +121,7 @@ export class ProyectoHitosModalComponent extends DialogFormComponent<ProyectoHit
           if (this.formGroup.get('aviso').disabled) {
             this.formGroup.get('aviso').enable();
           }
-          this.getTituloConvocatoria().subscribe((titulo: string) => this.fillDefaultAviso(titulo));
+          this.getTituloConvocatoria().subscribe((titulo: I18nFieldValue[]) => this.fillDefaultAviso(titulo));
         }
       }
     );
@@ -272,7 +274,7 @@ export class ProyectoHitosModalComponent extends DialogFormComponent<ProyectoHit
     const formGroup = new FormGroup({
       tipoHito: new FormControl(this.data?.hito?.tipoHito, [Validators.required, IsEntityValidator.isValid()]),
       fecha: new FormControl(this.data?.hito?.fecha, [Validators.required]),
-      comentario: new FormControl(this.data?.hito?.comentario, [Validators.maxLength(250)]),
+      comentario: new FormControl(this.data?.hito?.comentario, I18nValidators.maxLength(250)),
       generaAviso: new FormControl(this.data?.hito?.aviso ? true : false),
       aviso: new FormGroup({
         fechaEnvio: new FormControl(this.data?.hito?.aviso?.task?.instant, Validators.required),
@@ -296,7 +298,7 @@ export class ProyectoHitosModalComponent extends DialogFormComponent<ProyectoHit
         }
         if (!!!this.data.hito?.id && newDate > this.data.hito?.fecha) {
           this.clearAviso();
-          this.getTituloConvocatoria().subscribe((titulo: string) => this.fillDefaultAviso(titulo));
+          this.getTituloConvocatoria().subscribe((titulo: I18nFieldValue[]) => this.fillDefaultAviso(titulo));
         }
       });
     }
@@ -333,7 +335,7 @@ export class ProyectoHitosModalComponent extends DialogFormComponent<ProyectoHit
     this.formGroup.get('aviso.incluirIpsProyecto').setValue(false);
   }
 
-  private fillDefaultAviso(tituloConvocatoria: string): void {
+  private fillDefaultAviso(tituloConvocatoria: I18nFieldValue[]): void {
     this.formGroup.get('aviso.fechaEnvio').setValue(this.formGroup.get('fecha').value);
     this.configService.getEmailRecipients(DEFAULT_PREFIX_RECIPIENTS_CSP_PRO_HITOS + this.data.unidadGestionId).subscribe(
       (destinatarios: any) => {
@@ -342,11 +344,11 @@ export class ProyectoHitosModalComponent extends DialogFormComponent<ProyectoHit
     );
 
     this.emailTplService.processProyectoHitoTemplate(
-      this.data.tituloProyecto,
-      tituloConvocatoria,
+      this.data.tituloProyecto ?? [],
+      tituloConvocatoria ?? [],
       this.formGroup.get('fecha').value ?? DateTime.now(),
-      this.formGroup.get('tipoHito').value?.nombre ?? '',
-      this.formGroup.get('comentario').value ?? ''
+      this.formGroup.get('tipoHito').value?.nombre ?? [],
+      this.formGroup.get('comentario').value ?? [],
     ).subscribe(
       (template) => {
         this.formGroup.get('aviso.asunto').setValue(template.subject);
@@ -388,9 +390,9 @@ export class ProyectoHitosModalComponent extends DialogFormComponent<ProyectoHit
     }
   }
 
-  private getTituloConvocatoria(): Observable<string> {
+  private getTituloConvocatoria(): Observable<I18nFieldValue[]> {
     if (!this.data.convocatoriaId) {
-      return of('');
+      return of([]);
     }
     return this.convocatoriaService.findById(this.data.convocatoriaId).pipe(
       map((convocatoria: IConvocatoria) => convocatoria.titulo)

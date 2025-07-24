@@ -1,25 +1,44 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER } from '@core/converters/csp/solicitud-proyecto-presupuesto.converter';
-import { ISolicitudProyectoPresupuestoBackend } from '@core/models/csp/backend/solicitud-proyecto-presupuesto-backend';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
 import { environment } from '@env';
-import { SgiMutableRestService } from '@sgi/framework/http';
+import { CreateCtor, FindAllCtor, SgiRestBaseService, UpdateCtor, mixinCreate, mixinFindAll, mixinUpdate } from '@sgi/framework/http';
+import { Observable } from 'rxjs';
+import { ISolicitudProyectoPresupuestoResponse } from './solicitud-proyecto-presupuesto/solicitud-proyecto-presupuesto-response';
+import { SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER } from './solicitud-proyecto-presupuesto/solicitud-proyecto-presupuesto.converter';
+
+const _SolicitudProyectoPresupuestoServiceMixinBase:
+  CreateCtor<ISolicitudProyectoPresupuesto, ISolicitudProyectoPresupuesto, ISolicitudProyectoPresupuestoResponse, ISolicitudProyectoPresupuestoResponse> &
+  UpdateCtor<number, ISolicitudProyectoPresupuesto, ISolicitudProyectoPresupuesto, ISolicitudProyectoPresupuestoResponse, ISolicitudProyectoPresupuestoResponse> &
+  FindAllCtor<ISolicitudProyectoPresupuesto, ISolicitudProyectoPresupuestoResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinUpdate(
+      mixinCreate(
+        SgiRestBaseService,
+        SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER,
+        SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER
+      ),
+      SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER,
+      SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER
+    ),
+    SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER
+  );
 
 @Injectable({
   providedIn: 'root'
 })
-export class SolicitudProyectoPresupuestoService
-  extends SgiMutableRestService<number, ISolicitudProyectoPresupuestoBackend, ISolicitudProyectoPresupuesto>  {
+export class SolicitudProyectoPresupuestoService extends _SolicitudProyectoPresupuestoServiceMixinBase {
   private static readonly MAPPING = '/solicitudproyectopresupuestos';
 
   constructor(protected http: HttpClient) {
     super(
-      SolicitudProyectoPresupuestoService.name,
       `${environment.serviceServers.csp}${SolicitudProyectoPresupuestoService.MAPPING}`,
-      http,
-      SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER
+      http
     );
+  }
+
+  deleteById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${id}`);
   }
 
 }

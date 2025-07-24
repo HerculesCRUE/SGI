@@ -4,23 +4,31 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ConfiguracionSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
+import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitudObservaciones;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionDescripcion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.service.ConfiguracionSolicitudService;
 import org.crue.hercules.sgi.csp.service.DocumentoRequeridoSolicitudService;
 import org.crue.hercules.sgi.csp.service.TipoDocumentoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -40,6 +48,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * ConfiguracionSolicitudControllerTest
@@ -278,7 +288,8 @@ class ConfiguracionSolicitudControllerTest extends BaseControllerTest {
     for (int i = 31; i <= 37; i++) {
       DocumentoRequeridoSolicitud DocumentoRequeridoSolicitud = doDocumentoRequeridoSolicitudResponse
           .get(i - (page * pageSize) - 1);
-      Assertions.assertThat(DocumentoRequeridoSolicitud.getObservaciones()).isEqualTo("observaciones-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(DocumentoRequeridoSolicitud.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + i);
     }
   }
 
@@ -316,11 +327,17 @@ class ConfiguracionSolicitudControllerTest extends BaseControllerTest {
   }
 
   private ModeloEjecucion generarMockModeloEjecucion(Long modeloEjecucionId) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion-1"));
+
+    Set<ModeloEjecucionDescripcion> descripcionModeloEjecucion = new HashSet<>();
+    descripcionModeloEjecucion.add(new ModeloEjecucionDescripcion(Language.ES, "descripcionModeloEjecucion-1"));
+
     // @formatter:off
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
         .id(modeloEjecucionId)
-        .nombre("nombreModeloEjecucion-1")
-        .descripcion("descripcionModeloEjecucion-1")
+        .nombre(nombreModeloEjecucion)
+        .descripcion(descripcionModeloEjecucion)
         .activo(Boolean.TRUE)
         .build();
     // @formatter:on
@@ -339,12 +356,18 @@ class ConfiguracionSolicitudControllerTest extends BaseControllerTest {
   private ConfiguracionSolicitud generarMockConfiguracionSolicitud(Long configuracionSolicitudId, Long convocatoriaId,
       Long convocatoriaFaseId) {
 
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-1"));
+
     // @formatter:off
     TipoFase tipoFase = TipoFase.builder()
         .id(convocatoriaFaseId)
-        .nombre("nombre-1")
+        .nombre(nombreTipoFase)
         .activo(Boolean.TRUE)
         .build();
+
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    obsConvocatoriaFase.add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones"));
 
     ConvocatoriaFase convocatoriaFase = ConvocatoriaFase.builder()
         .id(convocatoriaFaseId)
@@ -352,7 +375,7 @@ class ConfiguracionSolicitudControllerTest extends BaseControllerTest {
         .tipoFase(tipoFase)
         .fechaInicio(Instant.parse("2020-10-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-10-15T00:00:00Z"))
-        .observaciones("observaciones")
+        .observaciones(obsConvocatoriaFase)
         .build();
 
     ConfiguracionSolicitud configuracionSolicitud = ConfiguracionSolicitud.builder()
@@ -374,10 +397,21 @@ class ConfiguracionSolicitudControllerTest extends BaseControllerTest {
    * @return
    */
   private DocumentoRequeridoSolicitud generarDocumentoRequeridoSolicitud(Long documentoRequeridoSolicitudId) {
+
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-1"));
+
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, "nombre-1"));
+
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES,
+        "observaciones-" + documentoRequeridoSolicitudId));
+
     // @formatter:off
     TipoFase tipoFase = TipoFase.builder()
         .id(1L)
-        .nombre("nombre-1")
+        .nombre(nombreTipoFase)
         .activo(Boolean.TRUE)
         .build();
 
@@ -393,7 +427,7 @@ class ConfiguracionSolicitudControllerTest extends BaseControllerTest {
 
     TipoDocumento tipoDocumento = TipoDocumento.builder()
         .id(1L)
-        .nombre("nombre-1")
+        .nombre(nombreTipoDocumento)
         .activo(Boolean.TRUE)
         .build();
 
@@ -401,7 +435,7 @@ class ConfiguracionSolicitudControllerTest extends BaseControllerTest {
         .id(documentoRequeridoSolicitudId)
         .configuracionSolicitudId(1L)
         .tipoDocumento(tipoDocumento)
-        .observaciones("observaciones-" + documentoRequeridoSolicitudId)
+        .observaciones(obsDocumentoRequerido)
         .build();
     // @formatter:on
 

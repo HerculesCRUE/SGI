@@ -1,3 +1,4 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IAutorizacion } from '@core/models/csp/autorizacion';
 import { INotificacionProyectoExternoCVN } from '@core/models/csp/notificacion-proyecto-externo-cvn';
 import { IProyecto } from '@core/models/csp/proyecto';
@@ -16,7 +17,7 @@ class INotificacionProyectoExternoCVNRequestConverter
     }
     return {
       id: undefined,
-      titulo: value.titulo,
+      titulo: value.titulo ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.titulo) : [],
       autorizacion: { id: value.autorizacionId } as IAutorizacion,
       proyecto: { id: value.proyectoId } as IProyecto,
       ambitoGeografico: value.ambitoGeografico,
@@ -43,7 +44,7 @@ class INotificacionProyectoExternoCVNRequestConverter
       return value as unknown as INotificacionProyectoExternoCVNRequest;
     }
     return {
-      titulo: value.titulo,
+      titulo: value.titulo ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.titulo) : [],
       autorizacionId: value.autorizacion?.id,
       proyectoId: value.proyecto?.id,
       ambitoGeografico: value.ambitoGeografico,

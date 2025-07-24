@@ -13,8 +13,8 @@ import { ReportService } from '@core/services/rep/report.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { concat, Observable, of, zip } from 'rxjs';
-import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concat, from, Observable, of, zip } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { InvencionEquipoInventorListadoExportService } from './invencion-equipo-inventor-listado-export.service';
 import { InvencionGeneralListadoExportService } from './invencion-general-listado-export.service';
 import { InvencionSolicitudesProteccionListadoExportService } from './invencion-solicitudes-proteccion-listado-export.service';
@@ -105,12 +105,19 @@ export class InvencionListadoExportService extends AbstractTableExportService<II
         return invenciones.items.map((invencion) => invencion as IInvencionReportData);
       }),
       switchMap((invencionesReportData) => {
-        const requestsInvencion: Observable<IInvencionReportData>[] = [];
+        const requestsInvencion: IInvencionReportData[] = [];
 
-        invencionesReportData.forEach(invencion => {
-          requestsInvencion.push(this.getDataReportInner(invencion, reportConfig.reportOptions));
-        });
-        return zip(...requestsInvencion);
+        return from(invencionesReportData).pipe(
+          mergeMap((invencion) => {
+            return this.getDataReportInner(invencion, reportConfig.reportOptions)
+          }, this.DEFAULT_CONCURRENT)
+        ).pipe(
+          map(r => {
+            requestsInvencion.push(r);
+            return requestsInvencion;
+          }),
+          takeLast(1)
+        )
       }),
       takeLast(1)
     );

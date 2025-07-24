@@ -24,8 +24,11 @@ import org.crue.hercules.sgi.csp.repository.ProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.repository.RolSocioRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoSocioSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -42,6 +45,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoSocioServiceImpl implements ProyectoSocioService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_MODEL_PROYECTO_SOCIO = "org.crue.hercules.sgi.csp.model.ProyectoSocio.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP = "org.springframework.util.Assert.date.overloap.message";
 
   private final ProyectoSocioRepository repository;
   private final ProyectoSocioEquipoRepository equipoRepository;
@@ -80,8 +87,14 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
   public ProyectoSocio create(ProyectoSocio proyectoSocio) {
     log.debug("create(ProyectoSocio proyectoSocio) - start");
 
-    Assert.isNull(proyectoSocio.getId(), "Id tiene que ser null para crear el ProyectoSocio");
-    Assert.isTrue(!isRangoFechasSolapado(proyectoSocio), "El rango de fechas del socio se solapa");
+    AssertHelper.idIsNull(proyectoSocio.getId(), ProyectoSocio.class);
+    Assert.isTrue(!isRangoFechasSolapado(proyectoSocio),
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_DATE_OVERLOAP)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_PROYECTO_SOCIO))
+            .parameter(MSG_KEY_FIELD, proyectoSocio.getId())
+            .build());
 
     ProyectoSocio returnValue = repository.save(proyectoSocio);
 
@@ -100,12 +113,18 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
   public ProyectoSocio update(ProyectoSocio proyectoSocio) {
     log.debug("update(ProyectoSocio proyectoSocio) - start");
 
-    Assert.notNull(proyectoSocio.getId(), "Id no puede ser null para actualizar ProyectoSocio");
+    AssertHelper.idNotNull(proyectoSocio.getId(), ProyectoSocio.class);
 
     return repository.findById(proyectoSocio.getId()).map(proyectoSocioExistente -> {
 
       // Validaciones
-      Assert.isTrue(!isRangoFechasSolapado(proyectoSocio), "El rango de fechas del socio se solapa");
+      Assert.isTrue(!isRangoFechasSolapado(proyectoSocio),
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_DATE_OVERLOAP)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_PROYECTO_SOCIO))
+              .parameter(MSG_KEY_FIELD, proyectoSocio.getId())
+              .build());
 
       if (!proyectoSocio.getRolSocio().getCoordinador().booleanValue()
           && proyectoSocioExistente.getRolSocio().getCoordinador().booleanValue()) {
@@ -154,7 +173,7 @@ public class ProyectoSocioServiceImpl implements ProyectoSocioService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ProyectoSocio id no puede ser null para desactivar un ProyectoSocio");
+    AssertHelper.idNotNull(id, ProyectoSocio.class);
 
     Optional<ProyectoSocio> socio = repository.findById(id);
     if (socio.isPresent()) {

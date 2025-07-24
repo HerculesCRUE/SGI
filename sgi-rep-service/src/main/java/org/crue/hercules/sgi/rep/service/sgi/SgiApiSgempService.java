@@ -32,7 +32,7 @@ public class SgiApiSgempService extends SgiApiBaseService {
           }, id).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     return dto;

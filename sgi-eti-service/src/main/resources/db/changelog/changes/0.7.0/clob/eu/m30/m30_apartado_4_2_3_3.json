@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_2_3_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.3 Babes neurriak"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Agente biologikoak edo/eta genetikoki eraldatutako organismoak manipulatzeko segurtasun neurriak aurreikusten dira?</p>"
+      },
+      {
+        "key": "medidasSeguras",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Zehaztu neurriak, edo aurreikusten ez badira, justifikatu zergatik:"
+      },
+      {
+        "key": "especificarLimitar",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Zehaztu:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

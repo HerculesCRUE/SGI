@@ -8,12 +8,15 @@ export enum ConfigType {
   FILE = 'file',
   SELECT = 'select',
   SELECT_MULTIPLE = 'select-multiple',
-  CONFIG_GROUP_TITLE = 'config-group-title'
+  CONFIG_GROUP_TITLE = 'config-group-title',
+  SELECT_FILE = 'select-file',
+  I18N_TEXT = 'i18n-text'
 }
 
 export enum ConfigModule {
   CNF,
   CSP,
+  ETI,
   NONE
 }
 
@@ -23,6 +26,9 @@ export interface IConfigOptions {
   module: ConfigModule,
   options?: Observable<KeyValue<string, string>[]>,
   disabled?: boolean,
-  info?: string
-  description?: string
+  info?: string,
+  description?: string,
+  required?: boolean,
+  labelParamas?: any,
+  filterLanguage?: boolean
 }

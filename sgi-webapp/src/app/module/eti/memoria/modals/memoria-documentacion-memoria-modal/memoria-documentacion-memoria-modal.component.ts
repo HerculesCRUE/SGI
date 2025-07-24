@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SgiError } from '@core/errors/sgi-error';
@@ -13,6 +13,7 @@ import { ITipoDocumento } from '@core/models/eti/tipo-documento';
 import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { TipoDocumentoService } from '@core/services/eti/tipo-documento.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
 import { Observable, of } from 'rxjs';
@@ -26,7 +27,7 @@ const PROYECTO_DOCUMENTO_NOMBRE_KEY = marker('csp.documento.nombre');
 const MSG_UPLOAD_ERROR = marker('error.file.upload');
 
 export interface MemoriaDocumentacionMemoriaModalData {
-  memoriaId: number;
+  memoria: IMemoria;
   tipoEvaluacion: TIPO_EVALUACION;
   showTipoDocumentos: boolean;
   comite: IComite;
@@ -62,14 +63,13 @@ export class MemoriaDocumentacionMemoriaModalComponent extends DialogFormCompone
     super(matDialogRef, false);
 
     if (data.tipoEvaluacion === TIPO_EVALUACION.MEMORIA) {
-      this.tiposDocumento$ = memoriaService.getTiposDocumentoRespuestasFormulario(this.data.memoriaId);
+      this.tiposDocumento$ = memoriaService.getTiposDocumentoRespuestasFormulario(this.data.memoria.id);
       if (!data.showTipoDocumentos) {
         // Se setea solo el tipo de documento adicional
-        this.subscriptions.push(this.tipoDocumentoService.findByFormulario(
-          resolveFormularioByTipoEvaluacionAndComite(this.data.tipoEvaluacion, this.data.comite)
-        ).subscribe(
+        const formulario = resolveFormularioByTipoEvaluacionAndComite(this.data.tipoEvaluacion, this.data.memoria);
+        this.subscriptions.push(this.tipoDocumentoService.findByFormulario(formulario).subscribe(
           (docs) => {
-            docs.filter(doc => doc.formulario.id === 1 ? doc.id === 11 : (doc.formulario.id === 2 ? doc.id === 16 : (doc.formulario.id === 3 ? doc.id === 21 : doc))).forEach(doc => this.formGroup.controls.tipoDocumento.setValue(doc));
+            docs.filter(doc => doc.adicional).forEach(doc => this.formGroup.controls.tipoDocumento.setValue(doc));
           }
         ));
       }
@@ -82,7 +82,7 @@ export class MemoriaDocumentacionMemoriaModalComponent extends DialogFormCompone
     super.ngOnInit();
     if (this.data.tipoEvaluacion !== TIPO_EVALUACION.MEMORIA) {
       this.subscriptions.push(this.tipoDocumentoService.findByFormulario(
-        resolveFormularioByTipoEvaluacionAndComite(this.data.tipoEvaluacion, null)
+        resolveFormularioByTipoEvaluacionAndComite(this.data.tipoEvaluacion, this.data.memoria)
       ).subscribe(
         (tiposDocumento) => {
           this.formGroup.controls.tipoDocumento.setValue(tiposDocumento[0]);
@@ -127,7 +127,7 @@ export class MemoriaDocumentacionMemoriaModalComponent extends DialogFormCompone
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       tipoDocumento: new FormControl(null, Validators.required),
-      nombre: new FormControl(null, Validators.required),
+      nombre: new FormControl([], I18nValidators.required),
       fichero: new FormControl(null, Validators.required),
     });
     return formGroup;
@@ -138,7 +138,7 @@ export class MemoriaDocumentacionMemoriaModalComponent extends DialogFormCompone
     documentacionMemoria.tipoDocumento = this.formGroup.controls.tipoDocumento.value;
     documentacionMemoria.nombre = this.formGroup.controls.nombre.value;
     documentacionMemoria.documento = this.formGroup.controls.fichero.value;
-    documentacionMemoria.memoria = { id: this.data.memoriaId } as IMemoria;
+    documentacionMemoria.memoria = this.data.memoria;
 
     return documentacionMemoria;
   }

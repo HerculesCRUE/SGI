@@ -61,13 +61,13 @@ export class ProyectoEntidadesFinanciadorasComponent extends FragmentComponent i
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.ENTIDADES_FINANCIADORAS, actionService);
+    super(actionService.FRAGMENT.ENTIDADES_FINANCIADORAS, actionService, translate);
     this.formPart = this.fragment as ProyectoEntidadesFinanciadorasFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSourcePropias.paginator = this.paginatorPropias;
     this.dataSourcePropias.sort = this.sortPropias;
     this.dataSourceAjenas.paginator = this.paginatorAjenas;
@@ -80,7 +80,7 @@ export class ProyectoEntidadesFinanciadorasComponent extends FragmentComponent i
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_ENTIDAD_FINANCIADORA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

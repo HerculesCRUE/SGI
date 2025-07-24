@@ -28,6 +28,9 @@ public abstract class SgiApiBaseService {
     log.debug("buildUrl(ServiceType serviceType, String relativeUrl) - start");
     String serviceURL = null;
     switch (serviceType) {
+      case CNF:
+        serviceURL = restApiProperties.getCnfUrl();
+        break;
       case CSP:
         serviceURL = restApiProperties.getCspUrl();
         break;

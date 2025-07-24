@@ -6,12 +6,14 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IInforme } from '@core/models/eti/informe';
+import { IInformeDocumento } from '@core/models/eti/informe-documento';
 import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
@@ -49,11 +51,11 @@ export class MemoriaInformesComponent extends FragmentComponent implements OnIni
     protected matDialog: MatDialog,
     protected memoriaService: MemoriaService,
     protected documentoService: DocumentoService,
-    actionService: MemoriaActionService
+    actionService: MemoriaActionService,
+    private languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.VERSIONES, actionService);
     this.formPart = this.fragment as MemoriaInformesFragment;
-
   }
 
   ngOnInit(): void {
@@ -82,7 +84,8 @@ export class MemoriaInformesComponent extends FragmentComponent implements OnIni
    * Visualiza el informe seleccionado.
    * @param documentoRef Referencia del informe..
    */
-  visualizarInforme(documentoRef: string) {
+  visualizarInforme(documentos: IInformeDocumento[]) {
+    const documentoRef = documentos.find(doc => doc.lang === this.languageService.getLanguage()).documentoRef;
     const documento: IDocumento = {} as IDocumento;
     this.documentoService.getInfoFichero(documentoRef).pipe(
       switchMap((documentoInfo: IDocumento) => {
@@ -112,4 +115,7 @@ export class MemoriaInformesComponent extends FragmentComponent implements OnIni
   ngOnDestroy(): void {
     this.subscriptions?.forEach(x => x.unsubscribe());
   }
+
+  protected setupI18N(): void { }
+
 }

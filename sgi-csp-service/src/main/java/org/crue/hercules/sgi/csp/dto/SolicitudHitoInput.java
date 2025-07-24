@@ -2,9 +2,12 @@ package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +29,7 @@ public class SolicitudHitoInput implements Serializable {
   @NotNull
   private Instant fecha;
 
-  private String comentario;
+  private List<I18nFieldValueDto> comentario;
   @Valid
   private SolicitudHitoAvisoInput aviso;
 }

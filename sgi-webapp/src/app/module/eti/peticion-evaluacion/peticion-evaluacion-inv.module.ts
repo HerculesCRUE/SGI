@@ -23,7 +23,6 @@ import { PeticionEvaluacionListadoExportService } from './peticion-evaluacion-li
 import { PeticionEvaluacionListadoInvComponent } from './peticion-evaluacion-listado-inv/peticion-evaluacion-listado-inv.component';
 import { PeticionEvaluacionMemoriasListadoExportService } from './peticion-evaluacion-memorias-listado-export.service';
 import { PeticionEvaluacionResolver } from './peticion-evaluacion.resolver';
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
 
 @NgModule({
   declarations: [
@@ -47,8 +46,7 @@ import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
     ReactiveFormsModule,
     SgiAuthModule,
     SgpSharedModule,
-    EtiSharedModule,
-    CKEditorModule
+    EtiSharedModule
   ],
   providers: [
     PeticionEvaluacionResolver,

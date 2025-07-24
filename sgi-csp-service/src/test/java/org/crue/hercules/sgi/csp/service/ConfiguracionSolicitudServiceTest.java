@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
@@ -16,19 +18,32 @@ import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Convocatoria.Estado;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObjeto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
+import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitudObservaciones;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaFaseRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.DocumentoRequeridoSolicitudRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConfiguracionSolicitudServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -55,7 +70,7 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
   private ConfiguracionSolicitudService service;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     service = new ConfiguracionSolicitudServiceImpl(repository, convocatoriaRepository, convocatoriaFaseRepository,
         documentoRequeridoSolicitudRepository);
   }
@@ -146,7 +161,7 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(configuracionSolicitud))
         // then: throw exception as id can't be provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id tiene que ser null para crear la ConfiguracionSolicitud");
+        .hasMessage("Identificador de Configuración solicitud debe ser nulo");
   }
 
   @Test
@@ -160,7 +175,7 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(configuracionSolicitud))
         // then: throw exception as convocatoria can't be provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Convocatoria no puede ser null en ConfiguracionSolicitud");
+        .hasMessage("Identificador de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -191,7 +206,7 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(configuracionSolicitud))
         // then: throw exception as Convocatoria already asigned
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Ya existe ConfiguracionSolicitud para la convocatoria %s", configuracionSolicitud.getConvocatoriaId());
+            "Configuración solicitud de Convocatoria ya existe");
   }
 
   @Test
@@ -210,7 +225,7 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(configuracionSolicitud))
         // then: throw exception as Tramitacion SGI can't be provided
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Habilitar presentacion SGI no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
+            "Tramitación SGI de Configuración solicitud no puede ser nulo");
   }
 
   @Test
@@ -230,7 +245,7 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(configuracionSolicitud))
         // then: throw exception as FasePresentacion can't be provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Plazo presentación solicitudes no puede ser null cuando se establece presentacion SGI");
+        .hasMessage("Plazo Presentación de Configuración solicitud no puede ser nulo");
   }
 
   @Test
@@ -356,7 +371,7 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedConfiguracionSolicitud, null))
         // then: throw exception as convocatoria can't be provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Convocatoria no puede ser null en ConfiguracionSolicitud");
+        .hasMessage("Identificador de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -394,7 +409,7 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedConfiguracionSolicitud, originalConfiguracionSolicitud.getConvocatoriaId()))
         // then: throw exception as Tramitacion SGI can't be provided
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Habilitar presentacion SGI no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
+            "Tramitación SGI de Configuración solicitud no puede ser nulo");
   }
 
   @Test
@@ -510,7 +525,7 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedConfiguracionSolicitud, originalConfiguracionSolicitud.getConvocatoriaId()))
         // then: throw exception as FasePresentacion has documents
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Si ya existen documentos requeridos solicitud asociados a la configuración, no se puede cambiar la fase");
+            "Documento Requerido Solicitud de Configuración solicitud ya existe");
   }
 
   @Test
@@ -562,12 +577,19 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
    */
   private ConfiguracionSolicitud generarMockConfiguracionSolicitud(Long configuracionSolicitudId, Long convocatoriaId,
       Long convocatoriaFaseId) {
+
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-1"));
+
     // @formatter:off
     TipoFase tipoFase = TipoFase.builder()
         .id(convocatoriaFaseId)
-        .nombre("nombre-1")
+        .nombre(nombreTipoFase)
         .activo(Boolean.TRUE)
         .build();
+
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    obsConvocatoriaFase.add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones"));
 
     ConvocatoriaFase convocatoriaFase = ConvocatoriaFase.builder()
         .id(convocatoriaFaseId)
@@ -575,7 +597,7 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .tipoFase(tipoFase)
         .fechaInicio(Instant.parse("2020-10-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-10-15T00:00:00Z"))
-        .observaciones("observaciones")
+        .observaciones(obsConvocatoriaFase)
         .build();
 
     ConfiguracionSolicitud configuracionSolicitud = ConfiguracionSolicitud.builder()
@@ -604,19 +626,25 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
    */
   private Convocatoria generarMockConvocatoria(Long convocatoriaId, Long unidadGestionId, Long modeloEjecucionId,
       Long modeloTipoFinalidadId, Long tipoRegimenConcurrenciaId, Long tipoAmbitoGeogragicoId, Boolean activo) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(
+        new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId)));
 
-    // @formatter:off
     ModeloEjecucion modeloEjecucion = (modeloEjecucionId == null) ? null
         : ModeloEjecucion.builder()
             .id(modeloEjecucionId)
-            .nombre("nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId))
+            .nombre(nombreModeloEjecucion)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(
+        new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId)));
 
     TipoFinalidad tipoFinalidad = (modeloTipoFinalidadId == null) ? null
         : TipoFinalidad.builder()
             .id(modeloTipoFinalidadId)
-            .nombre("nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId))
+            .nombre(nombreTipoFinalidad)
             .activo(Boolean.TRUE)
             .build();
 
@@ -628,21 +656,39 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
             .activo(Boolean.TRUE)
             .build();
 
+    Set<TipoRegimenConcurrenciaNombre> tipoRegimenConcurrenciaNombre = new HashSet<>();
+    tipoRegimenConcurrenciaNombre.add(new TipoRegimenConcurrenciaNombre(Language.ES,
+        "nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId)));
+
     TipoRegimenConcurrencia tipoRegimenConcurrencia = (tipoRegimenConcurrenciaId == null) ? null
         : TipoRegimenConcurrencia.builder()
             .id(tipoRegimenConcurrenciaId)
-            .nombre("nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId))
+            .nombre(tipoRegimenConcurrenciaNombre)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoAmbitoGeograficoNombre> nombre = new HashSet<>();
+    nombre.add(new TipoAmbitoGeograficoNombre(Language.ES,
+        "nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId)));
 
     TipoAmbitoGeografico tipoAmbitoGeografico = (tipoAmbitoGeogragicoId == null) ? null
         : TipoAmbitoGeografico.builder()
             .id(tipoAmbitoGeogragicoId)
-            .nombre("nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId))
+            .nombre(nombre)
             .activo(Boolean.TRUE)
             .build();
 
-    Convocatoria convocatoria = Convocatoria.builder()
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObjeto> convocatoriaObjeto = new HashSet<>();
+    convocatoriaObjeto.add(new ConvocatoriaObjeto(Language.ES, "objeto-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones
+        .add(new ConvocatoriaObservaciones(Language.ES, "observaciones-" + String.format("%03d", convocatoriaId)));
+
+    return Convocatoria.builder()
         .id(convocatoriaId)
         .unidadGestionRef((unidadGestionId == null) ? null : "unidad-" + String.format("%03d", unidadGestionId))
         .modeloEjecucion(modeloEjecucion)
@@ -650,9 +696,9 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaProvisional(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaConcesion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo-" + String.format("%03d", convocatoriaId))
-        .objeto("objeto-" + String.format("%03d", convocatoriaId))
-        .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
+        .titulo(convocatoriaTitulo)
+        .objeto(convocatoriaObjeto)
+        .observaciones(convocatoriaObservaciones)
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
         .estado(Convocatoria.Estado.REGISTRADA)
@@ -661,9 +707,6 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
         .clasificacionCVN(ClasificacionCVN.AYUDAS)
         .activo(activo)
         .build();
-    // @formatter:on
-
-    return convocatoria;
   }
 
   /**
@@ -675,12 +718,16 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
    */
   private DocumentoRequeridoSolicitud generarMockDocumentoRequeridoSolicitud(
       ConfiguracionSolicitud configuracionSolicitud) {
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(
+        new DocumentoRequeridoSolicitudObservaciones(Language.ES,
+            "observacionesDocumentoRequeridoSolicitud-" + configuracionSolicitud.getId()));
 
     // @formatter:on
     return DocumentoRequeridoSolicitud.builder().id(configuracionSolicitud.getId())
         .configuracionSolicitudId(configuracionSolicitud.getId())
         .tipoDocumento(generarMockTipoDocumento(configuracionSolicitud.getId()))
-        .observaciones("observacionesDocumentoRequeridoSolicitud-" + configuracionSolicitud.getId()).build();
+        .observaciones(obsDocumentoRequerido).build();
     // @formatter:on
   }
 
@@ -691,12 +738,16 @@ class ConfiguracionSolicitudServiceTest extends BaseServiceTest {
    * @return el objeto TipoDocumento
    */
   private TipoDocumento generarMockTipoDocumento(Long id) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, "nombreTipoDocumento-" + id));
 
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "descripcionTipoDocumento-" + id));
     // @formatter:off
     return TipoDocumento.builder()
         .id(id)
-        .nombre("nombreTipoDocumento-" + id)
-        .descripcion("descripcionTipoDocumento-" + id)
+        .nombre(nombreTipoDocumento)
+        .descripcion(descripcionTipoDocumento)
         .activo(Boolean.TRUE)
         .build();
     // @formatter:on

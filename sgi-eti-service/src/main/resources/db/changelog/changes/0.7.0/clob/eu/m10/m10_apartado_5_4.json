@@ -1,0 +1,41 @@
+[
+  {
+    "key": "ap5_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.4 Lankidetza onartzeko dokumentua"
+    },
+    "fieldGroup": [
+      {
+        "template": "Ikertzaile taldekoa ez den beste norbaitek bilduko baditu parte hartzaileak, badaukazu lankidetza onartzeko dokumentua? "
+      },
+      {
+        "key": "documentoAceptacionColaboracion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "Ez"
+            },
+            {
+              "value": "ACEPTACION_COLABORACION",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: ikusi ‘3.4.2 Parte hartzaileak ikertzaile taldeaz kanpoko langileek biltzea'. </p>"
+      }
+    ]
+  }
+]

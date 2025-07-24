@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap3_7_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.2 Duration of the experimentation process"
+    },
+    "fieldGroup": [
+      {
+        "template": "How long does the experimentation process to which each animal is subjected last (in days)?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>The duration should be counted from the time when the preparation of an animal for use in the experimental process begins until 'no further observations will be made on it' and 'it has been sacrificed, rehoused or reintegrated into a suitable habitat or husbandry system'.</p>"
+      },
+      {
+        "key": "duracionProcesoExperimentacion",
+        "type": "i18n-input",
+        "templateOptions": {
+          "label": "Time (days)",
+          "placeholder": "Time in days"
+        }
+      }
+    ]
+  }
+]

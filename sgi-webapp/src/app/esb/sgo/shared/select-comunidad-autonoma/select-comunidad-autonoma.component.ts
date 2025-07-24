@@ -4,6 +4,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { IComunidadAutonoma } from '@core/models/sgo/comunidad-autonoma';
+import { LanguageService } from '@core/services/language.service';
 import { ComunidadAutonomaService } from '@core/services/sgo/comunidad-autonoma/comunidad-autonoma.service';
 import { Observable, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
@@ -41,9 +42,10 @@ export class SelectComunidadAutonomaComponent extends SelectServiceComponent<ICo
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private comunidadAutonomaService: ComunidadAutonomaService
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
 
   }
 

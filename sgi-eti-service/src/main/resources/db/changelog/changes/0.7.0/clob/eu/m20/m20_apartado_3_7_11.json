@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap3_7_11",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.11 Animalien amaiera"
+    },
+    "fieldGroup": [
+      {
+        "template": "Zer egiten da animaliarekin, esperimentazio prozesu osoa amaitzean?"
+      },
+      {
+        "key": "destinoFinalCheck",
+        "type": "multicheckbox",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "eutanasia",
+              "label": "Eutanasia aplikatzen zaio."
+            },
+            {
+              "value": "muerte",
+              "label": "Prozesuan animalia hil egiten da."
+            },
+            {
+              "value": "mantenimiento",
+              "label": "Bizirik mantentzen da."
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Amaiera bakoitzeko animalia kopurua adierazi behar duzu dagokion atalean."
+      },
+      {
+        "key": "justificarMantenimiento",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.destinoFinalCheck || !model.destinoFinalCheck.some(destino => destino === 'mantenimiento')",
+        "templateOptions": {
+          "name": "Justifikatu",
+          "required": true
+        }
+      }
+    ]
+  }
+]

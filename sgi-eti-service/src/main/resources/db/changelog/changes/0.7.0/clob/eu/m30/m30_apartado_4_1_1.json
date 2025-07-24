@@ -1,0 +1,43 @@
+[
+  {
+    "key": "ap4_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.1 Arrisku maila"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Adierazi jardueraren arrisku maila orokorra. Arrisku maila desberdineko zenbait agente erabiltzen badira, hartu kontuan arrisku maila handienekoa.</p>"
+      },
+      {
+        "key": "nivelRiesgo",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "nivel_1",
+              "label": "I. maila. Arriskua txikia da norbanakoentzat eta populazioarentzat, edo ez dago arriskurik. Gizaki edo animaliengan gaixotasunak eragiteko aukera gutxi duten mikroorganismoak."
+            },
+            {
+              "value": "nivel_2",
+              "label": "II. maila. Arriskua ertaina da norbanakoentzat, eta txikia populazioarentzat. Gizaki edo animaliengan gaixotasunak eragin ditzaketen agente patogenoak dira, baina aukera gutxi dute laborategiko langileentzat, populazioarentzat, aziendarentzat edo ingurumenarentzat arrisku larri bat eragiteko. Laborategiko esposizioak infekzio larria eragin dezake, baina prebentzio neurri eta neurri terapeutiko eraginkorrak daude, eta hedapen arriskua mugatua da."
+            },
+            {
+              "value": "nivel_3",
+              "label": "III. maila. Arriskua handia da norbanakoentzat, eta txikia populazioarentzat. Gizaki edo animaliengan gaixotasun larriak eragiten dituzten agente patogenoak dira, baina normalean ez dira banako batetik beste batera hedatzen. Prebentzio neurri eta neurri terapeutiko eraginkorrak daude."
+            },
+            {
+              "value": "nivel_4",
+              "label": "IV. maila. Arriskua handia da norbanakoentzat eta populazioarentzat. Gizaki edo animaliengan gaixotasun larriak eragiten dituzten agente patogenoak dira, eta erraz transmititzen dira banako batetik beste batera, zuzenean edo zeharka. Normalean ez dago prebentzio neurri eta neurri terapeutiko eraginkorrik."
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -4,10 +4,14 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.tipo-documento.nombre' | translate}}</mat-label>
-        <input matInput formControlName="nombre" type="text" placeholder="{{'csp.tipo-documento.nombre' | translate}}"
+        <sgi-i18n-input formControlName="nombre" type="text" placeholder="{{'csp.tipo-documento.nombre' | translate}}"
           required>
+        </sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.nombre.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamNombreEntity}}
         </mat-error>
       </mat-form-field>
     </div>
@@ -15,8 +19,11 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.tipo-documento.descripcion' | translate}}</mat-label>
-        <textarea matInput formControlName="descripcion"
-          placeholder="{{'csp.tipo-documento.descripcion' | translate}}"></textarea>
+        <sgi-i18n-textarea matInput formControlName="descripcion"
+          placeholder="{{'csp.tipo-documento.descripcion' | translate}}"></sgi-i18n-textarea>
+        <mat-error *ngIf="formGroup.controls.descripcion.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamDescripcionEntity}}
+        </mat-error>
       </mat-form-field>
     </div>
   </form>

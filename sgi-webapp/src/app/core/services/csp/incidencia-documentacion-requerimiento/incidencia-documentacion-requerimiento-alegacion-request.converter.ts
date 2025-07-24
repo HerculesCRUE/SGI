@@ -1,3 +1,4 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IIncidenciaDocumentacionRequerimiento } from '@core/models/csp/incidencia-documentacion-requerimiento';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IIncidenciaDocumentacionRequerimientoAlegacionRequest } from './incidencia-documentacion-requerimiento-alegacion-request';
@@ -14,7 +15,7 @@ class IncidenciaDocumentacionRequerimientoAlegacionRequestConverter
       return value as unknown as IIncidenciaDocumentacionRequerimientoAlegacionRequest;
     }
     return {
-      alegacion: value.alegacion
+      alegacion: value.alegacion ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.alegacion) : []
     };
   }
 }

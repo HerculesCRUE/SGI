@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.rep.dto.eti;
 
+import java.util.List;
+
 import org.crue.hercules.sgi.rep.dto.BaseRestDto;
 
 import lombok.AllArgsConstructor;
@@ -16,7 +18,7 @@ import lombok.experimental.SuperBuilder;
 public class BloqueDto extends BaseRestDto {
 
   private FormularioDto formulario;
-  private String nombre;
   private Integer orden;
+  private List<BloqueNombreDto> nombre;
 
 }

@@ -64,12 +64,11 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
     private matDialog: MatDialog,
     private confirmDialogService: DialogService,
     private readonly translate: TranslateService) {
-    super(router, route, actionService, confirmDialogService);
+    super(router, route, actionService, confirmDialogService, translate);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
 
     this.isInvestigador = this.actionService.isInvestigador;
 
@@ -80,7 +79,7 @@ export class ProyectoEditarComponent extends ActionComponent implements OnInit {
     ));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

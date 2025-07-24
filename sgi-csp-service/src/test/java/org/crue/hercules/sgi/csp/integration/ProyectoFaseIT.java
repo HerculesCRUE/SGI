@@ -2,9 +2,12 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.dto.ProyectoFaseAvisoInput;
@@ -12,8 +15,12 @@ import org.crue.hercules.sgi.csp.dto.ProyectoFaseInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoFaseOutput;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
 import org.crue.hercules.sgi.csp.model.ProyectoFaseAviso;
+import org.crue.hercules.sgi.csp.model.ProyectoFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.service.ProyectoFaseAvisoService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -104,7 +111,9 @@ class ProyectoFaseIT extends BaseIT {
   void update_ReturnsProyectoFase() throws Exception {
     Long idProyectoFase = 1L;
     ProyectoFaseInput proyectoFase = generarMockProyectoFaseInput(1L);
-    proyectoFase.setObservaciones("observaciones modificado");
+    List<I18nFieldValueDto> proyectoFaseObservaciones = new ArrayList<I18nFieldValueDto>();
+    proyectoFaseObservaciones.add(new I18nFieldValueDto(Language.ES, "observaciones modificado"));
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
 
     final ResponseEntity<ProyectoFaseOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, proyectoFase), ProyectoFaseOutput.class, idProyectoFase);
@@ -122,8 +131,12 @@ class ProyectoFaseIT extends BaseIT {
         .isEqualTo(proyectoFase.getFechaFin());
     Assertions.assertThat(proyectoFaseActualizado.getTipoFase().getId()).as("getTipoFase().getId()")
         .isEqualTo(proyectoFase.getTipoFaseId());
-    Assertions.assertThat(proyectoFaseActualizado.getObservaciones()).as("getObservaciones()")
-        .isEqualTo(proyectoFase.getObservaciones());
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(proyectoFaseActualizado.getObservaciones(), Language.ES))
+        .as("getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(proyectoFase.getObservaciones(), Language.ES));
+
     Assertions.assertThat(proyectoFaseActualizado.getAviso1()).as("getAviso1()")
         .isNotNull();
     Assertions.assertThat(proyectoFaseActualizado.getAviso2()).as("getAviso2()")
@@ -176,7 +189,8 @@ class ProyectoFaseIT extends BaseIT {
     Assertions.assertThat(proyectoFase.getId()).as("getId()").isNotNull();
     Assertions.assertThat(proyectoFase.getTipoFase().getId()).as("getTipoFase().getId()").isEqualTo(1L);
     Assertions.assertThat(proyectoFase.getProyectoId()).as("getProyectoId()").isEqualTo(1L);
-    Assertions.assertThat(proyectoFase.getObservaciones()).as("observaciones")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoFase.getObservaciones(), Language.ES))
+        .as("observaciones")
         .isEqualTo("observaciones-proyecto-fase-" + String.format("%03d", idProyectoFase));
     Assertions.assertThat(proyectoFase.getFechaInicio()).as("getFechaInicio()")
         .isEqualTo(Instant.parse("2020-10-01T00:00:00Z"));
@@ -195,6 +209,11 @@ class ProyectoFaseIT extends BaseIT {
    */
   private ProyectoFase generarMockProyectoFase(Long id, Long tipoFaseId, Long proyectoId) {
 
+    Set<ProyectoFaseObservaciones> proyectoFaseObservaciones = new HashSet<>();
+    proyectoFaseObservaciones
+        .add(new ProyectoFaseObservaciones(Language.ES,
+            "observaciones-proyecto-fase-" + (id == null ? "" : String.format("%03d", id))));
+
     // @formatter:off
     return ProyectoFase.builder()
         .id(id)
@@ -202,7 +221,7 @@ class ProyectoFaseIT extends BaseIT {
         .proyectoId(proyectoId)
         .fechaInicio(Instant.parse("2020-10-19T00:00:00Z"))
         .fechaFin(Instant.parse("2020-10-20T00:00:00Z"))
-        .observaciones("observaciones-proyecto-fase-" + (id == null ? "" : String.format("%03d", id)))
+        .observaciones(proyectoFaseObservaciones)
         .proyectoFaseAviso1(buildMockProyectoFaseAviso(1L, id))
         .proyectoFaseAviso2(buildMockProyectoFaseAviso(2L, id))
         .build();
@@ -214,11 +233,15 @@ class ProyectoFaseIT extends BaseIT {
     tipoFase.setId(id == null ? 1 : id);
     tipoFase.setActivo(true);
 
+    List<I18nFieldValueDto> proyectoFaseObservaciones = new ArrayList<I18nFieldValueDto>();
+    proyectoFaseObservaciones.add(new I18nFieldValueDto(Language.ES,
+        "observaciones-proyecto-fase-" + String.format("%03d", id)));
+
     ProyectoFaseInput proyectoFase = new ProyectoFaseInput();
     proyectoFase.setProyectoId(id == null ? 1 : id);
     proyectoFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     proyectoFase.setFechaFin(Instant.parse("2020-10-20T23:59:59Z"));
-    proyectoFase.setObservaciones("observaciones-proyecto-fase-" + String.format("%03d", id));
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
     proyectoFase.setAviso1(buildMockProyectoFaseAvisoInput(id));
     proyectoFase.setAviso2(buildMockProyectoFaseAvisoInput(id));
     proyectoFase.setTipoFaseId(tipoFase.getId());
@@ -245,7 +268,7 @@ class ProyectoFaseIT extends BaseIT {
         .asunto("asunto")
         .contenido("contenido mail")
         .destinatarios(destinatarios)
-        .incluirIpsProyecto(new Boolean(Boolean.TRUE))
+        .incluirIpsProyecto(Boolean.TRUE)
         .fechaEnvio(Instant.now().plus(15, ChronoUnit.MINUTES))
         .build();
   }

@@ -17,7 +17,8 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         {{'pii.tipo-procedimiento' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
       </th>
-      <td mat-cell *matCellDef="let procedimiento">{{procedimiento.value.tipoProcedimiento?.nombre}}
+      <td mat-cell *matCellDef="let procedimiento">
+        <sgi-i18n-table-field [field]="procedimiento.value.tipoProcedimiento?.nombre"></sgi-i18n-table-field>
       </td>
     </ng-container>
     <!-- Acción a Tomar-->
@@ -25,7 +26,8 @@
       <th mat-header-cell *matHeaderCellDef mat-sort-header>
         {{'pii.solicitud-proteccion.procedimiento.accion' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}
       </th>
-      <td mat-cell *matCellDef="let procedimiento">{{procedimiento.value.accionATomar}}
+      <td mat-cell *matCellDef="let procedimiento">
+        <sgi-i18n-table-field [field]="procedimiento.value.accionATomar"></sgi-i18n-table-field>
       </td>
     </ng-container>
     <!-- Acciones -->

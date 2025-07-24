@@ -94,12 +94,19 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     private readonly cnfService: ConfigService,
     private readonly configCspService: ConfigCspService
   ) {
-    super();
+    super(translate);
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'nombre') {
+        return 'nombre.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.buildFormGroup();
     this.loadColectivosBusqueda();
     this.getLineasInvestigacion();
@@ -159,7 +166,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const rsqlFilter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
+    const rsqlFilter = new RSQLSgiRestFilter('nombre.value', SgiRestFilterOperator.LIKE_ICASE, controls.nombre.value)
       .and('codigo', SgiRestFilterOperator.LIKE_ICASE, controls.codigo.value)
       .and('miembrosEquipo.personaRef', SgiRestFilterOperator.EQUALS, controls.miembroEquipo.value?.id)
       .and('proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.proyectoSgeRef.value)
@@ -267,10 +274,8 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
         if (grupo.investigadoresPrincipales.length < idsInvestigadoresPrincipales.length) {
           grupo.investigadoresPrincipales.push(
             ...idsInvestigadoresPrincipales
-              .filter(id => grupo.investigadoresPrincipales.map(i => i.id).includes(id))
-              .map(id => {
-                return { id } as IPersona;
-              })
+              .filter(id => !grupo.investigadoresPrincipales.some(i => i.id === id))
+              .map(id => ({ id } as IPersona))
           )
         }
 
@@ -279,7 +284,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
       catchError((error) => {
         this.logger.error(error);
         this.processError(error);
-        return EMPTY;
+        return of(grupo);
       })
     );
   }
@@ -295,7 +300,7 @@ export class GrupoListadoComponent extends AbstractTablePaginationComponent<IGru
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       GRUPO_KEY,

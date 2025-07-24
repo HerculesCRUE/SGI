@@ -1,0 +1,152 @@
+[
+  {
+    "key": "ap4_3_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.2 Re-use"
+    },
+    "fieldGroup": [
+      {
+        "template": "Have the animals been or will they be reused in another research project?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "An animal that has already been used should not be subjected to new experimental processes or any procedure when another animal that has not undergone any procedure/intervention can be used in its place, unless the following conditions are met:<br><ul><li>a) That the severity of the previous interventions was <u>mild</u> either <u>moderate</u></li><li>b) That the total recovery of the general state of health and well-being of the animal has been demonstrated.</li><li>c) That the new procedures/interventions are classified as <u>mild</u>, <u>moderate</u> either <u>no recovery</u> and</li><li>d) That it conforms to the veterinary opinion, taking into account the experience during the life of the animal.</li></ul><br> In exceptional circumstances, notwithstanding the provisions of letter a), and after veterinary examination of the animal, the competent authority may authorise the reuse of an animal provided that such animal has not been subjected more than once to procedures/interventions that have caused severe distress and pain or equivalent suffering.<br>For more information on the reuse of animals see art. 29 and annex X.10 of Royal Decree 53-13"
+      },
+      {
+        "key": "reutilizacionRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Reused",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "key": "anteriorPosteriorCheck",
+        "type": "multicheckbox",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Choose",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "anterior",
+              "label": "They come from a PREVIOUS project"
+            },
+            {
+              "value": "posterior",
+              "label": "They can be used in a SUBSEQUENT project"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Previous project reference code",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'anterior')"
+      },
+      {
+        "key": "codigoRefProyectoAnterior",
+        "type": "i18n-input",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'anterior')",
+        "templateOptions": {
+          "label": "Code",
+          "placeholder": "Code"
+        }
+      },
+      {
+        "template": "Overall severity level of the previous project",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'anterior')"
+      },
+      {
+        "key": "gradoSeveridadProyectoAnterior",
+        "type": "select",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'anterior')",
+        "templateOptions": {
+          "label": "Choose",
+          "options": [
+            {
+              "label": "Non-recovery",
+              "value": "1"
+            },
+            {
+              "label": "Mild",
+              "value": "2"
+            },
+            {
+              "label": "Moderate",
+              "value": "3"
+            },
+            {
+              "label": "Severe",
+              "value": "4"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Subsequent project reference code",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'posterior')"
+      },
+      {
+        "key": "codigoRefProyectoPosterior",
+        "type": "i18n-input",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'posterior')",
+        "templateOptions": {
+          "label": "Code",
+          "placeholder": "Code"
+        }
+      },
+      {
+        "template": "Overall severity of the downstream project",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'posterior')"
+      },
+      {
+        "key": "gradoSeveridadProyectoPosterior",
+        "type": "select",
+        "hideExpression": "!model.reutilizacionRadio || model.reutilizacionRadio === 'no' || !model.anteriorPosteriorCheck || !model.anteriorPosteriorCheck.some(option => option == 'posterior')",
+        "templateOptions": {
+          "label": "Choose",
+          "options": [
+            {
+              "label": "Non-recovery",
+              "value": "1"
+            },
+            {
+              "label": "Mild",
+              "value": "2"
+            },
+            {
+              "label": "Moderate",
+              "value": "3"
+            },
+            {
+              "label": "Severe",
+              "value": "4"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: Requires veterinary report to be attached under 5.2</p>"
+      }
+    ]
+  }
+]

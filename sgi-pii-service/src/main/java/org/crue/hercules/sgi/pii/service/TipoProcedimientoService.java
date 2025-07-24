@@ -15,8 +15,9 @@ import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.pii.exceptions.TipoProcedimientoNotFoundException;
+import org.crue.hercules.sgi.pii.model.BaseActivableEntity;
+import org.crue.hercules.sgi.pii.model.BaseEntity;
 import org.crue.hercules.sgi.pii.model.TipoProcedimiento;
-import org.crue.hercules.sgi.pii.model.TipoProcedimiento.OnActivar;
 import org.crue.hercules.sgi.pii.repository.TipoProcedimientoRepository;
 import org.crue.hercules.sgi.pii.repository.specification.TipoProcedimientoSpecifications;
 import org.springframework.data.domain.Page;
@@ -65,7 +66,7 @@ public class TipoProcedimientoService {
    * @param tipoProcedimiento la entidad {@link TipoProcedimiento} a guardar.
    * @return la entidad {@link TipoProcedimiento} persistida.
    */
-  @Validated({ TipoProcedimiento.OnCrear.class })
+  @Validated({ BaseEntity.Create.class })
   public TipoProcedimiento create(@Valid TipoProcedimiento tipoProcedimiento) {
 
     Assert.isNull(tipoProcedimiento.getId(),
@@ -96,7 +97,7 @@ public class TipoProcedimientoService {
    * @param id Id del {@link TipoProcedimiento}.
    * @return Entidad {@link TipoProcedimiento} persistida activada.
    */
-  @Validated({ TipoProcedimiento.OnActivar.class })
+  @Validated({ BaseActivableEntity.OnActivar.class })
   public TipoProcedimiento activar(Long id) {
 
     Assert.notNull(id,
@@ -110,7 +111,8 @@ public class TipoProcedimientoService {
         return tipoProcedimiento;
       }
       // Invocar validaciones asociadas a OnActivar
-      Set<ConstraintViolation<TipoProcedimiento>> result = validator.validate(tipoProcedimiento, OnActivar.class);
+      Set<ConstraintViolation<TipoProcedimiento>> result = validator.validate(tipoProcedimiento,
+          BaseActivableEntity.OnActivar.class);
       if (!result.isEmpty()) {
         throw new ConstraintViolationException(result);
       }
@@ -147,7 +149,7 @@ public class TipoProcedimientoService {
     }).orElseThrow(() -> new TipoProcedimientoNotFoundException(id));
   }
 
-  @Validated({ TipoProcedimiento.OnActualizar.class })
+  @Validated({ BaseEntity.Update.class })
   public TipoProcedimiento update(@Valid TipoProcedimiento tipoProcedimiento) {
 
     Assert.notNull(tipoProcedimiento.getId(),

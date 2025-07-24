@@ -1,10 +1,18 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoDocumento;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoDocumentoComentario;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -66,8 +74,8 @@ class ProyectoPeriodoSeguimientoDocumentoIT extends BaseIT {
         .isEqualTo(newProyectoPeriodoSeguimientoDocumento.getDocumentoRef());
     Assertions.assertThat(responseData.getComentario()).as("getComentario()")
         .isEqualTo(newProyectoPeriodoSeguimientoDocumento.getComentario());
-    Assertions.assertThat(responseData.getNombre()).as("getNombre()")
-        .isEqualTo(newProyectoPeriodoSeguimientoDocumento.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(newProyectoPeriodoSeguimientoDocumento.getNombre(), Language.ES));
     Assertions.assertThat(responseData.getTipoDocumento().getId()).as("getTipoDocumento().getId()")
         .isEqualTo(newProyectoPeriodoSeguimientoDocumento.getTipoDocumento().getId());
   }
@@ -88,7 +96,9 @@ class ProyectoPeriodoSeguimientoDocumentoIT extends BaseIT {
     ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoExistente = generarMockProyectoPeriodoSeguimientoDocumento(
         1L);
     ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimientoDocumento(1L);
-    proyectoPeriodoSeguimiento.setComentario("comentario-modificados");
+    Set<ProyectoPeriodoSeguimientoDocumentoComentario> comentarioDocumento = new HashSet<>();
+    comentarioDocumento.add(new ProyectoPeriodoSeguimientoDocumentoComentario(Language.ES, "comentario-modificados"));
+    proyectoPeriodoSeguimiento.setComentario(comentarioDocumento);
 
     // when: update ProyectoPeriodoSeguimientoDocumento
     final ResponseEntity<ProyectoPeriodoSeguimientoDocumento> response = restTemplate.exchange(
@@ -103,9 +113,10 @@ class ProyectoPeriodoSeguimientoDocumentoIT extends BaseIT {
         .isEqualTo(proyectoPeriodoSeguimientoExistente.getProyectoPeriodoSeguimientoId());
     Assertions.assertThat(responseData.getDocumentoRef()).as("getDocumentoRef()")
         .isEqualTo(proyectoPeriodoSeguimientoExistente.getDocumentoRef());
-    Assertions.assertThat(responseData.getComentario()).as("getComentario()").isEqualTo("comentario-modificados");
-    Assertions.assertThat(responseData.getNombre()).as("getNombre()")
-        .isEqualTo(proyectoPeriodoSeguimientoExistente.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getComentario(), Language.ES))
+        .as("getComentario()").isEqualTo("comentario-modificados");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(proyectoPeriodoSeguimientoExistente.getNombre(), Language.ES));
     Assertions.assertThat(responseData.getTipoDocumento().getId()).as("getTipoDocumento().getId()")
         .isEqualTo(proyectoPeriodoSeguimientoExistente.getTipoDocumento().getId());
   }
@@ -165,19 +176,32 @@ class ProyectoPeriodoSeguimientoDocumentoIT extends BaseIT {
    * @return el objeto ProyectoPeriodoSeguimientoDocumento
    */
   private ProyectoPeriodoSeguimientoDocumento generarMockProyectoPeriodoSeguimientoDocumento(Long id) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, "TipoDocumento" + (id != null ? id : 1)));
+
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "descripcion-" + (id != null ? id : 1)));
 
     TipoDocumento tipoDocumento = new TipoDocumento();
     tipoDocumento.setId((id != null ? id : 1));
-    tipoDocumento.setNombre("TipoDocumento" + (id != null ? id : 1));
-    tipoDocumento.setDescripcion("descripcion-" + (id != null ? id : 1));
+    tipoDocumento.setNombre(nombreTipoDocumento);
+    tipoDocumento.setDescripcion(descripcionTipoDocumento);
     tipoDocumento.setActivo(Boolean.TRUE);
+
+    Set<ProyectoPeriodoSeguimientoDocumentoNombre> nombreDocumento = new HashSet<>();
+    nombreDocumento.add(new ProyectoPeriodoSeguimientoDocumentoNombre(Language.ES,
+        "Nombre-" + String.format("%03d", (id != null ? id : 1))));
+
+    Set<ProyectoPeriodoSeguimientoDocumentoComentario> comentarioDocumento = new HashSet<>();
+    comentarioDocumento.add(new ProyectoPeriodoSeguimientoDocumentoComentario(Language.ES,
+        "comentario-" + String.format("%03d", (id != null ? id : 1))));
 
     ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoDocumento = new ProyectoPeriodoSeguimientoDocumento();
     proyectoPeriodoSeguimientoDocumento.setId(id);
     proyectoPeriodoSeguimientoDocumento.setProyectoPeriodoSeguimientoId(id == null ? 1 : id);
-    proyectoPeriodoSeguimientoDocumento.setNombre("Nombre-" + String.format("%03d", (id != null ? id : 1)));
+    proyectoPeriodoSeguimientoDocumento.setNombre(nombreDocumento);
     proyectoPeriodoSeguimientoDocumento.setDocumentoRef("Doc-" + String.format("%03d", (id != null ? id : 1)));
-    proyectoPeriodoSeguimientoDocumento.setComentario("comentario-" + String.format("%03d", (id != null ? id : 1)));
+    proyectoPeriodoSeguimientoDocumento.setComentario(comentarioDocumento);
     proyectoPeriodoSeguimientoDocumento.setTipoDocumento(tipoDocumento);
     proyectoPeriodoSeguimientoDocumento.setVisible(Boolean.TRUE);
 

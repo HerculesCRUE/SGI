@@ -21,12 +21,14 @@ import lombok.extern.slf4j.Slf4j;
 public class BloqueService extends SgiApiBaseService {
   private static final String PATH_DELIMITER = "/";
   public static final String URL_API = PATH_DELIMITER + "bloques";
-  private static final String PATH_BLOQUE_COMENTARIOS_GENERALES = URL_API + PATH_DELIMITER + "comentarios-generales";
+  private static final String PATH_BLOQUE_COMENTARIOS_GENERALES = URL_API + PATH_DELIMITER
+      + "comentarios-generales";
 
   private static final String SORT_ORDEN_ASC = "s=orden,asc";
 
   private static final String PATH_ID = URL_API + PATH_DELIMITER + "{id}";
-  private static final String PATH_APARTADOS_TREE = PATH_ID + PATH_DELIMITER + "apartados-tree?" + SORT_ORDEN_ASC;
+  private static final String PATH_APARTADOS_TREE = PATH_ID + PATH_DELIMITER + "apartados-tree?"
+      + SORT_ORDEN_ASC;
   private static final String PATH_FORMULARIO = URL_API + PATH_DELIMITER + "{formularioId}" + PATH_DELIMITER
       + "formulario?" + SORT_ORDEN_ASC;
 
@@ -49,7 +51,7 @@ public class BloqueService extends SgiApiBaseService {
           }, idFormulario).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     log.debug("findByFormularioId({}) - start", idFormulario);
@@ -71,7 +73,7 @@ public class BloqueService extends SgiApiBaseService {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     log.debug("getBloqueComentariosGenerales() - end");
     return result;
@@ -92,7 +94,7 @@ public class BloqueService extends SgiApiBaseService {
           }, id).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     log.debug("getApartados({}) - start", id);

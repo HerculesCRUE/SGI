@@ -2,9 +2,14 @@ package org.crue.hercules.sgi.csp.model;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -77,8 +82,11 @@ public class RequerimientoJustificacion extends BaseEntity {
   private Instant fechaFinAlegacion;
 
   /** Observaciones */
-  @Column(name = "observaciones", nullable = true, length = DEFAULT_LONG_TEXT_LENGTH)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "requerimiento_justificacion_observaciones", joinColumns = @JoinColumn(name = "requerimiento_justificacion_id"))
+  @Valid
+  @Builder.Default
+  private Set<RequerimientoJustificacionObservaciones> observaciones = new HashSet<>();
 
   /** Importe aceptado costes directos */
   @Column(name = "importe_aceptado_cd", nullable = true)

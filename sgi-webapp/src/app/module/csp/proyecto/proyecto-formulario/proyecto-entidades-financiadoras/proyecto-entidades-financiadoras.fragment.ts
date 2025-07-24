@@ -6,8 +6,9 @@ import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { SgiRestListResult } from '@sgi/framework/http';
-import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { map, mergeMap, takeLast, tap } from 'rxjs/operators';
+import { NGXLogger } from 'ngx-logger';
+import { BehaviorSubject, forkJoin, from, merge, Observable, of } from 'rxjs';
+import { catchError, concatMap, map, mergeMap, takeLast, tap, toArray } from 'rxjs/operators';
 
 export interface IEntidadFinanciadora extends IProyectoEntidadFinanciadora {
   hasPresupuesto: boolean;
@@ -20,6 +21,7 @@ export class ProyectoEntidadesFinanciadorasFragment extends Fragment {
   private entidadesEliminadas: StatusWrapper<IEntidadFinanciadora>[] = [];
 
   constructor(
+    private readonly logger: NGXLogger,
     key: number,
     public readonly solicitudId: number,
     private proyectoService: ProyectoService,
@@ -35,70 +37,76 @@ export class ProyectoEntidadesFinanciadorasFragment extends Fragment {
   protected onInitialize(): void {
     if (this.getKey()) {
       const subscription =
-        merge(
-          this.proyectoService.findEntidadesFinanciadorasPropias(this.getKey() as number).pipe(
+        forkJoin({
+          entidadesPropias: this.proyectoService.findEntidadesFinanciadorasPropias(this.getKey() as number).pipe(
             map((response: SgiRestListResult<IEntidadFinanciadora>) => {
               return response.items.map(entidad => new StatusWrapper<IEntidadFinanciadora>(entidad));
             }),
-            tap((value) => {
-              this.entidadesPropias$.next(value);
-            }),
-            mergeMap(entidades => this.fillEmpresa(entidades))
+            concatMap(entidades => this.existsSolicitudProyectoPresupuesto(entidades)),
+            concatMap(entidades => this.fillEmpresa(entidades))
           ),
-          this.proyectoService.findEntidadesFinanciadorasAjenas(this.getKey() as number).pipe(
+          entidadesAjenas: this.proyectoService.findEntidadesFinanciadorasAjenas(this.getKey() as number).pipe(
             map((response: SgiRestListResult<IEntidadFinanciadora>) => {
               return response.items.map(entidad => new StatusWrapper<IEntidadFinanciadora>(entidad));
             }),
-            tap((value) => {
-              this.entidadesAjenas$.next(value);
-            }),
-            mergeMap(entidades => this.fillEmpresa(entidades)),
+            concatMap(entidades => this.existsSolicitudProyectoPresupuesto(entidades)),
+            concatMap(entidades => this.fillEmpresa(entidades)),
           ),
-        ).pipe(
-          mergeMap(entidad => {
-            if (!!!this.solicitudId) {
-              entidad.value.hasPresupuesto = false;
-              return of(entidad);
-            }
-            else {
-              return this.solicitudServie.existsSolicitudProyectoPresupuesto(
-                this.solicitudId,
-                entidad.value.empresa.id,
-                entidad.value.ajena
-              ).pipe(
-                map(exists => {
-                  entidad.value.hasPresupuesto = exists;
-                  return entidad;
-                })
-              );
-            }
+        }).pipe(
+          concatMap(results => {
+            this.entidadesPropias$.next(results.entidadesPropias);
+            this.entidadesAjenas$.next(results.entidadesAjenas);
+
+            this.entidadesFinanciadorasSincronizadas$.next([
+              ...results.entidadesPropias,
+              ...results.entidadesAjenas
+            ]);
+
+            return of(results);
           })
         ).subscribe();
       this.subscriptions.push(subscription);
     }
-
-    this.entidadesAjenas$.subscribe(entidadesAjenasActualizadas => {
-      this.entidadesFinanciadorasSincronizadas$.next([...entidadesAjenasActualizadas, ...this.entidadesPropias$.value])
-    }
-    );
-
-    this.entidadesPropias$.subscribe(entidadesPropiasActualizadas => {
-      this.entidadesFinanciadorasSincronizadas$.next([...entidadesPropiasActualizadas, ...this.entidadesAjenas$.value])
-    }
-    );
   }
 
   private fillEmpresa(entidades: StatusWrapper<IEntidadFinanciadora>[]):
-    Observable<StatusWrapper<IEntidadFinanciadora>> {
+    Observable<StatusWrapper<IEntidadFinanciadora>[]> {
     return from(entidades).pipe(
-      mergeMap(entidad => {
+      concatMap(entidad => {
         return this.empresaService.findById(entidad.value.empresa.id).pipe(
           map((empresa) => {
             entidad.value.empresa = empresa;
             return entidad;
+          }),
+          catchError((error) => {
+            this.logger.error(error);
+            return of(entidad);
           })
         );
       }),
+      toArray()
+    );
+  }
+
+  private existsSolicitudProyectoPresupuesto(entidades: StatusWrapper<IEntidadFinanciadora>[]): Observable<StatusWrapper<IEntidadFinanciadora>[]> {
+    return from(entidades).pipe(
+      concatMap(entidad => {
+        if (!!!this.solicitudId) {
+          entidad.value.hasPresupuesto = false;
+          return of(entidad);
+        }
+        return this.solicitudServie.existsSolicitudProyectoPresupuesto(
+          this.solicitudId,
+          entidad.value.empresa.id,
+          entidad.value.ajena
+        ).pipe(
+          map(exists => {
+            entidad.value.hasPresupuesto = exists;
+            return entidad;
+          })
+        )
+      }),
+      toArray()
     );
   }
 
@@ -191,6 +199,7 @@ export class ProyectoEntidadesFinanciadorasFragment extends Fragment {
             update.hasPresupuesto = wrapped.value.hasPresupuesto;
             update.empresa = wrapped.value.empresa;
             target$.value[index] = new StatusWrapper<IEntidadFinanciadora>(update);
+            target$.next(target$.value);
           })
         );
       })

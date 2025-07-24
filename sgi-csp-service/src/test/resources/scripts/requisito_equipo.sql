@@ -11,7 +11,14 @@
   }
 */
 INSERT INTO test.requisito_equipo
-  (id, f_min_nivel_academico, f_max_nivel_academico, edad_maxima, ratio_sexo, sexo_ref, vinculacion_universidad, f_min_categoria_profesional, f_max_categoria_profesional, num_minimo_competitivos, num_minimo_no_competitivos, num_maximo_competitivos_activos, num_maximo_no_competitivos_activos, otros_requisitos) 
+  (id, f_min_nivel_academico, f_max_nivel_academico, edad_maxima, ratio_sexo, sexo_ref, vinculacion_universidad, f_min_categoria_profesional, f_max_categoria_profesional, num_minimo_competitivos, num_minimo_no_competitivos, num_maximo_competitivos_activos, num_maximo_no_competitivos_activos) 
 VALUES
-  (1, null, null, 48, 50, 'sexo-ref', false, null, null, 10, 10, 15, 15, 'otros'),
-  (2, null, null, 48, 50, 'sexo-ref', false, null, null, 10, 10, 15, 15, 'otros');
+  (1, null, null, 48, 50, 'sexo-ref', false, null, null, 10, 10, 15, 15),
+  (2, null, null, 48, 50, 'sexo-ref', false, null, null, 10, 10, 15, 15);
+
+-- REQUISITO EQUIPO OTROS REQUISITOS
+INSERT INTO test.requisito_equipo_otros_requisitos
+  (requisitoequipo_id, lang, value_) 
+VALUES
+  (1, 'es', 'otros'),
+  (2, 'es', 'otros');

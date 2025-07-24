@@ -1,0 +1,20 @@
+:host {
+  .input-multilang {
+    display: flex;
+    gap: 5px;
+
+    mat-select {
+      width: 45px;
+    }
+
+    mat-select-trigger {
+      display: flex;
+      gap: 5px;
+      margin-bottom: -2px;
+    }
+
+    .mat-input-element {
+      flex: 1 1;
+    }
+  }
+}

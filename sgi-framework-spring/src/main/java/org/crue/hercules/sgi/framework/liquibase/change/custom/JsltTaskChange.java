@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Set;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -192,18 +191,11 @@ public class JsltTaskChange implements CustomTaskChange {
   private Expression getJsltExpression() throws CustomChangeException {
     if (jsltExpression == null) {
       try {
-        Set<InputStream> streams = resourceAccessor.getResourcesAsStream(jsltFile);
-
-        if (streams.size() != 1) {
-          throw new CustomChangeException("One JSLT file must be provided");
-        }
-
-        for (InputStream stream : streams) {
-          if (Boolean.TRUE.equals(includeEmpty)) {
-            this.jsltExpression = new Parser(new InputStreamReader(stream)).withObjectFilter("true").compile();
-          } else {
-            this.jsltExpression = new Parser(new InputStreamReader(stream)).compile();
-          }
+        InputStream stream = resourceAccessor.openStream(null, jsltFile);
+        if (Boolean.TRUE.equals(includeEmpty)) {
+          this.jsltExpression = new Parser(new InputStreamReader(stream)).withObjectFilter("true").compile();
+        } else {
+          this.jsltExpression = new Parser(new InputStreamReader(stream)).compile();
         }
       } catch (Exception e) {
         throw new CustomChangeException(e);

@@ -1,9 +1,18 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoSeguimientoDocumentoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoDocumento;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoDocumentoComentario;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoDocumentoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -66,10 +75,12 @@ class ProyectoPeriodoSeguimientoDocumentoControllerTest extends BaseControllerTe
         .andExpect(MockMvcResultMatchers.jsonPath("tipoDocumento.id")
             .value(proyectoPeriodoSeguimientoDocumento.getTipoDocumento().getId()))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("comentario").value(proyectoPeriodoSeguimientoDocumento.getComentario()))
+            MockMvcResultMatchers.jsonPath("comentario[0].value").value(
+                I18nHelper.getValueForLanguage(proyectoPeriodoSeguimientoDocumento.getComentario(), Language.ES)))
         .andExpect(
             MockMvcResultMatchers.jsonPath("documentoRef").value(proyectoPeriodoSeguimientoDocumento.getDocumentoRef()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(proyectoPeriodoSeguimientoDocumento.getNombre()));
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(proyectoPeriodoSeguimientoDocumento.getNombre(), Language.ES)));
   }
 
   @Test
@@ -125,12 +136,14 @@ class ProyectoPeriodoSeguimientoDocumentoControllerTest extends BaseControllerTe
             .value(updatedProyectoPeriodoSeguimientoDocumento.getProyectoPeriodoSeguimientoId()))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoDocumento.id")
             .value(updatedProyectoPeriodoSeguimientoDocumento.getTipoDocumento().getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("comentario")
-            .value(updatedProyectoPeriodoSeguimientoDocumento.getComentario()))
+        .andExpect(MockMvcResultMatchers.jsonPath("comentario[0].value")
+            .value(I18nHelper.getValueForLanguage(updatedProyectoPeriodoSeguimientoDocumento.getComentario(),
+                Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("documentoRef")
             .value(updatedProyectoPeriodoSeguimientoDocumento.getDocumentoRef()))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("nombre").value(updatedProyectoPeriodoSeguimientoDocumento.getNombre()));
+            MockMvcResultMatchers.jsonPath("nombre[0].value").value(
+                I18nHelper.getValueForLanguage(updatedProyectoPeriodoSeguimientoDocumento.getNombre(), Language.ES)));
   }
 
   @Test
@@ -243,19 +256,32 @@ class ProyectoPeriodoSeguimientoDocumentoControllerTest extends BaseControllerTe
    * @return el objeto ProyectoPeriodoSeguimientoDocumento
    */
   private ProyectoPeriodoSeguimientoDocumento generarMockProyectoPeriodoSeguimientoDocumento(Long id) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, "TipoDocumento" + (id != null ? id : 1)));
+
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "descripcion-" + (id != null ? id : 1)));
 
     TipoDocumento tipoDocumento = new TipoDocumento();
     tipoDocumento.setId((id != null ? id : 1));
-    tipoDocumento.setNombre("TipoDocumento" + (id != null ? id : 1));
-    tipoDocumento.setDescripcion("descripcion-" + (id != null ? id : 1));
+    tipoDocumento.setNombre(nombreTipoDocumento);
+    tipoDocumento.setDescripcion(descripcionTipoDocumento);
     tipoDocumento.setActivo(Boolean.TRUE);
+
+    Set<ProyectoPeriodoSeguimientoDocumentoNombre> nombreDocumento = new HashSet<>();
+    nombreDocumento.add(new ProyectoPeriodoSeguimientoDocumentoNombre(Language.ES,
+        "Nombre-" + String.format("%03d", (id != null ? id : 1))));
+
+    Set<ProyectoPeriodoSeguimientoDocumentoComentario> comentarioDocumento = new HashSet<>();
+    comentarioDocumento.add(new ProyectoPeriodoSeguimientoDocumentoComentario(Language.ES,
+        "comentario-" + String.format("%03d", (id != null ? id : 1))));
 
     ProyectoPeriodoSeguimientoDocumento proyectoPeriodoSeguimientoDocumento = new ProyectoPeriodoSeguimientoDocumento();
     proyectoPeriodoSeguimientoDocumento.setId(id);
     proyectoPeriodoSeguimientoDocumento.setProyectoPeriodoSeguimientoId(id == null ? 1 : id);
-    proyectoPeriodoSeguimientoDocumento.setNombre("Nombre-" + String.format("%03d", (id != null ? id : 1)));
+    proyectoPeriodoSeguimientoDocumento.setNombre(nombreDocumento);
     proyectoPeriodoSeguimientoDocumento.setDocumentoRef("Doc-" + String.format("%03d", (id != null ? id : 1)));
-    proyectoPeriodoSeguimientoDocumento.setComentario("comentario-" + String.format("%03d", (id != null ? id : 1)));
+    proyectoPeriodoSeguimientoDocumento.setComentario(comentarioDocumento);
     proyectoPeriodoSeguimientoDocumento.setTipoDocumento(tipoDocumento);
     proyectoPeriodoSeguimientoDocumento.setVisible(Boolean.TRUE);
 

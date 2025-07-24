@@ -62,9 +62,9 @@
           <mat-label>
             {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.incidencia'
             | translate}}</mat-label>
-          <textarea matInput formControlName="incidencia" id="incidencia"
+          <sgi-i18n-textarea formControlName="incidencia"
             placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.incidencia' | translate}}">
-          </textarea>
+          </sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.incidencia.errors?.maxlength">
             {{'error.maxlength.entity' | translate:msgParamIncidenciaEntity}}
           </mat-error>
@@ -99,9 +99,9 @@
           <mat-label>
             {{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.alegacion'
             | translate}}</mat-label>
-          <textarea matInput formControlName="alegacion" id="alegacion"
+          <sgi-i18n-textarea formControlName="alegacion"
             placeholder="{{'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos.gasto-requerimiento.datos-sgi.datos-requerimiento.alegacion' | translate}}">
-                  </textarea>
+          </sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.alegacion.errors?.maxlength">
             {{'error.maxlength.entity' | translate:msgParamAlegacionEntity}}
           </mat-error>

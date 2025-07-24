@@ -9,6 +9,7 @@ import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Rol } from '../seguimiento-formulario.action.service';
+import { DICTAMEN_MAP } from '@core/models/eti/dictamen';
 
 @Component({
   selector: 'sgi-seguimiento-listado-anterior-memoria',
@@ -22,6 +23,10 @@ export class SeguimientoListadoAnteriorMemoriaComponent extends AbstractTableWit
 
   @Input()
   rol: Rol;
+
+  get DICTAMEN_MAP() {
+    return DICTAMEN_MAP;
+  }
 
   constructor(
     private readonly memoriaService: MemoriaService,

@@ -40,6 +40,8 @@ export class SelectBooleanComponent extends SelectCommonComponent<boolean> {
 
     // Set options
     this.options = [true, false];
+
+    this.subscriptions.push(this.translateService.onLangChange.subscribe(() => this.refreshDisplayValue()));
   }
 
 }

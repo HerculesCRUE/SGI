@@ -42,7 +42,7 @@
           {{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{element.descripcion}}
+          <sgi-i18n-table-field [field]="element.descripcion"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

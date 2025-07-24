@@ -3,20 +3,24 @@ package org.crue.hercules.sgi.eti.service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.dto.ActaWithNumEvaluaciones;
 import org.crue.hercules.sgi.eti.dto.DocumentoOutput;
+import org.crue.hercules.sgi.eti.dto.TipoConvocatoriaOutput;
 import org.crue.hercules.sgi.eti.exceptions.ActaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Acta;
+import org.crue.hercules.sgi.eti.model.ActaResumen;
 import org.crue.hercules.sgi.eti.model.Comite;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.EstadoActa;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoActa;
+import org.crue.hercules.sgi.eti.repository.ActaDocumentoRepository;
 import org.crue.hercules.sgi.eti.repository.ActaRepository;
 import org.crue.hercules.sgi.eti.repository.ComentarioRepository;
 import org.crue.hercules.sgi.eti.repository.EstadoActaRepository;
@@ -29,6 +33,9 @@ import org.crue.hercules.sgi.eti.service.impl.ActaServiceImpl;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiBlockchainService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiCnfService;
 import org.crue.hercules.sgi.eti.service.sgi.SgiApiRepService;
+import org.crue.hercules.sgi.framework.i18n.I18nConfig;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -37,6 +44,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -66,9 +75,9 @@ public class ActaServiceTest extends BaseServiceTest {
   private RetrospectivaRepository retrospectivaRepository;
   @Mock
   private RetrospectivaService retrospectivaService;
-  @Mock
+  @Mock(lenient = true)
   private SgiApiRepService reportService;
-  @Mock
+  @Mock(lenient = true)
   private SgdocService sgdocService;
   @Mock
   private ComunicadosService comunicadosService;
@@ -82,6 +91,13 @@ public class ActaServiceTest extends BaseServiceTest {
   private ComentarioRepository comentarioRepository;
   @Mock
   private ComentarioService comentarioService;
+  @Mock
+  private ActaDocumentoRepository actaDocumentoRepository;
+
+  @Autowired
+  private MessageSource messageSource;
+  @Autowired
+  private I18nConfig i18nConfig;
 
   private ActaService actaService;
   private MemoriaService memoriaService;
@@ -91,7 +107,7 @@ public class ActaServiceTest extends BaseServiceTest {
     actaService = new ActaServiceImpl(actaRepository, estadoActaRepository, tipoEstadoActaRepository,
         evaluacionRepository, retrospectivaRepository, memoriaService, retrospectivaService, reportService,
         sgdocService, comunicadosService, configService, blockchainService, asistentesService, comentarioRepository,
-        comentarioService);
+        comentarioService, actaDocumentoRepository, messageSource, i18nConfig);
   }
 
   @Test
@@ -106,7 +122,8 @@ public class ActaServiceTest extends BaseServiceTest {
     Assertions.assertThat(acta.getMinutoInicio()).as("minutoInicio").isEqualTo(15);
     Assertions.assertThat(acta.getHoraFin()).as("horaFin").isEqualTo(12);
     Assertions.assertThat(acta.getMinutoFin()).as("minutoFin").isEqualTo(0);
-    Assertions.assertThat(acta.getResumen()).as("resumen").isEqualTo("Resumen123");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(acta.getResumen(), Language.ES)).as("resumen")
+        .isEqualTo("Resumen123");
     Assertions.assertThat(acta.getNumero()).as("numero").isEqualTo(123);
     Assertions.assertThat(acta.getEstadoActual().getId()).as("estadoActual.id").isEqualTo(1);
     Assertions.assertThat(acta.getInactiva()).as("inactiva").isEqualTo(true);
@@ -143,7 +160,8 @@ public class ActaServiceTest extends BaseServiceTest {
     Assertions.assertThat(actaCreado.getMinutoInicio()).as("minutoInicio").isEqualTo(15);
     Assertions.assertThat(actaCreado.getHoraFin()).as("horaFin").isEqualTo(12);
     Assertions.assertThat(actaCreado.getMinutoFin()).as("minutoFin").isEqualTo(0);
-    Assertions.assertThat(actaCreado.getResumen()).as("resumen").isEqualTo("Resumen123");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(actaCreado.getResumen(), Language.ES)).as("resumen")
+        .isEqualTo("Resumen123");
     Assertions.assertThat(actaCreado.getNumero()).as("numero").isEqualTo(123);
     Assertions.assertThat(actaCreado.getEstadoActual().getId()).as("estadoActual.id").isEqualTo(1);
     Assertions.assertThat(actaCreado.getInactiva()).as("inactiva").isEqualTo(true);
@@ -164,7 +182,8 @@ public class ActaServiceTest extends BaseServiceTest {
 
     // given: Un nuevo acta con el resumen actualizado
     Acta actaResumenActualizado = generarMockActa(1L, 123);
-    actaResumenActualizado.setResumen("Resumen actualizado");
+    I18nHelper.getFieldValueForLanguage(actaResumenActualizado.getResumen(), Language.ES)
+        .ifPresent(resumen -> resumen.setValue("Resumen actualizado"));
 
     Acta acta = generarMockActa(1L, 123);
 
@@ -176,7 +195,8 @@ public class ActaServiceTest extends BaseServiceTest {
 
     // then: El acta se actualiza correctamente.
     Assertions.assertThat(actaActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(actaActualizado.getResumen()).isEqualTo("Resumen actualizado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(actaActualizado.getResumen(), Language.ES))
+        .isEqualTo("Resumen actualizado");
 
   }
 
@@ -321,17 +341,17 @@ public class ActaServiceTest extends BaseServiceTest {
 
     BDDMockito.given(actaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(acta));
 
-    BDDMockito.given(reportService.getInformeActa(ArgumentMatchers.anyLong()))
+    BDDMockito.given(reportService.getInformeActa(ArgumentMatchers.anyLong(), ArgumentMatchers.<Language>any()))
         .willReturn(new FileSystemResource("path"));
-
-    BDDMockito.given(sgdocService
-        .uploadInforme(ArgumentMatchers.anyString(), ArgumentMatchers.<FileSystemResource>any()))
-        .willReturn(new DocumentoOutput());
 
     BDDMockito
         .given(evaluacionRepository.findByActivoTrueAndTipoEvaluacionIdAndEsRevMinimaAndConvocatoriaReunionId(
             ArgumentMatchers.anyLong(), ArgumentMatchers.anyBoolean(), ArgumentMatchers.anyLong()))
         .willReturn(Collections.emptyList());
+
+    BDDMockito.given(sgdocService
+        .uploadInforme(ArgumentMatchers.anyString(), ArgumentMatchers.<FileSystemResource>any()))
+        .willReturn(new DocumentoOutput());
 
     TipoEstadoActa tipoEstadoActa = new TipoEstadoActa(9L, "Finalizada", Boolean.TRUE);
 
@@ -357,11 +377,10 @@ public class ActaServiceTest extends BaseServiceTest {
    * @param numero numero del acta
    * @return el objeto Acta
    */
-  public Acta generarMockActa(Long id, Integer numero) {
+  private Acta generarMockActa(Long id, Integer numero) {
     Comite comite = new Comite();
     comite.setId(1L);
-    comite.setComite("CEEA");
-    comite.setGenero(Genero.M);
+    comite.setCodigo("CEEA");
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
     ConvocatoriaReunion convocatoriaReunion = new ConvocatoriaReunion();
@@ -375,6 +394,8 @@ public class ActaServiceTest extends BaseServiceTest {
     tipoEstadoActa.setNombre("En elaboración");
     tipoEstadoActa.setActivo(Boolean.TRUE);
 
+    Set<ActaResumen> resumen = new HashSet<>();
+    resumen.add(new ActaResumen(Language.ES, "Resumen" + numero));
     Acta acta = new Acta();
     acta.setId(id);
     acta.setConvocatoriaReunion(convocatoriaReunion);
@@ -382,7 +403,7 @@ public class ActaServiceTest extends BaseServiceTest {
     acta.setMinutoInicio(15);
     acta.setHoraFin(12);
     acta.setMinutoFin(0);
-    acta.setResumen("Resumen" + numero);
+    acta.setResumen(resumen);
     acta.setNumero(numero);
     acta.setEstadoActual(tipoEstadoActa);
     acta.setInactiva(true);
@@ -398,20 +419,30 @@ public class ActaServiceTest extends BaseServiceTest {
    * @param numero numero del acta
    * @return el objeto Acta
    */
-  public ActaWithNumEvaluaciones generarMockActaWithNumEvaluaciones(Long id, Integer numero) {
+  private ActaWithNumEvaluaciones generarMockActaWithNumEvaluaciones(Long id, Integer numero) {
     Acta acta = generarMockActa(id, numero);
+    TipoConvocatoriaOutput tipoConvocatoria = generarMockTipoConvocatoriaOutput(
+        acta.getConvocatoriaReunion().getTipoConvocatoriaReunion());
 
     ActaWithNumEvaluaciones returnValue = new ActaWithNumEvaluaciones();
     returnValue.setId(acta.getId());
-    returnValue.setComite(acta.getConvocatoriaReunion().getComite().getComite());
+    returnValue.setComite(acta.getConvocatoriaReunion().getComite().getCodigo());
     returnValue.setFechaEvaluacion(acta.getConvocatoriaReunion().getFechaEvaluacion());
     returnValue.setNumeroActa(acta.getNumero());
-    returnValue.setConvocatoria(acta.getConvocatoriaReunion().getTipoConvocatoriaReunion().getNombre());
+    returnValue.setTipoConvocatoria(tipoConvocatoria);
     returnValue.setNumEvaluaciones(1);
     returnValue.setNumRevisiones(2);
     returnValue.setNumTotal(returnValue.getNumEvaluaciones() + returnValue.getNumRevisiones());
     returnValue.setEstadoActa(acta.getEstadoActual());
     return returnValue;
+  }
+
+  private TipoConvocatoriaOutput generarMockTipoConvocatoriaOutput(TipoConvocatoriaReunion tipoConvocatoria) {
+    TipoConvocatoriaOutput tipoConvocatoriaOutput = new TipoConvocatoriaOutput();
+    tipoConvocatoriaOutput.setId(tipoConvocatoria.getId());
+    tipoConvocatoriaOutput.setNombre(tipoConvocatoria.getNombre());
+    tipoConvocatoriaOutput.setActivo(tipoConvocatoria.getActivo());
+    return tipoConvocatoriaOutput;
   }
 
 }

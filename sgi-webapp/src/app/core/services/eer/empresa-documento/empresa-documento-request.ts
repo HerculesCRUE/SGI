@@ -1,7 +1,9 @@
+import { I18nFieldValueRequest } from "@core/i18n/i18n-field-request";
+
 export interface IEmpresaDocumentoRequest {
-  nombre: string;
+  nombre: I18nFieldValueRequest[];
   documentoRef: string;
-  comentarios: string;
+  comentarios: I18nFieldValueRequest[];
   empresaId: number;
   tipoDocumentoId: number;
 }

@@ -14,10 +14,11 @@
       </mat-form-field>
 
 
-      <mat-form-field fxFlex="74%" *ngIf="formGroup.controls.comentario.value">
+      <mat-form-field fxFlex="74%" *ngIf="formGroup.controls.comentario.value.length > 0">
         <mat-label>{{'csp.proyecto.estado.comentario' | translate}}</mat-label>
-        <textarea matInput formControlName="comentario" id="comentario"
-          placeholder="{{'csp.proyecto.estado.comentario' | translate}}"></textarea>
+        <sgi-i18n-textarea formControlName="comentario" placeholder="{{'csp.proyecto.estado.comentario' | translate}}"
+          [useAutosize]="true" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="3">
+        </sgi-i18n-textarea>
       </mat-form-field>
     </div>
 
@@ -58,8 +59,8 @@
       <!-- Titulo -->
       <mat-form-field fxFlex="33%">
         <mat-label>{{'csp.proyecto.titulo' | translate}}</mat-label>
-        <input type="text" placeholder="{{'csp.proyecto.titulo' | translate}}" matInput formControlName="titulo"
-          required>
+        <sgi-i18n-input placeholder="{{'csp.proyecto.titulo' | translate}}" formControlName="titulo" required>
+        </sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
           {{'error.required.entity' | translate:msgParamTituloEntity}}
         </mat-error>
@@ -209,8 +210,17 @@
     </div>
 
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
+      <!-- Año -->
+      <mat-form-field fxFlex="8%">
+        <mat-label>{{'csp.proyecto.anio'| translate}}</mat-label>
+        <input matInput formControlName="anio" type="number" placeholder="{{'csp.proyecto.anio' | translate}}">
+        <mat-error *ngIf="formGroup.controls.anio.errors?.invalidAnio">
+          {{ 'error.anio.invalid' | translate }}
+        </mat-error>
+      </mat-form-field>
+
       <!-- Fecha inicio -->
-      <mat-form-field color="primary" fxFlex="33%">
+      <mat-form-field color="primary" fxFlex="24.5%">
         <mat-label>{{'csp.proyecto.fecha-inicio'| translate}}</mat-label>
         <input matInput [matDatepicker]="pickerFechaInicio" formControlName="fechaInicio"
           [required]="formPart.abiertoRequired">
@@ -419,8 +429,11 @@
       <!-- Observaciones -->
       <mat-form-field fxFill fxFlex="100%">
         <mat-label>{{'csp.proyecto.observaciones' | translate}}</mat-label>
-        <textarea matInput formControlName="observaciones" id="observaciones"
-          placeholder="{{'csp.proyecto.observaciones' | translate}}"></textarea>
+        <sgi-i18n-textarea formControlName="observaciones" placeholder="{{'csp.proyecto.observaciones' | translate}}">
+        </sgi-i18n-textarea>
+        <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
+        </mat-error>
       </mat-form-field>
     </div>
 

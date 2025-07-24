@@ -8,7 +8,7 @@ import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equip
 import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
-import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
+import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo/convocatoria-requisito-equipo.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
@@ -55,7 +55,7 @@ const REQUISITO_EQUIPO_NUM_MAXIMO_COMPETITIVO_FIELD = 'numMaximoCompetitivoEq';
 const REQUISITO_EQUIPO_NUM_MAXIMO_NO_COMPETITIVO_FIELD = 'numMaximoNoCompetitivoEq';
 
 @Injectable()
-export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTableExportFillService<IConvocatoriaReportData, IConvocatoriaReportOptions>{
+export class ConvocatoriaRequisitoEquipoListadoExportService extends AbstractTableExportFillService<IConvocatoriaReportData, IConvocatoriaReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,

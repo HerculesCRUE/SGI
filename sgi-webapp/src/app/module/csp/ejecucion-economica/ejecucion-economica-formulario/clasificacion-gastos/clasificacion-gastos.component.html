@@ -71,7 +71,7 @@
             {{'sge.dato-economico.proyecto' | translate}}
           </mat-header-cell>
           <mat-cell mat-cell *matCellDef="let element">
-            {{element.proyecto?.titulo }}
+            <sgi-i18n-table-field [field]="element.proyecto?.titulo"></sgi-i18n-table-field>
           </mat-cell>
         </ng-container>
 
@@ -81,7 +81,7 @@
             {{'sge.dato-economico.concepto-gasto' | translate}}
           </mat-header-cell>
           <mat-cell mat-cell *matCellDef="let element">
-            {{ element.conceptoGasto?.nombre }}
+            <sgi-i18n-table-field [field]="element.conceptoGasto?.nombre"></sgi-i18n-table-field>
           </mat-cell>
         </ng-container>
 
@@ -126,19 +126,20 @@
         </ng-container>
 
         <!-- Columnas dinamicas -->
-        <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+        <ng-container *ngFor="let column of formPart.columns$ | async; trackBy: formPart.trackByColumnId"
+          [matColumnDef]="column.id">
           <mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
             {{column.name}}
           </mat-header-cell>
           <mat-cell *matCellDef="let element" [class.computed]="column.compute">
             <ng-container *ngIf="column.compute">
-              {{element?.columnas[element.tipo === TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS ?
-              column.idFacturasGastos : (element.tipo === TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS ?
+              {{element?.columnas[element.tipoOperacion === TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS ?
+              column.idFacturasGastos : (element.tipoOperacion === TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS ?
               column.idViajesDietas : column.idPersonalContratado)] | number: '1.2-2'}}
             </ng-container>
             <ng-container *ngIf="!column.compute">
-              {{element?.columnas[element.tipo === TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS ?
-              column.idFacturasGastos : (element.tipo === TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS ?
+              {{element?.columnas[element.tipoOperacion === TipoOperacion.FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS ?
+              column.idFacturasGastos : (element.tipoOperacion === TipoOperacion.FACTURAS_JUSTIFICANTES_VIAJES_DIETAS ?
               column.idViajesDietas : column.idPersonalContratado)]}}
             </ng-container>
           </mat-cell>

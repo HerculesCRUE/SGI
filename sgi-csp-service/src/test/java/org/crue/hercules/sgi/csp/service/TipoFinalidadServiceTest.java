@@ -1,40 +1,46 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoFinalidadNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.repository.TipoFinalidadRepository;
 import org.crue.hercules.sgi.csp.service.impl.TipoFinalidadServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
+@Import({ TipoFinalidadServiceImpl.class })
 class TipoFinalidadServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private TipoFinalidadRepository repository;
 
+  // This bean must be created by Spring so validations can be applied
+  @Autowired
   private TipoFinalidadService service;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    service = new TipoFinalidadServiceImpl(repository);
-  }
 
   @Test
   void create_ReturnsTipoFinalidad() {
@@ -72,7 +78,7 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
         // when: create TipoFinalidad
         () -> service.create(data))
         // then: throw exception as id can't be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Id tiene que ser null para crear TipoFinalidad");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Identificador de Tipo Finalidad debe ser nulo");
   }
 
   @Test
@@ -84,15 +90,18 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
     BeanUtils.copyProperties(givenData, newData);
     newData.setId(null);
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(ArgumentMatchers.anyString()))
+    BDDMockito
+        .given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(givenData));
 
     Assertions.assertThatThrownBy(
         // when: create TipoFinalidad
         () -> service.create(newData))
         // then: throw exception as Nombre already exists
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoFinalidad activo con el nombre '%s'", newData.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Nombre: Ya existe un tipo de finalidad con el nombre '%s'",
+            I18nHelper.getValueForLanguage(newData.getNombre(), Language.ES));
   }
 
   @Test
@@ -105,8 +114,11 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
     BDDMockito.given(repository.save(ArgumentMatchers.<TipoFinalidad>any())).willAnswer(new Answer<TipoFinalidad>() {
       @Override
       public TipoFinalidad answer(InvocationOnMock invocation) throws Throwable {
+        Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+        nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "Nombre-Modificado"));
+
         TipoFinalidad givenData = invocation.getArgument(0, TipoFinalidad.class);
-        givenData.setNombre("Nombre-Modificado");
+        givenData.setNombre(nombreTipoFinalidad);
         return givenData;
       }
     });
@@ -118,7 +130,8 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
     Assertions.assertThat(updated).isNotNull();
     Assertions.assertThat(updated.getId()).isNotNull();
     Assertions.assertThat(updated.getId()).isEqualTo(data.getId());
-    Assertions.assertThat(updated.getNombre()).isEqualTo("Nombre-Modificado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getNombre(), Language.ES))
+        .isEqualTo("Nombre-Modificado");
     Assertions.assertThat(updated.getDescripcion()).isEqualTo(data.getDescripcion());
     Assertions.assertThat(updated.getActivo()).isEqualTo(data.getActivo());
   }
@@ -146,7 +159,7 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
         // when: update TipoFinalidad
         () -> service.update(data))
         // then: throw exception as id must be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Id no puede ser null para actualizar TipoFinalidad");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Identificador de Tipo Finalidad no puede ser nulo");
   }
 
   @Test
@@ -157,15 +170,18 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
     BeanUtils.copyProperties(givenData, data);
     data.setId(2L);
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(ArgumentMatchers.anyString()))
+    BDDMockito
+        .given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(givenData));
 
     Assertions.assertThatThrownBy(
         // when: update TipoFinalidad
         () -> service.update(data))
         // then: throw exception as Nombre already exists
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoFinalidad activo con el nombre '%s'", data.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un tipo de finalidad con el nombre '%s'",
+            I18nHelper.getValueForLanguage(data.getNombre(), Language.ES));
   }
 
   @Test
@@ -213,14 +229,17 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
     TipoFinalidad tipoFinalidad = generarMockTipoFinalidad(1L, Boolean.FALSE);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(tipoFinalidad));
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(ArgumentMatchers.<String>any()))
+    BDDMockito
+        .given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(tipoFinalidadExistente));
 
     // when: activamos el TipoFinalidad
-    // then: Lanza una excepcion porque el TipoFinalidad no existe
+    // then: Lanza una excepcion porque el nombre del TipoFinalidad ya existe
     Assertions.assertThatThrownBy(() -> service.enable(tipoFinalidad.getId()))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoFinalidad activo con el nombre '%s'", tipoFinalidad.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un tipo de finalidad con el nombre '%s'",
+            I18nHelper.getValueForLanguage(tipoFinalidad.getNombre(), Language.ES));
 
   }
 
@@ -303,7 +322,7 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
 
     BDDMockito
         .given(
-            repository.findAll(ArgumentMatchers.<Specification<TipoFinalidad>>any(), ArgumentMatchers.<Sort>any()))
+            repository.findAll(ArgumentMatchers.<Specification<TipoFinalidad>>any()))
         .willReturn(data);
     // when: Get page=3 with pagesize=10
     List<TipoFinalidad> listado = service.findAll(null);
@@ -311,7 +330,7 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
     Assertions.assertThat(listado.size()).isEqualTo(100);
     for (int i = 1; i < 10; i++) {
       TipoFinalidad item = listado.get(i - 1);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + i);
     }
   }
 
@@ -353,19 +372,28 @@ class TipoFinalidadServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFinalidad item = page.getContent().get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + j);
     }
   }
 
   /**
    * Función que devuelve un objeto TipoFinalidad
    * 
-   * @param id
-   * @param activo
+   * @param id     id del TipoFinalidad
+   * @param activo flag activo
    * @return TipoFinalidad
    */
   private TipoFinalidad generarMockTipoFinalidad(Long id, Boolean activo) {
-    return TipoFinalidad.builder().id(id).nombre("nombre-" + id).descripcion("descripcion-" + id).activo(activo)
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoFinalidadDescripcion> descripcionTipoFinalidad = new HashSet<>();
+    descripcionTipoFinalidad.add(new TipoFinalidadDescripcion(Language.ES, "descripcion-" + id));
+
+    return TipoFinalidad.builder().id(id)
+        .nombre(nombreTipoFinalidad)
+        .descripcion(descripcionTipoFinalidad)
+        .activo(activo)
         .build();
   }
 

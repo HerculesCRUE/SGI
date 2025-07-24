@@ -18,6 +18,7 @@ import { getPersonaEmailListConcatenated } from 'src/app/esb/sgp/shared/pipes/pe
 import { MiembroEquipoProyectoModalComponent, MiembroEquipoProyectoModalData } from '../../../shared/miembro-equipo-proyecto-modal/miembro-equipo-proyecto-modal.component';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { IProyectoEquipoListado, ProyectoEquipoFragment } from './proyecto-equipo.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const PROYECTO_EQUIPO_MIEMBRO_KEY = marker('csp.proyecto-equipo.miembro');
@@ -67,15 +68,16 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
     public actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.EQUIPO_PROYECTO, actionService);
+    super(actionService.FRAGMENT.EQUIPO_PROYECTO, actionService, translate);
     this.formPart = this.fragment as ProyectoEquipoFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IProyectoEquipoListado>, property: string) => {
@@ -87,7 +89,7 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
           case 'apellidos':
             return wrapper.value.proyectoEquipo.persona.apellidos;
           case 'rolEquipo':
-            return wrapper.value.proyectoEquipo.rolProyecto.nombre;
+            return this.languageService.getFieldValue(wrapper.value.proyectoEquipo.rolProyecto.nombre);
           case 'fechaInicio':
             return wrapper.value.proyectoEquipo.fechaInicio;
           case 'fechaFin':
@@ -102,7 +104,7 @@ export class ProyectoEquipoComponent extends FragmentComponent implements OnInit
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_EQUIPO_MIEMBRO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

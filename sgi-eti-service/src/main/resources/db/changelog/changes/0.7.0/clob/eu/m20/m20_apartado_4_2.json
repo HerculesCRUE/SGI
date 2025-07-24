@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "4.2 Fintzea"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Animaliei egingo zaien kaltearen laztasuna txikiagotzea eta jasan dezaketen mina edo ondoeza arindu edo txikiagotzea ahalbidetzen duten sistemak erabiltzea, horixe da fintzea. Estrategia horien artean daude: laztasunaren sailkapena, pairamenaren kontrola, anestesia, analgesia eta antzeko neurri zuzentzaileen erabilera eta “eutanasia humanitario” programatua eta programatu gabea. </p>"
+      }
+    ]
+  }
+]

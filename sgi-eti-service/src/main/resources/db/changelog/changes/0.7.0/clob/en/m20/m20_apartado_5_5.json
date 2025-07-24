@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap5_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.5 Non-technical summary (NTS)"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Royal Decree 118/2021 of 23rd February 2021, modifying Royal Decree 53/2013 of 11th February 2013, stipulates that the person responsible for the project involving animals must draw up an anonymous non-technical summary (NTS) of the project and its possible updates, to be submitted to the European Commission within a maximum of six months of its authorisation.</p><p>Wherever intellectual property and confidential information are protected, the project NTS will not contain any personal data, and will include at least information about the project aims, including the harm and benefits expected, as well as the number and type of animals to be used, demonstrating compliance with the requirement for replacement, reduction and refinement.</p><p>The competent bodies may require the NTS to specify whether the project is to be subject to retrospective assessment, and if so to specify the period. The project NTS must be updated with the results of the retrospective assessment within six months of its completion. Once the project has been authorised, the competent body will publish the NTS on the website of the Ministry of Agriculture, Fisheries and Food. The NTS will also be published in the ALURES - Animal use reporting EU System database.</p><p>El RNT debe adjuntarse en el apartado de Documentación. Consulte con la Secretaría Técnica del Comité de Ética para mayor detalle sobre el contenido o plantilla de este RNT.</p>"
+      },
+      {
+        "key": "resumenNoTecnico",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": "RESUMEN_RNT",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

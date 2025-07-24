@@ -14,10 +14,10 @@
         }
 
         .break-spaces {
-          width: 90%;
-          white-space: break-spaces;
+          padding-left: 2em;
           text-align: left;
-          height: auto;
+          text-indent: -2em;
+          white-space: break-spaces;
         }
       }
 

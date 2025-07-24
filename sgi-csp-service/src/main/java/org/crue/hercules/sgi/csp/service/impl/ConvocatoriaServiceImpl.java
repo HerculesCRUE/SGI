@@ -14,7 +14,9 @@ import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessConvocatori
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -23,6 +25,7 @@ import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
 import org.crue.hercules.sgi.csp.repository.AutorizacionRepository;
@@ -43,10 +46,13 @@ import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaSpecificat
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaClonerService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -65,6 +71,35 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ConvocatoriaServiceImpl implements ConvocatoriaService {
+  private static final String MSG_MODEL_CONVOCATORIA = "org.crue.hercules.sgi.csp.model.Convocatoria.message";
+  private static final String MSG_KEY_UNIDAD_GESTION_REF = "unidadGestionRef";
+  private static final String MSG_KEY_TITULO = "titulo";
+  private static final String MSG_KEY_TRAMITACION_SGI = "configuracionSolicitud.tramitacionSgi";
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_MODELO = "modelo";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_KEY_UNIDAD_GESTION = "unidadGestion";
+  private static final String MSG_FIELD_ACTION_ELIMINAR = "action.eliminar";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_FIELD_PRESENTACION_SGI = "presentacionSgi";
+  private static final String MSG_PROBLEM_UNIDAD_GESTION_NO_GESTIONABLE = "org.springframework.util.Assert.entity.unidadGestion.noGestionable.message";
+  private static final String MSG_MODEL_UNIDAD_GESTION = "org.crue.hercules.sgi.csp.model.UnidadGestion.message";
+  private static final String MSG_MODEL_MODELO_UNIDAD = "org.crue.hercules.sgi.csp.model.ModeloUnidad.message";
+  private static final String MSG_MODEL_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.model.ModeloEjecucion.message";
+  private static final String MSG_MODEL_MODELO_TIPO_FINALIDAD = "org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad.message";
+  private static final String MSG_MODEL_TIPO_FINALIDAD = "org.crue.hercules.sgi.csp.model.TipoFinalidad.message";
+  private static final String MSG_MODEL_TIPO_REGIMEN_CONCURRENCIA = "org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia.message";
+  private static final String MSG_MODEL_TIPO_AMBITO_GEOGRAFICO = "org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODELO_EJECUCION_INACTIVO = "org.springframework.util.Assert.entity.modeloEjecucion.inactivo.message";
+  private static final String MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.exceptions.AssignModeloEjecucion.message";
+  private static final String MSG_NO_DISPONIBLE_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.model.ModeloEjecucion.noDisponible.message";
+  private static final String MSG_NO_DISPONIBLE_UNIDAD_GESTION = "org.crue.hercules.sgi.csp.exceptions.ModeloEjecucion.noDisponible.unidadGestion.message";
+  private static final String MSG_ENTITY_EXISTS = "org.springframework.util.Assert.entity.exists.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA_PERMISOS = "org.springframework.util.Assert.accion.denegada.permisos.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA = "org.springframework.util.Assert.accion.denegada.message";
 
   private final ConvocatoriaRepository repository;
   private final ConvocatoriaPeriodoJustificacionRepository convocatoriaPeriodoJustificacionRepository;
@@ -125,7 +160,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   public Convocatoria create(Convocatoria convocatoria) {
     log.debug("create(Convocatoria convocatoria) - start");
 
-    Assert.isNull(convocatoria.getId(), "Id tiene que ser null para crear la Convocatoria");
+    AssertHelper.idIsNull(convocatoria.getId(), Convocatoria.class);
 
     authorityHelper.checkUserHasAuthorityCreateConvocatoria(convocatoria);
 
@@ -151,9 +186,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   public Convocatoria update(Convocatoria convocatoria) {
     log.debug("update(Convocatoria convocatoria) - start");
 
-    Assert.notNull(convocatoria.getId(), "Id no puede ser null para actualizar Convocatoria");
-    Assert.notNull(convocatoria.getFormularioSolicitud(),
-        "FormularioSolicitud no puede ser null para actualizar Convocatoria");
+    AssertHelper.idNotNull(convocatoria.getId(), Convocatoria.class);
+    AssertHelper.entityNotNull(convocatoria.getFormularioSolicitud(), Convocatoria.class, FormularioSolicitud.class);
 
     return repository.findById(convocatoria.getId()).map(data -> {
       authorityHelper.checkUserHasAuthorityModifyConvocatoria(data);
@@ -176,6 +210,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       data.setClasificacionCVN(validConvocatoria.getClasificacionCVN());
       data.setActivo(validConvocatoria.getActivo());
       data.setExcelencia(validConvocatoria.getExcelencia());
+      data.setCodigoInterno(validConvocatoria.getCodigoInterno());
+      data.setAnio(validConvocatoria.getAnio());
 
       Convocatoria returnValue = repository.save(validConvocatoria);
 
@@ -196,12 +232,12 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   public Convocatoria registrar(final Long id) {
     log.debug("registrar(Long id) - start");
 
-    Assert.notNull(id, "Id no puede ser null para registrar Convocatoria");
+    AssertHelper.idNotNull(id, Convocatoria.class);
 
     return repository.findById(id).map(data -> {
 
       Assert.isTrue(data.getEstado() == Convocatoria.Estado.BORRADOR,
-          "Convocatoria deber estar en estado 'Borrador' para pasar a 'Registrada'");
+          ApplicationContextSupport.getMessage("convocatoria.estado.borrador"));
 
       // Campos obligatorios en estado Registrada
       validarRequeridosConvocatoriaRegistrada(data);
@@ -225,7 +261,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   public Convocatoria enable(Long id) {
     log.debug("enable(Long id) - start");
 
-    Assert.notNull(id, "Convocatoria id no puede ser null para reactivar un Convocatoria");
+    AssertHelper.idNotNull(id, Convocatoria.class);
 
     return repository.findById(id).map(convocatoria -> {
       if (Boolean.TRUE.equals(convocatoria.getActivo())) {
@@ -249,7 +285,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   public Convocatoria disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "Convocatoria id no puede ser null para desactivar un Convocatoria");
+    AssertHelper.idNotNull(id, Convocatoria.class);
 
     return repository.findById(id).map(convocatoria -> {
       if (Boolean.FALSE.equals(convocatoria.getActivo())) {
@@ -258,10 +294,20 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
 
       // Comprobación de permisos para borrado lógico de convocatorias
       String authority = ConvocatoriaAuthorityHelper.CSP_CON_B;
+      Assert.isTrue(!repository.isRegistradaConSolicitudesOProyectos(id),
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA))
+              .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_ELIMINAR))
+              .build());
+
       Assert.isTrue(
-          (SgiSecurityContextHolder.hasAuthorityForUO(authority, convocatoria.getUnidadGestionRef()))
-              && !repository.isRegistradaConSolicitudesOProyectos(id),
-          "No se puede eliminar Convocatoria. No tiene los permisos necesarios o está registrada y cuenta con solicitudes o proyectos asociados");
+          (SgiSecurityContextHolder.hasAuthorityForUO(authority, convocatoria.getUnidadGestionRef())),
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_UNIDAD_GESTION_NO_GESTIONABLE)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_CONVOCATORIA))
+              .build());
 
       convocatoria.setActivo(Boolean.FALSE);
       Convocatoria returnValue = repository.save(convocatoria);
@@ -396,11 +442,11 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   @Override
   public Page<Convocatoria> findAllInvestigador(String query, Pageable paging) {
     log.debug("findAllInvestigador(String query, Pageable paging) - start");
-    Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct().and(ConvocatoriaSpecifications.activos()
+    Specification<Convocatoria> specs = ConvocatoriaSpecifications.activos()
         .and(ConvocatoriaSpecifications.registradas())
         .and(ConvocatoriaSpecifications.configuracionSolicitudTramitacionSGI())
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties))));
+            ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
     Page<Convocatoria> returnValue = repository.findAll(specs, paging);
     log.debug("findAllInvestigador(String query, Pageable paging) - end");
@@ -419,8 +465,7 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   @Override
   public Page<Convocatoria> findAllPublicas(String query, Pageable paging) {
     log.debug("findAllPublicas(String query, Pageable paging) - start");
-    Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct()
-        .and(ConvocatoriaSpecifications.publicas())
+    Specification<Convocatoria> specs = ConvocatoriaSpecifications.publicas()
         .and(SgiRSQLJPASupport.toSpecification(query,
             ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
@@ -441,10 +486,10 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   public Page<Convocatoria> findAllRestringidos(String query, Pageable paging) {
     log.debug("findAllRestringidos(String query, Pageable paging) - start");
 
-    Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct().and(ConvocatoriaSpecifications.activos()
+    Specification<Convocatoria> specs = ConvocatoriaSpecifications.activos()
         .and(ConvocatoriaSpecifications.registradas())
         .and(SgiRSQLJPASupport.toSpecification(query,
-            ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties))));
+            ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
 
     Page<Convocatoria> returnValue = repository.findAll(specs, paging);
 
@@ -465,9 +510,8 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
   public Page<Convocatoria> findAllTodosRestringidos(String query, Pageable paging) {
     log.debug("findAllTodosRestringidos(String query, Pageable paging) - start");
 
-    Specification<Convocatoria> specs = ConvocatoriaSpecifications.distinct()
-        .and(SgiRSQLJPASupport.toSpecification(query,
-            ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties)));
+    Specification<Convocatoria> specs = SgiRSQLJPASupport.toSpecification(query,
+        ConvocatoriaPredicateResolver.getInstance(programaRepository, sgiConfigProperties));
 
     List<String> unidadesGestion = authorityHelper.getUserUOsConvocatoria();
 
@@ -614,7 +658,14 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
         && !datosConvocatoria.getUnidadGestionRef().equals(datosOriginales.getUnidadGestionRef())) {
 
       Assert.isTrue(!this.tieneVinculaciones(datosConvocatoria.getId()),
-          "No se puede modificar la unidad de gestión al existir registros dependientes en las pantallas Enlaces, Plazos y fases, Hitos o Documentos");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_ACCION_DENEGADA)
+              .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_UNIDAD_GESTION))
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_CONVOCATORIA))
+              .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+              .build());
     }
 
     // Permitir actualizar ModeloEjecucion
@@ -630,35 +681,54 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
         && datosConvocatoria.getUnidadGestionRef().equals(datosOriginales.getUnidadGestionRef())) {
 
       Assert.isTrue(!this.tieneVinculaciones(datosConvocatoria.getId()),
-          "No se puede modificar el modelo de ejecución al existir registros dependientes en las pantallas Enlaces, Plazos y fases, Hitos o Documentos");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_ACCION_DENEGADA)
+              .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_UNIDAD_GESTION))
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_CONVOCATORIA))
+              .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+              .build());
     }
 
     // ModeloEjecucion
     if (datosConvocatoria.getModeloEjecucion() != null) {
 
-      Assert.notNull(datosConvocatoria.getUnidadGestionRef(),
-          "UnidadGestionRef requerido para obtener ModeloEjecucion");
+      AssertHelper.fieldNotNull(datosConvocatoria.getUnidadGestionRef(), Convocatoria.class,
+          MSG_KEY_UNIDAD_GESTION_REF);
 
       Optional<ModeloUnidad> modeloUnidad = modeloUnidadRepository.findByModeloEjecucionIdAndUnidadGestionRef(
           datosConvocatoria.getModeloEjecucion().getId(), datosConvocatoria.getUnidadGestionRef());
 
-      Assert.isTrue(modeloUnidad.isPresent(), "ModeloEjecucion '" + datosConvocatoria.getModeloEjecucion().getNombre()
-          + "' no disponible para la UnidadGestion " + datosConvocatoria.getUnidadGestionRef());
+      Assert.isTrue(modeloUnidad.isPresent(),
+          () -> ProblemMessage.builder()
+              .key(MSG_NO_DISPONIBLE_UNIDAD_GESTION)
+              .parameter(MSG_KEY_MODELO, datosConvocatoria.getModeloEjecucion().getNombre())
+              .parameter(MSG_KEY_UNIDAD_GESTION, datosConvocatoria.getUnidadGestionRef())
+              .build());
 
       // Permitir no activos solo si estamos modificando y es el mismo
       if (datosOriginales == null || (datosOriginales.getModeloEjecucion() != null
           && (!Objects.equals(modeloUnidad.get().getModeloEjecucion().getId(),
               datosOriginales.getModeloEjecucion().getId())))) {
         Assert.isTrue(modeloUnidad.get().getActivo(),
-            "ModeloEjecucion '" + modeloUnidad.get().getModeloEjecucion().getNombre()
-                + "' no está activo para la UnidadGestion " + modeloUnidad.get().getUnidadGestionRef());
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_UNIDAD))
+                .parameter(MSG_KEY_FIELD, modeloUnidad.get().getModeloEjecucion().getNombre())
+                .build());
+
       }
       // Permitir no activos solo si estamos modificando y es el mismo
       if (datosOriginales == null || (datosOriginales.getModeloEjecucion() != null
           && (!Objects.equals(modeloUnidad.get().getModeloEjecucion().getId(),
               datosOriginales.getModeloEjecucion().getId())))) {
         Assert.isTrue(modeloUnidad.get().getModeloEjecucion().getActivo(),
-            "ModeloEjecucion '" + modeloUnidad.get().getModeloEjecucion().getNombre() + "' no está activo");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_EJECUCION))
+                .parameter(MSG_KEY_FIELD, modeloUnidad.get().getModeloEjecucion().getNombre())
+                .build());
       }
       datosConvocatoria.setModeloEjecucion(modeloUnidad.get().getModeloEjecucion());
     }
@@ -666,23 +736,31 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     // TipoFinalidad
     if (datosConvocatoria.getFinalidad() != null) {
 
-      Assert.notNull(datosConvocatoria.getModeloEjecucion(), "ModeloEjecucion requerido para obtener TipoFinalidad");
+      AssertHelper.entityNotNull(datosConvocatoria.getModeloEjecucion(), Convocatoria.class, ModeloEjecucion.class);
 
       Optional<ModeloTipoFinalidad> modeloTipoFinalidad = modeloTipoFinalidadRepository
           .findByModeloEjecucionIdAndTipoFinalidadId(datosConvocatoria.getModeloEjecucion().getId(),
               datosConvocatoria.getFinalidad().getId());
 
-      Assert.isTrue(modeloTipoFinalidad.isPresent(), "TipoFinalidad '" + datosConvocatoria.getFinalidad().getNombre()
-          + "' no disponible para el ModeloEjecucion " + datosConvocatoria.getModeloEjecucion().getNombre());
+      Assert.isTrue(modeloTipoFinalidad.isPresent(),
+          () -> ProblemMessage.builder()
+              .key(MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FINALIDAD))
+              .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+              .parameter(MSG_KEY_MODELO, datosConvocatoria.getModeloEjecucion().getNombre())
+              .build());
 
       // Permitir no activos solo si estamos modificando y es el mismo
       if (datosOriginales == null || (datosOriginales.getFinalidad() != null
           && (!Objects.equals(modeloTipoFinalidad.get().getTipoFinalidad().getId(),
               datosOriginales.getFinalidad().getId())))) {
         Assert.isTrue(modeloTipoFinalidad.get().getActivo(),
-            "ModeloTipoFinalidad '" + modeloTipoFinalidad.get().getTipoFinalidad().getNombre()
-                + "' no está activo para el ModeloEjecucion "
-                + modeloTipoFinalidad.get().getModeloEjecucion().getNombre());
+            () -> ProblemMessage.builder()
+                .key(MSG_MODELO_EJECUCION_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_FINALIDAD))
+                .parameter(MSG_KEY_FIELD, modeloTipoFinalidad.get().getTipoFinalidad().getNombre())
+                .parameter(MSG_KEY_MODELO, modeloTipoFinalidad.get().getModeloEjecucion().getNombre())
+                .build());
       }
 
       // Permitir no activos solo si estamos modificando y es el mismo
@@ -690,7 +768,11 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
           && (!Objects.equals(modeloTipoFinalidad.get().getTipoFinalidad().getId(),
               datosOriginales.getFinalidad().getId())))) {
         Assert.isTrue(modeloTipoFinalidad.get().getTipoFinalidad().getActivo(),
-            "TipoFinalidad '" + modeloTipoFinalidad.get().getTipoFinalidad().getNombre() + "' no está activo");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FINALIDAD))
+                .parameter(MSG_KEY_FIELD, modeloTipoFinalidad.get().getTipoFinalidad().getNombre())
+                .build());
       }
       datosConvocatoria.setFinalidad(modeloTipoFinalidad.get().getTipoFinalidad());
     }
@@ -705,13 +787,21 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
             .findById(datosConvocatoria.getRegimenConcurrencia().getId());
 
         Assert.isTrue(tipoRegimenConcurrencia.isPresent(),
-            "RegimenConcurrencia '" + datosConvocatoria.getRegimenConcurrencia().getNombre() + "' no disponible");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_EXISTS)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_REGIMEN_CONCURRENCIA))
+                .parameter(MSG_KEY_FIELD, datosConvocatoria.getRegimenConcurrencia().getNombre())
+                .build());
 
         // Permitir no activos solo si estamos modificando y es el mismo
         if (datosOriginales == null || (datosOriginales.getRegimenConcurrencia() != null
             && (!tipoRegimenConcurrencia.get().getId().equals(datosOriginales.getRegimenConcurrencia().getId())))) {
           Assert.isTrue(tipoRegimenConcurrencia.get().getActivo(),
-              "RegimenConcurrencia '" + tipoRegimenConcurrencia.get().getNombre() + "' no está activo");
+              () -> ProblemMessage.builder()
+                  .key(MSG_ENTITY_INACTIVO)
+                  .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_REGIMEN_CONCURRENCIA))
+                  .parameter(MSG_KEY_FIELD, tipoRegimenConcurrencia.get().getNombre())
+                  .build());
         }
         datosConvocatoria.setRegimenConcurrencia(tipoRegimenConcurrencia.get());
       }
@@ -723,14 +813,17 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
       Optional<TipoAmbitoGeografico> tipoAmbitoGeografico = tipoAmbitoGeograficoRepository
           .findById(datosConvocatoria.getAmbitoGeografico().getId());
 
-      Assert.isTrue(tipoAmbitoGeografico.isPresent(),
-          "AmbitoGeografico '" + datosConvocatoria.getAmbitoGeografico().getNombre() + "' no disponible");
+      AssertHelper.fieldNotNull(tipoAmbitoGeografico.isPresent(), Convocatoria.class, MSG_MODEL_TIPO_AMBITO_GEOGRAFICO);
 
       // Permitir no activos solo si estamos modificando y es el mismo
       if (datosOriginales == null || (datosOriginales.getAmbitoGeografico() != null
           && (!Objects.equals(tipoAmbitoGeografico.get().getId(), datosOriginales.getAmbitoGeografico().getId())))) {
         Assert.isTrue(tipoAmbitoGeografico.get().getActivo(),
-            "AmbitoGeografico '" + tipoAmbitoGeografico.get().getNombre() + "' no está activo");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_AMBITO_GEOGRAFICO))
+                .parameter(MSG_KEY_FIELD, tipoAmbitoGeografico.get().getNombre())
+                .build());
       }
       datosConvocatoria.setAmbitoGeografico(tipoAmbitoGeografico.get());
     }
@@ -775,18 +868,18 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     log.debug("validarRequeridosConvocatoriaRegistrada(Convocatoria datosConvocatoria) - start");
 
     // ModeloUnidadGestion
-    Assert.notNull(datosConvocatoria.getUnidadGestionRef(), "UnidadGestionRef no puede ser null en la Convocatoria");
+    AssertHelper.fieldNotNull(datosConvocatoria.getUnidadGestionRef(), Convocatoria.class, MSG_KEY_UNIDAD_GESTION_REF);
     // ModeloEjecucion
-    Assert.notNull(datosConvocatoria.getModeloEjecucion(), "ModeloEjecucion no puede ser null en la Convocatoria");
+    AssertHelper.entityNotNull(datosConvocatoria.getModeloEjecucion(), Convocatoria.class, ModeloEjecucion.class);
     // Titulo
-    Assert.notNull(datosConvocatoria.getTitulo(), "Titulo no puede ser null en la Convocatoria");
+    AssertHelper.fieldNotNull(datosConvocatoria.getTitulo(), Convocatoria.class, MSG_KEY_TITULO);
     // TipoFinalidad
-    Assert.notNull(datosConvocatoria.getFinalidad(), "Finalidad no puede ser null en la Convocatoria");
+    AssertHelper.entityNotNull(datosConvocatoria.getFinalidad(), Convocatoria.class, TipoFinalidad.class);
     // TipoAmbitoGeografico
-    Assert.notNull(datosConvocatoria.getAmbitoGeografico(), "AmbitoGeografico no puede ser null en la Convocatoria");
+    AssertHelper.entityNotNull(datosConvocatoria.getAmbitoGeografico(), Convocatoria.class, TipoAmbitoGeografico.class);
     // FormularioSolicitud
-    Assert.notNull(datosConvocatoria.getFormularioSolicitud(),
-        "FormularioSolicitud no puede ser null en la Convocatoria");
+    AssertHelper.entityNotNull(datosConvocatoria.getFormularioSolicitud(), Convocatoria.class,
+        FormularioSolicitud.class);
 
     // ConfiguracionSolicitud
     validarRequeridosConfiguracionSolicitudConvocatoriaRegistrada(datosConvocatoria);
@@ -804,9 +897,9 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
     log.debug("validarRequeridosConvocatoriaBorrador(Convocatoria datosConvocatoria) - start");
 
     // ModeloUnidadGestion
-    Assert.notNull(datosConvocatoria.getUnidadGestionRef(), "UnidadGestionRef no puede ser null en la Convocatoria");
+    AssertHelper.fieldNotNull(datosConvocatoria.getUnidadGestionRef(), Convocatoria.class, MSG_KEY_UNIDAD_GESTION_REF);
     // Titulo
-    Assert.notNull(datosConvocatoria.getTitulo(), "Titulo no puede ser null en la Convocatoria");
+    AssertHelper.fieldNotNull(datosConvocatoria.getTitulo(), Convocatoria.class, MSG_KEY_TITULO);
 
     log.debug("validarRequeridosConvocatoriaBorrador(Convocatoria datosConvocatoria) - end");
   }
@@ -825,13 +918,13 @@ public class ConvocatoriaServiceImpl implements ConvocatoriaService {
         .orElseThrow(() -> new ConfiguracionSolicitudNotFoundException(datosConvocatoria.getId()));
 
     // Tramitacion SGI
-    Assert.notNull(datosConfiguracionSolicitud.getTramitacionSGI(),
-        "Habilitar presentacion SGI no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
+    AssertHelper.fieldNotNull(datosConfiguracionSolicitud.getTramitacionSGI(), ConfiguracionSolicitud.class,
+        MSG_KEY_TRAMITACION_SGI);
     // Convocatoria Fase
-    Assert.isTrue(
+    AssertHelper.fieldNotNull(
         !(datosConfiguracionSolicitud.getFasePresentacionSolicitudes() == null
             && datosConfiguracionSolicitud.getTramitacionSGI() == Boolean.TRUE),
-        "Plazo presentación solicitudes no puede ser null cuando se establece presentacion SGI");
+        ConvocatoriaFase.class, MSG_FIELD_PRESENTACION_SGI);
 
     log.debug("validarRequeridosConfiguracionSolicitudConvocatoriaRegistrada(Convocatoria datosConvocatoria) - end");
   }

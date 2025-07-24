@@ -1,10 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ActionComponent } from '@core/component/action.component';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
-import { TranslateService } from '@ngx-translate/core';
-import { ActionComponent } from '@core/component/action.component';
 import { NGXLogger } from 'ngx-logger';
 import { NOTIFICACION_CVN_ROUTE_NAMES } from '../notificacion-cvn-route-names';
 import { NotificacionCvnActionService } from '../notificacion-cvn.action.service';
@@ -26,11 +24,9 @@ export class NotificacionCvnEditarComponent extends ActionComponent implements O
     router: Router,
     route: ActivatedRoute,
     public actionService: NotificacionCvnActionService,
-    private matDialog: MatDialog,
-    dialogService: DialogService,
-    private readonly translate: TranslateService
+    dialogService: DialogService
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, null);
 
   }
 
@@ -41,4 +37,5 @@ export class NotificacionCvnEditarComponent extends ActionComponent implements O
   saveOrUpdate(action: 'save'): void {
   }
 
+  protected setupI18N(): void { }
 }

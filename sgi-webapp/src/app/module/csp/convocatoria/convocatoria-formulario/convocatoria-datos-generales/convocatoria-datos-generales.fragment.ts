@@ -17,9 +17,11 @@ import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service'
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { anioValidator } from '@core/validators/anio-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, from, merge, Observable, of, Subject } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, Subject, from, merge, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export interface AreaTematicaData {
@@ -73,7 +75,7 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
       fechaPublicacion: new FormControl(null),
       fechaProvisional: new FormControl(null),
       fechaConcesion: new FormControl(null),
-      titulo: new FormControl('', [Validators.required, Validators.maxLength(1000)]),
+      titulo: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(1000)]),
       modeloEjecucion: new FormControl(null),
       finalidad: new FormControl(null),
       duracion: new FormControl('', [Validators.min(1), Validators.max(9999)]),
@@ -83,9 +85,11 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
       clasificacionCVN: new FormControl(null),
       regimenConcurrencia: new FormControl(null),
       entidadGestora: new FormControl(null),
-      objeto: new FormControl('', Validators.maxLength(2000)),
-      observaciones: new FormControl('', Validators.maxLength(2000)),
-      palabrasClave: new FormControl(null)
+      objeto: new FormControl([], [I18nValidators.maxLength(2000)]),
+      observaciones: new FormControl([], [I18nValidators.maxLength(2000)]),
+      palabrasClave: new FormControl(null),
+      codigoInterno: new FormControl(null, Validators.maxLength(50)),
+      anio: new FormControl(this.isEdit() ? null : this.getCurrentYear(), anioValidator())
     });
 
     if (!this.hasEditPerm) {
@@ -158,7 +162,9 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
       ambitoGeografico: convocatoria.ambitoGeografico,
       clasificacionCVN: convocatoria.clasificacionCVN,
       estado: convocatoria.estado,
-      excelencia: convocatoria.excelencia
+      excelencia: convocatoria.excelencia,
+      codigoInterno: convocatoria.codigoInterno,
+      anio: convocatoria.anio
     };
 
     this.checkEstado(this.getFormGroup(), convocatoria);
@@ -204,6 +210,11 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
                 map((empresa) => {
                   this.getFormGroup().get('entidadGestora').setValue(empresa);
                   return convocatoria;
+                }),
+                catchError((error) => {
+                  this.getFormGroup().get('entidadGestora').setValue(this.convocatoriaEntidadGestora.empresa);
+                  this.logger.error(error);
+                  return of(convocatoria);
                 })
               );
             }
@@ -320,6 +331,8 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
     this.convocatoria.formularioSolicitud = form.formularioSolicitud.value;
     this.convocatoria.clasificacionCVN = form.clasificacionCVN.value;
     this.convocatoria.excelencia = form.excelencia.value;
+    this.convocatoria.codigoInterno = form.codigoInterno.value;
+    this.convocatoria.anio = form.anio.value;
 
     return this.convocatoria;
   }
@@ -553,5 +566,10 @@ export class ConvocatoriaDatosGeneralesFragment extends FormFragment<IConvocator
         );
       })
     );
+  }
+
+  private getCurrentYear(): number {
+    const today = new Date();
+    return today.getFullYear();
   }
 }

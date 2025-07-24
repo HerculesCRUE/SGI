@@ -131,7 +131,7 @@ public class SolicitudProyectoController {
    *         {@link HttpStatus#NO_CONTENT} en cualquier otro caso
    */
   @RequestMapping(path = "/{id}/solicitudpresupuesto", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Void> hasSolicitudPresupuesto(@PathVariable Long id) {
     log.debug("hasSolicitudPresupuesto(Long id) - start");
     Boolean returnValue = solicitudProyectoPresupuestoService.hasSolicitudPresupuesto(id);
@@ -149,7 +149,7 @@ public class SolicitudProyectoController {
    *         {@link HttpStatus#NO_CONTENT} en cualquier otro caso
    */
   @RequestMapping(path = "/{id}/solicitudsocio", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E','CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<SolicitudProyecto> hasSolicitudSocio(@PathVariable Long id) {
     log.debug("hasSolicitudSocio(Long id) - start");
     Boolean returnValue = solicitudProyectoSocioService.hasSolicitudSocio(id);

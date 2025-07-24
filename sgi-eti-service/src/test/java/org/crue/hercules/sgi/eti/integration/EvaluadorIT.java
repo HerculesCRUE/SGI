@@ -3,15 +3,18 @@ package org.crue.hercules.sgi.eti.integration;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.CargoComite;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
-import org.crue.hercules.sgi.eti.model.Formulario;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.eti.model.EvaluadorResumen;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -36,7 +39,6 @@ import org.springframework.web.util.UriComponentsBuilder;
   "classpath:scripts/comite.sql", 
   "classpath:scripts/cargo_comite.sql", 
   "classpath:scripts/tipo_actividad.sql",
-  "classpath:scripts/tipo_memoria.sql", 
   "classpath:scripts/estado_retrospectiva.sql",
   "classpath:scripts/tipo_convocatoria_reunion.sql", 
   "classpath:scripts/tipo_evaluacion.sql",
@@ -88,16 +90,21 @@ public class EvaluadorIT extends BaseIT {
     final Evaluador evaluador = response.getBody();
 
     Assertions.assertThat(evaluador.getId()).isEqualTo(2L);
-    Assertions.assertThat(evaluador.getResumen()).isEqualTo("Evaluador2");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluador.getResumen(), Language.ES)).isEqualTo("Evaluador2");
   }
 
   @Test
   public void addEvaluador_ReturnsEvaluador() throws Exception {
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
+    Set<EvaluadorResumen> resumenEvaluador = new HashSet<>();
+    resumenEvaluador.add(new EvaluadorResumen(Language.ES, "Evaluador1"));
     Evaluador nuevoEvaluador = new Evaluador();
-    nuevoEvaluador.setResumen("Evaluador1");
-    nuevoEvaluador.setComite(new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M,
-        new Formulario(1L, "M10", "Descripcion"), Boolean.TRUE));
+    nuevoEvaluador.setResumen(resumenEvaluador);
+    nuevoEvaluador.setComite(comite);
     nuevoEvaluador.setCargoComite(new CargoComite(1L, "CargoComite1", Boolean.TRUE));
     nuevoEvaluador.setPersonaRef("user-001");
     nuevoEvaluador.setActivo(Boolean.TRUE);
@@ -188,15 +195,17 @@ public class EvaluadorIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("7");
 
     // Contiene de resumen='Evaluador7' a 'Evaluador8'
-    Assertions.assertThat(evaluadores.get(0).getResumen()).isEqualTo("Evaluador7");
-    Assertions.assertThat(evaluadores.get(1).getResumen()).isEqualTo("Evaluador8");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadores.get(0).getResumen(), Language.ES))
+        .isEqualTo("Evaluador7");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadores.get(1).getResumen(), Language.ES))
+        .isEqualTo("Evaluador8");
   }
 
   @Test
   public void findAll_WithSearchQuery_ReturnsFilteredEvaluadorList() throws Exception {
     // when: Búsqueda por resumen like e id equals
     Long id = 5L;
-    String query = "resumen=ke=Evaluador;id==" + id;
+    String query = "resumen.value=ke=Evaluador;id==" + id;
 
     URI uri = UriComponentsBuilder.fromUriString(EVALUADOR_CONTROLLER_BASE_PATH).queryParam("q", query).build(false)
         .toUri();
@@ -215,13 +224,14 @@ public class EvaluadorIT extends BaseIT {
     final List<Evaluador> evaluadores = response.getBody();
     Assertions.assertThat(evaluadores.size()).isEqualTo(1);
     Assertions.assertThat(evaluadores.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(evaluadores.get(0).getResumen()).startsWith("Evaluador");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadores.get(0).getResumen(), Language.ES))
+        .startsWith("Evaluador");
   }
 
   @Test
   public void findAll_WithSortQuery_ReturnsOrderedEvaluadorList() throws Exception {
     // when: Ordenación por resumen desc
-    String query = "resumen,desc";
+    String query = "resumen.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(EVALUADOR_CONTROLLER_BASE_PATH).queryParam("s", query).build(false)
         .toUri();
@@ -242,7 +252,8 @@ public class EvaluadorIT extends BaseIT {
     for (int i = 0; i < 7; i++) {
       Evaluador evaluador = evaluadores.get(i);
       Assertions.assertThat(evaluador.getId()).isEqualTo(8 - i);
-      Assertions.assertThat(evaluador.getResumen()).isEqualTo("Evaluador" + String.format("%d", 8 - i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(evaluador.getResumen(), Language.ES))
+          .isEqualTo("Evaluador" + String.format("%d", 8 - i));
     }
   }
 
@@ -254,9 +265,9 @@ public class EvaluadorIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     // when: Ordena por resumen desc
-    String sort = "resumen,desc";
+    String sort = "resumen.value,desc";
     // when: Filtra por resumen like e id equals
-    String filter = "resumen=ke=Evaluador";
+    String filter = "resumen.value=ke=Evaluador";
 
     URI uri = UriComponentsBuilder.fromUriString(EVALUADOR_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -277,9 +288,12 @@ public class EvaluadorIT extends BaseIT {
 
     // Contiene resumen='Evaluador8', 'Evaluador7',
     // 'Evaluador6'
-    Assertions.assertThat(evaluadores.get(0).getResumen()).isEqualTo("Evaluador" + String.format("%d", 8));
-    Assertions.assertThat(evaluadores.get(1).getResumen()).isEqualTo("Evaluador" + String.format("%d", 7));
-    Assertions.assertThat(evaluadores.get(2).getResumen()).isEqualTo("Evaluador" + String.format("%d", 6));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadores.get(0).getResumen(), Language.ES))
+        .isEqualTo("Evaluador" + String.format("%d", 8));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadores.get(1).getResumen(),
+        Language.ES)).isEqualTo("Evaluador" + String.format("%d", 7));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(evaluadores.get(2).getResumen(),
+        Language.ES)).isEqualTo("Evaluador" + String.format("%d", 6));
   }
 
   @Test
@@ -319,11 +333,6 @@ public class EvaluadorIT extends BaseIT {
   }
 
   @Test
-  @Sql(scripts = {
-  // @formatter:off  
-  "classpath:scripts/evaluacion_seguimiento.sql",
-// @formatter:on  
-  })
   public void findEvaluacionesEnSeguimiento_Unlimited_ReturnsEvaluacionList() throws Exception {
     // when: Obtiene la page=0 con pagesize=5
     HttpHeaders headers = new HttpHeaders();
@@ -365,9 +374,12 @@ public class EvaluadorIT extends BaseIT {
 
     // Contiene los evaluadores con Resumen 'Evaluador001', 'Evaluador002' y
     // 'Evaluador003'
-    Assertions.assertThat(evaluadores.get(0).getResumen()).isEqualTo("Evaluador2");
-    Assertions.assertThat(evaluadores.get(1).getResumen()).isEqualTo("Evaluador3");
-    Assertions.assertThat(evaluadores.get(2).getResumen()).isEqualTo("Evaluador4");
+    Assertions.assertThat(
+        I18nHelper.getValueForLanguage(evaluadores.get(0).getResumen(), Language.ES)).isEqualTo("Evaluador2");
+    Assertions.assertThat(
+        I18nHelper.getValueForLanguage(evaluadores.get(1).getResumen(), Language.ES)).isEqualTo("Evaluador3");
+    Assertions.assertThat(
+        I18nHelper.getValueForLanguage(evaluadores.get(2).getResumen(), Language.ES)).isEqualTo("Evaluador4");
   }
 
   @Test
@@ -402,22 +414,26 @@ public class EvaluadorIT extends BaseIT {
    * @return el objeto Evaluador
    */
 
-  public Evaluador generarMockEvaluador(Long id, String resumen) {
+  private Evaluador generarMockEvaluador(Long id, String resumen) {
     CargoComite cargoComite = new CargoComite();
     cargoComite.setId(1L);
     cargoComite.setNombre("CargoComite1");
     cargoComite.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
+    Set<EvaluadorResumen> res = new HashSet<>();
+    res.add(new EvaluadorResumen(Language.ES, resumen));
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
     evaluador.setCargoComite(cargoComite);
     evaluador.setComite(comite);
     evaluador.setFechaAlta(Instant.now());
     evaluador.setFechaBaja(Instant.now());
-    evaluador.setResumen(resumen);
+    evaluador.setResumen(res);
     evaluador.setPersonaRef("user-00" + id);
     evaluador.setActivo(Boolean.TRUE);
 

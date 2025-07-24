@@ -1,0 +1,94 @@
+[
+  {
+    "key": "ap3_5_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.5.2 Destination of samples of human origin"
+    },
+    "hideExpression": "!formState.mainModel.ap3_5.muestrasBiologicasRadio || formState.mainModel.ap3_5.muestrasBiologicasRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "What will you do with the human samples once they are no longer needed for this project?"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "destinoMuestrasCheck",
+        "templateOptions": {
+          "label": "Destination",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "destruccion",
+              "label": "Destruction"
+            },
+            {
+              "value": "conservacion",
+              "label": "Anonymized preservation for later use"
+            },
+            {
+              "value": "cesionBiobanco",
+              "label": "Free transfer to Biobank"
+            },
+            {
+              "value": "usoColeccionMuestras",
+              "label": "Integrated use in sample collection"
+            },
+            {
+              "value": "incorporacionColeccionMuestras",
+              "label": "Adding to a sample collection"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarCesionBiobanco",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'cesionBiobanco')",
+        "templateOptions": {
+          "label": "Please specify transfer to Biobank",
+          "placeholder": "Please specify transfer to Biobank",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarUsoColeccionMuestras",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'usoColeccionMuestras')",
+        "templateOptions": {
+          "label": "Please specify collection and record",
+          "placeholder": "Please specify collection and record",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarIncorporacionColeccionMuestras",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.destinoMuestrasCheck || !model.destinoMuestrasCheck.some(destino => destino === 'incorporacionColeccionMuestras')",
+        "templateOptions": {
+          "label": "Please specify addition to collection",
+          "placeholder": "Please specify addition to collection",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: Please remember that the participant has the right to know and decide the destination of their samples and should be informed of this in the <strong>consent document</strong> (section 4.4.8 Right to decide on the destination of the samples').</p><p>For more information on the minimum information required, consult <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a59' target='_blank'>article 59</a> of LIB 14/2007.</p>"
+      }
+    ]
+  }
+]

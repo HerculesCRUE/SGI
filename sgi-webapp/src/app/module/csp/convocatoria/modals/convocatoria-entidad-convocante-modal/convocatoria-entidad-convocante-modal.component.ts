@@ -2,7 +2,7 @@ import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatTreeNestedDataSource } from '@angular/material/tree';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
@@ -11,6 +11,7 @@ import { IConvocatoriaEntidadConvocante } from '@core/models/csp/convocatoria-en
 import { IPrograma } from '@core/models/csp/programa';
 import { ProgramaService } from '@core/services/csp/programa.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -40,10 +41,13 @@ class NodePrograma {
   get childs(): NodePrograma[] {
     return this._childs;
   }
+  // tslint:disable-next-line: variable-name
+  _sortChildsWith: (a1: NodePrograma, a2: NodePrograma) => number
 
-  constructor(programa: StatusWrapper<IPrograma>) {
+  constructor(programa: StatusWrapper<IPrograma>, sortChildsWith: (a1: NodePrograma, a2: NodePrograma) => number) {
     this.programa = programa;
     this._childs = [];
+    this._sortChildsWith = sortChildsWith;
   }
 
   addChild(child: NodePrograma) {
@@ -58,20 +62,12 @@ class NodePrograma {
   }
 
   sortChildsByName(): void {
-    this._childs = sortByName(this._childs);
+    this._childs = sortNodes(this._childs, this._sortChildsWith);
   }
 }
 
-function sortByName(nodes: NodePrograma[]): NodePrograma[] {
-  return nodes.sort((a, b) => {
-    if (a.programa.value.nombre < b.programa.value.nombre) {
-      return -1;
-    }
-    if (a.programa.value.nombre > b.programa.value.nombre) {
-      return 1;
-    }
-    return 0;
-  });
+function sortNodes(nodes: NodePrograma[], sortWith: (a1: NodePrograma, a2: NodePrograma) => number): NodePrograma[] {
+  return nodes.sort(sortWith);
 }
 
 @Component({
@@ -99,13 +95,20 @@ export class ConvocatoriaEntidadConvocanteModalComponent
   checkedNode: NodePrograma;
   hasChild = (_: number, node: NodePrograma) => node.childs.length > 0;
 
+  private sortNodesByAreaNombre: (a1: NodePrograma, a2: NodePrograma) => number = (a1, a2) => {
+    const nombreA = this.languageService.getFieldValue(a1.programa?.value?.nombre);
+    const nombreB = this.languageService.getFieldValue(a2.programa?.value?.nombre);
+    return nombreA.localeCompare(nombreB);
+  };
+
   constructor(
     private readonly logger: NGXLogger,
     matDialogRef: MatDialogRef<ConvocatoriaEntidadConvocanteModalComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ConvocatoriaEntidadConvocanteModalData,
     private programaService: ProgramaService,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
     super(matDialogRef, !!!data.entidadConvocanteData);
 
@@ -185,7 +188,7 @@ export class ConvocatoriaEntidadConvocanteModalComponent
 
           return from(response.items).pipe(
             mergeMap((programa) => {
-              const node = new NodePrograma(new StatusWrapper<IPrograma>(programa));
+              const node = new NodePrograma(new StatusWrapper<IPrograma>(programa), this.sortNodesByAreaNombre);
               this.nodeMap.set(node.programa.value.id, node);
               return this.getChilds(node).pipe(map(() => node));
             })
@@ -220,7 +223,7 @@ export class ConvocatoriaEntidadConvocanteModalComponent
       map((result) => {
         const childs: NodePrograma[] = result.items.map(
           (programa) => {
-            const child = new NodePrograma(new StatusWrapper<IPrograma>(programa));
+            const child = new NodePrograma(new StatusWrapper<IPrograma>(programa), this.sortNodesByAreaNombre);
             child.parent = parent;
             this.nodeMap.set(child.programa.value.id, child);
             return child;
@@ -252,7 +255,7 @@ export class ConvocatoriaEntidadConvocanteModalComponent
 
   private publishNodes(rootNodes?: NodePrograma[]) {
     let nodes = rootNodes ? rootNodes : this.programaTree$.value;
-    nodes = sortByName(nodes);
+    nodes = sortNodes(nodes, this.sortNodesByAreaNombre);
     this.programaTree$.next(nodes);
   }
 

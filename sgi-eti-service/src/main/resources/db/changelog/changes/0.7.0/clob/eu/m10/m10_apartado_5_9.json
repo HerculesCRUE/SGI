@@ -1,0 +1,31 @@
+[
+  {
+    "key": "ap5_9",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "hideExpression": "formState.memoria.tipo !== 'RATIFICACION'",
+    "templateOptions": {
+      "label": "5.9 Kanpo erakundeko Batzordearen txostena"
+    },
+    "fieldGroup": [
+      {
+        "template": "Gogoratu: proiektua garatzen ari zaren kanpo erakundean dagokion batzordeak eman dizun onespen txostena erantsi behar duzu."
+      },
+      {
+        "key": "informeRatificacion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": "INFORME_EXTERNO",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

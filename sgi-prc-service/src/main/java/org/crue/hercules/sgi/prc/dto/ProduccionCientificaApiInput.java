@@ -9,10 +9,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.crue.hercules.sgi.prc.model.Acreditacion_;
-import org.crue.hercules.sgi.prc.model.Autor_;
 import org.crue.hercules.sgi.prc.model.BaseEntity;
-import org.crue.hercules.sgi.prc.model.CampoProduccionCientifica_;
 import org.crue.hercules.sgi.prc.model.IndiceImpacto.TipoRanking;
 import org.crue.hercules.sgi.prc.validation.CodigoCVNValueValid;
 import org.crue.hercules.sgi.prc.validation.FirmaOrPersonaRefOrNombreAndApellidosAutor;
@@ -38,14 +35,14 @@ public class ProduccionCientificaApiInput implements Serializable {
 
   @Valid
   @NotEmpty
-  @UniqueElementsByFields(fieldsNames = CampoProduccionCientifica_.CODIGO_CV_N)
+  @UniqueElementsByFields(fieldsNames = "codigoCVN")
   private List<CampoProduccionCientificaInput> campos;
 
   @Valid
   @NotEmpty
-  @UniqueElementsByFields(fieldsNames = Autor_.FIRMA)
-  @UniqueElementsByFields(fieldsNames = Autor_.PERSONA_REF)
-  @UniqueElementsByFields(fieldsNames = { Autor_.NOMBRE, Autor_.APELLIDOS })
+  @UniqueElementsByFields(fieldsNames = "firma")
+  @UniqueElementsByFields(fieldsNames = "personaRef")
+  @UniqueElementsByFields(fieldsNames = { "nombre", "apellidos" })
   private List<AutorInput> autores;
 
   @Valid
@@ -53,8 +50,8 @@ public class ProduccionCientificaApiInput implements Serializable {
   private List<IndiceImpactoInput> indicesImpacto;
 
   @Valid
-  @UniqueElementsByFields(fieldsNames = Acreditacion_.DOCUMENTO_REF)
-  @UniqueElementsByFields(fieldsNames = Acreditacion_.URL)
+  @UniqueElementsByFields(fieldsNames = "documentoRef")
+  @UniqueElementsByFields(fieldsNames = "url")
   private List<AcreditacionInput> acreditaciones;
 
   @UniqueElements

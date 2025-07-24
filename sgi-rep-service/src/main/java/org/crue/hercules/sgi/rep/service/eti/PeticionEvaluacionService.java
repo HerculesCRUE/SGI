@@ -48,7 +48,7 @@ public class PeticionEvaluacionService extends SgiApiBaseService {
           }, peticionEvaluacionId).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     log.debug("getMemorias({}) - end", peticionEvaluacionId);
@@ -70,7 +70,7 @@ public class PeticionEvaluacionService extends SgiApiBaseService {
           }, peticionEvaluacionId).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     log.debug("getTareasEquipoTrabajo({}) - end", peticionEvaluacionId);

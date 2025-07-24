@@ -12,9 +12,9 @@
     <p *ngFor="let campo of data?.campos">{{campo?.nombre}}: {{campo?.valor}}</p>
   </div>
   <div>
-    <form [formGroup]="formGroup">
+    <form [formGroup]="formGroup" fxLayout="column">
       <!-- Proyectos SGI ligados al proyecto SGE -->
-      <div>
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.ejecucion-economica.validacion-gastos.proyecto-sgi' |
             translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
@@ -29,7 +29,7 @@
       </div>
 
       <!-- Concepto de gasto tipo-->
-      <div fxLayout="row">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-radio-group class="radio-inline" name="conceptoGastoFiltro" formControlName="conceptoGastoFiltro">
           <mat-radio-button color="primary" class="radio" *ngFor="let optionConceptoGasto of optionsConceptoGasto"
             name="conceptoGastoFiltro" [value]="optionConceptoGasto" (change)="loadConceptoGasto($event.value)">
@@ -39,7 +39,7 @@
       </div>
 
       <!-- Concepto Gasto -->
-      <div fxLayout="row">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.ejecucion-economica.validacion-gastos.concepto-gasto' | translate}}</mat-label>
           <sgi-select-entity formControlName="conceptoGasto" [options]="conceptosGasto$ | async"
@@ -52,7 +52,7 @@
       </div>
 
       <!-- Estado -->
-      <div fxLayout="row">
+      <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.ejecucion-economica.validacion-gastos.estado' | translate}}</mat-label>
           <sgi-select-enum formControlName="estadoGasto" required [enumMap]="ESTADO_MAP"></sgi-select-enum>
@@ -103,10 +103,11 @@
                 <mat-label>
                   {{'csp.ejecucion-economica.validacion-gastos.observaciones' | translate}}
                 </mat-label>
-                <textarea #obs matInput formControlName="observaciones"
+                <sgi-i18n-textarea #obs formControlName="observaciones"
                   placeholder="{{'csp.ejecucion-economica.validacion-gastos.observaciones' | translate}}"
-                  maxlength="2000"></textarea>
-                <mat-hint>{{obs.value.length}} / 2000</mat-hint>
+                  maxlength="2000">
+                </sgi-i18n-textarea>
+                <mat-hint>{{obs.editingValue.length}} / 2000</mat-hint>
               </mat-form-field>
             </div>
           </form>
@@ -118,16 +119,16 @@
         <mat-label>
           {{'csp.ejecucion-economica.validacion-gastos.comentario-estado' | translate}}
         </mat-label>
-        <textarea #coment matInput formControlName="comentarioEstado" type="text"
+        <sgi-i18n-textarea #coment formControlName="comentarioEstado"
           placeholder="{{'csp.ejecucion-economica.validacion-gastos.comentario-estado' | translate}}" maxlength="2000">
-                    </textarea>
-        <mat-hint>{{coment.value.length}} / 2000</mat-hint>
+        </sgi-i18n-textarea>
+        <mat-hint>{{coment.editingValue.length}} / 2000</mat-hint>
       </mat-form-field>
     </form>
   </div>
 </sgi-dialog-content>
 <mat-dialog-actions>
-  <button color="accent" mat-raised-button type="submit">
+  <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>
     {{'btn.save' | translate}}
   </button>

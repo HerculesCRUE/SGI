@@ -3,6 +3,7 @@ import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IProyectoPeriodoJustificacionRequest } from './proyecto-periodo-justificacion-request';
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 
 class ProyectoPeriodoJustificacionRequestConverter
   extends SgiBaseConverter<IProyectoPeriodoJustificacionRequest, IProyectoPeriodoJustificacion> {
@@ -21,7 +22,7 @@ class ProyectoPeriodoJustificacionRequestConverter
       fechaInicioPresentacion: LuxonUtils.fromBackend(value.fechaInicioPresentacion),
       fechaFinPresentacion: LuxonUtils.fromBackend(value.fechaFinPresentacion),
       tipoJustificacion: value.tipoJustificacion,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.observaciones) : [],
       convocatoriaPeriodoJustificacionId: value.convocatoriaPeriodoJustificacionId,
       fechaPresentacionJustificacion: null,
       identificadorJustificacion: null,
@@ -48,7 +49,7 @@ class ProyectoPeriodoJustificacionRequestConverter
       fechaInicioPresentacion: LuxonUtils.toBackend(value.fechaInicioPresentacion),
       fechaFinPresentacion: LuxonUtils.toBackend(value.fechaFinPresentacion),
       tipoJustificacion: value.tipoJustificacion,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.observaciones) : [],
       convocatoriaPeriodoJustificacionId: value.convocatoriaPeriodoJustificacionId,
       estado: {
         id: value.estado?.id,

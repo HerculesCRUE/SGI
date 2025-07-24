@@ -47,13 +47,13 @@ export class ProyectoSocioPeriodoPagoComponent extends FragmentComponent impleme
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.PERIODO_PAGO, actionService);
+    super(actionService.FRAGMENT.PERIODO_PAGO, actionService, translate);
     this.formPart = this.fragment as ProyectoSocioPeriodoPagoFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subcription = this.formPart.periodoPagos$.subscribe(
       (proyectoEquipos) => {
         this.dataSource.data = proyectoEquipos;
@@ -64,7 +64,7 @@ export class ProyectoSocioPeriodoPagoComponent extends FragmentComponent impleme
     this.subscriptions.push(subcription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_SOCIO_PERIODO_PAGO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

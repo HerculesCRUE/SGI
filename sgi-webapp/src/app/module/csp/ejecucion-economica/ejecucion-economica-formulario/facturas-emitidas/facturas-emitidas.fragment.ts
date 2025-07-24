@@ -3,13 +3,14 @@ import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IFacturaEmitida } from '@core/models/sge/factura-emitida';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { CalendarioFacturacionService } from '@core/services/sge/calendario-facturacion.service';
 import { DateTime } from 'luxon';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
-import { IColumnDefinition, IRowConfig } from '../desglose-economico.fragment';
-import { DesgloseFacturaEmitidaFragment, IDesgloseFacturaEmitidaExportData, RowTreeDesgloseFacturaEmitida } from '../desglose-facturas.fragment';
+import { IRowConfig } from '../desglose-economico.fragment';
+import { DesgloseFacturaEmitidaFragment, IColumnDefinitionFacturaEmitida, IDesgloseFacturaEmitidaExportData, RowTreeDesgloseFacturaEmitida } from '../desglose-facturas.fragment';
 
 export class FacturasEmitidasFragment extends DesgloseFacturaEmitidaFragment<IFacturaEmitida> {
 
@@ -24,24 +25,18 @@ export class FacturasEmitidasFragment extends DesgloseFacturaEmitidaFragment<IFa
     relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     proyectoService: ProyectoService,
     private calendarioFacturacionService: CalendarioFacturacionService,
+    protected readonly languageService: LanguageService,
     protected readonly config: IConfiguracion
 
   ) {
-    super(key, proyectoSge, relaciones, proyectoService, config);
+    super(key, proyectoSge, relaciones, proyectoService, languageService, config);
   }
 
   protected onInitialize(): void {
     super.onInitialize();
-
-    this.subscriptions.push(this.getColumns().subscribe(
-      (columns) => {
-        this.columns = columns;
-        this.displayColumns = ['anualidad', 'factura', ...columns.map(column => column.id), 'acciones'];
-      }
-    ));
   }
 
-  protected getColumns(): Observable<IColumnDefinition[]> {
+  protected getColumns(): Observable<IColumnDefinitionFacturaEmitida[]> {
     return this.calendarioFacturacionService.getColumnasFacturasEmitidas(this.proyectoSge.id)
       .pipe(
         map(response => this.toColumnDefinition(response))
@@ -144,6 +139,15 @@ export class FacturasEmitidasFragment extends DesgloseFacturaEmitidaFragment<IFa
     });
 
     return of(root);
+  }
+
+  protected getDisplayColumns(columns: IColumnDefinitionFacturaEmitida[]): string[] {
+    return [
+      'anualidad',
+      'factura',
+      ...columns.map(column => column.id),
+      'acciones'
+    ];
   }
 
 }

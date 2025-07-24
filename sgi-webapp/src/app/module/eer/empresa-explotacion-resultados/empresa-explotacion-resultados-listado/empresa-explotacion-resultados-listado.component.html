@@ -99,7 +99,12 @@
           {{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{element.nombreRazonSocial ? element.nombreRazonSocial : element.entidad?.nombre}}
+          <ng-container *ngIf="element.nombreRazonSocial; else elseNombre">
+            <sgi-i18n-table-field [field]="element.nombreRazonSocial"></sgi-i18n-table-field>
+          </ng-container>
+          <ng-template #elseNombre>
+            {{ element.entidad?.nombre }}
+          </ng-template>
         </td>
       </ng-container>
 
@@ -109,7 +114,7 @@
           {{'eer.empresa-explotacion-resultados.objeto-social' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{element.objetoSocial}}
+          <sgi-i18n-table-field [field]="element.objetoSocial"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

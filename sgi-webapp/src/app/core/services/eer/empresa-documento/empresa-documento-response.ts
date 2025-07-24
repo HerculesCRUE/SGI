@@ -1,19 +1,11 @@
+import { I18nFieldValueResponse } from "@core/i18n/i18n-field-response";
+import { ITipoDocumentoResponse } from "@core/services/eer/tipo-documento/tipo-documento-response";
+
 export interface IEmpresaDocumentoResponse {
   id: number;
-  nombre: string;
+  nombre: I18nFieldValueResponse[];
   documentoRef: string;
-  comentarios: string;
+  comentarios: I18nFieldValueResponse[];
   empresaId: number;
-  tipoDocumento: {
-    id: number;
-    nombre: string;
-    descripcion: string;
-    padre: {
-      id: number;
-      nombre: string;
-      descripcion: string;
-      activo: boolean;
-    };
-    activo: boolean;
-  };
+  tipoDocumento: ITipoDocumentoResponse;
 }

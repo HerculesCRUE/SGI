@@ -1,0 +1,68 @@
+[
+  {
+    "key": "ap3_4_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.3 Genetikoki eraldatutako organismoen erabilera konfinatua"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Jarduera honetan genetikoki eraldatutako organismoen erabilera konfinatua dakarten zereginak egiten dira?</p>"
+      },
+      {
+        "key": "tareasUsoConfinadoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Erantsi etxe komertzialaren transgenikoari buruzko informazio orria."
+      },
+      {
+        "template": "Genetikoki eraldatutako zer organismo mota erabiltzen den",
+        "hideExpression": "!model.tareasUsoConfinadoRadio || model.tareasUsoConfinadoRadio === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tiposOMG",
+        "hideExpression": "!model.tareasUsoConfinadoRadio || model.tareasUsoConfinadoRadio === 'no'",
+        "templateOptions": {
+          "label": "Aukerak:",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "microOrganismos",
+              "label": "Mikroorganismoak"
+            },
+            {
+              "value": "animales",
+              "label": "Animaliak"
+            },
+            {
+              "value": "plantas",
+              "label": "Landareak"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -8,10 +8,13 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
-import { ISolicitudProyecto, TIPO_PRESUPUESTO_MAP } from '@core/models/csp/solicitud-proyecto';
+import { OrigenSolicitud } from '@core/models/csp/solicitud';
+import { ISolicitudProyecto, TIPO_PRESUPUESTO_MAP, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { LanguageService } from '@core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { AreaTematicaModalData, SolicitudAreaTematicaModalComponent } from '../../modals/solicitud-area-tematica-modal/solicitud-area-tematica-modal.component';
@@ -25,12 +28,15 @@ const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COLABORATIVO_KEY = marker('csp.soli
 const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_COORDINADO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.proyecto-coordinado');
 const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_ROL_UNIVERSIDAD_KEY = marker('csp.solicitud.rol-participacion-universidad');
 const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_TIPO_DESGLOSE_PRESUPUESTO_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.tipo-desglose-presupuesto');
+const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_OBJETIVOS_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.objetivos');
+const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_INTERESES_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.justificacion-interes');
+const SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_RESULTADOS_PREVISTOS_KEY = marker('csp.solicitud-datos-proyecto-ficha-general.resultados');
 const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 const AREA_KEY = marker('csp.area');
 
 export interface AreaTematicaListado {
   padre: IAreaTematica;
-  areasTematicasConvocatoria: string;
+  areasTematicasConvocatoria: I18nFieldValue[][];
   areaTematicaSolicitud: IAreaTematica;
 }
 @Component({
@@ -53,6 +59,9 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
   msgParamAreaTematicaEntities = {};
   msgParamAreaEntities: {};
   msgParamCodExternoEntity = {};
+  msgParamObjetivosEntity = {};
+  msgParamInteresesEntity = {};
+  msgParamResultadosPrevistosEntity = {};
 
   areasConvocatoria: IAreaTematica[];
 
@@ -66,9 +75,10 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
     private router: Router,
     private route: ActivatedRoute,
     private matDialog: MatDialog,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.PROYECTO_DATOS, actionService);
+    super(actionService.FRAGMENT.PROYECTO_DATOS, actionService, translate);
     this.formPart = this.fragment as SolicitudProyectoFichaGeneralFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -95,14 +105,32 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
       this.router.navigate(['../', SOLICITUD_ROUTE_NAMES.DATOS_GENERALES], { relativeTo: this.route });
     }
     this.loadAreaTematicas();
-    this.setupI18N();
+
+  }
+
+  get isOrigenSolicitudConvocatoriaSGI(): boolean {
+    return this.actionService.solicitud.origenSolicitud === OrigenSolicitud.CONVOCATORIA_SGI;
+  }
+
+  get tiposPresupuesto(): Map<TipoPresupuesto, string> {
+    let tiposPresupuesto: Map<TipoPresupuesto, string>;
+
+    if (this.isOrigenSolicitudConvocatoriaSGI) {
+      tiposPresupuesto = TIPO_PRESUPUESTO_MAP;
+    } else {
+      tiposPresupuesto = new Map();
+      tiposPresupuesto.set(TipoPresupuesto.GLOBAL, TIPO_PRESUPUESTO_MAP.get(TipoPresupuesto.GLOBAL))
+        .set(TipoPresupuesto.POR_ENTIDAD, TIPO_PRESUPUESTO_MAP.get(TipoPresupuesto.POR_ENTIDAD));
+    }
+
+    return tiposPresupuesto;
   }
 
   get TIPO_PRESUPUESTO_MAP() {
     return TIPO_PRESUPUESTO_MAP;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       AREA_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
@@ -168,6 +196,39 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
       }
     );
 
+    this.translate.get(
+      SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_OBJETIVOS_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).subscribe((value) =>
+      this.msgParamObjetivosEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.MALE,
+        ...MSG_PARAMS.CARDINALIRY.PLURAL
+      }
+    );
+
+    this.translate.get(
+      SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_INTERESES_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe((value) =>
+      this.msgParamInteresesEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.FEMALE,
+        ...MSG_PARAMS.CARDINALIRY.SINGULAR
+      }
+    );
+
+    this.translate.get(
+      SOLICITUD_DATOS_PROYECTO_FICHA_GENERAL_RESULTADOS_PREVISTOS_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).subscribe((value) =>
+      this.msgParamResultadosPrevistosEntity = {
+        entity: value,
+        ...MSG_PARAMS.GENDER.MALE,
+        ...MSG_PARAMS.CARDINALIRY.PLURAL
+      }
+    );
+
   }
 
   ngOnDestroy(): void {
@@ -182,7 +243,7 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
         this.areasConvocatoria = data[0]?.areaTematicaConvocatoria;
         const listadoAreas: AreaTematicaListado = {
           padre: data[0]?.rootTree,
-          areasTematicasConvocatoria: data[0]?.areaTematicaConvocatoria?.map(area => area.nombre).join(', '),
+          areasTematicasConvocatoria: data[0]?.areaTematicaConvocatoria.map(area => area.nombre).sort(this.sortAreasTematicasByNombre),
           areaTematicaSolicitud: data[0]?.areaTematicaSolicitud
         };
         this.listadoAreaTematicas.data = [listadoAreas];
@@ -214,5 +275,11 @@ export class SolicitudProyectoFichaGeneralComponent extends FormFragmentComponen
       }
     );
   }
+
+  private sortAreasTematicasByNombre: (a1: I18nFieldValue[], a2: I18nFieldValue[]) => number = (a1, a2) => {
+    const nombreA = this.languageService.getFieldValue(a1);
+    const nombreB = this.languageService.getFieldValue(a2);
+    return nombreA.localeCompare(nombreB);
+  };
 
 }

@@ -20,6 +20,7 @@ import org.crue.hercules.sgi.csp.repository.specification.ProyectoPeriodoSeguimi
 import org.crue.hercules.sgi.csp.service.ProyectoPeriodoSeguimientoService;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,6 +38,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeguimientoService {
+  private static final String MSG_FECHA_INICIO_PROYECTO = "fechaInicioProyecto";
+  private static final String MSG_FECHA_FIN_PROYECTO = "fechaFinProyecto";
+  private static final String MSG_FECHA_INICIO_PERIODO_SEGUIMIENTO = "fechaInicioPeriodoSeguimiento";
+  private static final String MSG_FECHA_FIN_PERIODO_SEGUIMIENTO = "fechaFinPeriodoSeguimiento";
+  private static final String MSG_FECHA_INICIO_PRESENTACION = "fechaInicioPresentacion";
+  private static final String MSG_FECHA_FIN_PRESENTACION = "fechaFinPresentacion";
+  private static final String MSG_PROYECTO_PERIODO_SEGUIMIENTO_EXISTENTE = "proyectoPeriodoSeguimiento.existente";
 
   private final ProyectoPeriodoSeguimientoRepository repository;
   private final ProyectoRepository proyectoRepository;
@@ -64,8 +72,7 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
   public ProyectoPeriodoSeguimiento create(ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento) {
     log.debug("create(ProyectoPeriodoSeguimiento ProyectoPeriodoSeguimiento) - start");
 
-    Assert.isNull(proyectoPeriodoSeguimiento.getId(),
-        "ProyectoPeriodoSeguimiento id tiene que ser null para crear un nuevo ProyectoPeriodoSeguimiento");
+    AssertHelper.idIsNull(proyectoPeriodoSeguimiento.getId(), ProyectoPeriodoSeguimiento.class);
 
     this.validarProyectoPeriodoSeguimiento(proyectoPeriodoSeguimiento, null);
 
@@ -93,8 +100,7 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
   public ProyectoPeriodoSeguimiento update(ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoActualizar) {
     log.debug("update(ProyectoPeriodoSeguimiento proyectoPeriodoSeguimientoActualizar) - start");
 
-    Assert.notNull(proyectoPeriodoSeguimientoActualizar.getId(),
-        "ProyectoPeriodoSeguimiento id no puede ser null para actualizar un proyectoPeriodoSeguimiento");
+    AssertHelper.idNotNull(proyectoPeriodoSeguimientoActualizar.getId(), ProyectoPeriodoSeguimiento.class);
 
     return repository.findById(proyectoPeriodoSeguimientoActualizar.getId()).map(proyectoPeriodoSeguimiento -> {
 
@@ -170,7 +176,7 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ProyectoPeriodoSeguimiento id no puede ser null para eliminar un ProyectoPeriodoSeguimiento");
+    AssertHelper.idNotNull(id, ProyectoPeriodoSeguimiento.class);
     if (!repository.existsById(id)) {
       throw new ProyectoPeriodoSeguimientoNotFoundException(id);
     }
@@ -263,23 +269,22 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
 
     this.validarRequeridosProyectoPeriodoSeguimiento(datosProyectoPeriodoSeguimiento, datosOriginales);
 
-    Assert.isTrue(
-        datosProyectoPeriodoSeguimiento.getFechaFin().isAfter(datosProyectoPeriodoSeguimiento.getFechaInicio()),
-        "La fecha de fin debe ser posterior a la fecha de inicio");
+    AssertHelper.isBefore(
+        datosProyectoPeriodoSeguimiento.getFechaFin().isAfter(datosProyectoPeriodoSeguimiento.getFechaInicio()));
 
     Proyecto proyecto = proyectoRepository.findById(datosProyectoPeriodoSeguimiento.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(datosProyectoPeriodoSeguimiento.getProyectoId()));
 
-    Assert.isTrue(
+    AssertHelper.fieldBefore(
         proyecto.getFechaInicio().isBefore(datosProyectoPeriodoSeguimiento.getFechaInicio())
             || proyecto.getFechaInicio().equals(datosProyectoPeriodoSeguimiento.getFechaInicio()),
-        "La fecha de inicio del proyecto debe ser anterior o igual a la fecha de inicio del periodo de seguimiento");
+        MSG_FECHA_INICIO_PROYECTO, MSG_FECHA_INICIO_PERIODO_SEGUIMIENTO);
 
     Instant fechaFinProyecto = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
         : proyecto.getFechaFin();
 
-    Assert.isTrue(!fechaFinProyecto.isBefore(datosProyectoPeriodoSeguimiento.getFechaFin()),
-        "La fecha de fin del proyecto debe ser posterior o igual a la fecha de fin del periodo de seguimiento");
+    AssertHelper.fieldBefore(!fechaFinProyecto.isBefore(datosProyectoPeriodoSeguimiento.getFechaFin()),
+        MSG_FECHA_FIN_PROYECTO, MSG_FECHA_FIN_PERIODO_SEGUIMIENTO);
 
     List<ProyectoPeriodoSeguimiento> listaPeriodosSeguimiento = repository
         .findByProyectoIdOrderByFechaInicio(proyecto.getId());
@@ -302,10 +307,10 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
     if (datosProyectoPeriodoSeguimiento.getFechaInicioPresentacion() != null
         && datosProyectoPeriodoSeguimiento.getFechaFinPresentacion() != null) {
 
-      Assert.isTrue(
+      AssertHelper.fieldBefore(
           datosProyectoPeriodoSeguimiento.getFechaFinPresentacion()
               .isAfter(datosProyectoPeriodoSeguimiento.getFechaInicioPresentacion()),
-          "La fecha de fin de presentación debe ser posterior a la fecha de inicio de presentación");
+          MSG_FECHA_INICIO_PRESENTACION, MSG_FECHA_FIN_PRESENTACION);
     }
 
     // Solapamiento de fechas
@@ -313,7 +318,7 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
         validarSolapamientoFechas(datosProyectoPeriodoSeguimiento.getProyectoId(),
             datosProyectoPeriodoSeguimiento.getFechaInicio(), datosProyectoPeriodoSeguimiento.getFechaFin(),
             Arrays.asList(datosProyectoPeriodoSeguimiento.getId())),
-        "Ya existe un periodo de fechas en vigencia que se solapa con el indicado");
+        ApplicationContextSupport.getMessage(MSG_PROYECTO_PERIODO_SEGUIMIENTO_EXISTENTE));
 
     log.debug(
         "validarProyectoPeriodoSeguimiento(ProyectoPeriodoSeguimiento datosProyectoPeriodoSeguimiento, ProyectoPeriodoSeguimiento datosOriginales) - end");
@@ -383,30 +388,23 @@ public class ProyectoPeriodoSeguimientoServiceImpl implements ProyectoPeriodoSeg
     log.debug(
         "validarRequeridosProyectoPeriodoSeguimiento(ProyectoPeriodoSeguimiento datosProyectoPeriodoSeguimiento, ProyectoPeriodoSeguimiento datosOriginales) - start");
 
-    Assert.isTrue(datosProyectoPeriodoSeguimiento.getProyectoId() != null, "Id Proyecto no puede ser null para "
-        + ((datosOriginales == null) ? "crear" : "actualizar") + " ProyectoPeriodoSeguimiento");
-
-    Assert.notNull(datosProyectoPeriodoSeguimiento.getFechaInicio(), "FechaInicio no puede ser null para "
-        + ((datosOriginales == null) ? "crear" : "actualizar") + " ProyectoPeriodoSeguimiento");
-
-    Assert.notNull(datosProyectoPeriodoSeguimiento.getFechaFin(), "FechaFin no puede ser null para "
-        + ((datosOriginales == null) ? "crear" : "actualizar") + " ProyectoPeriodoSeguimiento");
-
-    Assert.notNull(datosProyectoPeriodoSeguimiento.getTipoSeguimiento(), "TipoSeguimiento no puede ser null para "
-        + ((datosOriginales == null) ? "crear" : "actualizar") + "ProyectoPeriodoSeguimiento");
+    AssertHelper.idNotNull(datosProyectoPeriodoSeguimiento.getProyectoId(), Proyecto.class);
+    AssertHelper.fieldNotNull(datosProyectoPeriodoSeguimiento.getFechaInicio(), ProyectoPeriodoSeguimiento.class,
+        AssertHelper.MESSAGE_KEY_DATE_START);
+    AssertHelper.fieldNotNull(datosProyectoPeriodoSeguimiento.getFechaFin(), ProyectoPeriodoSeguimiento.class,
+        AssertHelper.MESSAGE_KEY_DATE_END);
+    AssertHelper.entityNotNull(datosProyectoPeriodoSeguimiento.getTipoSeguimiento(), ProyectoPeriodoSeguimiento.class,
+        TipoSeguimiento.class);
 
     // Se comprueba la existencia del proyecto
     Proyecto proyecto = proyectoRepository.findById(datosProyectoPeriodoSeguimiento.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(datosProyectoPeriodoSeguimiento.getProyectoId()));
 
     if (proyecto.getEstado() != null && proyecto.getEstado().getEstado() == EstadoProyecto.Estado.CONCEDIDO) {
-      Assert.notNull(datosProyectoPeriodoSeguimiento.getFechaInicioPresentacion(),
-          "FechaInicioPresentacion no puede ser null para " + ((datosOriginales == null) ? "crear" : "actualizar")
-              + " ProyectoPeriodoSeguimiento");
-
-      Assert.notNull(datosProyectoPeriodoSeguimiento.getFechaFinPresentacion(),
-          "FechaFinPresentacion no puede ser null para " + ((datosOriginales == null) ? "crear" : "actualizar")
-              + " ProyectoPeriodoSeguimiento");
+      AssertHelper.fieldNotNull(datosProyectoPeriodoSeguimiento.getFechaInicioPresentacion(),
+          ProyectoPeriodoSeguimiento.class, AssertHelper.MESSAGE_KEY_DATE_START);
+      AssertHelper.fieldNotNull(datosProyectoPeriodoSeguimiento.getFechaFinPresentacion(),
+          ProyectoPeriodoSeguimiento.class, AssertHelper.MESSAGE_KEY_DATE_END);
     }
 
     log.debug(

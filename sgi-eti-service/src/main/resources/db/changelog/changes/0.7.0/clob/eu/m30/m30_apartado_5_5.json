@@ -1,0 +1,47 @@
+[
+  {
+    "key": "ap5_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.5 Dokumentazio osagarria"
+    },
+    "fieldGroup": [
+      {
+        "template": "Baduzu beste dokumentazio osagarririk zure proiekturako?"
+      },
+      {
+        "key": "documentacionAdicional",
+        "type": "documento",
+        "templateOptions": {
+          "required": true,
+          "label": "Adierazi",
+          "options": [
+            {
+              "value": 0,
+              "label": "Ez"
+            },
+            {
+              "value": "ADICIONAL",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarDocumenAdicional",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.documentacionAdicional || model.documentacionAdicional === 0",
+        "templateOptions": {
+          "label": "Zehaztu",
+          "placeholder": "Zehaztu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

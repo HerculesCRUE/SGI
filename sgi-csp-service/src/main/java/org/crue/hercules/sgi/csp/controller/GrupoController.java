@@ -55,8 +55,9 @@ import org.crue.hercules.sgi.csp.service.GrupoResponsableEconomicoService;
 import org.crue.hercules.sgi.csp.service.GrupoService;
 import org.crue.hercules.sgi.csp.service.GrupoTipoService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.json.JSONObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -116,6 +117,7 @@ public class GrupoController {
   public static final String PATH_GRUPO_LINEA_INVESTIGACION = PATH_ID + "/lineas-investigacion";
   public static final String PATH_SOLICITUD = PATH_ID + "/solicitud";
   public static final String PATH_MODIFICABLE = PATH_ID + "/modificable";
+  public static final String PATH_DTO = PATH_ID + "/grupo-dto";
 
   // Services
   private final GrupoService service;
@@ -497,6 +499,23 @@ public class GrupoController {
 
     log.debug("findAllByAnio(anio) - end");
     return new ResponseEntity<>(grupos, HttpStatus.OK);
+  }
+
+  /**
+   * Devuelve el {@link GrupoDto} con el id indicado.
+   * 
+   * @param id Identificador de {@link GrupoDto}.
+   * @return {@link GrupoDto} correspondiente al id
+   */
+  @GetMapping(PATH_DTO)
+  @PreAuthorize("(isClient() and hasAuthority('SCOPE_sgi-csp')) or hasAuthority('CSP-PRO-PRC-V')")
+  public GrupoDto findGrupoDtoById(@PathVariable Long id) {
+    log.debug("findGrupoDtoById(Long id) - start");
+    Grupo grupo = service.findById(id);
+    GrupoDto returnValue = converter.convertToDto(grupo);
+    returnValue.setNombre(I18nHelper.getFieldValue(grupo.getNombre())); // TODO: eliminar al hacer i18n de prc
+    log.debug("findGrupoDtoById(Long id) - end");
+    return returnValue;
   }
 
   /**

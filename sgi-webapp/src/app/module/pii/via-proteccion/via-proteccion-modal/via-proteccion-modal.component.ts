@@ -1,12 +1,13 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogActionComponent } from '@core/component/dialog-action.component';
-import { TipoPropiedad, TIPO_PROPIEDAD_MAP } from '@core/enums/tipo-propiedad';
+import { TIPO_PROPIEDAD_MAP, TipoPropiedad } from '@core/enums/tipo-propiedad';
 import { MSG_PARAMS } from '@core/i18n';
 import { IViaProteccion } from '@core/models/pii/via-proteccion';
 import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -66,8 +67,8 @@ export class ViaProteccionModalComponent extends DialogActionComponent<IViaProte
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      nombre: new FormControl(this.viaProteccion.nombre ?? '', [Validators.maxLength(50), Validators.required]),
-      descripcion: new FormControl(this.viaProteccion.descripcion ?? '', [Validators.maxLength(250), Validators.required]),
+      nombre: new FormControl(this.viaProteccion.nombre ?? [], [I18nValidators.maxLength(50), I18nValidators.required]),
+      descripcion: new FormControl(this.viaProteccion.descripcion ?? [], [I18nValidators.maxLength(250), I18nValidators.required]),
       tipoPropiedad: new FormControl(this.viaProteccion.tipoPropiedad ?? null, [Validators.required]),
       mesesPrioridad: new FormControl(this.viaProteccion.mesesPrioridad ?? 1, [Validators.required]),
       paisEspecifico: new FormControl(this.viaProteccion.paisEspecifico ?? false, []),

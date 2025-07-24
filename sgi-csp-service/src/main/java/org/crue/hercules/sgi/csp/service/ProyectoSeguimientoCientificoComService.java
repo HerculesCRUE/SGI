@@ -11,10 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.com.CspComInicioPresentacionSeguimientoCientificoData;
@@ -22,6 +19,7 @@ import org.crue.hercules.sgi.csp.dto.com.CspComPresentacionSeguimientoCientifico
 import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.dto.sgp.PersonaOutput;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
@@ -30,8 +28,11 @@ import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiCnfService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -110,6 +111,7 @@ public class ProyectoSeguimientoCientificoComService {
         buildAndSendComunicadoInicioPeriodoJustificacionSeguimientoEmailToIps(comunicadosInicioPeriodoSeguimientoIps);
       }
     });
+
     List<EmailOutput> comunicadosFinPeriodoSeguimientoIps = getComunicadoIPEndPeriods();
     if (!CollectionUtils.isEmpty(comunicadosFinPeriodoSeguimientoIps)) {
       buildAndSendComunicadoFinPeriodoJustificacionSeguimientoEmailToIps(comunicadosFinPeriodoSeguimientoIps);
@@ -175,7 +177,8 @@ public class ProyectoSeguimientoCientificoComService {
 
     return proyectoIds
         .stream().map(idProyecto -> {
-          Optional<Proyecto> proyecto = this.proyectoRepository.findById(idProyecto);
+          Proyecto proyecto = this.proyectoRepository.findById(idProyecto)
+              .orElseThrow(() -> new ProyectoNotFoundException(idProyecto));
           ProyectoPeriodoSeguimiento periodo = periodos.stream()
               .filter(currentPeriodo -> currentPeriodo.getProyectoId().compareTo(idProyecto) == 0).findFirst()
               .orElse(null);
@@ -187,7 +190,8 @@ public class ProyectoSeguimientoCientificoComService {
               .fechaInicio(periodo.getFechaInicioPresentacion())
               .fechaFin(periodo.getFechaFinPresentacion())
               .numPeriodo(periodo.getNumPeriodo())
-              .titulo(proyecto.map(Proyecto::getTitulo).orElse(""))
+              .titulo(proyecto.getTitulo())
+              .enlaceAplicacion(sgiConfigProperties.getWebUrl())
               .build();
           EmailOutput comunicado = null;
           try {
@@ -203,7 +207,7 @@ public class ProyectoSeguimientoCientificoComService {
             log.error(e.getMessage(), e);
           }
           return comunicado;
-        }).collect(Collectors.toList());
+        }).toList();
   }
 
   /**
@@ -249,12 +253,12 @@ public class ProyectoSeguimientoCientificoComService {
             && (member.getFechaFin() == null || member.getFechaFin().isAfter(periodo.getFechaFin())))
         .map(member -> {
           List<String> emails = this.sgiApiSgpService.findById(member.getPersonaRef()).getEmails().stream()
-              .map(PersonaOutput.Email::getEmail).collect(Collectors.toList());
+              .map(PersonaOutput.Email::getEmail).toList();
           return emails.stream().map(email -> Recipient.builder()
               .address(email)
               .name(email)
-              .build()).collect(Collectors.toList());
-        }).flatMap(List::stream).collect(Collectors.toList());
+              .build()).toList();
+        }).flatMap(List::stream).toList();
   }
 
   /**
@@ -280,9 +284,7 @@ public class ProyectoSeguimientoCientificoComService {
         dates.add(saturday.toInstant());
         dates.add(sunday.toInstant());
         break;
-      case WEDNESDAY:
-      case THURSDAY:
-      case FRIDAY:
+      case WEDNESDAY, THURSDAY, FRIDAY:
         dates.add(now.plusDays(5).toInstant());
         break;
       default:
@@ -304,11 +306,13 @@ public class ProyectoSeguimientoCientificoComService {
     return proyectosUnidad.stream().flatMap(proyecto -> periodosByProyecto.get(proyecto.getId()).stream()
         .map(periodo -> CspComInicioPresentacionSeguimientoCientificoData.Proyecto
             .builder()
-            .titulo(proyecto.getTitulo())
+            .titulo(
+                proyecto.getTitulo().stream().map(t -> new I18nFieldValueDto(t.getLang(), t.getValue()))
+                    .collect(Collectors.toSet()))
             .fechaInicio(periodo.getFechaInicioPresentacion())
             .fechaFin(periodo.getFechaFinPresentacion())
             .build()))
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private void sendEmailForPeriodosSeguimientoUG(List<Recipient> recipients,
@@ -319,8 +323,11 @@ public class ProyectoSeguimientoCientificoComService {
 
     EmailOutput emailOutput = emailService
         .createComunicadoInicioPresentacionSeguimientoCientificoEmail(
-            CspComInicioPresentacionSeguimientoCientificoData.builder().fecha(yearMonth.atDay(1)).proyectos(
-                proyectosEmail).build(),
+            CspComInicioPresentacionSeguimientoCientificoData.builder()
+                .enlaceAplicacion(sgiConfigProperties.getWebUrl())
+                .fecha(yearMonth.atDay(1))
+                .proyectos(proyectosEmail)
+                .build(),
             recipients);
     emailService.sendEmail(emailOutput.getId());
   }
@@ -332,7 +339,7 @@ public class ProyectoSeguimientoCientificoComService {
 
     return destinatarios.stream()
         .map(destinatario -> Recipient.builder().name(destinatario).address(destinatario).build())
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private Map<Long, List<ProyectoPeriodoSeguimiento>> getPeriodosSeguimientoCientificoByProyecto(
@@ -367,7 +374,7 @@ public class ProyectoSeguimientoCientificoComService {
 
   private List<Long> getProyectosIdsByPeriodos(List<ProyectoPeriodoSeguimiento> periodos) {
     return periodos.stream().map(ProyectoPeriodoSeguimiento::getProyectoId)
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private enum TipoComunicado {

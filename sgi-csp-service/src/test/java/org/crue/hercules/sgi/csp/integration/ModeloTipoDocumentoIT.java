@@ -1,13 +1,20 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoDocumento;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -84,32 +91,6 @@ class ModeloTipoDocumentoIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
   }
 
-  @Sql
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void findById_ReturnsModeloTipoDocumento() throws Exception {
-    Long id = 1L;
-
-    final ResponseEntity<ModeloTipoDocumento> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-        HttpMethod.GET, buildRequest(null, null), ModeloTipoDocumento.class, id);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    ModeloTipoDocumento modeloTipoDocumentoResponse = response.getBody();
-
-    Assertions.assertThat(modeloTipoDocumentoResponse).as("isNotNull()").isNotNull();
-    Assertions.assertThat(modeloTipoDocumentoResponse.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(modeloTipoDocumentoResponse.getModeloEjecucion()).as("getModeloEjecucion()").isNotNull();
-    Assertions.assertThat(modeloTipoDocumentoResponse.getModeloEjecucion().getId()).as("getModeloEjecucion().getId()")
-        .isEqualTo(1L);
-    Assertions.assertThat(modeloTipoDocumentoResponse.getTipoDocumento()).as("getTipoDocumento()").isNotNull();
-    Assertions.assertThat(modeloTipoDocumentoResponse.getTipoDocumento().getId()).as("getTipoDocumento().getId()")
-        .isEqualTo(1L);
-    Assertions.assertThat(modeloTipoDocumentoResponse.getModeloTipoFase()).as("getModeloTipoFase()").isNotNull();
-    Assertions.assertThat(modeloTipoDocumentoResponse.getModeloTipoFase().getId()).as("getModeloTipoFase().getId()")
-        .isEqualTo(1L);
-    Assertions.assertThat(modeloTipoDocumentoResponse.getActivo()).as("getActivo()").isTrue();
-  }
-
   /**
    * Función que devuelve un objeto TipoDocumento
    * 
@@ -117,11 +98,16 @@ class ModeloTipoDocumentoIT extends BaseIT {
    * @return el objeto TipoDocumento
    */
   private TipoDocumento generarMockTipoDocumento(Long id, String nombre) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, nombre));
+
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "descripcion-" + id));
 
     TipoDocumento tipoDocumento = new TipoDocumento();
     tipoDocumento.setId(id);
-    tipoDocumento.setNombre(nombre);
-    tipoDocumento.setDescripcion("descripcion-" + id);
+    tipoDocumento.setNombre(nombreTipoDocumento);
+    tipoDocumento.setDescripcion(descripcionTipoDocumento);
     tipoDocumento.setActivo(Boolean.TRUE);
 
     return tipoDocumento;
@@ -164,10 +150,16 @@ class ModeloTipoDocumentoIT extends BaseIT {
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
     modeloEjecucion.setId(1L);
 
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-" + idTipoFase));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcion-" + idTipoFase));
+
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(idTipoFase);
-    tipoFase.setNombre("nombre-" + idTipoFase);
-    tipoFase.setDescripcion("descripcion-" + idTipoFase);
+    tipoFase.setNombre(nombreTipoFase);
+    tipoFase.setDescripcion(descripcionTipoFase);
     tipoFase.setActivo(Boolean.TRUE);
 
     ModeloTipoFase modeloTipoFase = new ModeloTipoFase();

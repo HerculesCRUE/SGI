@@ -4,6 +4,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { ISexo } from '@core/models/sgp/sexo';
+import { LanguageService } from '@core/services/language.service';
 import { SexoService } from '@core/services/sgp/sexo.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -24,9 +25,10 @@ export class SelectSexoComponent extends SelectServiceComponent<ISexo> {
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private sexoService: SexoService
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
 
   }
 

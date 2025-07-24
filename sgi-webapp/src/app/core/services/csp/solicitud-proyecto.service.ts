@@ -1,26 +1,44 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SOLICITUD_PROYECTO_CONVERTER } from '@core/converters/csp/solicitud-proyecto.converter';
-import { ISolicitudProyectoBackend } from '@core/models/csp/backend/solicitud-proyecto-backend';
 import { ISolicitudProyecto } from '@core/models/csp/solicitud-proyecto';
 import { environment } from '@env';
-import { SgiMutableRestService } from '@sgi/framework/http';
+import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ISolicitudProyectoResponse } from './solicitud-proyecto/solicitud-proyecto-response';
+import { SOLICITUD_PROYECTO_RESPONSE_CONVERTER } from './solicitud-proyecto/solicitud-proyecto-response.converter';
+
+const _SolicitudProyectoServiceMixinBase:
+  CreateCtor<ISolicitudProyecto, ISolicitudProyecto, ISolicitudProyectoResponse, ISolicitudProyectoResponse> &
+  UpdateCtor<number, ISolicitudProyecto, ISolicitudProyecto, ISolicitudProyectoResponse, ISolicitudProyectoResponse> &
+  FindAllCtor<ISolicitudProyecto, ISolicitudProyectoResponse> &
+  FindByIdCtor<number, ISolicitudProyecto, ISolicitudProyectoResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinFindById(
+      mixinUpdate(
+        mixinCreate(
+          SgiRestBaseService,
+          SOLICITUD_PROYECTO_RESPONSE_CONVERTER,
+          SOLICITUD_PROYECTO_RESPONSE_CONVERTER
+        ),
+        SOLICITUD_PROYECTO_RESPONSE_CONVERTER,
+        SOLICITUD_PROYECTO_RESPONSE_CONVERTER
+      ),
+      SOLICITUD_PROYECTO_RESPONSE_CONVERTER),
+    SOLICITUD_PROYECTO_RESPONSE_CONVERTER
+  );
 
 @Injectable({
   providedIn: 'root'
 })
-export class SolicitudProyectoService extends SgiMutableRestService<number, ISolicitudProyectoBackend, ISolicitudProyecto> {
+export class SolicitudProyectoService extends _SolicitudProyectoServiceMixinBase {
 
   private static readonly MAPPING = '/solicitudproyecto';
 
   constructor(protected http: HttpClient) {
     super(
-      SolicitudProyectoService.name,
       `${environment.serviceServers.csp}${SolicitudProyectoService.MAPPING}`,
-      http,
-      SOLICITUD_PROYECTO_CONVERTER
+      http
     );
   }
 

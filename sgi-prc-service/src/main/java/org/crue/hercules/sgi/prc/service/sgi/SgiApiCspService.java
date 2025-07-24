@@ -49,7 +49,7 @@ public class SgiApiCspService extends SgiApiBaseService {
       try {
 
         ServiceType serviceType = ServiceType.CSP;
-        String relativeUrl = "/grupos/{grupoRef}";
+        String relativeUrl = "/grupos/{grupoRef}/grupo-dto";
         HttpMethod httpMethod = HttpMethod.GET;
         String mergedURL = buildUri(serviceType, relativeUrl);
 

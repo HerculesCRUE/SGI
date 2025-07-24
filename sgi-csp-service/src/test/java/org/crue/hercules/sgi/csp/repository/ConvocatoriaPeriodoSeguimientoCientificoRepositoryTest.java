@@ -1,12 +1,16 @@
 package org.crue.hercules.sgi.csp.repository;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,27 +22,31 @@ class ConvocatoriaPeriodoSeguimientoCientificoRepositoryTest extends BaseReposit
   private ConvocatoriaPeriodoSeguimientoCientificoRepository repository;
 
   @Test
-  void findAllByConvocatoriaIdOrderByMesInicial_ReturnsConvocatoriaPeriodoSeguimientoCientificoList()
-      throws Exception {
+  void findAllByConvocatoriaIdOrderByMesInicial_ReturnsConvocatoriaPeriodoSeguimientoCientificoList() {
 
     // given: 10 ConvocatoriaPeriodoSeguimientoCientifico with same ConvocatoriId
-    // @formatter:off
+    Set<ConvocatoriaTitulo> convocatoriaTitulo1 = new HashSet<>();
+    convocatoriaTitulo1.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
     Convocatoria convocatoria1 = Convocatoria.builder()
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo-1")
         .unidadGestionRef("2")
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo1)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(convocatoria1);
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo2 = new HashSet<>();
+    convocatoriaTitulo2.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
 
     Convocatoria convocatoria2 = Convocatoria.builder()
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo-2")
         .unidadGestionRef("2")
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo2)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(convocatoria2);
@@ -52,8 +60,6 @@ class ConvocatoriaPeriodoSeguimientoCientificoRepositoryTest extends BaseReposit
           .mesInicial(i - 1)
           .mesFinal(i)
           .build();
-      // @formatter:on
-
       entityManager.persistAndFlush(convocatoriaPeriodoSeguimientoCientifico);
     }
     Long convocatoriaIdBuscado = convocatoria1.getId();
@@ -77,32 +83,35 @@ class ConvocatoriaPeriodoSeguimientoCientificoRepositoryTest extends BaseReposit
   }
 
   @Test
-  void findAllByConvocatoriaIdOrderByMesInicial_ReturnsNull() throws Exception {
+  void findAllByConvocatoriaIdOrderByMesInicial_ReturnsNull() {
     // given: 10 ConvocatoriaPeriodoSeguimientoCientifico
-    // @formatter:off
+    Set<ConvocatoriaTitulo> convocatoriaTitulo1 = new HashSet<>();
+    convocatoriaTitulo1.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
     Convocatoria convocatoria1 = Convocatoria.builder()
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo-1")
         .unidadGestionRef("2")
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo1)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(convocatoria1);
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo2 = new HashSet<>();
+    convocatoriaTitulo2.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
 
     Convocatoria convocatoria2 = Convocatoria.builder()
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo-2")
         .unidadGestionRef("2")
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo2)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(convocatoria2);
-    // @formatter:on
 
     for (int i = 11; i > 1; i--) {
-      // @formatter:off
       ConvocatoriaPeriodoSeguimientoCientifico convocatoriaPeriodoSeguimientoCientifico = ConvocatoriaPeriodoSeguimientoCientifico
           .builder()
           .convocatoriaId((i % 2 == 0) ? convocatoria2.getId() : convocatoria1.getId())
@@ -111,7 +120,6 @@ class ConvocatoriaPeriodoSeguimientoCientificoRepositoryTest extends BaseReposit
           .mesInicial(i - 1)
           .mesFinal(i)
           .build();
-      // @formatter:on
 
       if (i % 2 == 0) {
         entityManager.persistAndFlush(convocatoriaPeriodoSeguimientoCientifico);

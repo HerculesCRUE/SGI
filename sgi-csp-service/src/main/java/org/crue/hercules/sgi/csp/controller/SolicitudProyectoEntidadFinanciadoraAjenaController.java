@@ -77,7 +77,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
    * @return Nuevo {@link SolicitudProyectoEntidadFinanciadoraAjena} creado.
    */
   @PostMapping
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<SolicitudProyectoEntidadFinanciadoraAjena> create(
       @Valid @RequestBody SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena) {
     log.debug("create(SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena) - start");
@@ -98,7 +98,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
    * @return {@link SolicitudProyectoEntidadFinanciadoraAjena} actualizado.
    */
   @PutMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public SolicitudProyectoEntidadFinanciadoraAjena update(@Validated({ Update.class,
       Default.class }) @RequestBody SolicitudProyectoEntidadFinanciadoraAjena solicitudProyectoEntidadFinanciadoraAjena,
       @PathVariable Long id) {
@@ -118,7 +118,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
    * @param id Identificador de {@link SolicitudProyectoEntidadFinanciadoraAjena}.
    */
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");
@@ -135,7 +135,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
    *         {@link HttpStatus#NO_CONTENT} en cualquier otro caso
    */
   @RequestMapping(path = "/{id}/solicitudproyectopresupuestos", method = RequestMethod.HEAD)
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-V', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Void> hasSolicitudProyectoPresupuestoEntidad(@PathVariable Long id) {
     log.debug("hasSolicitudProyectoPresupuestoEntidad(Long id) - start");
     boolean returnValue = solicitudProyectoPresupuestoService.existsBySolicitudProyectoEntidadFinanciadoraAjena(id);
@@ -153,7 +153,7 @@ public class SolicitudProyectoEntidadFinanciadoraAjenaController {
    *         id.
    */
   @GetMapping("/{id}/solicitudproyectoentidad")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public SolicitudProyectoEntidad findBySolicitudProyectoEntidadFinanciadoraAjena(@PathVariable Long id) {
     log.debug("findBySolicitudProyectoEntidadFinanciadoraAjena(Long id) - start");
     SolicitudProyectoEntidad returnValue = solicitudProyectoEntidadService

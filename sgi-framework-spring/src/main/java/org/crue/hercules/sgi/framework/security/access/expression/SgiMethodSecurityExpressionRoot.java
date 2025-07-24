@@ -216,7 +216,7 @@ public class SgiMethodSecurityExpressionRoot extends SecurityExpressionRoot
   public boolean isClient() {
     if (authentication instanceof JwtAuthenticationToken) {
       return authentication.isAuthenticated() && ((JwtAuthenticationToken) authentication).getToken()
-          .containsClaim(SgiJwtAuthenticationConverter.CLIENT_ID);
+          .hasClaim(SgiJwtAuthenticationConverter.CLIENT_ID);
     }
 
     return false;

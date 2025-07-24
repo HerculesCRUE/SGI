@@ -1,0 +1,98 @@
+[
+  {
+    "key": "ap3_7_9",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.9 Odola ateratzea"
+    },
+    "fieldGroup": [
+      {
+        "template": "Animaliei odola aterako zaie?"
+      },
+      {
+        "key": "extraccionSangreRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "type": "table-crud",
+        "key": "extraccionSangreTable",
+        "hideExpression": "!field.parent.model.extraccionSangreRadio || field.parent.model.extraccionSangreRadio === 'no'",
+        "templateOptions": {
+          "entity": "blood extraction",
+          "gender": "female"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Blood extraction"
+          },
+          "fieldGroup": [
+            {
+              "key": "lugarAnatomico",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Kokapen anatomikoa",
+                "order": 10
+              }
+            },
+            {
+              "key": "volumen",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Bolumena",
+                "order": 20
+              }
+            },
+            {
+              "key": "pauta",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Pauta",
+                "order": 30
+              }
+            },
+            {
+              "key": "analgesiaAnestesia",
+              "type": "select",
+              "templateOptions": {
+                "label": "Analgesia/Anestesia",
+                "order": 40,
+                "options": [
+                  {
+                    "label": "Analgesia",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Anestesia",
+                    "value": "2"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: analgesia/anestesia erabiliko bada, zehaztu pauta dagokion atalean (3.7.6 eta 3.7.14). </p>"
+      }
+    ]
+  }
+]

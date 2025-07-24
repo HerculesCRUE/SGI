@@ -1,0 +1,21 @@
+[
+  {
+    "key": "ap4_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.1 Arrisku edo eragozpenak neurtzea"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Arriskuen eta onuren arteko oreka funtsezko kontuetako bat da ikerketaren etikan.</p><p>Ikertzaile nagusiaren (IN) ardura da zuhurtziaz neurtzea zer arrisku jasan ditzaketen parte hartzaileek eta zer onura espero daitezkeen haientzat (aldez aurretik deskribatu dira formulario honen 1.2 atalean).</p><p>Kontuan hartu behar da onura handi batek ez duela arrisku oro justifikatzen, ezta boluntarioki onartzen bada ere. Norbanakoaren ongizatea eta segurtasuna esperotako onuraren gainetik daude. </p><p>Arrisku/onura balantzeari buruzko informazio gehiagorako, kontsultatu CIOMSen dokumentu hau: <a href='https://cioms.ch/publications/product/pautas-eticas-internacionales-para-la-investigacion-relacionada-con-la-salud-con-seres-humanos/' target='_blank'>Gizakien ikerketa biomedikorako nazioarteko jarraibide etikoak</a></p>"
+      }
+    ],
+    "hideExpression": "!formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio || formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio === 'no'"
+  }
+]

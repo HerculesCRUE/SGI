@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap4_6_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.2 Formakuntzarako onura ikaslearentzat"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Ikerketako subjektu gisa parte hartzeak formakuntzarako onuraren bat dakarkio ikasleari?</p>"
+      },
+      {
+        "key": "beneficioFormativoEstudianteRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Hautatu aukera bat:",
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Zehaztu",
+        "hideExpression": "!model.beneficioFormativoEstudianteRadio || model.beneficioFormativoEstudianteRadio === 'no'"
+      },
+      {
+        "key": "especificarBeneficioFormativo",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.beneficioFormativoEstudianteRadio || model.beneficioFormativoEstudianteRadio === 'no'",
+        "templateOptions": {
+          "label": "Zehaztu",
+          "placeholder": "Zehaztu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

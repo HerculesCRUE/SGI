@@ -1,8 +1,26 @@
 -- CONCEPTO_GASTO
-insert into test.concepto_gasto (id,nombre,descripcion,activo) values (1,'nombre-001','descripcion-001',true);
-insert into test.concepto_gasto (id,nombre,descripcion,activo) values (2,'nombre-002','descripcion-002',true);
-insert into test.concepto_gasto (id,nombre,descripcion,activo) values (3,'nombre-003','descripcion-003',true);
-insert into test.concepto_gasto (id,nombre,descripcion,activo) values (4,'nombre-004','descripcion-004',false);
-insert into test.concepto_gasto (id,nombre,descripcion,activo) values (5,'nombre-4','descripcion-4',true);
-insert into test.concepto_gasto (id,nombre,descripcion,activo) values (6,'nombre-5','descripcion-5',true);
-insert into test.concepto_gasto (id,nombre,descripcion,activo) values (7,'nombre-6','descripcion-6',true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (1, true,  true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (2, true,  true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (3, true, true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (4, true,  false);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (5, true,  true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (6, true,  true);
+INSERT INTO test.concepto_gasto (id, costes_indirectos, activo) VALUES (7, true,  true);
+
+-- CONCEPTO_GASTO_NOMBRE
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (1, 'es', 'nombre-001');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (2, 'es', 'nombre-002');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (3, 'es', 'nombre-003');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (4, 'es', 'nombre-4');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (5, 'es', 'nombre-5');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (6, 'es', 'nombre-6');
+INSERT INTO test.concepto_gasto_nombre (concepto_gasto_id, lang, value_) VALUES (7, 'es', 'nombre-7');
+
+-- CONCEPTO_GASTO_DESCRIPCION
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (1, 'es', 'descripcion-001');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (2, 'es', 'descripcion-002');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (3, 'es', 'descripcion-003');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (4, 'es', 'descripcion-4');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (5, 'es', 'descripcion-5');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (6, 'es', 'descripcion-6');
+INSERT INTO test.concepto_gasto_descripcion (concepto_gasto_id, lang, value_) VALUES (7, 'es', 'descripcion-7');

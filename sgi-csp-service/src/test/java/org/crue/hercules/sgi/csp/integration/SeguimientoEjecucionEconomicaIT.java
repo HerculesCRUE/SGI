@@ -7,10 +7,13 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.SeguimientoEjecucionEconomicaController;
 import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoJustificacionOutput;
+import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoSeguimientoOutput;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoEjecucionEconomica;
 import org.crue.hercules.sgi.csp.dto.ProyectoSeguimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.dto.SeguimientoJustificacionAnualidad;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -45,8 +48,7 @@ class SeguimientoEjecucionEconomicaIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s",
         tokenBuilder.buildToken("usr-002", roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-    return request;
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -92,8 +94,8 @@ class SeguimientoEjecucionEconomicaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("1");
 
-    Assertions.assertThat(responseData.get(0).getNombre()).as("get(0).getNombre())")
-        .isEqualTo("PRO1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())").isEqualTo("PRO1");
     Assertions.assertThat(responseData.get(0).getCodigoExterno()).as("get(0).getCodigoExterno())")
         .isEqualTo("cod-externo-001");
   }
@@ -124,7 +126,7 @@ class SeguimientoEjecucionEconomicaIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "observaciones,desc";
+    String sort = "observaciones.value,desc";
 
     // when: find ProyectoPeriodoJustificacionOutput
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PERIODO_JUSTIFICACION)
@@ -144,12 +146,12 @@ class SeguimientoEjecucionEconomicaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(responseData.get(0).getObservaciones()).as("get(0).getObservaciones())")
-        .isEqualTo("testing periodo 3");
-    Assertions.assertThat(responseData.get(1).getObservaciones()).as("get(1).getObservaciones())")
-        .isEqualTo("testing periodo 2");
-    Assertions.assertThat(responseData.get(2).getObservaciones()).as("get(2).getObservaciones())")
-        .isEqualTo("testing periodo 1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones())").isEqualTo("testing periodo 3");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())").isEqualTo("testing periodo 2");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones())").isEqualTo("testing periodo 1");
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -171,38 +173,38 @@ class SeguimientoEjecucionEconomicaIT extends BaseIT {
   void findProyectoPeriodosSeguimiento_WithPagingSorting_ReturnsProyectoPeriodoSeguimientoOutputSubList()
       throws Exception {
 
-    // given: data for ProyectoPeriodoJustificacionOutput and a proyectoSgeRef
+    // given: data for ProyectoPeriodoSeguimientoOutput and a proyectoSgeRef
     String proyectoSgeRef = "proyecto-sge-ref-001";
     // first page, 3 elements per page sorted by nombre desc
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "observaciones,desc";
+    String sort = "observaciones.value,desc";
 
-    // when: find ProyectoPeriodoJustificacionOutput
+    // when: find ProyectoPeriodoSeguimientoOutput
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PERIODO_SEGUIMIENTO)
         .queryParam("s", sort).buildAndExpand(proyectoSgeRef).toUri();
-    final ResponseEntity<List<ProyectoPeriodoJustificacionOutput>> response = restTemplate.exchange(uri,
+    final ResponseEntity<List<ProyectoPeriodoSeguimientoOutput>> response = restTemplate.exchange(uri,
         HttpMethod.GET,
         buildRequest(headers, null, DEFAULT_ROLES),
-        new ParameterizedTypeReference<List<ProyectoPeriodoJustificacionOutput>>() {
+        new ParameterizedTypeReference<List<ProyectoPeriodoSeguimientoOutput>>() {
         });
 
-    // given: ProyectoPeriodoJustificacionOutput data filtered and sorted
+    // given: ProyectoPeriodoSeguimientoOutput data filtered and sorted
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    final List<ProyectoPeriodoJustificacionOutput> responseData = response.getBody();
+    final List<ProyectoPeriodoSeguimientoOutput> responseData = response.getBody();
     Assertions.assertThat(responseData).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("5");
 
-    Assertions.assertThat(responseData.get(0).getObservaciones()).as("get(0).getObservaciones())")
-        .isEqualTo("obs-5");
-    Assertions.assertThat(responseData.get(1).getObservaciones()).as("get(1).getObservaciones())")
-        .isEqualTo("obs-4");
-    Assertions.assertThat(responseData.get(2).getObservaciones()).as("get(2).getObservaciones())")
-        .isEqualTo("obs-003");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones())").isEqualTo("obs-5");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())").isEqualTo("obs-4");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones())").isEqualTo("obs-003");
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -231,7 +233,7 @@ class SeguimientoEjecucionEconomicaIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "observaciones,desc";
+    String sort = "observaciones.value,desc";
 
     // when: find RequerimientoJustificacionOutput
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_REQUERIMIENTO_JUSTIFICACION)
@@ -251,9 +253,11 @@ class SeguimientoEjecucionEconomicaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
 
-    Assertions.assertThat(responseData.get(0).getObservaciones()).as("get(0).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones())")
         .isEqualTo("obs-002");
-    Assertions.assertThat(responseData.get(1).getObservaciones()).as("get(1).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())")
         .isEqualTo("obs-001");
   }
 

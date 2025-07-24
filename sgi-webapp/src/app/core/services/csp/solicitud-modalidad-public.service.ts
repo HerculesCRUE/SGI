@@ -1,12 +1,12 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SOLICITUD_MODALIDAD_CONVERTER } from '@core/converters/csp/solicitud-modalidad.converter';
-import { ISolicitudModalidadBackend } from '@core/models/csp/backend/solicitud-modalidad-backend';
 import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
+import { SOLICITUD_MODALIDAD_RESPONSE_CONVERTER } from '@core/services/csp/solicitud-modalidad/solicitud-modalidad-response.converter';
 import { environment } from '@env';
 import { SgiRestBaseService } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ISolicitudModalidadResponse } from './solicitud-modalidad/solicitud-modalidad-response';
 
 @Injectable({
   providedIn: 'root'
@@ -24,11 +24,11 @@ export class SolicitudModalidadPublicService extends SgiRestBaseService {
   }
 
   create(solicitudPublicId: string, solicitudModalidad: ISolicitudModalidad): Observable<ISolicitudModalidad> {
-    return this.http.post<ISolicitudModalidadBackend>(
+    return this.http.post<ISolicitudModalidadResponse>(
       `${this.getEndpointUrl(solicitudPublicId)}`,
-      SOLICITUD_MODALIDAD_CONVERTER.fromTarget(solicitudModalidad)
+      SOLICITUD_MODALIDAD_RESPONSE_CONVERTER.fromTarget(solicitudModalidad)
     ).pipe(
-      map(response => SOLICITUD_MODALIDAD_CONVERTER.toTarget(response))
+      map(response => SOLICITUD_MODALIDAD_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -37,11 +37,11 @@ export class SolicitudModalidadPublicService extends SgiRestBaseService {
     solicitudModalidadId: number,
     solicitudModalidad: ISolicitudModalidad
   ): Observable<ISolicitudModalidad> {
-    return this.http.put<ISolicitudModalidadBackend>(
+    return this.http.put<ISolicitudModalidadResponse>(
       `${this.getEndpointUrl(solicitudPublicId)}/${solicitudModalidadId}`,
-      SOLICITUD_MODALIDAD_CONVERTER.fromTarget(solicitudModalidad)
+      SOLICITUD_MODALIDAD_RESPONSE_CONVERTER.fromTarget(solicitudModalidad)
     ).pipe(
-      map(response => SOLICITUD_MODALIDAD_CONVERTER.toTarget(response))
+      map(response => SOLICITUD_MODALIDAD_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 

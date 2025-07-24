@@ -52,14 +52,14 @@ export class RolEquipoColectivosComponent extends FragmentComponent implements O
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.ROL_EQUIPO_COLECTIVOS, actionService);
+    super(actionService.FRAGMENT.ROL_EQUIPO_COLECTIVOS, actionService, translate);
 
     this.formPart = this.fragment as RolEquipoColectivosFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -79,7 +79,7 @@ export class RolEquipoColectivosComponent extends FragmentComponent implements O
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       ROL_EQUIPO_COLECTIVO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

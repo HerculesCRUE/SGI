@@ -32,6 +32,14 @@ import org.crue.hercules.sgi.csp.dto.com.EmailParam;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.dto.com.Status;
 import org.crue.hercules.sgi.csp.enums.ServiceType;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
+import org.crue.hercules.sgi.csp.model.ProyectoFase;
+import org.crue.hercules.sgi.csp.model.ProyectoHito;
+import org.crue.hercules.sgi.csp.model.SolicitudHito;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
@@ -46,9 +54,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class SgiApiComService extends SgiApiBaseService {
+  private static final String MSG_FIELD_ASUNTO = "email.asunto";
+  private static final String MSG_FIELD_CONTENIDO = "email.contenido";
+  private static final String MSG_FIELD_DESTINATARIOS = "email.destinatarios";
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String PROBLEM_MESSAGE_NOTNULL = "notNull";
+
   private static final String DATA = "_DATA";
-  private static final String PATH_EMAILS = "/emails";
-  private static final String PATH_PARAMETER_ID = "/{id}";
+  private static final String PATH_SEPARATOR = "/";
+  private static final String PATH_EMAILS = PATH_SEPARATOR + "emails";
+  private static final String PATH_PARAMETER_ID = PATH_SEPARATOR + "{id}";
 
   private static final String TEMPLATE_GENERIC_EMAIL_TEXT_NAME = "GENERIC_EMAIL_TEXT";
   private static final String TEMPLATE_GENERIC_EMAIL_TEXT_PARAM_CONTENT = "GENERIC_CONTENT_TEXT";
@@ -212,10 +228,7 @@ public class SgiApiComService extends SgiApiBaseService {
       Deferrable deferrableRecipients) {
     log.debug("createGenericEmailText({}, {}, {}, {}) - start", subject, content, recipients, deferrableRecipients);
 
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    this.validateComunicados(subject, content, recipients);
 
     ServiceType serviceType = ServiceType.COM;
     String relativeUrl = PATH_EMAILS;
@@ -254,11 +267,8 @@ public class SgiApiComService extends SgiApiBaseService {
     log.debug("updateGenericEmailText({}, {}, {}, {}, {}) - start", id, subject, content, recipients,
         deferrableRecipients);
 
-    Assert.notNull(id, "ID is required");
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    AssertHelper.idNotNull(id, EmailOutput.class);
+    this.validateComunicados(subject, content, recipients);
 
     ServiceType serviceType = ServiceType.COM;
     String relativeUrl = PATH_EMAILS + PATH_PARAMETER_ID;
@@ -289,7 +299,7 @@ public class SgiApiComService extends SgiApiBaseService {
   public void deleteEmail(Long id) {
     log.debug("deleteEmail({}) - start", id);
 
-    Assert.notNull(id, "ID is required");
+    AssertHelper.idNotNull(id, EmailOutput.class);
 
     ServiceType serviceType = ServiceType.COM;
     String relativeUrl = PATH_EMAILS + PATH_PARAMETER_ID;
@@ -315,11 +325,8 @@ public class SgiApiComService extends SgiApiBaseService {
       List<Recipient> recipients) {
     log.debug("createConvocatoriaHitoEmail({}, {}, {}, {}) - start", convocatoriaHitoId, subject, content, recipients);
 
-    Assert.notNull(convocatoriaHitoId, "ConvocatoriaHito ID is required");
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    AssertHelper.idNotNull(convocatoriaHitoId, ConvocatoriaHito.class);
+    this.validateComunicados(subject, content, recipients);
 
     Long id = this.createGenericEmailText(subject, content, recipients, new Deferrable(
         ServiceType.CSP,
@@ -343,12 +350,9 @@ public class SgiApiComService extends SgiApiBaseService {
     log.debug("updateConvocatoriaHitoEmail({}, {}, {}, {}) - start", id, convocatoriaHitoId, subject, content,
         recipients);
 
-    Assert.notNull(id, "ID is required");
-    Assert.notNull(convocatoriaHitoId, "ConvocatoriaHito ID is required");
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    AssertHelper.idNotNull(id, EmailOutput.class);
+    AssertHelper.idNotNull(convocatoriaHitoId, ConvocatoriaHito.class);
+    this.validateComunicados(subject, content, recipients);
 
     this.updateGenericEmailText(id, subject, content, recipients, new Deferrable(
         ServiceType.CSP,
@@ -370,11 +374,8 @@ public class SgiApiComService extends SgiApiBaseService {
       List<Recipient> recipients) {
     log.debug("createSolicitudHitoEmail({}, {}, {}, {}) - start", solicitudHitoId, subject, content, recipients);
 
-    Assert.notNull(solicitudHitoId, "SolicitudHito ID is required");
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    AssertHelper.idNotNull(solicitudHitoId, SolicitudHito.class);
+    this.validateComunicados(subject, content, recipients);
 
     Long id = this.createGenericEmailText(subject, content, recipients, new Deferrable(
         ServiceType.CSP,
@@ -401,12 +402,9 @@ public class SgiApiComService extends SgiApiBaseService {
     log.debug("updateSolicitudHitoEmail({}, {}, {}, {}) - start", id, solicitudHitoId, subject, content,
         recipients);
 
-    Assert.notNull(id, "ID is required");
-    Assert.notNull(solicitudHitoId, "SolicitudHito ID is required");
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    AssertHelper.idNotNull(id, EmailOutput.class);
+    AssertHelper.idNotNull(solicitudHitoId, SolicitudHito.class);
+    this.validateComunicados(subject, content, recipients);
 
     this.updateGenericEmailText(id, subject, content, recipients, new Deferrable(
         ServiceType.CSP,
@@ -716,11 +714,8 @@ public class SgiApiComService extends SgiApiBaseService {
       List<Recipient> recipients) {
     log.debug("createProyectoHitoEmail({}, {}, {}, {}) - start", proyectoHitoId, subject, content, recipients);
 
-    Assert.notNull(proyectoHitoId, "ProyectoHito ID is required");
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    AssertHelper.idNotNull(proyectoHitoId, ProyectoHito.class);
+    this.validateComunicados(subject, content, recipients);
 
     Long id = this.createGenericEmailText(subject, content, recipients, new Deferrable(
         ServiceType.CSP,
@@ -800,11 +795,8 @@ public class SgiApiComService extends SgiApiBaseService {
       List<Recipient> recipients) {
     log.debug("createConvocatoriaFaseEmail({}, {}, {}, {}) - start", convocatoriaFaseId, subject, content, recipients);
 
-    Assert.notNull(convocatoriaFaseId, "ConvocatoriaFase ID is required");
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    AssertHelper.idNotNull(convocatoriaFaseId, ConvocatoriaFase.class);
+    this.validateComunicados(subject, content, recipients);
 
     Long id = this.createGenericEmailText(subject, content, recipients, new Deferrable(
         ServiceType.CSP,
@@ -818,11 +810,8 @@ public class SgiApiComService extends SgiApiBaseService {
       List<Recipient> recipients) {
     log.debug("createConvocatoriaFaseEmail({}, {}, {}, {}) - start", proyectoFaseId, subject, content, recipients);
 
-    Assert.notNull(proyectoFaseId, "ProyectoFase ID is required");
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    AssertHelper.idNotNull(proyectoFaseId, ProyectoFase.class);
+    this.validateComunicados(subject, content, recipients);
 
     Long id = this.createGenericEmailText(subject, content, recipients, new Deferrable(
         ServiceType.CSP,
@@ -852,6 +841,23 @@ public class SgiApiComService extends SgiApiBaseService {
     return super.<EmailInput, EmailOutput>callEndpoint(mergedURL, httpMethod, request,
         new ParameterizedTypeReference<EmailOutput>() {
         }).getBody();
+  }
+
+  private void validateComunicados(String subject, String content, List<Recipient> recipients) {
+    AssertHelper.fieldNotNull(subject, EmailOutput.class, MSG_FIELD_ASUNTO);
+    AssertHelper.fieldNotNull(content, EmailOutput.class, MSG_FIELD_CONTENIDO);
+    Assert.notEmpty(recipients,
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(MSG_FIELD_DESTINATARIOS))
+            .parameter(MSG_KEY_ENTITY,
+                EmailOutput.class)
+            .build());
+    Assert.noNullElements(recipients,
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(MSG_FIELD_DESTINATARIOS))
+            .parameter(MSG_KEY_ENTITY,
+                EmailOutput.class)
+            .build());
   }
 
 }

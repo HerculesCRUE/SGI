@@ -1,3 +1,4 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
 import { IPartidaPresupuestariaSge } from '@core/models/sge/partida-presupuestaria-sge';
 import { SgiBaseConverter } from '@sgi/framework/core';
@@ -13,7 +14,7 @@ class ProyectoPartidaPresupuestariaRequestConverter
       id: undefined,
       proyectoId: value.proyectoId,
       convocatoriaPartidaId: value.convocatoriaPartidaId,
-      descripcion: value.descripcion,
+      descripcion: value.descripcion ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.descripcion) : [],
       codigo: value.codigo,
       partidaSge: value.partidaRef ? { id: value.partidaRef } as IPartidaPresupuestariaSge : null,
       tipoPartida: value.tipoPartida
@@ -27,7 +28,7 @@ class ProyectoPartidaPresupuestariaRequestConverter
     return {
       proyectoId: value.proyectoId,
       convocatoriaPartidaId: value.convocatoriaPartidaId,
-      descripcion: value.descripcion,
+      descripcion: value.descripcion ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.descripcion) : [],
       codigo: value.codigo,
       partidaRef: value.partidaSge?.id,
       tipoPartida: value.tipoPartida

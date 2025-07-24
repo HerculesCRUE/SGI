@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap1_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Research team",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Any change in the research team should be notified to the relevant ethics committee.</p>"
+      },
+      {
+        "template": "Briefly describe if there have been any changes in the research team (addition or removal of members) or in the tasks of the members and their justification."
+      },
+      {
+        "key": "equipoInvestigador",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Description",
+          "label": "Description",
+          "required": false,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

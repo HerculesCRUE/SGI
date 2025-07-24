@@ -110,7 +110,7 @@ class ModeloUnidadIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "unidadGestionRef,desc";
-    String filter = "modeloEjecucion.descripcion=ke=00";
+    String filter = "modeloEjecucion.descripcion.value=ke=00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
         .build(false).toUri();

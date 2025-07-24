@@ -3,6 +3,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ESTADO_MAP } from '@core/models/pii/solicitud-proteccion';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { IPais } from '@core/models/sgo/pais';
+import { LanguageService } from '@core/services/language.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
@@ -44,7 +45,7 @@ const SOLICITUD_PROTECCION_TITULO_INVENCION_KEY = marker('pii.solicitud-protecci
 const SOLICITUD_PROTECCION_TIPO_PROTECCION_KEY = marker('pii.solicitud-proteccion.tipo-proteccion');
 @Injectable()
 export class SolicitudProteccionGeneralListadoExportService extends
-  AbstractTableExportFillService<ISolicitudProteccionReportData, IReportOptions>{
+  AbstractTableExportFillService<ISolicitudProteccionReportData, IReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -52,7 +53,8 @@ export class SolicitudProteccionGeneralListadoExportService extends
     private readonly invencionService: InvencionService,
     private readonly personaService: PersonaService,
     private readonly vinculacionService: VinculacionService,
-    private readonly paisService: PaisService
+    private readonly paisService: PaisService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -174,11 +176,11 @@ export class SolicitudProteccionGeneralListadoExportService extends
 
     return [
       LuxonUtils.toBackend(solicitud.fechaPrioridadSolicitud) ?? '',
-      solicitud.viaProteccion?.nombre ?? '',
+      this.languageService.getFieldValue(solicitud.viaProteccion?.nombre),
       solicitud.pais?.nombre ?? '',
       solicitud.numeroSolicitud ? solicitud.numeroSolicitud.toString() : '',
-      solicitud.invencion.titulo ?? '',
-      solicitud.invencion.tipoProteccion.nombre ?? '',
+      this.languageService.getFieldValue(solicitud.invencion.titulo),
+      this.languageService.getFieldValue(solicitud.invencion.tipoProteccion.nombre),
       this.translate.instant(ESTADO_MAP.get(solicitud.estado)) ?? '',
       this.notIsNullAndNotUndefined(solicitud.fechaFinPriorPresFasNacRec) ? 'S' : 'N',
       LuxonUtils.toBackend(solicitud.fechaFinPriorPresFasNacRec) ?? '',

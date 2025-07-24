@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap3_7_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.3 References from scientific publications"
+    },
+    "fieldGroup": [
+      {
+        "template": "Do the procedures/interventions follow any official guidelines?"
+      },
+      {
+        "key": "siguenDirectrizOficialRadio",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "si",
+              "label": "Yes, as specified below"
+            },
+            {
+              "value": "noConDisenioSimilar",
+              "label": "No, but references to scientific publications with a similar design are provided."
+            },
+            {
+              "value": "noSinDisenioSimilar",
+              "label": "No, there are no publications with a similar design"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: cite the most relevant references (maximum 10 lines) in full (author, title, publication, date, etc.) and provide the documents in section '5.6 Additional documentation'.</p>"
+      },
+      {
+        "key": "especificarDirectriz",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.siguenDirectrizOficialRadio || model.siguenDirectrizOficialRadio === 'noSinDisenioSimilar'",
+        "templateOptions": {
+          "name": "Please specify",
+          "required": true
+        }
+      }
+    ]
+  }
+]

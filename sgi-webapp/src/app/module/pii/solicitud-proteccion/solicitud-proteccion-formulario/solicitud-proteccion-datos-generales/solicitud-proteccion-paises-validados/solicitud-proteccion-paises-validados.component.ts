@@ -48,13 +48,13 @@ export class SolicitudProteccionPaisesValidadosComponent extends FragmentCompone
     private readonly translate: TranslateService,
     private readonly matDialog: MatDialog,
     private readonly dialogService: DialogService) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as SolicitudProteccionDatosGeneralesFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor = (item: StatusWrapper<IPaisValidado>, property: string) => {
@@ -117,7 +117,7 @@ export class SolicitudProteccionPaisesValidadosComponent extends FragmentCompone
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       PAIS_VALIDADO_KEY,

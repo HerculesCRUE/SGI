@@ -1,18 +1,24 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ModeloTipoFaseNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFaseRepository;
 import org.crue.hercules.sgi.csp.service.impl.ModeloTipoFaseServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -91,7 +97,7 @@ class ModeloTipoFaseServiceTest extends BaseServiceTest {
 
     // then: Se lanza una excepción
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoFase)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Debe seleccionarse si la fase está disponible para proyectos o convocatorias");
+        .hasMessage("Debe seleccionarse si la fase está disponible para convocatorias, solicitudes o proyectos");
 
   }
 
@@ -104,7 +110,7 @@ class ModeloTipoFaseServiceTest extends BaseServiceTest {
     // when: Creamos el ModeloTipoEnlace
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoFase)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id ModeloEjecución no puede ser null");
+        .hasMessage("Identificador de Modelo Ejecución no puede ser nulo");
   }
 
   @Test
@@ -116,7 +122,7 @@ class ModeloTipoFaseServiceTest extends BaseServiceTest {
     // when: Creamos el ModeloTipoEnlace
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoFase)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id TipoFase no puede ser null");
+        .hasMessage("Identificador de Tipo Fase no puede ser nulo");
   }
 
   @Test
@@ -162,7 +168,8 @@ class ModeloTipoFaseServiceTest extends BaseServiceTest {
         // when: Udpate con Activo false
         () -> service.update(modeloTipoFase))
         // then: Lanza una excepción
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El ModeloTipoFase tiene que estar activo");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("%s de Modelo Tipo Fase no está activo", modeloTipoFase.getTipoFase().getNombre());
 
   }
 
@@ -181,34 +188,8 @@ class ModeloTipoFaseServiceTest extends BaseServiceTest {
         () -> service.update(modeloTipoFase))
         // then: Lanza una excepción
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Debe seleccionarse si la fase está disponible para proyectos o convocatorias");
+        .hasMessage("Debe seleccionarse si la fase está disponible para convocatorias, solicitudes o proyectos");
     ;
-  }
-
-  @Test
-  void find_WithExistingId_ReturnsModeloTipoFase() {
-
-    // given: Entidad con un determinado Id
-    ModeloTipoFase modeloTipoFase = generarModeloTipoFase(1L);
-    BDDMockito.given(modeloTipoFaseRepository.findById(modeloTipoFase.getId())).willReturn(Optional.of(modeloTipoFase));
-
-    // when: Se busca la entidad por ese Id
-    ModeloTipoFase result = service.findById(modeloTipoFase.getId());
-
-    // then: Se recupera la entidad con el Id
-    Assertions.assertThat(result).isEqualTo(modeloTipoFase);
-  }
-
-  @Test
-  void find_WithNoExistingId_ThrowsNotFoundException() throws Exception {
-
-    // given: No existe entidad con el id indicado
-    Long id = 1L;
-    BDDMockito.given(modeloTipoFaseRepository.findById(id)).willReturn(Optional.empty());
-
-    // when: Se busca entidad con ese id
-    // then: Se produce error porque no encuentra la entidad con ese Id
-    Assertions.assertThatThrownBy(() -> service.findById(id)).isInstanceOf(ModeloTipoFaseNotFoundException.class);
   }
 
   @Test
@@ -257,89 +238,8 @@ class ModeloTipoFaseServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       ModeloTipoFase modeloTipoFase = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(modeloTipoFase.getTipoFase().getNombre()).isEqualTo("TipoFase" + String.format("%03d", i));
-    }
-  }
-
-  @Test
-  void findAllByModeloEjecucionActivosConvocatoria_ReturnsPage() {
-    // given: Una lista con 37 ModeloTipoFase activos para convocatorias para el
-    // ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-    List<ModeloTipoFase> tiposFaseModeloEjecucion = new ArrayList<>();
-    for (long i = 1; i <= 37; i++) {
-      tiposFaseModeloEjecucion.add(generarModeloTipoFase(i));
-    }
-
-    BDDMockito.given(modeloTipoFaseRepository.findAll(ArgumentMatchers.<Specification<ModeloTipoFase>>any(),
-        ArgumentMatchers.<Pageable>any())).willAnswer(new Answer<Page<ModeloTipoFase>>() {
-          @Override
-          public Page<ModeloTipoFase> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > tiposFaseModeloEjecucion.size() ? tiposFaseModeloEjecucion.size() : toIndex;
-            List<ModeloTipoFase> content = tiposFaseModeloEjecucion.subList(fromIndex, toIndex);
-            Page<ModeloTipoFase> page = new PageImpl<>(content, pageable, tiposFaseModeloEjecucion.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    Pageable paging = PageRequest.of(3, 10);
-    Page<ModeloTipoFase> page = service.findAllByModeloEjecucionActivosConvocatoria(idModeloEjecucion, null, paging);
-
-    // then: Devuelve la pagina 3 con los ModeloTipoFase del 31 al 37
-    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
-    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
-    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
-    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
-    for (int i = 31; i <= 37; i++) {
-      ModeloTipoFase modeloTipoFase = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(modeloTipoFase.getTipoFase().getNombre()).isEqualTo("TipoFase" + String.format("%03d", i));
-    }
-  }
-
-  @Test
-  void findAllByModeloEjecucionActivosProyecto_ReturnsPage() {
-    // given: Una lista con 37 ModeloTipoFase activos para convocatorias para el
-    // ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-    List<ModeloTipoFase> tiposFaseModeloEjecucion = new ArrayList<>();
-    for (long i = 1; i <= 37; i++) {
-      tiposFaseModeloEjecucion.add(generarModeloTipoFase(i));
-    }
-
-    BDDMockito.given(modeloTipoFaseRepository.findAll(ArgumentMatchers.<Specification<ModeloTipoFase>>any(),
-        ArgumentMatchers.<Pageable>any())).willAnswer(new Answer<Page<ModeloTipoFase>>() {
-          @Override
-          public Page<ModeloTipoFase> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > tiposFaseModeloEjecucion.size() ? tiposFaseModeloEjecucion.size() : toIndex;
-            List<ModeloTipoFase> content = tiposFaseModeloEjecucion.subList(fromIndex, toIndex);
-            Page<ModeloTipoFase> page = new PageImpl<>(content, pageable, tiposFaseModeloEjecucion.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    Pageable paging = PageRequest.of(3, 10);
-    Page<ModeloTipoFase> page = service.findAllByModeloEjecucionActivosProyecto(idModeloEjecucion, null, paging);
-
-    // then: Devuelve la pagina 3 con los ModeloTipoFase del 31 al 37
-    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
-    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
-    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
-    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
-    for (int i = 31; i <= 37; i++) {
-      ModeloTipoFase modeloTipoFase = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(modeloTipoFase.getTipoFase().getNombre()).isEqualTo("TipoFase" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(modeloTipoFase.getTipoFase().getNombre(), Language.ES))
+          .isEqualTo("TipoFase" + String.format("%03d", i));
     }
   }
 
@@ -350,11 +250,16 @@ class ModeloTipoFaseServiceTest extends BaseServiceTest {
    * @return el objeto TipoDocumento
    */
   private TipoFase generarMockTipoFase(Long id, String nombre) {
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, nombre));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcion-" + id));
 
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id);
-    tipoFase.setNombre(nombre);
-    tipoFase.setDescripcion("descripcion-" + id);
+    tipoFase.setNombre(nombreTipoFase);
+    tipoFase.setDescripcion(descripcionTipoFase);
     tipoFase.setActivo(Boolean.TRUE);
 
     return tipoFase;

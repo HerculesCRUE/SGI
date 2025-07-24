@@ -1,16 +1,16 @@
 package org.crue.hercules.sgi.framework.http;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.crue.hercules.sgi.framework.i18n.Language;
+import org.crue.hercules.sgi.framework.spring.context.i18n.SgiLocaleContextHolder;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.framework.web.config.OAuth2ClientConfiguration;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.util.Optionals;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -41,6 +41,7 @@ public class HttpEntityBuilder<T> {
   private HttpHeaders headers;
   private String clientRegistrationId;
   private boolean useCurrentUserAuthorization = false;
+  private Language language;
 
   /**
    * Creates a new {@link HttpEntityBuilder} for building an {@link HttpEntity}
@@ -103,6 +104,18 @@ public class HttpEntityBuilder<T> {
   }
 
   /**
+   * Sets languague to send in Accept-Language header. If not set, use the current
+   * language:
+   * 
+   * @param language {@link Language} to send
+   * @return self reference
+   */
+  public HttpEntityBuilder<T> withLanguage(Language language) {
+    this.language = language;
+    return this;
+  }
+
+  /**
    * Builds the {@link HttpEntity} with the provided information.
    * 
    * @return the {@link HttpEntity}
@@ -111,7 +124,8 @@ public class HttpEntityBuilder<T> {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN, MediaType.TEXT_HTML));
-    headers.setAcceptLanguage(Arrays.asList(new Locale.LanguageRange(LocaleContextHolder.getLocale().toLanguageTag())));
+    headers.set(HttpHeaders.ACCEPT_LANGUAGE,
+        language != null ? language.getCode() : SgiLocaleContextHolder.getLanguage().getCode());
 
     if (useCurrentUserAuthorization) {
       withCurrentUserAuthorization(headers);

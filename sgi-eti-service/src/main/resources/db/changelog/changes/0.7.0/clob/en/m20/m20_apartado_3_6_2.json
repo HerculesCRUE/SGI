@@ -1,0 +1,86 @@
+[
+  {
+    "key": "ap3_6_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.2 Genetically modified animals"
+    },
+    "fieldGroup": [
+      {
+        "template": "Are any of the animals used genetically modified?"
+      },
+      {
+        "key": "animalesModificadosGeneticamenteRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: Requires #nombre_comite_M30_en# report.</p>"
+      },
+      {
+        "template": "Do they involve risks to human, animal or environmental health?",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'"
+      },
+      {
+        "key": "implicanRiesgosRadio",
+        "type": "radio",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Can genetic modification result in progeny or animal line that experiences pain, suffering, distress or lasting harm equivalent to or greater than that caused by the introduction of a needle?",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'"
+      },
+      {
+        "key": "experimentaDolorRadio",
+        "type": "radio",
+        "hideExpression": "!model.animalesModificadosGeneticamenteRadio || model.animalesModificadosGeneticamenteRadio === 'no'",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

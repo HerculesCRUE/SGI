@@ -3,11 +3,13 @@ package org.crue.hercules.sgi.csp.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.model.BaseEntity;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -34,6 +36,5 @@ public class AlegacionRequerimientoInput implements Serializable {
   private Instant fechaReintegro;
   @Size(max = BaseEntity.DEFAULT_TEXT_LENGTH)
   private String justificanteReintegro;
-  @Size(max = BaseEntity.DEFAULT_LONG_TEXT_LENGTH)
-  private String observaciones;
+  private List<I18nFieldValueDto> observaciones;
 }

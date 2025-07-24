@@ -7,6 +7,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { Observable, of, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { FooterComponent } from './footer.component';
+import { TranslateService } from '@ngx-translate/core';
 
 const MSG_FORM_UNSAVED = marker('msg.unsaved');
 const MSG_FORM_UNSAVED_CANCEL = marker('btn.cancel');
@@ -26,14 +27,20 @@ export abstract class ActionComponent implements SgiAllowNavigation, OnInit, OnD
   protected activatedRoute: ActivatedRoute;
   protected subscriptions: Subscription[] = [];
 
-
-  constructor(router: Router, activatedRoute: ActivatedRoute, actionService: IActionService, private dialogService: DialogService) {
+  constructor(router: Router, activatedRoute: ActivatedRoute, actionService: IActionService, private dialogService: DialogService, translateService: TranslateService) {
     this.router = router;
     this.activatedRoute = activatedRoute;
     this._service = actionService;
+
+    if (translateService) {
+      this.subscriptions.push(translateService.onLangChange.subscribe(() => {
+        this.setupI18N();
+      }));
+    }
   }
 
   ngOnInit(): void {
+    this.setupI18N();
     if (this.footer) {
       this.subscriptions.push(this.footer.event$.subscribe((value) => {
         if (value === 'cancel') {
@@ -70,5 +77,5 @@ export abstract class ActionComponent implements SgiAllowNavigation, OnInit, OnD
 
   abstract saveOrUpdate(action?: any): void;
 
-
+  protected abstract setupI18N(): void;
 }

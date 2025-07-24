@@ -2,11 +2,15 @@ package org.crue.hercules.sgi.rep.service.eti;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
+import org.crue.hercules.sgi.rep.dto.eti.ApartadoDefinicionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoDto;
 import org.crue.hercules.sgi.rep.dto.eti.RespuestaDto;
 import org.crue.hercules.sgi.rep.model.BaseEntity;
@@ -40,9 +44,13 @@ class DtoTest extends BaseReportServiceTest {
   void getApartado_ReturnsJson() throws Exception {
     ApartadoDto dto = ApartadoDto.builder().build();
     ObjectNode node = JsonNodeFactory.instance.objectNode();
-    dto.setEsquemaRaw(node);
+    List<ApartadoDefinicionDto> definicion = new ArrayList<>();
+    ApartadoDefinicionDto defi = new ApartadoDefinicionDto();
+    definicion.add(defi);
+    defi.setEsquemaRaw(node);
+    dto.setDefinicion(definicion);
 
-    assertNotNull(dto.getEsquema());
+    assertNotNull(defi.getEsquema());
   }
 
   @Test

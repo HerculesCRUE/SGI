@@ -100,25 +100,31 @@
       <!-- Investigador -->
       <ng-container matColumnDef="investigador">
         <th mat-header-cell *matHeaderCellDef> {{'csp.notificacion-cvn.investigador' | translate}} </th>
-        <td mat-cell *matCellDef="let element"> {{element.solicitante | personaNombreCompleto}}</td>
+        <td mat-cell *matCellDef="let element" sgpNotFoundError [model]="element.solicitante">
+          {{element.solicitante | personaNombreCompleto}}
+        </td>
       </ng-container>
 
       <!-- Titulo Column -->
       <ng-container matColumnDef="titulo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.notificacion-cvn.titulo' | translate}} </th>
-        <td mat-cell *matCellDef="let notificacion"> {{notificacion.titulo}}</td>
+        <td mat-cell *matCellDef="let notificacion">
+          <sgi-i18n-table-field [field]="notificacion.titulo"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Entidad Participacion Column -->
       <ng-container matColumnDef="entidadParticipacion">
         <th mat-header-cell *matHeaderCellDef> {{'csp.notificacion-cvn.entidad-participacion' | translate}} </th>
-        <td mat-cell *matCellDef="let notificacion"> {{notificacion | notificacionCvnEntidadParticipacion}}</td>
+        <td mat-cell *matCellDef="let notificacion" sgempNotFoundError [model]="notificacion.entidadParticipacion">
+          {{notificacion | notificacionCvnEntidadParticipacion}}</td>
       </ng-container>
 
       <!-- IP -->
       <ng-container matColumnDef="ip">
         <th mat-header-cell *matHeaderCellDef> {{'csp.notificacion-cvn.ip' | translate}} </th>
-        <td mat-cell *matCellDef="let notificacion"> {{notificacion | notificacionCvnResponsable}}</td>
+        <td mat-cell *matCellDef="let notificacion" sgpNotFoundError [model]="notificacion.responsable"> {{notificacion
+          | notificacionCvnResponsable}}</td>
       </ng-container>
 
       <!-- fechaEstado Column -->

@@ -48,8 +48,8 @@
         <th mat-header-cell *matHeaderCellDef>
           {{'csp.validacion-solicitudes-tutor.solicitante' | translate}}
         </th>
-        <td mat-cell *matCellDef="let element">
-          {{ element.nombreSolicitante }}
+        <td mat-cell *matCellDef="let element" sgpNotFoundError [model]="element.solicitanteIP">
+          {{ element.solicitanteIP?.nombre }} {{element.solicitanteIP?.apellidos}}
         </td>
       </ng-container>
 
@@ -59,7 +59,7 @@
           {{'csp.validacion-solicitudes-tutor.titulo-trabajo' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.tituloTrabajo }}
+          <sgi-i18n-table-field [field]="element.tituloTrabajo"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
@@ -69,7 +69,7 @@
           {{'csp.validacion-solicitudes-tutor.convocatoria' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.tituloConvocatoria}}
+          <sgi-i18n-table-field [field]=" element.tituloConvocatoria"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

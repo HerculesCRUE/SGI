@@ -1,0 +1,32 @@
+[
+  {
+    "key": "ap4_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.2 Metodo alternatiboak bilatzeko kontsultatutako iturriak"
+    },
+    "fieldGroup": [
+      {
+        "template": "Deskribatu kontsultatutako iturriak eta erabilitako bilaketa irizpideak."
+      },
+      {
+        "key": "fuentes",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Kontsultatutako iturriak",
+          "required": true
+        }
+      },
+      {
+        "key": "criteriosBusqueda",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Bilaketa irizpideak",
+          "required": true
+        }
+      }
+    ]
+  }
+]

@@ -2,19 +2,26 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
-import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioPeriodoJustificacionDocumentoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionDocumento;
+import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionDocumentoComentario;
+import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
-import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionRepository;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionDocumentoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoSocioPeriodoJustificacionDocumentoServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -209,7 +216,7 @@ class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseServiceT
         () -> service.update(proyectoSocioId, Arrays.asList(proyectoSocioPeriodoJustificacionDocumento)))
         // then: throw exception
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("No se puede modificar el proyecto socio del ProyectoSocioPeriodoJustificacionDocumento");
+        .hasMessage("No se puede Modificar Proyecto Socio para Proyecto Socio Periodo Justificación Documento");
   }
 
   @Test
@@ -260,7 +267,8 @@ class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseServiceT
       ProyectoSocioPeriodoJustificacionDocumento proyectoSocioPeriodoJustificacion = page.getContent()
           .get(i - (page.getSize() * page.getNumber()) - 1);
       Assertions.assertThat(proyectoSocioPeriodoJustificacion.getId()).isEqualTo(Long.valueOf(i));
-      Assertions.assertThat(proyectoSocioPeriodoJustificacion.getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoSocioPeriodoJustificacion.getNombre(), Language.ES))
+          .isEqualTo("nombre-" + i);
     }
   }
 
@@ -273,15 +281,20 @@ class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseServiceT
         .of(generarMockProyectoSocioPeriodoJustificacionDocumento(idBuscado, proyectoSocioPeriodoJustificacionId)));
 
     // when: Buscamos el ProyectoSocioPeriodoJustificacionDocumento por su id
-    ProyectoSocioPeriodoJustificacionDocumento proyectoSocioPeriodoJustificacion = service.findById(idBuscado);
+    ProyectoSocioPeriodoJustificacionDocumento proyectoSocioPeriodoJustificacionDocumento = service.findById(idBuscado);
 
     // then: el ProyectoSocioPeriodoJustificacionDocumento
-    Assertions.assertThat(proyectoSocioPeriodoJustificacion).as("isNotNull()").isNotNull();
-    Assertions.assertThat(proyectoSocioPeriodoJustificacion.getId()).as("getId()").isEqualTo(idBuscado);
-    Assertions.assertThat(proyectoSocioPeriodoJustificacion.getNombre()).as("getNombre()").isEqualTo("nombre-1");
-    Assertions.assertThat(proyectoSocioPeriodoJustificacion.getComentario()).as("getComentario()")
+    Assertions.assertThat(proyectoSocioPeriodoJustificacionDocumento).as("isNotNull()").isNotNull();
+    Assertions.assertThat(proyectoSocioPeriodoJustificacionDocumento.getId()).as("getId()").isEqualTo(idBuscado);
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(proyectoSocioPeriodoJustificacionDocumento.getNombre(), Language.ES))
+        .as("getNombre()").isEqualTo("nombre-1");
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(proyectoSocioPeriodoJustificacionDocumento.getComentario(), Language.ES))
+        .as("getComentario()")
         .isEqualTo("comentario");
-    Assertions.assertThat(proyectoSocioPeriodoJustificacion.getVisible()).as("getVisible()").isTrue();
+    Assertions.assertThat(proyectoSocioPeriodoJustificacionDocumento.getVisible()).as("getVisible()").isTrue();
 
   }
 
@@ -311,9 +324,18 @@ class ProyectoSocioPeriodoJustificacionDocumentoServiceTest extends BaseServiceT
    */
   private ProyectoSocioPeriodoJustificacionDocumento generarMockProyectoSocioPeriodoJustificacionDocumento(Long id,
       Long proyectoSocioPeriodoJustificacionId) {
-    TipoDocumento tipoDocumento = TipoDocumento.builder().nombre("tipo1").activo(Boolean.TRUE).build();
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, "tipo1" + (id != null ? id : 1)));
+
+    Set<ProyectoSocioPeriodoJustificacionDocumentoNombre> nombreDocumento = new HashSet<>();
+    nombreDocumento.add(new ProyectoSocioPeriodoJustificacionDocumentoNombre(Language.ES, "nombre-" + id));
+
+    Set<ProyectoSocioPeriodoJustificacionDocumentoComentario> comentarioDocumento = new HashSet<>();
+    comentarioDocumento.add(new ProyectoSocioPeriodoJustificacionDocumentoComentario(Language.ES, "comentario"));
+
+    TipoDocumento tipoDocumento = TipoDocumento.builder().nombre(nombreTipoDocumento).activo(Boolean.TRUE).build();
     ProyectoSocioPeriodoJustificacionDocumento proyectoSocioPeriodoJustificacionDocumento = ProyectoSocioPeriodoJustificacionDocumento
-        .builder().id(id).nombre("nombre-" + id).comentario("comentario").documentoRef("001")
+        .builder().id(id).nombre(nombreDocumento).comentario(comentarioDocumento).documentoRef("001")
         .proyectoSocioPeriodoJustificacionId(proyectoSocioPeriodoJustificacionId).tipoDocumento(tipoDocumento)
         .visible(Boolean.TRUE).build();
 

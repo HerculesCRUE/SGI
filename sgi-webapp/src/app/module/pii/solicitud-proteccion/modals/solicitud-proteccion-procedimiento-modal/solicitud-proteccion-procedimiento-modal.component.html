@@ -30,8 +30,8 @@
       <mat-form-field fxFlex="65">
         <mat-label>{{'pii.solicitud-proteccion.procedimiento.accion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL }}
         </mat-label>
-        <input matInput formControlName="accionATomar" id="accionATomar"
-          placeholder="{{'pii.solicitud-proteccion.procedimiento.accion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL }}">
+        <sgi-i18n-input formControlName="accionATomar"
+          placeholder="{{'pii.solicitud-proteccion.procedimiento.accion' | translate:MSG_PARAMS.CARDINALIRY.PLURAL }}"></sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.accionATomar.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamAccionATomarEntity }}
         </mat-error>
@@ -60,8 +60,8 @@
 
     <mat-form-field fxFlex>
       <mat-label>{{'pii.solicitud-proteccion.procedimiento.comentarios' | translate}}</mat-label>
-      <textarea matInput formControlName="comentarios" id="comentarios"
-        placeholder="{{'pii.solicitud-proteccion.procedimiento.comentarios' | translate}}"></textarea>
+      <sgi-i18n-textarea formControlName="comentarios"
+        placeholder="{{'pii.solicitud-proteccion.procedimiento.comentarios' | translate}}"></sgi-i18n-textarea>
       <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
         {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
       </mat-error>

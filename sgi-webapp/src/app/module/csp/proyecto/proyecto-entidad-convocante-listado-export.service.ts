@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IPrograma } from '@core/models/csp/programa';
 import { IProyectoEntidadConvocante } from '@core/models/csp/proyecto-entidad-convocante';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
@@ -34,6 +36,7 @@ export class ProyectoEntidadConvocanteListadoExportService
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     private readonly proyectoService: ProyectoService,
+    private readonly languageService: LanguageService,
     private empresaService: EmpresaService
   ) {
     super(translate);
@@ -183,11 +186,11 @@ export class ProyectoEntidadConvocanteListadoExportService
       if (showPlanesInvestigacion) {
         const nombresNivelesPrograma = this.getNombresNivelesPrograma(entidadConvocante?.programa ?? entidadConvocante.programaConvocatoria);
         for (let i = 0; i <= maxNivelProgramaEntidadConvocante; i++) {
-          const nivel = nombresNivelesPrograma.length > i ? nombresNivelesPrograma[i] : '';
+          const nivel = nombresNivelesPrograma.length > i ? this.languageService.getFieldValue(nombresNivelesPrograma[i]) : '';
           elementsRow.push(nivel);
 
           if (i === 0) {
-            elementsRow.push(entidadConvocante.programaConvocatoria?.nombre ?? '');
+            elementsRow.push(this.languageService.getFieldValue(entidadConvocante.programaConvocatoria?.nombre) ?? '');
           }
         }
       }
@@ -234,7 +237,7 @@ export class ProyectoEntidadConvocanteListadoExportService
    * @param programa un programa
    * @returns la lista de los nombres de todos los niveles desde el nodo raiz hasta el programa
    */
-  private getNombresNivelesPrograma(programa: IPrograma): string[] {
+  private getNombresNivelesPrograma(programa: IPrograma): I18nFieldValue[][] {
     if (!programa) {
       return [];
     }
@@ -243,11 +246,11 @@ export class ProyectoEntidadConvocanteListadoExportService
     let currentPrograma = programa;
 
     while (currentPrograma.padre) {
-      nombres.push(currentPrograma.nombre ?? '');
+      nombres.push(currentPrograma.nombre ?? []);
       currentPrograma = currentPrograma.padre;
     }
 
-    nombres.push(currentPrograma.nombre ?? '');
+    nombres.push(currentPrograma.nombre ?? []);
 
     return nombres.reverse();
   }

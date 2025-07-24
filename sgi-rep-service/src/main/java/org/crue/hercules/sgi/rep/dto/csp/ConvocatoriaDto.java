@@ -1,7 +1,9 @@
 package org.crue.hercules.sgi.rep.dto.csp;
 
 import java.time.Instant;
+import java.util.List;
 
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.crue.hercules.sgi.rep.dto.BaseRestDto;
 
 import lombok.AllArgsConstructor;
@@ -44,13 +46,13 @@ public class ConvocatoriaDto extends BaseRestDto {
   private Instant fechaConcesion;
 
   /** Titulo */
-  private String titulo;
+  private List<I18nFieldValueDto> titulo;
 
   /** Objeto */
-  private String objeto;
+  private List<I18nFieldValueDto> objeto;
 
   /** Observaciones */
-  private String observaciones;
+  private List<I18nFieldValueDto> observaciones;
 
   /** Estado */
   private Estado estado;

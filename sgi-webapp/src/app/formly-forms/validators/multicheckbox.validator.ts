@@ -1,7 +1,12 @@
-import { AbstractControl, ValidationErrors } from '@angular/forms';
+import { AbstractControl } from '@angular/forms';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { SgiFormlyFieldConfig } from '@formly-forms/formly-field-config';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
+import { IValidationError } from './models/validation-error';
 import { IValidatorOptions } from './models/validator-options';
+
+const MSG_FORMLY_VALIDATIONS_MULTICHECKBOX_RESTRICTED = marker('msg.formly.validations.multicheckbox-restricted');
 
 export interface IMulticheckboxValidatorOptions extends IValidatorOptions {
   restrictions?: {
@@ -26,7 +31,8 @@ export function multicheckboxRestricted(
   control: AbstractControl,
   field: SgiFormlyFieldConfig,
   options: IMulticheckboxValidatorOptions,
-): ValidationErrors {
+  translate: TranslateService
+): IValidationError {
   const controlValues: string[] = control.value ?? [];
 
   const incompatibility = getIncompatibleOptions([...controlValues], options);
@@ -38,9 +44,15 @@ export function multicheckboxRestricted(
   const option2 = getDisplayValue(field.templateOptions.options, incompatibility.option2);
 
   return {
-    'multicheckbox-restricted': {
-      message: options.message ? eval('`' + options.message + '`') : `Las respuestas \"${option1}\" y \"${option2}\" no son compatibles`
-    }
+    name: 'multicheckbox-restricted',
+    customMessage: options.message ? eval('`' + options.message + '`') : null,
+    defatultMessage: translate.instant(
+      MSG_FORMLY_VALIDATIONS_MULTICHECKBOX_RESTRICTED,
+      {
+        option1: option1,
+        option2: option2
+      }
+    )
   };
 }
 

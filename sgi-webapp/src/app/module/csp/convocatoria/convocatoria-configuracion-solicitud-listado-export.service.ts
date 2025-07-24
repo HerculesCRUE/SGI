@@ -7,6 +7,7 @@ import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -40,6 +41,7 @@ export class ConvocatoriaConfiguracionSolicitudListadoExportService extends Abst
     protected readonly translate: TranslateService,
     private luxonDatePipe: LuxonDatePipe,
     private configuracionSolicitudService: ConfiguracionSolicitudService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -178,7 +180,7 @@ export class ConvocatoriaConfiguracionSolicitudListadoExportService extends Abst
       configuracionSolicitudContent += '\n';
 
       convocatoria.documentosRequeridos?.forEach((documento, index) => {
-        configuracionSolicitudContent += documento?.tipoDocumento ? documento?.tipoDocumento.nombre ?? '' : '';
+        configuracionSolicitudContent += documento?.tipoDocumento?.nombre ? this.languageService.getFieldValue(documento?.tipoDocumento?.nombre) ?? '' : '';
         if (convocatoria.documentosRequeridos.length - 1 > index) {
           configuracionSolicitudContent += ', ';
         }
@@ -216,7 +218,7 @@ export class ConvocatoriaConfiguracionSolicitudListadoExportService extends Abst
 
   private fillRowsEntidadExcelDocumento(elementsRow: any[], documento: IDocumentoRequeridoSolicitud) {
     if (documento) {
-      elementsRow.push(documento.tipoDocumento ? documento.tipoDocumento.nombre ?? '' : '');
+      elementsRow.push(documento.tipoDocumento ? this.languageService.getFieldValue(documento.tipoDocumento?.nombre) ?? '' : '');
     } else {
       elementsRow.push('');
     }

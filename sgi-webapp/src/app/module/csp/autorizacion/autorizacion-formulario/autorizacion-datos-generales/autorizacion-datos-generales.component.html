@@ -32,8 +32,9 @@
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <mat-form-field fxFlex="100%">
         <mat-label>{{'csp.autorizacion.titulo-proyecto' | translate}}</mat-label>
-        <input matInput formControlName="tituloProyecto" required type="text" id="tituloProyecto"
+        <sgi-i18n-input formControlName="tituloProyecto" required
           placeholder="{{'csp.autorizacion.titulo-proyecto' | translate}}">
+        </sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.tituloProyecto.errors?.maxlength">
           {{ 'error.maxlength.entity' | translate:msgParamTituloEntity }}
         </mat-error>
@@ -60,13 +61,13 @@
             formControlName="convocatoria" investigador="true">
           </sgi-select-convocatoria>
         </mat-form-field>
+
         <!-- Datos Convocatoria -->
-
-
         <mat-form-field fxFlex="50%">
           <mat-label>{{'csp.autorizacion.datos-convocatoria' | translate}}</mat-label>
-          <input matInput formControlName="datosConvocatoria" type="text" id="datosConvocatoria"
+          <sgi-i18n-input formControlName="datosConvocatoria"
             placeholder="{{'csp.autorizacion.datos-convocatoria' | translate}}">
+          </sgi-i18n-input>
           <mat-error *ngIf="formGroup.controls.datosConvocatoria.errors?.maxlength">
             {{ 'error.maxlength.entity' | translate:msgParamDatosConvocatoriaEntity }}
           </mat-error>
@@ -174,8 +175,9 @@
         <!-- Datos Convocatoria -->
         <mat-form-field fxFlex="50%">
           <mat-label>{{'csp.autorizacion.datos-convocatoria' | translate}}</mat-label>
-          <input matInput formControlName="datosConvocatoria" type="text" id="datosConvocatoria"
+          <sgi-i18n-input formControlName="datosConvocatoria"
             placeholder="{{'csp.autorizacion.datos-convocatoria' | translate}}">
+          </sgi-i18n-input>
           <mat-error *ngIf="formGroup.controls.datosConvocatoria.errors?.maxlength">
             {{ 'error.maxlength.entity' | translate:msgParamDatosConvocatoriaEntity }}
           </mat-error>
@@ -257,9 +259,9 @@
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <mat-form-field fxFlex="100%">
         <mat-label>{{'csp.autorizacion.observaciones' | translate}}</mat-label>
-        <textarea matInput formControlName="observaciones" type="text" id="observaciones"
+        <sgi-i18n-textarea formControlName="observaciones"
           placeholder="{{'csp.convocatoria.observaciones' | translate}}">
-            </textarea>
+        </sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
           {{ 'error.maxlength.entity' | translate:msgParamObservacionesEntity }}
         </mat-error>

@@ -1,0 +1,74 @@
+[
+  {
+    "key": "ap3_6_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.5 Proiektuaren zer alditan erabiliko diren animaliak"
+    },
+    "fieldGroup": [
+      {
+        "key": "fechaUsoAnimalesDesde",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Noiztik"
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "date-is-between",
+              "options": {
+                "compareTo": "formStateProperties",
+                "formStateProperties": [
+                  "memoria.peticionEvaluacion.fechaInicio",
+                  "memoria.peticionEvaluacion.fechaFin"
+                ],
+                "message": "Proiektuaren hasiera eta amaiera daten artean egon behar du (ebaluazio eskaeraren datu orokorrak)"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "key": "fechaUsoAnimalesHasta",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Noiz arte"
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "date-is-between",
+              "options": {
+                "compareTo": "formStateProperties",
+                "formStateProperties": [
+                  "memoria.peticionEvaluacion.fechaInicio",
+                  "memoria.peticionEvaluacion.fechaFin"
+                ],
+                "message": "Proiektuaren hasiera eta amaiera daten artean egon behar du (ebaluazio eskaeraren datu orokorrak)"
+              }
+            }
+          ]
+        }
+      }
+    ],
+    "validators": {
+      "validation": [
+        {
+          "name": "date-is-after",
+          "options": {
+            "compareTo": "formStateProperty",
+            "errorPath": "fechaUsoAnimalesHasta",
+            "formStateProperty": "mainModel.ap3_6.ap3_6_5.fechaUsoAnimalesDesde",
+            "message": "Datak hasierako balio gisa adierazitako data baino geroagokoa izan behar du."
+          }
+        }
+      ]
+    }
+  }
+]

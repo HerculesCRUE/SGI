@@ -126,7 +126,7 @@ export class ConvocatoriaRequisitosIPPublicFragment extends FormFragment<IConvoc
         [Validators.min(0), Validators.max(9999)])],
       numMaximoNoCompetitivosActivos: ['', Validators.compose(
         [Validators.min(0), Validators.max(9999)])],
-      otrosRequisitos: ['']
+      otrosRequisitos: [[]]
     });
 
     form.disable();

@@ -1,8 +1,10 @@
 import { Inject, Injectable, InjectionToken, OnDestroy, Optional } from '@angular/core';
-import { DateAdapter, MatDateFormats, MAT_DATE_LOCALE } from '@angular/material/core';
+import { DateAdapter, MAT_DATE_LOCALE, MatDateFormats } from '@angular/material/core';
+import { LocaleId } from '@core/i18n/locale-id';
 import { TIME_ZONE } from '@core/time-zone';
 import { DateTime, DateTimeOptions, Info } from 'luxon';
 import { Observable, Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 export const LUXON_DATE_FORMATS: MatDateFormats = {
   parse: {
@@ -77,10 +79,11 @@ export class LuxonDateAdapter extends DateAdapter<DateTime> implements OnDestroy
   private readonly subscription: Subscription;
   // tslint:disable-next-line: variable-name
   private _defaultTime: LuxonTime;
+  private readonly destroy$ = new Subject();
 
 
   constructor(
-    @Optional() @Inject(MAT_DATE_LOCALE) dateLocale: string,
+    @Optional() @Inject(MAT_DATE_LOCALE) dateLocale: LocaleId,
     @Inject(TIME_ZONE) timeZone: string | Observable<string> | Subject<string>,
     @Inject(LUXON_DATE_ADAPTER_OPTIONS)
     options?: LuxonDateAdapterOptions
@@ -89,17 +92,22 @@ export class LuxonDateAdapter extends DateAdapter<DateTime> implements OnDestroy
     this._useUTC = options ? !!options.useUtc : false;
     this._defaultTime = options.defaultTime;
 
-    this.setLocale(dateLocale || DateTime.local().locale);
+    this.setLocale(dateLocale.toString() || DateTime.local().locale);
     if (timeZone instanceof Subject || timeZone instanceof Observable) {
       this.subscription = timeZone.subscribe((value) => this._timeZone = value);
     }
     else {
       this._timeZone = timeZone;
     }
+
+    if (dateLocale?.onChange$) {
+      dateLocale.onChange$.pipe(takeUntil(this.destroy$)).subscribe(value => this.setLocale(value.code));
+    }
   }
 
   ngOnDestroy() {
     this.subscription?.unsubscribe();
+    this.destroy$.next();
   }
 
   setLocale(locale: string) {

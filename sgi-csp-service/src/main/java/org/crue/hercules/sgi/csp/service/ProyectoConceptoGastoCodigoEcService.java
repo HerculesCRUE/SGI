@@ -3,9 +3,9 @@ package org.crue.hercules.sgi.csp.service;
 import java.time.Instant;
 import java.util.List;
 
-import org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoCodigoEc;
-import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
+import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoCodigoEc;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,14 +13,6 @@ import org.springframework.data.domain.Pageable;
  * Service Interface para gestionar {@link ProyectoConceptoGastoCodigoEc}.
  */
 public interface ProyectoConceptoGastoCodigoEcService {
-
-  /**
-   * Obtiene un {@link ProyectoConceptoGastoCodigoEc} por su id.
-   *
-   * @param id el id de la entidad {@link ProyectoConceptoGastoCodigoEc}.
-   * @return la entidad {@link ProyectoConceptoGastoCodigoEc}.
-   */
-  ProyectoConceptoGastoCodigoEc findById(Long id);
 
   /**
    * Obtener todas las entidades {@link ProyectoConceptoGastoCodigoEc} paginadas

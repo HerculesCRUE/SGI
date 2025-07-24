@@ -12,6 +12,7 @@ import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -56,15 +57,16 @@ export class SeguimientoJustificacionRequerimientoDatosGeneralesComponent
     private readonly translate: TranslateService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as SeguimientoJustificacionRequerimientoDatosGeneralesFragment;
     this.initFlexProperties();
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.initIncidenciaDocumentacionTable();
   }
 
@@ -74,6 +76,17 @@ export class SeguimientoJustificacionRequerimientoDatosGeneralesComponent
 
   private initIncidenciaDocumentacionTable(): void {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor =
+      (wrapper: StatusWrapper<IIncidenciaDocumentacionRequerimiento>, property: string) => {
+        switch (property) {
+          case 'nombreDocumento':
+            return this.languageService.getFieldValue(wrapper.value.nombreDocumento);
+          case 'incidencia':
+            return this.languageService.getFieldValue(wrapper.value.incidencia);
+          default:
+            return wrapper[property];
+        }
+      };
     this.dataSource.sort = this.sort;
     this.getIncidenciaDocumentacionTableData();
   }
@@ -132,7 +145,7 @@ export class SeguimientoJustificacionRequerimientoDatosGeneralesComponent
     this.fxLayoutProperties.xs = 'column';
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       REQUERIMIENTO_PROYECTO_SGI_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

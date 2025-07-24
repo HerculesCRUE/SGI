@@ -1,0 +1,36 @@
+[
+  {
+    "key": "ap4_5_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.5.3 Non-discrimination on genetic grounds"
+    },
+    "hideExpression": "!formState.mainModel.ap4_5.estudiosGeneticosRadio || formState.mainModel.ap4_5.estudiosGeneticosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Please specify the measures planned to avoid discrimination or harm that could arise from the results of genetic studies</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p><a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a45' target='_blank'>Article 45</a> of the <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=2' target='_blank'>LIB 14/2007</a> sets out the following principles for genetic analysis:</p><ul><li>Accessibility and equity</li><li>Data Protection</li><li>Free</li><li>Consent</li><li>Data quality</li></ul><p>To which we should add what is established in the articles <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a9' target='_blank'>9</a> and <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a6' target='_blank'>6</a>.</p><ul><li>Genetic analyses will be carried out with criteria of relevance, quality, equity and accessibility</li><li>Non-discrimination</li></ul>"
+      },
+      {
+        "key": "noDiscriminacionMotivosGeneticos",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Measures",
+          "placeholder": "Measures",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

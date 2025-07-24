@@ -1,10 +1,12 @@
 package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,11 +24,10 @@ public class CertificadoAutorizacionInput implements Serializable {
   @NotNull
   private Long autorizacionId;
 
-  @NotBlank
-  private String documentoRef;
+  @NotEmpty
+  private List<I18nFieldValueDto> documentoRef;
 
-  @Size(max = 250)
-  private String nombre;
+  private List<I18nFieldValueDto> nombre;
 
   @NotNull
   private Boolean visible;

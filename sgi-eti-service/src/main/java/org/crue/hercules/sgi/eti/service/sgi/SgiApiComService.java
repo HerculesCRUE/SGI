@@ -1,12 +1,12 @@
 package org.crue.hercules.sgi.eti.service.sgi;
 
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 
 import org.crue.hercules.sgi.eti.config.RestApiProperties;
-import org.crue.hercules.sgi.eti.config.SgiConfigProperties;
 import org.crue.hercules.sgi.eti.dto.com.EmailInput;
 import org.crue.hercules.sgi.eti.dto.com.EmailInput.Deferrable;
 import org.crue.hercules.sgi.eti.dto.com.EmailOutput;
@@ -26,12 +26,15 @@ import org.crue.hercules.sgi.eti.dto.com.Recipient;
 import org.crue.hercules.sgi.eti.dto.com.Status;
 import org.crue.hercules.sgi.eti.enums.ServiceType;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.crue.hercules.sgi.framework.i18n.I18nConfig;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
+import org.springframework.context.MessageSource;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -42,8 +45,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 public class SgiApiComService extends SgiApiBaseService {
+  private static final String MSG_KEY_PATH_SEPARATOR = ".";
 
-  private static final String EMPTY_LUGAR = "videoconferencia";
+  private static final String MSG_FIELD_ASUNTO = "email.asunto";
+  private static final String MSG_FIELD_CONTENIDO = "email.contenido";
+  private static final String MSG_FIELD_DESTINATARIOS = "email.destinatarios";
+
   private static final String PATH_SEPARATOR = "/";
   private static final String DATA = "_DATA";
   private static final String PATH_EMAILS = PATH_SEPARATOR + "emails";
@@ -63,6 +70,7 @@ public class SgiApiComService extends SgiApiBaseService {
   private static final String TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_ORDEN_DEL_DIA = "ETI_CONVOCATORIA_REUNION_ORDEN_DEL_DIA";
   private static final String TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_LUGAR = "ETI_CONVOCATORIA_REUNION_LUGAR";
   private static final String TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_VIDEOCONFERENCIA = "ETI_CONVOCATORIA_REUNION_VIDEOCONFERENCIA";
+  private static final String TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_TIPO_CONVOCATORIA = "ETI_CONVOCATORIA_REUNION_TIPO_CONVOCATORIA";
 
   private static final String TEMPLATE_ETI_COM_ACTA_SIN_REV_MINIMA = "ETI_COM_ACTA_SIN_REV_MINIMA";
   private static final String TEMPLATE_ETI_COM_ACTA_SIN_REV_MINIMA_PARAM = TEMPLATE_ETI_COM_ACTA_SIN_REV_MINIMA
@@ -112,14 +120,17 @@ public class SgiApiComService extends SgiApiBaseService {
   private static final String TEMPLATE_ETI_COM_REVISION_ACTA_PARAM = TEMPLATE_ETI_COM_REVISION_ACTA
       + DATA;
 
-  private final SgiConfigProperties sgiConfigProperties;
   private final ObjectMapper mapper;
+  private final MessageSource messageSource;
+  private final I18nConfig i18nConfig;
 
   public SgiApiComService(RestApiProperties restApiProperties, RestTemplate restTemplate,
-      SgiConfigProperties sgiConfigProperties, ObjectMapper mapper) {
+      ObjectMapper mapper, MessageSource messageSource,
+      I18nConfig i18nConfig) {
     super(restApiProperties, restTemplate);
-    this.sgiConfigProperties = sgiConfigProperties;
     this.mapper = mapper;
+    this.messageSource = messageSource;
+    this.i18nConfig = i18nConfig;
   }
 
   /**
@@ -136,10 +147,7 @@ public class SgiApiComService extends SgiApiBaseService {
       Deferrable deferrableRecipients) {
     log.debug("createGenericEmailText({}, {}, {}, {}) - start", subject, content, recipients, deferrableRecipients);
 
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    this.validateComunicados(subject, content, recipients);
 
     ServiceType serviceType = ServiceType.COM;
     String relativeUrl = PATH_EMAILS;
@@ -178,11 +186,8 @@ public class SgiApiComService extends SgiApiBaseService {
     log.debug("updateGenericEmailText({}, {}, {}, {}, {}) - start", id, subject, content, recipients,
         deferrableRecipients);
 
-    Assert.notNull(id, "ID is required");
-    Assert.notNull(subject, "Subject is required");
-    Assert.notNull(content, "Content is required");
-    Assert.notEmpty(recipients, "At least one Recipient is required");
-    Assert.noNullElements(recipients, "The Recipients list must not contain null elements");
+    AssertHelper.idNotNull(id, EmailOutput.class);
+    this.validateComunicados(subject, content, recipients);
 
     ServiceType serviceType = ServiceType.COM;
     String relativeUrl = "/emails/{id}";
@@ -213,7 +218,7 @@ public class SgiApiComService extends SgiApiBaseService {
   public void deleteEmail(Long id) {
     log.debug("deleteEmail({}) - start", id);
 
-    Assert.notNull(id, "ID is required");
+    AssertHelper.idNotNull(id, EmailOutput.class);
 
     ServiceType serviceType = ServiceType.COM;
     String relativeUrl = "/emails/{id}";
@@ -250,10 +255,15 @@ public class SgiApiComService extends SgiApiBaseService {
     String minuto = String.format("%02d", convocatoriaReunion.getMinutoInicio());
     String horaSegunda = String.format("%02d", convocatoriaReunion.getHoraInicioSegunda());
     String minutoSegunda = String.format("%02d", convocatoriaReunion.getMinutoInicioSegunda());
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(
-        "dd/MM/yyyy")
-        .withZone(sgiConfigProperties.getTimeZone().toZoneId()).withLocale(LocaleContextHolder.getLocale());
-    String fechaEvaluacion = formatter.format(convocatoriaReunion.getFechaEvaluacion());
+
+    String messageKey = convocatoriaReunion.getTipoConvocatoriaReunion().getClass().getName()
+        + MSG_KEY_PATH_SEPARATOR + convocatoriaReunion.getTipoConvocatoriaReunion().getTipo().name();
+
+    List<I18nFieldValue> i18nTipoConvocatoria = new ArrayList<>();
+    for (Language language : i18nConfig.getEnabledLanguages()) {
+      i18nTipoConvocatoria.add(new I18nFieldValueDto(language,
+          messageSource.getMessage(messageKey, null, Locale.forLanguageTag(language.getCode()))));
+    }
 
     EmailInput request = EmailInput.builder().template(
         TEMPLATE_ETI_COM_CONVOCATORIA_REUNION).recipients(recipients)
@@ -261,13 +271,13 @@ public class SgiApiComService extends SgiApiBaseService {
     request.setParams(Arrays.asList(
         new EmailParam(
             TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_NOMBRE_INVESTIGACION,
-            convocatoriaReunion.getComite().getNombreInvestigacion()),
+            convocatoriaReunion.getComite().getNombre()),
         new EmailParam(
             TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_COMITE,
-            convocatoriaReunion.getComite().getComite()),
+            convocatoriaReunion.getComite().getCodigo()),
         new EmailParam(
             TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_FECHA_EVALUACION,
-            fechaEvaluacion),
+            convocatoriaReunion.getFechaEvaluacion().toString()),
         new EmailParam(
             TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_HORA_INICIO,
             hora),
@@ -285,10 +295,13 @@ public class SgiApiComService extends SgiApiBaseService {
             convocatoriaReunion.getOrdenDia()),
         new EmailParam(
             TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_LUGAR,
-            ObjectUtils.isEmpty(convocatoriaReunion.getLugar()) ? EMPTY_LUGAR : convocatoriaReunion.getLugar()),
+            convocatoriaReunion.getLugar().isEmpty() ? new HashSet<>() : convocatoriaReunion.getLugar()),
         new EmailParam(
             TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_VIDEOCONFERENCIA,
-            convocatoriaReunion.getVideoconferencia().toString())));
+            convocatoriaReunion.getVideoconferencia().toString()),
+        new EmailParam(
+            TEMPLATE_ETI_COM_CONVOCATORIA_REUNION_PARAM_TIPO_CONVOCATORIA,
+            i18nTipoConvocatoria)));
 
     final EmailOutput response = super.<EmailInput, EmailOutput>callEndpoint(mergedURL,
         httpMethod, request,
@@ -300,6 +313,14 @@ public class SgiApiComService extends SgiApiBaseService {
     return response;
   }
 
+  /**
+   * Crea el comunicado {@code ETI_COM_ACTA_SIN_REV_MINIMA}
+   * 
+   * @param data       Información para rellenar la plantilla del comunicado
+   * @param recipients remitentes del comunicado
+   * @return el email creado
+   * @throws JsonProcessingException
+   */
   public EmailOutput createComunicadoActaFinalizada(
       EtiComActaFinalizarActaData data, List<Recipient> recipients)
       throws JsonProcessingException {
@@ -308,6 +329,14 @@ public class SgiApiComService extends SgiApiBaseService {
         TEMPLATE_ETI_COM_ACTA_SIN_REV_MINIMA_PARAM);
   }
 
+  /**
+   * Crea el comunicado {@code ETI_COM_DICT_EVA_REV_MINIMA}
+   * 
+   * @param data       Información para rellenar la plantilla del comunicado
+   * @param recipients remitentes del comunicado
+   * @return el email creado
+   * @throws JsonProcessingException
+   */
   public EmailOutput createComunicadoEvaluacionMemoriaRevMin(
       EtiComDictamenEvaluacionRevMinData data, List<Recipient> recipients)
       throws JsonProcessingException {
@@ -316,6 +345,14 @@ public class SgiApiComService extends SgiApiBaseService {
         TEMPLATE_ETI_COM_DICT_EVA_REV_MINIMA_PARAM);
   }
 
+  /**
+   * Crea el comunicado {@code ETI_COM_INF_RETRO_PENDIENTE}
+   * 
+   * @param data       Información para rellenar la plantilla del comunicado
+   * @param recipients remitentes del comunicado
+   * @return el email creado
+   * @throws JsonProcessingException
+   */
   public EmailOutput createComunicadoAvisoRetrospectiva(EtiComAvisoRetrospectivaData data,
       List<Recipient> recipients) throws JsonProcessingException {
     return this.createComunicado(data, recipients,
@@ -338,6 +375,14 @@ public class SgiApiComService extends SgiApiBaseService {
         TEMPLATE_ETI_COM_EVA_MODIFICADA_PARAM);
   }
 
+  /**
+   * Crea el comunicado {@code ETI_COM_INF_SEG_ANU}
+   * 
+   * @param data       Información para rellenar la plantilla del comunicado
+   * @param recipients remitentes del comunicado
+   * @return el email creado
+   * @throws JsonProcessingException
+   */
   public EmailOutput createComunicadoInformeSeguimientoAnualPendiente(
       EtiComInformeSegAnualPendienteData data, List<Recipient> recipients)
       throws JsonProcessingException {
@@ -346,6 +391,14 @@ public class SgiApiComService extends SgiApiBaseService {
         TEMPLATE_ETI_COM_INF_SEG_ANU_PARAM);
   }
 
+  /**
+   * Crea el comunicado {@code ETI_COM_INF_SEG_FIN}
+   * 
+   * @param data       Información para rellenar la plantilla del comunicado
+   * @param recipients remitentes del comunicado
+   * @return el email creado
+   * @throws JsonProcessingException
+   */
   public EmailOutput createComunicadoInformeSeguimientoFinalPendiente(
       EtiComInformeSegFinalPendienteData data, List<Recipient> recipients)
       throws JsonProcessingException {
@@ -386,6 +439,14 @@ public class SgiApiComService extends SgiApiBaseService {
         TEMPLATE_ETI_COM_ASIGNACION_EVALUACION_PARAM);
   }
 
+  /**
+   * Crea el comunicado {@code ETI_COM_REVISION_ACTA}
+   * 
+   * @param data       Información para rellenar la plantilla del comunicado
+   * @param recipients remitentes del comunicado
+   * @return el email creado
+   * @throws JsonProcessingException
+   */
   public EmailOutput createComunicadoRevisionActa(
       EtiComRevisionActaData data, List<Recipient> recipients)
       throws JsonProcessingException {
@@ -427,6 +488,13 @@ public class SgiApiComService extends SgiApiBaseService {
     return super.<EmailInput, EmailOutput>callEndpoint(mergedURL, httpMethod, request,
         new ParameterizedTypeReference<EmailOutput>() {
         }).getBody();
+  }
+
+  private void validateComunicados(String subject, String content, List<Recipient> recipients) {
+    AssertHelper.fieldNotNull(subject, EmailOutput.class, MSG_FIELD_ASUNTO);
+    AssertHelper.fieldNotNull(content, EmailOutput.class, MSG_FIELD_CONTENIDO);
+    AssertHelper.fieldNotEmpty(recipients, EmailOutput.class, MSG_FIELD_DESTINATARIOS);
+    AssertHelper.fieldNoNullElements(recipients, EmailOutput.class, MSG_FIELD_DESTINATARIOS);
   }
 
 }

@@ -114,4 +114,6 @@ export class TesisTfmTfgListadoComponent extends AbstractTablePaginationComponen
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
   }
+
+  protected setupI18N(): void { }
 }

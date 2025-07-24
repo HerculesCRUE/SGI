@@ -6,24 +6,33 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.DocumentacionMemoria;
+import org.crue.hercules.sgi.eti.model.DocumentacionMemoriaNombre;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.MemoriaTitulo;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoDocumento;
+import org.crue.hercules.sgi.eti.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
-import org.crue.hercules.sgi.eti.model.TipoMemoria;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -51,7 +60,6 @@ import org.springframework.web.util.UriComponentsBuilder;
   "classpath:scripts/tipo_convocatoria_reunion.sql",
   "classpath:scripts/cargo_comite.sql",
   "classpath:scripts/tipo_actividad.sql", 
-  "classpath:scripts/tipo_memoria.sql",
   "classpath:scripts/estado_retrospectiva.sql", 
   "classpath:scripts/tipo_documento.sql",
   "classpath:scripts/tipo_estado_memoria.sql", 
@@ -131,7 +139,7 @@ class MemoriaIT extends BaseIT {
     final Memoria tipoMemoria = response.getBody();
 
     Assertions.assertThat(tipoMemoria.getId()).isEqualTo(2L);
-    Assertions.assertThat(tipoMemoria.getTitulo()).isEqualTo("Memoria002");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoMemoria.getTitulo(), Language.ES)).isEqualTo("Memoria002");
     Assertions.assertThat(tipoMemoria.getNumReferencia()).isEqualTo("ref-002");
   }
 
@@ -217,7 +225,7 @@ class MemoriaIT extends BaseIT {
     Assertions.assertThat(tipoMemorias.size()).isEqualTo(5);
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("1");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
-    Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("15");
+    Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("16");
 
   }
 
@@ -225,7 +233,7 @@ class MemoriaIT extends BaseIT {
   void findAll_WithSearchQuery_ReturnsFilteredMemoriaList() throws Exception {
     // when: Búsqueda por titulo like e id equals
     Long id = 5L;
-    String query = "titulo=ke=Memoria;id==" + id;
+    String query = "titulo.value=ke=Memoria;id==" + id;
 
     URI uri = UriComponentsBuilder.fromUriString(MEMORIA_CONTROLLER_BASE_PATH).queryParam("q", query).build(false)
         .toUri();
@@ -246,13 +254,14 @@ class MemoriaIT extends BaseIT {
     final List<MemoriaPeticionEvaluacion> tipoMemorias = response.getBody();
     Assertions.assertThat(tipoMemorias.size()).isEqualTo(1);
     Assertions.assertThat(tipoMemorias.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(tipoMemorias.get(0).getTitulo()).startsWith("Memoria");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoMemorias.get(0).getTitulo(), Language.ES))
+        .startsWith("Memoria");
   }
 
   @Test
   void findAll_WithSortQuery_ReturnsOrderedMemoriaList() throws Exception {
     // when: Ordenación por titulo desc
-    String query = "titulo,desc";
+    String query = "titulo.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(MEMORIA_CONTROLLER_BASE_PATH).queryParam("s", query).build(false)
         .toUri();
@@ -270,11 +279,12 @@ class MemoriaIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<MemoriaPeticionEvaluacion> tipoMemorias = response.getBody();
-    Assertions.assertThat(tipoMemorias.size()).isEqualTo(15);
+    Assertions.assertThat(tipoMemorias.size()).isEqualTo(16);
     for (int i = 1; i < 15; i++) {
       MemoriaPeticionEvaluacion tipoMemoria = tipoMemorias.get(i);
-      Assertions.assertThat(tipoMemoria.getId()).isEqualTo(16 - i);
-      Assertions.assertThat(tipoMemoria.getTitulo()).isEqualTo("Memoria" + String.format("%03d", 16 - i));
+      Assertions.assertThat(tipoMemoria.getId()).isEqualTo(17 - i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoMemoria.getTitulo(), Language.ES))
+          .isEqualTo("Memoria" + String.format("%03d", 17 - i));
     }
   }
 
@@ -287,9 +297,9 @@ class MemoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     // when: Ordena por titulo desc
-    String sort = "titulo,desc";
+    String sort = "titulo.value,desc";
     // when: Filtra por titulo like
-    String filter = "titulo=ke=00";
+    String filter = "titulo.value=ke=00";
 
     URI uri = UriComponentsBuilder.fromUriString(MEMORIA_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -311,9 +321,12 @@ class MemoriaIT extends BaseIT {
 
     // Contiene titulo='Memoria009' a 'Memoria007'
 
-    Assertions.assertThat(tipoMemorias.get(0).getTitulo()).isEqualTo("Memoria" + String.format("%03d", 9));
-    Assertions.assertThat(tipoMemorias.get(1).getTitulo()).isEqualTo("Memoria" + String.format("%03d", 8));
-    Assertions.assertThat(tipoMemorias.get(2).getTitulo()).isEqualTo("Memoria" + String.format("%03d", 7));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoMemorias.get(0).getTitulo(), Language.ES))
+        .isEqualTo("Memoria" + String.format("%03d", 9));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoMemorias.get(1).getTitulo(),
+        Language.ES)).isEqualTo("Memoria" + String.format("%03d", 8));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoMemorias.get(2).getTitulo(),
+        Language.ES)).isEqualTo("Memoria" + String.format("%03d", 7));
   }
 
   @Test
@@ -347,7 +360,7 @@ class MemoriaIT extends BaseIT {
     // la fecha límite, por lo que no es asignable.
     List<String> titulos = new ArrayList<>();
     for (int i = 0; i < 2; i++) {
-      titulos.add(memorias.get(i).getTitulo());
+      titulos.add(I18nHelper.getValueForLanguage(memorias.get(i).getTitulo(), Language.ES));
     }
     Assertions.assertThat(titulos).contains("Memoria011", "Memoria012");
   }
@@ -428,7 +441,7 @@ class MemoriaIT extends BaseIT {
     // given: search query with comité y fecha límite de una convocatoria de tipo
     // ordinario o extraordinario
     String query = "comite.id==1;fechaEnvioSecretaria=le=2020-08-01T00:00:00Z";
-    String sort = "titulo,asc";
+    String sort = "titulo.value,asc";
     // String query = "comite.id:1";
 
     URI uri = UriComponentsBuilder.fromUriString(MEMORIA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ASIGNABLES_ORDEXT)
@@ -455,8 +468,10 @@ class MemoriaIT extends BaseIT {
     // fecha de envío es menor que la fecha límite por que son asignables.
     // Memoria 14 tiene estado 3(En Secretaría) pero su fecha de envío es menor que
     // la fecha límite, por lo que no es asignable.
-    Assertions.assertThat(memorias.get(0).getTitulo()).isEqualTo("Memoria011");
-    Assertions.assertThat(memorias.get(1).getTitulo()).isEqualTo("Memoria012");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(memorias.get(0).getTitulo(), Language.ES))
+        .isEqualTo("Memoria011");
+    Assertions.assertThat(
+        I18nHelper.getValueForLanguage(memorias.get(1).getTitulo(), Language.ES)).isEqualTo("Memoria012");
     // Assertions.assertThat(memorias.get(2).getTitulo()).isEqualTo("Memoria012");
   }
 
@@ -491,7 +506,7 @@ class MemoriaIT extends BaseIT {
 
     List<String> titulos = new ArrayList<>();
     for (int i = 0; i < 3; i++) {
-      titulos.add(memorias.get(i).getTitulo());
+      titulos.add(I18nHelper.getValueForLanguage(memorias.get(i).getTitulo(), Language.ES));
     }
     Assertions.assertThat(titulos).contains("Memoria002", "Memoria004", "Memoria006");
 
@@ -631,16 +646,15 @@ class MemoriaIT extends BaseIT {
     final ResponseEntity<List<DocumentacionMemoria>> response = restTemplate.exchange(
         MEMORIA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/documentacion-retrospectiva", HttpMethod.GET,
         buildRequest(headers, null), new ParameterizedTypeReference<List<DocumentacionMemoria>>() {
-        }, 2L);
+        }, 9L);
 
     // then: Obtiene la documentación de memoria que no se encuentra en estado 1,2 o
     // 3
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<DocumentacionMemoria> documentacionMemoria = response.getBody();
-    Assertions.assertThat(documentacionMemoria.size()).isEqualTo(2);
+    Assertions.assertThat(documentacionMemoria.size()).isEqualTo(1);
 
-    Assertions.assertThat(documentacionMemoria.get(0).getDocumentoRef()).isEqualTo("doc-003");
-    Assertions.assertThat(documentacionMemoria.get(1).getDocumentoRef()).isEqualTo("doc-012");
+    Assertions.assertThat(documentacionMemoria.get(0).getDocumentoRef()).isEqualTo("doc-013");
   }
 
   @Test
@@ -737,7 +751,7 @@ class MemoriaIT extends BaseIT {
 
     final ResponseEntity<DocumentacionMemoria> response = restTemplate.exchange(
         MEMORIA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/documentacion-seguimiento-final/{idDocumentacionMemoria}",
-        HttpMethod.DELETE, buildRequestDocumentacionMemoria(headers, null), DocumentacionMemoria.class, 16L, 11L);
+        HttpMethod.DELETE, buildRequestDocumentacionMemoria(headers, null), DocumentacionMemoria.class, 16L, 14L);
 
     // then: 200
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -765,7 +779,7 @@ class MemoriaIT extends BaseIT {
 
     final ResponseEntity<DocumentacionMemoria> response = restTemplate.exchange(
         MEMORIA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + "/documentacion-retrospectiva/{idDocumentacionMemoria}",
-        HttpMethod.DELETE, buildRequestDocumentacionMemoria(headers, null), DocumentacionMemoria.class, 2L, 12L);
+        HttpMethod.DELETE, buildRequestDocumentacionMemoria(headers, null), DocumentacionMemoria.class, 16L, 11L);
 
     // then: 200
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
@@ -784,47 +798,11 @@ class MemoriaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
-  /**
-   * Función que devuelve un objeto DocumentacionMemoria
-   * 
-   * @param id            id de DocumentacionMemoria
-   * @param memoria       la Memoria de DocumentacionMemoria
-   * @param tipoDocumento el TipoDocumento de DocumentacionMemoria
-   * @return el objeto DocumentacionMemoria
-   */
-
-  private DocumentacionMemoria generarMockDocumentacionMemoria(Long id, Memoria memoria, TipoDocumento tipoDocumento) {
-
-    DocumentacionMemoria documentacionMemoria = new DocumentacionMemoria();
-    documentacionMemoria.setId(id);
-    documentacionMemoria.setMemoria(memoria);
-    documentacionMemoria.setTipoDocumento(tipoDocumento);
-    documentacionMemoria.setDocumentoRef("doc-00" + id);
-    documentacionMemoria.setNombre("doc-00" + id);
-
-    return documentacionMemoria;
-  }
-
-  /**
-   * Función que devuelve un objeto TipoDocumento
-   * 
-   * @param id id del TipoDocumento
-   * @return el objeto TipoDocumento
-   */
-
-  private TipoDocumento generarMockTipoDocumento(Long id) {
-
-    TipoDocumento tipoDocumento = new TipoDocumento();
-    tipoDocumento.setId(id);
-    tipoDocumento.setNombre("TipoDocumento" + id);
-
-    return tipoDocumento;
-  }
-
+  @Test
   void enviarSecretaria_Success() throws Exception {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ER")));
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "ETI-MEM-INV-ESCR")));
 
     // when: Enviar secretaria con id existente
     long id = 9L;
@@ -849,6 +827,7 @@ class MemoriaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
   }
 
+  @Test
   void enviarSecretariaRetrospectiva_Success() throws Exception {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
@@ -878,6 +857,47 @@ class MemoriaIT extends BaseIT {
   }
 
   /**
+   * Función que devuelve un objeto DocumentacionMemoria
+   * 
+   * @param id            id de DocumentacionMemoria
+   * @param memoria       la Memoria de DocumentacionMemoria
+   * @param tipoDocumento el TipoDocumento de DocumentacionMemoria
+   * @return el objeto DocumentacionMemoria
+   */
+
+  private DocumentacionMemoria generarMockDocumentacionMemoria(Long id, Memoria memoria, TipoDocumento tipoDocumento) {
+
+    Set<DocumentacionMemoriaNombre> nombre = new HashSet<>();
+    nombre.add(new DocumentacionMemoriaNombre(Language.ES, "doc-00" + id));
+    DocumentacionMemoria documentacionMemoria = new DocumentacionMemoria();
+    documentacionMemoria.setId(id);
+    documentacionMemoria.setMemoria(memoria);
+    documentacionMemoria.setTipoDocumento(tipoDocumento);
+    documentacionMemoria.setDocumentoRef("doc-00" + id);
+    documentacionMemoria.setNombre(nombre);
+
+    return documentacionMemoria;
+  }
+
+  /**
+   * Función que devuelve un objeto TipoDocumento
+   * 
+   * @param id id del TipoDocumento
+   * @return el objeto TipoDocumento
+   */
+
+  private TipoDocumento generarMockTipoDocumento(Long id) {
+
+    Set<TipoDocumentoNombre> nombre = new HashSet<>();
+    nombre.add(new TipoDocumentoNombre(Language.ES, "TipoDocumento" + id));
+    TipoDocumento tipoDocumento = new TipoDocumento();
+    tipoDocumento.setId(id);
+    tipoDocumento.setNombre(nombre);
+
+    return tipoDocumento;
+  }
+
+  /**
    * Función que devuelve un objeto Memoria.
    * 
    * @param id            id del memoria.
@@ -889,11 +909,38 @@ class MemoriaIT extends BaseIT {
 
   private Memoria generarMockMemoria(Long id, String numReferencia, String titulo, Integer version) {
 
-    return new Memoria(id, numReferencia, generarMockPeticionEvaluacion(id, titulo + " PeticionEvaluacion" + id),
-        generarMockComite(id, "comite" + id, true), titulo, "user-00" + id,
-        generarMockTipoMemoria(1L, "TipoMemoria1", true),
-        generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.TRUE,
-        generarMockRetrospectiva(3L), version, Boolean.TRUE, null);
+    Formulario formularioMemoria = new Formulario();
+    formularioMemoria.setId(1L);
+    formularioMemoria.setCodigo("M10/2020/001");
+    formularioMemoria.setSeguimientoAnualDocumentacionTitle(Formulario.SeguimientoAnualDocumentacionTitle.TITULO_1);
+    Formulario formularioSeguimientoAnual = new Formulario();
+    formularioSeguimientoAnual.setId(4L);
+    formularioSeguimientoAnual.setCodigo("SA/2020/001");
+    Formulario formularioSeguimientoFinal = new Formulario();
+    formularioSeguimientoFinal.setId(5L);
+    formularioSeguimientoFinal.setCodigo("SF/2020/001");
+
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, titulo));
+    Memoria memoria = new Memoria();
+    memoria.setId(id);
+    memoria.setNumReferencia(numReferencia);
+    memoria.setPeticionEvaluacion(generarMockPeticionEvaluacion(id, titulo + " PeticionEvaluacion" + id));
+    memoria.setComite(generarMockComite(id, "comite" + id, true));
+    memoria.setFormulario(formularioMemoria);
+    memoria.setFormularioSeguimientoAnual(formularioSeguimientoAnual);
+    memoria.setFormularioSeguimientoFinal(formularioSeguimientoFinal);
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("user-00" + id);
+    memoria.setTipo(Memoria.Tipo.NUEVA);
+    memoria.setEstadoActual(generarMockTipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE));
+    memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setRequiereRetrospectiva(Boolean.TRUE);
+    memoria.setRetrospectiva(generarMockRetrospectiva(3L));
+    memoria.setVersion(version);
+    memoria.setActivo(Boolean.TRUE);
+
+    return memoria;
   }
 
   /**
@@ -909,19 +956,27 @@ class MemoriaIT extends BaseIT {
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> tit = new HashSet<>();
+    tit.add(new PeticionEvaluacionTitulo(Language.ES, titulo));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen" + id));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos" + id));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico" + id));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo" + id);
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico" + id);
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos" + id);
-    peticionEvaluacion.setResumen("Resumen" + id);
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria" + id);
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo(titulo);
+    peticionEvaluacion.setTitulo(tit);
     peticionEvaluacion.setPersonaRef("user-00" + id);
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
@@ -936,21 +991,13 @@ class MemoriaIT extends BaseIT {
    * @param comite comité.
    * @param activo indicador de activo.
    */
-  private Comite generarMockComite(Long id, String comite, Boolean activo) {
-    Formulario formulario = new Formulario(id, "M" + id + "0", "Descripcion");
-    return new Comite(id, comite, "nombreInvestigacion", Genero.M, formulario, activo);
+  private Comite generarMockComite(Long id, String codigo, Boolean activo) {
+    Comite comite = new Comite();
+    comite.setId(id);
+    comite.setCodigo(codigo);
+    comite.setActivo(activo);
 
-  }
-
-  /**
-   * Función que devuelve un objeto tipo memoria.
-   * 
-   * @param id     identificador del tipo memoria.
-   * @param nombre nobmre.
-   * @param activo indicador de activo.
-   */
-  private TipoMemoria generarMockTipoMemoria(Long id, String nombre, Boolean activo) {
-    return new TipoMemoria(id, nombre, activo);
+    return comite;
 
   }
 

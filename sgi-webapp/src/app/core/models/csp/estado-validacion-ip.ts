@@ -1,9 +1,10 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 
 export interface IEstadoValidacionIP {
   id: number;
-  comentario: string;
+  comentario: I18nFieldValue[];
   estado: TipoEstadoValidacion;
   fecha: DateTime;
   proyectoFacturacionId: number;

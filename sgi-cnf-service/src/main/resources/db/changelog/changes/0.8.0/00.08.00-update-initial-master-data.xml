@@ -1,0 +1,753 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <property name="defaultLang" value="es" />
+
+  <changeSet context="!test" author="master" id="00.08.00-resources-update">
+
+    <!-- rep-common-header-logo -->
+    <!-- Update value if mach default_value -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="rep-common-header-logo" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/rep/rep-common-header-logo.png" />
+    </customChange>
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/rep/rep-common-header-logo.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-common-header-logo" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="web-i18n-${defaultLang}" />
+      <column
+        name="description" value="i18n ${defaultLang}" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-i18n-es" />
+      </whereParams>
+    </update>
+
+    <!-- web-header-logo-feder -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="web-header-logo-feder" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/web/web-header-logo-feder.png" />
+    </customChange>
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-feder.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-feder" />
+      </whereParams>
+    </update>
+
+    <!-- web-header-logo-feder 2x -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="web-header-logo-feder2x" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/web/web-header-logo-feder@2x.png" />
+    </customChange>
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-feder@2x.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-feder2x" />
+      </whereParams>
+    </update>
+
+    <!-- web-header-logo-feder 3x -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="web-header-logo-feder3x" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/web/web-header-logo-feder@3x.png" />
+    </customChange>
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-feder@3x.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-feder3x" />
+      </whereParams>
+    </update>
+
+    <!-- web-header-logo-ministerio -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="web-header-logo-ministerio" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/web/web-header-logo-ministerio.png" />
+    </customChange>
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ministerio.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-ministerio" />
+      </whereParams>
+    </update>
+
+    <!-- web-header-logo-ministerio 2x -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="web-header-logo-ministerio2x" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/web/web-header-logo-ministerio@2x.png" />
+    </customChange>
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ministerio@2x.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-ministerio2x" />
+      </whereParams>
+    </update>
+
+    <!-- web-header-logo-ministerio 3x -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="web-header-logo-ministerio3x" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/web/web-header-logo-ministerio@3x.png" />
+    </customChange>
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ministerio@3x.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-ministerio3x" />
+      </whereParams>
+    </update>
+
+    <!-- web-header-logo-ue -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="web-header-logo-ue" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/web/web-header-logo-ue.png" />
+    </customChange>
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ue.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-ue" />
+      </whereParams>
+    </update>
+
+    <!-- web-header-logo-ue 2x -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="web-header-logo-ue2x" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/web/web-header-logo-ue@2x.png" />
+    </customChange>
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ue@2x.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-ue2x" />
+      </whereParams>
+    </update>
+
+    <!-- web-header-logo-ue 3x -->
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateResourcesValue">
+      <param name="resourceName" value="web-header-logo-ue3x" />
+      <param name="valueBlobFile"
+        value="classpath:db/changelog/changes/0.8.0/blob/web/web-header-logo-ue@3x.png" />
+    </customChange>
+    <update tableName="resources">
+      <column name="default_value" valueBlobFile="blob/web/web-header-logo-ue@3x.png" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-header-logo-ue3x" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.08.00-config-i18n">
+    <insert tableName="config">
+      <column name="name" value="i18n-enabled-languages" />
+      <column name="description"
+        value="Listado JSON de los códigos de idioma habilitados" />
+      <column name="value" value="[&quot;${defaultLang}&quot;]" />
+      <column name="default_value" value="[&quot;${defaultLang}&quot;]" />
+    </insert>
+
+    <insert tableName="config">
+      <column name="name" value="i18n-languages-priority" />
+      <column name="description"
+        value="Orden de prioridad de idiomas en formato JSON" />
+      <column name="value" value="[&quot;es&quot;, &quot;en&quot;, &quot;eu&quot;]" />
+      <column name="default_value" value="[&quot;es&quot;, &quot;en&quot;, &quot;eu&quot;]" />
+    </insert>
+
+    <update tableName="config">
+      <column name="value" value="[]" />
+      <column name="default_value" value="[]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="nombre-sistema-gestion-externo" />
+      </whereParams>
+    </update>
+
+    <update tableName="config">
+      <column name="value" value="[]" />
+      <column name="default_value" value="[]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="url-sistema-gestion-externo" />
+      </whereParams>
+    </update>
+
+    <update tableName="config">
+      <column name="value" value="00000000" />
+      <column name="default_value" value="00000000" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="id-entidad-sgemp" />
+      </whereParams>
+    </update>
+
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-cal-fact-validarip-destinatarios-1" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-cal-fact-validarip-destinatarios-1" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-cal-fact-validarip-destinatarios-2" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-cal-fact-validarip-destinatarios-2" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-cal-fact-validarip-destinatarios-3" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-cal-fact-validarip-destinatarios-3" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-cal-fact-validarip-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-cal-fact-validarip-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-inicio-pres-seg-cientifico-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-inicio-pres-seg-cientifico-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-sol-camb-est-alegaciones-destinatarios-2" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-sol-camb-est-alegaciones-destinatarios-2" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-sol-camb-est-alegaciones-destinatarios-3" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-sol-camb-est-alegaciones-destinatarios-3" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-sol-camb-est-alegaciones-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-sol-camb-est-alegaciones-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-sol-camb-est-solicitada-destinatarios-2" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-sol-camb-est-solicitada-destinatarios-2" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-sol-camb-est-solicitada-destinatarios-3" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-sol-camb-est-solicitada-destinatarios-3" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-com-sol-camb-est-solicitada-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-com-sol-camb-est-solicitada-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-conv-fases-destinatarios-1" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-conv-fases-destinatarios-1" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-conv-fases-destinatarios-2" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-conv-fases-destinatarios-2" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-conv-fases-destinatarios-3" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-conv-fases-destinatarios-3" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-conv-fases-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-conv-fases-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-conv-hitos-destinatarios-1" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-conv-hitos-destinatarios-1" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-conv-hitos-destinatarios-2" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-conv-hitos-destinatarios-2" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-conv-hitos-destinatarios-3" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-conv-hitos-destinatarios-3" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-conv-hitos-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-conv-hitos-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-inicio-fin-periodo-just-socio-destinatarios-1" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-inicio-fin-periodo-just-socio-destinatarios-1" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-inicio-fin-periodo-just-socio-destinatarios-2" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-inicio-fin-periodo-just-socio-destinatarios-2" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-inicio-fin-periodo-just-socio-destinatarios-3" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-inicio-fin-periodo-just-socio-destinatarios-3" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-inicio-fin-periodo-just-socio-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-inicio-fin-periodo-just-socio-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-pro-ex-mod-aut-participacion-destinatarios" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-pro-ex-mod-aut-participacion-destinatarios" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-pro-fases-destinatarios-1" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-pro-fases-destinatarios-1" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-pro-fases-destinatarios-2" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-pro-fases-destinatarios-2" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-pro-fases-destinatarios-3" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-pro-fases-destinatarios-3" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-pro-fases-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-pro-fases-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-pro-hitos-destinatarios-1" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-pro-hitos-destinatarios-1" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-pro-hitos-destinatarios-2" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-pro-hitos-destinatarios-2" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-pro-hitos-destinatarios-3" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-pro-hitos-destinatarios-3" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-pro-hitos-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-pro-hitos-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-pro-recep-not-cvn-pext-destinatarios" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-pro-recep-not-cvn-pext-destinatarios" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-sol-hitos-destinatarios-1" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-sol-hitos-destinatarios-1" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-sol-hitos-destinatarios-2" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-sol-hitos-destinatarios-2" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-sol-hitos-destinatarios-3" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-sol-hitos-destinatarios-3" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-sol-hitos-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-sol-hitos-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-vencim-periodo-pago-socio-destinatarios-1" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-vencim-periodo-pago-socio-destinatarios-1" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-vencim-periodo-pago-socio-destinatarios-2" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-vencim-periodo-pago-socio-destinatarios-2" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-vencim-periodo-pago-socio-destinatarios-3" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-vencim-periodo-pago-socio-destinatarios-3" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="csp-vencim-periodo-pago-socio-destinatarios-5" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="csp-vencim-periodo-pago-socio-destinatarios-5" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="fin-plaz-fases-nac-reg-sol-prot-destinatarios" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="fin-plaz-fases-nac-reg-sol-prot-destinatarios" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="pii-com-fecha-fin-pri-sol-prot-destinatarios" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="pii-com-fecha-fin-pri-sol-prot-destinatarios" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="pii-fecha-limite-procedimiento-destinatarios" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="pii-fecha-limite-procedimiento-destinatarios" />
+      </whereParams>
+    </update>
+
+    <customChange class="org.crue.hercules.sgi.cnf.liquibase.UpdateConfigValue">
+      <param name="configName" value="prc-proceso-baremacion-destinatarios" />
+      <param name="valueClobContent" value="[&quot;sample@sample.es&quot;]" />
+    </customChange>
+    <update tableName="config">
+      <column name="default_value" value="[&quot;sample@sample.es&quot;]" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="prc-proceso-baremacion-destinatarios" />
+      </whereParams>
+    </update>
+
+  </changeSet>
+
+</databaseChangeLog>

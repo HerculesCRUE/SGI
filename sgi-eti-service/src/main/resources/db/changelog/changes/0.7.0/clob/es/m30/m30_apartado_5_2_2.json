@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap5_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2 Autorización para llevar a cabo utilización confinada de organismos modificados genéticamente"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Consultar con la Secretaría Técnica del Comité de Ética el procedimiento para la notificación de actividades de utilización confinada de organismos modificados genéticamente.</p>"
+      }
+    ]
+  }
+]

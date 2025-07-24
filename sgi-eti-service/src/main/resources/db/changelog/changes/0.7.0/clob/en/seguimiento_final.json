@@ -1,0 +1,52 @@
+[
+  {
+    "key": "ap1_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Description and summary",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Description of the knowledge obtained with the research project</p>"
+      },
+      {
+        "key": "descripcion",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Description",
+          "label": "Description",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20",
+          "maxLength": 4000
+        },
+        "expressionProperties": {
+          "templateOptions.description": "(model?.descripcion?.length ?? 0) + ' / ' + field.templateOptions.maxLength"
+        }
+      },
+      {
+        "template": "<p>Please give a brief summary of the results obtained with the completed project</p>"
+      },
+      {
+        "key": "resumen",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Summary",
+          "label": "Summary",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20",
+          "maxLength": 4000
+        },
+        "expressionProperties": {
+          "templateOptions.description": "(model?.resumen?.length ?? 0) + ' / ' + field.templateOptions.maxLength"
+        }
+      }
+    ]
+  }
+]

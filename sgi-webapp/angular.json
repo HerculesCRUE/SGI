@@ -35,7 +35,10 @@
                 "src/styles"
               ]
             },
-            "scripts": []
+            "scripts": [
+              "./node_modules/ckeditor5-custom-build/build/translations/en.js",
+              "./node_modules/ckeditor5-custom-build/build/translations/eu.js"
+            ]
           },
           "configurations": {
             "production": {

@@ -8,11 +8,10 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.RespuestaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
-import org.crue.hercules.sgi.eti.model.Comite;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Respuesta;
+import org.crue.hercules.sgi.eti.repository.FormularioRepository;
 import org.crue.hercules.sgi.eti.repository.RespuestaRepository;
 import org.crue.hercules.sgi.eti.service.impl.RespuestaServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,13 +38,15 @@ public class RespuestaServiceTest extends BaseServiceTest {
   private MemoriaService memoriaService;
   @Mock
   private RetrospectivaService retrospectivaService;
+  @Mock
+  private FormularioRepository formularioRepository;
 
   private RespuestaService respuestaService;
 
   @BeforeEach
   public void setUp() throws Exception {
     respuestaService = new RespuestaServiceImpl(respuestaRepository, memoriaService,
-        retrospectivaService);
+        retrospectivaService, formularioRepository);
   }
 
   @Test
@@ -55,8 +56,7 @@ public class RespuestaServiceTest extends BaseServiceTest {
     Respuesta respuesta = respuestaService.findById(1L);
 
     Assertions.assertThat(respuesta.getId()).isEqualTo(1L);
-    Assertions.assertThat(respuesta.getMemoria().getId()).isEqualTo(1L);
-    Assertions.assertThat(respuesta.getApartado().getEsquema()).isEqualTo("{\"nombre\":\"EsquemaApartado01\"}");
+    Assertions.assertThat(respuesta.getMemoriaId()).isEqualTo(1L);
     Assertions.assertThat(respuesta.getValor()).isEqualTo("{\"valor\":\"Valor1\"}");
 
   }
@@ -109,11 +109,11 @@ public class RespuestaServiceTest extends BaseServiceTest {
     BDDMockito.given(respuestaRepository.save(respuesta)).willReturn(respuestaServicioActualizado);
 
     // when: Actualizamos el Respuesta
-    Respuesta RespuestaActualizado = respuestaService.update(respuesta);
+    Respuesta respuestaActualizado = respuestaService.update(respuesta);
 
     // then: El Respuesta se actualiza correctamente.
-    Assertions.assertThat(RespuestaActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(RespuestaActualizado.getValor()).isEqualTo("{\"valor\":\"Valor actualizado\"}");
+    Assertions.assertThat(respuestaActualizado.getId()).isEqualTo(1L);
+    Assertions.assertThat(respuestaActualizado.getValor()).isEqualTo("{\"valor\":\"Valor actualizado\"}");
 
   }
 
@@ -233,8 +233,8 @@ public class RespuestaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getSize()).isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
-      Respuesta Respuesta = page.getContent().get(i);
-      Assertions.assertThat(Respuesta.getId()).isEqualTo(j);
+      Respuesta respuesta = page.getContent().get(i);
+      Assertions.assertThat(respuesta.getId()).isEqualTo(j);
     }
   }
 
@@ -264,8 +264,7 @@ public class RespuestaServiceTest extends BaseServiceTest {
     Assertions.assertThat(respuesta).isPresent();
 
     Assertions.assertThat(respuesta.get().getId()).isEqualTo(1L);
-    Assertions.assertThat(respuesta.get().getMemoria().getId()).isEqualTo(1L);
-    Assertions.assertThat(respuesta.get().getApartado().getEsquema()).isEqualTo("{\"nombre\":\"EsquemaApartado01\"}");
+    Assertions.assertThat(respuesta.get().getMemoriaId()).isEqualTo(1L);
     Assertions.assertThat(respuesta.get().getValor()).isEqualTo("{\"valor\":\"Valor1\"}");
   }
 
@@ -285,7 +284,7 @@ public class RespuestaServiceTest extends BaseServiceTest {
    * @return el objeto Respuesta
    */
 
-  public Respuesta generarMockRespuesta(Long id) {
+  private Respuesta generarMockRespuesta(Long id) {
     Memoria memoria = new Memoria();
     memoria.setId(id);
 
@@ -296,8 +295,8 @@ public class RespuestaServiceTest extends BaseServiceTest {
 
     Respuesta respuesta = new Respuesta();
     respuesta.setId(id);
-    respuesta.setMemoria(memoria);
-    respuesta.setApartado(apartado);
+    respuesta.setMemoriaId(memoria.getId());
+    respuesta.setApartadoId(apartado.getId());
     respuesta.setValor("{\"valor\":\"Valor" + id + "\"}");
 
     return respuesta;
@@ -313,58 +312,21 @@ public class RespuestaServiceTest extends BaseServiceTest {
    * @return Apartado
    */
   private Apartado getMockApartado(Long id, Long bloqueId, Long padreId) {
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion1");
-    Bloque Bloque = new Bloque(bloqueId, formulario, "Bloque " + bloqueId, bloqueId.intValue());
+    Bloque bloque = new Bloque(bloqueId, formulario, bloqueId.intValue(), null);
 
     Apartado padre = (padreId != null) ? getMockApartado(padreId, bloqueId, null) : null;
 
-    String txt = (id % 2 == 0) ? String.valueOf(id) : "0" + String.valueOf(id);
-
     final Apartado data = new Apartado();
     data.setId(id);
-    data.setBloque(Bloque);
-    data.setNombre("Apartado" + txt);
+    data.setBloque(bloque);
     data.setPadre(padre);
     data.setOrden(id.intValue());
-    data.setEsquema("{\"nombre\":\"EsquemaApartado" + txt + "\"}");
 
     return data;
   }
 
-  /**
-   * Función que devuelve un objeto Memoria
-   * 
-   * @param id id de la Memoria
-   * @return el objeto Memoria
-   */
-
-  public Memoria generarMockMemoria(Long id) {
-    Memoria memoria = new Memoria();
-    memoria.setId(id);
-
-    Formulario formulario = new Formulario();
-    formulario.setId(id);
-    formulario.setNombre("M10");
-
-    Comite comite = new Comite();
-    comite.setId(id);
-    comite.setFormulario(formulario);
-    comite.setGenero(Genero.M);
-
-    memoria.setComite(comite);
-
-    return memoria;
-  }
-
-  /**
-   * Función que devuelve un objeto Bloque
-   * 
-   * @param id         id del bloque
-   * @param formulario el formulario del bloque
-   * @return el objeto Bloque
-   */
-  public Bloque generarMockBloque(Long id, Formulario formulario) {
-    return new Bloque(id, formulario, "Bloque " + id, id.intValue());
-  }
 }

@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class TipoAmbitoGeograficoOutput implements Serializable {
 
   private Long id;
-  private String nombre;
+  private Collection<TipoAmbitoGeograficoNombre> nombre;
   private boolean activo;
 
 }

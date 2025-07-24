@@ -29,6 +29,11 @@
           [options$]="config.value.options" (error)="handleErrors($event)">
         </sgi-config-select-cnf>
       </ng-container>
+      <ng-container *ngSwitchCase="ConfigType.SELECT_FILE">
+        <sgi-config-select-file-eti [key]="config.key" [label]="config.value.label"
+          [description]="config.value.description" [required]="config.value.required" (error)="handleErrors($event)">
+        </sgi-config-select-file-eti>
+      </ng-container>
       <ng-container *ngSwitchCase="ConfigType.CONFIG_GROUP_TITLE">
         <h3 class="config-group-title">
           {{config.value.label | translate:config.value.labelParams}}

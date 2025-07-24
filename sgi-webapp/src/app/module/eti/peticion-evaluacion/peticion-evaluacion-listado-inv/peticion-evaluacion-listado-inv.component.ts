@@ -64,7 +64,7 @@ export class PeticionEvaluacionListadoInvComponent
     private matDialog: MatDialog,
     private readonly cnfService: ConfigService,
   ) {
-    super();
+    super(translate);
 
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
@@ -76,6 +76,13 @@ export class PeticionEvaluacionListadoInvComponent
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
+
+    this.resolveSortProperty = (column: string) => {
+      if (column == 'titulo') {
+        return 'titulo.value';
+      }
+      return column;
+    }
   }
 
 
@@ -85,7 +92,7 @@ export class PeticionEvaluacionListadoInvComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.formGroup = new FormGroup({
       comite: new FormControl(null, []),
@@ -99,7 +106,7 @@ export class PeticionEvaluacionListadoInvComponent
       }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PETICION_EVALUACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -145,7 +152,7 @@ export class PeticionEvaluacionListadoInvComponent
     const controls = this.formGroup.controls;
     return new RSQLSgiRestFilter('comite.id', SgiRestFilterOperator.EQUALS, controls.comite.value?.id?.toString())
       .and('peticionEvaluacion.codigo', SgiRestFilterOperator.LIKE_ICASE, controls.codigo.value)
-      .and('peticionEvaluacion.titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value);
+      .and('peticionEvaluacion.titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value);
   }
 
   protected loadTable(reset?: boolean) {

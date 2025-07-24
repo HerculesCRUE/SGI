@@ -1,0 +1,31 @@
+[
+  {
+    "key": "ap4_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.2 Equitable sample selection"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Please justify the choice of the study sample and describe the measures that guarantee equity in the recruitment process.<p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Do not confuse the <strong>equitable selection</strong> of the subjects with the <strong>Selection criteria</strong> already described in the methodology section.</p><p>Equitable sample selection is related to one of the basic principles of research ethics: <strong>justice</strong>.</p><p>Equity in selection implies that the recruitment of study subjects is done for reasons related to the scientific questions included in the research and that it does not hide other non-scientific interests or reasons, such as: easy availability, proximity, friendship, ease in obtaining consent, not requiring authorisations, reserving investigations with greater risk for discriminated groups, etc.</p><p>Equity should be based on three pillars: </p><ul><li>That the research involves potential benefits for the selected subjects or population.</li><li>That potentially beneficiary subjects or populations are not excluded from the selection if there are no scientific reasons for this.</li><li>That the distribution of burdens and benefits be fair so that research that involves risk does not fall on subjects or populations that are thus discriminated against or vulnerable while the benefits go to others.</li></ul><p>For more information on equitable sample selection, consult:</p><ul><li><a href='http://www.bioeticayderecho.ub.edu/archivos/norm/InformeBelmont.pdf' target='_blank'>Belmont Report</a></li><li><a href='https://www.unesco.org/en/ethics-science-technology/bioethics-and-human-rights' target='_blank'>Universal Declaration on Bioethics and Human Rights (UNESCO) in human beings</a></li><li>CIOMS document<a href='https://cioms.ch/publications/product/pautas-eticas-internacionales-para-la-investigacion-relacionada-con-la-salud-con-seres-humanos/' target='_blank'>International ethical guidelines for biomedical research involving human subjects</a>' (guideline 12)</li></ul>"
+      },
+      {
+        "key": "equitativaMuestra",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Justification",
+          "required": true
+        }
+      }
+    ]
+  }
+]

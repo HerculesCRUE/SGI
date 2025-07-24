@@ -55,7 +55,7 @@ public class EvaluacionService extends BaseRestTemplateService<EvaluacionDto> {
       resultados = response.getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     return resultados;
   }
@@ -72,7 +72,7 @@ public class EvaluacionService extends BaseRestTemplateService<EvaluacionDto> {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     return numComentarios;
@@ -90,7 +90,7 @@ public class EvaluacionService extends BaseRestTemplateService<EvaluacionDto> {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     return numComentarios;
@@ -107,7 +107,7 @@ public class EvaluacionService extends BaseRestTemplateService<EvaluacionDto> {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     return presidente;
@@ -130,7 +130,7 @@ public class EvaluacionService extends BaseRestTemplateService<EvaluacionDto> {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     return fechaEnvioSecretaria;
@@ -147,7 +147,7 @@ public class EvaluacionService extends BaseRestTemplateService<EvaluacionDto> {
       secretario = responseSecretario.getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     return secretario;
   }

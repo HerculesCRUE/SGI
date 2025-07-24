@@ -52,12 +52,12 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
     private readonly dialogService: DialogService,
     private readonly matDialog: MatDialog,
   ) {
-    super();
+    super(translate);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<ITramoReparto>> {
@@ -161,7 +161,7 @@ export class TramoRepartoListadoComponent extends AbstractTablePaginationCompone
     this.suscripciones.push(subcription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       TRAMO_REPARTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

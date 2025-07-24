@@ -1,9 +1,10 @@
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterTestingModule } from '@angular/router/testing';
+import { I18nComponentsModule } from '@components/i18n/i18n-components.module';
 import { IPrograma } from '@core/models/csp/programa';
 import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
 import { IEmpresa } from '@core/models/sgemp/empresa';
@@ -21,13 +22,14 @@ describe('SolicitudModalidadEntidadConvocantePublicModalComponent', () => {
       declarations: [SolicitudModalidadEntidadConvocantePublicModalComponent],
       imports: [
         BrowserAnimationsModule,
-        MaterialDesignModule,
-        HttpClientTestingModule,
-        LoggerTestingModule,
-        TestUtils.getIdiomas(),
-        RouterTestingModule,
         FormsModule,
-        ReactiveFormsModule
+        HttpClientTestingModule,
+        I18nComponentsModule,
+        LoggerTestingModule,
+        MaterialDesignModule,
+        ReactiveFormsModule,
+        RouterTestingModule,
+        TestUtils.getIdiomas()
       ],
       providers: [
         { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },

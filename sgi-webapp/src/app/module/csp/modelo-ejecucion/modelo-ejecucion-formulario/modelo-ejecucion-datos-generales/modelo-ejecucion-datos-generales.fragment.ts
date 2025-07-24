@@ -2,6 +2,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { FormFragment } from '@core/services/action-service';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, Observable } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
@@ -22,10 +23,11 @@ export class ModeloEjecucionDatosGeneralesFragment extends FormFragment<IModeloE
 
   protected buildFormGroup(): FormGroup {
     const fb = new FormGroup({
-      nombre: new FormControl(''),
-      descripcion: new FormControl(''),
+      nombre: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(50)]),
+      descripcion: new FormControl([], I18nValidators.maxLength(250)),
       externo: new FormControl(false),
-      contrato: new FormControl(false)
+      contrato: new FormControl(false),
+      solicitudSinConvocatoria: new FormControl(false)
     });
     return fb;
   }
@@ -37,7 +39,8 @@ export class ModeloEjecucionDatosGeneralesFragment extends FormFragment<IModeloE
       descripcion: modelo.descripcion,
       nombre: modelo.nombre,
       externo: modelo.externo,
-      contrato: modelo.contrato
+      contrato: modelo.contrato,
+      solicitudSinConvocatoria: modelo.solicitudSinConvocatoria
     } as IModeloEjecucion;
     this.modeloEjecucion = modelo;
     return result;
@@ -77,6 +80,7 @@ export class ModeloEjecucionDatosGeneralesFragment extends FormFragment<IModeloE
     modeloEjecucion.descripcion = form.descripcion;
     modeloEjecucion.externo = typeof form.externo === 'boolean' ? form.externo : formRaw.externo;
     modeloEjecucion.contrato = typeof form.contrato === 'boolean' ? form.contrato : formRaw.contrato;
+    modeloEjecucion.solicitudSinConvocatoria = typeof form.solicitudSinConvocatoria === 'boolean' ? form.solicitudSinConvocatoria : formRaw.solicitudSinConvocatoria;
     return modeloEjecucion;
   }
 

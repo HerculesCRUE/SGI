@@ -11,6 +11,11 @@ import lombok.Data;
 @Data
 public class RestApiProperties {
   /**
+   * URL base de los end-points del módulo de CNF.
+   */
+  private String cnfUrl;
+
+  /**
    * URL base de los end-points del módulo de ETICA.
    */
   private String etiUrl;

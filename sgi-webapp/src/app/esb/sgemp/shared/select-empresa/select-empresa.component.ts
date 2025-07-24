@@ -1,4 +1,5 @@
 import { FocusMonitor } from '@angular/cdk/a11y';
+import { coerceBooleanProperty } from '@angular/cdk/coercion';
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -46,6 +47,16 @@ export class SelectEmpresaComponent extends SelectDialogComponent<SearchEmpresaM
   @Input()
   selectedEmpresas: IEmpresa[];
 
+  @Input()
+  get onlyEmpresasPrincipales(): boolean {
+    return this._onlyEmpresasPrincipales;
+  }
+  set onlyEmpresasPrincipales(value: boolean) {
+    this._onlyEmpresasPrincipales = coerceBooleanProperty(value);
+  }
+  // tslint:disable-next-line: variable-name
+  private _onlyEmpresasPrincipales = false;
+
   constructor(
     changeDetectorRef: ChangeDetectorRef,
     elementRef: ElementRef,
@@ -64,12 +75,13 @@ export class SelectEmpresaComponent extends SelectDialogComponent<SearchEmpresaM
   protected getDialogData(): SearchEmpresaModalData {
     return {
       ...super.getDialogData(),
-      selectedEmpresas: this.selectedEmpresas ?? []
+      selectedEmpresas: this.selectedEmpresas ?? [],
+      onlyEmpresasPrincipales: this.onlyEmpresasPrincipales
     };
   }
 
   protected search(term: string): Observable<SearchResult<IEmpresa>> {
-    return this.empresaService.findAutocomplete(term).pipe(
+    return this.empresaService.findAutocomplete(term, this.onlyEmpresasPrincipales).pipe(
       map(response => {
         if (response.length > 10) {
           return {

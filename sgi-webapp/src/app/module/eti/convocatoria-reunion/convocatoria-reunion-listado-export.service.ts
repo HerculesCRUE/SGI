@@ -9,8 +9,8 @@ import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core
 import { ReportService } from '@core/services/rep/report.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { concat, Observable, of, zip } from 'rxjs';
-import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concat, from, Observable, of, zip } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { ConvocatoriaReunionGeneralListadoExportService } from './convocatoria-reunion-general-listado-export.service';
 import { ConvocatoriaReunionMemoriasListadoExportService } from './convocatoria-reunion-memorias-listado-export.service';
 
@@ -91,12 +91,19 @@ export class ConvocatoriaReunionListadoExportService extends
         return convocatorias.items.map((peticion) => peticion as IConvocatoriaReunionReportData);
       }),
       switchMap((convocatoriasReportData) => {
-        const requestsPeticion: Observable<IConvocatoriaReunionReportData>[] = [];
+        const requestsPeticion: IConvocatoriaReunionReportData[] = [];
 
-        convocatoriasReportData.forEach(convocatoria => {
-          requestsPeticion.push(this.getDataReportInner(convocatoria, reportConfig.reportOptions));
-        });
-        return zip(...requestsPeticion);
+        return from(convocatoriasReportData).pipe(
+          mergeMap((convocatoria) => {
+            return this.getDataReportInner(convocatoria, reportConfig.reportOptions)
+          }, this.DEFAULT_CONCURRENT)
+        ).pipe(
+          map(r => {
+            requestsPeticion.push(r);
+            return requestsPeticion;
+          }),
+          takeLast(1)
+        )
       }),
       takeLast(1)
     );

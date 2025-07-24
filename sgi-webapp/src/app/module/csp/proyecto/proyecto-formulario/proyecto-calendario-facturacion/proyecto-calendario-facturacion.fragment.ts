@@ -1,3 +1,4 @@
+import { CalendarioFacturacionSgeIntegration } from '@core/models/csp/configuracion';
 import { IEstadoValidacionIP, TipoEstadoValidacion } from '@core/models/csp/estado-validacion-ip';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoFacturacion } from '@core/models/csp/proyecto-facturacion';
@@ -27,12 +28,20 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
     new BehaviorSubject<StatusWrapper<IProyectoFacturacionData>[]>([]);
   proyectosSGE$ = new BehaviorSubject<IProyectoSge[]>([]);
   private proyectosFacturacionDeleted: StatusWrapper<IProyectoFacturacionData>[] = [];
-  private _isCalendarioFacturacionSgeEnabled = false;
+  private _calendarioFacturacionSgeIntegration: CalendarioFacturacionSgeIntegration
 
   public proyectoIVA: number = null;
 
-  get isCalendarioFacturacionSgeEnabled(): boolean {
-    return this._isCalendarioFacturacionSgeEnabled;
+  get calendarioFacturacionSgeIntegration(): CalendarioFacturacionSgeIntegration {
+    return this._calendarioFacturacionSgeIntegration;
+  }
+
+  get isCalendarioFacturacionSgeWriteIntegrationEnabled(): boolean {
+    return this._calendarioFacturacionSgeIntegration === CalendarioFacturacionSgeIntegration.INTEGRACION_LECTURA_ESCRITURA;
+  }
+
+  get isCalendarioFacturacionSgeReadIntegrationEnabled(): boolean {
+    return this.hasIntegrationReadFacturasPrevistasEmitidas(this._calendarioFacturacionSgeIntegration);
   }
 
   constructor(
@@ -44,7 +53,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
     private facturaPrevistaEmitidaService: FacturaPrevistaEmitidaService,
     private proyectoProrrogaService: ProyectoProrrogaService,
     private configService: ConfigService,
-    private readonly isInvestigador: boolean
+    private readonly isInvestigador: boolean,
   ) {
     super(key);
     this.setComplete(true);
@@ -55,10 +64,6 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
       return;
     }
 
-    this.subscriptions.push(
-      this.configService.isCalendarioFacturacionSgeEnabled().subscribe(isEnabled => this._isCalendarioFacturacionSgeEnabled = isEnabled)
-    );
-
     this.loadItemsFacturacion(this.getKey() as number);
   }
 
@@ -68,30 +73,43 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
     return proyectoFacturacionData;
   }
 
-
   private loadItemsFacturacion(proyectoId: number) {
     this.subscriptions.push(
-      forkJoin({
-        itemsFacturacion: this.getProyectosFacturacionByProyectoId(proyectoId),
-        facturasPrevistasEmitidas: this.getFacturasPrevistasEmitidas(proyectoId)
-      }).subscribe(({ itemsFacturacion, facturasPrevistasEmitidas }) => {
-
+      this.configService.getCalendarioFacturacionSgeIntegration().pipe(
+        tap(calendarioFacturacionSgeIntegration => this._calendarioFacturacionSgeIntegration = calendarioFacturacionSgeIntegration),
+        switchMap(calendarioFacturacionSgeIntegration =>
+          forkJoin({
+            itemsFacturacion: this.getProyectosFacturacionByProyectoId(proyectoId),
+            facturasPrevistasEmitidas: this.hasIntegrationReadFacturasPrevistasEmitidas(calendarioFacturacionSgeIntegration) ? this.getFacturasPrevistasEmitidas(proyectoId) : of([] as IFacturaPrevistaEmitida[]),
+            hasIntegrationReadFacturasPrevistasEmitidas: of(this.hasIntegrationReadFacturasPrevistasEmitidas(calendarioFacturacionSgeIntegration))
+          })
+        )
+      ).subscribe((({ hasIntegrationReadFacturasPrevistasEmitidas, itemsFacturacion, facturasPrevistasEmitidas }) => {
         const itemsFacturacionWrapped = itemsFacturacion.map(item => {
+          if (!hasIntegrationReadFacturasPrevistasEmitidas) {
+            item.numeroFacturaEmitida = item.numeroFacturaSge;
+            return new StatusWrapper(item);
+          }
+
           item.facturasEmitidas = facturasPrevistasEmitidas.filter(factura => factura.numeroPrevision === item.numeroPrevision?.toString());
           item.numeroFacturaEmitida = item.facturasEmitidas?.map(factura => factura.numeroFactura).join('*');
           return new StatusWrapper(item);
         })
 
         this.proyectosFacturacion$.next(itemsFacturacionWrapped);
-      })
+      }))
     );
+  }
+
+  private hasIntegrationReadFacturasPrevistasEmitidas(calendarioFacturacionSgeIntegration: CalendarioFacturacionSgeIntegration): boolean {
+    return calendarioFacturacionSgeIntegration === CalendarioFacturacionSgeIntegration.INTEGRACION_LECTURA_ESCRITURA
+      || calendarioFacturacionSgeIntegration === CalendarioFacturacionSgeIntegration.INTEGRACION_SOLO_LECTURA;
   }
 
   private getFacturasPrevistasEmitidas(proyectoId: number): Observable<IFacturaPrevistaEmitida[]> {
     const filter = new RSQLSgiRestFilter('proyectoIdSGI', SgiRestFilterOperator.EQUALS, proyectoId?.toString());
     return this.facturaPrevistaEmitidaService.findAll({ filter }).pipe(map(response => response.items));
   }
-
 
   private getProyectosFacturacionByProyectoId(proyectoId: number): Observable<IProyectoFacturacionData[]> {
     return this.proyectoService.findProyectosFacturacionByProyectoId(proyectoId).pipe(
@@ -233,7 +251,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
           obs$ = update$;
         }
 
-        if (this.isCalendarioFacturacionSgeEnabled && currentEstado?.estado === TipoEstadoValidacion.VALIDADA) {
+        if (this.isCalendarioFacturacionSgeWriteIntegrationEnabled && currentEstado?.estado === TipoEstadoValidacion.VALIDADA) {
           obs$ = obs$.pipe(
             switchMap((itemFacturacion: IProyectoFacturacionData) => {
               itemFacturacion.facturasEmitidas = toUpdate.value.facturasEmitidas;
@@ -251,7 +269,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
               const proyectoFacturacionListado = toUpdate.value;
               proyectoFacturacionListado.id = updatedItem.id;
 
-              if (this.isCalendarioFacturacionSgeEnabled) {
+              if (this.isCalendarioFacturacionSgeWriteIntegrationEnabled) {
                 proyectoFacturacionListado.facturasEmitidas = updatedItem.facturasEmitidas;
               }
 
@@ -269,7 +287,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
 
     const facturaPrevista: IFacturaPrevista = {
       id: itemFacturacion?.facturasEmitidas && itemFacturacion?.facturasEmitidas.length > 0 ? itemFacturacion.facturasEmitidas[0]?.id : null,
-      comentario: itemFacturacion.comentario,
+      comentario: itemFacturacion?.comentario,
       fechaEmision: itemFacturacion.fechaEmision,
       importeBase: itemFacturacion.importeBase,
       numeroPrevision: itemFacturacion.numeroPrevision,
@@ -310,7 +328,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
         return this.proyectoFacturacionService.create(toCreate.value)
           .pipe(
             switchMap((createdProyectoFacturacion: IProyectoFacturacionData) => {
-              if (this.isCalendarioFacturacionSgeEnabled && toCreate.value.estadoValidacionIP?.estado === TipoEstadoValidacion.VALIDADA) {
+              if (this.isCalendarioFacturacionSgeWriteIntegrationEnabled && toCreate.value.estadoValidacionIP?.estado === TipoEstadoValidacion.VALIDADA) {
                 createdProyectoFacturacion.tipoFacturacion = toCreate.value.tipoFacturacion;
                 return this.createOrUpdateFacturaPrevista(createdProyectoFacturacion);
               }
@@ -322,7 +340,7 @@ export class ProyectoCalendarioFacturacionFragment extends Fragment {
               const proyectoFacturacionListado = toCreate.value;
               proyectoFacturacionListado.id = createdProyectoFacturacion.id;
 
-              if (this.isCalendarioFacturacionSgeEnabled) {
+              if (this.isCalendarioFacturacionSgeWriteIntegrationEnabled) {
                 proyectoFacturacionListado.facturasEmitidas = createdProyectoFacturacion.facturasEmitidas;
               }
 

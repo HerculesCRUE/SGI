@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "4.3 Murriztea"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Proposatutako helburua lortzeko ahalik eta animalia kopuru txikiena erabiltzeko edozein estrategia baliatzea, horixe da murriztea."
+      }
+    ]
+  }
+]

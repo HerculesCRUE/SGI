@@ -7,7 +7,7 @@ import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-
 import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
-import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
+import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip/convocatoria-requisito-ip.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
@@ -54,7 +54,7 @@ const REQUISITO_IP_NUM_MAXIMO_NO_COMPETITIVO_FIELD = 'numMaximoNoCompetitivoIP';
 const COLUMN_VALUE_PREFIX = ': ';
 @Injectable()
 export class ConvocatoriaRequisitoIPListadoExportService extends
-  AbstractTableExportFillService<IConvocatoriaReportData, IConvocatoriaReportOptions>{
+  AbstractTableExportFillService<IConvocatoriaReportData, IConvocatoriaReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,

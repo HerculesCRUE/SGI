@@ -1,6 +1,7 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ClasificacionCVN } from '@core/enums/clasificacion-cvn';
 import { TipoSeguimiento } from '@core/enums/tipo-seguimiento';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IUnidadGestion } from '../usr/unidad-gestion';
 import { IEstadoProyecto } from './estado-proyecto';
@@ -14,7 +15,7 @@ export interface IProyecto {
   /** EstadoProyecto */
   estado: IEstadoProyecto;
   /** Titulo */
-  titulo: string;
+  titulo: I18nFieldValue[];
   /** Acronimo */
   acronimo: string;
   /** codigoExterno */
@@ -29,8 +30,6 @@ export interface IProyecto {
   fechaFin: DateTime;
   /** Fecha Fin Definitiva */
   fechaFinDefinitiva: DateTime;
-  /** Comentario */
-  comentario: string;
   /** Unidad gestion */
   unidadGestion: IUnidadGestion;
   /** modelo ejecucion */
@@ -66,7 +65,7 @@ export interface IProyecto {
   /** causaExencion */
   causaExencion: CausaExencion;
   /** observaciones */
-  observaciones: string;
+  observaciones: I18nFieldValue[];
   /** anualidades */
   anualidades: boolean;
   /** activo  */
@@ -89,6 +88,8 @@ export interface IProyecto {
   totalImportePresupuesto: number;
   /** total Importe concedido */
   totalImporteConcedido: number;
+  /** Año */
+  anio: number;
 }
 
 export enum CausaExencion {

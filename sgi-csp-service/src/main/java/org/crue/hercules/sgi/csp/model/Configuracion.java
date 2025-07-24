@@ -65,6 +65,45 @@ public class Configuracion extends BaseEntity {
     FECHA_DEVENGO
   }
 
+  public enum SgeFiltroAnualidades {
+    ANUALIDADES_OPCIONALES,
+    ANUALIDADES_OBLIGATORIAS;
+  }
+
+  public enum SgeIntegracionesEccMenus {
+    ECC_EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL,
+    ECC_EJECUCION_PRESUPUESTARIA_GASTOS,
+    ECC_EJECUCION_PRESUPUESTARIA_INGRESOS,
+    ECC_DETALLE_OPERACIONES_GASTOS,
+    ECC_DETALLE_OPERACIONES_INGRESOS,
+    ECC_DETALLE_OPERACIONES_MODIFICACIONES,
+    ECC_FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS,
+    ECC_FACTURAS_JUSTIFICANTES_VIAJES_DIETAS,
+    ECC_FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO,
+    ECC_FACTURAS_EMITIDAS,
+    ECC_SEGUIMIENTO_JUSTIFICACION_RESUMEN,
+    ECC_SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS
+  }
+
+  public enum SgeEjecucionEconomicaFiltros {
+    ECC_FILTRO_FACTURAS_GASTOS_FECHA_DEVENGO,
+    ECC_FILTRO_FACTURAS_GASTOS_FECHA_CONTABILIZACION,
+    ECC_FILTRO_FACTURAS_GASTOS_FECHA_PAGO,
+    ECC_FILTRO_VIAJES_DIETAS_FECHA_DEVENGO,
+    ECC_FILTRO_VIAJES_DIETAS_FECHA_CONTABILIZACION,
+    ECC_FILTRO_VIAJES_DIETAS_FECHA_PAGO,
+    ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_DEVENGO,
+    ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_CONTABILIZACION,
+    ECC_FILTRO_PERSONAL_CONTRATADO_FECHA_PAGO,
+    ECC_FILTRO_FACTURAS_EMITIDAS_FECHA_FACTURA
+  }
+
+  public enum SgeCalendarioFacturacionIntegration {
+    INTEGRACION_LECTURA_ESCRITURA,
+    INTEGRACION_SOLO_LECTURA,
+    SIN_INTEGRACION;
+  }
+
   public enum Param {
     /**
      * Formato codigo partida presupuestaria
@@ -138,10 +177,9 @@ public class Configuracion extends BaseEntity {
      */
     SECTOR_IVA_SGE_ENABLED("sectorIvaSgeEnabled"),
     /**
-     * Habilitar la visualización de la la opción de menú "Modificaciones" dentro de
-     * "Ejecución económica - Detalle de operaciones"
+     * Habilitar la visualización de las opciones del menú de ejecución económica
      */
-    DETALLE_OPERACIONES_MODIFICACIONES_ENABLED("detalleOperacionesModificacionesEnabled"),
+    INTEGRACIONES_ECC_SGE_ENABLED("integracionesEccSgeEnabled"),
     /**
      * Determina si el alta del proyecto económico en el SGE se realiza de forma
      * sincrona o de forma asíncrona
@@ -153,11 +191,11 @@ public class Configuracion extends BaseEntity {
      */
     PROYECTO_SGE_MODIFICACION_MODO_EJECUCION("proyectoSgeModificacionModoEjecucion"),
     /**
-     * Determina si hay integración del calendario facturación con el SGE para
-     * indicar si se van a notificar las facturas previstas validadas del calendario
-     * de facturación al SGE
+     * Determina si hay integración del calendario facturación con el SGE y si la
+     * integración es solo para la lectura número factura o si también se integra la
+     * creación del ítem facturación
      */
-    CALENDARIO_FACTURACION_SGE_ENABLED("calendarioFacturacionSgeEnabled"),
+    CALENDARIO_FACTURACION_SGE_INTEGRATION("calendarioFacturacionSgeIntegration"),
     /**
      * Columnas a mostrar en Facturas y gastos (ejecución económica - facturas y
      * justificantes)
@@ -177,7 +215,41 @@ public class Configuracion extends BaseEntity {
      * Determina si se esta habilitado el filtro de proyectos con algun socio del
      * pais seleccionado
      */
-    PROYECTO_SOCIO_PAIS_FILTER_ENABLED("proyectoSocioPaisFilterEnabled");
+    PROYECTO_SOCIO_PAIS_FILTER_ENABLED("proyectoSocioPaisFilterEnabled"),
+    /**
+     * Permitir creación de solicitudes sin convocatoria desde perfil de
+     * investigación
+     */
+    SOLICITUDES_SIN_CONVOCATORIA_INVESTIGADOR_ENABLED("solicitudesSinConvocatoriaInvestigadorEnabled"),
+    /**
+     * Determina si hay integración de las notificaciones de presupuesto al SGE
+     */
+    NOTIFICACION_PRESUPUESTO_SGE_ENABLED("notificacionPresupuestoSgeEnabled"),
+    /**
+     * Permite aplicar el formato de anio en la anualidad
+     */
+    FORMATO_ANUALIDAD_ANIO("formatoAnualidadAnio"),
+    /**
+     * Define el comportamiento del filtro de anualidades en Ejecución Económica
+     */
+    SGE_FILTRO_ANUALIDADES("sgeFiltroAnualidades"),
+    /**
+     * Habilita el modal para el detalle en ejecuciñon presupuestaria - Gastos
+     */
+    SGE_EJECUCION_PRESUPUESTARIA_GASTOS_DETALLE_ENABLED("sgeEjecucionPresupuestariaGastosDetalleEnabled"),
+    /**
+     * Habilita el modal para el detalle en detalle operaciones - Gastos
+     */
+    SGE_DETALLE_OPERACIONES_GASTOS_DETALLE_ENABLED("sgeDetalleOperacionesGastosDetalleEnabled"),
+    /**
+     * Habilita los buscadores de las pantallas de Ejecución Económica dependientes
+     * del SGE.
+     */
+    SGE_EJECUCION_ECONOMICA_FILTROS("sgeEjecucionEconomicaFiltros"),
+    /**
+     * Habilita la acción eliminar relación proyecto SGI - identificador SGE
+     */
+    SGE_ELIMINAR_RELACION_PROYECTO_ENABLED("sgeEliminarRelacionProyectoEnabled");
 
     private final String key;
 
@@ -257,11 +329,11 @@ public class Configuracion extends BaseEntity {
 
   /** Habilitar creación de Partidas presupuestarias en el SGE */
   @Column(name = "partidas_presupuestarias_sge", columnDefinition = "boolean default false", nullable = true, unique = true)
-  private Boolean partidasPresupuestariasSGE;
+  private Boolean partidasPresupuestariasSgeEnabled;
 
   /** Habilitar creación de periodos de amortización de fondos en el SGE */
   @Column(name = "sge_amortizacion_fondos", columnDefinition = "boolean default false", nullable = false, unique = true)
-  private Boolean amortizacionFondosSGE;
+  private Boolean amortizacionFondosSgeEnabled;
 
   /**
    * Habilitar que se muestre el buscador de proyectos económicos al pulsar el
@@ -269,20 +341,20 @@ public class Configuracion extends BaseEntity {
    * "Configuración económica - Identificación"
    */
   @Column(name = "sge_alta_buscador", columnDefinition = "boolean default false", nullable = false, unique = true)
-  private Boolean altaBuscadorSGE;
+  private Boolean altaBuscadorSgeEnabled;
 
   /**
    * Habilitar la integración de gastos justificados (apartado seguimiento de
    * justificación).
    */
   @Column(name = "sge_gastos_justificados", columnDefinition = "boolean default false", nullable = false, unique = true)
-  private Boolean gastosJustificadosSGE;
+  private Boolean gastosJustificadosSgeEnabled;
 
   /**
    * Habilitar la acción de solicitar modificación de los datos del proyecto SGE
    */
   @Column(name = "sge_modificacion", columnDefinition = "boolean default false", nullable = false, unique = true)
-  private Boolean modificacionProyectoSge;
+  private Boolean modificacionProyectoSgeEnabled;
 
   /**
    * Habilitar la visualización del campo Sector IVA proveniente de la integración
@@ -292,11 +364,10 @@ public class Configuracion extends BaseEntity {
   private Boolean sectorIvaSgeEnabled;
 
   /**
-   * Habilitar la visualización de la la opción de menú "Modificaciones" dentro de
-   * "Ejecución económica - Detalle de operaciones"
+   * Habilitar la visualización de las opciones del menú de ejecución económica
    */
-  @Column(name = "sge_modificaciones", columnDefinition = "boolean default true", nullable = false, unique = true)
-  private Boolean detalleOperacionesModificacionesEnabled;
+  @Column(name = "sge_integraciones_ecc_habilitadas", nullable = true, unique = true)
+  private String integracionesEccSgeEnabled;
 
   /**
    * Determina si el alta del proyecto económico en el SGE se realiza de forma
@@ -336,12 +407,13 @@ public class Configuracion extends BaseEntity {
   private String personalContratadoColumnasFijasVisibles;
 
   /**
-   * Determina si hay integración del calendario facturación con el SGE para
-   * indicar si se van a notificar las facturas previstas validadas del calendario
-   * de facturación al SGE
+   * Determina si hay integración del calendario facturación con el SGE y si la
+   * integración es solo para la lectura número factura o si también se integra la
+   * creación del ítem facturación
    */
-  @Column(name = "sge_calendario_facturacion", columnDefinition = "boolean default true", nullable = false, unique = true)
-  private Boolean calendarioFacturacionSgeEnabled;
+  @Column(name = "sge_calendario_facturacion", nullable = false, unique = true)
+  @Enumerated(EnumType.STRING)
+  private SgeCalendarioFacturacionIntegration calendarioFacturacionSgeIntegration;
 
   /**
    * Determina si se esta habilitado el filtro de proyectos con algun socio del
@@ -349,6 +421,55 @@ public class Configuracion extends BaseEntity {
    */
   @Column(name = "csp_pro_socio_pais_filter_enabled", columnDefinition = "boolean default true", nullable = false, unique = true)
   private Boolean proyectoSocioPaisFilterEnabled;
+
+  /**
+   * Permitir creación de solicitudes sin convocatoria desde perfil de
+   * investigación
+   */
+  @Column(name = "inv_solicitudes_sin_convocatoria", columnDefinition = "boolean default false", nullable = false, unique = true)
+  private Boolean solicitudesSinConvocatoriaInvestigadorEnabled;
+
+  /**
+   * Determina si hay integración de las notificaciones de presupuesto al SGE
+   */
+  @Column(name = "sge_notificacion_presupuesto", columnDefinition = "boolean default true", nullable = false, unique = true)
+  private Boolean notificacionPresupuestoSgeEnabled;
+
+  /**
+   * Permite aplicar el formato de anio en la anualidad
+   */
+  @Column(name = "pro_anualidad_anio_formato", columnDefinition = "boolean default true", nullable = false, unique = true)
+  private Boolean formatoAnualidadAnio;
+
+  /** Define el comportamiento del filtro de anualidades en Ejecución Económica */
+  @Column(name = "sge_filtro_anualidades", nullable = false, unique = true)
+  @Enumerated(EnumType.STRING)
+  private SgeFiltroAnualidades sgeFiltroAnualidades;
+
+  /**
+   * Habilita el modal para el detalle en ejecucion presupuestaria - Gastos
+   */
+  @Column(name = "sge_ejecucionpresupuestaria_gastos_detalle", columnDefinition = "boolean default false", nullable = false, unique = true)
+  private Boolean sgeEjecucionPresupuestariaGastosDetalleEnabled;
+
+  /**
+   * Habilita el modal para el detalle en detalle operaciones - Gastos
+   */
+  @Column(name = "sge_detalleoperaciones_gastos_detalle", columnDefinition = "boolean default false", nullable = false, unique = true)
+  private Boolean sgeDetalleOperacionesGastosDetalleEnabled;
+
+  /**
+   * Habilita los buscadores de las pantallas de Ejecución Económica dependientes
+   * del SGE.
+   */
+  @Column(name = "sge_ejecucion_economica_filtros", nullable = true, unique = true)
+  private String sgeEjecucionEconomicaFiltros;
+
+  /**
+   * Habilita la acción eliminar relación proyecto SGI - identificador SGE
+   */
+  @Column(name = "sge_eliminar_relacion_proyecto", columnDefinition = "boolean default false", nullable = false, unique = true)
+  private Boolean sgeEliminarRelacionProyectoEnabled;
 
   public Object getParamValue(Param key) {
     switch (key) {
@@ -373,25 +494,25 @@ public class Configuracion extends BaseEntity {
       case CARDINALIDAD_RELACION_SGI_SGE:
         return this.getCardinalidadRelacionSgiSge();
       case PARTIDAS_PRESUPUESTARIAS_SGE_ENABLED:
-        return this.getPartidasPresupuestariasSGE();
+        return this.getPartidasPresupuestariasSgeEnabled();
       case AMORTIZACION_FONDOS_SGE_ENABLED:
-        return this.getAmortizacionFondosSGE();
+        return this.getAmortizacionFondosSgeEnabled();
       case ALTA_BUSCADOR_SGE_ENABLED:
-        return this.getAltaBuscadorSGE();
+        return this.getAltaBuscadorSgeEnabled();
       case GASTOS_JUSTIFICADOS_SGE_ENABLED:
-        return this.getGastosJustificadosSGE();
+        return this.getGastosJustificadosSgeEnabled();
       case MODIFICACION_PROYECTO_SGE_ENABLED:
-        return this.getModificacionProyectoSge();
+        return this.getModificacionProyectoSgeEnabled();
       case SECTOR_IVA_SGE_ENABLED:
         return this.getSectorIvaSgeEnabled();
-      case DETALLE_OPERACIONES_MODIFICACIONES_ENABLED:
-        return this.getDetalleOperacionesModificacionesEnabled();
+      case INTEGRACIONES_ECC_SGE_ENABLED:
+        return this.getIntegracionesEccSgeEnabled();
       case PROYECTO_SGE_ALTA_MODO_EJECUCION:
         return this.getProyectoSgeAltaModoEjecucion();
       case PROYECTO_SGE_MODIFICACION_MODO_EJECUCION:
         return this.getProyectoSgeModificacionModoEjecucion();
-      case CALENDARIO_FACTURACION_SGE_ENABLED:
-        return this.getCalendarioFacturacionSgeEnabled();
+      case CALENDARIO_FACTURACION_SGE_INTEGRATION:
+        return this.getCalendarioFacturacionSgeIntegration();
       case FACTURAS_GASTOS_COLUMNAS_FIJAS_VISIBLES:
         return this.getFacturasGastosColumnasFijasVisibles();
       case VIAJES_DIETAS_COLUMNAS_FIJAS_VISIBLES:
@@ -400,6 +521,22 @@ public class Configuracion extends BaseEntity {
         return this.getPersonalContratadoColumnasFijasVisibles();
       case PROYECTO_SOCIO_PAIS_FILTER_ENABLED:
         return this.getProyectoSocioPaisFilterEnabled();
+      case SOLICITUDES_SIN_CONVOCATORIA_INVESTIGADOR_ENABLED:
+        return this.getSolicitudesSinConvocatoriaInvestigadorEnabled();
+      case NOTIFICACION_PRESUPUESTO_SGE_ENABLED:
+        return this.getNotificacionPresupuestoSgeEnabled();
+      case FORMATO_ANUALIDAD_ANIO:
+        return this.getFormatoAnualidadAnio();
+      case SGE_FILTRO_ANUALIDADES:
+        return this.getSgeFiltroAnualidades();
+      case SGE_EJECUCION_PRESUPUESTARIA_GASTOS_DETALLE_ENABLED:
+        return this.getSgeEjecucionPresupuestariaGastosDetalleEnabled();
+      case SGE_DETALLE_OPERACIONES_GASTOS_DETALLE_ENABLED:
+        return this.getSgeDetalleOperacionesGastosDetalleEnabled();
+      case SGE_EJECUCION_ECONOMICA_FILTROS:
+        return this.getSgeEjecucionEconomicaFiltros();
+      case SGE_ELIMINAR_RELACION_PROYECTO_ENABLED:
+        return this.getSgeEliminarRelacionProyectoEnabled();
       default:
         return null;
     }
@@ -432,31 +569,33 @@ public class Configuracion extends BaseEntity {
         this.setValidacionClasificacionGastos(ValidacionClasificacionGastos.valueOf(newValue));
         break;
       case EJECUCION_ECONOMICA_GRUPOS_ENABLED:
-        this.setEjecucionEconomicaGruposEnabled(new Boolean(newValue));
+        this.setEjecucionEconomicaGruposEnabled(Boolean.valueOf(newValue));
         break;
       case CARDINALIDAD_RELACION_SGI_SGE:
         this.setCardinalidadRelacionSgiSge(CardinalidadRelacionSgiSge.valueOf(newValue));
         break;
       case PARTIDAS_PRESUPUESTARIAS_SGE_ENABLED:
-        this.setPartidasPresupuestariasSGE(new Boolean(newValue));
+        this.setPartidasPresupuestariasSgeEnabled(Boolean.valueOf(newValue));
         break;
       case AMORTIZACION_FONDOS_SGE_ENABLED:
-        this.setAmortizacionFondosSGE(new Boolean(newValue));
+        this.setAmortizacionFondosSgeEnabled(Boolean.valueOf(newValue));
         break;
       case ALTA_BUSCADOR_SGE_ENABLED:
-        this.setAltaBuscadorSGE(new Boolean(newValue));
+        this.setAltaBuscadorSgeEnabled(Boolean.valueOf(newValue));
         break;
       case GASTOS_JUSTIFICADOS_SGE_ENABLED:
-        this.setGastosJustificadosSGE(new Boolean(newValue));
+        this.setGastosJustificadosSgeEnabled(Boolean.valueOf(newValue));
         break;
       case MODIFICACION_PROYECTO_SGE_ENABLED:
-        this.setModificacionProyectoSge(new Boolean(newValue));
+        this.setModificacionProyectoSgeEnabled(Boolean.valueOf(newValue));
         break;
       case SECTOR_IVA_SGE_ENABLED:
-        this.setSectorIvaSgeEnabled(new Boolean(newValue));
+        this.setSectorIvaSgeEnabled(Boolean.valueOf(newValue));
         break;
-      case DETALLE_OPERACIONES_MODIFICACIONES_ENABLED:
-        this.setDetalleOperacionesModificacionesEnabled(new Boolean(newValue));
+      case INTEGRACIONES_ECC_SGE_ENABLED:
+        if (isValidEnumString(newValue, SgeIntegracionesEccMenus.class, true)) {
+          this.setIntegracionesEccSgeEnabled(newValue);
+        }
         break;
       case PROYECTO_SGE_ALTA_MODO_EJECUCION:
         this.setProyectoSgeAltaModoEjecucion(ModoEjecucion.valueOf(newValue));
@@ -464,8 +603,8 @@ public class Configuracion extends BaseEntity {
       case PROYECTO_SGE_MODIFICACION_MODO_EJECUCION:
         this.setProyectoSgeModificacionModoEjecucion(ModoEjecucion.valueOf(newValue));
         break;
-      case CALENDARIO_FACTURACION_SGE_ENABLED:
-        this.setCalendarioFacturacionSgeEnabled(new Boolean(newValue));
+      case CALENDARIO_FACTURACION_SGE_INTEGRATION:
+        this.setCalendarioFacturacionSgeIntegration(SgeCalendarioFacturacionIntegration.valueOf(newValue));
         break;
       case FACTURAS_GASTOS_COLUMNAS_FIJAS_VISIBLES:
         if (isValidEnumString(newValue, SgeFacturasJustificantesColumnasFijas.class, true)) {
@@ -483,7 +622,33 @@ public class Configuracion extends BaseEntity {
         }
         break;
       case PROYECTO_SOCIO_PAIS_FILTER_ENABLED:
-        this.setProyectoSocioPaisFilterEnabled(new Boolean(newValue));
+        this.setProyectoSocioPaisFilterEnabled(Boolean.valueOf(newValue));
+        break;
+      case SOLICITUDES_SIN_CONVOCATORIA_INVESTIGADOR_ENABLED:
+        this.setSolicitudesSinConvocatoriaInvestigadorEnabled(Boolean.valueOf(newValue));
+        break;
+      case NOTIFICACION_PRESUPUESTO_SGE_ENABLED:
+        this.setNotificacionPresupuestoSgeEnabled(Boolean.valueOf(newValue));
+        break;
+      case FORMATO_ANUALIDAD_ANIO:
+        this.setFormatoAnualidadAnio(Boolean.valueOf(newValue));
+        break;
+      case SGE_FILTRO_ANUALIDADES:
+        this.setSgeFiltroAnualidades(SgeFiltroAnualidades.valueOf(newValue));
+        break;
+      case SGE_EJECUCION_PRESUPUESTARIA_GASTOS_DETALLE_ENABLED:
+        this.setSgeEjecucionPresupuestariaGastosDetalleEnabled(Boolean.valueOf(newValue));
+        break;
+      case SGE_DETALLE_OPERACIONES_GASTOS_DETALLE_ENABLED:
+        this.setSgeDetalleOperacionesGastosDetalleEnabled(Boolean.valueOf(newValue));
+        break;
+      case SGE_EJECUCION_ECONOMICA_FILTROS:
+        if (isValidEnumString(newValue, SgeEjecucionEconomicaFiltros.class, true)) {
+          this.setSgeEjecucionEconomicaFiltros(newValue);
+        }
+        break;
+      case SGE_ELIMINAR_RELACION_PROYECTO_ENABLED:
+        this.setSgeEliminarRelacionProyectoEnabled(Boolean.valueOf(newValue));
         break;
     }
   }

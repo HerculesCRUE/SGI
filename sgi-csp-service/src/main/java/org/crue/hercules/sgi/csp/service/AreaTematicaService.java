@@ -1,8 +1,12 @@
 package org.crue.hercules.sgi.csp.service;
 
+import javax.validation.Valid;
+
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.AreaTematica;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Service Interface para gestionar {@link AreaTematica}.
@@ -15,7 +19,8 @@ public interface AreaTematicaService {
    * @param areaTematica la entidad {@link AreaTematica} a guardar.
    * @return la entidad {@link AreaTematica} persistida.
    */
-  AreaTematica create(AreaTematica areaTematica);
+  @Validated({ BaseEntity.Create.class })
+  AreaTematica create(@Valid AreaTematica areaTematica);
 
   /**
    * Actualizar {@link AreaTematica}.
@@ -23,7 +28,8 @@ public interface AreaTematicaService {
    * @param areaTematicaActualizar la entidad {@link AreaTematica} a actualizar.
    * @return la entidad {@link AreaTematica} persistida.
    */
-  AreaTematica update(AreaTematica areaTematicaActualizar);
+  @Validated({ BaseEntity.Update.class })
+  AreaTematica update(@Valid AreaTematica areaTematicaActualizar);
 
   /**
    * Reactiva el {@link AreaTematica}.

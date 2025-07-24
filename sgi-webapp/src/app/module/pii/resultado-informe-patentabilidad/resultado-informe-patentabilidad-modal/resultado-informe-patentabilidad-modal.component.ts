@@ -6,6 +6,7 @@ import { DialogActionComponent } from '@core/component/dialog-action.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IResultadoInformePatentibilidad } from '@core/models/pii/resultado-informe-patentabilidad';
 import { ResultadoInformePatentabilidadService } from '@core/services/pii/resultado-informe-patentabilidad/resultado-informe-patentabilidad.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -89,8 +90,8 @@ export class ResultadoInformePatentabilidadModalComponent
 
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      nombre: new FormControl(this.resultadoInformePatentibilidad?.nombre ?? '', [Validators.required, Validators.maxLength(50)]),
-      descripcion: new FormControl(this.resultadoInformePatentibilidad?.descripcion ?? '', [Validators.required, Validators.maxLength(250)]),
+      nombre: new FormControl(this.resultadoInformePatentibilidad?.nombre ?? [], [I18nValidators.required, I18nValidators.maxLength(50)]),
+      descripcion: new FormControl(this.resultadoInformePatentibilidad?.descripcion ?? [], [I18nValidators.required, I18nValidators.maxLength(250)]),
     });
     return formGroup;
   }

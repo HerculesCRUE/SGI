@@ -4,8 +4,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
@@ -14,10 +16,17 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioNotFoundException;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
+import org.crue.hercules.sgi.csp.model.RolProyectoAbreviatura;
+import org.crue.hercules.sgi.csp.model.RolProyectoDescripcion;
+import org.crue.hercules.sgi.csp.model.RolProyectoNombre;
 import org.crue.hercules.sgi.csp.model.RolSocio;
+import org.crue.hercules.sgi.csp.model.RolSocioAbreviatura;
+import org.crue.hercules.sgi.csp.model.RolSocioDescripcion;
+import org.crue.hercules.sgi.csp.model.RolSocioNombre;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoSocioEquipoServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -43,7 +52,7 @@ class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
   private ProyectoSocioEquipoService service;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     service = new ProyectoSocioEquipoServiceImpl(repository, proyectoSocioRepository);
   }
 
@@ -185,7 +194,7 @@ class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
     // ProyectoSocio
     Assertions.assertThatThrownBy(() -> service.update(proyectoSocioId, Arrays.asList(proyectoPeriodoPago)))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("No se puede modificar el proyecto socio del ProyectoSocioEquipo");
+        .hasMessage("No se puede Modificar Proyecto Socio para Proyecto Socio Equipo");
   }
 
   @Test
@@ -203,7 +212,7 @@ class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findById_WithIdNotExist_ThrowsProyectoSocioEquipoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoSocioEquipoNotFoundException() {
     // given: Ningun ProyectoSocioEquipo con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -256,11 +265,20 @@ class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
   }
 
   private ProyectoSocio generarMockProyectoSocio(Long id) {
+    Set<RolSocioAbreviatura> abreviatura = new HashSet<>();
+    abreviatura.add(new RolSocioAbreviatura(Language.ES, "001"));
+
+    Set<RolSocioNombre> nombre = new HashSet<>();
+    nombre.add(new RolSocioNombre(Language.ES, "nombre-001"));
+
+    Set<RolSocioDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new RolSocioDescripcion(Language.ES, "descripcion-001"));
+
     // @formatter:off
     RolSocio rolSocio = RolSocio.builder()
-        .id(id).abreviatura("001")
-        .nombre("nombre-001")
-        .descripcion("descripcion-001")
+        .id(id).abreviatura(abreviatura)
+        .nombre(nombre)
+        .descripcion(descripcion)
         .coordinador(Boolean.FALSE)
         .activo(Boolean.TRUE)
         .build();
@@ -282,12 +300,19 @@ class ProyectoSocioEquipoServiceTest extends BaseServiceTest {
    * @return el ProyectoSocioEquipo
    */
   private ProyectoSocioEquipo generarMockProyectoSocioEquipo(Long id) {
+    Set<RolProyectoNombre> nombre = new HashSet<>();
+    nombre.add(new RolProyectoNombre(Language.ES, "nombre-001"));
 
+    Set<RolProyectoDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new RolProyectoDescripcion(Language.ES, "descripcion-001"));
+
+    Set<RolProyectoAbreviatura> abreviatura = new HashSet<>();
+    abreviatura.add(new RolProyectoAbreviatura(Language.ES, "001"));
     // @formatter:off
     RolProyecto rolProyecto = RolProyecto.builder()
-        .id(id).abreviatura("001")
-        .nombre("nombre-001")
-        .descripcion("descripcion-001")
+        .id(id).abreviatura(abreviatura)
+        .nombre(nombre)
+        .descripcion(descripcion)
         .rolPrincipal(Boolean.FALSE)
         .equipo(RolProyecto.Equipo.INVESTIGACION).activo(Boolean.TRUE)
         .build();

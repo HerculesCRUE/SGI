@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { ESTADO_GASTO_PROYECTO_CONVERTER } from '@core/converters/csp/estado-gasto-proyecto.converter';
-import { IEstadoGastoProyectoBackend } from '@core/models/csp/backend/estado-gasto-proyecto-backend';
+import { ESTADO_GASTO_PROYECTO_RESPONSE_CONVERTER } from '@core/services/csp/estado-gasto-proyecto/estado-gasto-proyecto-response.converter';
+import { IEstadoGastoProyectoResponse } from '@core/services/csp/estado-gasto-proyecto/estado-gasto-proyecto-response';
 import { IEstadoGastoProyecto } from '@core/models/csp/estado-gasto-proyecto';
 import { IGastoProyecto } from '@core/models/csp/gasto-proyecto';
 import { environment } from '@env';
@@ -64,15 +64,15 @@ export class GastoProyectoService extends _GastoProyectoServiceMixinBase {
   }
 
   /**
- * Recupera listado de historico estado
- * @param id  gasto proyecto
- * @param options opciones de búsqueda.
- */
+   * Recupera listado de historico estado
+   * @param id  gasto proyecto
+   * @param options opciones de búsqueda.
+   */
   findEstadoGastoProyecto(gastoProyectoId: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IEstadoGastoProyecto>> {
-    return this.find<IEstadoGastoProyectoBackend, IEstadoGastoProyecto>(
+    return this.find<IEstadoGastoProyectoResponse, IEstadoGastoProyecto>(
       `${this.endpointUrl}/${gastoProyectoId}/estadosgastoproyecto`,
       options,
-      ESTADO_GASTO_PROYECTO_CONVERTER
+      ESTADO_GASTO_PROYECTO_RESPONSE_CONVERTER
     );
   }
 

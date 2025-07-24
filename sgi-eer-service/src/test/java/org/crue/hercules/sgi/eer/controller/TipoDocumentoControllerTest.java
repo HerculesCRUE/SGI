@@ -2,13 +2,19 @@ package org.crue.hercules.sgi.eer.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eer.converter.TipoDocumentoConverter;
 import org.crue.hercules.sgi.eer.dto.TipoDocumentoOutput;
 import org.crue.hercules.sgi.eer.model.TipoDocumento;
+import org.crue.hercules.sgi.eer.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.eer.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.eer.service.TipoDocumentoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -103,7 +109,7 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
     // containing Nombre='Nombre-31' to 'Nombre-40'
     for (int i = 0, j = 1; i < 10; i++, j++) {
       TipoDocumento item = actual.get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("Nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("Nombre-" + j);
     }
   }
 
@@ -195,7 +201,7 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
     // containing Nombre='Nombre-31' to 'Nombre-40'
     for (int i = 0, j = 1; i < 10; i++, j++) {
       TipoDocumento item = actual.get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("Nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("Nombre-" + j);
     }
   }
 
@@ -235,11 +241,15 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
 
   private TipoDocumento generateTipoDocumentoMock(Long id, Boolean activo, String nombre, String descripcion,
       TipoDocumento padre) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, nombre));
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, descripcion));
     return TipoDocumento.builder()
         .activo(activo)
-        .descripcion(descripcion)
+        .descripcion(descripcionTipoDocumento)
         .id(id)
-        .nombre(nombre)
+        .nombre(nombreTipoDocumento)
         .padre(padre)
         .build();
   }
@@ -250,11 +260,15 @@ class TipoDocumentoControllerTest extends BaseControllerTest {
 
   private TipoDocumentoOutput generateTipoDocumentoOutputMock(Long id, Boolean activo, String nombre,
       String descripcion, TipoDocumentoOutput padre) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, nombre));
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, descripcion));
     return TipoDocumentoOutput.builder()
         .activo(activo)
-        .descripcion(descripcion)
+        .descripcion(descripcionTipoDocumento)
         .id(id)
-        .nombre(nombre)
+        .nombre(nombreTipoDocumento)
         .padre(padre)
         .build();
   }

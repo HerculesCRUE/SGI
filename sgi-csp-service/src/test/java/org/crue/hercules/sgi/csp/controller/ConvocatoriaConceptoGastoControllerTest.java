@@ -3,17 +3,22 @@ package org.crue.hercules.sgi.csp.controller;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaConceptoGastoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoDescripcion;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoNombre;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoObservaciones;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoCodigoEcService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -34,6 +39,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * ConvocatoriaConceptoGastoControllerTest
@@ -73,10 +80,10 @@ class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest {
         // then: new ConvocatoriaConceptoGasto is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("conceptoGasto.nombre")
-            .value(convocatoriaConceptoGasto.getConceptoGasto().getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("conceptoGasto.descripcion")
-            .value(convocatoriaConceptoGasto.getConceptoGasto().getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("conceptoGasto.nombre[0].value").value(
+            I18nHelper.getValueForLanguage(convocatoriaConceptoGasto.getConceptoGasto().getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("conceptoGasto.descripcion[0].value").value(
+            I18nHelper.getValueForLanguage(convocatoriaConceptoGasto.getConceptoGasto().getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("conceptoGasto.activo")
             .value(convocatoriaConceptoGasto.getConceptoGasto().getActivo()));
   }
@@ -106,7 +113,11 @@ class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest {
     // given: Existing ConvocatoriaConceptoGasto to be updated
     ConvocatoriaConceptoGasto convocatoriaConceptoGastoExistente = generarMockConvocatoriaConceptoGasto(1L);
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = generarMockConvocatoriaConceptoGasto(1L);
-    convocatoriaConceptoGasto.setObservaciones("Observaciones nuevas");
+
+    Set<ConvocatoriaConceptoGastoObservaciones> observacionesConvocatoriaConceptoGasto = new HashSet<>();
+    observacionesConvocatoriaConceptoGasto
+        .add(new ConvocatoriaConceptoGastoObservaciones(Language.ES, "Observaciones nuevas"));
+    convocatoriaConceptoGasto.setObservaciones(observacionesConvocatoriaConceptoGasto);
 
     BDDMockito.given(service.update(ArgumentMatchers.<ConvocatoriaConceptoGasto>any()))
         .willAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -120,9 +131,11 @@ class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: ConvocatoriaConceptoGasto is updated
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(convocatoriaConceptoGasto.getObservaciones()))
-        .andExpect(MockMvcResultMatchers.jsonPath("conceptoGasto.nombre")
-            .value(convocatoriaConceptoGastoExistente.getConceptoGasto().getNombre()));
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoriaConceptoGasto.getObservaciones(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("conceptoGasto.nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoriaConceptoGastoExistente.getConceptoGasto().getNombre(),
+                Language.ES)));
   }
 
   @Test
@@ -353,17 +366,27 @@ class ConvocatoriaConceptoGastoControllerTest extends BaseControllerTest {
    * @return el objeto ConvocatoriaConceptoGasto
    */
   private ConvocatoriaConceptoGasto generarMockConvocatoriaConceptoGasto(Long id, Boolean permitido) {
+    Set<ConceptoGastoNombre> nombreConceptoGasto = new HashSet<>();
+    nombreConceptoGasto.add(new ConceptoGastoNombre(Language.ES, "nombre-" + (id != null ? id : 1)));
+
+    Set<ConceptoGastoDescripcion> descripcionConceptoGasto = new HashSet<>();
+    descripcionConceptoGasto.add(new ConceptoGastoDescripcion(Language.ES, "Descripcion"));
+
     ConceptoGasto conceptoGasto = new ConceptoGasto();
-    conceptoGasto.setDescripcion("Descripcion");
-    conceptoGasto.setNombre("nombre-" + (id != null ? id : 1));
+    conceptoGasto.setDescripcion(descripcionConceptoGasto);
+    conceptoGasto.setNombre(nombreConceptoGasto);
     conceptoGasto.setActivo(true);
+
+    Set<ConvocatoriaConceptoGastoObservaciones> observacionesConvocatoriaConceptoGasto = new HashSet<>();
+    observacionesConvocatoriaConceptoGasto
+        .add(new ConvocatoriaConceptoGastoObservaciones(Language.ES, "Obs-" + (id != null ? id : 1)));
 
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = new ConvocatoriaConceptoGasto();
     convocatoriaConceptoGasto.setId(id);
     convocatoriaConceptoGasto.setConceptoGasto(conceptoGasto);
     convocatoriaConceptoGasto.setPermitido(permitido);
     convocatoriaConceptoGasto.setConvocatoriaId((id != null ? id : 1));
-    convocatoriaConceptoGasto.setObservaciones("Obs-" + (id != null ? id : 1));
+    convocatoriaConceptoGasto.setObservaciones(observacionesConvocatoriaConceptoGasto);
 
     return convocatoriaConceptoGasto;
   }

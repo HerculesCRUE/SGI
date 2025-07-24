@@ -124,7 +124,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     route: ActivatedRoute,
     private readonly cnfService: ConfigService
   ) {
-    super();
+    super(translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -139,11 +139,18 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     if (route.snapshot.queryParamMap.get(CONVOCATORIA_ACTION_LINK_KEY)) {
       this.convocatoriaId = Number(route.snapshot.queryParamMap.get(CONVOCATORIA_ACTION_LINK_KEY));
     }
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'titulo') {
+        return 'titulo.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.loadForm();
 
     if (this.convocatoriaId) {
@@ -200,7 +207,7 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
     this.filter = this.createFilter();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -455,10 +462,10 @@ export class SolicitudListadoComponent extends AbstractTablePaginationComponent<
         .and('convocatoria.entidadesFinanciadoras.entidadRef', SgiRestFilterOperator.EQUALS, controls.entidadFinanciadora.value?.id)
         .and('convocatoria.entidadesFinanciadoras.fuenteFinanciacion.id',
           SgiRestFilterOperator.EQUALS, controls.fuenteFinanciacion.value?.id?.toString())
-        .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value)
+        .and('titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value)
         .and('solicitudProyecto.rolUniversidadId', SgiRestFilterOperator.EQUALS, controls.rolUniversidad.value?.id?.toString())
         .and('unidadGestionRef', SgiRestFilterOperator.EQUALS, controls.unidadGestion.value?.id?.toString())
-        .and('convocatoria.finalidad.id', SgiRestFilterOperator.EQUALS, controls.finalidad.value?.id?.toString());
+        .and('tipoFinalidad.id', SgiRestFilterOperator.EQUALS, controls.finalidad.value?.id?.toString());
 
       if (controls.estadoSolicitudHistorico.value) {
         rsqlFilter

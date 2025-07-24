@@ -33,16 +33,17 @@ public class ApartadoService extends BaseRestTemplateService<ApartadoDto> {
   public List<ApartadoDto> findByPadreId(Long idPadre) {
     List<ApartadoDto> result = null;
     try {
-
+      HttpHeaders headers = new HttpHeaders();
       String sort = "orden,asc";
-      URI uri = UriComponentsBuilder.fromUriString(getUrlBase() + getUrlApi() + "/" + idPadre + "/hijos")
+      URI uri = UriComponentsBuilder
+          .fromUriString(getUrlBase() + getUrlApi() + "/" + idPadre + "/hijos")
           .queryParam("s", sort).build(false).toUri();
-      result = findAllFromURI(uri, new HttpHeaders(), new ParameterizedTypeReference<List<ApartadoDto>>() {
+      result = findAllFromURI(uri, headers, new ParameterizedTypeReference<List<ApartadoDto>>() {
       });
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     return result;
   }
@@ -50,15 +51,15 @@ public class ApartadoService extends BaseRestTemplateService<ApartadoDto> {
   public List<ApartadoDto> findByBloqueId(Long idBloque) {
     List<ApartadoDto> result = null;
     try {
-
+      HttpHeaders headers = new HttpHeaders();
       String sort = "orden,asc";
       URI uri = UriComponentsBuilder.fromUriString(getUrlBase() + BloqueService.URL_API + "/" + idBloque + URL_API)
           .queryParam("s", sort).build(false).toUri();
-      result = findAllFromURI(uri, new HttpHeaders(), new ParameterizedTypeReference<List<ApartadoDto>>() {
+      result = findAllFromURI(uri, headers, new ParameterizedTypeReference<List<ApartadoDto>>() {
       });
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     return result;
   }

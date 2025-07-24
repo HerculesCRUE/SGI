@@ -5,20 +5,24 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.crue.hercules.sgi.com.dto.ProcessedEmailTpl;
-import org.crue.hercules.sgi.com.dto.ProcessedEmailTpl.ProcessedEmailTplBuilder;
 import org.crue.hercules.sgi.com.exceptions.ContentException;
 import org.crue.hercules.sgi.com.exceptions.SubjectException;
 import org.crue.hercules.sgi.com.model.EmailTpl;
 import org.crue.hercules.sgi.com.repository.EmailTplRepository;
 import org.crue.hercules.sgi.framework.exception.NotFoundException;
+import org.crue.hercules.sgi.framework.i18n.I18nConfig;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
+import freemarker.core.StringArraySequence;
+import freemarker.template.AttemptExceptionReporter;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import freemarker.template.TemplateSequenceModel;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -41,6 +45,17 @@ public class FreemarkerEmailTemplateProcessor {
         "FreemarkerEmailTemplateProcessor(EmailTplRepository repository, Configuration freemarkerCfg) - end");
   }
 
+  private void configure() {
+    freemarkerCfg.setAttemptExceptionReporter(AttemptExceptionReporter.LOG_WARN_REPORTER);
+    setSharedVariables();
+  }
+
+  private void setSharedVariables() {
+    TemplateSequenceModel languagePriorities = new StringArraySequence(
+        I18nConfig.get().getLanguagePriorities().stream().map(Language::getCode).toArray(String[]::new));
+    freemarkerCfg.setSharedVariable("languagePriorities", languagePriorities);
+  }
+
   public ProcessedEmailTpl processTemplate(String name, Map<String, Object> params)
       throws ContentException, SubjectException {
     log.debug(
@@ -50,7 +65,8 @@ public class FreemarkerEmailTemplateProcessor {
         .orElseThrow(() -> new NotFoundException(ProblemMessage.builder().key(NotFoundException.class)
             .parameter(PROBLEM_MESSAGE_PARAMETER_ENTITY, ApplicationContextSupport.getMessage(EmailTpl.class))
             .parameter(MESSAGE_KEY_ID, name).build()));
-    ProcessedEmailTplBuilder builder = ProcessedEmailTpl.builder();
+    ProcessedEmailTpl.ProcessedEmailTplBuilder builder = ProcessedEmailTpl.builder();
+    this.configure();
     try {
       if (ObjectUtils.isNotEmpty(emailTpl.getSubjectTpl())) {
         Template subjectTemplate = freemarkerCfg.getTemplate(

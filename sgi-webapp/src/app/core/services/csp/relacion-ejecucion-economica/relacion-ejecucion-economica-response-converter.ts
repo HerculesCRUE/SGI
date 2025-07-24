@@ -1,3 +1,4 @@
+import { I18N_FIELD_RESPONSE_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IRelacionEjecucionEconomica } from '@core/models/csp/relacion-ejecucion-economica';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -12,7 +13,7 @@ class RelacionEjecucionEconomicaResponseConverter
     }
     return {
       id: value.id,
-      nombre: value.nombre,
+      nombre: value.nombre ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.nombre) : [],
       codigoExterno: value.codigoExterno,
       codigoInterno: value.codigoInterno,
       fechaInicio: LuxonUtils.fromBackend(value.fechaInicio),
@@ -29,7 +30,7 @@ class RelacionEjecucionEconomicaResponseConverter
     }
     return {
       id: value.id,
-      nombre: value.nombre,
+      nombre: value.nombre ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.nombre) : [],
       codigoExterno: value.codigoExterno,
       codigoInterno: value.codigoInterno,
       fechaInicio: LuxonUtils.toBackend(value.fechaInicio),

@@ -17,19 +17,24 @@
 
 INSERT INTO test.alegacion_requerimiento
 (id, requerimiento_justificacion_id, fecha_alegacion ,importe_alegado, importe_alegado_cd, importe_alegado_ci, 
-importe_reintegrado, importe_reintegrado_cd, importe_reintegrado_ci, intereses_reintegrados, fecha_reintegro, justificante_reintegro, observaciones)
+importe_reintegrado, importe_reintegrado_cd, importe_reintegrado_ci, intereses_reintegrados, fecha_reintegro, justificante_reintegro)
 VALUES
 (1, 1, '2022-05-11 00:00:00.000', 500.22, 250.11, 250.11, 
-300.00, 200.00, 100.00, 0.00, '2022-06-11 00:00:00.000', 'Justificante-001', 'Observacion-001');
+300.00, 200.00, 100.00, 0.00, '2022-06-11 00:00:00.000', 'Justificante-001');
 INSERT INTO test.alegacion_requerimiento
 (id, requerimiento_justificacion_id, fecha_alegacion ,importe_alegado, importe_alegado_cd, importe_alegado_ci, 
-importe_reintegrado, importe_reintegrado_cd, importe_reintegrado_ci, intereses_reintegrados, fecha_reintegro, justificante_reintegro, observaciones)
+importe_reintegrado, importe_reintegrado_cd, importe_reintegrado_ci, intereses_reintegrados, fecha_reintegro, justificante_reintegro)
 VALUES
 (2, 2, '2022-07-21 00:00:00.000', 200.22, 100.11, 100.11, 
-0.00, 0.00, 0.00, 0.00, '2022-09-22 00:00:00.000', 'Justificante-002', 'Observacion-002');
+0.00, 0.00, 0.00, 0.00, '2022-09-22 00:00:00.000', 'Justificante-002');
 INSERT INTO test.alegacion_requerimiento
 (id, requerimiento_justificacion_id, fecha_alegacion ,importe_alegado, importe_alegado_cd, importe_alegado_ci, 
-importe_reintegrado, importe_reintegrado_cd, importe_reintegrado_ci, intereses_reintegrados, fecha_reintegro, justificante_reintegro, observaciones)
+importe_reintegrado, importe_reintegrado_cd, importe_reintegrado_ci, intereses_reintegrados, fecha_reintegro, justificante_reintegro)
 VALUES
 (3, 4, '2022-11-01 00:00:00.000', 0.00, 0.00, 0.00, 
-700.00, 700.00, 0.00, 350.00, '2022-12-25 00:00:00.000', 'Justificante-003', 'Observacion-003');
+700.00, 700.00, 0.00, 350.00, '2022-12-25 00:00:00.000', 'Justificante-003');
+
+-- ALEGACION_REQUERIMIENTO_OBSERVACIONES
+INSERT INTO test.alegacion_requerimiento_observaciones (alegacion_requerimiento_id, lang, value_) VALUES (1, 'es', 'Observacion-001');
+INSERT INTO test.alegacion_requerimiento_observaciones (alegacion_requerimiento_id, lang, value_) VALUES (2, 'es', 'Observacion-002');
+INSERT INTO test.alegacion_requerimiento_observaciones (alegacion_requerimiento_id, lang, value_) VALUES (3, 'es', 'Observacion-003');

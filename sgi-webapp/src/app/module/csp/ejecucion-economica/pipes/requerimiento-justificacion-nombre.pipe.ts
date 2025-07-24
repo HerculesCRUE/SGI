@@ -1,5 +1,6 @@
 import { Pipe, PipeTransform } from '@angular/core';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
+import { LanguageService } from '@core/services/language.service';
 
 @Pipe({
   name: 'requerimientoJustificacionNombre',
@@ -8,14 +9,17 @@ import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-just
 })
 export class RequerimientoJustificacionNombrePipe implements PipeTransform {
 
+  constructor(private languageService: LanguageService) {
+  }
+
   transform(requerimientoJustificacion: IRequerimientoJustificacion): string {
-    return formatRequerimientoJustificacionNombre(requerimientoJustificacion);
+    return formatRequerimientoJustificacionNombre(requerimientoJustificacion, this.languageService);
   }
 }
 
-export function formatRequerimientoJustificacionNombre(requerimientoJustificacion: IRequerimientoJustificacion): string {
-  if (requerimientoJustificacion?.numRequerimiento && requerimientoJustificacion?.tipoRequerimiento?.nombre) {
-    return `${requerimientoJustificacion.numRequerimiento} - ${requerimientoJustificacion.tipoRequerimiento.nombre}`;
+export function formatRequerimientoJustificacionNombre(requerimientoJustificacion: IRequerimientoJustificacion, languageService: LanguageService): string {
+  if (requerimientoJustificacion?.numRequerimiento && requerimientoJustificacion?.tipoRequerimiento?.nombre?.length) {
+    return `${requerimientoJustificacion.numRequerimiento} - ${languageService.getFieldValue(requerimientoJustificacion.tipoRequerimiento.nombre)}`;
   } else {
     return '';
   }

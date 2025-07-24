@@ -20,7 +20,8 @@ describe('SearchEmpresaModalComponent', () => {
     const matDialogData: SearchEmpresaModalData = {
       searchTerm: '',
       selectedEmpresas: [],
-      extended: true
+      extended: true,
+      onlyEmpresasPrincipales: false
     };
 
     TestBed.configureTestingModule({

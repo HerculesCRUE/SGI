@@ -8,6 +8,7 @@ import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-r
 import { ActionService } from '@core/services/action-service';
 import { AnualidadGastoService } from '@core/services/csp/anualidad-gasto/anualidad-gasto.service';
 import { AnualidadIngresoService } from '@core/services/csp/anualidad-ingreso/anualidad-ingreso.service';
+import { ConfigService } from '@core/services/csp/configuracion/config.service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { CodigoEconomicoGastoService } from '@core/services/sge/codigo-economico-gasto.service';
 import { CodigoEconomicoIngresoService } from '@core/services/sge/codigo-economico-ingreso.service';
@@ -66,7 +67,8 @@ export class ProyectoAnualidadActionService extends ActionService {
     codigoEconomicoIngresoService: CodigoEconomicoIngresoService,
     partidaPresupuestariaGastoSgeService: PartidaPresupuestariaGastoSgeService,
     partidaPresupuestariaIngresoSgeService: PartidaPresupuestariaIngresoSgeService,
-    proyectoAnualidadService: ProyectoAnualidadService
+    proyectoAnualidadService: ProyectoAnualidadService,
+    configServiceCSP: ConfigService
   ) {
     super();
     this.data = route.snapshot.data[PROYECTO_ANUALIDAD_DATA_KEY];
@@ -80,6 +82,7 @@ export class ProyectoAnualidadActionService extends ActionService {
       id,
       this.data.proyecto,
       proyectoAnualidadService,
+      configServiceCSP,
       this.data.readonly
     );
 

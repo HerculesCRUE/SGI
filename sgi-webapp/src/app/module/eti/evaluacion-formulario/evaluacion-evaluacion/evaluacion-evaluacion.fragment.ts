@@ -9,6 +9,7 @@ import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -33,13 +34,13 @@ export class EvaluacionEvaluacionFragment extends FormFragment<IMemoria> {
 
   protected buildFormGroup(): FormGroup {
     const form = this.fb.group({
-      comite: [{ value: '', disabled: true }],
+      comite: [{ value: null, disabled: true }],
       fechaEvaluacion: [{ value: null, disabled: true }],
       referenciaMemoria: [{ value: '', disabled: true }],
-      solicitante: [{ value: '', disabled: true }],
+      solicitante: [{ value: null, disabled: true }],
       version: [{ value: '', disabled: true }],
       dictamen: [null, [Validators.required]],
-      comentario: ['', [Validators.maxLength(2000)]]
+      comentario: [[], [I18nValidators.maxLength(2000)]]
     });
 
     this.subscriptions.push(form.controls.dictamen.valueChanges.subscribe(
@@ -75,11 +76,11 @@ export class EvaluacionEvaluacionFragment extends FormFragment<IMemoria> {
 
   buildPatch(value: IMemoria): { [key: string]: any } {
     return {
-      comite: value.comite.comite,
+      comite: value.comite,
       fechaEvaluacion: value.fechaEnvioSecretaria,
       referenciaMemoria: value.numReferencia,
       version: value.version,
-      solicitante: `${value.peticionEvaluacion?.solicitante?.nombre} ${value.peticionEvaluacion?.solicitante?.apellidos}`,
+      solicitante: value.peticionEvaluacion?.solicitante,
       dictamen: this.evaluacion.dictamen,
       comentario: this.evaluacion.comentario
     };

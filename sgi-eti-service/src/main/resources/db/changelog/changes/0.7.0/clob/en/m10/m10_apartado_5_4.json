@@ -1,0 +1,41 @@
+[
+  {
+    "key": "ap5_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.4 Collaboration acceptance document"
+    },
+    "fieldGroup": [
+      {
+        "template": "If the recruitment of participants is going to be carried out by someone outside the research team, do you have the collaboration acceptance document?"
+      },
+      {
+        "key": "documentoAceptacionColaboracion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": "ACEPTACION_COLABORACION",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: see section '3,4.2 Recruitment carried out by personnel outside the research team'.</p>"
+      }
+    ]
+  }
+]

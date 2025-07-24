@@ -1,0 +1,57 @@
+[
+  {
+    "key": "ap3_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.6 Personal data"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Are data of a personal nature used in this activity?</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Personal data are any numerical, text, graphic, photographic, audio or any other kind of information about the possible participants.</p>"
+      },
+      {
+        "key": "caracterPersonalRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "key": "numeroDatosCaracterPersonal",
+        "type": "i18n-input",
+        "hideExpression": "!model.caracterPersonalRadio || model.caracterPersonalRadio === 'no'",
+        "templateOptions": {
+          "label": "Include the number",
+          "required": true,
+          "placeholder": "Number"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>HELP: EU Regulation 679/2016 and the personal data protection and guarantee of digital rights act, Organic Law 3/2018, oblige to record data processing at university.</p>"
+      }
+    ]
+  }
+]

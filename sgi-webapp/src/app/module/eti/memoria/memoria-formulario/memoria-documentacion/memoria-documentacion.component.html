@@ -6,14 +6,18 @@
       <ng-container matColumnDef="tipoDocumento">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.memoria.documento.tipo' | translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoDocumento.nombre}} </td>
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.tipoDocumento?.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Nombre Column -->
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.memoria.documento.nombre' | translate}}
         </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.nombre}} </td>
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Acciones Column -->
@@ -56,13 +60,13 @@
 
   <div class="separation-button">
     <h2>{{'title.eti.memoria.documentacion.seguimiento-anual' | translate}}</h2>
-    <ng-container *ngIf="formularioComite === FORMULARIO.M10">
+    <ng-container *ngIf="formulario.seguimientoAnualDocumentacionTitle === FORMULARIO_SEGUIMIENTO_ANUAL_TITLE.TITULO_1">
       <span>{{'eti.memoria.documentacion.seguimiento-anual.formulario.M10' | translate}}</span>
     </ng-container>
-    <ng-container *ngIf="formularioComite === FORMULARIO.M20">
+    <ng-container *ngIf="formulario.seguimientoAnualDocumentacionTitle === FORMULARIO_SEGUIMIENTO_ANUAL_TITLE.TITULO_2">
       <span>{{'eti.memoria.documentacion.seguimiento-anual.formulario.M20' | translate}}</span>
     </ng-container>
-    <ng-container *ngIf="formularioComite === FORMULARIO.M30">
+    <ng-container *ngIf="formulario.seguimientoAnualDocumentacionTitle === FORMULARIO_SEGUIMIENTO_ANUAL_TITLE.TITULO_2">
       <span>{{'eti.memoria.documentacion.seguimiento-anual.formulario.M30' | translate}}</span>
     </ng-container>
     <div class="separation-button">
@@ -74,7 +78,9 @@
           <ng-container matColumnDef="nombre">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.memoria.documento.nombre' | translate}}
             </th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.nombre}} </td>
+            <td mat-cell *matCellDef="let wrapper">
+              <sgi-i18n-table-field [field]="wrapper.value.nombre"></sgi-i18n-table-field>
+            </td>
           </ng-container>
 
           <!-- Acciones Column -->
@@ -133,7 +139,9 @@
           <ng-container matColumnDef="nombre">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.memoria.documento.nombre' | translate}}
             </th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.nombre}} </td>
+            <td mat-cell *matCellDef="let wrapper">
+              <sgi-i18n-table-field [field]="wrapper.value.nombre"></sgi-i18n-table-field>
+            </td>
           </ng-container>
 
           <!-- Acciones Column -->
@@ -191,7 +199,9 @@
           <ng-container matColumnDef="nombre">
             <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.memoria.documento.nombre' | translate}}
             </th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.nombre}} </td>
+            <td mat-cell *matCellDef="let wrapper">
+              <sgi-i18n-table-field [field]="wrapper.value.nombre"></sgi-i18n-table-field>
+            </td>
           </ng-container>
 
           <!-- Acciones Column -->

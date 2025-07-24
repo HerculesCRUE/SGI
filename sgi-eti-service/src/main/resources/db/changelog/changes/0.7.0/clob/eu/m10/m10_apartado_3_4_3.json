@@ -1,0 +1,32 @@
+[
+  {
+    "key": "ap3_4_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.4.3 Esku hartzeen edo proben deskribapena"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Deskribatu zer esku hartze edo proba egingo zaizkion azterketako subjektuari bere laginak edo datuak lortzeko, eta zehaztu non egingo zaizkion, nor arduratuko den, zenbat iraungo duten eta zer maiztasunekin egingo diren.</p>"
+      },
+      {
+        "key": "descripcionIntervenciones",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Esku hartzeak edo probak",
+          "required": true
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: gogoratu parte hartzailearen eskubidea dela egingo dizkioten edo bere parte hartzean eragina izango duten esku hartze edo proba guztiak ezagutzea, eta horren berri eman behar zaiola baimen dokumentuan (‘4.4 Esku hartze edo probei buruzko informazioa’ atala). </p><p>Nahitaez eman behar den gutxieneko informazioari buruz gehiago jakiteko, kontsultatu <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a15' target='_blank'>14/2007 IBLren 15. artikulua</a>. </p><p><b>'5. 7 Dokumentazio osagarria' atalean erantsi behar dira datuak biltzeko erabiliko diren dokumentu guztiak (galdetegiak, elkarrizketak, inkestak, etab.). </b></p>"
+      }
+    ]
+  }
+]

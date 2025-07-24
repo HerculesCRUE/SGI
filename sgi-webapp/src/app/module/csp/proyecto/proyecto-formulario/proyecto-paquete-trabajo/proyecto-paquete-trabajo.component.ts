@@ -18,6 +18,7 @@ import { switchMap } from 'rxjs/operators';
 import { PaquetesTrabajoModalData, ProyectoPaquetesTrabajoModalComponent } from '../../modals/proyecto-paquetes-trabajo-modal/proyecto-paquetes-trabajo-modal.component';
 import { ProyectoActionService } from '../../proyecto.action.service';
 import { ProyectoPaqueteTrabajoFragment } from './proyecto-paquete-trabajo.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const PROYECTO_PAQUETE_TRABAJO_KEY = marker('csp.proyecto-paquete-trabajo');
@@ -49,15 +50,16 @@ export class ProyectoPaqueteTrabajoComponent extends FragmentComponent implement
     public actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.PAQUETE_TRABAJO, actionService);
+    super(actionService.FRAGMENT.PAQUETE_TRABAJO, actionService, translate);
     this.formPart = this.fragment as ProyectoPaqueteTrabajoFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IProyectoPaqueteTrabajo>, property: string) => {
@@ -71,7 +73,8 @@ export class ProyectoPaqueteTrabajoComponent extends FragmentComponent implement
           case 'personaMes':
             return wrapper.value.personaMes;
           case 'descripcion':
-            return wrapper.value.descripcion;
+            return this.languageService.getFieldValue(wrapper.value.descripcion);
+
           default:
             return wrapper[property];
         }
@@ -82,7 +85,7 @@ export class ProyectoPaqueteTrabajoComponent extends FragmentComponent implement
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_PAQUETE_TRABAJO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

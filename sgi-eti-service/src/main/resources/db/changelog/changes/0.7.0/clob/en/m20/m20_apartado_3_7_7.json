@@ -1,0 +1,70 @@
+[
+  {
+    "key": "ap3_7_7",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.7 Biological agents"
+    },
+    "fieldGroup": [
+      {
+        "template": "Does the experimental process include the inoculation of biological agents?"
+      },
+      {
+        "key": "agentesBiologicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>If the experimental process requires working with biological agents (BA) or genetically modified organisms (GMO) in a laboratory with containment level 2 or higher, it is necessary to request the evaluation of the #nombre_comite_M30_en#.</p>"
+      },
+      {
+        "key": "tipoAgenteBiologico",
+        "type": "i18n-input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Type of biological agent",
+          "required": true,
+          "placeholder": "Type"
+        }
+      },
+      {
+        "key": "nivelBioseguridad",
+        "type": "i18n-input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Biosafety level",
+          "required": true,
+          "placeholder": "Level"
+        }
+      },
+      {
+        "key": "administracion",
+        "type": "i18n-input",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Dosage and route of administration",
+          "required": true,
+          "placeholder": "Dose"
+        }
+      }
+    ]
+  }
+]

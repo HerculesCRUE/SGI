@@ -1,0 +1,17 @@
+[
+  {
+    "key": "ap5_2_2_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.4 Pregunta 4"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "Con respecto a las características técnicas del OMG empleado en la actividad, indicar la siguiente información:"
+      }
+    ]
+  }
+]

@@ -246,8 +246,9 @@
       <!-- Titulo convocatoria -->
       <mat-form-field *ngIf="fragment.isEdit()" fxFlex>
         <mat-label>{{'pub.solicitud.datos-generales.titulo' | translate}}</mat-label>
-        <input matInput formControlName="tituloConvocatoria" type="text"
+        <sgi-i18n-input formControlName="tituloConvocatoria"
           placeholder="{{'pub.solicitud.datos-generales.titulo' | translate}}">
+        </sgi-i18n-input>
       </mat-form-field>
 
     </div>
@@ -294,7 +295,7 @@
                 {{'csp.solicitud-entidad-convocante.plan' | translate}}
               </th>
               <td mat-cell *matCellDef="let entidadConvocanteModalidad">
-                {{ entidadConvocanteModalidad.plan?.nombre }}
+                <sgi-i18n-table-field [field]="entidadConvocanteModalidad.plan?.nombre"></sgi-i18n-table-field>
               </td>
             </ng-container>
 
@@ -304,8 +305,9 @@
                 {{'csp.solicitud-entidad-convocante.programa' | translate}}
               </th>
               <td mat-cell *matCellDef="let entidadConvocanteModalidad">
-                {{ entidadConvocanteModalidad.entidadConvocante.programa?.padre?.id ?
-                entidadConvocanteModalidad.entidadConvocante.programa?.nombre : ''}}
+                <sgi-i18n-table-field
+                  [field]="entidadConvocanteModalidad.entidadConvocante.programa?.padre?.id ? entidadConvocanteModalidad.entidadConvocante.programa?.nombre : ''">
+                </sgi-i18n-table-field>
               </td>
             </ng-container>
 
@@ -315,7 +317,8 @@
                 {{'csp.solicitud-entidad-convocante.modalidad' | translate}}
               </th>
               <td mat-cell *matCellDef="let entidadConvocanteModalidad">
-                {{ entidadConvocanteModalidad.modalidad?.value.programa?.nombre }}
+                <sgi-i18n-table-field
+                  [field]="entidadConvocanteModalidad.modalidad?.value.programa?.nombre"></sgi-i18n-table-field>
               </td>
             </ng-container>
 
@@ -348,10 +351,9 @@
     <div fxFlex fxLayout="row" fxLayoutGap="10px">
       <mat-form-field fxFlex="100%">
         <mat-label>{{'csp.solicitud.observaciones' | translate}}</mat-label>
-        <textarea matInput formControlName="observaciones" type="text" id="observaciones"
-          placeholder="{{'csp.solicitud.observaciones' | translate}}" cdkTextareaAutosize
-          #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5">
-        </textarea>
+        <sgi-i18n-textarea formControlName="observaciones" placeholder="{{'csp.solicitud.observaciones' | translate}}"
+          [useAutosize]="true" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5">
+        </sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
         </mat-error>

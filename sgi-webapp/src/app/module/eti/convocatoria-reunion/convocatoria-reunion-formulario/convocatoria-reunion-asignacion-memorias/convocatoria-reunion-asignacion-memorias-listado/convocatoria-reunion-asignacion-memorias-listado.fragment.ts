@@ -102,11 +102,14 @@ export class ConvocatoriaReunionAsignacionMemoriasListadoFragment extends Fragme
               evaluaciones.forEach((evaluacion: IEvaluacion) => {
                 const datosPersonaEvaluador1 = personas.find((persona) =>
                   evaluacion.evaluador1.persona.id === persona.id);
-                evaluacion.evaluador1.persona = datosPersonaEvaluador1;
-
+                if (datosPersonaEvaluador1) {
+                  evaluacion.evaluador1.persona = datosPersonaEvaluador1;
+                }
                 const datosPersonaEvaluador2 = personas.find((persona) =>
                   evaluacion.evaluador2.persona.id === persona.id);
-                evaluacion.evaluador2.persona = datosPersonaEvaluador2;
+                if (datosPersonaEvaluador2) {
+                  evaluacion.evaluador2.persona = datosPersonaEvaluador2;
+                }
               });
 
               return evaluaciones;

@@ -1,0 +1,2 @@
+<#assign data = CSP_COM_MODIFICACION_AUTORIZACION_PARTICIPACION_PROYECTO_EXTERNO_DATA?eval_json />
+Con fecha ${data.fecha?datetime.iso?string('dd/MM/yyyy')}, ha sido registrada en nuestra base de datos la solicitud de autorización de participación en el proyecto externo ${data.tituloProyecto} por parte de ${data.nombreSolicitante}

@@ -27,7 +27,11 @@ import org.crue.hercules.sgi.csp.repository.SolicitudProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudProyectoSocioPeriodoJustificacionSpecifications;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoSocioPeriodoJustificacionService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -46,22 +50,29 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class SolicitudProyectoSocioPeriodoJustificacionServiceImpl
     implements SolicitudProyectoSocioPeriodoJustificacionService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_MODEL_SOLICITUD_PROYECTO_SOCIO_PERIODO_JUSTIFICACION = "org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacion.message";
+  private static final String MSG_ENTITY_MODIFICABLE = "org.springframework.util.Assert.entity.modificable.message";
 
   private final Validator validator;
   private final SolicitudProyectoSocioPeriodoJustificacionRepository repository;
   private final SolicitudProyectoSocioRepository solicitudProyectoSocioRepository;
   private final SolicitudService solicitudService;
   private final SolicitudProyectoRepository solicitudProyectoRepository;
+  private final SolicitudAuthorityHelper solicitudAuthorityHelper;
 
   public SolicitudProyectoSocioPeriodoJustificacionServiceImpl(Validator validator,
       SolicitudProyectoSocioPeriodoJustificacionRepository repository,
       SolicitudProyectoSocioRepository solicitudProyectoSocioRepository, SolicitudService solicitudService,
-      SolicitudProyectoRepository solicitudProyectoRepository) {
+      SolicitudProyectoRepository solicitudProyectoRepository,
+      SolicitudAuthorityHelper solicitudAuthorityHelper) {
     this.validator = validator;
     this.repository = repository;
     this.solicitudProyectoSocioRepository = solicitudProyectoSocioRepository;
     this.solicitudService = solicitudService;
     this.solicitudProyectoRepository = solicitudProyectoRepository;
+    this.solicitudAuthorityHelper = solicitudAuthorityHelper;
   }
 
   /**
@@ -83,23 +94,33 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceImpl
 
     if (periodos.isEmpty()) {
       // Fast check
-      repository.deleteInBulkBySolicitudProyectoSocioId(solicitudProyectoSocioId);
+      repository.deleteBySolicitudProyectoSocioId(solicitudProyectoSocioId);
       return new ArrayList<>();
     }
 
     // Recuperamos la solicitud
-    SolicitudProyectoSocio solicitud = solicitudProyectoSocioRepository.findById(solicitudProyectoSocioId)
+    SolicitudProyectoSocio solicitudProyectoSocio = solicitudProyectoSocioRepository.findById(solicitudProyectoSocioId)
         .orElseThrow(() -> new SolicitudProyectoSocioNotFoundException(solicitudProyectoSocioId));
 
+    solicitudAuthorityHelper
+        .checkUserHasAuthorityModifySolicitud(solicitudProyectoSocio.getSolicitudProyectoId());
+
     // Comprobar si la solicitud es modificable
-    SolicitudProyecto solicitudProyecto = solicitudProyectoRepository.findById(solicitud.getSolicitudProyectoId())
-        .orElseThrow(() -> new SolicitudProyectoNotFoundException(solicitud.getSolicitudProyectoId()));
+    SolicitudProyecto solicitudProyecto = solicitudProyectoRepository
+        .findById(solicitudProyectoSocio.getSolicitudProyectoId())
+        .orElseThrow(() -> new SolicitudProyectoNotFoundException(solicitudProyectoSocio.getSolicitudProyectoId()));
+
     Assert.isTrue(solicitudService.modificable(solicitudProyecto.getId()),
-        "No se puede modificar SolicitudProyectoSocioPeriodoJustificacion");
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_MODIFICABLE)
+            .parameter(MSG_KEY_ENTITY,
+                ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_PROYECTO_SOCIO_PERIODO_JUSTIFICACION))
+            .parameter(MSG_KEY_MSG, null)
+            .build());
 
     // Comprobamos la consistencia y preparamos para la actualización los
     // SolicitudProyectoSocioPeriodoJustificacion recibidos
-    checkAndSetupPeriodos(solicitud, solicitudProyecto, periodos);
+    checkAndSetupPeriodos(solicitudProyectoSocio, solicitudProyecto, periodos);
 
     // Recuperamos los SolicitudProyectoSocioPeriodoJustificacion asociados a la
     // solicitud existentes en base de datos
@@ -186,8 +207,7 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceImpl
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id,
-        "SolicitudProyectoSocioPeriodoJustificacion id no puede ser null para eliminar un SolicitudProyectoSocioPeriodoJustificacion");
+    AssertHelper.idNotNull(id, SolicitudProyectoSocioPeriodoJustificacion.class);
     if (!repository.existsById(id)) {
       throw new SolicitudProyectoSocioPeriodoJustificacionNotFoundException(id);
     }
@@ -212,6 +232,11 @@ public class SolicitudProyectoSocioPeriodoJustificacionServiceImpl
   public Page<SolicitudProyectoSocioPeriodoJustificacion> findAllBySolicitudProyectoSocio(Long solicitudProyectoSocioId,
       String query, Pageable paging) {
     log.debug("findAllBySolicitudProyectoSocio(Long solicitudProyectoSocioId, String query, Pageable paging) - start");
+
+    SolicitudProyectoSocio solicitudProyectoSocio = solicitudProyectoSocioRepository.findById(solicitudProyectoSocioId)
+        .orElseThrow(() -> new SolicitudProyectoSocioNotFoundException(solicitudProyectoSocioId));
+
+    solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(solicitudProyectoSocio.getSolicitudProyectoId());
 
     Specification<SolicitudProyectoSocioPeriodoJustificacion> specs = SolicitudProyectoSocioPeriodoJustificacionSpecifications
         .bySolicitudId(solicitudProyectoSocioId).and(SgiRSQLJPASupport.toSpecification(query));

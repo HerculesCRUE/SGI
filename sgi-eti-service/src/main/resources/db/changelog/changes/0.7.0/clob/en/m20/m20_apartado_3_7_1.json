@@ -1,0 +1,109 @@
+[
+  {
+    "key": "ap3_7_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.1 Procedures/Interventions to be performed on the animal"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>We refer to the manipulations (surgical or non-surgical), tests or observations to which the animal is subjected throughout the experimental process as 'procedures/interventions'.</p>"
+      },
+      {
+        "template": "<p>Please describe <strong>IN DETAIL</strong> (and <strong>numbered</strong>) all the procedures/interventions to which the animal is subjected throughout the experimental process. Particularly detail those where it is anticipated that it may suffer 'a level of pain, suffering, distress or lasting harm equivalent to or greater than that caused by the introduction of a needle in accordance with good veterinary practice'.</p>"
+      },
+      {
+        "key": "descripcionProcedimientoIntervencion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Description of the procedure/intervention",
+          "required": false
+        }
+      },
+      {
+        "template": "<p>Please indicate the duration of each procedure/intervention, frequency of performance, number of animals for each procedure and severity category.</p></br><p>The classification of the severity that the animal is expected to experience pain, suffering or anxiety is carried out according to the following classification:<ul><li><strong>No recovery</strong>: Procedures/interventions that are performed entirely under general anaesthesia after which the animal will not regain consciousness should be classified as non-recovery.</li><li><strong>Mild</strong>: Procedures/interventions on animals as a result of which the animal is likely to experience mild pain, suffering or distress of short duration, as well as procedures/interventions without significant alteration of the well-being or general condition of the animals, should be classified as mild. .</li><li><strong>Moderate</strong>: procedures/interventions on animals as a result of which they are likely to experience short-term but long-lasting moderate pain, suffering or distress, as well as procedures/interventions that could cause a moderate alteration in the well-being or general condition of the animals should be classified as moderate.</li><li><strong>Severe</strong>: procedures/interventions on animals as a result of which they are likely to experience severe or moderate but long-lasting pain, suffering or distress, as well as procedures/interventions that could cause a serious alteration in the well-being or general condition of the animals. be classified as severe.</li></ul>"
+      },
+      {
+        "type": "table-crud",
+        "key": "procedimientoIntervencionMedidaCorrectoraTable",
+        "templateOptions": {
+          "entity": "procedure/intervention",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Corrective measure"
+          },
+          "fieldGroup": [
+            {
+              "key": "numeroProcedimiento",
+              "type": "input",
+              "templateOptions": {
+                "label": "No. Procedure/ Intervention",
+                "required": true,
+                "order": 10
+              }
+            },
+            {
+              "key": "frecuenciaRealizacion",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Frequency of implementation",
+                "required": true,
+                "order": 30
+              }
+            },
+            {
+              "key": "numeroAnimales",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Number of animals",
+                "required": true,
+                "order": 40
+              }
+            },
+            {
+              "key": "categoriaSeveridad",
+              "type": "select",
+              "templateOptions": {
+                "label": "Severity category",
+                "required": true,
+                "order": 50,
+                "options": [
+                  {
+                    "value": "Sin recuperación",
+                    "label": "No recovery"
+                  },
+                  {
+                    "value": "Leve",
+                    "label": "Mild"
+                  },
+                  {
+                    "value": "Moderada",
+                    "label": "Moderate"
+                  },
+                  {
+                    "value": "Severa",
+                    "label": "Severe"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "warn-div"
+        ],
+        "hideExpression": "!model.procedimientoIntervencionMedidaCorrectoraTable.length > 0",
+        "template": "<p>If you modify the procedures/interventions or their severity, remember to review and update the table in section 4.2.1</p>."
+      }
+    ]
+  }
+]

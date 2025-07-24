@@ -1,11 +1,11 @@
 package org.crue.hercules.sgi.pii.dto;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import org.crue.hercules.sgi.pii.model.Procedimiento;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,14 +29,12 @@ public class ProcedimientoInput {
   @NotNull
   private Long solicitudProteccionId;
 
-  @Size(max = Procedimiento.LONG_TEXT_LENGTH)
-  private String accionATomar;
+  private List<I18nFieldValueDto> accionATomar;
 
   private Instant fechaLimiteAccion;
 
   private Boolean generarAviso;
 
-  @Size(max = Procedimiento.COMENTARIOS_MAX_LENGTH)
-  private String comentarios;
+  private List<I18nFieldValueDto> comentarios;
 
 }

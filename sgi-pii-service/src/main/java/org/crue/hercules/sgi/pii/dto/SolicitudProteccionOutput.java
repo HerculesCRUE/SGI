@@ -2,9 +2,17 @@ package org.crue.hercules.sgi.pii.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 
 import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
+import org.crue.hercules.sgi.pii.model.InvencionTitulo;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
+import org.crue.hercules.sgi.pii.model.SolicitudProteccionComentarios;
+import org.crue.hercules.sgi.pii.model.SolicitudProteccionTitulo;
+import org.crue.hercules.sgi.pii.model.TipoCaducidadDescripcion;
+import org.crue.hercules.sgi.pii.model.TipoProteccionNombre;
+import org.crue.hercules.sgi.pii.model.ViaProteccionDescripcion;
+import org.crue.hercules.sgi.pii.model.ViaProteccionNombre;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +33,7 @@ public class SolicitudProteccionOutput implements Serializable {
 
   private Long id;
   private Invencion invencion;
-  private String titulo;
+  private Collection<SolicitudProteccionTitulo> titulo;
   private Instant fechaPrioridadSolicitud;
   private Instant fechaFinPriorPresFasNacRec;
   private Instant fechaPublicacion;
@@ -40,7 +48,7 @@ public class SolicitudProteccionOutput implements Serializable {
   private TipoCaducidad tipoCaducidad;
   private String agentePropiedadRef;
   private String paisProteccionRef;
-  private String comentarios;
+  private Collection<SolicitudProteccionComentarios> comentarios;
 
   @Data
   @EqualsAndHashCode(callSuper = false)
@@ -55,7 +63,7 @@ public class SolicitudProteccionOutput implements Serializable {
 
     private Long id;
     private Invencion.TipoProteccion tipoProteccion;
-    private String titulo;
+    private Collection<InvencionTitulo> titulo;
 
     @Data
     @EqualsAndHashCode(callSuper = false)
@@ -70,7 +78,7 @@ public class SolicitudProteccionOutput implements Serializable {
 
       private Long id;
       private TipoPropiedad tipoPropiedad;
-      private String nombre;
+      private Collection<TipoProteccionNombre> nombre;
     }
   }
 
@@ -86,8 +94,8 @@ public class SolicitudProteccionOutput implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private String nombre;
-    private String descripcion;
+    private Collection<ViaProteccionNombre> nombre;
+    private Collection<ViaProteccionDescripcion> descripcion;
     private TipoPropiedad tipoPropiedad;
     private Boolean paisEspecifico;
     private Integer mesesPrioridad;
@@ -107,6 +115,6 @@ public class SolicitudProteccionOutput implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private String descripcion;
+    private Collection<TipoCaducidadDescripcion> descripcion;
   }
 }

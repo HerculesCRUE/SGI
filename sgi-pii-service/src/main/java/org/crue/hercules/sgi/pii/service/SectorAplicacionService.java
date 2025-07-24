@@ -15,8 +15,9 @@ import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.pii.exceptions.SectorAplicacionNotFoundException;
+import org.crue.hercules.sgi.pii.model.BaseActivableEntity;
+import org.crue.hercules.sgi.pii.model.BaseEntity;
 import org.crue.hercules.sgi.pii.model.SectorAplicacion;
-import org.crue.hercules.sgi.pii.model.SectorAplicacion.OnActivar;
 import org.crue.hercules.sgi.pii.repository.SectorAplicacionRepository;
 import org.crue.hercules.sgi.pii.repository.specification.SectorAplicacionSpecifications;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,17 +37,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Validated
 public class SectorAplicacionService {
 
   private final Validator validator;
 
   private final SectorAplicacionRepository repository;
-
-  public SectorAplicacionService(Validator validator, SectorAplicacionRepository sectorAplicacionRepository) {
-    this.validator = validator;
-    this.repository = sectorAplicacionRepository;
-  }
 
   /**
    * Guardar un nuevo {@link SectorAplicacion}.
@@ -54,7 +52,7 @@ public class SectorAplicacionService {
    * @return la entidad {@link SectorAplicacion} persistida.
    */
   @Transactional
-  @Validated({ SectorAplicacion.OnCrear.class })
+  @Validated({ BaseEntity.Create.class })
   public SectorAplicacion create(@Valid SectorAplicacion sectorAplicacion) {
     log.debug("create(SectorAplicacion sectorAplicacion) - start");
 
@@ -79,7 +77,7 @@ public class SectorAplicacionService {
    * @return la entidad {@link SectorAplicacion} persistida.
    */
   @Transactional
-  @Validated({ SectorAplicacion.OnActualizar.class })
+  @Validated({ BaseEntity.Update.class })
   public SectorAplicacion update(@Valid SectorAplicacion sectorAplicacion) {
     log.debug("update(SectorAplicacion sectorAplicacion) - start");
 
@@ -126,7 +124,8 @@ public class SectorAplicacionService {
         return sectorAplicacion;
       }
       // Invocar validaciones asociadas a OnActivar
-      Set<ConstraintViolation<SectorAplicacion>> result = validator.validate(sectorAplicacion, OnActivar.class);
+      Set<ConstraintViolation<SectorAplicacion>> result = validator.validate(sectorAplicacion,
+          BaseActivableEntity.OnActivar.class);
       if (!result.isEmpty()) {
         throw new ConstraintViolationException(result);
       }

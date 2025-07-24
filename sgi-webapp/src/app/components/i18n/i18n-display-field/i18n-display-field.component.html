@@ -1,0 +1,6 @@
+<span><sup class="prefix"
+    *ngIf="value && value.lang !== languageService.getLanguage(); else empty">{{value.lang.codeExtended}}</sup>{{value?.value}}</span>
+
+<ng-template #empty>
+  <sup class="prefix">&nbsp;&nbsp;&nbsp;</sup>
+</ng-template>

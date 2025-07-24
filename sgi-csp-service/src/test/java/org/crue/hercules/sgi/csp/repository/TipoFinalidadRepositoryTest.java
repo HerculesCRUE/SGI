@@ -1,9 +1,15 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -23,7 +29,10 @@ class TipoFinalidadRepositoryTest extends BaseRepositoryTest {
     entityManager.persistAndFlush(generarMockTipoFinalidad(1L, Boolean.FALSE));
 
     // when: find given nombre
-    TipoFinalidad dataFound = repository.findByNombreAndActivoIsTrue(data.getNombre()).get();
+    TipoFinalidad dataFound = repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        Language.ES,
+        I18nHelper.getValueForLanguage(data.getNombre(), Language.ES))
+        .get();
 
     // then: TipoFinalidad with given name is found
     Assertions.assertThat(dataFound).isNotNull();
@@ -41,8 +50,9 @@ class TipoFinalidadRepositoryTest extends BaseRepositoryTest {
     entityManager.persistAndFlush(generarMockTipoFinalidad(3L, Boolean.TRUE));
 
     // when: find given nombre
-    Optional<TipoFinalidad> dataFound = repository.findByNombreAndActivoIsTrue(data.getNombre());
-
+    Optional<TipoFinalidad> dataFound = repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        Language.ES,
+        I18nHelper.getValueForLanguage(data.getNombre(), Language.ES));
     // then: TipoFinalidad with given name is not found
     Assertions.assertThat(dataFound).isEqualTo(Optional.empty());
   }
@@ -55,6 +65,16 @@ class TipoFinalidadRepositoryTest extends BaseRepositoryTest {
    * @return TipoFinalidad
    */
   private TipoFinalidad generarMockTipoFinalidad(Long id, Boolean activo) {
-    return TipoFinalidad.builder().nombre("nombre-" + id).descripcion("descripcion-" + id).activo(activo).build();
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoFinalidadDescripcion> descripcionTipoFinalidad = new HashSet<>();
+    descripcionTipoFinalidad.add(new TipoFinalidadDescripcion(Language.ES, "descripcion-" + id));
+
+    return TipoFinalidad.builder()
+        .nombre(nombreTipoFinalidad)
+        .descripcion(descripcionTipoFinalidad)
+        .activo(activo)
+        .build();
   }
 }

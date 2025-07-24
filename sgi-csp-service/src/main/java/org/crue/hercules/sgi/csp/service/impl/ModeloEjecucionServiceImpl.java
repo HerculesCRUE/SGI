@@ -1,25 +1,33 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.List;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
 
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity;
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
-import org.crue.hercules.sgi.csp.model.ModeloEjecucion_;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ModeloEjecucionSpecifications;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoSpecifications;
 import org.crue.hercules.sgi.csp.service.ModeloEjecucionService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -28,17 +36,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Validated
 public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_MODEL_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.model.ModeloEjecucion.message";
+  private static final String MSG_ENTITY_EXISTS = "org.springframework.util.Assert.entity.exists.message";
 
-  private static final String MESSAGE_YA_EXISTE_UN_MODELO_EJECUCION_ACTIVO_CON_EL_NOMBRE_PREFFIX = "Ya existe un ModeloEjecucion activo con el nombre '";
   private final ModeloEjecucionRepository modeloEjecucionRepository;
   private final ProyectoRepository proyectoRepository;
-
-  public ModeloEjecucionServiceImpl(ModeloEjecucionRepository modeloEjecucionRepository,
-      ProyectoRepository proyectoRepository) {
-    this.modeloEjecucionRepository = modeloEjecucionRepository;
-    this.proyectoRepository = proyectoRepository;
-  }
+  private final Validator validator;
 
   /**
    * Guardar un nuevo {@link ModeloEjecucion}.
@@ -48,12 +56,11 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
    */
   @Override
   @Transactional
-  public ModeloEjecucion create(ModeloEjecucion modeloEjecucion) {
+  @Validated({ BaseEntity.Create.class })
+  public ModeloEjecucion create(@Valid ModeloEjecucion modeloEjecucion) {
     log.debug("create(ModeloEjecucion modeloEjecucion) - start");
 
-    Assert.isNull(modeloEjecucion.getId(), "ModeloEjecucion id tiene que ser null para crear un nuevo ModeloEjecucion");
-    Assert.isTrue(!(modeloEjecucionRepository.findByNombreAndActivoIsTrue(modeloEjecucion.getNombre()).isPresent()),
-        MESSAGE_YA_EXISTE_UN_MODELO_EJECUCION_ACTIVO_CON_EL_NOMBRE_PREFFIX + modeloEjecucion.getNombre() + "'");
+    AssertHelper.idIsNull(modeloEjecucion.getId(), ModeloEjecucion.class);
 
     modeloEjecucion.setActivo(true);
 
@@ -72,23 +79,18 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
    */
   @Override
   @Transactional
-  public ModeloEjecucion update(ModeloEjecucion modeloEjecucionActualizar) {
+  @Validated({ BaseEntity.Update.class })
+  public ModeloEjecucion update(@Valid ModeloEjecucion modeloEjecucionActualizar) {
     log.debug("update(ModeloEjecucion modeloEjecucionActualizar) - start");
 
-    Assert.notNull(modeloEjecucionActualizar.getId(),
-        "ModeloEjecucion id no puede ser null para actualizar un ModeloEjecucion");
-    modeloEjecucionRepository.findByNombreAndActivoIsTrue(modeloEjecucionActualizar.getNombre())
-        .ifPresent(modeloEjecucionExistente -> Assert
-            .isTrue(modeloEjecucionActualizar.getId().equals(modeloEjecucionExistente.getId()),
-                MESSAGE_YA_EXISTE_UN_MODELO_EJECUCION_ACTIVO_CON_EL_NOMBRE_PREFFIX
-                    + modeloEjecucionExistente.getNombre()
-                    + "'"));
+    AssertHelper.idNotNull(modeloEjecucionActualizar.getId(), ModeloEjecucion.class);
 
     return modeloEjecucionRepository.findById(modeloEjecucionActualizar.getId()).map(modeloEjecucion -> {
       modeloEjecucion.setNombre(modeloEjecucionActualizar.getNombre());
       modeloEjecucion.setDescripcion(modeloEjecucionActualizar.getDescripcion());
       modeloEjecucion.setExterno(modeloEjecucionActualizar.getExterno());
       modeloEjecucion.setContrato(modeloEjecucionActualizar.getContrato());
+      modeloEjecucion.setSolicitudSinConvocatoria(modeloEjecucionActualizar.getSolicitudSinConvocatoria());
 
       ModeloEjecucion returnValue = modeloEjecucionRepository.save(modeloEjecucion);
       log.debug("update(ModeloEjecucion modeloEjecucionActualizar) - end");
@@ -107,15 +109,20 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
   public ModeloEjecucion enable(Long id) {
     log.debug("enable(Long id) - start");
 
-    Assert.notNull(id, "ModeloEjecucion id no puede ser null para reactivar un ModeloEjecucion");
+    AssertHelper.idNotNull(id, ModeloEjecucion.class);
 
     return modeloEjecucionRepository.findById(id).map(modeloEjecucion -> {
       if (modeloEjecucion.getActivo()) {
         return modeloEjecucion;
       }
 
-      Assert.isTrue(!(modeloEjecucionRepository.findByNombreAndActivoIsTrue(modeloEjecucion.getNombre()).isPresent()),
-          MESSAGE_YA_EXISTE_UN_MODELO_EJECUCION_ACTIVO_CON_EL_NOMBRE_PREFFIX + modeloEjecucion.getNombre() + "'");
+      // Invocar validaciones asociadas a OnActivar
+      Set<ConstraintViolation<ModeloEjecucion>> result = validator.validate(
+          modeloEjecucion,
+          BaseActivableEntity.OnActivar.class);
+      if (!result.isEmpty()) {
+        throw new ConstraintViolationException(result);
+      }
 
       modeloEjecucion.setActivo(true);
       ModeloEjecucion returnValue = modeloEjecucionRepository.save(modeloEjecucion);
@@ -135,7 +142,7 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
   public ModeloEjecucion disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "ModeloEjecucion id no puede ser null para desactivar un ModeloEjecucion");
+    AssertHelper.idNotNull(id, ModeloEjecucion.class);
 
     return modeloEjecucionRepository.findById(id).map(modeloEjecucion -> {
       if (!modeloEjecucion.getActivo()) {
@@ -159,14 +166,30 @@ public class ModeloEjecucionServiceImpl implements ModeloEjecucionService {
    */
   @Override
   public List<ModeloEjecucion> findAll(String query) {
-    log.debug("findAll(String query, Pageable pageable) - start");
+    log.debug("findAll(String query) - start");
     Specification<ModeloEjecucion> specs = ModeloEjecucionSpecifications.distinct()
         .and(ModeloEjecucionSpecifications.activos())
         .and(SgiRSQLJPASupport.toSpecification(query));
 
-    List<ModeloEjecucion> returnValue = modeloEjecucionRepository.findAll(specs,
-        Sort.by(Sort.Direction.ASC, ModeloEjecucion_.NOMBRE));
-    log.debug("findAll(String query, Pageable pageable) - end");
+    List<ModeloEjecucion> returnValue = modeloEjecucionRepository.findAll(specs);
+    return returnValue;
+  }
+
+  /**
+   * Comprueba si existen o no {@link ModeloEjecucion} que cumplan con el filtro.
+   *
+   * @param query la información del filtro.
+   * @return Si existen o no {@link ModeloEjecucion} que cumplan con el filtro.
+   */
+  @Override
+  public boolean exists(String query) {
+    log.debug("exists(String query) - start");
+    Specification<ModeloEjecucion> specs = ModeloEjecucionSpecifications.distinct()
+        .and(ModeloEjecucionSpecifications.activos())
+        .and(SgiRSQLJPASupport.toSpecification(query));
+
+    boolean returnValue = modeloEjecucionRepository.exists(specs);
+    log.debug("exists(String query) - end");
     return returnValue;
   }
 

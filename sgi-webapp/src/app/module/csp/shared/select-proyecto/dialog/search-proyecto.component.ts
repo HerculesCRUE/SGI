@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Router } from '@angular/router';
@@ -26,8 +26,8 @@ import {
   SgiRestListResult,
   SgiRestSortDirection
 } from '@sgi/framework/http';
-import { merge, of, Subject } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { from, merge, Observable, of, Subject } from 'rxjs';
+import { map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 import { CSP_ROUTE_NAMES } from '../../../csp-route-names';
 
 const ENTITY_KEY = marker('csp.proyecto');
@@ -92,6 +92,7 @@ export class SearchProyectoModalComponent extends DialogCommonComponent implemen
       miembroEquipo: new FormControl(),
       miembrosParticipantes: new FormControl()
     });
+
     this.setupI18N();
     this.setNombresMiembrosParticipantes();
   }
@@ -138,7 +139,7 @@ export class SearchProyectoModalComponent extends DialogCommonComponent implemen
         index: reset ? 0 : this.paginator.pageIndex,
         size: this.paginator.pageSize
       },
-      sort: new RSQLSgiRestSort(this.sort?.active, SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
+      sort: new RSQLSgiRestSort(this.resolveSortProperty(this.sort?.active), SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
       filter: this.buildFilter()
     };
 
@@ -148,19 +149,28 @@ export class SearchProyectoModalComponent extends DialogCommonComponent implemen
           map((response: SgiRestListResult<IProyectoListado>) => {
             this.totalElementos = response.total;
             return response.items;
-          }), switchMap(items => {
-            items.forEach(item => this.resolveProyectosSgeSubscription(item));
-            const proyectos: number[] = [];
-            return of(items.filter(proyecto => {
-              if (!proyectos.includes(proyecto.id)) {
-                proyectos.push(proyecto.id);
-                return true;
-              }
-              return false;
-            }));
-          })).subscribe(result => {
-            this.proyectos$.next(result);
-          }));
+          }),
+          switchMap(proyectos =>
+            from(proyectos).pipe(
+              mergeMap(proyecto => this.fillProyectosSge(proyecto)),
+              toArray(),
+              map(() => {
+                return proyectos;
+              })
+            )
+          )
+        ).subscribe(result => {
+          this.proyectos$.next(result);
+        }));
+  }
+
+  private fillProyectosSge(proyecto: IProyectoListado): Observable<IProyectoListado> {
+    return this.proyectoService.findAllProyectosSgeProyecto(proyecto.id).pipe(
+      map(proyectosSge => {
+        proyecto.proyectosSGE = proyectosSge.items.map(element => element.proyectoSge.id).join(', ');
+        return proyecto;
+      })
+    );
   }
 
   private resolveProyectosSgeSubscription(item: IProyectoListado): void {
@@ -175,7 +185,7 @@ export class SearchProyectoModalComponent extends DialogCommonComponent implemen
 
   private buildFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const filter = new RSQLSgiRestFilter('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
+    const filter = new RSQLSgiRestFilter('titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('acronimo', SgiRestFilterOperator.LIKE_ICASE, controls.acronimo.value)
       .and('codigoExterno', SgiRestFilterOperator.LIKE_ICASE, controls.codigoExterno.value);
 
@@ -206,7 +216,7 @@ export class SearchProyectoModalComponent extends DialogCommonComponent implemen
       .and('equipo.personaRef', SgiRestFilterOperator.EQUALS, controls.miembroEquipo.value?.id?.toString());
 
     if (controls.miembrosParticipantes.value) {
-      filter.and('equipo.personaRef', SgiRestFilterOperator.IN, this.data.personas.map(persona => persona.id));
+      filter.and('miembrosEquipoActuales', SgiRestFilterOperator.IN, this.data.personas.map(persona => persona.id));
     }
     return filter;
   }
@@ -225,5 +235,12 @@ export class SearchProyectoModalComponent extends DialogCommonComponent implemen
 
   openCreate(): void {
     window.open(this.router.serializeUrl(this.router.createUrlTree(['/', Module.CSP.path, CSP_ROUTE_NAMES.PROYECTO, ROUTE_NAMES.NEW])), '_blank');
+  }
+
+  private resolveSortProperty(column: string): string {
+    if (column == 'titulo') {
+      return 'titulo.value';
+    }
+    return column;
   }
 }

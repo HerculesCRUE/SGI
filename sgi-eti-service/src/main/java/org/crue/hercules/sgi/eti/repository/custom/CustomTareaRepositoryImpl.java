@@ -8,24 +8,17 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Join;
-import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.eti.dto.TareaWithIsEliminable;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo_;
-import org.crue.hercules.sgi.eti.model.FormacionEspecifica;
-import org.crue.hercules.sgi.eti.model.FormacionEspecifica_;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Memoria_;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
-import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
 import org.crue.hercules.sgi.eti.model.Tarea;
 import org.crue.hercules.sgi.eti.model.Tarea_;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria_;
-import org.crue.hercules.sgi.eti.model.TipoTarea;
-import org.crue.hercules.sgi.eti.model.TipoTarea_;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -66,19 +59,11 @@ public class CustomTareaRepositoryImpl implements CustomTareaRepository {
     // Define FROM clause
     Root<Tarea> root = cq.from(Tarea.class);
 
-    Join<Tarea, TipoTarea> joinTipoTarea = root.join(Tarea_.tipoTarea, JoinType.LEFT);
-    Join<Tarea, FormacionEspecifica> joinFormacionEspecifica = root.join(Tarea_.formacionEspecifica, JoinType.LEFT);
-
-    cq.multiselect(root.get(Tarea_.id), root.get(Tarea_.equipoTrabajo), root.get(Tarea_.memoria),
-        root.get(Tarea_.tarea), root.get(Tarea_.formacion), joinFormacionEspecifica.get(FormacionEspecifica_.id),
-        joinFormacionEspecifica.get(FormacionEspecifica_.nombre),
-        joinFormacionEspecifica.get(FormacionEspecifica_.activo), joinTipoTarea.get(TipoTarea_.id),
-        joinTipoTarea.get(TipoTarea_.nombre), joinTipoTarea.get(TipoTarea_.activo), root.get(Tarea_.organismo),
-        root.get(Tarea_.anio), cb.selectCase().when(cb.isNull(isNotEliminable(root, cb, cq)), true).otherwise(false)
-            .alias("eliminable"));
+    cq.multiselect(root, cb.selectCase().when(cb.isNull(isNotEliminable(root, cb, cq)), true).otherwise(false)
+        .alias("eliminable"));
 
     // Where
-    cq.where(cb.equal(root.get(Tarea_.equipoTrabajo).get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
+    cq.where(cb.equal(root.get(Tarea_.equipoTrabajo).get(EquipoTrabajo_.peticionEvaluacionId),
         idPeticionEvaluacion));
 
     TypedQuery<TareaWithIsEliminable> typedQuery = entityManager.createQuery(cq);

@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,6 +14,8 @@ import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNAsociarProyec
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNInput;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
 import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVN;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -42,8 +45,7 @@ class NotificacionProyectoExternoCVNIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s",
         tokenBuilder.buildToken("user", roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-    return request;
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -279,6 +281,10 @@ class NotificacionProyectoExternoCVNIT extends BaseIT {
   }
 
   private NotificacionProyectoExternoCVNInput buildMockNotificacionProyectoExternoCVN() {
+    List<I18nFieldValueDto> tituloNotificacionProyectoExternoCVNInput = new ArrayList<>();
+    tituloNotificacionProyectoExternoCVNInput
+        .add(new I18nFieldValueDto(Language.ES, "Notificación 1 con Entidad y Solicitante"));
+
     return NotificacionProyectoExternoCVNInput.builder()
         .autorizacionId(2L)
         .entidadParticipacionRef("00132245")
@@ -287,7 +293,7 @@ class NotificacionProyectoExternoCVNIT extends BaseIT {
         .responsableRef("23302408")
         .solicitanteRef("00112233")
         .proyectoCVNId("001")
-        .titulo("Notificación 1 con Entidad y Solicitante")
+        .titulo(tituloNotificacionProyectoExternoCVNInput)
         .build();
   }
 

@@ -11,6 +11,7 @@ import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConfigService } from '@core/services/csp/configuracion/config.service';
+import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
@@ -20,12 +21,13 @@ import { IProyectoEconomicoFormlyData, IProyectoEconomicoFormlyResponse, Proyect
 import { SearchProyectoEconomicoModalComponent, SearchProyectoEconomicoModalData } from 'src/app/esb/sge/shared/search-proyecto-economico-modal/search-proyecto-economico-modal.component';
 import { ACTION_MODAL_MODE } from 'src/app/esb/shared/formly-forms/core/base-formly-modal.component';
 import { ProyectoActionService } from '../../proyecto.action.service';
-import { ProyectoProyectosSgeFragment } from './proyecto-proyectos-sge.fragment';
+import { IProyectoProyectoSgeListadoData, ProyectoProyectosSgeFragment } from './proyecto-proyectos-sge.fragment';
 
 const IDENTIFICADOR_SGE_KEY = marker('csp.proyecto-proyecto-sge.identificador-sge');
 const TIPO_PROYECTO_KEY = marker('sge.proyecto');
 const MSG_SAVE_SUCCESS = marker('msg.save.request.entity.success');
 const MSG_UPDATE_SUCCESS = marker('msg.update.request.entity.success');
+const MSG_DELETE_RELACION_PROYECTO = marker('msg.proyecto-proyecto-sge.eliminar-relacion');
 
 @Component({
   selector: 'sgi-proyecto-proyectos-sge',
@@ -46,7 +48,7 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
   private textoCrearSuccess: string;
   private textoUpdateSuccess: string;
 
-  dataSource = new MatTableDataSource<StatusWrapper<IProyectoProyectoSge>>();
+  dataSource = new MatTableDataSource<StatusWrapper<IProyectoProyectoSgeListadoData>>();
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -66,9 +68,10 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
     private matDialog: MatDialog,
     private readonly cspConfigService: ConfigService,
     private readonly snackBarService: SnackBarService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private dialogService: DialogService,
   ) {
-    super(actionService.FRAGMENT.PROYECTOS_SGE, actionService);
+    super(actionService.FRAGMENT.PROYECTOS_SGE, actionService, translate);
 
     this.formPart = this.fragment as ProyectoProyectosSgeFragment;
 
@@ -89,7 +92,7 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -116,7 +119,7 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
 
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       IDENTIFICADOR_SGE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -205,6 +208,18 @@ export class ProyectoProyectosSgeComponent extends FragmentComponent implements 
           this.formPart.refreshSolicitudesProyectoPendientes();
         }
       }
+    );
+  }
+
+  deleteRelacionProyecto(wrapper: StatusWrapper<IProyectoProyectoSge>): void {
+    this.subscriptions.push(
+      this.dialogService.showConfirmation(MSG_DELETE_RELACION_PROYECTO).subscribe(
+        (aceptado) => {
+          if (aceptado) {
+            this.formPart.deleteRelacionProyecto(wrapper);
+          }
+        }
+      )
     );
   }
 

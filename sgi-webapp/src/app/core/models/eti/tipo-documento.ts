@@ -1,15 +1,16 @@
-import { IFormulario } from './formulario';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 
 export interface ITipoDocumento {
   /** Id */
   id: number;
-
+  /** Codigo */
+  codigo: string;
   /** Nombre */
-  nombre: string;
-
-  /** Formulario */
-  formulario: IFormulario;
-
+  nombre: I18nFieldValue[];
+  /** Formulario Id */
+  formularioId: number;
+  /** Documentación adicional */
+  adicional: boolean;
   /** Activo */
   activo: boolean;
 }

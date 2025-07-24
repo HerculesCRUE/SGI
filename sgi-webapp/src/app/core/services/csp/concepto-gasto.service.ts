@@ -2,18 +2,36 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { environment } from '@env';
-import { SgiRestFindOptions, SgiRestListResult, SgiRestService } from '@sgi/framework/http';
+import { CreateCtor, FindAllCtor, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor, mixinCreate, mixinFindAll, mixinUpdate } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
+import { IConceptoGastoResponse } from './concepto-gasto/concepto-gasto-response';
+import { CONCEPTO_GASTO_RESPONSE_CONVERTER } from './concepto-gasto/concepto-gasto-response.converter';
+
+const _ConceptoGastoServiceMixinBase:
+  CreateCtor<IConceptoGasto, IConceptoGasto, IConceptoGastoResponse, IConceptoGastoResponse> &
+  UpdateCtor<number, IConceptoGasto, IConceptoGasto, IConceptoGastoResponse, IConceptoGastoResponse> &
+  FindAllCtor<IConceptoGasto, IConceptoGastoResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinUpdate(
+      mixinCreate(
+        SgiRestBaseService,
+        CONCEPTO_GASTO_RESPONSE_CONVERTER,
+        CONCEPTO_GASTO_RESPONSE_CONVERTER
+      ),
+      CONCEPTO_GASTO_RESPONSE_CONVERTER,
+      CONCEPTO_GASTO_RESPONSE_CONVERTER
+    ),
+    CONCEPTO_GASTO_RESPONSE_CONVERTER
+  );
 
 @Injectable({
   providedIn: 'root'
 })
-export class ConceptoGastoService extends SgiRestService<number, IConceptoGasto> {
+export class ConceptoGastoService extends _ConceptoGastoServiceMixinBase {
   private static readonly MAPPING = '/conceptogastos';
 
   constructor(protected http: HttpClient) {
     super(
-      ConceptoGastoService.name,
       `${environment.serviceServers.csp}${ConceptoGastoService.MAPPING}`,
       http
     );
@@ -24,7 +42,7 @@ export class ConceptoGastoService extends SgiRestService<number, IConceptoGasto>
    * @param options opciones de búsqueda.
    */
   findTodos(options?: SgiRestFindOptions): Observable<SgiRestListResult<IConceptoGasto>> {
-    return this.find<IConceptoGasto, IConceptoGasto>(`${this.endpointUrl}/todos`, options);
+    return this.find<IConceptoGastoResponse, IConceptoGasto>(`${this.endpointUrl}/todos`, options, CONCEPTO_GASTO_RESPONSE_CONVERTER);
   }
 
   /**
@@ -50,9 +68,9 @@ export class ConceptoGastoService extends SgiRestService<number, IConceptoGasto>
    */
   findAllAgrupacionesGastoConceptoNotInAgrupacion(id: number, options?: SgiRestFindOptions)
     : Observable<SgiRestListResult<IConceptoGasto>> {
-    const returnValue = this.find<IConceptoGasto, IConceptoGasto>(
+    const returnValue = this.find<IConceptoGastoResponse, IConceptoGasto>(
       `${this.endpointUrl}/${id}/no-proyectoagrupacion`,
-      options
+      options, CONCEPTO_GASTO_RESPONSE_CONVERTER
     );
     return returnValue;
   }

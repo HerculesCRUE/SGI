@@ -65,14 +65,12 @@ export class SolicitudRrhhAcreditarNivelAcademicoModalComponent
     }
   }
 
-
   private setupI18N(): void {
     this.translate.get(
       DOCUMENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamDocumentoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
   }
-
 
   protected getValue(): SolicitudRrhhAcreditarNivelAcademicoModalData {
     this.data.documento = this.formGroup.controls.documento.value;

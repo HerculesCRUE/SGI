@@ -1,4 +1,4 @@
-import { ComponentFactoryResolver, Directive, ElementRef, Input, OnInit, ViewContainerRef } from "@angular/core";
+import { ComponentFactoryResolver, Directive, ElementRef, Input, OnChanges, SimpleChanges, ViewContainerRef } from "@angular/core";
 import { marker } from "@biesbjerg/ngx-translate-extract-marker";
 import { MSG_PARAMS } from "@core/i18n";
 import { TranslateService } from "@ngx-translate/core";
@@ -13,7 +13,7 @@ const NOT_FOUND = marker("error.not-found");
 @Directive({
   selector: '[notFoundError]'
 })
-export class NotFoundErrorDirective implements OnInit {
+export class NotFoundErrorDirective implements OnChanges {
 
   @Input() model: ModelWithId | ModelWithId[];
   @Input() message: string;
@@ -29,7 +29,13 @@ export class NotFoundErrorDirective implements OnInit {
     this.defaultMessage = NOT_FOUND;
   }
 
-  ngOnInit() {
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.model && this.model) {
+      this.checkAndCreateComponent();
+    }
+  }
+
+  checkAndCreateComponent() {
     const idsNotFound = this.getIdsElementsNotFound(this.model);
     if (idsNotFound.length === 0) {
       return;

@@ -1,0 +1,41 @@
+[
+  {
+    "key": "ap5_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.1 Consent document"
+    },
+    "fieldGroup": [
+      {
+        "template": "Does your project require a consent document from the source subject and/or their representative?"
+      },
+      {
+        "key": "documentoConsentimiento",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": "CONSENTIMIENTO",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: see section '4.4 Information and consent'.</p>"
+      }
+    ]
+  }
+]

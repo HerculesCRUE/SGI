@@ -11,6 +11,10 @@ import org.crue.hercules.sgi.csp.model.Grupo_;
 import org.crue.hercules.sgi.csp.model.SolicitanteExterno;
 import org.crue.hercules.sgi.csp.model.SolicitanteExterno_;
 import org.crue.hercules.sgi.csp.model.Solicitud;
+import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
+import org.crue.hercules.sgi.csp.model.SolicitudDocumento_;
+import org.crue.hercules.sgi.csp.model.SolicitudHito;
+import org.crue.hercules.sgi.csp.model.SolicitudHito_;
 import org.crue.hercules.sgi.csp.model.SolicitudRrhh;
 import org.crue.hercules.sgi.csp.model.SolicitudRrhh_;
 import org.crue.hercules.sgi.csp.model.Solicitud_;
@@ -142,6 +146,32 @@ public class SolicitudSpecifications {
       return cb.and(
           root.get(Solicitud_.id).in(querySolicitanteExterno),
           cb.equal(root.get(Solicitud_.codigoRegistroInterno), codigoRegistroInterno));
+    };
+  }
+
+  /**
+   * {@link Solicitud}es con {@link SolicitudDocumento}s o {@link SolicitudHito}s
+   * asociados
+   * 
+   * @param solicitudId identificador de la {@link Solicitud}
+   * @return specification para obtener las {@link Solicitud} con
+   *         {@link SolicitudDocumento}s o {@link SolicitudHito}s
+   */
+  public static Specification<Solicitud> hasDocumentosOrHitos(Long solicitudId) {
+    return (root, query, cb) -> {
+      Subquery<Long> documentosSubquery = query.subquery(Long.class);
+      Root<SolicitudDocumento> documentosRoot = documentosSubquery.from(SolicitudDocumento.class);
+      documentosSubquery.select(documentosRoot.get(SolicitudDocumento_.solicitudId))
+          .where(cb.equal(documentosRoot.get(SolicitudDocumento_.solicitudId), solicitudId));
+
+      Subquery<Long> hitosSubquery = query.subquery(Long.class);
+      Root<SolicitudHito> hitosRoot = hitosSubquery.from(SolicitudHito.class);
+      hitosSubquery.select(hitosRoot.get(SolicitudHito_.solicitudId))
+          .where(cb.equal(hitosRoot.get(SolicitudHito_.solicitudId), solicitudId));
+
+      return cb.or(
+          cb.exists(documentosSubquery),
+          cb.exists(hitosSubquery));
     };
   }
 

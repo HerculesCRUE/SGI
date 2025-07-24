@@ -32,7 +32,6 @@ import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoPeriodoJustificacionSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.modelmapper.internal.util.Assert;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -203,8 +202,7 @@ public class ProyectoPeriodoJustificacionService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id,
-        "ProyectoPeriodoJustificacion id no puede ser null para eliminar un ProyectoPeriodoJustificacion");
+    AssertHelper.idNotNull(id, ProyectoPeriodoJustificacion.class);
     if (!repository.existsById(id)) {
       throw new ProyectoPeriodoJustificacionNotFoundException(id);
     }

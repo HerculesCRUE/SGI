@@ -2,11 +2,15 @@ package org.crue.hercules.sgi.csp.repository;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -22,27 +26,30 @@ class ConvocatoriaEntidadFinanciadoraRepositoryTest extends BaseRepositoryTest {
 
     // given: 2 ConvocatoriaEntidadFinanciadora de los que 1 coincide con el
     // ConvocatoriaId a buscar
+    Set<ConvocatoriaTitulo> convocatoriaTitulo1 = new HashSet<>();
+    convocatoriaTitulo1.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
     Convocatoria convocatoria1 = Convocatoria.builder()
-    // @formatter:off
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo-1")
         .unidadGestionRef("2")
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo1)
         .activo(Boolean.TRUE)
         .build();
-    // @formatter:on
     entityManager.persistAndFlush(convocatoria1);
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo2 = new HashSet<>();
+    convocatoriaTitulo2.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
     Convocatoria convocatoria2 = Convocatoria.builder()
-    // @formatter:off
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo-2")
         .unidadGestionRef("2")
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo2)
         .activo(Boolean.TRUE)
         .build();
-    // @formatter:on
     entityManager.persistAndFlush(convocatoria2);
 
     List<ConvocatoriaEntidadFinanciadora> persistList = new ArrayList<>();
@@ -77,27 +84,30 @@ class ConvocatoriaEntidadFinanciadoraRepositoryTest extends BaseRepositoryTest {
   void findAllByConvocatoriaId_ReturnsEmptyList() throws Exception {
     // given: 2 ConvocatoriaEntidadFinanciadora de los que 1 coincide con el
     // ConvocatoriaId a buscar
+    Set<ConvocatoriaTitulo> convocatoriaTitulo1 = new HashSet<>();
+    convocatoriaTitulo1.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
     Convocatoria convocatoria1 = Convocatoria.builder()
-    // @formatter:off
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo-1")
         .unidadGestionRef("2")
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo1)
         .activo(Boolean.TRUE)
         .build();
-    // @formatter:on
     entityManager.persistAndFlush(convocatoria1);
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo2 = new HashSet<>();
+    convocatoriaTitulo2.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
     Convocatoria convocatoria2 = Convocatoria.builder()
-    // @formatter:off
         .estado(Convocatoria.Estado.BORRADOR)
         .codigo("codigo-2")
         .unidadGestionRef("2")
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
+        .titulo(convocatoriaTitulo2)
         .activo(Boolean.TRUE)
         .build();
-    // @formatter:on
     entityManager.persistAndFlush(convocatoria2);
 
     List<ConvocatoriaEntidadFinanciadora> persistList = new ArrayList<>();
@@ -121,6 +131,6 @@ class ConvocatoriaEntidadFinanciadoraRepositoryTest extends BaseRepositoryTest {
 
     // then: Se comprueba que no se obtiene ningún valor y la lista está vacia
     Assertions.assertThat(dataFound).isNotNull();
-    Assertions.assertThat(dataFound.size()).isZero();
+    Assertions.assertThat(dataFound).isEmpty();
   }
 }

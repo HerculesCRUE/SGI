@@ -5,6 +5,8 @@ import { IPersona } from '@core/models/sgp/persona';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IGrupoEquipoResponse } from './grupo-equipo-response';
+import { ROL_PROYECTO_RESPONSE_CONVERTER } from '../rol-proyecto/rol-proyecto-response.converter';
+import { IRolProyectoResponse } from '../rol-proyecto/rol-proyecto-response';
 
 class GrupoEquipoResponseConverter
   extends SgiBaseConverter<IGrupoEquipoResponse, IGrupoEquipo> {
@@ -18,7 +20,7 @@ class GrupoEquipoResponseConverter
       grupo: value.grupoId ? { id: value.grupoId } as IGrupo : undefined,
       fechaInicio: LuxonUtils.fromBackend(value.fechaInicio),
       fechaFin: LuxonUtils.fromBackend(value.fechaFin),
-      rol: value.rol as IRolProyecto,
+      rol: ROL_PROYECTO_RESPONSE_CONVERTER.toTarget(value.rol as IRolProyectoResponse),
       dedicacion: value.dedicacion,
       participacion: value.participacion
     };
@@ -34,7 +36,7 @@ class GrupoEquipoResponseConverter
       grupoId: value.grupo.id,
       fechaInicio: LuxonUtils.toBackend(value.fechaInicio),
       fechaFin: LuxonUtils.toBackend(value.fechaFin),
-      rol: value.rol,
+      rol: ROL_PROYECTO_RESPONSE_CONVERTER.fromTarget(value.rol),
       dedicacion: value.dedicacion,
       participacion: value.participacion
     };

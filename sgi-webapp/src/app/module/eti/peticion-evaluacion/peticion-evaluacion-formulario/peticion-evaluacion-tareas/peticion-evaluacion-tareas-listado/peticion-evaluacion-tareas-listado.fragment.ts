@@ -8,9 +8,10 @@ import { TareaService } from '@core/services/eti/tarea.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
-import { map, mergeMap, takeLast, tap } from 'rxjs/operators';
+import { catchError, map, mergeMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { EquipoInvestigadorListadoFragment } from '../../equipo-investigador/equipo-investigador-listado/equipo-investigador-listado.fragment';
 import { MemoriasListadoFragment } from '../../memorias-listado/memorias-listado.fragment';
+import { NGXLogger } from 'ngx-logger';
 
 export class PeticionEvaluacionTareasFragment extends Fragment {
 
@@ -22,6 +23,7 @@ export class PeticionEvaluacionTareasFragment extends Fragment {
   solicitantePeticionEvaluacion: IPersona;
 
   constructor(
+    private readonly logger: NGXLogger,
     key: number,
     private personaService: PersonaService,
     private tareaService: TareaService,
@@ -50,22 +52,28 @@ export class PeticionEvaluacionTareasFragment extends Fragment {
 
   loadTareas(idPeticionEvaluacion: number): void {
     this.peticionEvaluacionService.findTareas(idPeticionEvaluacion).pipe(
-      map((response) => {
-        if (response.items) {
-          response.items.forEach((tarea) => {
+      map(response => response.items || []),
+      mergeMap(tareas =>
+        from(tareas).pipe(
+          mergeMap(tarea =>
             this.personaService.findById(tarea.equipoTrabajo.persona.id).pipe(
-              map((usuarioInfo) => {
+              map(usuarioInfo => {
                 tarea.equipoTrabajo.persona = usuarioInfo;
+                return tarea;
+              }),
+              catchError(err => {
+                this.logger.error(err);
+                return of(tarea);
               })
-            ).subscribe();
-          });
-          return response.items.map((tarea) => new StatusWrapper<ITareaWithIsEliminable>(tarea));
-        }
-        else {
-          return [];
-        }
-      })
-    ).subscribe((tareas) => {
+            )
+          ),
+          toArray(),
+          map(tareasActualizadas =>
+            tareasActualizadas.map(tarea => new StatusWrapper<ITareaWithIsEliminable>(tarea))
+          )
+        )
+      )
+    ).subscribe(tareas => {
       this.tareas$.next(tareas);
     });
   }

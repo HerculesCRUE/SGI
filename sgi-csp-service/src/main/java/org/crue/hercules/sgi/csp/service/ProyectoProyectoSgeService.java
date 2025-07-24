@@ -44,6 +44,14 @@ public interface ProyectoProyectoSgeService {
   boolean existsById(Long id);
 
   /**
+   * Comprueba si el {@link ProyectoProyectoSge} es eliminable
+   *
+   * @param id el id de la entidad {@link ProyectoProyectoSge}.
+   * @return {@code true} si se puede eliminar, {@code false} en caso contrario.
+   */
+  boolean isDeletableById(Long id);
+
+  /**
    * Obtiene {@link ProyectoProyectoSge} por su id.
    *
    * @param id el id de la entidad {@link ProyectoProyectoSge}.

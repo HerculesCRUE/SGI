@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TimeZone;
@@ -18,6 +19,9 @@ import javax.validation.Validator;
 
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.ObjectUtils;
+import org.crue.hercules.sgi.framework.i18n.I18nConfig;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.prc.config.SgiConfigProperties;
@@ -67,6 +71,7 @@ import org.crue.hercules.sgi.prc.repository.predicate.ProduccionCientificaPredic
 import org.crue.hercules.sgi.prc.repository.specification.ConfiguracionBaremoSpecifications;
 import org.crue.hercules.sgi.prc.service.sgi.SgiApiCspService;
 import org.crue.hercules.sgi.prc.util.ProduccionCientificaFieldFormatUtil;
+import org.springframework.context.MessageSource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -89,6 +94,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @Validated
 public class ProduccionCientificaApiService {
+  private static final String MSG_KEY_PATH_SEPARATOR = ".";
 
   private final Validator validator;
 
@@ -109,6 +115,8 @@ public class ProduccionCientificaApiService {
   private final ProduccionCientificaConverter produccionCientificaConverter;
   private final SgiConfigProperties sgiConfigProperties;
   private final ComunicadosService comunicadosService;
+  private final MessageSource messageSource;
+  private final I18nConfig i18nConfig;
 
   /**
    * Guardar un nuevo {@link ProduccionCientifica} y sus entidades relacionadas
@@ -172,6 +180,12 @@ public class ProduccionCientificaApiService {
       List<AutorInput> autores) {
     log.debug(
         "enviarComunicadoValidacionItem(EpigrafeCVN epigrafeCVN, List<CampoProduccionCientificaInput> campos) - start");
+    String messageKey = EpigrafeCVN.class.getName() + MSG_KEY_PATH_SEPARATOR + epigrafeCVN.name();
+    List<I18nFieldValueDto> i18nDescripcionEpigrafeCVN = new ArrayList<>();
+    for (Language language : i18nConfig.getEnabledLanguages()) {
+      i18nDescripcionEpigrafeCVN.add(new I18nFieldValueDto(language,
+          messageSource.getMessage(messageKey, null, Locale.forLanguageTag(language.getCode()))));
+    }
 
     String titulo = null;
     Instant fecha = null;
@@ -208,7 +222,7 @@ public class ProduccionCientificaApiService {
 
     List<String> personaRefs = autores.stream().map(AutorInput::getPersonaRef).filter(StringUtils::hasText).distinct()
         .collect(Collectors.toList());
-    comunicadosService.enviarComunicadoValidarItem(epigrafeCVN.getDescription(), titulo, fecha, personaRefs);
+    comunicadosService.enviarComunicadoValidarItem(i18nDescripcionEpigrafeCVN, titulo, fecha, personaRefs);
 
     log.debug(
         "enviarComunicadoValidacionItem(EpigrafeCVN epigrafeCVN, List<CampoProduccionCientificaInput> campos) - end");

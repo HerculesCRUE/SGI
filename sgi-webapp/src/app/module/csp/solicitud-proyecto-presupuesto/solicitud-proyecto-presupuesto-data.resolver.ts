@@ -7,8 +7,8 @@ import { SolicitudProyectoEntidadService } from '@core/services/csp/solicitud-pr
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { NGXLogger } from 'ngx-logger';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { SOLICITUD_DATA_KEY } from '../solicitud/solicitud-data.resolver';
 import { ISolicitudData } from '../solicitud/solicitud.action.service';
 import { SOLICITUD_PROYECTO_PRESUPUESTO_ROUTE_PARAMS } from './solicitud-proyecto-presupuesto-route-params';
@@ -67,6 +67,10 @@ export class SolicitudProyectoPresupuestoDataResolver extends SgiResolverResolve
           map(empresa => {
             data.entidad.empresa = empresa;
             return data;
+          }),
+          catchError((error) => {
+            this.logger.error(error);
+            return of(data);
           })
         );
       })

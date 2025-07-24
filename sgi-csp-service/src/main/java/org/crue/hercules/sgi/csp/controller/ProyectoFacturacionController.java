@@ -6,30 +6,40 @@ import org.crue.hercules.sgi.csp.dto.ProyectoFacturacionInput;
 import org.crue.hercules.sgi.csp.dto.ProyectoFacturacionOutput;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.service.ProyectoFacturacionService;
+import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Validated
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(path = ProyectoFacturacionController.MAPPING)
+@Slf4j
 public class ProyectoFacturacionController {
 
-  public static final String MAPPING = "/proyectosfacturacion";
+  public static final String PATH_SEPARATOR = "/";
+  public static final String MAPPING = PATH_SEPARATOR + "proyectosfacturacion";
+
+  public static final String PATH_FACTURAS_PENDIENTES_EMITIR = PATH_SEPARATOR + "facturas-pendientes-emitir";
 
   private final ModelMapper modelMapper;
   private final ProyectoFacturacionService proyectoFacturacionService;
@@ -96,6 +106,27 @@ public class ProyectoFacturacionController {
     this.proyectoFacturacionService.delete(id);
   }
 
+  /**
+   * Devuelve una lista paginada y filtrada {@link ProyectoFacturacion} sin número
+   * de factura sge que cumpla con los criterios de busqueda.
+   *
+   * @param query  filtro de búsqueda.
+   * @param paging {@link Pageable}.
+   * @return el listado de entidades {@link ProyectoFacturacion} paginadas y
+   *         filtradas.
+   */
+  @GetMapping(PATH_FACTURAS_PENDIENTES_EMITIR)
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-PRO-E', 'CSP-PRO-V')")
+  public ResponseEntity<Page<ProyectoFacturacionOutput>> findFacturasPrevistasPendientesEmitir(
+      @RequestParam(name = "q", required = false) String query,
+      @RequestPageable(sort = "s") Pageable paging) {
+    log.debug("findFacturasPrevistasPendientesEmitir(String query, Pageable paging) - start");
+    Page<ProyectoFacturacionOutput> page = proyectoFacturacionService
+        .findFacturasPrevistasPendientesEmitir(query, paging).map(this::convert);
+    log.debug("findFacturasPrevistasPendientesEmitir(String query, Pageable paging) - end");
+    return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
+  }
+
   private ProyectoFacturacion convert(ProyectoFacturacionInput input) {
     return this.modelMapper.map(input, ProyectoFacturacion.class);
   }
@@ -103,4 +134,5 @@ public class ProyectoFacturacionController {
   private ProyectoFacturacionOutput convert(ProyectoFacturacion entity) {
     return this.modelMapper.map(entity, ProyectoFacturacionOutput.class);
   }
+
 }

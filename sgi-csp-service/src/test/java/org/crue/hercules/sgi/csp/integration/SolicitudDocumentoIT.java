@@ -1,10 +1,16 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
+import org.crue.hercules.sgi.csp.model.SolicitudDocumentoComentario;
+import org.crue.hercules.sgi.csp.model.SolicitudDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -31,8 +37,7 @@ class SolicitudDocumentoIT extends BaseIT {
     headers.set("Authorization",
         String.format("bearer %s", tokenBuilder.buildToken("user", "AUTH", "CSP-SOL-C", "CSP-SOL-E")));
 
-    HttpEntity<SolicitudDocumento> request = new HttpEntity<>(entity, headers);
-    return request;
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql
@@ -70,7 +75,11 @@ class SolicitudDocumentoIT extends BaseIT {
     // given: Existing SolicitudDocumento to be updated
     SolicitudDocumento solicitudDocumentoExistente = generarSolicitudDocumento(1L, 1L, 1L);
     SolicitudDocumento solicitudDocumento = generarSolicitudDocumento(1L, 1L, 1L);
-    solicitudDocumento.setComentario("comentario-modificados");
+
+    Set<SolicitudDocumentoComentario> solicitudDocumentoComentarios = new HashSet<>();
+    solicitudDocumentoComentarios
+        .add(new SolicitudDocumentoComentario(Language.ES, "comentario-modificados"));
+    solicitudDocumento.setComentario(solicitudDocumentoComentarios);
 
     // when: update SolicitudDocumento
     final ResponseEntity<SolicitudDocumento> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -85,9 +94,10 @@ class SolicitudDocumentoIT extends BaseIT {
         .isEqualTo(solicitudDocumentoExistente.getSolicitudId());
     Assertions.assertThat(responseData.getDocumentoRef()).as("getDocumentoRef()")
         .isEqualTo(solicitudDocumentoExistente.getDocumentoRef());
-    Assertions.assertThat(responseData.getComentario()).as("getComentario()").isEqualTo("comentario-modificados");
-    Assertions.assertThat(responseData.getNombre()).as("getNombre()")
-        .isEqualTo(solicitudDocumentoExistente.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getComentario(), Language.ES))
+        .as("getComentario()").isEqualTo("comentario-modificados");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(solicitudDocumentoExistente.getNombre(), Language.ES));
     Assertions.assertThat(responseData.getTipoDocumento().getId()).as("getTipoDocumento().getId()")
         .isEqualTo(solicitudDocumentoExistente.getTipoDocumento().getId());
   }
@@ -119,11 +129,20 @@ class SolicitudDocumentoIT extends BaseIT {
   private SolicitudDocumento generarSolicitudDocumento(Long solicitudDocumentoId, Long solicitudId,
       Long tipoDocumentoId) {
 
-    SolicitudDocumento solicitudDocumento = SolicitudDocumento.builder().id(solicitudDocumentoId)
-        .solicitudId(solicitudId).comentario("comentarios-" + solicitudDocumentoId)
-        .documentoRef("documentoRef-" + solicitudDocumentoId).nombre("nombre-" + solicitudDocumentoId)
-        .tipoDocumento(TipoDocumento.builder().id(tipoDocumentoId).build()).build();
+    Set<SolicitudDocumentoNombre> solicitudDocumentoNombre = new HashSet<>();
+    solicitudDocumentoNombre.add(new SolicitudDocumentoNombre(Language.ES, "nombre-" + solicitudDocumentoId));
 
-    return solicitudDocumento;
+    Set<SolicitudDocumentoComentario> solicitudDocumentoComentarios = new HashSet<>();
+    solicitudDocumentoComentarios
+        .add(new SolicitudDocumentoComentario(Language.ES, "comentarios-" + solicitudDocumentoId));
+
+    return SolicitudDocumento.builder()
+        .id(solicitudDocumentoId)
+        .solicitudId(solicitudId)
+        .comentario(solicitudDocumentoComentarios)
+        .documentoRef("documentoRef-" + solicitudDocumentoId)
+        .nombre(solicitudDocumentoNombre)
+        .tipoDocumento(TipoDocumento.builder().id(tipoDocumentoId).build())
+        .build();
   }
 }

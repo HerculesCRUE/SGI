@@ -41,7 +41,7 @@ export class ProyectoAgrupacionGastoEditarComponent extends ActionComponent impl
     dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
   }
 
   get MSG_PARAMS() {
@@ -50,10 +50,10 @@ export class ProyectoAgrupacionGastoEditarComponent extends ActionComponent impl
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_AGRUPACION_GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

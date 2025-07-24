@@ -2,8 +2,10 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.FuenteFinanciacionNotFoundException;
@@ -12,14 +14,17 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.TipoFinanciacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
+import org.crue.hercules.sgi.csp.model.FuenteFinanciacionNombre;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
+import org.crue.hercules.sgi.csp.model.TipoFinanciacionNombre;
 import org.crue.hercules.sgi.csp.repository.FuenteFinanciacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoEntidadFinanciadoraRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFinanciacionRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoEntidadFinanciadoraServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -107,7 +112,7 @@ class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque el ProyectoEntidadFinanciadora ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(proyectoEntidadFinanciadora))
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "ProyectoEntidadFinanciadora id tiene que ser null para crear un nuevo ProyectoEntidadFinanciadora");
+            "Identificador de Proyecto Entidad Financiadora debe ser nulo");
   }
 
   @Test
@@ -124,7 +129,7 @@ class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
     // when: Creamos el ProyectoEntidadFinanciadora
     // then: Lanza una excepcion porque el PorcentajeFinanciacion es negativo
     Assertions.assertThatThrownBy(() -> service.create(convocatoriaEntidadFinanciadora))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("PorcentajeFinanciacion no puede ser negativo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Porcentaje Financiación no puede ser negativo");
   }
 
   @Test
@@ -138,7 +143,7 @@ class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
         // when: create ProyectoEntidadFinanciadora
         () -> service.create(proyectoEntidadFinanciadora))
         // then: throw exception as proyectoId is null
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El id de proyecto no puede ser nulo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Identificador de Proyecto no puede ser nulo");
   }
 
   @Test
@@ -190,7 +195,8 @@ class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
         // when: create ProyectoEntidadFinanciadora
         () -> service.create(convocatoriaEntidadFinanciadora))
         // then: throw exception as FuenteFinanciacion is not activo
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("La FuenteFinanciacion debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("%s de Fuente de Financiación no está activo",
+            convocatoriaEntidadFinanciadora.getFuenteFinanciacion().getNombre());
   }
 
   @Test
@@ -230,7 +236,8 @@ class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
         // when: create ProyectoEntidadFinanciadora
         () -> service.create(proyectoEntidadFinanciadora))
         // then: throw exception as TipoFinanciacion is not activo
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El TipoFinanciacion debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("%s de Tipo Financiación no está activo",
+            proyectoEntidadFinanciadora.getTipoFinanciacion().getNombre());
   }
 
   @Test
@@ -295,7 +302,7 @@ class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
     // when: Actualizamos el ProyectoEntidadFinanciadora
     // then: Lanza una excepcion porque el PorcentajeFinanciacion es negativo
     Assertions.assertThatThrownBy(() -> service.update(proyectoEntidadFinanciadora))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("PorcentajeFinanciacion no puede ser negativo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Porcentaje Financiación no puede ser negativo");
   }
 
   @Test
@@ -373,7 +380,8 @@ class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
         // when: update ProyectoEntidadFinanciadora
         () -> service.update(convocatoriaEntidadFinanciadoraActualizada))
         // then: throw exception as FuenteFinanciacion is not activo
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("La FuenteFinanciacion debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("%s de Fuente de Financiación no está activo",
+            convocatoriaEntidadFinanciadoraActualizada.getFuenteFinanciacion().getNombre());
   }
 
   @Test
@@ -399,7 +407,8 @@ class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
         // when: update ProyectoEntidadFinanciadora
         () -> service.update(proyectoEntidadFinanciadoraActualizada))
         // then: throw exception as TipoFinanciacion is not activo
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El TipoFinanciacion debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("%s de Tipo Financiación no está activo",
+            proyectoEntidadFinanciadoraActualizada.getTipoFinanciacion().getNombre());
   }
 
   @Test
@@ -514,16 +523,24 @@ class ProyectoEntidadFinanciadoraServiceTest extends BaseServiceTest {
    * @return el objeto ConvocatoriaEntidadFinanciadora
    */
   private ProyectoEntidadFinanciadora generarMockProyectoEntidadFinanciadora(Long id) {
+    Set<FuenteFinanciacionNombre> tipoFinanciacionNombre = new HashSet<>();
+    tipoFinanciacionNombre.add(new FuenteFinanciacionNombre(Language.ES, "nombreFuenteFinanciacion"));
+
     FuenteFinanciacion fuenteFinanciacion = FuenteFinanciacion.builder()
     // @formatter:off
       .id(id == null ? 1 : id)
       .activo(true)
+      .nombre(tipoFinanciacionNombre)
       .build();
     // @formatter:on
+
+    Set<TipoFinanciacionNombre> nombre = new HashSet<>();
+    nombre.add(new TipoFinanciacionNombre(Language.ES, "nombreTipoFinanciacion"));
 
     TipoFinanciacion tipoFinanciacion = TipoFinanciacion.builder()
     // @formatter:off
       .id(id == null ? 1 : id)
+      .nombre(nombre)
       .activo(true)
       .build();
     // @formatter:on

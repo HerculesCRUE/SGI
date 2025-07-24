@@ -1,10 +1,14 @@
 package org.crue.hercules.sgi.pii.integration;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.dto.ViaProteccionInput;
 import org.crue.hercules.sgi.pii.dto.ViaProteccionOutput;
 import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
@@ -65,7 +69,7 @@ class ViaProteccionIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "nombre=ke=-00";
+    String filter = "nombre.value=ke=-00";
 
     Long numOfVias = this.viaProteccionRepository.count();
 
@@ -114,9 +118,10 @@ class ViaProteccionIT extends BaseIT {
     ViaProteccionOutput viaProteccionOutput = response.getBody();
 
     Assertions.assertThat(viaProteccionOutput.getId()).as("id").isNotNull();
-    Assertions.assertThat(viaProteccionOutput.getNombre()).as("nombre").isEqualTo("nombre-via-proteccion");
-    Assertions.assertThat(viaProteccionOutput.getDescripcion()).as("descripcion")
-        .isEqualTo("descripcion-via-proteccion");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(viaProteccionOutput.getNombre(), Language.ES))
+        .as("nombre[0].value").isEqualTo("nombre-via-proteccion");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(viaProteccionOutput.getDescripcion(), Language.ES))
+        .as("descripcion[0].value").isEqualTo("descripcion-via-proteccion");
 
   }
 
@@ -143,9 +148,10 @@ class ViaProteccionIT extends BaseIT {
     ViaProteccionOutput viaProteccionOutput = response.getBody();
 
     Assertions.assertThat(viaProteccionOutput.getId()).as("id").isNotNull();
-    Assertions.assertThat(viaProteccionOutput.getNombre()).as("nombre").isEqualTo("nombre-via-proteccion-003");
-    Assertions.assertThat(viaProteccionOutput.getDescripcion()).as("descripcion")
-        .isEqualTo("descricion-via-proteccion-003");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(viaProteccionOutput.getNombre(), Language.ES))
+        .as("nombre[0].value").isEqualTo("nombre-via-proteccion-003");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(viaProteccionOutput.getDescripcion(), Language.ES))
+        .as("descripcion[0].value").isEqualTo("descripcion-via-proteccion-003");
 
   }
 
@@ -172,9 +178,10 @@ class ViaProteccionIT extends BaseIT {
     ViaProteccionOutput viaProteccionOutput = response.getBody();
 
     Assertions.assertThat(viaProteccionOutput.getId()).as("id").isNotNull();
-    Assertions.assertThat(viaProteccionOutput.getNombre()).as("nombre").isEqualTo("nombre-via-proteccion-002");
-    Assertions.assertThat(viaProteccionOutput.getDescripcion()).as("descripcion")
-        .isEqualTo("descricion-via-proteccion-002");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(viaProteccionOutput.getNombre(), Language.ES))
+        .as("nombre[0].value").isEqualTo("nombre-via-proteccion-002");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(viaProteccionOutput.getDescripcion(), Language.ES))
+        .as("descripcion[0].value").isEqualTo("descripcion-via-proteccion-002");
 
   }
 
@@ -191,7 +198,10 @@ class ViaProteccionIT extends BaseIT {
     Long viaProteccionId = 1L;
 
     ViaProteccionInput viaProteccionInput = generarMockViaProteccionInput();
-    viaProteccionInput.setDescripcion("descricion-via-proteccion-modificado");
+
+    List<I18nFieldValueDto> descripcionViaProteccion = new ArrayList<>();
+    descripcionViaProteccion.add(new I18nFieldValueDto(Language.ES, "descripcion-via-proteccion-modificado"));
+    viaProteccionInput.setDescripcion(descripcionViaProteccion);
 
     ResponseEntity<ViaProteccionOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null,
@@ -203,9 +213,10 @@ class ViaProteccionIT extends BaseIT {
     ViaProteccionOutput viaProteccionOutput = response.getBody();
 
     Assertions.assertThat(viaProteccionOutput.getId()).as("id").isNotNull();
-    Assertions.assertThat(viaProteccionOutput.getNombre()).as("nombre").isEqualTo("nombre-via-proteccion");
-    Assertions.assertThat(viaProteccionOutput.getDescripcion()).as("descripcion")
-        .isEqualTo("descricion-via-proteccion-modificado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(viaProteccionOutput.getNombre(), Language.ES))
+        .as("nombre[0].value").isEqualTo("nombre-via-proteccion");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(viaProteccionOutput.getDescripcion(), Language.ES))
+        .as("descripcion[0].value").isEqualTo("descripcion-via-proteccion-modificado");
 
   }
 
@@ -215,9 +226,15 @@ class ViaProteccionIT extends BaseIT {
    * @return el objeto ViaProteccionInput
    */
   private ViaProteccionInput generarMockViaProteccionInput() {
+    List<I18nFieldValueDto> nombreViaProteccion = new ArrayList<>();
+    nombreViaProteccion.add(new I18nFieldValueDto(Language.ES, "nombre-via-proteccion"));
+
+    List<I18nFieldValueDto> descripcionViaProteccion = new ArrayList<>();
+    descripcionViaProteccion.add(new I18nFieldValueDto(Language.ES, "descripcion-via-proteccion"));
+
     ViaProteccionInput viaProteccionInput = new ViaProteccionInput();
-    viaProteccionInput.setNombre("nombre-via-proteccion");
-    viaProteccionInput.setDescripcion("descripcion-via-proteccion");
+    viaProteccionInput.setNombre(nombreViaProteccion);
+    viaProteccionInput.setDescripcion(descripcionViaProteccion);
     viaProteccionInput.setExtensionInternacional(Boolean.FALSE);
     viaProteccionInput.setMesesPrioridad(1);
     viaProteccionInput.setPaisEspecifico(Boolean.FALSE);

@@ -13,6 +13,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 import { CspSharedModule } from '../../shared/csp-shared.module';
 import { SolicitudActionService } from '../solicitud.action.service';
 import { ValidacionTutorListadoInvComponent } from './validacion-tutor-listado-inv.component';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 describe('ValidacionTutorListadoInvComponent', () => {
   let component: ValidacionTutorListadoInvComponent;
@@ -34,7 +35,8 @@ describe('ValidacionTutorListadoInvComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         SharedModule,
-        CspSharedModule
+        CspSharedModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

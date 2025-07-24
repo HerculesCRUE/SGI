@@ -4,14 +4,13 @@ import java.util.List;
 
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
-import org.crue.hercules.sgi.csp.repository.custom.CustomConvocatoriaPeriodoSeguimientoCientificoRepository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 public interface ConvocatoriaPeriodoSeguimientoCientificoRepository
-    extends CustomConvocatoriaPeriodoSeguimientoCientificoRepository,
-    JpaRepository<ConvocatoriaPeriodoSeguimientoCientifico, Long>,
+    extends JpaRepository<ConvocatoriaPeriodoSeguimientoCientifico, Long>,
     JpaSpecificationExecutor<ConvocatoriaPeriodoSeguimientoCientifico> {
 
   /**
@@ -22,4 +21,13 @@ public interface ConvocatoriaPeriodoSeguimientoCientificoRepository
    * @return lista con las {@link ConvocatoriaEntidadGestora} ordenadas
    */
   List<ConvocatoriaPeriodoSeguimientoCientifico> findAllByConvocatoriaIdOrderByMesInicial(Long convocatoriaId);
+
+  /**
+   * Elimina todos los registros de
+   * {@link ConvocatoriaPeriodoSeguimientoCientifico} que pertenecen a una
+   * {@link Convocatoria}
+   * 
+   * @param convocatoriaId Id de la {@link Convocatoria}
+   */
+  void deleteByConvocatoriaId(Long convocatoriaId);
 }

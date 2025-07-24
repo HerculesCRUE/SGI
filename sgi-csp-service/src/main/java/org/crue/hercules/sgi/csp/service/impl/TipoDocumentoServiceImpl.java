@@ -1,20 +1,30 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
+
 import org.crue.hercules.sgi.csp.exceptions.TipoDocumentoNotFoundException;
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity;
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.repository.TipoDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.TipoDocumentoSpecifications;
 import org.crue.hercules.sgi.csp.service.TipoDocumentoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -23,13 +33,17 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Validated
+
 public class TipoDocumentoServiceImpl implements TipoDocumentoService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_MODEL_TIPO_DOCUMENTO = "org.crue.hercules.sgi.csp.model.TipoDocumento.message";
+  private static final String MSG_ENTITY_EXISTS = "org.springframework.util.Assert.entity.exists.message";
 
   private final TipoDocumentoRepository tipoDocumentoRepository;
-
-  public TipoDocumentoServiceImpl(TipoDocumentoRepository tipoDocumentoRepository) {
-    this.tipoDocumentoRepository = tipoDocumentoRepository;
-  }
+  private final Validator validator;
 
   /**
    * Guardar un nuevo {@link TipoDocumento}.
@@ -39,12 +53,11 @@ public class TipoDocumentoServiceImpl implements TipoDocumentoService {
    */
   @Override
   @Transactional
-  public TipoDocumento create(TipoDocumento tipoDocumento) {
+  @Validated({ BaseEntity.Create.class })
+  public TipoDocumento create(@Valid TipoDocumento tipoDocumento) {
     log.debug("create(TipoDocumento tipoDocumento) - start");
 
-    Assert.isNull(tipoDocumento.getId(), "TipoDocumento id tiene que ser null para crear un nuevo TipoDocumento");
-    Assert.isTrue(!(tipoDocumentoRepository.findByNombreAndActivoIsTrue(tipoDocumento.getNombre()).isPresent()),
-        "Ya existe un TipoDocumento activo con el nombre '" + tipoDocumento.getNombre() + "'");
+    AssertHelper.idIsNull(tipoDocumento.getId(), TipoDocumento.class);
 
     tipoDocumento.setActivo(Boolean.TRUE);
     TipoDocumento returnValue = tipoDocumentoRepository.save(tipoDocumento);
@@ -61,15 +74,11 @@ public class TipoDocumentoServiceImpl implements TipoDocumentoService {
    */
   @Override
   @Transactional
-  public TipoDocumento update(TipoDocumento tipoDocumentoActualizar) {
+  @Validated({ BaseEntity.Update.class })
+  public TipoDocumento update(@Valid TipoDocumento tipoDocumentoActualizar) {
     log.debug("update(TipoDocumento tipoDocumento) - start");
 
-    Assert.notNull(tipoDocumentoActualizar.getId(),
-        "TipoDocumento id no puede ser null para actualizar un TipoDocumento");
-    tipoDocumentoRepository.findByNombreAndActivoIsTrue(tipoDocumentoActualizar.getNombre())
-        .ifPresent(tipoDocumentoExistente -> Assert.isTrue(
-            Objects.equals(tipoDocumentoActualizar.getId(), tipoDocumentoExistente.getId()),
-            "Ya existe un TipoDocumento activo con el nombre '" + tipoDocumentoExistente.getNombre() + "'"));
+    AssertHelper.idNotNull(tipoDocumentoActualizar.getId(), TipoDocumento.class);
 
     return tipoDocumentoRepository.findById(tipoDocumentoActualizar.getId()).map(tipoDocumento -> {
       tipoDocumento.setNombre(tipoDocumentoActualizar.getNombre());
@@ -92,15 +101,20 @@ public class TipoDocumentoServiceImpl implements TipoDocumentoService {
   public TipoDocumento enable(Long id) {
     log.debug("enable(Long id) - start");
 
-    Assert.notNull(id, "TipoDocumento id no puede ser null para reactivar un TipoDocumento");
+    AssertHelper.idNotNull(id, TipoDocumento.class);
 
     return tipoDocumentoRepository.findById(id).map(tipoDocumento -> {
       if (Boolean.TRUE.equals(tipoDocumento.getActivo())) {
         return tipoDocumento;
       }
 
-      Assert.isTrue(!(tipoDocumentoRepository.findByNombreAndActivoIsTrue(tipoDocumento.getNombre()).isPresent()),
-          "Ya existe un TipoDocumento activo con el nombre '" + tipoDocumento.getNombre() + "'");
+      // Invocar validaciones asociadas a OnActivar
+      Set<ConstraintViolation<TipoDocumento>> result = validator.validate(
+          tipoDocumento,
+          BaseActivableEntity.OnActivar.class);
+      if (!result.isEmpty()) {
+        throw new ConstraintViolationException(result);
+      }
 
       tipoDocumento.setActivo(true);
       TipoDocumento returnValue = tipoDocumentoRepository.save(tipoDocumento);
@@ -120,7 +134,7 @@ public class TipoDocumentoServiceImpl implements TipoDocumentoService {
   public TipoDocumento disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "TipoDocumento id no puede ser null para desactivar un TipoDocumento");
+    AssertHelper.idNotNull(id, TipoDocumento.class);
 
     return tipoDocumentoRepository.findById(id).map(tipoDocumento -> {
       if (Boolean.FALSE.equals(tipoDocumento.getActivo())) {

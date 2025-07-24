@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
@@ -84,8 +90,12 @@ public class ProyectoPeriodoSeguimiento extends BaseEntity {
   private TipoSeguimiento tipoSeguimiento;
 
   /** Observaciones */
-  @Column(name = "observaciones", length = 2000, nullable = true)
-  private String observaciones;
+
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "proyecto_periodo_seguimiento_observaciones", joinColumns = @JoinColumn(name = "proyecto_periodo_seguimiento_id"))
+  @Valid
+  @Builder.Default
+  private Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
 
   /** Identificador de la convocatoria periodo de seguimiento */
   @Column(name = "convocatoria_periodo_seguimiento_id", nullable = true)

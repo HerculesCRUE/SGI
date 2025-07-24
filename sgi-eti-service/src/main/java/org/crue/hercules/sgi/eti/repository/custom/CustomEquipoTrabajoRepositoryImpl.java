@@ -17,7 +17,6 @@ import org.crue.hercules.sgi.eti.model.EquipoTrabajo_;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Memoria_;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
-import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
 import org.crue.hercules.sgi.eti.model.Tarea;
 import org.crue.hercules.sgi.eti.model.Tarea_;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria_;
@@ -62,12 +61,12 @@ public class CustomEquipoTrabajoRepositoryImpl implements CustomEquipoTrabajoRep
     Root<EquipoTrabajo> root = cq.from(EquipoTrabajo.class);
 
     cq.multiselect(root.get(EquipoTrabajo_.id), root.get(EquipoTrabajo_.personaRef),
-        root.get(EquipoTrabajo_.peticionEvaluacion),
+        root.get(EquipoTrabajo_.peticionEvaluacionId),
         cb.selectCase().when(cb.isNull(isNotEliminable(root, cb, cq)), true).otherwise(false)
             .alias("eliminable"));
 
     // Where
-    cq.where(cb.equal(root.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id), idPeticionEvaluacion));
+    cq.where(cb.equal(root.get(EquipoTrabajo_.peticionEvaluacionId), idPeticionEvaluacion));
 
     TypedQuery<EquipoTrabajoWithIsEliminable> typedQuery = entityManager.createQuery(cq);
 

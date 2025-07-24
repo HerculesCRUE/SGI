@@ -1,25 +1,41 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_CONVERTER } from '@core/converters/csp/proyecto-periodo-seguimiento-documento.converter';
-import { IProyectoPeriodoSeguimientoDocumentoBackend } from '@core/models/csp/backend/proyecto-periodo-seguimiento-documento-backend';
 import { IProyectoPeriodoSeguimientoDocumento } from '@core/models/csp/proyecto-periodo-seguimiento-documento';
 import { environment } from '@env';
-import { SgiMutableRestService } from '@sgi/framework/http';
+import { CreateCtor, SgiRestBaseService, UpdateCtor, mixinCreate, mixinUpdate } from '@sgi/framework/http';
+import { IProyectoPeriodoSeguimientoDocumentoResponse } from './proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-documento-response';
+import { PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_RESPONSE_CONVERTER } from './proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-documento-response.converter';
+import { Observable } from 'rxjs';
+
+const _ProyectoPeriodoSeguimientoDocumentoServiceMixinBase:
+  CreateCtor<IProyectoPeriodoSeguimientoDocumento, IProyectoPeriodoSeguimientoDocumento, IProyectoPeriodoSeguimientoDocumentoResponse, IProyectoPeriodoSeguimientoDocumentoResponse> &
+  UpdateCtor<number, IProyectoPeriodoSeguimientoDocumento, IProyectoPeriodoSeguimientoDocumento, IProyectoPeriodoSeguimientoDocumentoResponse, IProyectoPeriodoSeguimientoDocumentoResponse> &
+  typeof SgiRestBaseService =
+  mixinUpdate(
+    mixinCreate(
+      SgiRestBaseService,
+      PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_RESPONSE_CONVERTER,
+      PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_RESPONSE_CONVERTER
+    ),
+    PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_RESPONSE_CONVERTER,
+    PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_RESPONSE_CONVERTER
+  );
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProyectoPeriodoSeguimientoDocumentoService
-  extends SgiMutableRestService<number, IProyectoPeriodoSeguimientoDocumentoBackend, IProyectoPeriodoSeguimientoDocumento> {
+export class ProyectoPeriodoSeguimientoDocumentoService extends _ProyectoPeriodoSeguimientoDocumentoServiceMixinBase {
   private static readonly MAPPING = '/proyectoperiodoseguimientodocumentos';
 
   constructor(protected http: HttpClient) {
     super(
-      ProyectoPeriodoSeguimientoDocumentoService.name,
       `${environment.serviceServers.csp}${ProyectoPeriodoSeguimientoDocumentoService.MAPPING}`,
-      http,
-      PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_CONVERTER
+      http
     );
+  }
+
+  deleteById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${id}`);
   }
 
 }

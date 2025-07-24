@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,8 +16,11 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+
+import org.crue.hercules.sgi.csp.validation.UniqueDescripcionAreaTematicaActivo;
+import org.crue.hercules.sgi.csp.validation.UniqueNombreAreaTematicaActivo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +35,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@UniqueNombreAreaTematicaActivo(groups = {
+    BaseEntity.Update.class, BaseActivableEntity.OnActivar.class,
+    BaseEntity.Create.class })
+@UniqueDescripcionAreaTematicaActivo(groups = {
+    BaseEntity.Update.class, BaseActivableEntity.OnActivar.class,
+    BaseEntity.Create.class })
 public class AreaTematica extends BaseEntity {
 
   /**
@@ -42,16 +57,18 @@ public class AreaTematica extends BaseEntity {
 
   /** Nombre */
   /** Si tiene padre equivale a abreviatura requerido size 5 y único */
-  @Column(name = "nombre", length = 50, nullable = false)
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "area_tematica_nombre", joinColumns = @JoinColumn(name = "area_tematica_id"))
   @NotEmpty
-  @Size(max = 50)
-  private String nombre;
+  @Valid
+  private Set<AreaTematicaNombre> nombre = new HashSet<>();
 
   /** Descripción */
   /** Si tiene padre equivale a nombre requerido size 50 y único */
-  @Column(name = "descripcion", length = 250, nullable = true)
-  @Size(max = 250)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "area_tematica_descripcion", joinColumns = @JoinColumn(name = "area_tematica_id"))
+  @Valid
+  private Set<AreaTematicaDescripcion> descripcion = new HashSet<>();
 
   /** Area Tematica padre. */
   @ManyToOne

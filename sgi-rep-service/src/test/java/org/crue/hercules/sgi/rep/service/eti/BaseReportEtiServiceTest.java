@@ -5,13 +5,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.rep.dto.eti.ActaDto;
 import org.crue.hercules.sgi.rep.dto.eti.ActaDto.TipoEstadoActaDto;
+import org.crue.hercules.sgi.rep.dto.eti.ApartadoDefinicionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoDto;
 import org.crue.hercules.sgi.rep.dto.eti.BloqueDto;
 import org.crue.hercules.sgi.rep.dto.eti.ComentarioDto;
 import org.crue.hercules.sgi.rep.dto.eti.ComiteDto;
-import org.crue.hercules.sgi.rep.dto.eti.ComiteDto.Genero;
+import org.crue.hercules.sgi.rep.dto.eti.ComiteNombreDto;
 import org.crue.hercules.sgi.rep.dto.eti.ConfiguracionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ConvocatoriaReunionDto;
 import org.crue.hercules.sgi.rep.dto.eti.DictamenDto;
@@ -26,7 +28,6 @@ import org.crue.hercules.sgi.rep.dto.eti.TipoConvocatoriaReunionDto;
 import org.crue.hercules.sgi.rep.dto.eti.TipoEstadoMemoriaDto;
 import org.crue.hercules.sgi.rep.dto.eti.TipoEvaluacionDto;
 import org.crue.hercules.sgi.rep.dto.eti.TipoInvestigacionTuteladaDto;
-import org.crue.hercules.sgi.rep.dto.eti.TipoMemoriaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.DatosContactoDto;
 import org.crue.hercules.sgi.rep.dto.sgp.DatosContactoDto.ComunidadAutonomaDto;
 import org.crue.hercules.sgi.rep.dto.sgp.DatosContactoDto.PaisDto;
@@ -48,7 +49,7 @@ abstract class BaseReportEtiServiceTest extends BaseReportServiceTest {
   protected EvaluacionDto generarMockEvaluacion(Long idEvaluacion) {
     return EvaluacionDto.builder()
         .id(idEvaluacion)
-        .memoria(generarMockMemoria(1L, 1L))
+        .memoria(generarMockMemoria(1L))
         .convocatoriaReunion(generarMockConvocatoriaReunion(idEvaluacion))
         .tipoEvaluacion(TipoEvaluacionDto.builder().id(1L).nombre("nombre").activo(Boolean.TRUE).build())
         .dictamen(DictamenDto.builder().id(1L).nombre("nombre").activo(Boolean.TRUE).build())
@@ -61,9 +62,7 @@ abstract class BaseReportEtiServiceTest extends BaseReportServiceTest {
   protected ConvocatoriaReunionDto generarMockConvocatoriaReunion(Long idConvocatoriaReunion) {
     ConvocatoriaReunionDto convocatoriaReunion = ConvocatoriaReunionDto.builder()
         .id(idConvocatoriaReunion)
-        .lugar("lugar")
         .comite(generarMockComite(1L, "CEI"))
-        .ordenDia("ordenDia")
         .anio(2021)
         .horaInicio(10)
         .minutoInicio(0)
@@ -89,12 +88,16 @@ abstract class BaseReportEtiServiceTest extends BaseReportServiceTest {
   }
 
   protected ComiteDto generarMockComite(Long idComite, String comite) {
+    List<ComiteNombreDto> nombre = new ArrayList<>();
+    ComiteNombreDto comiteNombre = new ComiteNombreDto();
+    comiteNombre.setLang(Language.ES);
+    comiteNombre.setValue("nombreInvestigacion");
+    comiteNombre.setGenero(ComiteNombreDto.Genero.M);
+    nombre.add(comiteNombre);
     return ComiteDto.builder()
         .id(idComite)
-        .comite(comite)
-        .nombreInvestigacion("nombreInvestigacion")
-        .genero(Genero.M)
-        .formulario(generarMockFormulario(1L))
+        .codigo(comite)
+        .nombre(nombre)
         .activo(Boolean.TRUE)
         .build();
   }
@@ -103,20 +106,18 @@ abstract class BaseReportEtiServiceTest extends BaseReportServiceTest {
     return PeticionEvaluacionDto.builder().id(
         idPeticionEvaluacion)
         .tipoActividad(TipoActividadDto.builder().id(1L).nombre("nombreTipoActividad").build())
-        .fuenteFinanciacion("fuenteFinanciacion")
         .estadoFinanciacion(EstadoFinanciacion.CONCEDIDO)
         .tipoInvestigacionTutelada(TipoInvestigacionTuteladaDto.builder().nombre("nombre").build())
         .build();
   }
 
-  protected MemoriaDto generarMockMemoria(Long idMemoria, Long idFormulario) {
+  protected MemoriaDto generarMockMemoria(Long idMemoria) {
     return MemoriaDto.builder()
         .id(idMemoria)
         .numReferencia("numReferencia")
         .peticionEvaluacion(generarMockPeticionEvaluacion(1L))
         .comite(generarMockComite(1L, "CEI"))
-        .titulo("titulo")
-        .tipoMemoria(TipoMemoriaDto.builder().id(1L).nombre("nombre").activo(Boolean.TRUE).build())
+        .tipo(MemoriaDto.Tipo.NUEVA)
         .fechaEnvioSecretaria(Instant.now())
         .version(1)
         .activo(Boolean.TRUE)
@@ -175,7 +176,6 @@ abstract class BaseReportEtiServiceTest extends BaseReportServiceTest {
         .horaFin(15)
         .minutoInicio(10)
         .minutoFin(10)
-        .resumen("resumen" + numero)
         .numero(numero)
         .inactiva(Boolean.TRUE)
         .activo(Boolean.TRUE)
@@ -187,7 +187,7 @@ abstract class BaseReportEtiServiceTest extends BaseReportServiceTest {
   protected FormularioDto generarMockFormulario(Long idFormulario) {
     return FormularioDto.builder()
         .id(idFormulario)
-        .nombre("nombre")
+        .codigo("codigo")
         .build();
   }
 
@@ -200,18 +200,25 @@ abstract class BaseReportEtiServiceTest extends BaseReportServiceTest {
   }
 
   protected ApartadoDto generarMockApartado(Long idApartado, Long idBloque, Long idFormulario) {
-    return ApartadoDto.builder()
+    ApartadoDto value = ApartadoDto.builder()
         .id(idApartado)
-        .nombre("nombre")
         .orden(1)
         .bloque(generarMockBloque(idBloque, idFormulario))
         .build();
+    List<ApartadoDefinicionDto> definicion = new ArrayList<>();
+    ApartadoDefinicionDto defi = new ApartadoDefinicionDto();
+    defi.setNombre("nombre");
+    definicion.add(defi);
+
+    value.setDefinicion(definicion);
+    return value;
+
   }
 
   protected RespuestaDto generarMockRespuesta(Long idApartado) {
     return RespuestaDto.builder()
         .id(1L)
-        .apartado(generarMockApartado(idApartado, 1L, 1L))
+        .apartadoId(idApartado)
         .valor("valor")
         .build();
   }

@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoriaReunion } from './convocatoria-reunion';
 import { TipoEstadoActa } from './tipo-estado-acta';
 
@@ -15,7 +16,7 @@ export interface IActa {
   /** Minuto fin */
   minutoFin: number;
   /** Resumen */
-  resumen: string;
+  resumen: I18nFieldValue[];
   /** Numero */
   numero: number;
   /** Inactiva */

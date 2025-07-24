@@ -5,7 +5,7 @@
   <mat-horizontal-stepper [linear]="true" labelPosition="bottom" (selectionChange)="onStepChange($event)">
     <ng-container *ngFor="let block of blocks; let step_index = index; let last = last;">
       <mat-step [stepControl]="block.formlyData.formGroup">
-        <ng-template matStepLabel>{{block.bloque.nombre}}</ng-template>
+        <ng-template matStepLabel>{{getNombreBloque(block.bloque)}}</ng-template>
         <ng-container *ngIf="block.selected">
           <div class="upper-buttons" fxLayout="row">
             <button *ngIf="step_index > 0" mat-button (click)="previousStep()" class="left" fxFlex="auto">

@@ -1,0 +1,90 @@
+[
+  {
+    "key": "ap5_2_2_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.3 3. Galdera"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "Jardueran erabiltzen den GEOa, instalazioan sortzen da?"
+      },
+      {
+        "key": "pregunta3OMG1Radio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Hirugarren bati erosten zaio eta instalazioan manipulatu bakarrik egiten da, manipulazio horrek GEO berriak sortu gabe?"
+      },
+      {
+        "key": "pregunta3OMG2Radio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "key": "instalacionOrigenOMG",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.pregunta3OMG2Radio || model.pregunta3OMG2Radio === 'no'",
+        "templateOptions": {
+          "name": "Adierazi jatorrizko instalazioa eta agintari eskudunak GEOen lehen erabilera konfinaturako emandako baimenaren erreferentzia, instalazio hori nazionala bada.",
+          "required": true
+        }
+      },
+      {
+        "template": "Zer arrisku maila du GEOak?",
+        "hideExpression": "!model.pregunta3OMG2Radio || model.pregunta3OMG2Radio === 'no'"
+      },
+      {
+        "key": "nivelRiesgoOMGRadio",
+        "type": "radio",
+        "hideExpression": "!model.pregunta3OMG2Radio || model.pregunta3OMG2Radio === 'no'",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "nivelRiesgoGrupo1",
+              "label": "1. Taldea"
+            },
+            {
+              "value": "nivelRiesgoGrupo2",
+              "label": "2. Taldea"
+            },
+            {
+              "value": "nivelRiesgoGrupo3",
+              "label": "3. Taldea"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -5,7 +5,7 @@
 
     <ng-container [matColumnDef]="currentField.key" *ngFor="let currentField of fieldsToRender; let i = index">
 
-      <th mat-header-cell *matHeaderCellDef>{{ currentField.name }}</th>
+      <th mat-header-cell *matHeaderCellDef>{{ currentField.name | translate }}</th>
       <ng-container *ngIf="currentField.name === HEADER_ACCIONES">
         <td mat-cell *matCellDef="let row; let i = dataIndex">
           <div class="action-button-container" *ngIf="!to.disabled">
@@ -49,6 +49,14 @@
 
           <p *ngSwitchCase="'select-categorias-profesionales'">
             {{model[i][currentField.key]['nombre']}}
+          </p>
+
+          <p *ngSwitchCase="'i18n-input'">
+            <sgi-i18n-table-field [field]="model[i][currentField.key]"></sgi-i18n-table-field>
+          </p>
+
+          <p *ngSwitchCase="'i18n-textarea'">
+            <sgi-i18n-table-field [field]="model[i][currentField.key]"></sgi-i18n-table-field>
           </p>
 
           <p *ngSwitchDefault>{{model[i][currentField.key]}}</p>

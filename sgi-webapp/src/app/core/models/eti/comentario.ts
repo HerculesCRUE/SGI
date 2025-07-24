@@ -1,4 +1,5 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IPersona } from '../sgp/persona';
 import { IApartado } from './apartado';
@@ -18,7 +19,7 @@ export interface IComentario {
   /** Tipo de comentario */
   tipoComentario: TipoComentario;
   /** Texto */
-  texto: string;
+  texto: I18nFieldValue[];
   /** Persona creación/modificación */
   evaluador: IPersona;
   /** Estado */

@@ -1,0 +1,161 @@
+[
+  {
+    "key": "ap5_2_2_4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.4.1 Organismo receptor del cual deriva el OMG. Especificar nombre científico y común"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "key": "receptorOMGCheck",
+        "type": "multicheckbox",
+        "templateOptions": {
+          "label": "Seleccionar",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "celulasHumanasPrimatesOMG",
+              "label": "Células humanas/primates"
+            },
+            {
+              "value": "otrasCelulasOMG",
+              "label": "Otras células"
+            },
+            {
+              "value": "animalOMG",
+              "label": "Animal"
+            },
+            {
+              "value": "plantaOMG",
+              "label": "Planta"
+            },
+            {
+              "value": "bacteriaOMG",
+              "label": "Bacteria"
+            },
+            {
+              "value": "hongoOMG",
+              "label": "Hongo"
+            },
+            {
+              "value": "virusOMG",
+              "label": "Virus"
+            },
+            {
+              "value": "protozoosOMG",
+              "label": "Protozoos"
+            }
+          ]
+        }
+      },
+      {
+        "key": "detallarCelulasHumanasPrimates",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.receptorOMGCheck || !model.receptorOMGCheck.some(receptor => receptor === 'celulasHumanasPrimatesOMG')",
+        "templateOptions": {
+          "placeholder": "Detallar",
+          "label": "Células humanas/primates",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarOtrasCelulas",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.receptorOMGCheck || !model.receptorOMGCheck.some(receptor => receptor === 'otrasCelulasOMG')",
+        "templateOptions": {
+          "placeholder": "Detallar",
+          "label": "Otras células",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarAnimal",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.receptorOMGCheck || !model.receptorOMGCheck.some(receptor => receptor === 'animalOMG')",
+        "templateOptions": {
+          "placeholder": "Detallar",
+          "label": "Animal",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarPlanta",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.receptorOMGCheck || !model.receptorOMGCheck.some(receptor => receptor === 'plantaOMG')",
+        "templateOptions": {
+          "placeholder": "Detallar",
+          "label": "Planta",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarBacteria",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.receptorOMGCheck || !model.receptorOMGCheck.some(receptor => receptor === 'bacteriaOMG')",
+        "templateOptions": {
+          "placeholder": "Detallar",
+          "label": "Bacteria",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarHongo",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.receptorOMGCheck || !model.receptorOMGCheck.some(receptor => receptor === 'hongoOMG')",
+        "templateOptions": {
+          "placeholder": "Detallar",
+          "label": "Hongo",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarVirus",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.receptorOMGCheck || !model.receptorOMGCheck.some(receptor => receptor === 'virusOMG')",
+        "templateOptions": {
+          "placeholder": "Detallar",
+          "label": "Virus",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarProtozoos",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.receptorOMGCheck || !model.receptorOMGCheck.some(receptor => receptor === 'protozoosOMG')",
+        "templateOptions": {
+          "placeholder": "Detallar",
+          "label": "Protozoos",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

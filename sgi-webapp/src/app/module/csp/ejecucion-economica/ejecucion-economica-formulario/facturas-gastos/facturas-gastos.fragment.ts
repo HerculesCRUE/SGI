@@ -1,14 +1,18 @@
 import { FacturasJustificantesColumnasFijasConfigurables, IConfiguracion } from '@core/models/csp/configuracion';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
+import { ConfigService } from '@core/services/cnf/config.service';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyecto-concepto-gasto-codigo-ec.service';
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { EjecucionEconomicaService } from '@core/services/sge/ejecucion-economica.service';
+import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ConfigCsp } from 'src/app/module/adm/config-csp/config-csp.component';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
 import { IColumnDefinition, IRowConfig, RowTreeDesglose } from '../desglose-economico.fragment';
 import { FacturasJustificantesFragment, IDesglose } from '../facturas-justificantes.fragment';
@@ -19,27 +23,34 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
     key: number,
     proyectoSge: IProyectoSge,
     relaciones: IRelacionEjecucionEconomicaWithResponsables[],
+    protected readonly languageService: LanguageService,
     proyectoService: ProyectoService,
     proyectoAnualidadService: ProyectoAnualidadService,
     gastoProyectoService: GastoProyectoService,
+    private readonly cnfService: ConfigService,
     private ejecucionEconomicaService: EjecucionEconomicaService,
     proyectoConceptoGastoCodigoEcService: ProyectoConceptoGastoCodigoEcService,
     proyectoConceptoGastoService: ProyectoConceptoGastoService,
     configuracion: IConfiguracion,
+    private readonly translateService: TranslateService
   ) {
-    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService,
-      gastoProyectoService, proyectoConceptoGastoCodigoEcService, proyectoConceptoGastoService, configuracion);
+    super(
+      key,
+      proyectoSge,
+      relaciones,
+      languageService,
+      proyectoService,
+      proyectoAnualidadService,
+      gastoProyectoService,
+      proyectoConceptoGastoCodigoEcService,
+      proyectoConceptoGastoService,
+      configuracion,
+      translateService
+    );
   }
 
   protected onInitialize(): void {
     super.onInitialize();
-
-    this.subscriptions.push(this.getColumns(true).subscribe(
-      (columns) => {
-        this.columns = columns;
-        this.displayColumns = this.getDisplayColumns(this.getRowConfig(), columns);
-      }
-    ));
   }
 
   protected getColumns(reducida?: boolean): Observable<IColumnDefinition[]> {
@@ -51,6 +62,7 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
 
   protected getRowConfig(): IRowConfig {
     return {
+      actionsShow: true,
       anualidadGroupBy: true,
       anualidadShow: true,
       aplicacionPresupuestariaGroupBy: this.config.facturasGastosColumnasFijasVisibles?.some(c => c === FacturasJustificantesColumnasFijasConfigurables.APLICACION_PRESUPUESTARIA),
@@ -112,7 +124,7 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
     });
   }
 
-  private getDisplayColumns(rowConfig: IRowConfig, columns: IColumnDefinition[]): string[] {
+  protected getDisplayColumns(rowConfig: IRowConfig, columns: IColumnDefinition[]): string[] {
     const displayColumns = [];
 
     if (rowConfig?.anualidadShow) {
@@ -139,6 +151,12 @@ export class FacturasGastosFragment extends FacturasJustificantesFragment {
     displayColumns.push('acciones');
 
     return displayColumns;
+  }
+
+  protected getLimiteRegistrosExportacionExcel(): Observable<number> {
+    return this.cnfService.getLimiteRegistrosExportacionExcel(ConfigCsp.CSP_EXP_MAX_NUM_REGISTROS_EXCEL_FACTURAS_GASTOS).pipe(
+      map(limite => Number(limite))
+    );
   }
 
 }

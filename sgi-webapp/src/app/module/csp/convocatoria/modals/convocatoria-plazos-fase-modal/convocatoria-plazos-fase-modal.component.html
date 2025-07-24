@@ -53,9 +53,9 @@
     <div fxFlex>
       <mat-form-field fxFlex>
         <mat-label>{{'csp.convocatoria-fase.observaciones' | translate}}</mat-label>
-        <textarea matInput formControlName="observaciones" type="text"
+        <sgi-i18n-textarea matInput formControlName="observaciones"
           placeholder="{{'csp.convocatoria-fase.observaciones' | translate}}">
-            </textarea>
+        </sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.get('observaciones').errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
         </mat-error>

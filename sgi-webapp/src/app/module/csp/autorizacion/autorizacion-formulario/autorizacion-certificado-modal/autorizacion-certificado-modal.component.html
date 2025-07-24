@@ -16,8 +16,8 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.certificado-autorizacion.nombre' | translate}}</mat-label>
-        <input matInput formControlName="nombre" id="nombre"
-          placeholder="{{'csp.certificado-autorizacion.nombre' | translate}}">
+        <sgi-i18n-input formControlName="nombre" placeholder="{{'csp.certificado-autorizacion.nombre' | translate}}">
+        </sgi-i18n-input>
       </mat-form-field>
     </div>
     <!-- Documento-->
@@ -37,7 +37,7 @@
           placeholder="{{'csp.certificado-autorizacion.documento' | translate}}" required readonly>
         <button *ngIf="formGroup.controls.generadoAutomatico.value" mat-button color="primary"
           matTooltip="{{'btn.autorizacion.descargar-certificado' | translate}}" id="btnDownload"
-          (click)="visualizarInforme()">
+          (click)="visualizarInformeGenerado()">
           <mat-icon color="primary">arrow_downward</mat-icon>
         </button>
         <mat-error *ngIf="formGroup.controls.documentoAuto.errors?.required">

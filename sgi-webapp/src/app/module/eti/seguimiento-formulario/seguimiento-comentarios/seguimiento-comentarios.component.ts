@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -10,6 +11,7 @@ import { IComentario, TipoEstadoComentario } from '@core/models/eti/comentario';
 import { TIPO_COMENTARIO, TipoComentario } from '@core/models/eti/tipo-comentario';
 import { DialogService } from '@core/services/dialog.service';
 import { TipoComentarioService } from '@core/services/eti/tipo-comentario.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -61,9 +63,11 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
     private matDialog: MatDialog,
     private actionService: SeguimientoFormularioActionService,
     private readonly translate: TranslateService,
-    private readonly authService: SgiAuthService
+    private readonly authService: SgiAuthService,
+    private readonly languageService: LanguageService,
+    private readonly router: Router
   ) {
-    super(actionService.FRAGMENT.COMENTARIOS, actionService);
+    super(actionService.FRAGMENT.COMENTARIOS, actionService, translate);
     this.dataSource = new MatTableDataSource<StatusWrapper<IComentario>>();
     this.formPart = this.fragment as SeguimientoComentarioFragment;
     this.elementosPagina = [5, 10, 25, 100];
@@ -74,7 +78,7 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.subscriptions.push(this.formPart.comentarios$.subscribe(elements => {
@@ -88,11 +92,13 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
       (wrapper: StatusWrapper<IComentario>, property: string) => {
         switch (property) {
           case 'apartado.bloque':
-            return wrapper.value.apartado?.bloque.nombre;
+            return this.getBloqueNombre(wrapper.value);
           case 'apartado.padre':
             return this.getApartadoNombre(wrapper.value);
           case 'apartado':
             return this.getSubApartadoNombre(wrapper.value);
+          case 'texto':
+            return this.languageService.getFieldValue(wrapper.value.texto);
           default:
             return wrapper.value[property];
         }
@@ -100,7 +106,7 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
 
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       COMENTARIO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -124,11 +130,17 @@ export class SeguimientoComentariosComponent extends FragmentComponent implement
   }
 
   getApartadoNombre(comentario: IComentario): string {
-    return getApartadoNombre(comentario.apartado);
+    return getApartadoNombre(comentario.apartado, this.languageService.getLanguage());
   }
 
   getSubApartadoNombre(comentario: IComentario): string {
-    return getSubApartadoNombre(comentario.apartado);
+    return getSubApartadoNombre(comentario.apartado, this.languageService.getLanguage());
+  }
+
+  getBloqueNombre(comentario: IComentario): string {
+    return comentario.apartado?.bloque.orden === 0 ?
+      this.languageService.getFieldValue(comentario.apartado?.bloque.nombre) : (comentario.apartado?.bloque?.orden
+        + ' ' + this.languageService.getFieldValue(comentario.apartado?.bloque.nombre));
   }
 
   /**

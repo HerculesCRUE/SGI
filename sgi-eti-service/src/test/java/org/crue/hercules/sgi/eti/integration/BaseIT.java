@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.eti.integration;
 
+import java.util.Locale;
+
 import org.crue.hercules.sgi.framework.test.http.client.BufferingHttpComponentsClientHttpRequestFactory;
 import org.crue.hercules.sgi.framework.test.http.client.SgiClientHttpRequestInterceptors;
 import org.crue.hercules.sgi.framework.test.security.Oauth2WireMockInitializer;
@@ -19,6 +21,10 @@ public class BaseIT {
 
   @Autowired
   protected TokenBuilder tokenBuilder;
+
+  BaseIT() {
+    Locale.setDefault(new Locale("es", "ES"));
+  }
 
   @TestConfiguration
   static class TestRestTemplateConfiguration {

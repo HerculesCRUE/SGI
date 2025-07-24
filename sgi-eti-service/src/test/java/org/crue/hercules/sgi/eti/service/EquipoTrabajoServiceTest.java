@@ -2,8 +2,10 @@ package org.crue.hercules.sgi.eti.service;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.dto.EquipoTrabajoWithIsEliminable;
@@ -11,9 +13,14 @@ import org.crue.hercules.sgi.eti.exceptions.EquipoTrabajoNotFoundException;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.repository.EquipoTrabajoRepository;
 import org.crue.hercules.sgi.eti.service.impl.EquipoTrabajoServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -51,7 +58,7 @@ public class EquipoTrabajoServiceTest extends BaseServiceTest {
 
     Assertions.assertThat(equipoTrabajo.getId()).isEqualTo(1L);
     Assertions.assertThat(equipoTrabajo.getPersonaRef()).isEqualTo("user-001");
-    Assertions.assertThat(equipoTrabajo.getPeticionEvaluacion().getTitulo()).isEqualTo("PeticionEvaluacion1");
+    Assertions.assertThat(equipoTrabajo.getPeticionEvaluacionId()).isEqualTo(1L);
 
   }
 
@@ -81,7 +88,7 @@ public class EquipoTrabajoServiceTest extends BaseServiceTest {
     Assertions.assertThat(equipoTrabajoCreado).isNotNull();
     Assertions.assertThat(equipoTrabajoCreado.getId()).isEqualTo(1L);
     Assertions.assertThat(equipoTrabajo.getPersonaRef()).isEqualTo("user-001");
-    Assertions.assertThat(equipoTrabajo.getPeticionEvaluacion().getTitulo()).isEqualTo("PeticionEvaluacion1");
+    Assertions.assertThat(equipoTrabajo.getPeticionEvaluacionId()).isEqualTo(1L);
   }
 
   @Test
@@ -170,9 +177,9 @@ public class EquipoTrabajoServiceTest extends BaseServiceTest {
     Assertions.assertThat(result.size()).isEqualTo(10);
     for (int i = 0, j = 1; i < 10 && j <= 10; i++, j++) {
       EquipoTrabajoWithIsEliminable equipoTrabajo = result.get(i);
-      Assertions.assertThat(equipoTrabajo.getPeticionEvaluacion().getTitulo())
-          .as("equipoTrabajo[" + j + "].peticionEvaluacion.titulo")
-          .isEqualTo("PeticionEvaluacion" + String.format("%03d", j));
+      Assertions.assertThat(equipoTrabajo.getPeticionEvaluacionId())
+          .as("equipoTrabajo[" + j + "].peticionEvaluacionId")
+          .isEqualTo(j);
     }
   }
 
@@ -212,8 +219,8 @@ public class EquipoTrabajoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       EquipoTrabajo equipoTrabajo = page.getContent().get(i);
-      Assertions.assertThat(equipoTrabajo.getPeticionEvaluacion().getTitulo())
-          .isEqualTo("PeticionEvaluacion" + String.format("%03d", j));
+      Assertions.assertThat(equipoTrabajo.getPeticionEvaluacionId())
+          .isEqualTo(j);
     }
   }
 
@@ -231,19 +238,27 @@ public class EquipoTrabajoServiceTest extends BaseServiceTest {
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> tit = new HashSet<>();
+    tit.add(new PeticionEvaluacionTitulo(Language.ES, titulo));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen" + id));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos" + id));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico" + id));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo" + id);
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico" + id);
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos" + id);
-    peticionEvaluacion.setResumen("Resumen" + id);
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria" + id);
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo(titulo);
+    peticionEvaluacion.setTitulo(tit);
     peticionEvaluacion.setPersonaRef("user-00" + id);
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
@@ -262,7 +277,7 @@ public class EquipoTrabajoServiceTest extends BaseServiceTest {
 
     EquipoTrabajo equipoTrabajo = new EquipoTrabajo();
     equipoTrabajo.setId(id);
-    equipoTrabajo.setPeticionEvaluacion(peticionEvaluacion);
+    equipoTrabajo.setPeticionEvaluacionId(peticionEvaluacion.getId());
     equipoTrabajo.setPersonaRef("user-00" + id);
 
     return equipoTrabajo;
@@ -280,7 +295,7 @@ public class EquipoTrabajoServiceTest extends BaseServiceTest {
 
     EquipoTrabajoWithIsEliminable equipoTrabajo = new EquipoTrabajoWithIsEliminable();
     equipoTrabajo.setId(id);
-    equipoTrabajo.setPeticionEvaluacion(peticionEvaluacion);
+    equipoTrabajo.setPeticionEvaluacionId(peticionEvaluacion.getId());
     equipoTrabajo.setPersonaRef("user-00" + id);
     equipoTrabajo.setEliminable(true);
 

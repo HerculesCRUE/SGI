@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "4.1 Replacement"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>One of the main tools available to researchers to comply with replacement is the use of alternative methods. Alternative methods are understood as those that <u>do not involve the use of animals</u>, allow <u>reduce the number of animals</u> to use or <u>replace them</u> by other species with a lower degree of suffering.</p><p>More information about alternative methods can be found on the web pages of the <a target='_blank' href='https://joint-research-centre.ec.europa.eu/eu-reference-laboratory-alternatives-animal-testing-eurl-ecvam_en'>ECVAM</a> and <a target='_blank' href='http://www.remanet.net/'>REMA</a>.</p>"
+      }
+    ]
+  }
+]

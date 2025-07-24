@@ -2,6 +2,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
 import { FormFragment } from '@core/services/action-service';
 import { TipoProteccionService } from '@core/services/pii/tipo-proteccion/tipo-proteccion.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, Observable, Subject } from 'rxjs';
 import { catchError, filter, map, tap } from 'rxjs/operators';
@@ -23,8 +24,8 @@ export class TipoProteccionDatosGeneralesFragment extends FormFragment<ITipoProt
 
   protected buildFormGroup(): FormGroup {
     const fb = new FormGroup({
-      nombre: new FormControl('', [Validators.maxLength(50)]),
-      descripcion: new FormControl('', [Validators.maxLength(250)]),
+      nombre: new FormControl([], [I18nValidators.maxLength(50)]),
+      descripcion: new FormControl([], [I18nValidators.maxLength(250)]),
       tipoPropiedad: new FormControl('', [Validators.required])
     });
 

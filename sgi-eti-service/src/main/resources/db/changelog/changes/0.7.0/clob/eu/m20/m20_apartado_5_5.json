@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap5_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.5 Laburpen ez-teknikoa (LET)"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Otsailaren 23ko 118/2021 Errege Dekretuak, otsailaren 1eko 53/2013 Errege Dekretua aldatzen duenak, xedatzen du animaliekin egindako proiektuaren arduradunak laburpen anonimo ez-tekniko bat (LET) eta horren balizko eguneraketak idatzi behar dituela, eta laburpen hori Europako Batzordeari aurkeztu behar zaiola, baimena ematen denetik gehienez ere sei hilabeteko epean.</p><p>Jabetza intelektuala eta isilpeko informazioa babestuta badaude, proiektuaren LETak ez du datu pertsonalik jasoko, eta gutxienez informazio hau bilduko du: zer helburu dituen proiektuak, zer kalte eta onura aurreikusten diren eta zenbat animalia eta zer motatakoak erabiliko diren. Ere berean, ordezkatze, murrizte eta fintze baldintza betetzen dela frogatuko du.</p><p>Organo eskudunek zera eskatu ahal izango dute, proiektuaren LETak zehaztu dezala proiektuari atzera begirako ebaluazioa egin behar zaion, eta, hala bada, horretarako epea ezarriko dute. Proiektuaren LETa atzera begirako ebaluazioaren emaitzekin eguneratu beharko da, ebaluazioa amaitu eta sei hilabeteko epean.</p><p>Behin proiektua baimenduta, organo eskudunak Nekazaritza, Arrantza eta Elikadura Ministerioaren webgunean argitaratuko du LETa. Halaber, RNT ALURES – Animal use reporting EU System datu basean argitaratuko da.</p><p>El RNT debe adjuntarse en el apartado de Documentación. Consulte con la Secretaría Técnica del Comité de Ética para mayor detalle sobre el contenido o plantilla de este RNT.</p>"
+      },
+      {
+        "key": "resumenNoTecnico",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": "RESUMEN_RNT",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

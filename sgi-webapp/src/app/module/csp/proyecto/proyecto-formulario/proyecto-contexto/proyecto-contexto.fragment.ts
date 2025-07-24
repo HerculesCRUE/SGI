@@ -4,12 +4,11 @@ import { IProyectoContexto } from '@core/models/csp/proyecto-contexto';
 import { FormFragment } from '@core/services/action-service';
 import { ContextoProyectoService } from '@core/services/csp/contexto-proyecto.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
-import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { ProyectoContextoModalData } from '../../modals/proyecto-contexto-modal/proyecto-contexto-modal.component';
-import { AreaTematicaListado } from './proyecto-contexto.component';
 
 export interface AreaTematicaProyectoData {
   root: IAreaTematica;
@@ -17,7 +16,7 @@ export interface AreaTematicaProyectoData {
   areasTematicasConvocatoria: IAreaTematica[];
 }
 
-export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
+export class ProyectoContextoFragment extends FormFragment<IProyectoContexto> {
   proyectoContexto: IProyectoContexto;
   areasTematicas$ = new BehaviorSubject<AreaTematicaProyectoData[]>([]);
   areaTematica: IAreaTematica;
@@ -39,9 +38,9 @@ export class ProyectoContextoFragment extends FormFragment<IProyectoContexto>{
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      objetivos: new FormControl('', [Validators.maxLength(2000)]),
-      intereses: new FormControl('', [Validators.maxLength(2000)]),
-      resultados_previstos: new FormControl('', [Validators.maxLength(2000)]),
+      objetivos: new FormControl([], [I18nValidators.maxLength(2000)]),
+      intereses: new FormControl([], [I18nValidators.maxLength(2000)]),
+      resultados_previstos: new FormControl([], [I18nValidators.maxLength(2000)]),
       propiedadResultados: new FormControl(''),
     });
 

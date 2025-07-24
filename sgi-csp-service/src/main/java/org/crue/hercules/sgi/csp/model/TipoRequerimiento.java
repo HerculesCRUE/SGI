@@ -1,13 +1,23 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -32,6 +42,10 @@ public class TipoRequerimiento extends BaseActivableEntity {
   private Long id;
 
   /** Nombre */
-  @Column(name = "nombre", nullable = false)
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tipo_requerimiento_nombre", joinColumns = @JoinColumn(name = "tipo_requerimiento_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<TipoRequerimientoNombre> nombre = new HashSet<>();
 }

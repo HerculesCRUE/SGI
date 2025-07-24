@@ -69,7 +69,7 @@ export class ConvocatoriaRequisitosEquipoComponent extends FormFragmentComponent
     public translate: TranslateService,
     private readonly sexoService: SexoService
   ) {
-    super(actionService.FRAGMENT.REQUISITOS_EQUIPO, actionService);
+    super(actionService.FRAGMENT.REQUISITOS_EQUIPO, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaRequisitosEquipoFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -92,7 +92,7 @@ export class ConvocatoriaRequisitosEquipoComponent extends FormFragmentComponent
 
   ngOnInit() {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.subscriptions.push(this.formPart.nivelesAcademicos$.subscribe(elements => {
       this.nivelAcademicoDataSource.data = elements;
@@ -136,7 +136,7 @@ export class ConvocatoriaRequisitosEquipoComponent extends FormFragmentComponent
     this.categoriaProfesionalDataSource.sort = this.sortCategoriaProfesional;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_REQUISITOS_EQUIPO_MODALIDAD_CONTRATO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

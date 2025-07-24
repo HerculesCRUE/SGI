@@ -70,4 +70,5 @@ export class ConfigPrcComponent extends AbstractMenuContentComponent {
     }
   }
 
+  protected setupI18N(): void { }
 }

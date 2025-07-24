@@ -1,14 +1,18 @@
 package org.crue.hercules.sgi.eti.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
-import org.crue.hercules.sgi.eti.exceptions.TipoTareaNotFoundException;
 import org.crue.hercules.sgi.eti.model.TipoTarea;
+import org.crue.hercules.sgi.eti.model.TipoTareaNombre;
 import org.crue.hercules.sgi.eti.repository.TipoTareaRepository;
 import org.crue.hercules.sgi.eti.service.impl.TipoTareaServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -45,104 +49,8 @@ public class TipoTareaServiceTest extends BaseServiceTest {
 
     Assertions.assertThat(tipoTarea.getId()).isEqualTo(1L);
 
-    Assertions.assertThat(tipoTarea.getNombre()).isEqualTo("TipoTarea1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoTarea.getNombre(), Language.ES)).isEqualTo("TipoTarea1");
 
-  }
-
-  @Test
-  public void create_ReturnsTipoTarea() {
-    // given: Un nuevo TipoTarea
-    TipoTarea tipoTareaNew = generarMockTipoTarea(1L, "TipoTareaNew");
-
-    TipoTarea tipoTarea = generarMockTipoTarea(1L, "TipoTareaNew");
-
-    BDDMockito.given(tipoTareaRepository.save(tipoTareaNew)).willReturn(tipoTarea);
-
-    // when: Creamos el tipo Tarea
-    TipoTarea tipoTareaCreado = tipoTareaService.create(tipoTareaNew);
-
-    // then: El tipo Tarea se crea correctamente
-    Assertions.assertThat(tipoTareaCreado).isNotNull();
-    Assertions.assertThat(tipoTareaCreado.getId()).isEqualTo(1L);
-    Assertions.assertThat(tipoTareaCreado.getNombre()).isEqualTo("TipoTareaNew");
-  }
-
-  @Test
-  public void update_ReturnsTipoTarea() {
-    // given: Un nuevo tipo Tarea con el servicio actualizado
-    TipoTarea tipoTareaServicioActualizado = generarMockTipoTarea(1L, "TipoTarea1 actualizada");
-
-    TipoTarea tipoTarea = generarMockTipoTarea(1L, "TipoTarea1");
-
-    BDDMockito.given(tipoTareaRepository.findById(1L)).willReturn(Optional.of(tipoTarea));
-    BDDMockito.given(tipoTareaRepository.save(tipoTarea)).willReturn(tipoTareaServicioActualizado);
-
-    // when: Actualizamos el tipo Tarea
-    TipoTarea tipoTareaActualizado = tipoTareaService.update(tipoTarea);
-
-    // then: El tipo Tarea se actualiza correctamente.
-    Assertions.assertThat(tipoTareaActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(tipoTareaActualizado.getNombre()).isEqualTo("TipoTarea1 actualizada");
-
-  }
-
-  @Test
-  public void update_ThrowsTipoTareaNotFoundException() {
-    // given: Un nuevo tipo Tarea a actualizar
-    TipoTarea tipoTarea = generarMockTipoTarea(1L, "TipoTarea");
-
-    // then: Lanza una excepcion porque el tipo Tarea no existe
-    Assertions.assertThatThrownBy(() -> tipoTareaService.update(tipoTarea))
-        .isInstanceOf(TipoTareaNotFoundException.class);
-
-  }
-
-  @Test
-  public void update_WithoutId_ThrowsIllegalArgumentException() {
-
-    // given: Un TipoTarea que venga sin id
-    TipoTarea tipoTarea = generarMockTipoTarea(null, "TipoTarea");
-
-    Assertions.assertThatThrownBy(
-        // when: update TipoTarea
-        () -> tipoTareaService.update(tipoTarea))
-        // then: Lanza una excepción, el id es necesario
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  public void delete_WithoutId_ThrowsIllegalArgumentException() {
-    // given: Sin id
-    Assertions.assertThatThrownBy(
-        // when: Delete sin id
-        () -> tipoTareaService.delete(null))
-        // then: Lanza una excepción
-        .isInstanceOf(IllegalArgumentException.class);
-  }
-
-  @Test
-  public void delete_NonExistingId_ThrowsTipoTareaNotFoundException() {
-    // given: Id no existe
-    BDDMockito.given(tipoTareaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.FALSE);
-
-    Assertions.assertThatThrownBy(
-        // when: Delete un id no existente
-        () -> tipoTareaService.delete(1L))
-        // then: Lanza TipoTareaNotFoundException
-        .isInstanceOf(TipoTareaNotFoundException.class);
-  }
-
-  @Test
-  public void delete_WithExistingId_DeletesTipoTarea() {
-    // given: Id existente
-    BDDMockito.given(tipoTareaRepository.existsById(ArgumentMatchers.anyLong())).willReturn(Boolean.TRUE);
-    BDDMockito.doNothing().when(tipoTareaRepository).deleteById(ArgumentMatchers.anyLong());
-
-    Assertions.assertThatCode(
-        // when: Delete con id existente
-        () -> tipoTareaService.delete(1L))
-        // then: No se lanza ninguna excepción
-        .doesNotThrowAnyException();
   }
 
   @Test
@@ -203,7 +111,8 @@ public class TipoTareaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoTarea tipoTarea = page.getContent().get(i);
-      Assertions.assertThat(tipoTarea.getNombre()).isEqualTo("TipoTarea" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoTarea.getNombre(), Language.ES))
+          .isEqualTo("TipoTarea" + String.format("%03d", j));
     }
   }
 
@@ -214,12 +123,12 @@ public class TipoTareaServiceTest extends BaseServiceTest {
    * @param nombre nombre del tipo de Tarea
    * @return el objeto tipo Tarea
    */
-
-  public TipoTarea generarMockTipoTarea(Long id, String nombre) {
-
+  private TipoTarea generarMockTipoTarea(Long id, String nombre) {
+    Set<TipoTareaNombre> nom = new HashSet<>();
+    nom.add(new TipoTareaNombre(Language.ES, nombre));
     TipoTarea tipoTarea = new TipoTarea();
     tipoTarea.setId(id);
-    tipoTarea.setNombre(nombre);
+    tipoTarea.setNombre(nom);
     tipoTarea.setActivo(Boolean.TRUE);
 
     return tipoTarea;

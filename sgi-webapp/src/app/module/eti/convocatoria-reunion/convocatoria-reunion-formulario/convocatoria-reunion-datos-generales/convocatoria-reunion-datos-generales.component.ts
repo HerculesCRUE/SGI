@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -15,11 +15,11 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
-import { SgiCkEditorConfig } from '@shared/sgi-ckeditor-config';
+import { CKEDITOR_CONFIG, CkEditorConfig } from '@shared/sgi-ckeditor-config';
 import Editor from 'ckeditor5-custom-build/build/ckeditor';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, Subscription, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { catchError, map, switchMap } from 'rxjs/operators';
 import { ConvocatoriaReunionActionService } from '../../convocatoria-reunion.action.service';
 import { ConvocatoriaReunionDatosGeneralesFragment } from './convocatoria-reunion-datos-generales.fragment';
 
@@ -34,6 +34,7 @@ const CONVOCATORIA_VIDEOCONFERENCIA_KEY = marker('eti.convocatoria-reunion.video
 const CONVOCATORIA_LUGAR_KEY = marker('eti.convocatoria-reunion.lugar');
 const CONVOCATORIA_ORDEN_DIA_KEY = marker('eti.convocatoria-reunion.orden-dia');
 const CONVOCATORIA_CONVOCANTES_KEY = marker('eti.convocatoria-reunion.convocantes');
+const SGP_NOT_FOUND = marker("error.sgp.not-found");
 
 @Component({
   selector: 'sgi-convocatoria-reunion-datos-generales',
@@ -42,7 +43,6 @@ const CONVOCATORIA_CONVOCANTES_KEY = marker('eti.convocatoria-reunion.convocante
 })
 export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComponent<IConvocatoriaReunion> implements OnInit, OnDestroy {
   public readonly CkEditor = Editor;
-  public readonly configCkEditor = SgiCkEditorConfig.defaultConfig
 
   fxFlexProperties: FxFlexProperties;
   fxFlexPropertiesInline: FxFlexProperties;
@@ -70,15 +70,16 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
     private personaService: PersonaService,
     private actionService: ConvocatoriaReunionActionService,
     private convocatoriaReunionService: ConvocatoriaReunionService,
-    private translate: TranslateService
+    private translate: TranslateService,
+    @Inject(CKEDITOR_CONFIG) public readonly configCkEditor: CkEditorConfig
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formFragment = this.fragment as ConvocatoriaReunionDatosGeneralesFragment;
   }
 
   ngOnInit() {
     super.ngOnInit();
-    this.setupI18N();
+
 
     if (this.actionService.hasMemoriasAssigned()) {
       this.formGroup.controls.comite.disable({ onlySelf: true });
@@ -90,7 +91,7 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
     }
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_COMITE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -202,7 +203,9 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
     const personas = listado.items;
     evaluadores.forEach((convocante) => {
       const datosPersonaConvocante = personas.find((persona: IPersona) => convocante.persona.id === persona.id);
-      convocante.persona = datosPersonaConvocante;
+      if (datosPersonaConvocante) {
+        convocante.persona = datosPersonaConvocante;
+      }
     });
     return evaluadores;
   }
@@ -242,5 +245,15 @@ export class ConvocatoriaReunionDatosGeneralesComponent extends FormFragmentComp
   getDatosConvocantesFormulario(): IEvaluador[] {
     const convocantes: IEvaluador[] = this.formGroup.controls.convocantes.value;
     return convocantes;
+  }
+
+  getPersonaConvocante(convocante: IPersona): string {
+    if (convocante?.nombre) {
+      return `${convocante?.nombre} ${convocante?.apellidos}`;
+    } else if (convocante?.id) {
+      return this.translate.instant(SGP_NOT_FOUND, { ids: convocante.id, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    } else {
+      return null;
+    }
   }
 }

@@ -1,7 +1,7 @@
-import { ISectorAplicacion } from "@core/models/pii/sector-aplicacion";
+import { ISectorAplicacionResponse } from "../../sector-aplicacion/sector-aplicacion-response";
 
 export interface IInvencionSectorAplicacionResponse {
   id: number;
   invencionId: number;
-  sectorAplicacion: ISectorAplicacion;
+  sectorAplicacion: ISectorAplicacionResponse;
 }

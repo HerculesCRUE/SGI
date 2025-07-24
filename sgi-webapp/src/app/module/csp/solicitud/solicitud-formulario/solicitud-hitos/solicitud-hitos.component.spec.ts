@@ -7,6 +7,7 @@ import { ActivatedRoute, Data } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
 import { Estado } from '@core/models/csp/estado-solicitud';
+import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
@@ -23,6 +24,7 @@ describe('SolicitudHitosComponent', () => {
     [SOLICITUD_DATA_KEY]: {
       solicitud: {
         formularioSolicitud: FormularioSolicitud.PROYECTO,
+        modeloEjecucion: { id: 1 } as IModeloEjecucion,
         estado: {
           estado: Estado.BORRADOR
         }

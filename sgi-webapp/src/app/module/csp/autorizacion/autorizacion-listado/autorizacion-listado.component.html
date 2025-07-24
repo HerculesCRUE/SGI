@@ -75,20 +75,24 @@
       <!-- Solicitante Column -->
       <ng-container matColumnDef="solicitante">
         <th mat-header-cell *matHeaderCellDef> {{'csp.autorizacion.solicitante' | translate}} </th>
-        <td mat-cell *matCellDef="let element"> {{element.autorizacion?.solicitante.nombre}}
+        <td mat-cell *matCellDef="let element" sgpNotFoundError [model]="element.autorizacion?.solicitante">
+          {{element.autorizacion?.solicitante.nombre}}
           {{element.autorizacion?.solicitante.apellidos}}</td>
       </ng-container>
 
       <!-- Titulo Column -->
       <ng-container matColumnDef="tituloProyecto">
         <th mat-header-cell *matHeaderCellDef> {{'csp.autorizacion.titulo-proyecto' | translate}} </th>
-        <td mat-cell *matCellDef="let element"> {{element.autorizacion?.tituloProyecto}}</td>
+        <td mat-cell *matCellDef="let element">
+          <sgi-i18n-table-field [field]="element.autorizacion?.tituloProyecto"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Entidad Participacion Column -->
       <ng-container matColumnDef="entidadParticipacion">
         <th mat-header-cell *matHeaderCellDef> {{'csp.autorizacion.entidad-participacion' | translate}} </th>
-        <td mat-cell *matCellDef="let element"> {{element.entidadPaticipacionNombre}}</td>
+        <td mat-cell *matCellDef="let element" sgempNotFoundError [model]="element.autorizacion.entidad">
+          {{element.entidadPaticipacionNombre}}</td>
       </ng-container>
 
       <!-- Estado Column -->

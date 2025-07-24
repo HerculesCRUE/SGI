@@ -1,0 +1,47 @@
+[
+  {
+    "key": "ap5_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.3 Authorisation document"
+    },
+    "fieldGroup": [
+      {
+        "template": "If part of your project is carried out outside the University facilities, do you have the respective authorisation document issued by the person responsible for the centre or place?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>In general, any facet of a study that is carried out outside the University facilities will require authorisation or a signed agreement from the person responsible for the Centre or facilities where that phase of the project will be carried out, including the recruitment of subjects for the study, distribution of information about the project, taking samples, conducting surveys, performing physical or psychological tests, collecting data, etc.</p>"
+      },
+      {
+        "key": "documentoAutorizacion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": "AUTORIZACION",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: describe in sections '3.4.1 Recruitment process and/or 3.5.3 Description of interventions'.</p>"
+      }
+    ]
+  }
+]

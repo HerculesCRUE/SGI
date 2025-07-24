@@ -35,14 +35,6 @@ public interface ProyectoDocumentoService {
   void delete(Long id);
 
   /**
-   * Obtiene {@link ProyectoDocumento} por su id.
-   *
-   * @param id el id de la entidad {@link ProyectoDocumento}.
-   * @return la entidad {@link ProyectoDocumento}.
-   */
-  ProyectoDocumento findById(Long id);
-
-  /**
    * Obtiene las {@link ProyectoDocumento} para una {@link Proyecto}.
    *
    * @param proyectoId el id de la {@link Proyecto}.

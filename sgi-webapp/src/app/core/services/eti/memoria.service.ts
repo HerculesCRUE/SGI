@@ -1,21 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CONVOCATORIA_REUNION_CONVERTER } from '@core/converters/eti/convocatoria-reunion.converter';
-import { DOCUMENTACION_MEMORIA_CONVERTER } from '@core/converters/eti/documentacion-memoria.converter';
-import { EVALUACION_WITH_NUM_COMENTARIO_CONVERTER } from '@core/converters/eti/evaluacion-with-num-comentario.converter';
-import { EVALUACION_CONVERTER } from '@core/converters/eti/evaluacion.converter';
-import { INFORME_CONVERTER } from '@core/converters/eti/informe.converter';
-import { MEMORIA_PETICION_EVALUACION_CONVERTER } from '@core/converters/eti/memoria-peticion-evaluacion.converter';
-import { MEMORIA_CONVERTER } from '@core/converters/eti/memoria.converter';
-import { RESPUESTA_CONVERTER } from '@core/converters/eti/respuesta.converter';
-import { IConvocatoriaReunionBackend } from '@core/models/eti/backend/convocatoria-reunion-backend';
-import { IDocumentacionMemoriaBackend } from '@core/models/eti/backend/documentacion-memoria-backend';
-import { IEvaluacionBackend } from '@core/models/eti/backend/evaluacion-backend';
-import { IEvaluacionWithNumComentarioBackend } from '@core/models/eti/backend/evaluacion-with-num-comentario-backend';
-import { IInformeBackend } from '@core/models/eti/backend/informe-backend';
-import { IMemoriaBackend } from '@core/models/eti/backend/memoria-backend';
-import { IMemoriaPeticionEvaluacionBackend } from '@core/models/eti/backend/memoria-peticion-evaluacion-backend';
-import { IRespuestaBackend } from '@core/models/eti/backend/respuesta-backend';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IConvocatoriaReunion } from '@core/models/eti/convocatoria-reunion';
 import { IDocumentacionMemoria } from '@core/models/eti/documentacion-memoria';
 import { IEstadoMemoria } from '@core/models/eti/estado-memoria';
@@ -26,27 +12,72 @@ import { IMemoria } from '@core/models/eti/memoria';
 import { IMemoriaPeticionEvaluacion } from '@core/models/eti/memoria-peticion-evaluacion';
 import { IRespuesta } from '@core/models/eti/respuesta';
 import { ITipoDocumento } from '@core/models/eti/tipo-documento';
+import { IEvaluacionResponse } from '@core/services/eti/evaluacion/evaluacion-response';
+import { IEvaluacionWithNumComentarioResponse } from '@core/services/eti/evaluacion/evaluacion-with-num-comentario-response';
+import { EVALUACION_WITH_NUM_COMENTARIO_RESPONSE_CONVERTER } from '@core/services/eti/evaluacion/evaluacion-with-num-comentario-response.converter';
+import { MEMORIA_PETICION_EVALUACION_RESPONSE_CONVERTER } from '@core/services/eti/memoria/memoria-peticion-evaluacion-response.converter';
+import { IMemoriaResponse } from '@core/services/eti/memoria/memoria-response';
+import { MEMORIA_RESPONSE_CONVERTER } from '@core/services/eti/memoria/memoria-response.converter';
+import { IRespuestaResponse } from '@core/services/eti/respuesta/respuesta-response';
+import { RESPUESTA_RESPONSE_CONVERTER } from '@core/services/eti/respuesta/respuesta-response.converter';
 import { environment } from '@env';
-import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
-import { NGXLogger } from 'ngx-logger';
+import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IConvocatoriaReunionResponse } from './convocatoria-reunion/convocatoria-reunion-response';
+import { CONVOCATORIA_REUNION_RESPONSE_CONVERTER } from './convocatoria-reunion/convocatoria-reunion-response.converter';
 import { IEstadoMemoriaResponse } from './estado-memoria/estado-memoria-response';
 import { ESTADO_MEMORIA_RESPONSE_CONVERTER } from './estado-memoria/estado-memoria-response.converter';
+import { EVALUACION_RESPONSE_CONVERTER } from './evaluacion/evaluacion-response.converter';
+import { IDocumentacionMemoriaResponse } from './memoria/documentacion-memoria-response';
+import { DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER } from './memoria/documentacion-memoria-response.converter';
+import { IInformeResponse } from './memoria/informe-response';
+import { INFORME_RESPONSE_CONVERTER } from './memoria/informe-response.converter';
+import { IMemoriaPeticionEvaluacionResponse } from './memoria/memoria-peticion-evaluacion-response';
+import { IMemoriaRequest } from './memoria/memoria-request';
+import { MEMORIA_REQUEST_CONVERTER } from './memoria/memoria-request.converter';
+
+const _MemoriaServiceMixinBase:
+  CreateCtor<IMemoria, IMemoria, IMemoriaRequest, IMemoriaResponse> &
+  UpdateCtor<number, IMemoria, IMemoria, IMemoriaResponse, IMemoriaResponse> &
+  FindByIdCtor<number, IMemoria, IMemoriaResponse> &
+  FindAllCtor<IMemoriaPeticionEvaluacion, IMemoriaPeticionEvaluacionResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinFindById(
+      mixinUpdate(
+        mixinCreate(
+          SgiRestBaseService,
+          MEMORIA_REQUEST_CONVERTER,
+          MEMORIA_RESPONSE_CONVERTER
+        ),
+        MEMORIA_RESPONSE_CONVERTER,
+        MEMORIA_RESPONSE_CONVERTER
+      ),
+      MEMORIA_RESPONSE_CONVERTER
+    ),
+    MEMORIA_PETICION_EVALUACION_RESPONSE_CONVERTER
+  );
 
 @Injectable({
   providedIn: 'root'
 })
-export class MemoriaService extends SgiMutableRestService<number, IMemoriaBackend, IMemoria> {
+export class MemoriaService extends _MemoriaServiceMixinBase {
   private static readonly MAPPING = '/memorias';
 
-  constructor(private readonly logger: NGXLogger, protected http: HttpClient) {
+  constructor(protected http: HttpClient) {
     super(
-      MemoriaService.name,
       `${environment.serviceServers.eti}${MemoriaService.MAPPING}`,
-      http,
-      MEMORIA_CONVERTER
+      http
     );
+  }
+
+  /**
+  * Elimina la memoria
+  *
+  * @param idMemoria Identifiacdor de la memoria.
+  */
+  deleteById(idMemoria: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${idMemoria}`);
   }
 
   /**
@@ -57,10 +88,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    */
   getDocumentacionesTipoEvaluacion(idMemoria: number, idTipoEvaluacion: number, options?: SgiRestFindOptions)
     : Observable<SgiRestListResult<IDocumentacionMemoria>> {
-    return this.find<IDocumentacionMemoriaBackend, IDocumentacionMemoria>(
+    return this.find<IDocumentacionMemoriaResponse, IDocumentacionMemoria>(
       `${this.endpointUrl}/${idMemoria}/documentaciones/${idTipoEvaluacion}`,
       options,
-      DOCUMENTACION_MEMORIA_CONVERTER
+      DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER
     );
   }
 
@@ -72,10 +103,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    */
   getEvaluacionesAnteriores(memoriaId: number, evaluacionId: number, tipoComentarioId: number, options?: SgiRestFindOptions)
     : Observable<SgiRestListResult<IEvaluacionWithNumComentario>> {
-    return this.find<IEvaluacionWithNumComentarioBackend, IEvaluacionWithNumComentario>(
+    return this.find<IEvaluacionWithNumComentarioResponse, IEvaluacionWithNumComentario>(
       `${this.endpointUrl}/${memoriaId}/evaluaciones-anteriores/${evaluacionId}/${tipoComentarioId}`,
       options,
-      EVALUACION_WITH_NUM_COMENTARIO_CONVERTER
+      EVALUACION_WITH_NUM_COMENTARIO_RESPONSE_CONVERTER
     );
   }
 
@@ -87,10 +118,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @return las memorias asignables a la convocatoria.
    */
   findAllMemoriasAsignablesConvocatoria(idConvocatoria: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IMemoria>> {
-    return this.find<IMemoriaBackend, IMemoria>(
+    return this.find<IMemoriaResponse, IMemoria>(
       `${this.endpointUrl}/asignables/${idConvocatoria}`,
       options,
-      MEMORIA_CONVERTER
+      MEMORIA_RESPONSE_CONVERTER
     );
   }
 
@@ -101,10 +132,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @return las memorias asignables a la convocatoria de ese tipo seguimiento.
    */
   findAllAsignablesTipoConvocatoriaSeguimiento(options?: SgiRestFindOptions): Observable<SgiRestListResult<IMemoria>> {
-    return this.find<IMemoriaBackend, IMemoria>(
+    return this.find<IMemoriaResponse, IMemoria>(
       `${this.endpointUrl}/tipo-convocatoria-seg`,
       options,
-      MEMORIA_CONVERTER
+      MEMORIA_RESPONSE_CONVERTER
     );
   }
 
@@ -116,10 +147,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    *
    */
   findAllAsignablesTipoConvocatoriaOrdExt(options?: SgiRestFindOptions): Observable<SgiRestListResult<IMemoria>> {
-    return this.find<IMemoriaBackend, IMemoria>(
+    return this.find<IMemoriaResponse, IMemoria>(
       `${this.endpointUrl}/tipo-convocatoria-ord-ext`,
       options,
-      MEMORIA_CONVERTER
+      MEMORIA_RESPONSE_CONVERTER
     );
   }
 
@@ -130,23 +161,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @return las memorias
    */
   findAllMemoriasEvaluacionByPersonaRef(options?: SgiRestFindOptions): Observable<SgiRestListResult<IMemoriaPeticionEvaluacion>> {
-    return this.find<IMemoriaPeticionEvaluacionBackend, IMemoriaPeticionEvaluacion>(
+    return this.find<IMemoriaPeticionEvaluacionResponse, IMemoriaPeticionEvaluacion>(
       `${this.endpointUrl}/persona`,
       options,
-      MEMORIA_PETICION_EVALUACION_CONVERTER
-    );
-  }
-
-  /**
-   * Se sobrecarga el metodo para permirtir la sobreescritura del findAll y retornar otro tipo.
-   * Siempre se retornará {@link IMemoriaPeticionEvaluacion}
-   */
-  findAll(options?: SgiRestFindOptions): Observable<SgiRestListResult<IMemoria>>;
-  findAll(options?: SgiRestFindOptions): Observable<SgiRestListResult<IMemoria | IMemoriaPeticionEvaluacion>> {
-    return this.find<IMemoriaPeticionEvaluacionBackend, IMemoriaPeticionEvaluacion>(
-      `${this.endpointUrl}`,
-      options,
-      MEMORIA_PETICION_EVALUACION_CONVERTER
+      MEMORIA_PETICION_EVALUACION_RESPONSE_CONVERTER
     );
   }
 
@@ -156,10 +174,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param id id de la memoria.
    */
   findDocumentacionFormulario(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IDocumentacionMemoria>> {
-    return this.find<IDocumentacionMemoriaBackend, IDocumentacionMemoria>(
+    return this.find<IDocumentacionMemoriaResponse, IDocumentacionMemoria>(
       `${this.endpointUrl}/${id}/documentacion-formulario`,
       options,
-      DOCUMENTACION_MEMORIA_CONVERTER
+      DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER
     );
   }
 
@@ -169,10 +187,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param id id de la memoria.
    */
   findDocumentacionSeguimientoAnual(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IDocumentacionMemoria>> {
-    return this.find<IDocumentacionMemoriaBackend, IDocumentacionMemoria>(
+    return this.find<IDocumentacionMemoriaResponse, IDocumentacionMemoria>(
       `${this.endpointUrl}/${id}/documentacion-seguimiento-anual`,
       options,
-      DOCUMENTACION_MEMORIA_CONVERTER
+      DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER
     );
   }
 
@@ -182,10 +200,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param id id de la memoria.
    */
   findDocumentacionSeguimientoFinal(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IDocumentacionMemoria>> {
-    return this.find<IDocumentacionMemoriaBackend, IDocumentacionMemoria>(
+    return this.find<IDocumentacionMemoriaResponse, IDocumentacionMemoria>(
       `${this.endpointUrl}/${id}/documentacion-seguimiento-final`,
       options,
-      DOCUMENTACION_MEMORIA_CONVERTER
+      DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER
     );
   }
 
@@ -195,55 +213,55 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param id id de la memoria.
    */
   findDocumentacionRetrospectiva(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IDocumentacionMemoria>> {
-    return this.find<IDocumentacionMemoriaBackend, IDocumentacionMemoria>(
+    return this.find<IDocumentacionMemoriaResponse, IDocumentacionMemoria>(
       `${this.endpointUrl}/${id}/documentacion-retrospectiva`,
       options,
-      DOCUMENTACION_MEMORIA_CONVERTER
+      DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER
     );
   }
 
   createDocumentacionInicial(id: number, documentacionMemoria: IDocumentacionMemoria): Observable<IDocumentacionMemoria> {
-    return this.http.post<IDocumentacionMemoriaBackend>(
+    return this.post<IDocumentacionMemoriaResponse, IDocumentacionMemoriaResponse>(
       `${this.endpointUrl}/${id}/documentacion-inicial`,
-      DOCUMENTACION_MEMORIA_CONVERTER.fromTarget(documentacionMemoria)
+      DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER.fromTarget(documentacionMemoria)
     ).pipe(
-      map(response => DOCUMENTACION_MEMORIA_CONVERTER.toTarget(response))
+      map(response => DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
   createDocumentacionInicialInvestigador(id: number, documentacionMemoria: IDocumentacionMemoria): Observable<IDocumentacionMemoria> {
-    return this.http.post<IDocumentacionMemoriaBackend>(
+    return this.post<IDocumentacionMemoriaResponse, IDocumentacionMemoriaResponse>(
       `${this.endpointUrl}/${id}/documentacion-inicial/investigador`,
-      DOCUMENTACION_MEMORIA_CONVERTER.fromTarget(documentacionMemoria)
+      DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER.fromTarget(documentacionMemoria)
     ).pipe(
-      map(response => DOCUMENTACION_MEMORIA_CONVERTER.toTarget(response))
+      map(response => DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
   createDocumentacionSeguimientoAnual(id: number, documentacionMemoria: IDocumentacionMemoria): Observable<IDocumentacionMemoria> {
-    return this.http.post<IDocumentacionMemoriaBackend>(
+    return this.post<IDocumentacionMemoriaResponse, IDocumentacionMemoriaResponse>(
       `${this.endpointUrl}/${id}/documentacion-seguimiento-anual`,
-      DOCUMENTACION_MEMORIA_CONVERTER.fromTarget(documentacionMemoria)
+      DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER.fromTarget(documentacionMemoria)
     ).pipe(
-      map(response => DOCUMENTACION_MEMORIA_CONVERTER.toTarget(response))
+      map(response => DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
   createDocumentacionSeguimientoFinal(id: number, documentacionMemoria: IDocumentacionMemoria): Observable<IDocumentacionMemoria> {
-    return this.http.post<IDocumentacionMemoriaBackend>(
+    return this.post<IDocumentacionMemoriaResponse, IDocumentacionMemoriaResponse>(
       `${this.endpointUrl}/${id}/documentacion-seguimiento-final`,
-      DOCUMENTACION_MEMORIA_CONVERTER.fromTarget(documentacionMemoria)
+      DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER.fromTarget(documentacionMemoria)
     ).pipe(
-      map(response => DOCUMENTACION_MEMORIA_CONVERTER.toTarget(response))
+      map(response => DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
   createDocumentacionRetrospectiva(id: number, documentacionMemoria: IDocumentacionMemoria): Observable<IDocumentacionMemoria> {
-    return this.http.post<IDocumentacionMemoriaBackend>(
+    return this.post<IDocumentacionMemoriaResponse, IDocumentacionMemoriaResponse>(
       `${this.endpointUrl}/${id}/documentacion-retrospectiva`,
-      DOCUMENTACION_MEMORIA_CONVERTER.fromTarget(documentacionMemoria)
+      DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER.fromTarget(documentacionMemoria)
     ).pipe(
-      map(response => DOCUMENTACION_MEMORIA_CONVERTER.toTarget(response))
+      map(response => DOCUMENTACION_MEMORIA_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -265,10 +283,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param memoriaId id memoria.
    */
   getEvaluacionesMemoria(memoriaId: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IEvaluacion>> {
-    return this.find<IEvaluacionBackend, IEvaluacion>(
+    return this.find<IEvaluacionResponse, IEvaluacion>(
       `${this.endpointUrl}/${memoriaId}/evaluaciones`,
       options,
-      EVALUACION_CONVERTER
+      EVALUACION_RESPONSE_CONVERTER
     );
   }
 
@@ -278,10 +296,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @return listado de informes.
    */
   findInformesSecretaria(id: number): Observable<SgiRestListResult<IInforme>> {
-    return this.find<IInformeBackend, IInforme>(
+    return this.find<IInformeResponse, IInforme>(
       `${this.endpointUrl}/${id}/informes`,
       null,
-      INFORME_CONVERTER
+      INFORME_RESPONSE_CONVERTER
     );
   }
 
@@ -326,10 +344,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param id identificador de la memoria
    */
   recuperarEstadoAnterior(id: number): Observable<IMemoria> {
-    return this.http.get<IMemoriaBackend>(
+    return this.get<IMemoriaResponse>(
       `${this.endpointUrl}/${id}/recuperar-estado-anterior`
     ).pipe(
-      map(response => this.converter.toTarget(response))
+      map(response => MEMORIA_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -339,7 +357,7 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param memoriaId id memoria.
    */
   enviarSecretaria(memoriaId: number): Observable<void> {
-    return this.http.put<void>(`${this.endpointUrl}/${memoriaId}/enviar-secretaria`, null);
+    return this.put<void, void>(`${this.endpointUrl}/${memoriaId}/enviar-secretaria`, null);
   }
 
   /**
@@ -348,7 +366,7 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param memoriaId id memoria.
    */
   enviarSecretariaRetrospectiva(memoriaId: number): Observable<void> {
-    return this.http.put<void>(`${this.endpointUrl}/${memoriaId}/enviar-secretaria-retrospectiva`, null);
+    return this.put<void, void>(`${this.endpointUrl}/${memoriaId}/enviar-secretaria-retrospectiva`, null);
   }
 
   /**
@@ -357,8 +375,8 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param memoriaId id memoria.
    * @param comentario un comentario
    */
-  indicarSubsanacion(memoriaId: number, comentario: string): Observable<void> {
-    return this.http.patch<void>(`${this.endpointUrl}/${memoriaId}/indicar-subsanacion`, comentario);
+  indicarSubsanacion(memoriaId: number, comentario: I18nFieldValue[]): Observable<void> {
+    return this.http.patch<void>(`${this.endpointUrl}/${memoriaId}/indicar-subsanacion`, comentario ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(comentario) : []);
   }
 
   /**
@@ -367,11 +385,11 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param id identificador de la memoria de la que se parte para crear la nueva memoria.
    */
   createMemoriaModificada(memoria: IMemoria, id: number): Observable<IMemoria> {
-    return this.http.post<IMemoriaBackend>(
+    return this.post<IMemoriaRequest, IMemoriaResponse>(
       `${this.endpointUrl}/${id}/crear-memoria-modificada`,
-      this.converter.fromTarget(memoria)
+      MEMORIA_REQUEST_CONVERTER.fromTarget(memoria)
     ).pipe(
-      map(response => this.converter.toTarget(response))
+      map(response => MEMORIA_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -380,18 +398,18 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param idComite identificador del comite
    */
   findConvocatoriaReunionProxima(idComite: number): Observable<IConvocatoriaReunion> {
-    return this.http.get<IConvocatoriaReunionBackend>(
+    return this.get<IConvocatoriaReunionResponse>(
       `${this.endpointUrl}/${idComite}/convocatoria-reunion/proxima`
     ).pipe(
-      map(response => CONVOCATORIA_REUNION_CONVERTER.toTarget(response))
+      map(response => CONVOCATORIA_REUNION_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
   getTiposDocumentoRespuestasFormulario(id: number): Observable<ITipoDocumento[]> {
-    return this.find<IRespuestaBackend, IRespuesta>(
+    return this.find<IRespuestaResponse, IRespuesta>(
       `${this.endpointUrl}/${id}/respuestas-documento`,
       null,
-      RESPUESTA_CONVERTER
+      RESPUESTA_RESPONSE_CONVERTER
     ).pipe(
       map(response => response.items.map(item => item.tipoDocumento))
     );
@@ -402,10 +420,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param idMemoria identificador de la memoria
    */
   findInformeUltimaVersion(idMemoria: number): Observable<IInforme> {
-    return this.http.get<IInformeBackend>(
+    return this.get<IInformeResponse>(
       `${this.endpointUrl}/${idMemoria}/informe/ultima-version`
     ).pipe(
-      map(response => INFORME_CONVERTER.toTarget(response))
+      map(response => INFORME_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -415,10 +433,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * * @param idTipoEvaluacion el identificador del tipo de evaluación
    */
   findInformeUltimaVersionTipoEvaluacion(idMemoria: number, idTipoEvaluacion: number): Observable<IInforme> {
-    return this.http.get<IInformeBackend>(
+    return this.get<IInformeResponse>(
       `${this.endpointUrl}/${idMemoria}/informe/ultima-version/tipo/${idTipoEvaluacion}`
     ).pipe(
-      map(response => INFORME_CONVERTER.toTarget(response))
+      map(response => INFORME_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -452,7 +470,7 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param id identificador de la memoria
    */
   getEstadoActual(id: number): Observable<IEstadoMemoria> {
-    return this.http.get<IEstadoMemoriaResponse>(
+    return this.get<IEstadoMemoriaResponse>(
       `${this.endpointUrl}/${id}/estado-actual`
     ).pipe(
       map(response => ESTADO_MEMORIA_RESPONSE_CONVERTER.toTarget(response))
@@ -465,10 +483,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @param id identificador de la memoria
    */
   getLastEvaluacionMemoria(id: number): Observable<IEvaluacion> {
-    return this.http.get<IEvaluacionBackend>(
+    return this.get<IEvaluacionResponse>(
       `${this.endpointUrl}/${id}/last-evaluacion`
     ).pipe(
-      map(response => EVALUACION_CONVERTER.toTarget(response))
+      map(response => EVALUACION_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -493,10 +511,10 @@ export class MemoriaService extends SgiMutableRestService<number, IMemoriaBacken
    * @return las memorias asignables a la convocatoria.
    */
   findAllMemoriasAsignablesPeticionEvaluacion(idPeticionEvaluacion: number): Observable<SgiRestListResult<IMemoria>> {
-    return this.find<IMemoriaBackend, IMemoria>(
+    return this.find<IMemoriaResponse, IMemoria>(
       `${this.endpointUrl}/asignables-peticion-evaluacion/${idPeticionEvaluacion}`,
       null,
-      MEMORIA_CONVERTER
+      MEMORIA_RESPONSE_CONVERTER
     );
   }
 

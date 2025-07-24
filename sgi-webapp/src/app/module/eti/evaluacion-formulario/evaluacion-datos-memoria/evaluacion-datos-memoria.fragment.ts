@@ -3,6 +3,7 @@ import { IMemoria } from '@core/models/eti/memoria';
 import { FormFragment } from '@core/services/action-service';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
+import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -11,6 +12,7 @@ export class EvaluacionDatosMemoriaFragment extends FormFragment<IMemoria> {
   private memoria: IMemoria;
 
   constructor(
+    private readonly logger: NGXLogger,
     private fb: FormBuilder,
     key: number,
     private service: EvaluacionService,
@@ -22,10 +24,10 @@ export class EvaluacionDatosMemoriaFragment extends FormFragment<IMemoria> {
 
   protected buildFormGroup(): FormGroup {
     const fb = this.fb.group({
-      comite: [{ value: '', disabled: true }],
+      comite: [{ value: null, disabled: true }],
       fechaEvaluacion: [{ value: null, disabled: true }],
       referenciaMemoria: [{ value: '', disabled: true }],
-      solicitante: [{ value: '', disabled: true }],
+      solicitante: [{ value: null, disabled: true }],
       version: [{ value: '', disabled: true }]
     });
     return fb;
@@ -46,7 +48,8 @@ export class EvaluacionDatosMemoriaFragment extends FormFragment<IMemoria> {
                 memoria.peticionEvaluacion.solicitante = persona;
                 return memoria;
               }),
-              catchError(() => {
+              catchError((err) => {
+                this.logger.error(err);
                 return of(memoria);
               })
             );
@@ -60,11 +63,11 @@ export class EvaluacionDatosMemoriaFragment extends FormFragment<IMemoria> {
 
   buildPatch(value: IMemoria): { [key: string]: any } {
     const patch = {
-      comite: value.comite.comite,
+      comite: value.comite,
       fechaEvaluacion: value.fechaEnvioSecretaria,
       referenciaMemoria: value.numReferencia,
       version: value.version,
-      solicitante: `${value?.peticionEvaluacion.solicitante?.nombre} ${value?.peticionEvaluacion.solicitante?.apellidos}`
+      solicitante: value?.peticionEvaluacion.solicitante
     };
     return patch;
   }

@@ -14,6 +14,7 @@ import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -62,11 +63,12 @@ export class ConvocatoriaConfiguracionSolicitudesComponent
 
   constructor(
     protected actionService: ConvocatoriaActionService,
+    private readonly languageService: LanguageService,
     public translate: TranslateService,
     private matDialog: MatDialog,
     private dialogService: DialogService
   ) {
-    super(actionService.FRAGMENT.CONFIGURACION_SOLICITUDES, actionService);
+    super(actionService.FRAGMENT.CONFIGURACION_SOLICITUDES, actionService, translate);
 
     this.formPart = this.fragment as ConvocatoriaConfiguracionSolicitudesFragment;
 
@@ -90,17 +92,17 @@ export class ConvocatoriaConfiguracionSolicitudesComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IDocumentoRequeridoSolicitud>, property: string) => {
         switch (property) {
           case 'nombre':
-            return wrapper.value.tipoDocumento.nombre;
+            return wrapper.value.tipoDocumento?.nombre ? this.languageService.getFieldValue(wrapper.value.tipoDocumento?.nombre) : '';
           case 'descripcion':
-            return wrapper.value.tipoDocumento.descripcion;
+            return wrapper.value.tipoDocumento.descripcion ? this.languageService.getFieldValue(wrapper.value.tipoDocumento?.descripcion) : '';
           case 'observaciones':
-            return wrapper.value.observaciones;
+            return wrapper.value.observaciones ? this.languageService.getFieldValue(wrapper.value.observaciones) : '';
           default:
             return wrapper[property];
         }
@@ -118,7 +120,7 @@ export class ConvocatoriaConfiguracionSolicitudesComponent
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_CONFIGURACION_SOLICITUD_DOCUMENTO_REQUERIDO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -148,7 +150,7 @@ export class ConvocatoriaConfiguracionSolicitudesComponent
   }
 
   displayerConvocatoriaFase(convocatoriaFase: IConvocatoriaFase): string {
-    return convocatoriaFase?.tipoFase?.nombre ?? '';
+    return this.languageService.getFieldValue(convocatoriaFase?.tipoFase?.nombre) ?? '';
   }
 
   /**

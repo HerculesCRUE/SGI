@@ -1,30 +1,48 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_CONVERTER } from '@core/converters/csp/proyecto-periodo-seguimiento-documento.converter';
-import { PROYECTO_PERIODO_SEGUIMIENTO_CONVERTER } from '@core/converters/csp/proyecto-periodo-seguimiento.converter';
-import { IProyectoPeriodoSeguimientoBackend } from '@core/models/csp/backend/proyecto-periodo-seguimiento-backend';
-import { IProyectoPeriodoSeguimientoDocumentoBackend } from '@core/models/csp/backend/proyecto-periodo-seguimiento-documento-backend';
 import { IProyectoPeriodoSeguimiento } from '@core/models/csp/proyecto-periodo-seguimiento';
 import { IProyectoPeriodoSeguimientoDocumento } from '@core/models/csp/proyecto-periodo-seguimiento-documento';
 import { environment } from '@env';
-import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
+import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IProyectoPeriodoSeguimientoDocumentoResponse } from './proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-documento-response';
+import { PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_RESPONSE_CONVERTER } from './proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-documento-response.converter';
 import { PROYECTO_PERIODO_SEGUIMIENTO_PRESENTACION_DOCUMENTACION_REQUEST_CONVERTER } from './proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-presentacion-documentacion-request.converter';
+import { IProyectoPeriodoSeguimientoResponse } from './proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-response';
+import { PROYECTO_PERIODO_SEGUIMIENTO_RESPONSE_CONVERTER } from './proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-response.converter';
+
+const _ProyectoPeriodoSeguimientoServiceMixinBase:
+  CreateCtor<IProyectoPeriodoSeguimiento, IProyectoPeriodoSeguimiento, IProyectoPeriodoSeguimientoResponse, IProyectoPeriodoSeguimientoResponse> &
+  UpdateCtor<number, IProyectoPeriodoSeguimiento, IProyectoPeriodoSeguimiento, IProyectoPeriodoSeguimientoResponse, IProyectoPeriodoSeguimientoResponse> &
+  FindAllCtor<IProyectoPeriodoSeguimiento, IProyectoPeriodoSeguimientoResponse> &
+  FindByIdCtor<number, IProyectoPeriodoSeguimiento, IProyectoPeriodoSeguimientoResponse> &
+  typeof SgiRestBaseService =
+  mixinFindById(
+    mixinFindAll(
+      mixinUpdate(
+        mixinCreate(
+          SgiRestBaseService,
+          PROYECTO_PERIODO_SEGUIMIENTO_RESPONSE_CONVERTER,
+          PROYECTO_PERIODO_SEGUIMIENTO_RESPONSE_CONVERTER
+        ),
+        PROYECTO_PERIODO_SEGUIMIENTO_RESPONSE_CONVERTER,
+        PROYECTO_PERIODO_SEGUIMIENTO_RESPONSE_CONVERTER
+      ),
+      PROYECTO_PERIODO_SEGUIMIENTO_RESPONSE_CONVERTER
+    ),
+    PROYECTO_PERIODO_SEGUIMIENTO_RESPONSE_CONVERTER);
 
 @Injectable({
   providedIn: 'root'
 })
-export class ProyectoPeriodoSeguimientoService
-  extends SgiMutableRestService<number, IProyectoPeriodoSeguimientoBackend, IProyectoPeriodoSeguimiento>  {
+export class ProyectoPeriodoSeguimientoService extends _ProyectoPeriodoSeguimientoServiceMixinBase {
   private static readonly MAPPING = '/proyectoperiodoseguimientos';
 
   constructor(protected http: HttpClient) {
     super(
-      ProyectoPeriodoSeguimientoService.name,
       `${environment.serviceServers.csp}${ProyectoPeriodoSeguimientoService.MAPPING}`,
-      http,
-      PROYECTO_PERIODO_SEGUIMIENTO_CONVERTER
+      http
     );
   }
 
@@ -47,10 +65,10 @@ export class ProyectoPeriodoSeguimientoService
    * @return la lista de ProyectoPeridoSeguimientoDocumento
    */
   findDocumentos(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyectoPeriodoSeguimientoDocumento>> {
-    return this.find<IProyectoPeriodoSeguimientoDocumentoBackend, IProyectoPeriodoSeguimientoDocumento>(
+    return this.find<IProyectoPeriodoSeguimientoDocumentoResponse, IProyectoPeriodoSeguimientoDocumento>(
       `${this.endpointUrl}/${id}/proyectoperiodoseguimientodocumentos`,
       options,
-      PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_CONVERTER
+      PROYECTO_PERIODO_SEGUIMIENTO_DOCUMENTO_RESPONSE_CONVERTER
     );
   }
 
@@ -69,11 +87,15 @@ export class ProyectoPeriodoSeguimientoService
 
   updateFechaPresentacionDocumentacion(periodoSeguimiento: IProyectoPeriodoSeguimiento) {
     const url = `${this.endpointUrl}/${periodoSeguimiento.id}/presentacion-documentacion`;
-    return this.http.patch<IProyectoPeriodoSeguimientoBackend>(
+    return this.http.patch<IProyectoPeriodoSeguimientoResponse>(
       url,
       PROYECTO_PERIODO_SEGUIMIENTO_PRESENTACION_DOCUMENTACION_REQUEST_CONVERTER.fromTarget(periodoSeguimiento),
     ).pipe(
-      map(response => PROYECTO_PERIODO_SEGUIMIENTO_CONVERTER.toTarget(response))
+      map(response => PROYECTO_PERIODO_SEGUIMIENTO_RESPONSE_CONVERTER.toTarget(response))
     );
+  }
+
+  deleteById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${id}`);
   }
 }

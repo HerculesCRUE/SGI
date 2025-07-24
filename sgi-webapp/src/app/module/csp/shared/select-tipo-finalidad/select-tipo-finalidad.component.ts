@@ -1,16 +1,18 @@
-import { coerceNumberProperty } from '@angular/cdk/coercion';
+import { coerceBooleanProperty, coerceNumberProperty } from '@angular/cdk/coercion';
 import { PlatformLocation } from '@angular/common';
 import { Component, Input, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
+import { SelectValue } from '@core/component/select-common/select-common.component';
 import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
 import { Module } from '@core/module';
 import { ModeloEjecucionService } from '@core/services/csp/modelo-ejecucion.service';
 import { TipoFinalidadService } from '@core/services/csp/tipo-finalidad.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
+import { LanguageService } from '@core/services/language.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable, of } from 'rxjs';
@@ -56,6 +58,22 @@ export class SelectTipoFinalidadComponent extends SelectServiceExtendedComponent
   private _modeloEjecucionId: number;
 
   @Input()
+  get modeloEjecucionIdRequired(): boolean {
+    return this._modeloEjecucionIdRequired;
+  }
+  set modeloEjecucionIdRequired(value: boolean) {
+    const newValue = coerceBooleanProperty(value);
+    const changes = this._modeloEjecucionIdRequired !== newValue;
+    this._modeloEjecucionIdRequired = newValue;
+    if (this.ready && changes) {
+      this.loadData();
+    }
+    this.stateChanges.next();
+  }
+  // tslint:disable-next-line: variable-name
+  private _modeloEjecucionIdRequired: boolean = false;
+
+  @Input()
   get excluded(): ITipoFinalidad[] {
     return this._excluded;
   }
@@ -86,6 +104,7 @@ export class SelectTipoFinalidadComponent extends SelectServiceExtendedComponent
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation: PlatformLocation,
     dialog: MatDialog,
     private service: TipoFinalidadService,
@@ -93,7 +112,7 @@ export class SelectTipoFinalidadComponent extends SelectServiceExtendedComponent
     private authService: SgiAuthService,
     private unidadGestionService: UnidadGestionService,
   ) {
-    super(defaultErrorStateMatcher, ngControl, platformLocation, dialog);
+    super(defaultErrorStateMatcher, ngControl, languageService, platformLocation, dialog);
 
     this.disableWith = (option) => {
       if (this.excluded.length) {
@@ -103,9 +122,16 @@ export class SelectTipoFinalidadComponent extends SelectServiceExtendedComponent
     };
 
     this.addTarget = TipoFinalidadModalComponent;
+    this.sortWith = (o1: SelectValue<ITipoFinalidad>, o2: SelectValue<ITipoFinalidad>) => {
+      return o1?.displayText.localeCompare(o2?.displayText)
+    };
   }
 
   protected loadServiceOptions(): Observable<ITipoFinalidad[]> {
+    if (this.modeloEjecucionIdRequired && !!!this.modeloEjecucionId) {
+      return of([] as ITipoFinalidad[]);
+    }
+
     if (this.requestByModeloEjecucion) {
       // If empty, null or zero, an empty array is returned
       if (!!!this.modeloEjecucionId) {

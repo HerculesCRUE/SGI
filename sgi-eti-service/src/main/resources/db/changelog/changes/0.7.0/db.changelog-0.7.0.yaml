@@ -1,0 +1,11 @@
+databaseChangeLog:
+  - include:
+      file: classpath*:db/changelog/changes/0.7.0/00.07.00-update-initial-database.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.7.0/00.07.00-update-initial-master-data-common.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.7.0/00.07.00-update-initial-master-data-es.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.7.0/00.07.00-update-initial-master-data-en.xml
+  - include:
+      file: classpath*:db/changelog/changes/0.7.0/00.07.00-update-initial-master-data-eu.xml

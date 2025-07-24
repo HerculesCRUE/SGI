@@ -168,18 +168,12 @@ public class SolicitudProteccionService {
         .map(solicitudProteccionExistente -> {
           solicitudProteccionExistente.setTitulo(solicitudProteccion.getTitulo());
           solicitudProteccionExistente.setFechaPrioridadSolicitud(solicitudProteccion.getFechaPrioridadSolicitud());
-          if (!solicitudProteccionExistente.getViaProteccion().getId()
-              .equals(solicitudProteccion.getViaProteccion().getId())) {
-            Set<ConstraintViolation<SolicitudProteccion>> result = validator.validate(solicitudProteccion,
-                SolicitudProteccion.OnActualizarViaProteccion.class);
-            if (!result.isEmpty()) {
-              throw new ConstraintViolationException(result);
-            }
-            ViaProteccion viaProteccionActualizar = this.viaProteccionRepository
-                .findById(solicitudProteccion.getViaProteccion().getId())
-                .orElseThrow(() -> new ViaProteccionNotFoundException(solicitudProteccion.getViaProteccion().getId()));
-            solicitudProteccionExistente.setViaProteccion(viaProteccionActualizar);
-          }
+
+          ViaProteccion viaProteccionActualizar = this.viaProteccionRepository
+              .findById(solicitudProteccion.getViaProteccion().getId())
+              .orElseThrow(() -> new ViaProteccionNotFoundException(solicitudProteccion.getViaProteccion().getId()));
+          solicitudProteccionExistente.setViaProteccion(viaProteccionActualizar);
+
           solicitudProteccionExistente.setNumeroSolicitud(solicitudProteccion.getNumeroSolicitud());
           solicitudProteccionExistente.setComentarios(solicitudProteccion.getComentarios());
           solicitudProteccionExistente.setNumeroRegistro(solicitudProteccion.getNumeroRegistro());

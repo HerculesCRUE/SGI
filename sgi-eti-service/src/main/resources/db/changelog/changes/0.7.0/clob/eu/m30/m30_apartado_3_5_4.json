@@ -1,0 +1,139 @@
+[
+  {
+    "key": "ap3_5_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.4 Genetikoki eraldatutako organismoa"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4 || !formState.mainModel.ap3_4.ap3_4_3 || !formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio || formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>1 motako GEOa: izaki bizidunengan gaixotasun bat edo ingurumenean ondorio kaltegarri bat eragiteko probabilitate hutsala duena.</p><p>2 motako GEOa: izaki bizidunei gaixotasun bat eragin diezaiekeena, kolektibitatera hedatzea oso zaila izanik eta, oro har, profilaxia edo tratamendu eraginkorra duena; edo ingurumenean ondorio kaltegarri txikia eragin dezakeena.</p><p>3 motako GEOa: izaki bizidunei gaixotasun larria eragin diezaiekeena, kolektibitatera hedatzeko arriskua duena eta, oro har, profilaxia edo tratamendu eraginkorra duena; edo ingurumenean ondorio kaltegarria eragin dezakeena.</p><p>4 motako GEOa: izaki bizidunei gaixotasun larria eragin diezaiekeena, kolektibitatera hedatzeko probabilitate handia duena eta, oro har, profilaxirik edo tratamendu eraginkorrik ez duena; edo ingurumenean ondorio kaltegarri larria eragin dezakeena.</p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "microorganismosParasitosTable",
+        "templateOptions": {
+          "entity": "genetikoki eraldatutako organismoa",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "genetikoki eraldatutako organismoa"
+          },
+          "fieldGroup": [
+            {
+              "key": "organismoModificadoNombre",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Izena",
+                "order": 10,
+                "placeholder": "Izena",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoHuesped",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Ostalaria",
+                "order": 20,
+                "placeholder": "Ostalaria",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoVectorUtilizado",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Erabilitako bektorea",
+                "order": 30,
+                "placeholder": "Erabilitako bektorea",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoInsertoEspecie",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Elementu txertatua eta elementu txertatuaren jatorrizko espeziea",
+                "order": 40,
+                "placeholder": "Elementu txertatua eta elementu txertatuaren jatorrizko espeziea",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoProteina",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Kodetzen duen proteina",
+                "order": 50,
+                "placeholder": "Kodetzen duen proteina",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoGrupoRiesgo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Arrisku taldea",
+                "order": 60,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "1. taldea"
+                  },
+                  {
+                    "value": "2",
+                    "label": "2. taldea"
+                  },
+                  {
+                    "value": "3",
+                    "label": "3. taldea"
+                  },
+                  {
+                    "value": "4",
+                    "label": "4. taldea"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "organismoModificadoVolumenMaximo",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Aldi bakoitzean erabiltzen den gehienezko lagin bolumena edo animalia kopurua",
+                "order": 70,
+                "placeholder": "Aldi bakoitzean erabiltzen den gehienezko lagin bolumena edo animalia kopurua",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -12,7 +12,8 @@ import org.springframework.stereotype.Repository;
  * Spring Data JPA repository para {@link Bloque}.
  */
 @Repository
-public interface BloqueRepository extends JpaRepository<Bloque, Long>, JpaSpecificationExecutor<Bloque> {
+public interface BloqueRepository
+    extends JpaRepository<Bloque, Long>, JpaSpecificationExecutor<Bloque> {
 
   /**
    * Obtener todas las entidades {@link Bloque} paginadas de una
@@ -22,6 +23,7 @@ public interface BloqueRepository extends JpaRepository<Bloque, Long>, JpaSpecif
    * @param pageable la información de la paginación.
    * @return la lista de entidades {@link Bloque} paginadas y/o filtradas.
    */
+
   Page<Bloque> findByFormularioId(Long id, Pageable pageable);
 
 }

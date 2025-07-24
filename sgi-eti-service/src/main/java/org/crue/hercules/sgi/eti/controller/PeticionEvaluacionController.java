@@ -9,7 +9,6 @@ import org.crue.hercules.sgi.eti.dto.MemoriaPeticionEvaluacion;
 import org.crue.hercules.sgi.eti.dto.PeticionEvaluacionWithIsEliminable;
 import org.crue.hercules.sgi.eti.dto.TareaWithIsEliminable;
 import org.crue.hercules.sgi.eti.exceptions.EquipoTrabajoNotFoundException;
-import org.crue.hercules.sgi.eti.exceptions.PeticionEvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.TareaNotFoundException;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
 import org.crue.hercules.sgi.eti.model.Memoria;
@@ -19,6 +18,7 @@ import org.crue.hercules.sgi.eti.service.EquipoTrabajoService;
 import org.crue.hercules.sgi.eti.service.MemoriaService;
 import org.crue.hercules.sgi.eti.service.PeticionEvaluacionService;
 import org.crue.hercules.sgi.eti.service.TareaService;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -47,6 +47,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/peticionevaluaciones")
 @Slf4j
 public class PeticionEvaluacionController {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_ANOTHER_ENTITY = "anotherEntity";
+  private static final String MSG_MODEL_TAREA = "org.crue.hercules.sgi.eti.model.Tarea.message";
+  private static final String MSG_MODEL_EQUIPO_TRABAJO = "org.crue.hercules.sgi.eti.model.EquipoTrabajo.message";
+  private static final String MSG_MODEL_PETICION_EVALUACION = "org.crue.hercules.sgi.eti.model.PeticionEvaluacion.message";
+  private static final String MSG_NO_PERTENECE = "org.crue.hercules.sgi.eti.exceptions.entity.noPertenece.anotherEntity";
 
   private static final String FIND_ALL_STRING_QUERY_PAGEABLE_PAGING_END = "findAll(String query,Pageable paging) - end";
 
@@ -270,12 +276,8 @@ public class PeticionEvaluacionController {
       @Valid @RequestBody EquipoTrabajo nuevoEquipoTrabajo) {
     log.debug("createEquipoTrabajo(Long id, EquipoTrabajo nuevoEquipoTrabajo) - start");
 
-    PeticionEvaluacion peticionEvaluacion = service.findById(id);
-    if (peticionEvaluacion == null) {
-      throw new PeticionEvaluacionNotFoundException(id);
-    }
-
-    nuevoEquipoTrabajo.setPeticionEvaluacion(peticionEvaluacion);
+    service.existsById(id);
+    nuevoEquipoTrabajo.setPeticionEvaluacionId(id);
 
     EquipoTrabajo returnValue = equipoTrabajoService.create(nuevoEquipoTrabajo);
     log.debug("createEquipoTrabajo(Long id, EquipoTrabajo nuevoEquipoTrabajo) - end");
@@ -302,8 +304,12 @@ public class PeticionEvaluacionController {
       throw new EquipoTrabajoNotFoundException(idEquipoTrabajo);
     }
 
-    Assert.isTrue(equipoTrabajo.getPeticionEvaluacion().getId().equals(idPeticionEvaluacion),
-        "El equipo de trabajo no pertenece a la peticion de evaluación");
+    Assert.isTrue(equipoTrabajo.getPeticionEvaluacionId().equals(idPeticionEvaluacion),
+        () -> ProblemMessage.builder()
+            .key(MSG_NO_PERTENECE)
+            .parameter(MSG_KEY_ENTITY, MSG_MODEL_EQUIPO_TRABAJO)
+            .parameter(MSG_KEY_ANOTHER_ENTITY, MSG_MODEL_PETICION_EVALUACION)
+            .build());
 
     nuevaTarea.setEquipoTrabajo(equipoTrabajo);
 
@@ -329,8 +335,12 @@ public class PeticionEvaluacionController {
       throw new EquipoTrabajoNotFoundException(idEquipoTrabajo);
     }
 
-    Assert.isTrue(equipoTrabajo.getPeticionEvaluacion().getId().equals(idPeticionEvaluacion),
-        "El equipo de trabajo no pertenece a la peticion de evaluación");
+    Assert.isTrue(equipoTrabajo.getPeticionEvaluacionId().equals(idPeticionEvaluacion),
+        () -> ProblemMessage.builder()
+            .key(MSG_NO_PERTENECE)
+            .parameter(MSG_KEY_ENTITY, MSG_MODEL_EQUIPO_TRABAJO)
+            .parameter(MSG_KEY_ANOTHER_ENTITY, MSG_MODEL_PETICION_EVALUACION)
+            .build());
 
     tareaService.deleteByEquipoTrabajo(idEquipoTrabajo);
     equipoTrabajoService.delete(idEquipoTrabajo);
@@ -358,10 +368,18 @@ public class PeticionEvaluacionController {
     }
 
     Assert.isTrue(tarea.getEquipoTrabajo().getId().equals(idEquipoTrabajo),
-        "La tarea no pertenece al equipo de trabajo");
+        () -> ProblemMessage.builder()
+            .key(MSG_NO_PERTENECE)
+            .parameter(MSG_KEY_ENTITY, MSG_MODEL_TAREA)
+            .parameter(MSG_KEY_ANOTHER_ENTITY, MSG_MODEL_EQUIPO_TRABAJO)
+            .build());
 
-    Assert.isTrue(tarea.getEquipoTrabajo().getPeticionEvaluacion().getId().equals(idPeticionEvaluacion),
-        "La tarea no pertenece a la peticion de evaluación");
+    Assert.isTrue(tarea.getEquipoTrabajo().getPeticionEvaluacionId().equals(idPeticionEvaluacion),
+        () -> ProblemMessage.builder()
+            .key(MSG_NO_PERTENECE)
+            .parameter(MSG_KEY_ENTITY, MSG_MODEL_TAREA)
+            .parameter(MSG_KEY_ANOTHER_ENTITY, MSG_MODEL_PETICION_EVALUACION)
+            .build());
 
     tareaService.delete(idTarea);
 

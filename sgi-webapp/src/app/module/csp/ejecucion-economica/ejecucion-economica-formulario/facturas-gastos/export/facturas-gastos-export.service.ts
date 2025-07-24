@@ -13,6 +13,7 @@ import { Observable, of } from 'rxjs';
 import { IEjecucionPresupuestariaReportOptions } from '../../../common/ejecucion-presupuestaria-report-options';
 import { IColumnDefinition, IRowConfig } from '../../desglose-economico.fragment';
 import { IDesglose } from '../../facturas-justificantes.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 const ANUALIDAD_KEY = marker('sge.dato-economico.anualidad');
 const PROYECTO_KEY = marker('sge.dato-economico.proyecto');
@@ -32,7 +33,8 @@ export class FacturasGastosExportService
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    protected reportService: ReportService
+    protected reportService: ReportService,
+    private readonly languageService: LanguageService
   ) {
     super(reportService);
   }
@@ -51,10 +53,10 @@ export class FacturasGastosExportService
       }
 
       if (reportConfig.reportOptions.rowConfig.proyectoShow) {
-        row.elements.push(item.proyecto?.titulo ?? 'Sin clasificar');
+        row.elements.push(this.languageService.getFieldValue(item.proyecto?.titulo));
       }
 
-      row.elements.push(item.conceptoGasto?.nombre ?? 'Sin clasificar');
+      row.elements.push(this.languageService.getFieldValue(item.conceptoGasto?.nombre));
 
       if (reportConfig.reportOptions.rowConfig.clasificadoAutomaticamenteShow) {
         row.elements.push(this.getI18nBooleanYesNo(item.clasificadoAutomaticamente));

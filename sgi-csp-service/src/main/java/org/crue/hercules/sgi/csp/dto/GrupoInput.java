@@ -2,13 +2,15 @@ package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoTipo.Tipo;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,9 +25,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GrupoInput implements Serializable {
 
-  @Size(max = Grupo.NOMBRE_LENGTH)
-  @NotBlank
-  private String nombre;
+  @NotEmpty
+  private List<I18nFieldValueDto> nombre;
 
   @NotNull
   private Instant fechaInicio;
@@ -43,6 +44,8 @@ public class GrupoInput implements Serializable {
   private Tipo tipo;
 
   private Boolean especialInvestigacion;
+
+  private List<I18nFieldValueDto> resumen;
 
   private String departamentoOrigenRef;
 

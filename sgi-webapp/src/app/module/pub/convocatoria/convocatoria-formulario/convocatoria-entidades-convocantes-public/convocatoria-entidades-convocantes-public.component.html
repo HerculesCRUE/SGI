@@ -19,20 +19,25 @@
       <!-- Plan Column -->
       <ng-container matColumnDef="plan">
         <th mat-header-cell *matHeaderCellDef>{{'csp.convocatoria-entidad-convocante.plan' | translate}}</th>
-        <td mat-cell *matCellDef="let data"> {{data.plan?.nombre}}
+        <td mat-cell *matCellDef="let data">
+          <sgi-i18n-table-field [field]="data.plan?.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
 
       <!-- Programa Column -->
       <ng-container matColumnDef="programa">
         <th mat-header-cell *matHeaderCellDef>{{'csp.convocatoria-entidad-convocante.programa' | translate}}</th>
-        <td mat-cell *matCellDef="let data"> {{data.programa?.nombre}} </td>
+        <td mat-cell *matCellDef="let data">
+          <sgi-i18n-table-field [field]="data.programa?.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Modalidad Column -->
       <ng-container matColumnDef="itemPrograma">
         <th mat-header-cell *matHeaderCellDef>{{'csp.convocatoria-entidad-convocante.modalidad' | translate}}</th>
-        <td mat-cell *matCellDef="let data"> {{data.modalidad?.nombre}} </td>
+        <td mat-cell *matCellDef="let data">
+          <sgi-i18n-table-field [field]="data.modalidad?.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Acciones Column -->

@@ -7,6 +7,7 @@ import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, merge, Observable, of } from 'rxjs';
@@ -46,15 +47,15 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
       estado: new FormControl({ value: this.isEdit() ? null : Estado.BORRADOR, disabled: true }, Validators.required),
       fechaSolicitud: new FormControl({ value: null, disabled: true }),
       solicitante: new FormControl({ value: null, disabled: true }),
-      tituloProyecto: new FormControl(null, [Validators.maxLength(250), Validators.required]),
+      tituloProyecto: new FormControl([], [I18nValidators.maxLength(250), I18nValidators.required]),
       convocatoria: new FormControl(null),
-      datosConvocatoria: new FormControl(null, Validators.maxLength(250)),
+      datosConvocatoria: new FormControl([], I18nValidators.maxLength(250)),
       entidadParticipa: new FormControl(null, Validators.required),
       datosEntidad: new FormControl(null, Validators.maxLength(250)),
       investigadorPrincipalProyecto: new FormControl(null, [Validators.required, Validators.maxLength(250)]),
       datosIpProyecto: new FormControl(null),
       horasDedicacion: new FormControl(null),
-      observaciones: new FormControl(null, Validators.maxLength(2000))
+      observaciones: new FormControl([], I18nValidators.maxLength(2000))
     });
 
     this.subscriptions.push(form.controls.convocatoria.valueChanges.subscribe(
@@ -62,7 +63,7 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
         if (this.autorizacionData?.estado?.estado === 'BORRADOR' || !this.isEdit()) {
           if (convocatoria) {
             form.controls.datosConvocatoria.disable();
-            form.controls.datosConvocatoria.setValue(null);
+            form.controls.datosConvocatoria.setValue([]);
           } else if (!this.isVisor) {
             form.controls.datosConvocatoria.enable();
           }
@@ -157,6 +158,10 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
             map(entidad => {
               autorizacionData.entidad = entidad;
               return autorizacionData;
+            }),
+            catchError((error) => {
+              this.logger.error(error);
+              return of(autorizacionData);
             })
           );
         } else {
@@ -234,7 +239,7 @@ export class AutorizacionDatosGeneralesFragment extends FormFragment<IAutorizaci
     return observable$.pipe(
       map(value => {
         this.autorizacionData.id = value.id;
-        this.disableCambioEstado$.next(!value.tituloProyecto
+        this.disableCambioEstado$.next(!value.tituloProyecto?.length
           || !value.responsable
           || !value.entidad);
         return this.autorizacionData.id;

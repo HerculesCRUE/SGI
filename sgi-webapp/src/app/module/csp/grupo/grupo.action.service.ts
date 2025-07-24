@@ -15,6 +15,7 @@ import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { LineaInvestigacionService } from '@core/services/csp/linea-investigacion/linea-investigacion.service';
 import { RolProyectoService } from '@core/services/csp/rol-proyecto/rol-proyecto.service';
 import { DialogService } from '@core/services/dialog.service';
+import { ProyectoSgeService } from '@core/services/sge/proyecto-sge.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
@@ -85,20 +86,21 @@ export class GrupoActionService extends ActionService implements OnDestroy {
     private route: ActivatedRoute,
     private dialogService: DialogService,
     private translate: TranslateService,
-    grupoService: GrupoService,
-    grupoEquipoService: GrupoEquipoService,
-    palabraClaveService: PalabraClaveService,
-    rolProyectoService: RolProyectoService,
-    vinculacionService: VinculacionService,
-    personaService: PersonaService,
+    private readonly configuracionService: ConfigService,
+    private readonly grupoEnlaceService: GrupoEnlaceService,
+    private readonly grupoEquipoInstrumentalService: GrupoEquipoInstrumentalService,
+    private readonly grupoEquipoService: GrupoEquipoService,
+    private readonly grupoLineaInvestigacionService: GrupoLineaInvestigacionService,
+    private readonly grupoPersonaAutorizadaService: GrupoPersonaAutorizadaService,
+    private readonly grupoResponsableEconomicoService: GrupoResponsableEconomicoService,
+    private readonly grupoService: GrupoService,
+    private readonly lineaInvestigacionService: LineaInvestigacionService,
+    private readonly palabraClaveService: PalabraClaveService,
+    private readonly personaService: PersonaService,
+    private readonly proyectoSgeService: ProyectoSgeService,
+    private readonly rolProyectoService: RolProyectoService,
     private readonly sgiAuthService: SgiAuthService,
-    grupoResponsableEconomicoService: GrupoResponsableEconomicoService,
-    grupoEquipoInstrumentalService: GrupoEquipoInstrumentalService,
-    grupoEnlaceService: GrupoEnlaceService,
-    grupoPersonaAutorizadaService: GrupoPersonaAutorizadaService,
-    grupoLineaInvestigacionService: GrupoLineaInvestigacionService,
-    lineaInvestigacionService: LineaInvestigacionService,
-    configuracionService: ConfigService
+    private readonly vinculacionService: VinculacionService,
   ) {
     super();
     this.id = Number(route.snapshot.paramMap.get(GRUPO_ROUTE_PARAMS.ID));
@@ -110,9 +112,12 @@ export class GrupoActionService extends ActionService implements OnDestroy {
 
     this.datosGenerales = new GrupoDatosGeneralesFragment(
       logger,
-      this.id, grupoService,
+      this.id,
+      configuracionService,
+      grupoService,
       grupoEquipoService,
       palabraClaveService,
+      proyectoSgeService,
       rolProyectoService,
       vinculacionService,
       this.data?.isEjecucionEconomicaGruposEnabled,

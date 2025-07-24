@@ -9,8 +9,8 @@ import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core
 import { ReportService } from '@core/services/rep/report.service';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { concat, Observable, of, zip } from 'rxjs';
-import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concat, from, Observable, of, zip } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { SolicitudProteccionGeneralListadoExportService } from './solicitud-proteccion-general-listado-export.service';
 
 export interface ISolicitudProteccionReportOptions extends IReportOptions {
@@ -23,7 +23,7 @@ export interface ISolicitudProteccionReportData extends ISolicitudProteccion {
 
 @Injectable()
 export class SolicitudProteccionListadoExportService extends AbstractTableExportService<ISolicitudProteccionReportData,
-IReportOptions> {
+  IReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -77,12 +77,19 @@ IReportOptions> {
         return invenciones.items.map((solicitud) => solicitud as ISolicitudProteccionReportData);
       }),
       switchMap((invencionesReportData) => {
-        const requestsInvencion: Observable<ISolicitudProteccionReportData>[] = [];
+        const requestsInvencion: ISolicitudProteccionReportData[] = [];
 
-        invencionesReportData.forEach(invencion => {
-          requestsInvencion.push(this.getDataReportInner(invencion, reportConfig.reportOptions));
-        });
-        return zip(...requestsInvencion);
+        return from(invencionesReportData).pipe(
+          mergeMap((invencion) => {
+            return this.getDataReportInner(invencion, reportConfig.reportOptions)
+          }, this.DEFAULT_CONCURRENT)
+        ).pipe(
+          map(r => {
+            requestsInvencion.push(r);
+            return requestsInvencion;
+          }),
+          takeLast(1)
+        )
       }),
       takeLast(1)
     );

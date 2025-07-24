@@ -15,8 +15,9 @@ import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.pii.exceptions.ResultadoInformePatentabilidadNotFoundException;
+import org.crue.hercules.sgi.pii.model.BaseActivableEntity;
+import org.crue.hercules.sgi.pii.model.BaseEntity;
 import org.crue.hercules.sgi.pii.model.ResultadoInformePatentabilidad;
-import org.crue.hercules.sgi.pii.model.ResultadoInformePatentabilidad.OnActivar;
 import org.crue.hercules.sgi.pii.repository.ResultadoInformePatentabilidadRepository;
 import org.crue.hercules.sgi.pii.repository.specification.ResultadoInformePatentabilidadSpecifications;
 import org.springframework.data.domain.Page;
@@ -56,7 +57,7 @@ public class ResultadoInformePatentabilidadService {
    * @return Entidad {@link ResultadoInformePatentabilidad} persistida.
    */
   @Transactional
-  @Validated(ResultadoInformePatentabilidad.OnCrear.class)
+  @Validated(BaseEntity.Create.class)
   public ResultadoInformePatentabilidad create(@Valid ResultadoInformePatentabilidad resultadoInformePatentabilidad) {
     log.debug("create(ResultadoInformePatentabilidad resultadoInformePatentabilidad) - start");
 
@@ -102,7 +103,7 @@ public class ResultadoInformePatentabilidadService {
    * @return Entidad {@link ResultadoInformePatentabilidad} persistida.
    */
   @Transactional
-  @Validated(ResultadoInformePatentabilidad.OnActualizar.class)
+  @Validated(BaseEntity.Update.class)
   public ResultadoInformePatentabilidad update(@Valid ResultadoInformePatentabilidad resultadoInformePatentabilidad) {
     log.debug("update(ResultadoInformePatentabilidad resultadoInformePatentabilidad) - start");
 
@@ -193,7 +194,7 @@ public class ResultadoInformePatentabilidadService {
    * @return la entidad {@link ResultadoInformePatentabilidad} persistida.
    */
   @Transactional
-  @Validated({ ResultadoInformePatentabilidad.OnActivar.class })
+  @Validated({ BaseActivableEntity.OnActivar.class })
   public ResultadoInformePatentabilidad enable(Long id) {
     log.debug("enable(Long id) - start");
 
@@ -212,7 +213,7 @@ public class ResultadoInformePatentabilidadService {
       }
       // Invocar validaciones asociadas a OnActivar
       Set<ConstraintViolation<ResultadoInformePatentabilidad>> result = validator
-          .validate(resultadoInformePatentabilidad, OnActivar.class);
+          .validate(resultadoInformePatentabilidad, BaseActivableEntity.OnActivar.class);
       if (!result.isEmpty()) {
         throw new ConstraintViolationException(result);
       }

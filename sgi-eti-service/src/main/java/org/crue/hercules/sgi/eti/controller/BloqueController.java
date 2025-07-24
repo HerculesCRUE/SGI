@@ -91,13 +91,6 @@ public class BloqueController {
     return returnValue;
   }
 
-  /**
-   * Obtiene las entidades {@link Apartado} por el id de su {@link Bloque}.
-   * 
-   * @param id     El id de la entidad {@link Bloque}.
-   * @param paging pageable
-   * @return el listado de entidades {@link Apartado} paginadas y filtradas.
-   */
   @GetMapping(PATH_APARTADOS)
   @PreAuthorize("hasAnyAuthorityForAnyUO('ETI-EVC-EVAL', 'ETI-EVC-EVALR', 'ETI-EVC-INV-EVALR', 'ETI-MEM-INV-ER')")
   public ResponseEntity<Page<Apartado>> getApartados(@PathVariable Long id,
@@ -112,9 +105,8 @@ public class BloqueController {
   }
 
   /**
-   * Devuelve los bloques a través del id del formulario.
-   * 
-   * @deprecated Usar {@link FormularioController#getBloques(Long, Pageable)}
+   * Devuelve los bloques en el idioma correspondiente a través del id del
+   * formulario.
    * 
    * @param idFormulario Identificador de {@link Formulario}.
    * @param paging       pageable
@@ -133,7 +125,7 @@ public class BloqueController {
 
   /**
    * Obtiene el {@link Bloque} de comentarios generales.
-   *
+   * 
    * @return el {@link Bloque}.
    */
   @GetMapping(PATH_COMENTARIOS_GENERALES)
@@ -156,9 +148,9 @@ public class BloqueController {
   @PreAuthorize("isClient() and hasAuthority('SCOPE_sgi-eti')")
   public ResponseEntity<Page<ApartadoTreeOutput>> getApartadosTree(@PathVariable Long id,
       @RequestPageable(sort = "s") Pageable paging) {
-    log.debug("getApartados(Long id, Pageable paging) - start");
+    log.debug(" getApartadosTree(@PathVariable Long id, @PathVariable String lang, Pageable paging) - start");
     Page<ApartadoTreeOutput> page = apartadoService.findApartadosTreeByBloqueId(id, paging);
-    log.debug("getApartados(Long id, Pageable paging) - end");
+    log.debug(" getApartadosTree(@PathVariable Long id, @PathVariable String lang, Pageable paging) - end");
     return page.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT) : new ResponseEntity<>(page, HttpStatus.OK);
   }
 

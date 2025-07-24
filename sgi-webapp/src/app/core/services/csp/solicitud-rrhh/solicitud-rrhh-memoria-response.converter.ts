@@ -1,3 +1,4 @@
+import { I18N_FIELD_RESPONSE_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { ISolicitudRrhhMemoria } from '@core/models/csp/solicitud-rrhh-memoria';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { ISolicitudRrhhMemoriaResponse } from './solicitud-rrhh-memoria-response';
@@ -9,9 +10,9 @@ class SolicitudRrhhMemoriaResponseConverter
       return value as unknown as ISolicitudRrhhMemoria;
     }
     return {
-      tituloTrabajo: value.tituloTrabajo,
-      observaciones: value.observaciones,
-      resumen: value.resumen
+      tituloTrabajo: value.tituloTrabajo ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.tituloTrabajo) : [],
+      observaciones: value.observaciones ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.observaciones) : [],
+      resumen: value.resumen ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.resumen) : []
     };
   }
 
@@ -20,9 +21,9 @@ class SolicitudRrhhMemoriaResponseConverter
       return value as unknown as ISolicitudRrhhMemoriaResponse;
     }
     return {
-      tituloTrabajo: value.tituloTrabajo,
-      observaciones: value.observaciones,
-      resumen: value.resumen
+      tituloTrabajo: value.tituloTrabajo ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.tituloTrabajo) : [],
+      observaciones: value.observaciones ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.observaciones) : [],
+      resumen: value.resumen ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.resumen) : []
     };
   }
 }

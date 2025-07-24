@@ -1,0 +1,61 @@
+[
+  {
+    "key": "ap3_7",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.7 Agente biologikoen, genetikoki eraldatutako organismoen edo/eta substantzia kimiko arriskutsuen"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Jarraian, deskribatu zer ibilbide egiten duten agente biologikoek, genetikoki eraldatutako organismoek eskuratzen direnetik ezabatzen diren arte:</p>"
+      },
+      {
+        "key": "mododeObtencion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Nola eskuratzen diren",
+          "required": true
+        }
+      },
+      {
+        "key": "transporte",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Nola garraiatzen diren",
+          "required": true
+        }
+      },
+      {
+        "key": "recepcion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Nola hartzen diren",
+          "required": true
+        }
+      },
+      {
+        "key": "almacenamiento",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Nola biltegiratzen diren",
+          "required": true
+        }
+      },
+      {
+        "key": "eliminacion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Nola ezabatzen diren",
+          "required": true
+        }
+      }
+    ]
+  }
+]

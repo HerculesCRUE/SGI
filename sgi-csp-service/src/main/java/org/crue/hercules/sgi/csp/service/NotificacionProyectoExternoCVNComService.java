@@ -2,7 +2,6 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.dto.com.CspComRecepcionNotificacionesCVNProyectoExtData;
 import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
@@ -61,7 +60,7 @@ public class NotificacionProyectoExternoCVNComService {
     return destinatarios.stream()
         .map(destinatario -> Recipient.builder().name(destinatario).address(destinatario)
             .build())
-        .collect(Collectors.toList());
+        .toList();
   }
 
 }

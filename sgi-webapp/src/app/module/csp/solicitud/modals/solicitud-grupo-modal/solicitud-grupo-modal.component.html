@@ -7,8 +7,8 @@
     <div fxFlex>
       <mat-form-field>
         <mat-label>{{'csp.solicitud.grupo.nombre' | translate}}</mat-label>
-        <input matInput formControlName="nombre" type="text" id="nombre"
-          placeholder="{{'csp.solicitud.grupo.nombre' | translate}}" required>
+        <sgi-i18n-input formControlName="nombre" placeholder="{{'csp.solicitud.grupo.nombre' | translate}}" required>
+        </sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>

@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "4.1 Ordezkatzea"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Ikertzaileek ordezkatzearen araua betetzeko duten tresna nagusietako bat metodo alternatiboak erabiltzea da. Horrelako metodoak dira <u>animaliarik erabiltzen ez dutenak</u>, <u>animalia kopuru txikiagoa</u> erabiltzea ahalbidetzen dutenak edo animaliak pairamen maila txikiagoko beste espezie batzuez <u>ordezkatzeko</u> aukera ematen dutenak. </p><p>Metodo alternatiboei buruzko informazio gehiago aurkituko duzu <a target='_blank' href='https://joint-research-centre.ec.europa. eu/eu-reference-laboratory-alternatives-animal-testing-eurl-ecvam_en'>ECVAMen</a> eta <a target='_blank' href='http://www.remanet.net/'>REMAren</a> webguneetan.</p>"
+      }
+    ]
+  }
+]

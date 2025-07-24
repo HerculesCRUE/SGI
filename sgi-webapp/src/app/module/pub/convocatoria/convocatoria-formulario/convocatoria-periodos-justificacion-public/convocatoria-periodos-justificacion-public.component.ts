@@ -9,6 +9,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
 import { ConvocatoriaPeriodosJustificacionPublicFragment } from './convocatoria-periodos-justificacion-public.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'sgi-convocatoria-periodos-justificacion-public',
@@ -27,7 +28,8 @@ export class ConvocatoriaPeriodosJustificacionPublicComponent extends FragmentCo
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   constructor(
-    protected actionService: ConvocatoriaPublicActionService
+    protected actionService: ConvocatoriaPublicActionService,
+    private readonly languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.PERIODO_JUSTIFICACION, actionService);
     this.formPart = this.fragment as ConvocatoriaPeriodosJustificacionPublicFragment;
@@ -40,6 +42,8 @@ export class ConvocatoriaPeriodosJustificacionPublicComponent extends FragmentCo
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IConvocatoriaPeriodoJustificacion>, property: string) => {
         switch (property) {
+          case 'observaciones':
+            return this.languageService.getFieldValue(wrapper.value.observaciones);
           default:
             return wrapper.value[property];
         }
@@ -60,4 +64,5 @@ export class ConvocatoriaPeriodosJustificacionPublicComponent extends FragmentCo
     return MSG_PARAMS;
   }
 
+  protected setupI18N(): void { }
 }

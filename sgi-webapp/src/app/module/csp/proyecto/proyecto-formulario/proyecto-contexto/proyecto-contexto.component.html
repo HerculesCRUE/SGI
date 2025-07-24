@@ -10,8 +10,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto.contexto.objetivos' | translate}}</mat-label>
-          <textarea matInput formControlName="objetivos" id="objetivos"
-            placeholder="{{'csp.proyecto.contexto.objetivos' | translate}}"></textarea>
+          <sgi-i18n-textarea formControlName="objetivos"
+            placeholder="{{'csp.proyecto.contexto.objetivos' | translate}}"></sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.objetivos.errors?.maxlength">
             {{'error.maxlength.entity' | translate:msgParamObjetivosEntity}}
           </mat-error>
@@ -23,8 +23,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto.contexto.intereses' | translate}}</mat-label>
-          <textarea matInput formControlName="intereses" id="intereses"
-            placeholder="{{'csp.proyecto.contexto.intereses' | translate}}"></textarea>
+          <sgi-i18n-textarea formControlName="intereses"
+            placeholder="{{'csp.proyecto.contexto.intereses' | translate}}"></sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.intereses.errors?.maxlength">
             {{'error.maxlength.entity' | translate:msgParamInteresesEntity}}
           </mat-error>
@@ -36,8 +36,8 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.proyecto.contexto.resultados' | translate}}</mat-label>
-          <textarea matInput formControlName="resultados_previstos" id="resultados_previstos"
-            placeholder="{{'csp.proyecto.contexto.resultados' | translate}}"></textarea>
+          <sgi-i18n-textarea formControlName="resultados_previstos"
+            placeholder="{{'csp.proyecto.contexto.resultados' | translate}}"></sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.resultados_previstos.errors?.maxlength">
             {{'error.maxlength.entity' | translate:msgParamResultadosEntity}}
           </mat-error>
@@ -69,21 +69,25 @@
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               {{'list.entity' | translate:msgParamAreaEntities}}
             </th>
-            <td mat-cell *matCellDef="let data">{{data.padre?.nombre}}</td>
+            <td mat-cell *matCellDef="let data">
+              <sgi-i18n-table-field [field]="data.padre?.nombre"></sgi-i18n-table-field>
+            </td>
           </ng-container>
           <ng-container matColumnDef="areaTematicaConvocatoria">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               {{'csp.area-tematica.nombre.convocatoria' | translate}}
             </th>
-            <td mat-cell *matCellDef="let data" matTooltip="{{data.areasTematicasConvocatoria}}">
-              {{data.areasTematicasConvocatoria}}
+            <td mat-cell *matCellDef="let data" matTooltip="{{data.areasTematicasConvocatoria | i18nFieldsValues}}">
+              <sgi-i18n-table-list-fields [fields]="data.areasTematicasConvocatoria"></sgi-i18n-table-list-fields>
             </td>
           </ng-container>
           <ng-container matColumnDef="areaTematicaProyecto">
             <th mat-header-cell *matHeaderCellDef mat-sort-header>
               {{'csp.area-tematica.proyecto' | translate}}
             </th>
-            <td mat-cell *matCellDef="let data"> {{data.areaTematicaProyecto?.nombre}} </td>
+            <td mat-cell *matCellDef="let data">
+              <sgi-i18n-table-field [field]="data.areaTematicaProyecto?.nombre"></sgi-i18n-table-field>
+            </td>
           </ng-container>
           <ng-container matColumnDef="acciones">
             <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}

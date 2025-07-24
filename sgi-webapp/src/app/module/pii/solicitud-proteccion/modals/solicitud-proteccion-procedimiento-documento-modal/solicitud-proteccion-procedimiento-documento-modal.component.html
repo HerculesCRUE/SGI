@@ -6,9 +6,9 @@
       <mat-form-field>
         <mat-label>{{'pii.solicitud-proteccion.procedimiento-documento.nombre' |
           translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
-        <input matInput formControlName="nombre" type="text" id="nombre"
+        <sgi-i18n-input formControlName="nombre"
           placeholder="{{'pii.solicitud-proteccion.procedimiento-documento.nombre' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}"
-          required cdkFocusInitial>
+          required cdkFocusInitial></sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>

@@ -2,14 +2,18 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.converter.TipoRequerimientoConverter;
 import org.crue.hercules.sgi.csp.dto.TipoRequerimientoOutput;
 import org.crue.hercules.sgi.csp.model.TipoRequerimiento;
+import org.crue.hercules.sgi.csp.model.TipoRequerimientoNombre;
 import org.crue.hercules.sgi.csp.service.TipoRequerimientoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -35,7 +39,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
  * TipoRequerimientoControllerTest
  */
 @WebMvcTest(TipoRequerimientoController.class)
-public class TipoRequerimientoControllerTest extends BaseControllerTest {
+class TipoRequerimientoControllerTest extends BaseControllerTest {
 
   @MockBean
   private TipoRequerimientoService service;
@@ -46,7 +50,7 @@ public class TipoRequerimientoControllerTest extends BaseControllerTest {
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SJUS-E" })
-  public void findActivos_WithPaging_ReturnsTipoRequerimientoSubList() throws Exception {
+  void findActivos_WithPaging_ReturnsTipoRequerimientoSubList() throws Exception {
     // given: One hundred TipoRequerimiento
     List<TipoRequerimiento> data = new ArrayList<>();
     for (long i = 1; i <= 100; i++) {
@@ -63,8 +67,7 @@ public class TipoRequerimientoControllerTest extends BaseControllerTest {
             int fromIndex = size * index;
             int toIndex = fromIndex + size;
             List<TipoRequerimiento> content = data.subList(fromIndex, toIndex);
-            Page<TipoRequerimiento> page = new PageImpl<>(content, pageable, data.size());
-            return page;
+            return new PageImpl<>(content, pageable, data.size());
           }
         });
     BDDMockito.given(converter.convert(ArgumentMatchers.<Page<TipoRequerimiento>>any()))
@@ -74,10 +77,8 @@ public class TipoRequerimientoControllerTest extends BaseControllerTest {
             Page<TipoRequerimiento> pageInput = invocation.getArgument(0);
             List<TipoRequerimientoOutput> content = pageInput.getContent().stream().map(input -> {
               return generarMockTipoRequerimientoOutput(input.getId(), input.getNombre(), input.getActivo());
-            }).collect(Collectors.toList());
-            Page<TipoRequerimientoOutput> pageOutput = new PageImpl<>(content, pageInput.getPageable(),
-                pageInput.getTotalElements());
-            return pageOutput;
+            }).toList();
+            return new PageImpl<>(content, pageInput.getPageable(), pageInput.getTotalElements());
           }
         });
 
@@ -103,28 +104,27 @@ public class TipoRequerimientoControllerTest extends BaseControllerTest {
     // containing Nombre='TipoRequerimiento-31' to 'TipoRequerimiento-40'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoRequerimientoOutput item = actual.get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("TipoRequerimiento-" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES))
+          .isEqualTo("TipoRequerimiento-" + String.format("%03d", j));
     }
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "CSP-SJUS-E" })
-  public void findActivos_EmptyList_Returns204() throws Exception {
+  void findActivos_EmptyList_Returns204() throws Exception {
     // given: no data TipoRequerimiento
     BDDMockito.given(service.findActivos(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<TipoRequerimiento>>() {
           @Override
           public Page<TipoRequerimiento> answer(InvocationOnMock invocation) throws Throwable {
-            Page<TipoRequerimiento> page = new PageImpl<>(Collections.emptyList());
-            return page;
+            return new PageImpl<>(Collections.emptyList());
           }
         });
     BDDMockito.given(converter.convert(ArgumentMatchers.<Page<TipoRequerimiento>>any()))
         .willAnswer(new Answer<Page<TipoRequerimientoOutput>>() {
           @Override
           public Page<TipoRequerimientoOutput> answer(InvocationOnMock invocation) throws Throwable {
-            Page<TipoRequerimientoOutput> page = new PageImpl<>(Collections.emptyList());
-            return page;
+            return new PageImpl<>(Collections.emptyList());
           }
         });
     // when: get page=3 with pagesize=10
@@ -142,14 +142,18 @@ public class TipoRequerimientoControllerTest extends BaseControllerTest {
   }
 
   private TipoRequerimiento generarMockTipoRequerimiento(Long id, String nombre, Boolean activo) {
+    Set<TipoRequerimientoNombre> nombreTipoRequerimiento = new HashSet<>();
+    nombreTipoRequerimiento.add(new TipoRequerimientoNombre(Language.ES, nombre));
+
     return TipoRequerimiento.builder()
         .activo(activo)
         .id(id)
-        .nombre(nombre)
+        .nombre(nombreTipoRequerimiento)
         .build();
   }
 
-  private TipoRequerimientoOutput generarMockTipoRequerimientoOutput(Long id, String nombre, Boolean activo) {
+  private TipoRequerimientoOutput generarMockTipoRequerimientoOutput(Long id, Set<TipoRequerimientoNombre> nombre,
+      Boolean activo) {
     return TipoRequerimientoOutput.builder()
         .activo(activo)
         .id(id)

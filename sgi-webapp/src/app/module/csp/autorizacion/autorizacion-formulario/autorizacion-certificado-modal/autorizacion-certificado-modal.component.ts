@@ -6,10 +6,12 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { ICertificadoAutorizacion } from '@core/models/csp/certificado-autorizacion';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { IPersona } from '@core/models/sgp/persona';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
@@ -30,6 +32,7 @@ export interface ICertificadoAutorizacionModalData {
   solicitante: IPersona;
   hasSomeOtherCertificadoAutorizacionVisible: boolean;
   generadoAutomatico: boolean;
+  documento: IDocumento;
 }
 
 @Component({
@@ -45,7 +48,7 @@ export class AutorizacionCertificadoModalComponent extends DialogFormComponent<I
   title: string;
 
   uploading = false;
-  documentoAutorizacion: IDocumento;
+  documentosRefsGenerados: I18nFieldValue[];
 
   msgParamTipoEntidadRelacionada = {};
   msgParamEntidadRelacionada = {};
@@ -68,7 +71,8 @@ export class AutorizacionCertificadoModalComponent extends DialogFormComponent<I
     private autorizacionService: AutorizacionService,
     readonly sgiAuthService: SgiAuthService,
     private readonly documentoService: DocumentoService,
-    private readonly datePipe: DatePipe
+    private readonly datePipe: DatePipe,
+    private readonly languageService: LanguageService
   ) {
     super(matDialogRef, !!data?.certificado?.id);
   }
@@ -108,14 +112,23 @@ export class AutorizacionCertificadoModalComponent extends DialogFormComponent<I
   protected getValue(): ICertificadoAutorizacionModalData {
     this.data.certificado.nombre = this.formGroup.controls.nombre.value;
     this.data.certificado.visible = this.formGroup.controls.publico.value;
-    this.data.certificado.documento = this.formGroup.controls.generadoAutomatico.value
-      ? this.getDocumentoAuto() : this.formGroup.controls.documento.value;
+
+    if (!this.formGroup.controls.generadoAutomatico.disabled) {
+      this.data.certificado.documentoRef = this.formGroup.controls.generadoAutomatico.value
+        ? this.getDocumentoRefsGenerados() : [
+          {
+            lang: this.languageService.getLanguage(),
+            value: (this.formGroup.controls.documento.value as IDocumento)?.documentoRef
+          }
+        ];
+    }
+
     this.data.generadoAutomatico = this.formGroup.controls.generadoAutomatico.value;
     return this.data;
   }
 
-  private getDocumentoAuto(): IDocumento {
-    return this.documentoAutorizacion ?? this.data.certificado.documento;
+  private getDocumentoRefsGenerados(): I18nFieldValue[] {
+    return this.documentosRefsGenerados ?? this.data.certificado.documentoRef;
   }
 
   private getTitleDocumento(): string {
@@ -130,16 +143,16 @@ export class AutorizacionCertificadoModalComponent extends DialogFormComponent<I
       }
       return apellidosNombre + fechaStr + "certificadoAutorizacionProyectoExterno.pdf";
     } else {
-      return this.data?.certificado?.documento?.nombre;
+      return this.data?.documento?.nombre;
     }
   }
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      nombre: new FormControl(this.data?.certificado?.nombre),
+      nombre: new FormControl(this.data?.certificado?.nombre ?? []),
       publico: new FormControl(this.data?.certificado?.visible, [Validators.required,
       this.buildValidadorHasSomeOtherCertificadoAutorizacionVisible(this.data?.hasSomeOtherCertificadoAutorizacionVisible)]),
-      documento: new FormControl(this.data?.certificado?.documento, Validators.required),
+      documento: new FormControl(this.data?.documento, Validators.required),
       documentoAuto: new FormControl(this.getTitleDocumento(), Validators.required),
       generadoAutomatico: new FormControl(null),
     });
@@ -157,7 +170,7 @@ export class AutorizacionCertificadoModalComponent extends DialogFormComponent<I
           if (value) {
             form.controls.documentoAuto.enable();
             form.controls.documento.disable();
-            if (!this.documentoAutorizacion?.documentoRef) {
+            if (!this.documentosRefsGenerados?.length) {
               this.generarInforme(this.data?.certificado?.autorizacion?.id);
             }
           } else {
@@ -218,22 +231,21 @@ export class AutorizacionCertificadoModalComponent extends DialogFormComponent<I
 
   private generarInforme(idAutorizacion: number): void {
     this.autorizacionService.getInformeAutorizacion(idAutorizacion, this.getTitleDocumento()).subscribe(
-      (documentoInfo: IDocumento) => {
-        this.documentoAutorizacion = documentoInfo;
+      (documentoInfo: I18nFieldValue[]) => {
+        this.documentosRefsGenerados = documentoInfo;
         this.formGroup.controls.documentoAuto.setValue(this.getTitleDocumento());
       });
   }
 
   /**
-   * Visualiza el informe de autorización.
-   * @param documentoRef referencia del documento
+   * Visualiza el informe de autorización generado automaticamente.
    */
-  visualizarInforme(): void {
-    const documento = this.getDocumentoAuto();
-    if (documento?.documentoRef) {
-      this.documentoService.getInfoFichero(documento.documentoRef).pipe(
-        switchMap((documentoInfo: IDocumento) => {
-          return this.documentoService.downloadFichero(documentoInfo.documentoRef);
+  visualizarInformeGenerado(): void {
+    const documentosRefs = this.getDocumentoRefsGenerados();
+    if (documentosRefs?.length) {
+      this.documentoService.getInfoFichero(this.languageService.getFieldValue(documentosRefs)).pipe(
+        switchMap((documento: IDocumento) => {
+          return this.documentoService.downloadFichero(documento.documentoRef);
         })
       ).subscribe(response => {
         triggerDownloadToUser(response, this.getTitleDocumento());

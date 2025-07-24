@@ -1,0 +1,34 @@
+[
+  {
+    "key": "ap3_4_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.5 Radioactive substances"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Does this activity use Radioactive Substances?</p>"
+      },
+      {
+        "key": "sustanciasRadiactivas",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

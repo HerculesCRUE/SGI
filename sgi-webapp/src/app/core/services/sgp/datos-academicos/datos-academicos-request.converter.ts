@@ -1,4 +1,3 @@
-import { IProyecto } from '@core/models/csp/proyecto';
 import { IDatosAcademicos } from '@core/models/sgp/datos-academicos';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';

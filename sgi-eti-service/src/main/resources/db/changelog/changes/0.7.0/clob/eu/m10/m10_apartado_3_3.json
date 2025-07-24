@@ -1,0 +1,25 @@
+[
+  {
+    "key": "ap3_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.3 Argitalpen zientifikoen erreferentziak"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Aipatu modu osatuan (egilea, izenburua, argitalpena, data, etab.) proiektua idazteko erabilitako erreferentzia esanguratsuenak (gehienez 10 erreferentzia).</p>"
+      },
+      {
+        "key": "referenciasPublicaciones",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Erreferentziak",
+          "required": true
+        }
+      }
+    ]
+  }
+]

@@ -8,12 +8,14 @@
       <!-- Titulo Column -->
       <ng-container matColumnDef="titulo">
         <th mat-header-cell *matHeaderCellDef> {{'csp.convocatoria.titulo' | translate}} </th>
-        <td mat-cell *matCellDef="let element"> {{element.convocatoria.titulo}}</td>
+        <td mat-cell *matCellDef="let element">
+          <sgi-i18n-table-field [field]="element.convocatoria.titulo"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Referencia Column -->
       <ng-container matColumnDef="codigo">
-        <th mat-header-cell *matHeaderCellDef> {{'csp.convocatoria.referencia' | translate}} </th>
+        <th mat-header-cell *matHeaderCellDef> {{'csp.convocatoria.codigo-externo' | translate}} </th>
         <td mat-cell *matCellDef="let element"> {{element.convocatoria.codigo}}</td>
       </ng-container>
 
@@ -46,7 +48,9 @@
       <!-- Fuente Financiacion Column -->
       <ng-container matColumnDef="fuenteFinanciacion">
         <th mat-header-cell *matHeaderCellDef> {{'csp.convocatoria.fuente-financiacion' | translate}} </th>
-        <td mat-cell *matCellDef="let element">{{element.entidadFinanciadora.fuenteFinanciacion?.nombre}}</td>
+        <td mat-cell *matCellDef="let element">
+          <sgi-i18n-table-field [field]="element.entidadFinanciadora.fuenteFinanciacion?.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Acciones Column -->

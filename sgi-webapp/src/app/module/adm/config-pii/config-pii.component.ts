@@ -73,4 +73,5 @@ export class ConfigPiiComponent extends AbstractMenuContentComponent {
     }
   }
 
+  protected setupI18N(): void { }
 }

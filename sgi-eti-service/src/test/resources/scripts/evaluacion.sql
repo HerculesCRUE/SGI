@@ -32,5 +32,7 @@ INSERT INTO test.evaluacion(id, memoria_id, convocatoria_reunion_id, tipo_evalua
  VALUES(11, 10, 2, 3, 1, 2, 3, '2020-07-13T00:00:00Z', 1, true, true);
 INSERT INTO test.evaluacion(id, memoria_id, convocatoria_reunion_id, tipo_evaluacion_id, dictamen_id, evaluador1_id, evaluador2_id, fecha_dictamen, version, es_rev_minima, activo) 
  VALUES(12, 2, 3, 1, 1, 2, 3, '2020-07-10T00:00:00Z', 7, false, true);
+INSERT INTO test.evaluacion(id, memoria_id, convocatoria_reunion_id, tipo_evaluacion_id, dictamen_id, evaluador1_id, evaluador2_id, fecha_dictamen, version, es_rev_minima, activo) 
+ VALUES(13, 17, 3, 3, 1, 2, 3, '2020-07-10T00:00:00Z', 1 , false, true);
 
-ALTER SEQUENCE test.evaluacion_seq RESTART WITH 13;
+ALTER SEQUENCE test.evaluacion_seq RESTART WITH 14;

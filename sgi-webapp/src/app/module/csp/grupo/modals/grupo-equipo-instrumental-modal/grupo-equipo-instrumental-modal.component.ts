@@ -1,11 +1,12 @@
 import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IGrupoEquipoInstrumental } from '@core/models/csp/grupo-equipo-instrumental';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { switchMap } from 'rxjs/operators';
 
@@ -93,8 +94,8 @@ export class GrupoEquipoInstrumentalModalComponent extends DialogFormComponent<G
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup(
       {
-        nombre: new FormControl(this.data?.entidad?.nombre, [Validators.required, Validators.maxLength(100)]),
-        descripcion: new FormControl(this.data?.entidad?.descripcion, Validators.maxLength(250)),
+        nombre: new FormControl(this.data?.entidad?.nombre, [I18nValidators.required, I18nValidators.maxLength(100)]),
+        descripcion: new FormControl(this.data?.entidad?.descripcion, I18nValidators.maxLength(250)),
         numRegistro: new FormControl(this.data?.entidad?.numRegistro, Validators.maxLength(50)),
       }
     );

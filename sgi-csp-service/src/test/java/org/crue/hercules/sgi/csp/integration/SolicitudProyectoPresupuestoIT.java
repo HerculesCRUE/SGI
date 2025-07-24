@@ -2,12 +2,17 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuestoObservaciones;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -78,6 +83,10 @@ class SolicitudProyectoPresupuestoIT extends BaseIT {
         .isEqualTo(newSolicitudProyectoPresupuesto.getImporteSolicitado());
     Assertions.assertThat(responseData.getObservaciones()).as("getObservaciones()")
         .isEqualTo(newSolicitudProyectoPresupuesto.getObservaciones());
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(responseData.getObservaciones(), Language.ES))
+        .as("getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(newSolicitudProyectoPresupuesto.getObservaciones(), Language.ES));
     Assertions.assertThat(responseData.getSolicitudProyectoEntidadId()).as("getSolicitudProyectoEntidadId()").isNull();
 
   }
@@ -108,7 +117,10 @@ class SolicitudProyectoPresupuestoIT extends BaseIT {
   void update_ReturnsSolicitudProyectoPresupuesto() throws Exception {
     Long idSolicitudProyectoPresupuesto = 1L;
     SolicitudProyectoPresupuesto solicitudProyectoPresupuesto = generarMockSolicitudProyectoPresupuesto(1L, 1L, 1L);
-    solicitudProyectoPresupuesto.setObservaciones("actualizado");
+    Set<SolicitudProyectoPresupuestoObservaciones> solicitudProyectoPresupuestoObservaciones = new HashSet<>();
+    solicitudProyectoPresupuestoObservaciones.add(
+        new SolicitudProyectoPresupuestoObservaciones(Language.ES, "actualizado"));
+    solicitudProyectoPresupuesto.setObservaciones(solicitudProyectoPresupuestoObservaciones);
 
     final ResponseEntity<SolicitudProyectoPresupuesto> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.PUT, buildRequest(null, solicitudProyectoPresupuesto),
@@ -237,7 +249,13 @@ class SolicitudProyectoPresupuestoIT extends BaseIT {
     Assertions.assertThat(responseData.getAnualidad()).as("getAnualidad()").isEqualTo(2020);
     Assertions.assertThat(responseData.getImporteSolicitado()).as("getImporteSolicitado()")
         .isEqualTo(new BigDecimal("1000.00"));
-    Assertions.assertThat(responseData.getObservaciones()).as("getObservaciones()").isEqualTo("observaciones-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("observaciones-001");
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(responseData.getObservaciones(),
+            Language.ES))
+        .as("getObservaciones()")
+        .isEqualTo("observaciones-001");
     Assertions.assertThat(responseData.getSolicitudProyectoEntidadId()).as("getSolicitudProyectoEntidadId()").isNull();
   }
 
@@ -254,6 +272,10 @@ class SolicitudProyectoPresupuestoIT extends BaseIT {
 
     String suffix = String.format("%03d", id);
 
+    Set<SolicitudProyectoPresupuestoObservaciones> solicitudProyectoPresupuestoObservaciones = new HashSet<>();
+    solicitudProyectoPresupuestoObservaciones.add(
+        new SolicitudProyectoPresupuestoObservaciones(Language.ES, "observaciones-" + suffix));
+
     SolicitudProyectoPresupuesto solicitudProyectoPresupuesto = SolicitudProyectoPresupuesto
         .builder()// @formatter:off
         .id(id)
@@ -261,7 +283,7 @@ class SolicitudProyectoPresupuestoIT extends BaseIT {
         .conceptoGasto(ConceptoGasto.builder().id(conceptoGastoId).build())
         .anualidad(2020)
         .importeSolicitado(new BigDecimal("1000.00"))
-        .observaciones("observaciones-" + suffix)
+        .observaciones(solicitudProyectoPresupuestoObservaciones)
         .solicitudProyectoEntidadId(null)
         .build();// @formatter:on
 

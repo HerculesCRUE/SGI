@@ -159,45 +159,6 @@ class SolicitudModalidadControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isNotFound());
   }
 
-  @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findById_WithExistingId_ReturnsSolicitudModalidad() throws Exception {
-    // given: existing id
-    BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
-      return generarMockSolicitudModalidad(invocation.getArgument(0));
-    });
-
-    // when: find by existing id
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: response is OK
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        // and the requested SolicitudModalidad is resturned as JSON object
-        .andExpect(MockMvcResultMatchers.jsonPath("id").value(1L))
-        .andExpect(MockMvcResultMatchers.jsonPath("solicitudId").value(1L))
-        .andExpect(MockMvcResultMatchers.jsonPath("entidadRef").value("entidadRef"))
-        .andExpect(MockMvcResultMatchers.jsonPath("programa.id").value(1L));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findById_WithNoExistingId_Returns404() throws Exception {
-    // given: no existing id
-    BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
-      throw new SolicitudModalidadNotFoundException(1L);
-    });
-
-    // when: find by non existing id
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError()).
-        // then: HTTP code 404 NotFound pressent
-        andExpect(MockMvcResultMatchers.status().isNotFound());
-  }
-
   /**
    * Función que devuelve un objeto SolicitudModalidad
    * 

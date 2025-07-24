@@ -25,7 +25,7 @@ export class AreaTematicaDatosGeneralesComponent extends FormFragmentComponent<I
     readonly actionService: AreaTematicaActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
     this.fxFlexProperties.md = '0 1 calc(100%-10px)';
@@ -40,10 +40,10 @@ export class AreaTematicaDatosGeneralesComponent extends FormFragmentComponent<I
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       AREA_TEMATICA_NOMBRE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

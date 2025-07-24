@@ -1,39 +1,54 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { PROYECTO_SOCIO_PERIODO_JUSTIFICACION_DOCUMENTO_CONVERTER } from '@core/converters/csp/proyecto-socio-periodo-justificacion-documento.converter';
-import { PROYECTO_SOCIO_PERIODO_JUSTIFICACION_CONVERTER } from '@core/converters/csp/proyecto-socio-periodo-justificacion.converter';
-import { IProyectoSocioPeriodoJustificacionBackend } from '@core/models/csp/backend/proyecto-socio-periodo-justificacion-backend';
-import { IProyectoSocioPeriodoJustificacionDocumentoBackend } from '@core/models/csp/backend/proyecto-socio-periodo-justificacion-documento-backend';
 import { IProyectoSocioPeriodoJustificacion } from '@core/models/csp/proyecto-socio-periodo-justificacion';
 import { IProyectoSocioPeriodoJustificacionDocumento } from '@core/models/csp/proyecto-socio-periodo-justificacion-documento';
+import { PROYECTO_SOCIO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER } from '@core/services/csp/proyecto-socio-periodo-justificacion/proyecto-socio-periodo-justificacion-response.converter';
 import { environment } from '@env';
-import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
+import { CreateCtor, FindByIdCtor, mixinCreate, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IProyectoSocioPeriodoJustificacionDocumentoResponse } from './proyecto-socio-periodo-justificacion-documento/proyecto-socio-periodo-justificacion-documento-response';
+import { PROYECTO_SOCIO_PERIODO_JUSTIFICACION_DOCUMENTO_RESPONSE_CONVERTER } from './proyecto-socio-periodo-justificacion-documento/proyecto-socio-periodo-justificacion-documento-response.converter';
+import { IProyectoSocioPeriodoJustificacionResponse } from './proyecto-socio-periodo-justificacion/proyecto-socio-periodo-justificacion-response';
+
+const _ProyectoSocioPeriodoJustificacionServiceMixinBase:
+  CreateCtor<IProyectoSocioPeriodoJustificacion, IProyectoSocioPeriodoJustificacion, IProyectoSocioPeriodoJustificacionResponse, IProyectoSocioPeriodoJustificacionResponse> &
+  UpdateCtor<number, IProyectoSocioPeriodoJustificacion, IProyectoSocioPeriodoJustificacion, IProyectoSocioPeriodoJustificacionResponse, IProyectoSocioPeriodoJustificacionResponse> &
+  FindByIdCtor<number, IProyectoSocioPeriodoJustificacion, IProyectoSocioPeriodoJustificacionResponse> &
+  typeof SgiRestBaseService =
+  mixinFindById(
+    mixinUpdate(
+      mixinCreate(
+        SgiRestBaseService,
+        PROYECTO_SOCIO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER,
+        PROYECTO_SOCIO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER
+      ),
+      PROYECTO_SOCIO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER,
+      PROYECTO_SOCIO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER
+    ),
+    PROYECTO_SOCIO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER);
 
 @Injectable({
   providedIn: 'root'
 })
 export class ProyectoSocioPeriodoJustificacionService
-  extends SgiMutableRestService<number, IProyectoSocioPeriodoJustificacionBackend, IProyectoSocioPeriodoJustificacion> {
+  extends _ProyectoSocioPeriodoJustificacionServiceMixinBase {
   private static readonly MAPPING = '/proyectosocioperiodojustificaciones';
 
   constructor(protected http: HttpClient) {
     super(
-      ProyectoSocioPeriodoJustificacionService.name,
       `${environment.serviceServers.csp}${ProyectoSocioPeriodoJustificacionService.MAPPING}`,
-      http,
-      PROYECTO_SOCIO_PERIODO_JUSTIFICACION_CONVERTER
+      http
     );
   }
 
   updateList(proyectoSolictudSocioId: number, entities: IProyectoSocioPeriodoJustificacion[]):
     Observable<IProyectoSocioPeriodoJustificacion[]> {
-    return this.http.patch<IProyectoSocioPeriodoJustificacionBackend[]>(
+    return this.http.patch<IProyectoSocioPeriodoJustificacionResponse[]>(
       `${this.endpointUrl}/${proyectoSolictudSocioId}`,
-      this.converter.fromTargetArray(entities)
+      PROYECTO_SOCIO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER.fromTargetArray(entities)
     ).pipe(
-      map(response => this.converter.toTargetArray(response))
+      map(response => PROYECTO_SOCIO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER.toTargetArray(response))
     );
   }
 
@@ -44,10 +59,10 @@ export class ProyectoSocioPeriodoJustificacionService
    */
   findAllProyectoSocioPeriodoJustificacionDocumento(id: number, options?: SgiRestFindOptions)
     : Observable<SgiRestListResult<IProyectoSocioPeriodoJustificacionDocumento>> {
-    return this.find<IProyectoSocioPeriodoJustificacionDocumentoBackend, IProyectoSocioPeriodoJustificacionDocumento>(
+    return this.find<IProyectoSocioPeriodoJustificacionDocumentoResponse, IProyectoSocioPeriodoJustificacionDocumento>(
       `${this.endpointUrl}/${id}/proyectosocioperiodojustificaciondocumentos`,
       options,
-      PROYECTO_SOCIO_PERIODO_JUSTIFICACION_DOCUMENTO_CONVERTER
+      PROYECTO_SOCIO_PERIODO_JUSTIFICACION_DOCUMENTO_RESPONSE_CONVERTER
     );
   }
 

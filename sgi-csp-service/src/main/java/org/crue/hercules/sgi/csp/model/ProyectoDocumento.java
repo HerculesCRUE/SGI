@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -49,10 +57,12 @@ public class ProyectoDocumento extends BaseEntity {
   private Long proyectoId;
 
   /** Nombre. */
-  @Column(name = "nombre", length = 250, nullable = false)
-  @Size(max = 250)
-  @NotNull
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "proyecto_documento_nombre", joinColumns = @JoinColumn(name = "proyecto_documento_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<ProyectoDocumentoNombre> nombre = new HashSet<>();
 
   /** Referemcoa documento. */
   @Column(name = "documento_ref", length = 250, nullable = false)
@@ -71,9 +81,11 @@ public class ProyectoDocumento extends BaseEntity {
   private TipoDocumento tipoDocumento;
 
   /** Comentario. */
-  @Column(name = "comentario", length = 2000, nullable = true)
-  @Size(max = 2000)
-  private String comentario;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "proyecto_documento_comentario", joinColumns = @JoinColumn(name = "proyecto_documento_id"))
+  @Valid
+  @Builder.Default
+  private Set<ProyectoDocumentoComentario> comentario = new HashSet<>();
 
   /** Visible */
   @Column(name = "visible", nullable = false)

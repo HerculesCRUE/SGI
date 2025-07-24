@@ -10,6 +10,7 @@ import { SolicitudProyectoPresupuestoEditarComponent } from './solicitud-proyect
 import { SolicitudProyectoPresupuestoDatosGeneralesComponent } from './solicitud-proyecto-presupuesto-formulario/solicitud-proyecto-presupuesto-datos-generales/solicitud-proyecto-presupuesto-datos-generales.component';
 import { SolicitudProyectoPresupuestoPartidasGastoComponent } from './solicitud-proyecto-presupuesto-formulario/solicitud-proyecto-presupuesto-partidas-gasto/solicitud-proyecto-presupuesto-partidas-gasto.component';
 import { SolicitudProyectoPresupuestoRoutingModule } from './solicitud-proyecto-presupuesto-routing.module';
+import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { SolicitudProyectoPresupuestoRoutingModule } from './solicitud-proyecto-
     SolicitudProyectoPresupuestoRoutingModule,
     SgiAuthModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    SgempSharedModule
   ],
   providers: [
     SolicitudProyectoPresupuestoDataResolver

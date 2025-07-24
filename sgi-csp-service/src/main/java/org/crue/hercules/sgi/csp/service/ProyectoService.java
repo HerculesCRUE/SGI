@@ -270,4 +270,13 @@ public interface ProyectoService {
    */
   ProyectoApartadosToBeCopied getProyectoApartadosToBeCopied(Long id);
 
+  /**
+   * Obtiene la lista de anualidades de un proyecto comprendidas entre su fecha
+   * de inicio y us fecha de fin o fecha de fin definitiva si esta informada
+   * 
+   * @param id Identificador de {@link Proyecto}
+   * @return la lista de anualidades del proyecto
+   */
+  List<String> getAnualidadesFechasProyecto(Long id);
+
 }

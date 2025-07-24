@@ -12,6 +12,7 @@ import { SharedModule } from '@shared/shared.module';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { EtiSharedModule } from '../../shared/eti-shared.module';
 import { SeguimientoListadoComponent } from './seguimiento-listado.component';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 describe('SeguimientoListadoComponent', () => {
   let component: SeguimientoListadoComponent;
@@ -32,7 +33,8 @@ describe('SeguimientoListadoComponent', () => {
         ReactiveFormsModule,
         SgiAuthModule,
         SharedModule,
-        EtiSharedModule
+        EtiSharedModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

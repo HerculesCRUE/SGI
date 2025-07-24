@@ -11,12 +11,13 @@ import { ROUTE_NAMES } from '@core/route.names';
 import { DialogService } from '@core/services/dialog.service';
 import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
 import { FormlyService } from '@core/services/eti/formly/formly.service';
+import { LanguageService } from '@core/services/language.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
-import { FormlyFieldConfig } from '@ngx-formly/core';
+import { FormlyFieldConfig, FormlyFormOptions } from '@ngx-formly/core';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { Observable, Subscription } from 'rxjs';
-import { filter, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { PETICION_EVALUACION_ROUTE, PETICION_EVALUACION_ROUTE_NAMES } from '../../peticion-evaluacion/peticion-evaluacion-route-names';
 
 const MSG_CHECKLIST_INVALID_FORM = marker('eti.checklist.invalid');
@@ -30,6 +31,7 @@ export interface FormlyData {
   formGroup: FormGroup;
   formly: IFormly;
   model: {};
+  options: FormlyFormOptions;
 }
 
 export interface SolicitudProyectoData {
@@ -46,8 +48,17 @@ export class ChecklistFormularioComponent implements OnInit, OnDestroy {
 
   public readonly data: FormlyData = {
     formGroup: new FormGroup({}),
-    formly: { esquema: [] } as IFormly,
-    model: {}
+    formly: {} as IFormly,
+    model: {},
+    options: {
+      formState: {
+        solicitud: {
+          estado: {
+            estado: ""
+          }
+        }
+      }
+    }
   };
 
   private subscriptions: Subscription[] = [];
@@ -63,17 +74,19 @@ export class ChecklistFormularioComponent implements OnInit, OnDestroy {
     private readonly dialogService: DialogService,
     private readonly translate: TranslateService,
     private router: Router,
+    public languageService: LanguageService
   ) {
+
   }
 
   ngOnInit(): void {
     this.subscriptions.push(this.formlyService.findByNombre('CHECKLIST').subscribe((formlyByNombre: IFormly) => {
       this.data.formly = formlyByNombre;
     }));
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CHECKLIST_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -157,6 +170,14 @@ export class ChecklistFormularioComponent implements OnInit, OnDestroy {
     return this.data.formGroup.controls.pregunta_1.value || this.data.formGroup.controls.pregunta_2.value
       || this.data.formGroup.controls.pregunta_3.value || this.data.formGroup.controls.pregunta_4.value
       || this.data.formGroup.controls.pregunta_5.value || this.data.formGroup.controls.pregunta_6.value;
+  }
+
+  getEsquema(formly: IFormly): FormlyFieldConfig[] {
+    if (formly?.definicion?.length) {
+      return formly?.definicion.find(f => f.lang.toLowerCase() === this.languageService.getLanguage().code).esquema;
+    } else {
+      return [];
+    }
   }
 
   ngOnDestroy(): void {

@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -66,12 +72,18 @@ public class GastoRequerimientoJustificacion extends BaseEntity {
   private Boolean aceptado;
 
   /** Incidencia */
-  @Column(name = "incidencia", length = DEFAULT_LONG_TEXT_LENGTH, nullable = true)
-  private String incidencia;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "gasto_requerimiento_justificacion_incidencia", joinColumns = @JoinColumn(name = "gasto_requerimiento_justificacion_id"))
+  @Valid
+  @Builder.Default
+  private Set<GastoRequerimientoJustificacionIncidencia> incidencia = new HashSet<>();
 
-  /** Identificador justificacion */
-  @Column(name = "alegacion", length = DEFAULT_LONG_TEXT_LENGTH, nullable = true)
-  private String alegacion;
+  /** Alegacion */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "gasto_requerimiento_justificacion_alegacion", joinColumns = @JoinColumn(name = "gasto_requerimiento_justificacion_id"))
+  @Valid
+  @Builder.Default
+  private Set<GastoRequerimientoJustificacionAlegacion> alegacion = new HashSet<>();
 
   /** Identificador justificacion */
   @Column(name = "identificador_justificacion", length = EXTERNAL_REF_LENGTH, nullable = true)

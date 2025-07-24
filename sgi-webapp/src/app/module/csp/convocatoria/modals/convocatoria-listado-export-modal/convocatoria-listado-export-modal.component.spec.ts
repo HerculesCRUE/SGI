@@ -3,7 +3,7 @@ import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -24,7 +24,6 @@ import { ConvocatoriaEntidadFinanciadoraListadoExportService } from '../../convo
 import { ConvocatoriaFaseListadoExportService } from '../../convocatoria-fase-listado-export.service';
 import { ConvocatoriaFooterListadoExportService } from '../../convocatoria-footer-listado-export.service';
 import { ConvocatoriaGeneralListadoExportService } from '../../convocatoria-general-listado-export.service';
-import { ConvocatoriaHeaderListadoExportService } from '../../convocatoria-header-listado-export.service';
 import { ConvocatoriaHitoListadoExportService } from '../../convocatoria-hito-listado-export.service';
 import { ConvocatoriaListadoExportService } from '../../convocatoria-listado-export.service';
 import { ConvocatoriaPartidaPresupuestariaListadoExportService } from '../../convocatoria-partida-presupuestaria-listado-export.service';
@@ -76,7 +75,6 @@ describe('ConvocatoriaListadoExportModalComponent', () => {
         ConvocatoriaPartidaPresupuestariaListadoExportService,
         ConvocatoriaConfiguracionSolicitudListadoExportService,
         ConvocatoriaFooterListadoExportService,
-        ConvocatoriaHeaderListadoExportService,
         LuxonDatePipe,
         DecimalPipe,
         PercentPipe,

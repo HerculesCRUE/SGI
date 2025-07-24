@@ -120,7 +120,7 @@ export class SearchConvocatoriaModalComponent extends DialogCommonComponent impl
         index: reset ? 0 : this.paginator.pageIndex,
         size: this.paginator.pageSize
       },
-      sort: new RSQLSgiRestSort(this.sort?.active, SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
+      sort: new RSQLSgiRestSort(this.resolveSortProperty(this.sort?.active), SgiRestSortDirection.fromSortDirection(this.sort?.direction)),
       filter: this.buildFilter()
     };
 
@@ -232,7 +232,7 @@ export class SearchConvocatoriaModalComponent extends DialogCommonComponent impl
 
   private buildFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const filter = new RSQLSgiRestFilter('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
+    const filter = new RSQLSgiRestFilter('titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('codigo', SgiRestFilterOperator.LIKE_ICASE, controls.codigo.value)
       .and('abiertoPlazoPresentacionSolicitud', SgiRestFilterOperator.EQUALS, controls.abiertoPlazoPresentacionSolicitud.value?.toString());
 
@@ -262,6 +262,13 @@ export class SearchConvocatoriaModalComponent extends DialogCommonComponent impl
 
   openCreate(): void {
     window.open(this.router.serializeUrl(this.router.createUrlTree(['/', Module.CSP.path, CSP_ROUTE_NAMES.CONVOCATORIA, ROUTE_NAMES.NEW])), '_blank');
+  }
+
+  private resolveSortProperty(column: string): string {
+    if (column == 'titulo') {
+      return 'titulo.value';
+    }
+    return column;
   }
 
 }

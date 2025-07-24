@@ -15,6 +15,7 @@ import { transformAutorApellidos } from '../../../shared/autor/pipe/autor-apelli
 import { transformAutorNombre } from '../../../shared/autor/pipe/autor-nombre.pipe';
 import { TesisTfmTfgActionService } from '../../tesis-tfm-tfg.action.service';
 import { TesisTfmTfgDatosGeneralesFragment } from './tesis-tfm-tfg-datos-generales.fragment';
+import { TranslateService } from '@ngx-translate/core';
 
 const MSG_DOWNLOAD_ERROR = marker('error.file.download');
 
@@ -160,4 +161,6 @@ export class TesisTfmTfgDatosGeneralesComponent extends FragmentComponent implem
       }
     ));
   }
+
+  protected setupI18N(): void { }
 }

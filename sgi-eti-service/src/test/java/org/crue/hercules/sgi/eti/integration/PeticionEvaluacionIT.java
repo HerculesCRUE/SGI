@@ -4,7 +4,9 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.dto.EquipoTrabajoWithIsEliminable;
@@ -15,9 +17,18 @@ import org.crue.hercules.sgi.eti.model.FormacionEspecifica;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.Tarea;
+import org.crue.hercules.sgi.eti.model.TareaFormacion;
+import org.crue.hercules.sgi.eti.model.TareaNombre;
+import org.crue.hercules.sgi.eti.model.TareaOrganismo;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoTarea;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -41,7 +52,6 @@ import org.springframework.web.util.UriComponentsBuilder;
   "classpath:scripts/tipo_actividad.sql", 
   "classpath:scripts/formulario.sql",
   "classpath:scripts/comite.sql",
-  "classpath:scripts/tipo_memoria.sql", 
   "classpath:scripts/tipo_estado_memoria.sql",
   "classpath:scripts/estado_retrospectiva.sql", 
   "classpath:scripts/formacion_especifica.sql",
@@ -117,7 +127,8 @@ public class PeticionEvaluacionIT extends BaseIT {
     final PeticionEvaluacion tipoActividad = response.getBody();
 
     Assertions.assertThat(tipoActividad.getId()).isEqualTo(2L);
-    Assertions.assertThat(tipoActividad.getTitulo()).isEqualTo("PeticionEvaluacion2");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoActividad.getTitulo(), Language.ES))
+        .isEqualTo("PeticionEvaluacion2");
   }
 
   @Test
@@ -206,7 +217,7 @@ public class PeticionEvaluacionIT extends BaseIT {
     // Contiene de titulo='PeticionEvaluacion6' a 'PeticionEvaluacion8'
     List<String> titulos = new ArrayList<>();
     for (int i = 0; i < 2; i++) {
-      titulos.add(peticionEvaluaciones.get(i).getTitulo());
+      titulos.add(I18nHelper.getValueForLanguage(peticionEvaluaciones.get(i).getTitulo(), Language.ES));
     }
     Assertions.assertThat(titulos).contains("PeticionEvaluacion7", "PeticionEvaluacion8");
   }
@@ -215,7 +226,7 @@ public class PeticionEvaluacionIT extends BaseIT {
   public void findAll_WithSearchQuery_ReturnsFilteredPeticionEvaluacionList() throws Exception {
     // when: Búsqueda por titulo like e id equals
     Long id = 2L;
-    String query = "peticionEvaluacion.titulo=ke=PeticionEvaluacion";
+    String query = "peticionEvaluacion.titulo.value=ke=PeticionEvaluacion2";
 
     URI uri = UriComponentsBuilder.fromUriString(PETICION_EVALUACION_CONTROLLER_BASE_PATH).queryParam("q", query)
         .build(false).toUri();
@@ -231,13 +242,15 @@ public class PeticionEvaluacionIT extends BaseIT {
     final List<PeticionEvaluacion> peticionEvaluaciones = response.getBody();
     Assertions.assertThat(peticionEvaluaciones.size()).isEqualTo(1);
     Assertions.assertThat(peticionEvaluaciones.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(peticionEvaluaciones.get(0).getTitulo()).startsWith("PeticionEvaluacion");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(peticionEvaluaciones.get(0).getTitulo(), Language.ES))
+        .startsWith(
+            "PeticionEvaluacion");
   }
 
   @Test
   public void findAll_WithSortQuery_ReturnsOrderedPeticionEvaluacionList() throws Exception {
     // when: Ordenación por titulo desc
-    String query = "titulo,desc";
+    String query = "titulo.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(PETICION_EVALUACION_CONTROLLER_BASE_PATH).queryParam("s", query)
         .build(false).toUri();
@@ -255,7 +268,7 @@ public class PeticionEvaluacionIT extends BaseIT {
     for (int i = 0; i < 7; i++) {
       PeticionEvaluacion peticionEvaluacion = peticionEvaluaciones.get(i);
       Assertions.assertThat(peticionEvaluacion.getId()).isEqualTo(8 - i);
-      Assertions.assertThat(peticionEvaluacion.getTitulo())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(peticionEvaluacion.getTitulo(), Language.ES))
           .isEqualTo("PeticionEvaluacion" + String.format("%d", 8 - i));
     }
   }
@@ -267,9 +280,9 @@ public class PeticionEvaluacionIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     // when: Ordena por titulo desc
-    String sort = "titulo,desc";
+    String sort = "titulo.value,desc";
     // when: Filtra por titulo like e id equals
-    String filter = "peticionEvaluacion.titulo=ke=Peticion";
+    String filter = "peticionEvaluacion.titulo.value=ke=PeticionEvaluacion2";
 
     URI uri = UriComponentsBuilder.fromUriString(PETICION_EVALUACION_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -290,9 +303,8 @@ public class PeticionEvaluacionIT extends BaseIT {
 
     // Contiene titulo='PeticionEvaluacion1', 'PeticionEvaluacion2',
     // 'PeticionEvaluacion3'
-    Assertions.assertThat(peticionEvaluaciones.get(0).getTitulo())
+    Assertions.assertThat(I18nHelper.getValueForLanguage(peticionEvaluaciones.get(0).getTitulo(), Language.ES))
         .isEqualTo("PeticionEvaluacion" + String.format("%d", 2));
-
   }
 
   @Test
@@ -338,7 +350,7 @@ public class PeticionEvaluacionIT extends BaseIT {
     // correcta en el header
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<MemoriaPeticionEvaluacion> memoriasPeticionEvaluacion = response.getBody();
-    Assertions.assertThat(memoriasPeticionEvaluacion.size()).isEqualTo(15);
+    Assertions.assertThat(memoriasPeticionEvaluacion.size()).isEqualTo(16);
 
     // Contiene de id='7' a '8'
     List<Long> ids = new ArrayList<>();
@@ -367,11 +379,14 @@ public class PeticionEvaluacionIT extends BaseIT {
     Assertions.assertThat(tarea.getEquipoTrabajo().getId()).as("equipoTrabajo.id").isEqualTo(2L);
     Assertions.assertThat(tarea.getMemoria()).as("memoria").isNotNull();
     Assertions.assertThat(tarea.getMemoria().getId()).as("memoria.id").isEqualTo(2L);
-    Assertions.assertThat(tarea.getTarea()).as("tarea").isEqualTo("Tarea");
-    Assertions.assertThat(tarea.getFormacion()).as("formacion").isEqualTo("Formacion");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getNombre(), Language.ES)).as("nombre")
+        .isEqualTo("Tarea");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getFormacion(), Language.ES)).as("formacion")
+        .isEqualTo("Formacion");
     Assertions.assertThat(tarea.getFormacionEspecifica()).as("formacionEspecifica").isNotNull();
     Assertions.assertThat(tarea.getFormacionEspecifica().getId()).as("formacionEspecifica.id").isEqualTo(1L);
-    Assertions.assertThat(tarea.getOrganismo()).as("organismo").isEqualTo("Organismo");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getOrganismo(), Language.ES)).as("organismo")
+        .isEqualTo("Organismo");
     Assertions.assertThat(tarea.getAnio()).as("anio").isEqualTo(2020);
   }
 
@@ -390,7 +405,7 @@ public class PeticionEvaluacionIT extends BaseIT {
     final EquipoTrabajo equipoTrabajo = response.getBody();
 
     Assertions.assertThat(equipoTrabajo.getId()).isNotNull();
-    Assertions.assertThat(equipoTrabajo.getPeticionEvaluacion().getId()).isEqualTo(2);
+    Assertions.assertThat(equipoTrabajo.getPeticionEvaluacionId()).isEqualTo(2);
     Assertions.assertThat(equipoTrabajo.getPersonaRef()).isEqualTo("user-001");
   }
 
@@ -466,7 +481,7 @@ public class PeticionEvaluacionIT extends BaseIT {
     // when: Ordena por id desc
     String sort = "id,desc";
     // when: Filtra por numReferencia like
-    String filter = "peticionEvaluacion.titulo=ke=PeticionEvaluacion2";
+    String filter = "peticionEvaluacion.titulo.value=ke=PeticionEvaluacion2";
 
     URI uri = UriComponentsBuilder.fromUriString(PETICION_EVALUACION_CONTROLLER_BASE_PATH + "/memorias")
         .queryParam("s", sort).queryParam("q", filter).build(false).toUri();
@@ -486,7 +501,8 @@ public class PeticionEvaluacionIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).isEqualTo("1");
 
     // Contiene titulo='PeticionEvaluacion1'
-    Assertions.assertThat(peticionesEvaluacion.get(0).getTitulo()).isEqualTo("PeticionEvaluacion2");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(peticionesEvaluacion.get(0).getTitulo(), Language.ES))
+        .isEqualTo("PeticionEvaluacion2");
   }
 
   /**
@@ -497,25 +513,33 @@ public class PeticionEvaluacionIT extends BaseIT {
    * @return el objeto PeticionEvaluacion
    */
 
-  public PeticionEvaluacion generarMockPeticionEvaluacion(Long id, String titulo) {
+  private PeticionEvaluacion generarMockPeticionEvaluacion(Long id, String titulo) {
     TipoActividad tipoActividad = new TipoActividad();
     tipoActividad.setId(1L);
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> tit = new HashSet<>();
+    tit.add(new PeticionEvaluacionTitulo(Language.ES, titulo));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen" + id));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos" + id));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico" + id));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo" + id);
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico" + id);
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos" + id);
-    peticionEvaluacion.setResumen("Resumen" + id);
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria" + id);
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo(titulo);
+    peticionEvaluacion.setTitulo(tit);
     peticionEvaluacion.setPersonaRef("user-00" + id);
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
@@ -530,11 +554,11 @@ public class PeticionEvaluacionIT extends BaseIT {
    * @param peticionEvaluacion la PeticionEvaluacion del EquipoTrabajo
    * @return el objeto EquipoTrabajo
    */
-  public EquipoTrabajo generarMockEquipoTrabajo(Long id, PeticionEvaluacion peticionEvaluacion) {
+  private EquipoTrabajo generarMockEquipoTrabajo(Long id, PeticionEvaluacion peticionEvaluacion) {
 
     EquipoTrabajo equipoTrabajo = new EquipoTrabajo();
     equipoTrabajo.setId(id);
-    equipoTrabajo.setPeticionEvaluacion(peticionEvaluacion);
+    equipoTrabajo.setPeticionEvaluacionId(peticionEvaluacion.getId());
     equipoTrabajo.setPersonaRef("user-00" + (id == null ? 1 : id));
 
     return equipoTrabajo;
@@ -547,7 +571,7 @@ public class PeticionEvaluacionIT extends BaseIT {
    * @param descripcion descripcion de la tarea
    * @return el objeto Tarea
    */
-  public Tarea generarMockTarea(Long id, String descripcion) {
+  private Tarea generarMockTarea(Long id, String descripcion) {
     EquipoTrabajo equipoTrabajo = new EquipoTrabajo();
     equipoTrabajo.setId(2L);
 
@@ -559,17 +583,22 @@ public class PeticionEvaluacionIT extends BaseIT {
 
     TipoTarea tipoTarea = new TipoTarea();
     tipoTarea.setId(1L);
-    tipoTarea.setNombre("Eutanasia");
-    tipoTarea.setActivo(Boolean.TRUE);
+
+    Set<TareaNombre> nombre = new HashSet<>();
+    nombre.add(new TareaNombre(Language.ES, descripcion));
+    Set<TareaFormacion> formacion = new HashSet<>();
+    formacion.add(new TareaFormacion(Language.ES, "Formacion" + (id != null ? id : "")));
+    Set<TareaOrganismo> organismo = new HashSet<>();
+    organismo.add(new TareaOrganismo(Language.ES, "Organismo" + (id != null ? id : "")));
 
     Tarea tarea = new Tarea();
     tarea.setId(id);
     tarea.setEquipoTrabajo(equipoTrabajo);
     tarea.setMemoria(memoria);
-    tarea.setTarea(descripcion);
-    tarea.setFormacion("Formacion" + (id != null ? id : ""));
+    tarea.setNombre(nombre);
+    tarea.setFormacion(formacion);
     tarea.setFormacionEspecifica(formacionEspecifica);
-    tarea.setOrganismo("Organismo" + (id != null ? id : ""));
+    tarea.setOrganismo(organismo);
     tarea.setAnio(2020);
     tarea.setTipoTarea(tipoTarea);
 

@@ -55,7 +55,7 @@ export class PublicacionEditarComponent extends ActionComponent implements OnIni
     private matDialog: MatDialog,
     private readonly translate: TranslateService,
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
     this.subscriptions.push(
       this.actionService.isProduccionCientificaDisabled$()
         .subscribe(isDisabled => this.isProduccionCientificaDisabled = isDisabled)
@@ -64,10 +64,10 @@ export class PublicacionEditarComponent extends ActionComponent implements OnIni
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PRODUCCION_CIENTIFICA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

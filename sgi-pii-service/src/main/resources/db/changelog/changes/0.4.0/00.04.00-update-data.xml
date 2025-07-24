@@ -8,10 +8,31 @@
                       http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
   <changeSet context="!test" author="master" id="00.04.00-solicitud_proteccion">
-    <sql>
+    <validCheckSum>8:db98d107649a6251214d53f16eba76bf</validCheckSum>
+    <sql dbms="!h2">
       DELETE FROM ${schemaPrefix}solicitud_proteccion
       WHERE 
         activo = '0'
+        AND NOT EXISTS (
+          SELECT id
+          FROM ${schemaPrefix}pais_validado p
+          WHERE p.solicitud_proteccion_id = ${schemaPrefix}solicitud_proteccion.id
+        )
+        AND NOT EXISTS (
+          SELECT id
+          FROM ${schemaPrefix}procedimiento p
+          WHERE p.solicitud_proteccion_id = ${schemaPrefix}solicitud_proteccion.id
+        )
+        AND NOT EXISTS (
+          SELECT id
+          FROM ${schemaPrefix}invencion_gasto ig
+          WHERE ig.solicitud_proteccion_id = ${schemaPrefix}solicitud_proteccion.id
+        );
+    </sql>
+    <sql dbms="h2">
+      DELETE FROM ${schemaPrefix}solicitud_proteccion
+      WHERE 
+        activo = false
         AND NOT EXISTS (
           SELECT id
           FROM ${schemaPrefix}pais_validado p

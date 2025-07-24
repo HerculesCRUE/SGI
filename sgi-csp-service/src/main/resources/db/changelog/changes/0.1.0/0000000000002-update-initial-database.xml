@@ -121,7 +121,8 @@
   </changeSet>
   <!-- Se elimina restricción para fecha_congreso en la tabla gasto_proyecto -->
   <changeSet author="user (generated)" id="0000000000002-14">
+    <validCheckSum>8:49047ef4ac72987564f858c1dc4b6d5e</validCheckSum>
     <dropNotNullConstraint columnDataType="timestamp" columnName="fecha_congreso" tableName="gasto_proyecto" />
-    <dropNotNullConstraint columnDataType="timestamp" columnName="proyecto_id" tableName="gasto_proyecto" />
+    <dropNotNullConstraint columnDataType="BIGINT" columnName="proyecto_id" tableName="gasto_proyecto" />
   </changeSet>
 </databaseChangeLog>

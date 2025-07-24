@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 
 export interface IProyectoSocioPeriodoJustificacion {
@@ -8,7 +9,7 @@ export interface IProyectoSocioPeriodoJustificacion {
   fechaFin: DateTime;
   fechaInicioPresentacion: DateTime;
   fechaFinPresentacion: DateTime;
-  observaciones: string;
+  observaciones: I18nFieldValue[];
   documentacionRecibida: boolean;
   fechaRecepcion: DateTime;
   importeJustificado: number;

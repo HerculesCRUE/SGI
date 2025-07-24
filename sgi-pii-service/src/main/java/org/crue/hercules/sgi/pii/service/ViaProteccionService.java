@@ -15,8 +15,9 @@ import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.pii.exceptions.ViaProteccionNotFoundException;
+import org.crue.hercules.sgi.pii.model.BaseActivableEntity;
+import org.crue.hercules.sgi.pii.model.BaseEntity;
 import org.crue.hercules.sgi.pii.model.ViaProteccion;
-import org.crue.hercules.sgi.pii.model.ViaProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.repository.ViaProteccionRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -52,7 +53,7 @@ public class ViaProteccionService {
    * @param id Id del {@link ViaProteccion}.
    * @return Entidad {@link ViaProteccion} persistida activada.
    */
-  @Validated({ ViaProteccion.OnActivar.class })
+  @Validated({ BaseActivableEntity.OnActivar.class })
   public ViaProteccion activar(Long id) {
 
     Assert.notNull(id,
@@ -66,7 +67,8 @@ public class ViaProteccionService {
         return viaProteccion;
       }
       // Invocar validaciones asociadas a OnActivar
-      Set<ConstraintViolation<ViaProteccion>> result = validator.validate(viaProteccion, OnActivar.class);
+      Set<ConstraintViolation<ViaProteccion>> result = validator.validate(viaProteccion,
+          BaseActivableEntity.OnActivar.class);
       if (!result.isEmpty()) {
         throw new ConstraintViolationException(result);
       }
@@ -109,7 +111,7 @@ public class ViaProteccionService {
    * @param viaProteccion la entidad {@link ViaProteccion} a guardar.
    * @return la entidad {@link ViaProteccion} persistida.
    */
-  @Validated({ ViaProteccion.OnCrear.class })
+  @Validated({ BaseEntity.Create.class })
   public ViaProteccion create(@Valid ViaProteccion viaProteccion) {
 
     Assert.isNull(viaProteccion.getId(),
@@ -123,7 +125,7 @@ public class ViaProteccionService {
     return this.viaProteccionRepository.save(viaProteccion);
   }
 
-  @Validated({ ViaProteccion.OnActualizar.class })
+  @Validated({ BaseEntity.Update.class })
   public ViaProteccion update(@Valid ViaProteccion toUpdate) {
 
     Assert.notNull(toUpdate.getId(),

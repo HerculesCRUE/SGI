@@ -3,26 +3,40 @@ package org.crue.hercules.sgi.csp.service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaEnlaceNotFoundException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlace;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObjeto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoEnlace;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEnlaceRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoEnlaceRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaEnlaceServiceImpl;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -47,7 +61,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   private ConvocatoriaEnlaceService service;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     service = new ConvocatoriaEnlaceServiceImpl(repository, convocatoriaRepository, modeloTipoEnlaceRepository,
         authorityHelper);
   }
@@ -94,7 +108,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
     // when: Creamos el ConvocatoriaEnlace
     // then: Lanza una excepcion porque el ConvocatoriaEnlace ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(convocatoriaEnlace)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ConvocatoriaEnlace id tiene que ser null para crear un nuevo ConvocatoriaEnlace");
+        .hasMessage("Identificador de Convocatoria Enlace debe ser nulo");
   }
 
   @Test
@@ -107,7 +121,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
     // when: Creamos el ConvocatoriaEnlace
     // then: Lanza una excepcion porque la url es null
     Assertions.assertThatThrownBy(() -> service.create(convocatoriaEnlace)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ConvocatoriaEnlace url no puede ser null para crear una nueva ConvocatoriaEnlace");
+        .hasMessage("URL de Convocatoria Enlace no puede ser nulo");
   }
 
   @Test
@@ -118,7 +132,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
     // when: Creamos el ConvocatoriaEnlace
     // then: Lanza una excepcion porque la convocatoria es null
     Assertions.assertThatThrownBy(() -> service.create(convocatoriaEnlace)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Convocatoria no puede ser null para crear ConvocatoriaEnlace");
+        .hasMessage("Identificador de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -137,8 +151,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
         () -> service.create(convocatoriaEnlace))
         // then: throw exception as ModeloEjecucion not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoEnlace '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaEnlace.getTipoEnlace().getNombre(), "Convocatoria sin modelo asignado");
+        .hasMessage("Tipo Enlace no disponible para el Modelo Ejecución Convocatoria sin modelo asignado");
   }
 
   @Test
@@ -159,8 +172,8 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
         () -> service.create(convocatoriaEnlace))
         // then: throw exception as ModeloTipoEnlace not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoEnlace '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaEnlace.getTipoEnlace().getNombre(), convocatoria.getModeloEjecucion().getNombre());
+        .hasMessage("Tipo Enlace no disponible para el Modelo Ejecución %s",
+            convocatoria.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -183,7 +196,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
         () -> service.create(convocatoriaEnlace))
         // then: throw exception as ModeloTipoEnlace is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoEnlace '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Modelo Tipo Enlace no está activo",
             convocatoriaEnlace.getTipoEnlace().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -206,7 +219,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
         () -> service.create(convocatoriaEnlace))
         // then: throw exception as TipoEnlace is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoEnlace '%s' no está activo", convocatoriaEnlace.getTipoEnlace().getNombre());
+        .hasMessage("%s de Tipo Enlace no está activo", convocatoriaEnlace.getTipoEnlace().getNombre());
   }
 
   @Test
@@ -216,7 +229,11 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
     Convocatoria convocatoria = generarMockConvocatoria(convocatoriaId, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(1L, convocatoriaId);
     ConvocatoriaEnlace convocatoriaEnlaceDescripcionActualizada = generarMockConvocatoriaEnlace(1L, convocatoriaId);
-    convocatoriaEnlaceDescripcionActualizada.setDescripcion("nuevaDescripcion");
+
+    Set<ConvocatoriaEnlaceDescripcion> descripcionConvocatoriaEnlace = new HashSet<>();
+    descripcionConvocatoriaEnlace.add(new ConvocatoriaEnlaceDescripcion(Language.ES, "nuevaDescripcion"));
+    convocatoriaEnlaceDescripcionActualizada.setDescripcion(descripcionConvocatoriaEnlace);
+    convocatoriaEnlaceDescripcionActualizada.setDescripcion(descripcionConvocatoriaEnlace);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(convocatoria));
@@ -236,8 +253,10 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
     // then: El ConvocatoriaEnlace se actualiza correctamente.
     Assertions.assertThat(convocatoriaEnlaceActualizado).as("isNotNull()").isNotNull();
     Assertions.assertThat(convocatoriaEnlaceActualizado.getId()).as("getId()").isEqualTo(convocatoriaEnlace.getId());
-    Assertions.assertThat(convocatoriaEnlaceActualizado.getDescripcion()).as("getDescripcion()")
-        .isEqualTo(convocatoriaEnlaceDescripcionActualizada.getDescripcion());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaEnlaceActualizado.getDescripcion(), Language.ES))
+        .as("getDescripcion()")
+        .isEqualTo(
+            I18nHelper.getValueForLanguage(convocatoriaEnlaceDescripcionActualizada.getDescripcion(), Language.ES));
     Assertions.assertThat(convocatoriaEnlaceActualizado.getTipoEnlace()).as("getTipoEnlace()")
         .isEqualTo(convocatoriaEnlace.getTipoEnlace());
     Assertions.assertThat(convocatoriaEnlaceActualizado.getUrl()).as("getUrl()").isEqualTo(convocatoriaEnlace.getUrl());
@@ -269,7 +288,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
     // when: Actualizamos el ConvocatoriaEnlace
     // then: Lanza una excepcion porque el ConvocatoriaEnlace no existe
     Assertions.assertThatThrownBy(() -> service.update(convocatoriaEnlace)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ConvocatoriaEnlace url no puede ser null para actualizar un nuevo ConvocatoriaEnlace");
+        .hasMessage("URL de Convocatoria Enlace no puede ser nulo");
   }
 
   @Test
@@ -280,7 +299,10 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
     ConvocatoriaEnlace convocatoriaEnlace = generarMockConvocatoriaEnlace(1L, convocatoriaId);
     ConvocatoriaEnlace convocatoriaEnlaceDescripcionActualizada = generarMockConvocatoriaEnlace(1L, convocatoriaId);
     convocatoriaEnlaceDescripcionActualizada.getTipoEnlace().setId(null);
-    convocatoriaEnlaceDescripcionActualizada.setDescripcion("nuevaDescripcion");
+
+    Set<ConvocatoriaEnlaceDescripcion> descripcionConvocatoriaEnlace = new HashSet<>();
+    descripcionConvocatoriaEnlace.add(new ConvocatoriaEnlaceDescripcion(Language.ES, "nuevaDescripcion"));
+    convocatoriaEnlaceDescripcionActualizada.setDescripcion(descripcionConvocatoriaEnlace);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.<Long>any()))
         .willReturn(Optional.of(convocatoria));
@@ -294,8 +316,10 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
     // then: El ConvocatoriaEnlace se actualiza correctamente.
     Assertions.assertThat(convocatoriaEnlaceActualizado).as("isNotNull()").isNotNull();
     Assertions.assertThat(convocatoriaEnlaceActualizado.getId()).as("getId()").isEqualTo(convocatoriaEnlace.getId());
-    Assertions.assertThat(convocatoriaEnlaceActualizado.getDescripcion()).as("getDescripcion()")
-        .isEqualTo(convocatoriaEnlaceDescripcionActualizada.getDescripcion());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaEnlaceActualizado.getDescripcion(), Language.ES))
+        .as("getDescripcion()")
+        .isEqualTo(
+            I18nHelper.getValueForLanguage(convocatoriaEnlaceDescripcionActualizada.getDescripcion(), Language.ES));
     Assertions.assertThat(convocatoriaEnlaceActualizado.getTipoEnlace()).as("getTipoEnlace()").isNull();
     Assertions.assertThat(convocatoriaEnlaceActualizado.getUrl()).as("getUrl()").isEqualTo(convocatoriaEnlace.getUrl());
     Assertions.assertThat(convocatoriaEnlaceActualizado.getConvocatoriaId()).as("getConvocatoriaId()")
@@ -322,8 +346,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
         () -> service.update(convocatoriaEnlaceActualizado))
         // then: throw exception as ModeloTipoEnlace not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoEnlace '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaEnlaceActualizado.getTipoEnlace().getNombre(), "Convocatoria sin modelo asignado");
+        .hasMessage("Tipo Enlace no disponible para el Modelo Ejecución Convocatoria sin modelo asignado");
   }
 
   @Test
@@ -348,8 +371,8 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
         () -> service.update(convocatoriaEnlaceActualizado))
         // then: throw exception as ModeloTipoEnlace not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoEnlace '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaEnlaceActualizado.getTipoEnlace().getNombre(), convocatoria.getModeloEjecucion().getNombre());
+        .hasMessage("Tipo Enlace no disponible para el Modelo Ejecución %s",
+            convocatoria.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -377,7 +400,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
         () -> service.update(convocatoriaEnlaceActualizado))
         // then: throw exception as ModeloTipoEnlace is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoEnlace '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Modelo Tipo Enlace no está activo para el modelo ejecución %s",
             convocatoriaEnlaceActualizado.getTipoEnlace().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -404,7 +427,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
         () -> service.update(convocatoriaEnlaceActualizado))
         // then: throw exception as TipoEnlace is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoEnlace '%s' no está activo", convocatoriaEnlaceActualizado.getTipoEnlace().getNombre());
+        .hasMessage("%s de Tipo Enlace no está activo", convocatoriaEnlaceActualizado.getTipoEnlace().getNombre());
   }
 
   @Test
@@ -423,7 +446,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithoutId_ThrowsIllegalArgumentException() {
     // given: no id
     Long id = null;
 
@@ -435,7 +458,7 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Long id = 1L;
 
@@ -462,13 +485,14 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
     // then: el ConvocatoriaEnlace
     Assertions.assertThat(convocatoriaEnlace).as("isNotNull()").isNotNull();
     Assertions.assertThat(convocatoriaEnlace.getId()).as("getId()").isEqualTo(idBuscado);
-    Assertions.assertThat(convocatoriaEnlace.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaEnlace.getDescripcion(), Language.ES))
+        .as("getDescripcion()").isEqualTo("descripcion-1");
     Assertions.assertThat(convocatoriaEnlace.getConvocatoriaId()).as("getConvocatoriaId()").isEqualTo(convocatoriaId);
 
   }
 
   @Test
-  void findById_WithIdNotExist_ThrowsConvocatoriaEnlaceNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaEnlaceNotFoundException() {
     // given: Ningun ConvocatoriaEnlace con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -556,19 +580,25 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
    */
   private Convocatoria generarMockConvocatoria(Long convocatoriaId, Long unidadGestionId, Long modeloEjecucionId,
       Long modeloTipoFinalidadId, Long tipoRegimenConcurrenciaId, Long tipoAmbitoGeogragicoId, Boolean activo) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(
+        new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId)));
 
-    // @formatter:off
     ModeloEjecucion modeloEjecucion = (modeloEjecucionId == null) ? null
         : ModeloEjecucion.builder()
             .id(modeloEjecucionId)
-            .nombre("nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId))
+            .nombre(nombreModeloEjecucion)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(
+        new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId)));
 
     TipoFinalidad tipoFinalidad = (modeloTipoFinalidadId == null) ? null
         : TipoFinalidad.builder()
             .id(modeloTipoFinalidadId)
-            .nombre("nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId))
+            .nombre(nombreTipoFinalidad)
             .activo(Boolean.TRUE)
             .build();
 
@@ -580,21 +610,39 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
             .activo(Boolean.TRUE)
             .build();
 
+    Set<TipoRegimenConcurrenciaNombre> tipoRegimenConcurrenciaNombre = new HashSet<>();
+    tipoRegimenConcurrenciaNombre.add(new TipoRegimenConcurrenciaNombre(Language.ES,
+        "nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId)));
+
     TipoRegimenConcurrencia tipoRegimenConcurrencia = (tipoRegimenConcurrenciaId == null) ? null
         : TipoRegimenConcurrencia.builder()
             .id(tipoRegimenConcurrenciaId)
-            .nombre("nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId))
+            .nombre(tipoRegimenConcurrenciaNombre)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoAmbitoGeograficoNombre> nombre = new HashSet<>();
+    nombre.add(new TipoAmbitoGeograficoNombre(Language.ES,
+        "nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId)));
 
     TipoAmbitoGeografico tipoAmbitoGeografico = (tipoAmbitoGeogragicoId == null) ? null
         : TipoAmbitoGeografico.builder()
             .id(tipoAmbitoGeogragicoId)
-            .nombre("nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId))
+            .nombre(nombre)
             .activo(Boolean.TRUE)
             .build();
 
-    Convocatoria convocatoria = Convocatoria.builder()
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObjeto> convocatoriaObjeto = new HashSet<>();
+    convocatoriaObjeto.add(new ConvocatoriaObjeto(Language.ES, "objeto-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones
+        .add(new ConvocatoriaObservaciones(Language.ES, "observaciones-" + String.format("%03d", convocatoriaId)));
+
+    return Convocatoria.builder()
         .id(convocatoriaId)
         .unidadGestionRef((unidadGestionId == null) ? null : "unidad-" + String.format("%03d", unidadGestionId))
         .modeloEjecucion(modeloEjecucion)
@@ -602,9 +650,9 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaProvisional(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaConcesion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo-" + String.format("%03d", convocatoriaId))
-        .objeto("objeto-" + String.format("%03d", convocatoriaId))
-        .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
+        .titulo(convocatoriaTitulo)
+        .objeto(convocatoriaObjeto)
+        .observaciones(convocatoriaObservaciones)
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
         .estado(Convocatoria.Estado.REGISTRADA)
@@ -613,9 +661,6 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
         .clasificacionCVN(ClasificacionCVN.AYUDAS)
         .activo(activo)
         .build();
-    // @formatter:on
-
-    return convocatoria;
   }
 
   /**
@@ -626,11 +671,16 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
    * @return el objeto TipoEnlace
    */
   private TipoEnlace generarMockTipoEnlace(Long id, Boolean activo) {
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcion-" + id));
 
     TipoEnlace tipoEnlace = new TipoEnlace();
     tipoEnlace.setId(id);
-    tipoEnlace.setNombre("nombre-" + id);
-    tipoEnlace.setDescripcion("descripcion-" + id);
+    tipoEnlace.setNombre(nombre);
+    tipoEnlace.setDescripcion(descripcion);
     tipoEnlace.setActivo(activo);
 
     return tipoEnlace;
@@ -664,12 +714,14 @@ class ConvocatoriaEnlaceServiceTest extends BaseServiceTest {
    * @return el objeto ConvocatoriaEnlace
    */
   private ConvocatoriaEnlace generarMockConvocatoriaEnlace(Long id, Long convocatoriaId) {
+    Set<ConvocatoriaEnlaceDescripcion> descripcionConvocatoriaEnlace = new HashSet<>();
+    descripcionConvocatoriaEnlace.add(new ConvocatoriaEnlaceDescripcion(Language.ES, "descripcion-" + id));
 
     // @formatter:off
     return ConvocatoriaEnlace.builder()
         .id(id)
         .convocatoriaId(convocatoriaId)
-        .descripcion("descripcion-" + id)
+        .descripcion(descripcionConvocatoriaEnlace)
         .url("www.url" + id + ".es")
         .tipoEnlace(generarMockTipoEnlace(1L, Boolean.TRUE))
         .build();

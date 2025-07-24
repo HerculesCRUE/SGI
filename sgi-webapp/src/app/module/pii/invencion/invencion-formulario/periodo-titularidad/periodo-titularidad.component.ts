@@ -22,10 +22,12 @@ export class PeriodoTitularidadComponent extends FragmentComponent implements On
     private readonly dialogService: DialogService,
     private readonly matDialog: MatDialog
   ) {
-    super(actionService.FRAGMENT.PERIODOS_TITULARIDAD, actionService);
+    super(actionService.FRAGMENT.PERIODOS_TITULARIDAD, actionService, translate);
   }
 
   ngOnInit(): void {
   }
+
+  protected setupI18N(): void { }
 
 }

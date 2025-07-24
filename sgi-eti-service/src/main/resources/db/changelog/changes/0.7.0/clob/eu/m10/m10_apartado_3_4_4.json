@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap3_4_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.4.4 Parte hartzeko pizgarriak"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Proiektuan parte hartzeagatik pizgarririk edo ordainik emango al zaio azterketako subjektuari?</p>"
+      },
+      {
+        "key": "incentivosParticipacionRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>Zehaztu pizgarri mota, zenbatekoa eta justifikazioa.</p>",
+        "hideExpression": "!model.incentivosParticipacionRadio || model.incentivosParticipacionRadio === 'no'"
+      },
+      {
+        "key": "incentivosParticipacionTexto",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.incentivosParticipacionRadio || model.incentivosParticipacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Pizgarriak",
+          "placeholder": "Pizgarriak",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

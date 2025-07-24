@@ -22,7 +22,9 @@
       <ng-container matColumnDef="comentario">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.proyecto-historico-estado.comentario' | translate}} </th>
-        <td mat-cell *matCellDef="let estadoProyecto">{{estadoProyecto.comentario}}</td>
+        <td mat-cell *matCellDef="let estadoProyecto">
+          <sgi-i18n-table-field [field]="estadoProyecto.comentario"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

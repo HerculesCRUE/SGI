@@ -49,14 +49,18 @@
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.rol-socio.nombre' | translate}}
         </th>
-        <td mat-cell *matCellDef="let rolSocioProyecto">{{rolSocioProyecto.nombre}}</td>
+        <td mat-cell *matCellDef="let rolSocioProyecto">
+          <sgi-i18n-table-field [field]="rolSocioProyecto.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Abreviatura -->
       <ng-container matColumnDef="abreviatura">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.rol-socio.abreviatura' | translate}}
         </th>
-        <td mat-cell *matCellDef="let rolSocioProyecto">{{rolSocioProyecto.abreviatura}}</td>
+        <td mat-cell *matCellDef="let rolSocioProyecto">
+          <sgi-i18n-table-field [field]="rolSocioProyecto.abreviatura"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Coordinaddor -->

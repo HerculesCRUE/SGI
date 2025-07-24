@@ -110,7 +110,7 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     // when: Creamos el SolicitudModalidad
     // then: Lanza una excepcion porque el SolicitudModalidad ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(solicitudModalidad)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("SolicitudModalidad id tiene que ser null para crear una SolicitudModalidad");
+        .hasMessage("Identificador de Solicitud Modalidad debe ser nulo");
   }
 
   @Test
@@ -122,7 +122,7 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     // when: Creamos el SolicitudModalidad
     // then: Lanza una excepcion porque no tiene solicitud
     Assertions.assertThatThrownBy(() -> service.create(solicitudModalidad)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Solicitud id no puede ser null para crear una SolicitudModalidad");
+        .hasMessage("Identificador de Solicitud no puede ser nulo");
   }
 
   @Test
@@ -134,7 +134,7 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     // when: Creamos el SolicitudModalidad
     // then: Lanza una excepcion porque no tiene programa
     Assertions.assertThatThrownBy(() -> service.create(solicitudModalidad)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Programa id no puede ser null para crear una SolicitudModalidad");
+        .hasMessage("Identificador de Programa no puede ser nulo");
   }
 
   @Test
@@ -186,7 +186,7 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.create(solicitudModalidad)).isInstanceOf(IllegalArgumentException.class)
         .hasMessage(
-            "No existe ninguna ConvocatoriaEntidadConvocante con el entidadRef para la convocatoria seleccionada");
+            "Convocatoria Entidad Convocante de Convocatoria no existe");
   }
 
   @Test
@@ -211,7 +211,7 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     // when: Creamos el SolicitudModalidad
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.create(solicitudModalidad)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La modalidad seleccionada no pertenece al arbol del programa de la convocatoria");
+        .hasMessage("Solicitud Modalidad no pertenece a Programa");
   }
 
   @Test
@@ -305,7 +305,7 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
     // when: Actualizamos el SolicitudModalidad
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.update(solicitudModalidad)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La modalidad seleccionada no pertenece al arbol del programa de la convocatoria");
+        .hasMessage("Solicitud Modalidad no pertenece a Programa");
   }
 
   @Test
@@ -358,32 +358,6 @@ class SolicitudModalidadServiceTest extends BaseServiceTest {
         // when: delete
         () -> service.delete(id))
         // then: NotFoundException is thrown
-        .isInstanceOf(SolicitudModalidadNotFoundException.class);
-  }
-
-  @Test
-  void findById_ReturnsSoliciud() {
-    // given: Un SolicitudModalidad con el id buscado
-    Long idBuscado = 1L;
-    BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.of(generarMockSolicitudModalidad(idBuscado)));
-
-    // when: Buscamos el SolicitudModalidad por su id
-    SolicitudModalidad solicitudModalidad = service.findById(idBuscado);
-
-    // then: el SolicitudModalidad
-    Assertions.assertThat(solicitudModalidad).as("isNotNull()").isNotNull();
-    Assertions.assertThat(solicitudModalidad.getId()).as("getId()").isEqualTo(idBuscado);
-  }
-
-  @Test
-  void findById_WithIdNotExist_ThrowsProgramaNotFoundException() throws Exception {
-    // given: Ningun SolicitudModalidad con el id buscado
-    Long idBuscado = 1L;
-    BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
-
-    // when: Buscamos el SolicitudModalidad por su id
-    // then: lanza un SolicitudModalidadNotFoundException
-    Assertions.assertThatThrownBy(() -> service.findById(idBuscado))
         .isInstanceOf(SolicitudModalidadNotFoundException.class);
   }
 

@@ -1,5 +1,4 @@
-<sgi-fragment title="{{'tree.entity' | translate:msgParamEntity}} {{actionService.getArea().nombre}}"
-  class="gestion-areas-tematicas">
+<sgi-fragment title="{{'tree.entity' | translate:msgParamEntity}}" class="gestion-areas-tematicas">
   <!-- Validacion si no tiene area -->
   <div *ngIf="dataSource.data.length === 0" class="vacio">
     <p>{{'info.csp.area-tematica-arbol.no.padre' | translate}}</p>
@@ -10,24 +9,24 @@
       <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
           <li class="mat-tree-node">
-            <button mat-button disabled></button>
+            <button mat-icon-button disabled></button>
             <mat-checkbox *ngIf="viewMode === 'new'" class="checkbox" color="primary" [checked]="node === checkedNode"
               (change)="onCheckNode(node, $event)">
-              {{node.area.value.nombre}}
+              <sgi-i18n-tree-field [field]="node.area.value.nombre"></sgi-i18n-tree-field>
             </mat-checkbox>
             <button color="primary" mat-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
               (click)="showNodeDetails(node)">
               <mat-icon class="mat-icon-rtl-mirror">
                 {{ 'visibility'}}
               </mat-icon>
-              {{node.area.value.nombre}}
+              <sgi-i18n-tree-field [field]="node.area.value.nombre"></sgi-i18n-tree-field>
             </button>
             <button mat-button color="primary" *ngIf="(viewMode !== 'new' && node === viewingNode)"
               (click)="hideNodeDetails()">
               <mat-icon class="mat-icon-rtl-mirror">
                 {{ 'visibility_off'}}
               </mat-icon>
-              {{node.area.value.nombre}}
+              <sgi-i18n-tree-field [field]="node.area.value.nombre"></sgi-i18n-tree-field>
             </button>
           </li>
         </mat-tree-node>
@@ -42,21 +41,22 @@
               </button>
               <mat-checkbox *ngIf="viewMode === 'new'" class="checkbox" color="primary" [checked]="node === checkedNode"
                 (change)="onCheckNode(node, $event)">
-                {{node.area.value.nombre}}
+                <sgi-i18n-tree-field [field]="node.area.value.nombre"></sgi-i18n-tree-field>
               </mat-checkbox>
               <button color="primary" mat-button *ngIf="(viewMode !== 'new' && node !== viewingNode)"
                 (click)="showNodeDetails(node)">
                 <mat-icon class="mat-icon-rtl-mirror">
                   {{ 'visibility'}}
                 </mat-icon>
-                {{node.area.value.nombre}}
+                <sgi-i18n-tree-field [field]="node.area.value.nombre"></sgi-i18n-tree-field>
               </button>
               <button color="primary" mat-button *ngIf="(viewMode !== 'new' && node === viewingNode)"
                 (click)="hideNodeDetails()">
                 <mat-icon class="mat-icon-rtl-mirror">
                   {{ 'visibility_off'}}
                 </mat-icon>
-                {{node.area.value.nombre}}
+                <sgi-i18n-tree-field [field]="node.area.value.nombre"></sgi-i18n-tree-field>
+
               </button>
             </div>
             <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
@@ -76,9 +76,12 @@
         <div fxFlex="50%" fxFlex.xs="100%">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.area-tematica-arbol.nombre' | translate}}</mat-label>
-            <input #input matInput type="text" placeholder="{{'csp.area-tematica-arbol.nombre' | translate}}"
+            <sgi-i18n-input #input type="text" placeholder="{{'csp.area-tematica-arbol.nombre' | translate}}"
               formControlName="nombre" required>
-            <mat-hint align="end">{{input.value?.length || 0}}/5</mat-hint>
+            </sgi-i18n-input>
+            <mat-hint align="end">
+              {{input.editingValue?.length || 0}}/5
+            </mat-hint>
             <mat-error *ngIf="formGroup.get('nombre').errors?.required">
               {{'error.required.entity' | translate:msgParamNombreEntity}}
             </mat-error>
@@ -92,8 +95,8 @@
         <div fxFlex="50%" fxFlex.xs="100%">
           <mat-form-field class="input-form">
             <mat-label>{{'csp.area-tematica-arbol.descripcion' | translate}}</mat-label>
-            <input matInput type="text" placeholder="{{'csp.area-tematica-arbol.descripcion' | translate}}"
-              formControlName="descripcion" required>
+            <sgi-i18n-input matInput type="text" placeholder="{{'csp.area-tematica-arbol.descripcion' | translate}}"
+              formControlName="descripcion" required></sgi-i18n-input>
             <mat-error *ngIf="formGroup.get('descripcion').errors?.required">
               {{'error.required.entity' | translate:msgParamDescripcionEntity}}
             </mat-error>
@@ -105,13 +108,18 @@
       </div>
       <div class="separation-button">
         <button *ngIf="viewMode === 'new' || viewMode === 'edit'" color="accent" mat-raised-button
-          (click)="acceptDetail()">{{'btn.ok' | translate}}</button>
-        <button *ngIf="viewMode === 'new' || viewMode === 'edit'" class="link-cancelar" mat-button><span
-            class="underline" (click)="cancelDetail()">{{'btn.cancel' | translate}}</span></button>
-        <button *ngIf="viewMode === 'view'" color="accent" mat-raised-button
-          (click)="switchToEdit()">{{'btn.edit.entity'| translate:msgParamAreaTematicaEntity}}</button>
-        <button *ngIf="viewMode === 'view'" color="warn" aria-label="Center Align" mat-raised-button
-          (click)="deleteDetail()">
+          [disabled]="!this.formGroup.valid" (click)="acceptDetail()">
+          {{'btn.ok' | translate}}
+        </button>
+        <button *ngIf="viewMode === 'new' || viewMode === 'edit'" class="link-cancelar" mat-button>
+          <span class="underline" (click)="cancelDetail()">
+            {{'btn.cancel' | translate}}
+          </span>
+        </button>
+        <button *ngIf="viewMode === 'view'" color="accent" mat-raised-button (click)="switchToEdit()">
+          {{'btn.edit.entity'| translate:msgParamAreaTematicaEntity}}
+        </button>
+        <button *ngIf="viewMode === 'view'" color="warn" mat-raised-button (click)="deleteDetail()">
           {{'btn.delete.entity'| translate:msgParamAreaTematicaEntity}}
         </button>
       </div>
@@ -122,7 +130,7 @@
   </div>
 
   <div class="separation-button">
-    <button color="three" aria-label="Center Align" mat-raised-button (click)="switchToNew()">
+    <button color="three" mat-raised-button (click)="switchToNew()">
       <mat-icon color="accent">add_circle</mat-icon>
       {{ 'btn.add.entity' | translate:msgParamAreaTematicaEntity }}
     </button>

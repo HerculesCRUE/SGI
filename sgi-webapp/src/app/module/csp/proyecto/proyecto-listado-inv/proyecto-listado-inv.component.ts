@@ -135,4 +135,5 @@ export class ProyectoListadoInvComponent extends AbstractTablePaginationComponen
     return undefined;
   }
 
+  protected setupI18N(): void { }
 }

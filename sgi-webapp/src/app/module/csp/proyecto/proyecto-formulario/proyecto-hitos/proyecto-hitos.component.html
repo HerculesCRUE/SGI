@@ -6,7 +6,9 @@
       <!-- Tipo hito Column -->
       <ng-container matColumnDef="tipoHito">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-hito.tipo' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoHito.nombre}} </td>
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.tipoHito.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Fecha Column -->
@@ -18,7 +20,9 @@
       <!-- Comentario Column -->
       <ng-container matColumnDef="comentario">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.proyecto-hito.comentario' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.comentario}} </td>
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.comentario"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Aviso Column -->

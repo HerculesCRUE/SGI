@@ -41,16 +41,16 @@ export class PlanInvestigacionCrearComponent extends ActionComponent {
     dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
   }
 
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       PLAN_INVESTIGACION_KEY,

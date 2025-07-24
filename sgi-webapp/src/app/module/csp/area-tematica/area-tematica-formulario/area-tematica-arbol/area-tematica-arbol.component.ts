@@ -1,16 +1,16 @@
 import { NestedTreeControl } from '@angular/cdk/tree';
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormControl, FormGroup } from '@angular/forms';
 import { MatCheckboxChange } from '@angular/material/checkbox';
 import { MatTree, MatTreeNestedDataSource } from '@angular/material/tree';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
-import { StatusWrapper } from '@core/utils/status-wrapper';
+import { LanguageService } from '@core/services/language.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -64,9 +64,10 @@ export class AreaTematicaArbolComponent extends FragmentComponent implements OnI
   constructor(
     private readonly dialogService: DialogService,
     public actionService: AreaTematicaActionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.AREAS_ARBOL, actionService);
+    super(actionService.FRAGMENT.AREAS_ARBOL, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -83,18 +84,18 @@ export class AreaTematicaArbolComponent extends FragmentComponent implements OnI
 
   ngOnInit() {
     super.ngOnInit();
-    this.setupI18N();
+
     this.formPart.areas$.subscribe((programas) => {
       this.dataSource.data = programas;
     });
     this.formGroup = new FormGroup({
-      nombre: new FormControl('', [Validators.required, Validators.maxLength(5)]),
-      descripcion: new FormControl('', [Validators.required, Validators.maxLength(50)]),
+      nombre: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(5)]),
+      descripcion: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(50)]),
     });
     this.switchToNone();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       AREA_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
@@ -155,9 +156,7 @@ export class AreaTematicaArbolComponent extends FragmentComponent implements OnI
   }
 
   switchToNew() {
-    const newNode = new NodeArea(new StatusWrapper<IAreaTematica>({
-      padre: {} as IAreaTematica
-    } as IAreaTematica));
+    const newNode = this.formPart.createEmptyNode();
     this.viewMode = VIEW_MODE.NEW;
     this.viewingNode = newNode;
     this.loadDetails(this.viewingNode);

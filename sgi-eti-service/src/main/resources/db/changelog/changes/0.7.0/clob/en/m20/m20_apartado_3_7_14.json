@@ -1,0 +1,117 @@
+[
+  {
+    "key": "ap3_7_14",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.14 List and protocol of biological substances and agents administered including anaesthesia and analgesia"
+    },
+    "fieldGroup": [
+      {
+        "template": "Please specify below the active ingredient and guidelines for ALL substances administered, including anaesthesia, analgesia, and planned and unplanned euthanasia protocol (if applicable)."
+      },
+      {
+        "type": "table-crud",
+        "key": "principioActivoTable",
+        "templateOptions": {
+          "entity": "active ingredient",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Active ingredient"
+          },
+          "fieldGroup": [
+            {
+              "key": "Tipo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Type",
+                "order": 10,
+                "options": [
+                  {
+                    "label": "Pre-anaesthesia for surgical procedure/intervention",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Anaesthesia",
+                    "value": "2"
+                  },
+                  {
+                    "label": "Intra-operative anaesthesia",
+                    "value": "3"
+                  },
+                  {
+                    "label": "Post-operative anaesthesia",
+                    "value": "4"
+                  },
+                  {
+                    "label": "Analgesia in non-surgical intervention",
+                    "value": "5"
+                  },
+                  {
+                    "label": "Another substance of the experimental procedure",
+                    "value": "6"
+                  },
+                  {
+                    "label": "Planned euthanasia",
+                    "value": "7"
+                  },
+                  {
+                    "label": "Unplanned euthanasia",
+                    "value": "8"
+                  },
+                  {
+                    "label": "Euthanasia (planned and unplanned)",
+                    "value": "9"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "producto",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Product (active ingredient)",
+                "order": 20
+              }
+            },
+            {
+              "key": "viaAdministracion",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Route of administration",
+                "order": 30
+              }
+            },
+            {
+              "key": "dosis",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Dose",
+                "order": 40
+              }
+            },
+            {
+              "key": "volumen",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Volume",
+                "order": 50
+              }
+            },
+            {
+              "key": "pauta",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Guideline",
+                "order": 60
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -69,7 +69,7 @@ export class ConvocatoriaBaremacionBaremosPuntuacionesComponent extends Fragment
     private readonly actionService: ConvocatoriaBaremacionActionService,
     private readonly translateService: TranslateService
   ) {
-    super(actionService.FRAGMENT.BAREMOS_PUNTUACIONES, actionService);
+    super(actionService.FRAGMENT.BAREMOS_PUNTUACIONES, actionService, translateService);
     this.formPart = this.fragment as ConvocatoriaBaremacionBaremosPuntuacionesFragment;
     this.treeFlattener = new MatTreeFlattener(this.transformer, this.getLevel, this.isExpandable, this.getChildren);
     this.treeControl = new FlatTreeControl<NodeConfiguracionBaremo>(this.getLevel, this.isExpandable);
@@ -253,9 +253,10 @@ export class ConvocatoriaBaremacionBaremosPuntuacionesComponent extends Fragment
   }
 
   getErrorMsg(node: NodeConfiguracionBaremo): string {
-    return node.errorsMsg.map(errorMsg => {
+    const value = node.errorsMsg.map(errorMsg => {
       return this.translateService.instant(errorMsg);
-    }).join(' | ');
+    });
+    return value.join(' | ');
   }
 
   loadBaremoComponent(
@@ -301,4 +302,6 @@ export class ConvocatoriaBaremacionBaremosPuntuacionesComponent extends Fragment
   private enableTree(): void {
     this._treeDisabled = false;
   }
+
+  protected setupI18N(): void { }
 }

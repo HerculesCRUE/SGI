@@ -25,7 +25,9 @@ import org.crue.hercules.sgi.csp.repository.specification.ProyectoEquipoSpecific
 import org.crue.hercules.sgi.csp.service.ProyectoEquipoService;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -42,6 +44,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA = "org.springframework.util.Assert.accion.denegada.message";
+  private static final String MSG_MODEL_PROYECTO = "org.crue.hercules.sgi.csp.model.Proyecto.message";
+  private static final String MSG_MODEL_PROYECTO_EQUIPO = "org.crue.hercules.sgi.csp.model.ProyectoEquipo.message";
+  private static final String MSG_FECHAS_PROYECTO_EQUIPO = "proyectoEquipo.fechas";
+  private static final String MSG_PROYECTO_EQUIPO_FECHA_FIN_ANTERIOR_A_FECHA_INICIO = "proyectoEquipo.fechaFinAnteriorAFechaInicio";
+  private static final String MSG_PROYECTO_EQUIPO_OVERLOAP = "proyectoEquipo.overloap";
 
   private final ProyectoEquipoRepository repository;
   private final ProyectoRepository proyectoRepository;
@@ -114,20 +126,27 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
             .orElseThrow(() -> new ProyectoEquipoNotFoundException(proyectoEquipo.getId()));
 
         Assert.isTrue(proyectoEquipoBD.getProyectoId().equals(proyectoEquipo.getProyectoId()),
-            "No se puede modificar el proyecto del ProyectoEquipo");
+            () -> ProblemMessage.builder()
+                .key(MSG_PROBLEM_ACCION_DENEGADA)
+                .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_PROYECTO))
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_PROYECTO_EQUIPO))
+                .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+                .build());
       }
 
       proyectoEquipo.setProyectoId(proyectoId);
 
       if (proyectoEquipo.getFechaInicio() != null && proyectoEquipo.getFechaFin() != null) {
         Assert.isTrue(proyectoEquipo.getFechaInicio().isBefore(proyectoEquipo.getFechaFin()),
-            "La fecha de fin de participación en el proyecto de algún miembro del equipo pasaría a ser menor que su fecha de inicio. Revise los datos del apartado equipo del proyecto");
+            ApplicationContextSupport.getMessage(MSG_PROYECTO_EQUIPO_FECHA_FIN_ANTERIOR_A_FECHA_INICIO));
       }
       if (proyectoEquipo.getFechaInicio() != null && proyecto.getFechaInicio() != null) {
         Assert.isTrue(
             (proyectoEquipo.getFechaInicio().isAfter(proyecto.getFechaInicio())
                 || proyectoEquipo.getFechaInicio().equals(proyecto.getFechaInicio())),
-            "Las fechas de proyecto equipo deben de estar dentro de la duración del proyecto");
+            ApplicationContextSupport.getMessage(MSG_FECHAS_PROYECTO_EQUIPO));
       }
 
       Instant proyectoFechaFin = proyecto.getFechaFinDefinitiva() != null ? proyecto.getFechaFinDefinitiva()
@@ -136,7 +155,7 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
         Assert.isTrue(
             (proyectoEquipo.getFechaFin().isBefore(proyectoFechaFin)
                 || proyectoEquipo.getFechaFin().equals(proyectoFechaFin)),
-            "Las fechas de proyecto equipo deben de estar dentro de la duración del proyecto");
+            ApplicationContextSupport.getMessage(MSG_FECHAS_PROYECTO_EQUIPO));
       }
 
       Specification<ProyectoEquipo> specByProyectoId = ProyectoEquipoSpecifications
@@ -159,7 +178,7 @@ public class ProyectoEquipoServiceImpl implements ProyectoEquipoService {
         Assert.isTrue(
             (repository.count(specs) == 0) && proyectoEquipoAnterior.getFechaFin() != null
                 && proyectoEquipoAnterior.getFechaFin().isBefore(proyectoEquipo.getFechaInicio()),
-            "El proyecto equipo se solapa con otro existente");
+            ApplicationContextSupport.getMessage(MSG_PROYECTO_EQUIPO_OVERLOAP));
       }
 
       proyectoEquipoAnterior = proyectoEquipo;

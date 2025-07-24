@@ -7,10 +7,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.eti.config.RestApiProperties;
 import org.crue.hercules.sgi.eti.dto.sgp.PersonaOutput;
 import org.crue.hercules.sgi.eti.enums.ServiceType;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +32,7 @@ public class SgiApiSgpService extends SgiApiBaseService {
   public PersonaOutput findById(String id) {
     log.debug("findById({}) - start", id);
 
-    Assert.notNull(id, "ID is required");
+    AssertHelper.idNotNull(id, PersonaOutput.class);
 
     ServiceType serviceType = ServiceType.SGP;
     String relativeUrl = "/personas/{id}";
@@ -55,9 +55,8 @@ public class SgiApiSgpService extends SgiApiBaseService {
    */
   public List<PersonaOutput> findAllByIdIn(List<String> ids) {
     log.debug("findAllByIdIn({}) - start", ids);
-
-    Assert.notEmpty(ids, "At least one ID is required");
-    Assert.noNullElements(ids, "The IDs list must not contain null elements");
+    AssertHelper.fieldNotEmpty(ids, PersonaOutput.class, "id");
+    AssertHelper.fieldNoNullElements(ids, PersonaOutput.class, "id");
 
     String in = ids.stream().map(id -> StringUtils.wrap(id, "\"")).collect(Collectors.joining(","));
 

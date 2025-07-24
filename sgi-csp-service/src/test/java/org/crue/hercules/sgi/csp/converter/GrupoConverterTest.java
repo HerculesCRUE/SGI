@@ -1,17 +1,24 @@
 package org.crue.hercules.sgi.csp.converter;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.dto.GrupoInput;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoEspecialInvestigacion;
+import org.crue.hercules.sgi.csp.model.GrupoNombre;
 import org.crue.hercules.sgi.csp.service.BaseServiceTest;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.modelmapper.ModelMapper;
-
-import java.time.Instant;
 
 class GrupoConverterTest extends BaseServiceTest {
 
@@ -48,6 +55,10 @@ class GrupoConverterTest extends BaseServiceTest {
 
   private GrupoInput buildMockGrupoInput(String codigo, String departamentoOrigenRef, boolean especialInvestigacion,
       Instant fechaInicio, Instant fechaFin, String nombre) {
+
+    List<I18nFieldValueDto> nombreGrupo = new ArrayList<>();
+    nombreGrupo.add(new I18nFieldValueDto(Language.ES, nombre));
+
     return GrupoInput
         .builder()
         .codigo(codigo)
@@ -55,13 +66,17 @@ class GrupoConverterTest extends BaseServiceTest {
         .especialInvestigacion(especialInvestigacion)
         .fechaFin(fechaFin)
         .fechaInicio(fechaInicio)
-        .nombre(nombre)
+        .nombre(nombreGrupo)
         .build();
   }
 
   private Grupo buildMockGrupo(Long id, String codigo, String departamentoOrigenRef,
       GrupoEspecialInvestigacion especialInvestigacion,
       Instant fechaInicio, Instant fechaFin, String nombre) {
+
+    Set<GrupoNombre> nombreGrupo = new HashSet<>();
+    nombreGrupo.add(new GrupoNombre(Language.ES, nombre));
+
     return Grupo
         .builder()
         .id(id)
@@ -70,7 +85,7 @@ class GrupoConverterTest extends BaseServiceTest {
         .especialInvestigacion(especialInvestigacion)
         .fechaFin(fechaFin)
         .fechaInicio(fechaInicio)
-        .nombre(nombre)
+        .nombre(nombreGrupo)
         .build();
   }
 

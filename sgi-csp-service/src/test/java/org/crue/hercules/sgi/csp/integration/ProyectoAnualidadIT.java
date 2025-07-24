@@ -47,9 +47,7 @@ class ProyectoAnualidadIT extends BaseIT {
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", roles)));
 
-    HttpEntity<ProyectoAnualidadInput> request = new HttpEntity<>(entity, headers);
-
-    return request;
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {

@@ -27,8 +27,8 @@ import { ReportService } from '@core/services/rep/report.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { concat, Observable, of, zip } from 'rxjs';
-import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concat, from, Observable, of, zip } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { ConvocatoriaAreaTematicaListadoExportService, IConvocatoriaAreaTematicaListadoExport } from './convocatoria-area-tematica-listado-export.service';
 import { ConvocatoriaCalendarioJustificacionListadoExportService } from './convocatoria-calendario-justificacion-listado-export.service';
 import { ConvocatoriaConceptoGastoListadoExportService, IConvocatoriaConceptoGastoListadoExport } from './convocatoria-concepto-gasto-listado-export.service';
@@ -39,7 +39,6 @@ import { ConvocatoriaEntidadFinanciadoraListadoExportService } from './convocato
 import { ConvocatoriaFaseListadoExportService } from './convocatoria-fase-listado-export.service';
 import { ConvocatoriaFooterListadoExportService } from './convocatoria-footer-listado-export.service';
 import { ConvocatoriaGeneralListadoExportService } from './convocatoria-general-listado-export.service';
-import { ConvocatoriaHeaderListadoExportService } from './convocatoria-header-listado-export.service';
 import { ConvocatoriaHitoListadoExportService } from './convocatoria-hito-listado-export.service';
 import { IConvocatoriaListado } from './convocatoria-listado/convocatoria-listado.component';
 import { ConvocatoriaPartidaPresupuestariaListadoExportService } from './convocatoria-partida-presupuestaria-listado-export.service';
@@ -109,8 +108,7 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
     private readonly convocatoriaConceptoGastoListadoExportService: ConvocatoriaConceptoGastoListadoExportService,
     private readonly convocatoriaPartidaPresupuestariaListadoExportService: ConvocatoriaPartidaPresupuestariaListadoExportService,
     private readonly convocatoriaConfiguracionSolicitudListadoExportService: ConvocatoriaConfiguracionSolicitudListadoExportService,
-    private readonly convocatoriaFooterListadoExportService: ConvocatoriaFooterListadoExportService,
-    private readonly convocatoriaHeaderListadoExportService: ConvocatoriaHeaderListadoExportService
+    private readonly convocatoriaFooterListadoExportService: ConvocatoriaFooterListadoExportService
   ) {
     super(reportService);
   }
@@ -136,9 +134,6 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
     return of(rowReport).pipe(
       map((row) => {
         row.elements.push(...this.convocatoriaGeneralListadoExportService.fillRows(convocatorias, index, reportConfig));
-        if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
-          row.elements.push(...this.convocatoriaHeaderListadoExportService.fillRows(convocatorias, index, reportConfig));
-        }
         if (reportConfig.reportOptions?.showAreasTematicas) {
           row.elements.push(...this.convocatoriaAreaTematicaListadoExportService.fillRows(convocatorias, index, reportConfig));
         }
@@ -206,12 +201,18 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
         });
       }),
       switchMap((convocatoriasReportData) => {
-        const requestsConvocatoria: Observable<IConvocatoriaReportData>[] = [];
-
-        convocatoriasReportData.forEach(convocatoria => {
-          requestsConvocatoria.push(this.getDataReportInner(convocatoria, reportConfig.reportOptions, reportConfig.outputType));
-        });
-        return zip(...requestsConvocatoria);
+        const requestsConvocatoria: IConvocatoriaReportData[] = [];
+        return from(convocatoriasReportData).pipe(
+          mergeMap((convocatoria) => {
+            return this.getDataReportInner(convocatoria, reportConfig.reportOptions, reportConfig.outputType)
+          }, this.DEFAULT_CONCURRENT)
+        ).pipe(
+          map(r => {
+            requestsConvocatoria.push(r);
+            return requestsConvocatoria;
+          }),
+          takeLast(1)
+        )
       }),
       takeLast(1)
     );
@@ -220,7 +221,6 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
   private getDataReportInner(convocatoriaData: IConvocatoriaReportData, reportOptions: IConvocatoriaReportOptions, output: OutputReport)
     : Observable<IConvocatoriaReportData> {
     return concat(
-      this.getDataReportHeader(convocatoriaData, output),
       this.getDataReportListadoGeneral(convocatoriaData),
       this.getDataReportAreasTematicas(convocatoriaData, reportOptions),
       this.getDataReportEntidadesConvocantes(convocatoriaData, reportOptions),
@@ -407,17 +407,6 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
     }
   }
 
-  private getDataReportHeader(convocatoriaData: IConvocatoriaReportData,
-    output: OutputReport
-  ): Observable<IConvocatoriaReportData> {
-    if (output === OutputReport.PDF || output === OutputReport.RTF) {
-      return this.convocatoriaHeaderListadoExportService.getData(convocatoriaData)
-        .pipe(tap({ error: (err) => this.logger.error(err) }));
-    } else {
-      return of(convocatoriaData);
-    }
-  }
-
   private getDataReportFooter(convocatoriaData: IConvocatoriaReportData,
     output: OutputReport
   ): Observable<IConvocatoriaReportData> {
@@ -433,9 +422,7 @@ export class ConvocatoriaListadoExportService extends AbstractTableExportService
     Observable<ISgiColumnReport[]> {
     const columns: ISgiColumnReport[] = [];
     columns.push(... this.convocatoriaGeneralListadoExportService.fillColumns(resultados, reportConfig));
-    if (reportConfig.outputType === OutputReport.PDF || reportConfig.outputType === OutputReport.RTF) {
-      columns.push(... this.convocatoriaHeaderListadoExportService.fillColumns(resultados, reportConfig));
-    }
+
     if (reportConfig.reportOptions?.showAreasTematicas) {
       columns.push(... this.convocatoriaAreaTematicaListadoExportService.fillColumns(resultados, reportConfig));
     }

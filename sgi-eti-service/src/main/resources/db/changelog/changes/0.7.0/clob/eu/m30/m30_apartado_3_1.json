@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap3_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.1 Proiektuaren helburu zientifikoak"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Deskribatu labur-labur zer helburu nagusi lortu nahi diren agente biologikoak, genetikoki eraldatutako organismoak, substantzia kimiko arriskutsuak, substantzia erradioaktiboak edo/eta nanopartikulak darabiltzan esperimentu honekin.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Atal hau automatikoki betetzen da, <b>Ebaluazio eskaerako</b> <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/datos-generales' target='_blank'><b>Datu orokorrak</b></a> ataleko <b>Helburu zientifikoak</b> eremuan sartutako datuetatik abiatuta. Beharrezko aldaketak egiteko, joan menuko puntu horretara.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "key": "objetivosCientificos",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Proiektuaren helburu zientifikoen deskribapena",
+          "disabled": true,
+          "required": true,
+          "expressionModelValue": "formState.memoria.peticionEvaluacion.objetivos"
+        }
+      }
+    ]
+  }
+]

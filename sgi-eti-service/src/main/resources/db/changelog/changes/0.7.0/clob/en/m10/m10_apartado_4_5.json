@@ -1,0 +1,128 @@
+[
+  {
+    "key": "ap4_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.5 Genetic studies"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Is some type of genetic predictive test going to be performed?</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p><strong>Limits to be respected in genetic analyses.</strong> Genetic predictive tests may only be performed to study:</p><ul><li>genetic diseases or that allow the subject to be identified as a carrier of a gene responsible for a disease, or to detect a genetic predisposition or susceptibility to a disease, for medical or medical research purposes and with genetic counselling, when indicated</li><li>inter-individual differences in response to drugs</li><li>genetic-environmental interactions</li><li>molecular bases of diseases</li></ul><p>Everything related to the regulation of genetic analysis, its limits, guiding principles, information, etc., is contained in the <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=2' target='_blank'>Biomedical Research Law</a> 14/2007 (see <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a9' target='_blank'>article 9</a>, <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#tv' target='_blank'>Title V</a>)</p>"
+      },
+      {
+        "key": "estudiosGeneticosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>Predictive test type</p>",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si')"
+      },
+      {
+        "key": "pruebaPredectivaRadio",
+        "type": "radio",
+        "className": "vertical-radio",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si')",
+        "required": true,
+        "templateOptions": {
+          "label": "Type",
+          "options": [
+            {
+              "value": "enfermedadGenetica",
+              "label": "Genetic disease"
+            },
+            {
+              "value": "genResponsable",
+              "label": "Identification of a gene responsible for disease"
+            },
+            {
+              "value": "predisposicionSusceptibilidad",
+              "label": "Predisposition or susceptibility to a disease"
+            },
+            {
+              "value": "otra",
+              "label": "Another"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otraPruebaPredictiva",
+        "type": "i18n-textarea",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si' && model.pruebaPredectivaRadio && model.pruebaPredectivaRadio === 'otra')",
+        "templateOptions": {
+          "label": "Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "<p>Purposes</p>",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si')"
+      },
+      {
+        "key": "finesRadio",
+        "type": "radio",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si')",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Purposes",
+          "options": [
+            {
+              "value": "terapeutico",
+              "label": "Therapeutic"
+            },
+            {
+              "value": "investigacionMedica",
+              "label": "Medical research"
+            },
+            {
+              "value": "investigacionBasica",
+              "label": "Basic research"
+            },
+            {
+              "value": "otros",
+              "label": "Other"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otrosFines",
+        "type": "i18n-textarea",
+        "hideExpression": "!(model.estudiosGeneticosRadio && model.estudiosGeneticosRadio === 'si' && model.finesRadio && model.finesRadio === 'otros')",
+        "templateOptions": {
+          "label": "Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

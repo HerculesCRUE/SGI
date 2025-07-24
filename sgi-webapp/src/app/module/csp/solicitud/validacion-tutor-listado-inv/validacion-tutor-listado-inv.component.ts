@@ -2,8 +2,10 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { Estado, ESTADO_MAP } from '@core/models/csp/estado-solicitud';
 import { ISolicitud } from '@core/models/csp/solicitud';
+import { IPersona } from '@core/models/sgp/persona';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
@@ -15,9 +17,9 @@ import { from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, tap, toArray } from 'rxjs/operators';
 
 interface SolicitudListado extends ISolicitud {
-  tituloConvocatoria: string;
-  nombreSolicitante: string;
-  tituloTrabajo: string;
+  tituloConvocatoria: I18nFieldValue[];
+  solicitanteIP: IPersona;
+  tituloTrabajo: I18nFieldValue[];
 }
 
 @Component({
@@ -60,6 +62,13 @@ export class ValidacionTutorListadoInvComponent extends AbstractTablePaginationC
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
+
+    this.resolveSortProperty = (column: string) => {
+      if (column == 'solicitudRrhh.tituloTrabajo') {
+        return 'solicitudRrhh.tituloTrabajo.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
@@ -113,8 +122,10 @@ export class ValidacionTutorListadoInvComponent extends AbstractTablePaginationC
             const personas = result.items;
 
             solicitudes.forEach((solicitud) => {
-              solicitud.solicitante = personas.find((persona) => solicitud.solicitante?.id === persona.id);
-
+              const personaSearch = personas.find((persona) => solicitud.solicitante?.id === persona.id);
+              if (personaSearch) {
+                solicitud.solicitante = personaSearch;
+              }
             });
             return response;
           }),
@@ -128,16 +139,26 @@ export class ValidacionTutorListadoInvComponent extends AbstractTablePaginationC
       switchMap(response =>
         from(response.items).pipe(
           mergeMap(solicitud => {
+            solicitud.solicitanteIP = { id: solicitud.solicitante?.id } as IPersona;
             if (!!!solicitud.solicitante?.id) {
               return this.solicitudService.findSolicitanteExterno(solicitud.id).pipe(
                 map(solicitanteExterno => {
-                  solicitud.nombreSolicitante = `${solicitanteExterno?.nombre ?? ''} ${solicitanteExterno?.apellidos ?? ''}`;
+                  if (solicitanteExterno?.nombre) {
+                    solicitud.solicitanteIP.nombre = solicitanteExterno?.nombre;
+                    solicitud.solicitanteIP.apellidos = solicitanteExterno?.apellidos;
+                  }
                   return solicitud;
+                }),
+                catchError((error) => {
+                  this.processError(error);
+                  return of(solicitud);
                 })
               );
             }
-
-            solicitud.nombreSolicitante = `${solicitud.solicitante.nombre ?? ''} ${solicitud.solicitante.apellidos ?? ''}`;
+            if (solicitud.solicitante?.nombre) {
+              solicitud.solicitanteIP.nombre = solicitud.solicitante?.nombre;
+              solicitud.solicitanteIP.apellidos = solicitud.solicitante?.apellidos;
+            }
             return of(solicitud);
           }),
           toArray(),
@@ -192,4 +213,5 @@ export class ValidacionTutorListadoInvComponent extends AbstractTablePaginationC
     this.formGroup.controls.pendientes.setValue(true);
   }
 
+  protected setupI18N(): void { }
 }

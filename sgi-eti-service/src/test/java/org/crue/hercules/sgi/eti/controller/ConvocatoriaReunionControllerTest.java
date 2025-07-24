@@ -6,38 +6,46 @@ import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.dto.ConvocatoriaReunionDatosGenerales;
 import org.crue.hercules.sgi.eti.exceptions.ConvocatoriaReunionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Asistentes;
+import org.crue.hercules.sgi.eti.model.AsistentesMotivo;
 import org.crue.hercules.sgi.eti.model.CargoComite;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionLugar;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionOrdenDia;
 import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
 import org.crue.hercules.sgi.eti.model.Evaluador;
-import org.crue.hercules.sgi.eti.model.Formulario;
+import org.crue.hercules.sgi.eti.model.EvaluadorResumen;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.MemoriaTitulo;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
-import org.crue.hercules.sgi.eti.model.TipoMemoria;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.service.ActaService;
 import org.crue.hercules.sgi.eti.service.AsistentesService;
 import org.crue.hercules.sgi.eti.service.ConvocatoriaReunionService;
 import org.crue.hercules.sgi.eti.service.DocumentacionConvocatoriaReunionService;
 import org.crue.hercules.sgi.eti.service.EvaluacionService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -57,6 +65,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * ConvocatoriaReunionControllerTest
@@ -105,11 +115,14 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
         // then: La entidad se crea correctamente
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(response.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("comite").value(response.getComite()))
+        .andExpect(MockMvcResultMatchers.jsonPath("comite.id").value(response.getComite().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaEvaluacion").value(response.getFechaEvaluacion().toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaLimite").value(response.getFechaLimite().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("lugar").value(response.getLugar()))
-        .andExpect(MockMvcResultMatchers.jsonPath("ordenDia").value(response.getOrdenDia()))
+        .andExpect(MockMvcResultMatchers.jsonPath("lugar[0].value")
+            .value(I18nHelper.getValueForLanguage(response.getLugar(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("ordenDia[0].value").value(
+            I18nHelper.getValueForLanguage(response.getOrdenDia(),
+                Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("anio").value(response.getAnio()))
         .andExpect(MockMvcResultMatchers.jsonPath("numeroActa").value(response.getNumeroActa()))
         .andExpect(
@@ -163,11 +176,13 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
         // then: Los datos se actualizan correctamente
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(response.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("comite").value(response.getComite()))
+        .andExpect(MockMvcResultMatchers.jsonPath("comite.id").value(response.getComite().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaEvaluacion").value(response.getFechaEvaluacion().toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaLimite").value(response.getFechaLimite().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("lugar").value(response.getLugar()))
-        .andExpect(MockMvcResultMatchers.jsonPath("ordenDia").value(response.getOrdenDia()))
+        .andExpect(MockMvcResultMatchers.jsonPath("lugar[0].value")
+            .value(I18nHelper.getValueForLanguage(response.getLugar(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("ordenDia[0].value")
+            .value(I18nHelper.getValueForLanguage(response.getOrdenDia(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("anio").value(response.getAnio()))
         .andExpect(MockMvcResultMatchers.jsonPath("numeroActa").value(response.getNumeroActa()))
         .andExpect(
@@ -276,11 +291,14 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
         // then: Se recupera la entidad con el Id
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(response.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("comite").value(response.getComite()))
+        .andExpect(MockMvcResultMatchers.jsonPath("comite.id").value(response.getComite().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaEvaluacion").value(response.getFechaEvaluacion().toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaLimite").value(response.getFechaLimite().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("lugar").value(response.getLugar()))
-        .andExpect(MockMvcResultMatchers.jsonPath("ordenDia").value(response.getOrdenDia()))
+        .andExpect(MockMvcResultMatchers.jsonPath("lugar[0].value")
+            .value(I18nHelper.getValueForLanguage(response.getLugar(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("ordenDia[0].value").value(
+            I18nHelper.getValueForLanguage(response.getOrdenDia(),
+                Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("anio").value(response.getAnio()))
         .andExpect(MockMvcResultMatchers.jsonPath("numeroActa").value(response.getNumeroActa()))
         .andExpect(
@@ -342,11 +360,14 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
         // then: Se recupera la entidad con el Id
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(response.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("comite").value(response.getComite()))
+        .andExpect(MockMvcResultMatchers.jsonPath("comite.id").value(response.getComite().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaEvaluacion").value(response.getFechaEvaluacion().toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaLimite").value(response.getFechaLimite().toString()))
-        .andExpect(MockMvcResultMatchers.jsonPath("lugar").value(response.getLugar()))
-        .andExpect(MockMvcResultMatchers.jsonPath("ordenDia").value(response.getOrdenDia()))
+        .andExpect(MockMvcResultMatchers.jsonPath("lugar[0].value")
+            .value(I18nHelper.getValueForLanguage(response.getLugar(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("ordenDia[0].value").value(
+            I18nHelper.getValueForLanguage(response.getOrdenDia(),
+                Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("anio").value(response.getAnio()))
         .andExpect(MockMvcResultMatchers.jsonPath("numeroActa").value(response.getNumeroActa()))
         .andExpect(
@@ -1010,22 +1031,29 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
    */
   private ConvocatoriaReunion getMockData(Long id, Long comiteId, Long tipoId) {
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(comiteId, "Comite" + comiteId, "nombreInvestigacion", Genero.M, formulario,
-        Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite"
+        + comiteId);
+    comite.setActivo(Boolean.TRUE);
 
     String tipo_txt = (tipoId == 1L) ? "Ordinaria" : (tipoId == 2L) ? "Extraordinaria" : "Seguimiento";
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(tipoId, tipo_txt, Boolean.TRUE);
 
     String txt = (id % 2 == 0) ? String.valueOf(id) : "0" + String.valueOf(id);
 
+    Set<ConvocatoriaReunionLugar> lugar = new HashSet<>();
+    lugar.add(new ConvocatoriaReunionLugar(Language.ES, "Lugar " + txt));
+    Set<ConvocatoriaReunionOrdenDia> ordenDia = new HashSet<>();
+    ordenDia.add(new ConvocatoriaReunionOrdenDia(Language.ES,
+        "Orden del día convocatoria reunión " + txt));
     final ConvocatoriaReunion data = new ConvocatoriaReunion();
     data.setId(id);
     data.setComite(comite);
     data.setFechaEvaluacion(LocalDate.of(2020, 7, id.intValue()).atStartOfDay(ZoneOffset.UTC).toInstant());
     data.setFechaLimite(LocalDate.of(2020, 8, id.intValue()).atStartOfDay(ZoneOffset.UTC).toInstant());
-    data.setLugar("Lugar " + txt);
-    data.setOrdenDia("Orden del día convocatoria reunión " + txt);
+    data.setLugar(lugar);
+    data.setOrdenDia(ordenDia);
     data.setAnio(2020);
     data.setNumeroActa(id);
     data.setTipoConvocatoriaReunion(tipoConvocatoriaReunion);
@@ -1048,11 +1076,13 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
 
   private Asistentes generarMockAsistentes(Long id, String motivo, Boolean asistencia) {
 
+    Set<AsistentesMotivo> mot = new HashSet<>();
+    mot.add(new AsistentesMotivo(Language.ES, motivo));
     Asistentes asistentes = new Asistentes();
     asistentes.setId(id);
     asistentes.setEvaluador(generarMockEvaluador(id, "Resumen " + motivo));
     asistentes.setConvocatoriaReunion(getMockData(id, id, 1L));
-    asistentes.setMotivo(motivo);
+    asistentes.setMotivo(mot);
     asistentes.setAsistencia(asistencia);
 
     return asistentes;
@@ -1072,16 +1102,20 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
     cargoComite.setNombre("CargoComite1");
     cargoComite.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
+    Set<EvaluadorResumen> res = new HashSet<>();
+    res.add(new EvaluadorResumen(Language.ES, resumen));
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
     evaluador.setCargoComite(cargoComite);
     evaluador.setComite(comite);
     evaluador.setFechaAlta(Instant.now());
     evaluador.setFechaBaja(Instant.now());
-    evaluador.setResumen(resumen);
+    evaluador.setResumen(res);
     evaluador.setPersonaRef("user-" + String.format("%03d", id));
     evaluador.setActivo(Boolean.TRUE);
 
@@ -1096,7 +1130,7 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
    * @return el objeto Evaluacion
    */
 
-  public Evaluacion generarMockEvaluacion(Long id, String sufijo) {
+  private Evaluacion generarMockEvaluacion(Long id, String sufijo) {
 
     String sufijoStr = (sufijo == null ? id.toString() : sufijo);
 
@@ -1110,35 +1144,66 @@ public class ConvocatoriaReunionControllerTest extends BaseControllerTest {
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> peTitulo = new HashSet<>();
+    peTitulo.add(new PeticionEvaluacionTitulo(Language.ES, "PeticionEvaluacion1"));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen"));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos1"));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico1"));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo1");
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico1");
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos1");
-    peticionEvaluacion.setResumen("Resumen");
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria");
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo("PeticionEvaluacion1");
+    peticionEvaluacion.setTitulo(peTitulo);
     peticionEvaluacion.setPersonaRef("user-001");
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
-    TipoMemoria tipoMemoria = new TipoMemoria();
-    tipoMemoria.setId(1L);
-    tipoMemoria.setNombre("TipoMemoria1");
-    tipoMemoria.setActivo(Boolean.TRUE);
+    TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
+    tipoEstadoMemoria.setId(1L);
+    tipoEstadoMemoria.setNombre("En elaboracion");
+    tipoEstadoMemoria.setActivo(Boolean.TRUE);
 
-    Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria" + sufijoStr, "user-00" + id,
-        tipoMemoria, new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.FALSE,
-        new Retrospectiva(id, new EstadoRetrospectiva(1L, "Pendiente", Boolean.TRUE), Instant.now()), 3, Boolean.TRUE,
-        null);
+    EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
+    estadoRetrospectiva.setId(1L);
+    estadoRetrospectiva.setNombre("Pendiente");
+    estadoRetrospectiva.setActivo(Boolean.TRUE);
+
+    Retrospectiva retrospectiva = new Retrospectiva();
+    retrospectiva.setId(id);
+    retrospectiva.setEstadoRetrospectiva(estadoRetrospectiva);
+    retrospectiva.setFechaRetrospectiva(Instant.now());
+
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, "Memoria" + sufijoStr));
+    Memoria memoria = new Memoria();
+    memoria.setId(1L);
+    memoria.setNumReferencia("numRef-001");
+    memoria.setPeticionEvaluacion(peticionEvaluacion);
+    memoria.setComite(comite);
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("user-00" + id);
+    memoria.setTipo(Memoria.Tipo.NUEVA);
+    memoria.setEstadoActual(tipoEstadoMemoria);
+    memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setRequiereRetrospectiva(Boolean.FALSE);
+    memoria.setVersion(3);
+    memoria.setActivo(Boolean.TRUE);
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion();
     tipoEvaluacion.setId(1L);

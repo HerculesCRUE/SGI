@@ -77,7 +77,7 @@ public class AreaTematicaController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-AREA-E')")
-  public AreaTematica update(@Validated({ Update.class, Default.class }) @RequestBody AreaTematica areaTematica,
+  public AreaTematica update(@Valid @RequestBody AreaTematica areaTematica,
       @PathVariable Long id) {
     log.debug("update(AreaTematica areaTematica, Long id) - start");
     areaTematica.setId(id);

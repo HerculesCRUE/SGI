@@ -12,6 +12,7 @@ import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatori
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -57,9 +58,10 @@ export class ConvocatoriaConceptoGastoCodigoEcComponent extends FragmentComponen
     public readonly actionService: ConvocatoriaConceptoGastoActionService,
     private matDialog: MatDialog,
     private readonly dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.CODIGOS_ECONOMICOS, actionService);
+    super(actionService.FRAGMENT.CODIGOS_ECONOMICOS, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaConceptoGastoCodigoEcFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -76,7 +78,7 @@ export class ConvocatoriaConceptoGastoCodigoEcComponent extends FragmentComponen
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource = new MatTableDataSource<StatusWrapper<ConvocatoriaConceptoGastoCodigoEc>>();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -88,13 +90,15 @@ export class ConvocatoriaConceptoGastoCodigoEcComponent extends FragmentComponen
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<ConvocatoriaConceptoGastoCodigoEc>, property: string) => {
         switch (property) {
+          case 'observaciones':
+            return this.languageService.getFieldValue(wrapper.value.observaciones);
           default:
             return wrapper.value[property];
         }
       };
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_CONCEPTO_GASTO_ECONOMICO_PERMITIDO,
       MSG_PARAMS.CARDINALIRY.SINGULAR

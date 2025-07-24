@@ -1,0 +1,18 @@
+[
+  {
+    "key": "ap4_4_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.4.2 Minimum mandatory information"
+    },
+    "hideExpression": "!formState.mainModel.ap4_4.informacionConsentimientoRadio || formState.mainModel.ap4_4.informacionConsentimientoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>The aims of Informed Consent are:<ul><li>To inform subjects potentially taking part in the research activity of the potential risks and benefits thereof</li><li>To ensure that people have understood this information and can take decisions on a voluntary basis regarding their participation in the research.</li><li>To inform them that they can cease their participation whenever they wish, without reprisals of any kind.</li></ul></p>"
+      }
+    ]
+  }
+]

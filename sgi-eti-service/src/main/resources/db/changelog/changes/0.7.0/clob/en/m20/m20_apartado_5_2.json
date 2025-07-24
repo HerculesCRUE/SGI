@@ -1,0 +1,34 @@
+[
+  {
+    "key": "ap5_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.2 Veterinary report"
+    },
+    "fieldGroup": [
+      {
+        "template": "Is a veterinary report required for the assessment of cumulative severity due to previous or subsequent reuse of animals (see section 4.3.2)?"
+      },
+      {
+        "key": "informeVeterinario",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": "INFORME_VETERINARIO",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

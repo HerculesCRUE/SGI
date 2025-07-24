@@ -35,12 +35,12 @@
             <li class="mat-tree-node">
               <button mat-icon-button disabled></button>
               <mat-label *ngIf="node.programa.id === data.proyectoEntidadConvocante.programaConvocatoria?.id">
-                {{node.programa.nombre}}
+                <sgi-i18n-tree-field [field]="node.programa.nombre" class="break-spaces"></sgi-i18n-tree-field>
               </mat-label>
               <mat-checkbox *ngIf="node.programa.id !== data.proyectoEntidadConvocante.programaConvocatoria?.id"
                 class="checkbox" color="primary" [checked]="node === checkedNode" (change)="onCheckNode(node, $event)"
-                matTooltip="{{node.programa.descripcion}}">
-                <span class="break-spaces">{{node.programa.nombre}}</span>
+                matTooltip="{{node.programa.descripcion | i18nFieldTooltip}}">
+                <sgi-i18n-tree-field [field]="node.programa.nombre" class="break-spaces"></sgi-i18n-tree-field>
               </mat-checkbox>
             </li>
           </mat-tree-node>
@@ -53,13 +53,13 @@
                   </mat-icon>
                 </button>
                 <mat-label *ngIf="node.programa.id === data.proyectoEntidadConvocante.programaConvocatoria?.id"
-                  matTooltip="{{node.programa.descripcion}}">
-                  {{node.programa.nombre}}
+                  matTooltip="{{node.programa.descripcion | i18nFieldTooltip}}">
+                  <sgi-i18n-tree-field [field]="node.programa.nombre" class="break-spaces"></sgi-i18n-tree-field>
                 </mat-label>
                 <mat-checkbox *ngIf="node.programa.id !== data.proyectoEntidadConvocante.programaConvocatoria?.id"
                   class="checkbox" color="primary" [checked]="node === checkedNode" (change)="onCheckNode(node, $event)"
-                  matTooltip="{{node.programa.descripcion}}">
-                  <span class="break-spaces">{{node.programa.nombre}}</span>
+                  matTooltip="{{node.programa.descripcion | i18nFieldTooltip}}">
+                  <sgi-i18n-tree-field [field]="node.programa.nombre" class="break-spaces"></sgi-i18n-tree-field>
                 </mat-checkbox>
               </div>
               <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
@@ -78,6 +78,7 @@
     <mat-icon class="save-icon">save</mat-icon>{{
     (create ? 'btn.add.entity' :'btn.ok') | translate:msgParamEntity }}
   </button>
-  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
-    translate}}</button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
 </mat-dialog-actions>

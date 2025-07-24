@@ -8,6 +8,7 @@ import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
 import { Module } from '@core/module';
 import { ROUTE_NAMES } from '@core/route.names';
+import { LanguageService } from '@core/services/language.service';
 import { TipoProteccionService } from '@core/services/pii/tipo-proteccion/tipo-proteccion.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
@@ -46,17 +47,18 @@ export class SelectTipoProteccionComponent extends SelectServiceExtendedComponen
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation: PlatformLocation,
+    private authService: SgiAuthService,
     private tipoProteccionService: TipoProteccionService,
-    private authService: SgiAuthService
   ) {
-    super(defaultErrorStateMatcher, ngControl, platformLocation);
+    super(defaultErrorStateMatcher, ngControl, languageService, platformLocation);
     this.addTarget = `/${Module.PII.path}/${PII_ROUTE_NAMES.TIPO_PROTECCION}/${ROUTE_NAMES.NEW}`;
   }
 
   protected loadServiceOptions(): Observable<ITipoProteccion[]> {
     const findOptions: SgiRestFindOptions = {
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC),
+      sort: new RSQLSgiRestSort('nombre.value', SgiRestSortDirection.ASC),
       filter: new RSQLSgiRestFilter('tipoPropiedad', SgiRestFilterOperator.EQUALS, this.tipoPropiedad)
     };
     return this.tipoProteccionService.findAll(findOptions).pipe(map(({ items }) => items));

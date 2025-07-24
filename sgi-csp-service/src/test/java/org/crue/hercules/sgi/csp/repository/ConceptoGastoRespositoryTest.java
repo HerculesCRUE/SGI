@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoDescripcion;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoNombre;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,16 +25,26 @@ class ConceptoGastoRespositoryTest extends BaseRepositoryTest {
   @Test
   void findByNombreAndActivoIsTrue_ReturnsConceptoGasto() throws Exception {
     // given: 2 ConceptoGasto de los que 1 coincide con el nombre buscado
-    ConceptoGasto conceptoGasto1 = new ConceptoGasto(null, "nombre-1", "descripcion-1", true, true);
+    Set<ConceptoGastoNombre> nombreConceptoGasto1 = new HashSet<>();
+    nombreConceptoGasto1.add(new ConceptoGastoNombre(Language.ES, "nombre-1"));
+    Set<ConceptoGastoDescripcion> descripcionConceptoGasto1 = new HashSet<>();
+    descripcionConceptoGasto1.add(new ConceptoGastoDescripcion(Language.ES, "descripcion-1"));
+    ConceptoGasto conceptoGasto1 = new ConceptoGasto(null, nombreConceptoGasto1, descripcionConceptoGasto1, true, true);
     entityManager.persistAndFlush(conceptoGasto1);
 
-    ConceptoGasto conceptoGasto2 = new ConceptoGasto(null, "nombre-2", "descripcion-2", true, false);
+    Set<ConceptoGastoNombre> nombreConceptoGasto2 = new HashSet<>();
+    nombreConceptoGasto2.add(new ConceptoGastoNombre(Language.ES, "nombre-2"));
+    Set<ConceptoGastoDescripcion> descripcionConceptoGasto2 = new HashSet<>();
+    descripcionConceptoGasto2.add(new ConceptoGastoDescripcion(Language.ES, "descripcion-2"));
+    ConceptoGasto conceptoGasto2 = new ConceptoGasto(null, nombreConceptoGasto2, descripcionConceptoGasto2, true,
+        false);
     entityManager.persistAndFlush(conceptoGasto2);
 
     String nombreBuscado = "nombre-1";
 
     // when: se busca el ConceptoGasto nombre
-    ConceptoGasto conceptoGastoEncontrado = repository.findByNombreAndActivoIsTrue(nombreBuscado).get();
+    ConceptoGasto conceptoGastoEncontrado = repository
+        .findByNombreLangAndNombreValueAndActivoIsTrue(Language.ES, nombreBuscado).get();
 
     // then: Se recupera el ConceptoGasto con el nombre buscado
     Assertions.assertThat(conceptoGastoEncontrado.getId()).as("getId").isNotNull();
@@ -42,16 +57,26 @@ class ConceptoGastoRespositoryTest extends BaseRepositoryTest {
   @Test
   void findByNombreAndActivoIsTrue_NoExiste_ReturnsNull() throws Exception {
     // given: 2 ConceptoGasto que no coinciden con el nombre buscado
-    ConceptoGasto conceptoGasto1 = new ConceptoGasto(null, "nombre-1", "descripcion-1", true, true);
+    Set<ConceptoGastoNombre> nombreConceptoGasto1 = new HashSet<>();
+    nombreConceptoGasto1.add(new ConceptoGastoNombre(Language.ES, "nombre-1"));
+    Set<ConceptoGastoDescripcion> descripcionConceptoGasto1 = new HashSet<>();
+    descripcionConceptoGasto1.add(new ConceptoGastoDescripcion(Language.ES, "descripcion-1"));
+    ConceptoGasto conceptoGasto1 = new ConceptoGasto(null, nombreConceptoGasto1, descripcionConceptoGasto1, true, true);
     entityManager.persistAndFlush(conceptoGasto1);
 
-    ConceptoGasto conceptoGasto2 = new ConceptoGasto(null, "nombre-2", "descripcion-2", true, false);
+    Set<ConceptoGastoNombre> nombreConceptoGasto2 = new HashSet<>();
+    nombreConceptoGasto2.add(new ConceptoGastoNombre(Language.ES, "nombre-2"));
+    Set<ConceptoGastoDescripcion> descripcionConceptoGasto2 = new HashSet<>();
+    descripcionConceptoGasto2.add(new ConceptoGastoDescripcion(Language.ES, "descripcion-2"));
+    ConceptoGasto conceptoGasto2 = new ConceptoGasto(null, nombreConceptoGasto2, descripcionConceptoGasto2, true,
+        false);
     entityManager.persistAndFlush(conceptoGasto2);
 
     String nombreBuscado = "nombre-noexiste";
 
     // when: se busca el ConceptoGasto por nombre
-    Optional<ConceptoGasto> conceptoGastoEncontrado = repository.findByNombreAndActivoIsTrue(nombreBuscado);
+    Optional<ConceptoGasto> conceptoGastoEncontrado = repository
+        .findByNombreLangAndNombreValueAndActivoIsTrue(Language.ES, nombreBuscado);
 
     // then: No hay ningun ConceptoGasto con el nombre buscado
     Assertions.assertThat(conceptoGastoEncontrado).isEqualTo(Optional.empty());

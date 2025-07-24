@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.SgiReportDto;
 import org.crue.hercules.sgi.rep.integration.BaseIT;
-import org.crue.hercules.sgi.rep.service.eti.InformeEvaluadorReportService;
+import org.crue.hercules.sgi.rep.service.InformeEvaluadorReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 

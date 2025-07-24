@@ -1,10 +1,10 @@
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
-import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
 import { ICodigoEconomicoGasto } from '@core/models/sge/codigo-economico-gasto';
 import { IPartidaPresupuestariaSge } from '@core/models/sge/partida-presupuestaria-sge';
 import { SgiBaseConverter } from '@sgi/framework/core';
+import { CONCEPTO_GASTO_RESPONSE_CONVERTER } from '../concepto-gasto/concepto-gasto-response.converter';
 import { IAnualidadGastoResponse } from './anualidad-gasto-response';
 
 class AnualidadGastoResponseConverter extends SgiBaseConverter<IAnualidadGastoResponse, IAnualidadGasto>{
@@ -15,11 +15,7 @@ class AnualidadGastoResponseConverter extends SgiBaseConverter<IAnualidadGastoRe
     return {
       id: value.id,
       proyectoAnualidad: { id: value.proyectoAnualidadId } as IProyectoAnualidad,
-      conceptoGasto: {
-        id: value.conceptoGasto?.id,
-        nombre: value.conceptoGasto?.nombre,
-        costesIndirectos: value.conceptoGasto?.costesIndirectos
-      } as IConceptoGasto,
+      conceptoGasto: value.conceptoGasto ? CONCEPTO_GASTO_RESPONSE_CONVERTER.toTarget(value.conceptoGasto) : null,
       codigoEconomico: value.codigoEconomicoRef ? { id: value.codigoEconomicoRef } as ICodigoEconomicoGasto : null,
       importePresupuesto: value.importePresupuesto,
       proyectoPartida: value.proyectoPartida?.id ? {
@@ -38,11 +34,7 @@ class AnualidadGastoResponseConverter extends SgiBaseConverter<IAnualidadGastoRe
     return {
       id: value.id,
       proyectoAnualidadId: value.proyectoAnualidad?.id,
-      conceptoGasto: {
-        id: value.conceptoGasto?.id,
-        nombre: value.conceptoGasto?.nombre,
-        costesIndirectos: value.conceptoGasto?.costesIndirectos
-      } as IConceptoGasto,
+      conceptoGasto: value.conceptoGasto ? CONCEPTO_GASTO_RESPONSE_CONVERTER.fromTarget(value.conceptoGasto) : null,
       codigoEconomicoRef: value.codigoEconomico?.id,
       importePresupuesto: value.importePresupuesto,
       proyectoPartida: {

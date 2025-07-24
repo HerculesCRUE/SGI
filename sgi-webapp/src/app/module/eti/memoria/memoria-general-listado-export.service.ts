@@ -24,7 +24,7 @@ const MEMORIA_RESPONSABLE_APELLIDOS_KEY = marker('eti.memoria.report.responsable
 
 @Injectable()
 export class MemoriaGeneralListadoExportService extends
-  AbstractTableExportFillService<IMemoriaReportData, IMemoriaReportOptions>{
+  AbstractTableExportFillService<IMemoriaReportData, IMemoriaReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -122,8 +122,8 @@ export class MemoriaGeneralListadoExportService extends
 
     return [
       memoriaData.numReferencia ?? '',
-      memoriaData.comite.comite ?? '',
-      this.translate.instant(ESTADO_MEMORIA_MAP.get(memoriaData.estadoActual.id)) ?? '',
+      memoriaData.comite.codigo ?? '',
+      memoriaData.estadoActual.id ? this.translate.instant(ESTADO_MEMORIA_MAP.get(memoriaData.estadoActual.id)) : '',
       LuxonUtils.toBackend(memoriaData.fechaEvaluacion) ?? '',
       memoriaData.solicitante?.nombre ?? '',
       memoriaData.solicitante?.apellidos ?? '',

@@ -93,23 +93,6 @@ class SolicitudModalidadIT extends BaseIT {
 
   }
 
-  @Sql
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void findById_ReturnsSolicitudModalidad() throws Exception {
-    Long idSolicitudModalidad = 1L;
-
-    final ResponseEntity<SolicitudModalidad> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-        HttpMethod.GET, buildRequest(null, null), SolicitudModalidad.class, idSolicitudModalidad);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    SolicitudModalidad solicitudModalidad = response.getBody();
-    Assertions.assertThat(solicitudModalidad.getId()).as("getId()").isEqualTo(idSolicitudModalidad);
-    Assertions.assertThat(solicitudModalidad.getSolicitudId()).as("getSolicitudId()").isEqualTo(1);
-    Assertions.assertThat(solicitudModalidad.getEntidadRef()).as("getEntidadRef()").isEqualTo("entidad-001");
-    Assertions.assertThat(solicitudModalidad.getPrograma().getId()).as("getPrograma().getId()").isEqualTo(2);
-  }
-
   /**
    * Función que devuelve un objeto SolicitudModalidad
    * 

@@ -3,11 +3,16 @@ package org.crue.hercules.sgi.csp.integration;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoJustificacionRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -194,10 +199,10 @@ class ProyectoSocioPeriodoJustificacionIT extends BaseIT {
         .as("getFechaInicioPresentacion()").isNull();
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getFechaFinPresentacion()).as("getFechaFinPresentacion()")
         .isNull();
-    ;
     Assertions.assertThat(convocatoriaPeriodoJustificacion.getNumPeriodo()).as("getNumPeriodo()").isEqualTo(1);
-    Assertions.assertThat(convocatoriaPeriodoJustificacion.getObservaciones()).as("getObservaciones()")
-        .isEqualTo("observaciones 1");
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriaPeriodoJustificacion.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("observaciones 1");
 
   }
 
@@ -265,17 +270,20 @@ class ProyectoSocioPeriodoJustificacionIT extends BaseIT {
    * @return el objeto ProyectoSocioPeriodoJustificacion
    */
   private ProyectoSocioPeriodoJustificacion generarMockProyectoSocioPeriodoJustificacion(Long id) {
-    ProyectoSocioPeriodoJustificacion convocatoriaPeriodoJustificacion = new ProyectoSocioPeriodoJustificacion();
-    convocatoriaPeriodoJustificacion.setId(id);
-    convocatoriaPeriodoJustificacion.setProyectoSocioId(id == null ? 1 : id);
-    convocatoriaPeriodoJustificacion.setNumPeriodo(1);
-    convocatoriaPeriodoJustificacion.setFechaInicio(Instant.parse("2021-01-11T00:00:00Z"));
-    convocatoriaPeriodoJustificacion.setFechaFin(Instant.parse("2021-09-21T23:59:59Z"));
-    convocatoriaPeriodoJustificacion.setFechaInicioPresentacion(Instant.parse("2021-10-10T00:00:00Z"));
-    convocatoriaPeriodoJustificacion.setFechaFinPresentacion(Instant.parse("2021-11-20T23:59:59Z"));
-    convocatoriaPeriodoJustificacion.setObservaciones("observaciones-" + id);
+    Set<ProyectoSocioPeriodoJustificacionObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoSocioPeriodoJustificacionObservaciones(Language.ES, "observaciones-" + id));
 
-    return convocatoriaPeriodoJustificacion;
+    ProyectoSocioPeriodoJustificacion proyectoSocioPeriodoJustificacion = new ProyectoSocioPeriodoJustificacion();
+    proyectoSocioPeriodoJustificacion.setId(id);
+    proyectoSocioPeriodoJustificacion.setProyectoSocioId(id == null ? 1 : id);
+    proyectoSocioPeriodoJustificacion.setNumPeriodo(1);
+    proyectoSocioPeriodoJustificacion.setFechaInicio(Instant.parse("2021-01-11T00:00:00Z"));
+    proyectoSocioPeriodoJustificacion.setFechaFin(Instant.parse("2021-09-21T23:59:59Z"));
+    proyectoSocioPeriodoJustificacion.setFechaInicioPresentacion(Instant.parse("2021-10-10T00:00:00Z"));
+    proyectoSocioPeriodoJustificacion.setFechaFinPresentacion(Instant.parse("2021-11-20T23:59:59Z"));
+    proyectoSocioPeriodoJustificacion.setObservaciones(observaciones);
+
+    return proyectoSocioPeriodoJustificacion;
   }
 
 }

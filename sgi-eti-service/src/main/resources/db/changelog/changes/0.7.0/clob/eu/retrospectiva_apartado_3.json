@@ -1,0 +1,141 @@
+[
+  {
+    "key": "ap1_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Laztasuna",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Zenbat animalia erabili dira guztira?</p>"
+      },
+      {
+        "key": "numAnimalesUtilizados",
+        "type": "i18n-input",
+        "templateOptions": {
+          "label": "Erabilitako animalia kopurua",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Zenbat animalia iritsi dira esperimentuaren amaierara arte?</p>"
+      },
+      {
+        "key": "numAnimalesFinal",
+        "type": "i18n-input",
+        "templateOptions": {
+          "label": "Amaierako animalia kopurua",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Zer laztasun maila jasan dute benetan animaliek, beharrezkoa bada elkarren artean bereizketak eginez (adibidez, kontrolekoak)?</p>"
+      },
+      {
+        "key": "nivelSeveridadSufrido",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Deskribapena",
+          "label": "Deskribapena",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Zenbat animalia baztertu dira esperimentutik, prozesu teknikoa ez delako ongi atera eta baztertu egin behar izan direlako?</p>"
+      },
+      {
+        "key": "numAnimalesRetirados",
+        "type": "i18n-input",
+        "templateOptions": {
+          "label": "Baztertutako animalia kopurua",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Deskribatu arrazoiak, unea eta laztasun maila:</p>"
+      },
+      {
+        "key": "nivelSeveridadAlcanzado",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Deskribapena",
+          "label": "Deskribapena",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Zenbat animaliari aplikatu zaie amaierako punturako irizpidea?</p>"
+      },
+      {
+        "key": "numAnimalesPuntoFinal",
+        "type": "i18n-input",
+        "templateOptions": {
+          "label": "Amaierako puntua aplikatu zaien animalien kopurua",
+          "placeholder": "",
+          "description": "",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Adierazi aplikazio unea:</p>"
+      },
+      {
+        "key": "aplicacion",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Deskribapena",
+          "label": "Deskribapena",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Deskribatu animaliei buruz eta ikerketako esperimentuen garapenari buruz interesgarria izan daitekeen beste edozein alderdi.</p>"
+      },
+      {
+        "key": "descripcion",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Deskribapena",
+          "label": "Deskribapena",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "template": "<p>Aipatu zer neurri hartu diren ikerketan baldintza etikoak betetzeko.</p>"
+      },
+      {
+        "key": "medidas",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Deskribapena",
+          "label": "Deskribapena",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

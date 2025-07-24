@@ -1,9 +1,14 @@
 package org.crue.hercules.sgi.pii.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,6 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -45,8 +52,12 @@ public class InvencionDocumento extends BaseEntity {
   @Column(name = "fecha_anadido", nullable = false)
   private Instant fechaAnadido;
 
-  @Column(name = "nombre", nullable = false, length = NOMBRE_LENGTH)
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "invencion_documento_nombre", joinColumns = @JoinColumn(name = "invencion_documento_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<InvencionDocumentoNombre> nombre = new HashSet<>();
 
   @Column(name = "documento_ref", nullable = false, length = FICHERO_LENGTH)
   private String documentoRef;

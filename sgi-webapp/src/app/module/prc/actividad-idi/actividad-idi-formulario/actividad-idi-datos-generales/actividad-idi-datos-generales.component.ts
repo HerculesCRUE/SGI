@@ -160,4 +160,6 @@ export class ActividadIdiDatosGeneralesComponent extends FragmentComponent imple
       }
     ));
   }
+
+  protected setupI18N(): void { }
 }

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { MEMORIA_TIPO_MAP } from '@core/models/eti/memoria';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
@@ -24,7 +25,7 @@ const EVALUACION_TIPO_MEMORIA_KEY = marker('eti.evaluacion.report.tipo-memoria')
 
 @Injectable()
 export class SeguimientoGeneralListadoExportService extends
-  AbstractTableExportFillService<ISeguimientoReportData, ISeguimientoReportOptions>{
+  AbstractTableExportFillService<ISeguimientoReportData, ISeguimientoReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -104,9 +105,9 @@ export class SeguimientoGeneralListadoExportService extends
     const seguimientoData = seguimientos[index];
 
     return [
-      seguimientoData.memoria?.comite?.comite ?? '',
+      seguimientoData.memoria?.comite?.codigo ?? '',
       seguimientoData.tipoEvaluacion?.nombre ?? '',
-      seguimientoData.memoria?.tipoMemoria?.nombre ?? '',
+      seguimientoData.memoria?.tipo ? this.translate.instant(MEMORIA_TIPO_MAP.get(seguimientoData.memoria?.tipo)) : '',
       LuxonUtils.toBackend(seguimientoData.fechaDictamen) ?? '',
       seguimientoData.memoria?.numReferencia ?? '',
       seguimientoData.solicitante?.nombre ?? '',

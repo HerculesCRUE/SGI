@@ -7,7 +7,6 @@ import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
-import org.crue.hercules.sgi.eti.model.TipoMemoria;
 import org.crue.hercules.sgi.eti.repository.custom.CustomMemoriaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,13 +34,13 @@ public interface MemoriaRepository
    * parámetro, su comité sea el recibido y su número de referencia contenga el
    * año.
    * 
-   * @param anio          Año a buscar en la referencia de la memoria.
-   * @param tipoMemoriaId Identificador {@link TipoMemoria}
-   * @param idComite      Identificador {@link Comite}
+   * @param anio     Año a buscar en la referencia de la memoria.
+   * @param tipo     Tipo de Memoria {@link Memoria.Tipo}
+   * @param idComite Identificador {@link Comite}
    * @return {@link Memoria}
    */
-  Memoria findFirstByNumReferenciaContainingAndTipoMemoriaIdIsNotAndComiteIdOrderByNumReferenciaDesc(String anio,
-      Long tipoMemoriaId, Long idComite);
+  Memoria findFirstByNumReferenciaContainingAndTipoIsNotAndComiteIdOrderByNumReferenciaDesc(String anio,
+      Memoria.Tipo tipo, Long idComite);
 
   /**
    * Recupera la última memoria que contenga el número de referencia recibido y

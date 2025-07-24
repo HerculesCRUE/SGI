@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.eti.repository.predicate;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
@@ -9,6 +10,8 @@ import javax.persistence.criteria.Subquery;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Memoria_;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo_;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
 
@@ -23,7 +26,7 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
   private static final String LIKE_WILDCARD_PERCENT = "%";
 
   private enum Property {
-    TITULO("peticionEvaluacion.titulo"),
+    TITULO("peticionEvaluacion.titulo.value"),
     COMITE("comite.id"),
     PERSONA("peticionEvaluacion.personaRef"),
     ESTADO("estadoActual.id"),
@@ -59,7 +62,8 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
     return instance;
   }
 
-  private static Predicate buildFilterTitulo(ComparisonNode node, Root<PeticionEvaluacion> root, CriteriaBuilder cb) {
+  private static Predicate buildFilterTitulo(ComparisonNode node, Root<PeticionEvaluacion> root, CriteriaQuery<?> query,
+      CriteriaBuilder cb) {
     ComparisonOperator operator = node.getOperator();
     if (!operator.equals(RSQLOperators.IGNORE_CASE_LIKE) && !operator.equals(RSQLOperators.LIKE)) {
       // Unsupported Operator
@@ -70,8 +74,18 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
     String tituloFilter = node.getArguments().get(0);
-    Predicate titulo = cb.like(root.get(PeticionEvaluacion_.titulo), tituloFilter);
-    return cb.and(titulo);
+
+    Subquery<PeticionEvaluacionTitulo> subquery = query.subquery(PeticionEvaluacionTitulo.class);
+    Root<PeticionEvaluacion> rootSubquery = subquery.from(PeticionEvaluacion.class);
+    Join<PeticionEvaluacion, PeticionEvaluacionTitulo> join = rootSubquery.join(PeticionEvaluacion_.TITULO);
+
+    subquery.select(join);
+    subquery.where(
+        cb.and(cb.like(join.get(PeticionEvaluacionTitulo_.value),
+            LIKE_WILDCARD_PERCENT + tituloFilter + LIKE_WILDCARD_PERCENT)),
+        cb.equal(root, rootSubquery));
+
+    return cb.exists(subquery);
   }
 
   private static Predicate buildFilterPersona(ComparisonNode node, Root<PeticionEvaluacion> root,
@@ -102,15 +116,14 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
       throw new IllegalArgumentException(BAD_NUMBER_OF_ARGUMENTS_FOR + node.getSelector());
     }
     String codigoFilter = node.getArguments().get(0);
-    Predicate codigo = cb.like(root.get(PeticionEvaluacion_.codigo), codigoFilter);
+    Predicate codigo = cb.like(root.get(PeticionEvaluacion_.codigo),
+        LIKE_WILDCARD_PERCENT + codigoFilter + LIKE_WILDCARD_PERCENT);
     return cb.and(codigo);
   }
 
-  private static Predicate buildNonFilter(Root<PeticionEvaluacion> root,
-      CriteriaBuilder cb) {
-    // esta comprobación se hace para que la consulta no devuelva resultado
-    Predicate titulo = cb.notEqual(root.get(PeticionEvaluacion_.titulo), root.get(PeticionEvaluacion_.titulo));
-    return cb.and(titulo);
+  private static Predicate buildNonFilter(CriteriaBuilder cb) {
+    // Siempre falso, evita que la consulta devuelva resultados
+    return cb.disjunction();
   }
 
   private static Predicate buildFilterNumReferencia(ComparisonNode node, Root<PeticionEvaluacion> root,
@@ -155,15 +168,15 @@ public class PeticionEvaluacionPredicateResolver implements SgiRSQLPredicateReso
 
     switch (property) {
       case TITULO:
-        return buildFilterTitulo(node, root, criteriaBuilder);
+        return buildFilterTitulo(node, root, query, criteriaBuilder);
       case PERSONA:
         return buildFilterPersona(node, root, criteriaBuilder);
       case CODIGO:
         return buildFilterCodigo(node, root, criteriaBuilder);
       case ESTADO:
-        return buildNonFilter(root, criteriaBuilder);
+        return buildNonFilter(criteriaBuilder);
       case COMITE:
-        return buildNonFilter(root, criteriaBuilder);
+        return buildNonFilter(criteriaBuilder);
       case NUM_REFERENCIA:
         return buildFilterNumReferencia(node, root, query, criteriaBuilder);
       default:

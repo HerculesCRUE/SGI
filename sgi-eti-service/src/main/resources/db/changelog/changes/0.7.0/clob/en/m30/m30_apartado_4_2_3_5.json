@@ -1,0 +1,89 @@
+[
+  {
+    "key": "ap4_2_3_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.5 Waste management"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Is external management of hazardous or biological waste contemplated?</p>"
+      },
+      {
+        "key": "gestionResiduos",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please specify external management or justify if positive",
+        "hideExpression": "!model.gestionResiduos || model.gestionResiduos === 'no'"
+      },
+      {
+        "key": "residuosGenerar",
+        "type": "multicheckbox",
+        "hideExpression": "!model.gestionResiduos || model.gestionResiduos === 'no'",
+        "templateOptions": {
+          "label": "Which",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "biosanitarios",
+              "label": "Bio-medical waste"
+            },
+            {
+              "value": "quimicos",
+              "label": "Chemical waste"
+            },
+            {
+              "value": "radiactivos",
+              "label": "Radioactive waste"
+            },
+            {
+              "value": "animales",
+              "label": "Waste from experimental animals"
+            },
+            {
+              "value": "otros",
+              "label": "Other. Please specify"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otrasTexto",
+        "type": "i18n-textarea",
+        "hideExpression": "model.gestionResiduos === 'no' || (!model.residuosGenerar || !model.residuosGenerar.find((c) => c === 'otros'))",
+        "templateOptions": {
+          "placeholder": "Other. Please specify",
+          "label": "Other. Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>A hazardous waste is one that presents one or more of the following dangerous characteristics: explosive, carcinogenic, oxidizing, corrosive, flammable, infectious, irritating, toxic, harmful, mutagenic and/or ecotoxic. If a waste does not have any of the above characteristics, it will not be considered hazardous waste and, therefore, its management will be carried out together with the rest of urban waste.<br><br>Among the hazardous waste produced in the teaching and research laboratories of the University, chemical waste, group III or bio-medical waste, radioactive waste and waste from experimental animals stand out. <strong>(SANDACH)</strong>.</p>"
+      }
+    ]
+  }
+]

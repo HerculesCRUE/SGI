@@ -1,0 +1,24 @@
+[
+  {
+    "key": "ap4_2_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.5 Amaierako puntuko irizpideak"
+    },
+    "fieldGroup": [
+      {
+        "template": "Parametroen kuantifikazioaren arabera, adierazi amaierako puntuko zer irizpide erabiliko diren animaliari eutanasia aplikatzeko."
+      },
+      {
+        "key": "puntoFinal",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Amaierako puntuko irizpideak",
+          "required": true
+        }
+      }
+    ]
+  }
+]

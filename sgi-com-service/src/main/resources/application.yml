@@ -8,6 +8,7 @@ sgi:
   time-zone: "Europe/Madrid"
   rest:
     api:
+      cnf-url: "http://sgi-cnf-service:4288"
       csp-url: "http://sgi-csp-service:4281"
       eti-url: "http://sgi-eti-service:4280"
       pii-url: "http://sgi-pii-service:4283"
@@ -21,10 +22,8 @@ spring:
     # Set spring-profile using maven
     active: @spring.profiles.active@
   datasource:
-    # Make sure database schema is created (schema.sql is executed): always/never
-    initialization-mode: always
     # We use a H2 in file database with PostgreSQL compatibility mode
-    url: "jdbc:h2:./target/db/com;MODE=PostgreSQL;DB_CLOSE_ON_EXIT=FALSE"
+    url: "jdbc:h2:./target/db/com;MODE=PostgreSQL;NON_KEYWORDS=VALUE;DB_CLOSE_ON_EXIT=FALSE"
     driver-class-name: org.h2.Driver
     username: com
     password: com
@@ -78,11 +77,11 @@ spring:
           name: Hércules Email
           copy: false
   mvc:
+    # Retain ant path controller definitions
+    pathmatch:
+      matching-strategy: ant-path-matcher
     # Whether a "NoHandlerFoundException" should be thrown if no Handler was found to process a request
     throw-exception-if-no-handler-found: true
-  resources:
-    # Disable the static resource handling
-    add-mappings: false
   security:
     oauth2:
       client:
@@ -112,6 +111,13 @@ spring:
           # JSON Web Key endpoint (with the cryptographic key to validate JSON Web Signature)
           jwk-set-uri: ${spring.security.oauth2.client.provider.keycloak.issuer-uri}/protocol/openid-connect/certs
           user-name-claim: user_ref_id
+  web:
+    resources:
+      # Disable the static resource handling
+      add-mappings: false
+
+preliquibase:
+  enabled: false
 ---
 sgi:
   # If set all emails are sent to this instead of real recipient list
@@ -119,7 +125,10 @@ sgi:
   # If set to true no email is sent
   disable-email-send: true
 spring:
-  profiles: dev
+  config:
+    activate:
+      on-profile:
+      - dev
   liquibase:
     # Set Liquibase contexts same as spring profiles
     contexts: dev
@@ -140,6 +149,8 @@ spring:
 #    # Disable X-Frame-Options (disable only for development)
 #    frameoptions:
 #      enable: false
+preliquibase:
+  enabled: true
 logging:
   level:
     org:
@@ -164,10 +175,11 @@ sgi:
   # If set to true no email is sent
   disable-email-send: true
 spring:
-  profiles: dev-oracle
+  config:
+    activate:
+      on-profile:
+      - dev-oracle
   datasource:
-    # Make sure database schema is not created (schema.sql is not executed): always/never
-    initialization-mode: never
     # We use Oracle database
     url: jdbc:oracle:thin:@oracle12c:1521/ORCLPDB1.localdomain
     driver-class-name: oracle.jdbc.OracleDriver
@@ -215,7 +227,10 @@ sgi:
       tp-url: "http://sgi-tp-service:8080"
       usr-url: "http://sgi-eti-service:8080"
 spring:
-  profiles: prod
+  config:
+    activate:
+      on-profile:
+      - prod
   datasource:
     # We use PostgreSQL database
     url: "jdbc:postgresql://postgres:5432/com"
@@ -226,7 +241,7 @@ spring:
     properties:
       hibernate:
         # We use a PostgreSQL database
-        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
         # Set default Hibernate Schema
         '[default_schema]': com
   security:
@@ -237,8 +252,10 @@ spring:
             issuer-uri: http://sgi-auth:8080/auth/realms/sgi
 ---
 spring:
-  # Set spring-profile
-  profiles: test
+  config:
+    activate:
+      on-profile:
+      - test
   datasource:
     # We use a H2 in memory database
     url: "jdbc:h2:mem:test;DB_CLOSE_DELAY=-1"
@@ -261,8 +278,10 @@ spring:
       replace: none
 ---
 spring:
-  # Set spring-profile
-  profiles: test-postgres
+  config:
+    activate:
+      on-profile:
+      - test-postgres
   datasource:
     # We use PostgreSQL database
     url: "jdbc:postgresql://postgres:5432/db"
@@ -273,7 +292,7 @@ spring:
     properties:
       hibernate:
         # We use a PostgreSQL database
-        dialect: org.hibernate.dialect.PostgreSQL95Dialect
+        dialect: org.hibernate.dialect.PostgreSQL10Dialect
         # Set default Hibernate Schema
         '[default_schema]': test
   liquibase:

@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IPersona } from '../sgp/persona';
 import { IComite } from './comite';
@@ -12,7 +13,7 @@ export interface IMemoriaPeticionEvaluacion {
   /** Numero Referencia */
   numReferencia: string;
   /** Título */
-  titulo: string;
+  titulo: I18nFieldValue[];
   /** Comité */
   comite: IComite;
   /** Estado Memoria Actual */

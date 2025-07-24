@@ -17,7 +17,12 @@ export enum ConfigEti {
   ETI_REP_EVALUACION_DOCX = 'rep-eti-evaluacion-docx',
   ETI_REP_EVALUACION_RETROSPECTIVA_DOCX = 'rep-eti-evaluacion-retrospectiva-docx',
   ETI_REP_FICHA_EVALUADOR_DOCX = 'rep-eti-ficha-evaluador-docx',
-  ETI_REP_MXX_DOCX = 'rep-eti-mxx-docx',
+  ETI_REP_FORMULARIO_M10 = 'M10',
+  ETI_REP_FORMULARIO_M20 = 'M20',
+  ETI_REP_FORMULARIO_M30 = 'M30',
+  ETI_REP_FORMULARIO_SA = 'SA',
+  ETI_REP_FORMULARIO_SF = 'SF',
+  ETI_REP_FORMULARIO_R = 'R',
   // Límites exportación excel
   ETI_EXP_MAX_NUM_REGISTROS_EXCEL_ACTA_LISTADO = 'eti-exp-max-num-registros-excel-acta-listado',
   ETI_EXP_MAX_NUM_REGISTROS_EXCEL_CONVOCATORIA_REUNION_LISTADO = 'eti-exp-max-num-registros-excel-convocatoria-reunion-listado',
@@ -46,7 +51,12 @@ export class ConfigEtiComponent extends AbstractMenuContentComponent {
     [ConfigEti.ETI_REP_EVALUACION_RETROSPECTIVA_DOCX, { type: ConfigType.FILE, label: marker(`adm.config.eti.ETI_REP_EVALUACION_RETROSPECTIVA_DOCX`), module: ConfigModule.CNF }],
     [ConfigEti.ETI_REP_EVALUACION_DOCX, { type: ConfigType.FILE, label: marker(`adm.config.eti.ETI_REP_EVALUACION_DOCX`), module: ConfigModule.CNF }],
     [ConfigEti.ETI_REP_FICHA_EVALUADOR_DOCX, { type: ConfigType.FILE, label: marker(`adm.config.eti.ETI_REP_FICHA_EVALUADOR_DOCX`), module: ConfigModule.CNF }],
-    [ConfigEti.ETI_REP_MXX_DOCX, { type: ConfigType.FILE, label: marker(`adm.config.eti.ETI_REP_MXX_DOCX`), module: ConfigModule.CNF }],
+    [ConfigEti.ETI_REP_FORMULARIO_M10, { type: ConfigType.SELECT_FILE, label: marker(`adm.config.eti.ETI_REP_FORMULARIO_M10`), description: marker(`adm.config.eti.ETI_REP_FORMULARIO_M10.file`), module: ConfigModule.ETI }],
+    [ConfigEti.ETI_REP_FORMULARIO_M20, { type: ConfigType.SELECT_FILE, label: marker(`adm.config.eti.ETI_REP_FORMULARIO_M20`), description: marker(`adm.config.eti.ETI_REP_FORMULARIO_M20.file`), module: ConfigModule.ETI }],
+    [ConfigEti.ETI_REP_FORMULARIO_M30, { type: ConfigType.SELECT_FILE, label: marker(`adm.config.eti.ETI_REP_FORMULARIO_M30`), description: marker(`adm.config.eti.ETI_REP_FORMULARIO_M30.file`), module: ConfigModule.ETI }],
+    [ConfigEti.ETI_REP_FORMULARIO_SA, { type: ConfigType.SELECT_FILE, label: marker(`adm.config.eti.ETI_REP_FORMULARIO_SA`), description: marker(`adm.config.eti.ETI_REP_FORMULARIO_SA.file`), module: ConfigModule.ETI }],
+    [ConfigEti.ETI_REP_FORMULARIO_SF, { type: ConfigType.SELECT_FILE, label: marker(`adm.config.eti.ETI_REP_FORMULARIO_SF`), description: marker(`adm.config.eti.ETI_REP_FORMULARIO_SF.file`), module: ConfigModule.ETI }],
+    [ConfigEti.ETI_REP_FORMULARIO_R, { type: ConfigType.SELECT_FILE, label: marker(`adm.config.eti.ETI_REP_FORMULARIO_R`), description: marker(`adm.config.eti.ETI_REP_FORMULARIO_R.file`), module: ConfigModule.ETI }],
     //Límite exportación excel
     [ConfigEti.TITLE_EXPORTACIÓN, { type: ConfigType.CONFIG_GROUP_TITLE, label: marker(`adm.config.group-title.exportacion`), module: ConfigModule.NONE }],
     [ConfigEti.ETI_EXP_MAX_NUM_REGISTROS_EXCEL_PETICION_EVALUACION_LISTADO, { type: ConfigType.TEXT, label: marker(`adm.config.eti.ETI_EXP_MAX_NUM_REGISTROS_EXCEL_PETICION_EVALUACION_LISTADO`), required: false, module: ConfigModule.CNF }],
@@ -100,4 +110,5 @@ export class ConfigEtiComponent extends AbstractMenuContentComponent {
     return of([{ key: 'true', value: marker('label.si') }, { key: 'false', value: marker('label.no') }]);
   }
 
+  protected setupI18N(): void { }
 }

@@ -46,16 +46,16 @@ export class MemoriaCrearComponent extends ActionComponent implements OnInit {
     private readonly translate: TranslateService,
     private readonly memoriaService: MemoriaService
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
     this.from = history.state.from;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       MEMORIA_KEY,

@@ -6,15 +6,14 @@ import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equip
 import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
 import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
 import { ISolicitudRrhhTutor } from '@core/models/csp/solicitud-rrhh-tutor';
-import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { IClasificacion } from '@core/models/sgo/clasificacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { SolicitudRrhhService } from '@core/services/csp/solicitud-rrhh/solicitud-rrhh.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
@@ -46,19 +45,15 @@ const REQUISITO_TUTOR_NIVEL_ACADEMICO_KEY = marker('csp.solicitud.solicitud-rrhh
 const REQUISITO_TUTOR_CATEGORIA_PROFESIONAL_KEY = marker('csp.solicitud.solicitud-rrhh.requisitos.tutor-categoria-profesional');
 const NOMBRE_KEY = marker('csp.solicitud.solicitud-rrhh.nombre');
 const DOCUMENTO_ACREDITATIVO_KEY = marker('csp.solicitud.solicitud-rrhh.documento-acreditativo');
-const NIVEL_ACADEMICO_KEY = marker('csp.solicitud.solicitud-rrhh.requisitos.nivel-academico');
-const CATEGORIA_PROFESIONAL_KEY = marker('csp.solicitud.solicitud-rrhh.requisitos.categoria-profesional');
 
 const SOLICITUD_RRHH_UNIVERSIDAD_FIELD = 'solicitudRrhhUniversidad';
 const SOLICITUD_RRHH_AREA_ANEP_FIELD = 'solicitudRrhhAreaAnep';
-const SOLICITUD_RRHH_TUTOR_FIELD = 'solicitudRrhhTutor';
 const SOLICITUD_RRHH_TUTOR_NOMBRE_FIELD = 'solicitudRrhhTutorNombre';
 const SOLICITUD_RRHH_TUTOR_APELLIDOS_FIELD = 'solicitudRrhhTutorApellidos';
 const SOLICITUD_RRHH_TUTOR_EMAIL_FIELD = 'solicitudRrhhTutorEmail';
 const SOLICITUD_RRHH_TITULO_TRABAJO_FIELD = 'solicitudRrhhTituloTrabajo';
 const SOLICITUD_RRHH_RESUMEN_FIELD = 'solicitudRrhhResumen';
 const SOLICITUD_RRHH_OBSERVACIONES_FIELD = 'solicitudRrhhObservaciones';
-const SOLICITUD_RRHH_FIELD = 'solicitudRrhhDatos';
 const REQUISITO_SOLICITANTE_NIVEL_ACADEMICO_NOMBRE_FIELD = 'requisitoSolicitanteNivelAcademicoNombre';
 const REQUISITO_SOLICITANTE_CATEGORIA_PROFESIONAL_NOMBRE_FIELD = 'requisitoSolicitanteCategoriaProfesionalNombre';
 const REQUISITO_TUTOR_NIVEL_ACADEMICO_NOMBRE_FIELD = 'requisitoTutorNivelAcademicoNombre';
@@ -69,7 +64,7 @@ const REQUISITO_TUTOR_NIVEL_ACADEMICO_DOCUMENTO_FIELD = 'requisitoTutorNivelAcad
 const REQUISITO_TUTOR_CATEGORIA_PROFESIONAL_DOCUMENTO_FIELD = 'requisitoTutorCategoriaProfesionalDocumento';
 
 @Injectable()
-export class SolicitudRrhhListadoExportService extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions>{
+export class SolicitudRrhhListadoExportService extends AbstractTableExportFillService<ISolicitudReportData, ISolicitudReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -81,7 +76,8 @@ export class SolicitudRrhhListadoExportService extends AbstractTableExportFillSe
     private clasificacionService: ClasificacionService,
     private convocatoriaService: ConvocatoriaService,
     private categoriasProfesionalesService: CategoriaProfesionalService,
-    private nivelAcademicoService: NivelAcademicosService
+    private nivelAcademicoService: NivelAcademicosService,
+    private languageService: LanguageService
   ) {
     super(translate);
   }
@@ -327,118 +323,10 @@ export class SolicitudRrhhListadoExportService extends AbstractTableExportFillSe
     solicitudes: ISolicitudReportData[],
     reportConfig: IReportConfig<ISolicitudReportOptions>
   ): ISgiColumnReport[] {
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsRrhhNotExcel(solicitudes);
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       const rrhhTitlePrefix = this.translate.instant(SOLICITUD_RRHH_KEY) + COLUMN_VALUE_PREFIX;
       return this.getColumnsRrhh(rrhhTitlePrefix, false, solicitudes);
     }
-  }
-
-  private getColumnsRrhhNotExcel(solicitudes: ISolicitudReportData[]): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = this.getColumnsRrhh('', true, solicitudes);
-
-    const titleI18n = this.translate.instant(SOLICITUD_RRHH_KEY);
-
-    const titleReqSolicitanteNivelAcademico = this.translate.instant(REQUISITO_SOLICITANTE_NIVEL_ACADEMICO_KEY) + COLUMN_VALUE_PREFIX +
-      ' (' + this.translate.instant(NOMBRE_KEY) +
-      ' - ' + this.translate.instant(DOCUMENTO_ACREDITATIVO_KEY) +
-      ')';
-
-    const columnsHorReqSolicitanteNivelAcademico: ISgiColumnReport[] = [];
-    const columnHorReqSolicitanteNivelAcademico: ISgiColumnReport = {
-      name: REQUISITO_SOLICITANTE_NIVEL_ACADEMICO_NOMBRE_FIELD,
-      title: this.translate.instant(NIVEL_ACADEMICO_KEY),
-      type: ColumnType.STRING,
-    };
-    columnsHorReqSolicitanteNivelAcademico.push(columnHorReqSolicitanteNivelAcademico);
-
-    const columnReqSolicitanteNivelAcademico: ISgiColumnReport = {
-      name: REQUISITO_SOLICITANTE_NIVEL_ACADEMICO_NOMBRE_FIELD,
-      title: titleReqSolicitanteNivelAcademico,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns: columnsHorReqSolicitanteNivelAcademico
-    };
-
-    const titleReqSolicitanteCategoriaProfesional = this.translate.instant(REQUISITO_SOLICITANTE_CATEGORIA_PROFESIONAL_KEY) + COLUMN_VALUE_PREFIX +
-      ' (' + this.translate.instant(NOMBRE_KEY) +
-      ' - ' + this.translate.instant(DOCUMENTO_ACREDITATIVO_KEY) +
-      ')';
-
-    const columnsHorReqSolicitanteCategoriaProfesional: ISgiColumnReport[] = [];
-    const columnHorReqSolicitanteCategoriaProfesional: ISgiColumnReport = {
-      name: REQUISITO_SOLICITANTE_CATEGORIA_PROFESIONAL_NOMBRE_FIELD,
-      title: this.translate.instant(CATEGORIA_PROFESIONAL_KEY),
-      type: ColumnType.STRING,
-    };
-    columnsHorReqSolicitanteCategoriaProfesional.push(columnHorReqSolicitanteCategoriaProfesional);
-
-    const columnReqSolicitanteCategoriaProfesional: ISgiColumnReport = {
-      name: REQUISITO_SOLICITANTE_CATEGORIA_PROFESIONAL_NOMBRE_FIELD,
-      title: titleReqSolicitanteCategoriaProfesional,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns: columnsHorReqSolicitanteCategoriaProfesional
-    };
-
-    const titleReqTutorNivelAcademico = this.translate.instant(REQUISITO_TUTOR_NIVEL_ACADEMICO_KEY) + COLUMN_VALUE_PREFIX +
-      ' (' + this.translate.instant(NOMBRE_KEY) +
-      ' - ' + this.translate.instant(DOCUMENTO_ACREDITATIVO_KEY) +
-      ')';
-
-    const columnsHorReqTutorNivelAcademico: ISgiColumnReport[] = [];
-    const columnHorReqTutorNivelAcademico: ISgiColumnReport = {
-      name: REQUISITO_TUTOR_NIVEL_ACADEMICO_NOMBRE_FIELD,
-      title: this.translate.instant(NIVEL_ACADEMICO_KEY),
-      type: ColumnType.STRING,
-    };
-    columnsHorReqTutorNivelAcademico.push(columnHorReqTutorNivelAcademico);
-
-    const columnReqTutorNivelAcademico: ISgiColumnReport = {
-      name: REQUISITO_TUTOR_NIVEL_ACADEMICO_NOMBRE_FIELD,
-      title: titleReqTutorNivelAcademico,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns: columnsHorReqTutorNivelAcademico
-    };
-
-    const titleReqTutorCategoriaProfesional = this.translate.instant(REQUISITO_TUTOR_CATEGORIA_PROFESIONAL_KEY) + COLUMN_VALUE_PREFIX +
-      ' (' + this.translate.instant(NOMBRE_KEY) +
-      ' - ' + this.translate.instant(DOCUMENTO_ACREDITATIVO_KEY) +
-      ')';
-
-    const columnsReqTutorCategoriaProfesional: ISgiColumnReport[] = [];
-    const columnHorReqTutorCategoriaProfesional: ISgiColumnReport = {
-      name: REQUISITO_TUTOR_CATEGORIA_PROFESIONAL_NOMBRE_FIELD,
-      title: this.translate.instant(CATEGORIA_PROFESIONAL_KEY),
-      type: ColumnType.STRING,
-    };
-    columnsReqTutorCategoriaProfesional.push(columnHorReqTutorCategoriaProfesional);
-
-    const columnReqTutorCategoriaProfesional: ISgiColumnReport = {
-      name: REQUISITO_TUTOR_CATEGORIA_PROFESIONAL_NOMBRE_FIELD,
-      title: titleReqTutorCategoriaProfesional,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns: columnsReqTutorCategoriaProfesional
-    };
-
-    const columnEntidad: ISgiColumnReport = {
-      name: SOLICITUD_RRHH_FIELD,
-      title: titleI18n,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns
-    };
-
-    const columnsVerticales: ISgiColumnReport[] = [];
-    columnsVerticales.push(columnEntidad);
-    columnsVerticales.push(columnReqSolicitanteNivelAcademico);
-    columnsVerticales.push(columnReqSolicitanteCategoriaProfesional);
-    columnsVerticales.push(columnReqTutorNivelAcademico);
-    columnsVerticales.push(columnReqTutorCategoriaProfesional);
-    return columnsVerticales;
   }
 
   private getColumnsRrhh(prefix: string, allString: boolean, solicitudes: ISolicitudReportData[]): ISgiColumnReport[] {
@@ -589,149 +477,12 @@ export class SolicitudRrhhListadoExportService extends AbstractTableExportFillSe
     const solicitud = solicitudes[index];
 
     const elementsRow: any[] = [];
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      this.fillRowsRrhhNotExcel1(solicitud, elementsRow);
-      this.fillRowsRrhhNotExcel2(solicitud, elementsRow);
-      this.fillRowsRrhhNotExcel3(solicitud, elementsRow);
-      this.fillRowsRrhhNotExcel4(solicitud, elementsRow);
-      this.fillRowsRrhhNotExcel5(solicitud, elementsRow);
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       this.fillRowsRrhhExcel(elementsRow, solicitud, solicitudes);
     }
     return elementsRow;
   }
 
-  private fillRowsRrhhNotExcel1(solicitud: ISolicitudReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-    if (solicitud.solicitudRrhh) {
-      const datosRrhh: any[] = [];
-      datosRrhh.push(solicitud.solicitudRrhh.universidad?.nombre ?? solicitud.solicitudRrhh.universidadDatos);
-      datosRrhh.push(solicitud.solicitudRrhh.areaAnep?.nombre ?? '');
-      datosRrhh.push(solicitud.solicitudRrhhTutor?.tutor?.nombre ?? '');
-      datosRrhh.push(solicitud.solicitudRrhhTutor?.tutor?.apellidos ?? '');
-      datosRrhh.push(solicitud.solicitudRrhhTutor?.tutor?.emails ? solicitud.solicitudRrhhTutor?.tutor?.emails[0].email : '');
-      datosRrhh.push(solicitud.solicitudRrhhMemoria?.tituloTrabajo ?? '');
-      datosRrhh.push(solicitud.solicitudRrhhMemoria?.resumen ?? '');
-      datosRrhh.push(solicitud.solicitudRrhhMemoria?.observaciones ?? '');
-
-      const rowReport: ISgiRowReport = {
-        elements: datosRrhh
-      };
-      rowsReport.push(rowReport);
-    }
-    elementsRow.push({
-      rows: rowsReport
-    });
-  }
-
-  private fillRowsRrhhNotExcel2(solicitud: ISolicitudReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-    if (solicitud.solicitudRrhh) {
-
-      if (solicitud.requisitosSolicitanteNivelAcademico) {
-        solicitud.requisitosSolicitanteNivelAcademico.forEach(requisitoSolicitanteNivelAcademico => {
-          const datosRrhh: any[] = [];
-          const solicitanteNivelAcademicoDocumentoAcreditativo =
-            solicitud.requisitosAcreditadosNivelAcademico.some(req => req.requisitoIpNivelAcademico.id === requisitoSolicitanteNivelAcademico.id);
-          let requisitosSolicitanteNivelAcademicoTable = requisitoSolicitanteNivelAcademico.nivelAcademico?.nombre ?? '';
-          requisitosSolicitanteNivelAcademicoTable += '\n';
-          requisitosSolicitanteNivelAcademicoTable += this.getI18nBooleanYesNo(solicitanteNivelAcademicoDocumentoAcreditativo);
-
-          datosRrhh.push(requisitosSolicitanteNivelAcademicoTable);
-
-          const rowReport: ISgiRowReport = {
-            elements: datosRrhh
-          };
-          rowsReport.push(rowReport);
-        });
-      }
-    }
-    elementsRow.push({
-      rows: rowsReport
-    });
-  }
-
-  private fillRowsRrhhNotExcel3(solicitud: ISolicitudReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-    if (solicitud.solicitudRrhh) {
-
-      if (solicitud.requisitosSolicitanteCategoriaProfesional) {
-        solicitud.requisitosSolicitanteCategoriaProfesional.forEach(requisitoSolicitanteCategoriaProfesional => {
-          const datosRrhh: any[] = [];
-          const solicitanteCategoriaDocumentoAcreditativo =
-            solicitud.requisitosAcreditadosCategoriaProfesional.some(req => req.requisitoIpCategoria.id === requisitoSolicitanteCategoriaProfesional.id);
-          let requisitosSolicitanteCategoriaProfesionalTable = requisitoSolicitanteCategoriaProfesional.categoriaProfesional?.nombre ?? '';
-          requisitosSolicitanteCategoriaProfesionalTable += '\n';
-          requisitosSolicitanteCategoriaProfesionalTable += this.getI18nBooleanYesNo(solicitanteCategoriaDocumentoAcreditativo);
-
-          datosRrhh.push(requisitosSolicitanteCategoriaProfesionalTable);
-
-          const rowReport: ISgiRowReport = {
-            elements: datosRrhh
-          };
-          rowsReport.push(rowReport);
-        });
-      }
-    }
-    elementsRow.push({
-      rows: rowsReport
-    });
-  }
-
-  private fillRowsRrhhNotExcel4(solicitud: ISolicitudReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-    if (solicitud.solicitudRrhh) {
-
-      if (solicitud.requisitosTutorNivelAcademico) {
-        solicitud.requisitosTutorNivelAcademico.forEach(requisitoTutorNivelAcademico => {
-          const datosRrhh: any[] = [];
-          const tutorNivelAcademicoDocumentoAcreditativo =
-            solicitud.requisitosAcreditadosNivelAcademico.some(req => req.requisitoIpNivelAcademico.id === requisitoTutorNivelAcademico.id);
-          let requisitosTutorNivelAcademicoTable = requisitoTutorNivelAcademico.nivelAcademico?.nombre ?? '';
-          requisitosTutorNivelAcademicoTable += '\n';
-          requisitosTutorNivelAcademicoTable += this.getI18nBooleanYesNo(tutorNivelAcademicoDocumentoAcreditativo);
-
-          datosRrhh.push(requisitosTutorNivelAcademicoTable);
-
-          const rowReport: ISgiRowReport = {
-            elements: datosRrhh
-          };
-          rowsReport.push(rowReport);
-        });
-      }
-    }
-    elementsRow.push({
-      rows: rowsReport
-    });
-  }
-
-  private fillRowsRrhhNotExcel5(solicitud: ISolicitudReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-    if (solicitud.solicitudRrhh) {
-
-      if (solicitud.requisitosTutorCategoriaProfesional) {
-        solicitud.requisitosTutorCategoriaProfesional.forEach(requisitoTutorCategoriaProfesional => {
-          const datosRrhh: any[] = [];
-          const tutorCategoriaDocumentoAcreditativo =
-            solicitud.requisitosAcreditadosCategoriaProfesional.some(req => req.requisitoIpCategoria.id === requisitoTutorCategoriaProfesional.id);
-          let requisitosTutorCategoriaProfesionalTable = requisitoTutorCategoriaProfesional.categoriaProfesional?.nombre ?? '';
-          requisitosTutorCategoriaProfesionalTable += '\n';
-          requisitosTutorCategoriaProfesionalTable += this.getI18nBooleanYesNo(tutorCategoriaDocumentoAcreditativo);
-
-          datosRrhh.push(requisitosTutorCategoriaProfesionalTable);
-
-          const rowReport: ISgiRowReport = {
-            elements: datosRrhh
-          };
-          rowsReport.push(rowReport);
-        });
-      }
-
-    }
-    elementsRow.push({
-      rows: rowsReport
-    });
-  }
 
   private fillRowsRrhhExcel(elementsRow: any[], solicitud: ISolicitudReportData, solicitudes: ISolicitudReportData[]) {
     if (solicitud.solicitudRrhh) {
@@ -740,9 +491,9 @@ export class SolicitudRrhhListadoExportService extends AbstractTableExportFillSe
       elementsRow.push(solicitud.solicitudRrhhTutor?.tutor?.nombre ?? '');
       elementsRow.push(solicitud.solicitudRrhhTutor?.tutor?.apellidos ?? '');
       elementsRow.push(solicitud.solicitudRrhhTutor?.tutor?.emails ? solicitud.solicitudRrhhTutor?.tutor?.emails[0].email : '');
-      elementsRow.push(solicitud.solicitudRrhhMemoria?.tituloTrabajo ?? '');
-      elementsRow.push(solicitud.solicitudRrhhMemoria?.resumen ?? '');
-      elementsRow.push(solicitud.solicitudRrhhMemoria?.observaciones ?? '');
+      elementsRow.push(this.languageService.getFieldValue(solicitud.solicitudRrhhMemoria?.tituloTrabajo));
+      elementsRow.push(this.languageService.getFieldValue(solicitud.solicitudRrhhMemoria?.resumen));
+      elementsRow.push(this.languageService.getFieldValue(solicitud.solicitudRrhhMemoria?.observaciones));
 
       if (solicitud.requisitosSolicitanteNivelAcademico) {
         solicitud.requisitosSolicitanteNivelAcademico.forEach(requisitoSolicitanteNivelAcademico => {

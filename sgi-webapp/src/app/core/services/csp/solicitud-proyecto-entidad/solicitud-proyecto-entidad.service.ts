@@ -1,7 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER } from '@core/converters/csp/solicitud-proyecto-presupuesto.converter';
-import { ISolicitudProyectoPresupuestoBackend } from '@core/models/csp/backend/solicitud-proyecto-presupuesto-backend';
 import { ISolicitudProyectoEntidad } from '@core/models/csp/solicitud-proyecto-entidad';
 import { ISolicitudProyectoPresupuesto } from '@core/models/csp/solicitud-proyecto-presupuesto';
 import { environment } from '@env';
@@ -9,6 +7,8 @@ import { FindByIdCtor, mixinFindById, SgiRestBaseService, SgiRestFindOptions, Sg
 import { Observable } from 'rxjs';
 import { ISolicitudProyectoEntidadResponse } from './solicitud-proyecto-entidad-response';
 import { SOLICITUD_PROYECTO_ENTIDAD_RESPONSE_CONVERTER } from './solicitud-proyecto-entidad-response.converter';
+import { ISolicitudProyectoPresupuestoResponse } from '../solicitud-proyecto-presupuesto/solicitud-proyecto-presupuesto-response';
+import { SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER } from '../solicitud-proyecto-presupuesto/solicitud-proyecto-presupuesto.converter';
 
 // tslint:disable-next-line: variable-name
 const _SolicitudProyectoEntidadServiceMixinBase:
@@ -40,7 +40,7 @@ export class SolicitudProyectoEntidadService extends _SolicitudProyectoEntidadSe
    */
   findAllSolicitudProyectoPresupuestoEntidadConvocatoria(id: number, options?: SgiRestFindOptions)
     : Observable<SgiRestListResult<ISolicitudProyectoPresupuesto>> {
-    return this.find<ISolicitudProyectoPresupuestoBackend, ISolicitudProyectoPresupuesto>(
+    return this.find<ISolicitudProyectoPresupuestoResponse, ISolicitudProyectoPresupuesto>(
       `${this.endpointUrl}/${id}/solicitudproyectopresupuestos`,
       options,
       SOLICITUD_PROYECTO_PRESUPUESTO_CONVERTER

@@ -1,6 +1,7 @@
 import { IModeloUnidadBackend } from '@core/models/csp/backend/modelo-unidad-backend';
 import { IModeloUnidad } from '@core/models/csp/modelo-unidad';
 import { IUnidadGestion } from '@core/models/usr/unidad-gestion';
+import { MODELO_EJECUCION_RESPONSE_CONVERTER } from '@core/services/csp/modelo-ejecucion/modelo-ejecucion-response.converter';
 import { SgiBaseConverter } from '@sgi/framework/core';
 
 class ModeloUnidadConverter extends SgiBaseConverter<IModeloUnidadBackend, IModeloUnidad> {
@@ -18,7 +19,7 @@ class ModeloUnidadConverter extends SgiBaseConverter<IModeloUnidadBackend, IMode
         descripcion: null,
         activo: null
       } as IUnidadGestion,
-      modeloEjecucion: value.modeloEjecucion,
+      modeloEjecucion: MODELO_EJECUCION_RESPONSE_CONVERTER.toTarget(value.modeloEjecucion),
       activo: value.activo,
 
     };
@@ -31,7 +32,7 @@ class ModeloUnidadConverter extends SgiBaseConverter<IModeloUnidadBackend, IMode
     return {
       id: value.id,
       unidadGestionRef: String(value.unidadGestion.id),
-      modeloEjecucion: value.modeloEjecucion,
+      modeloEjecucion: MODELO_EJECUCION_RESPONSE_CONVERTER.fromTarget(value.modeloEjecucion),
       activo: value.activo,
     };
   }

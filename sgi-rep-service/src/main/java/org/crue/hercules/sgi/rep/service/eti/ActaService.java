@@ -58,7 +58,7 @@ public class ActaService extends BaseRestTemplateService<ActaDto> {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     return numEvaluaciones;
@@ -87,7 +87,7 @@ public class ActaService extends BaseRestTemplateService<ActaDto> {
       resultados = response.getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     return resultados;
   }

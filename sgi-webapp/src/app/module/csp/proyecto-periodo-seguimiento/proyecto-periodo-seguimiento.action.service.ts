@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoPeriodoSeguimiento } from '@core/models/csp/proyecto-periodo-seguimiento';
 import { ActionService } from '@core/services/action-service';
-import { ConvocatoriaSeguimientoCientificoService } from '@core/services/csp/convocatoria-seguimiento-cientifico.service';
+import { ConvocatoriaSeguimientoCientificoService } from '@core/services/csp/convocatoria-periodo-seguimiento-cientifico/convocatoria-seguimiento-cientifico.service';
 import { ProyectoPeriodoSeguimientoDocumentoService } from '@core/services/csp/proyecto-periodo-seguimiento-documento.service';
 import { ProyectoPeriodoSeguimientoService } from '@core/services/csp/proyecto-periodo-seguimiento.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';

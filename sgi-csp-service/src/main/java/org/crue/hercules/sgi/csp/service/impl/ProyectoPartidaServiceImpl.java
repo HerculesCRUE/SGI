@@ -14,8 +14,11 @@ import org.crue.hercules.sgi.csp.repository.ConfiguracionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoPartidaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoPartidaSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoPartidaService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -34,6 +37,12 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @Validated
 public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
+
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_MODEL_PROYECTO_PARTIDA = "org.crue.hercules.sgi.csp.model.ProyectoPartida.message";
+  private static final String MSG_ENTITY_MODIFICABLE = "org.springframework.util.Assert.entity.modificable.message";
+  private static final String MSG_MODIFICABLE_DESCRIPCION = "proyectoPartida.modificable.descripcion";
 
   private final ProyectoPartidaRepository repository;
   private final ConfiguracionRepository configuracionRepository;
@@ -61,7 +70,7 @@ public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
   public ProyectoPartida create(@Valid ProyectoPartida proyectoPartida) {
     log.debug("create(ProyectoPartida proyectoPartida) - start");
 
-    Assert.isNull(proyectoPartida.getId(), "ProyectoPartida id tiene que ser null para crear un nuevo ProyectoPartida");
+    AssertHelper.idIsNull(proyectoPartida.getId(), ProyectoPartida.class);
     this.validate(proyectoPartida);
 
     ProyectoPartida returnValue = repository.save(proyectoPartida);
@@ -83,8 +92,7 @@ public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
   public ProyectoPartida update(@Valid ProyectoPartida proyectoPartidaActualizar) {
     log.debug("update(ProyectoPartida proyectoPartidaActualizar) - start");
 
-    Assert.notNull(proyectoPartidaActualizar.getId(),
-        "ProyectoPartida id no puede ser null para actualizar un ProyectoPartida");
+    AssertHelper.idNotNull(proyectoPartidaActualizar.getId(), ProyectoPartida.class);
     this.validate(proyectoPartidaActualizar);
 
     return repository.findById(proyectoPartidaActualizar.getId()).map(proyectoPartida -> {
@@ -112,7 +120,7 @@ public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ProyectoPartida id no puede ser null para desactivar un ProyectoPartida");
+    AssertHelper.idNotNull(id, ProyectoPartida.class);
 
     if (!repository.existsById(id)) {
       throw new ProyectoPartidaNotFoundException(id);
@@ -181,17 +189,21 @@ public class ProyectoPartidaServiceImpl implements ProyectoPartidaService {
   private void validate(ProyectoPartida proyectoPartida) {
     log.debug("validate(ProyectoPartida proyectoPartida) - start");
 
-    Assert.isTrue(proyectoPartida.getProyectoId() != null,
-        "Id Proyecto no puede ser null para realizar la acción sobre ProyectoPartida");
+    AssertHelper.idNotNull(proyectoPartida.getProyectoId(), Proyecto.class);
 
     configuracionRepository.findFirstByOrderByIdAsc()
         .ifPresent(configuracion -> Assert.isTrue(
-            Boolean.TRUE.equals(configuracion.getPartidasPresupuestariasSGE())
+            Boolean.TRUE.equals(configuracion.getPartidasPresupuestariasSgeEnabled())
                 || proyectoPartida.getCodigo().matches(configuracion.getFormatoPartidaPresupuestaria()),
-            "Formato de codigo no valido"));
+            ApplicationContextSupport.getMessage("formato.codigo.invalido")));
 
-    Assert.isTrue(this.modificable(proyectoPartida.getId(), "CSP-PRO-E"),
-        "No se puede modificar ProyectoPartida. No tiene los permisos necesarios o el proyecto tiene presupuestos anuales enviados al SGE.");
+    Assert.isTrue(this.modificable(proyectoPartida
+        .getId(), "CSP-PRO-E"),
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_MODIFICABLE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_PROYECTO_PARTIDA))
+            .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_MODIFICABLE_DESCRIPCION))
+            .build());
 
     log.debug("validate(ProyectoPartida proyectoPartida) - end");
   }

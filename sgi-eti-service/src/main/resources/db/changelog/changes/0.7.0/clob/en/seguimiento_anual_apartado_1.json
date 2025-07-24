@@ -1,0 +1,29 @@
+[
+  {
+    "key": "ap1_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Start date of the research activity",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Fill in this item according to the committee to which your report is addressed:<ul><li>For the #nombre_comite_M10_en# start date of recruitment.</li><li>For the #nombre_comite_M20_en# start date of use of experimental animals.</li><li>For the #nombre_comite_M30_en# start date of handling of biological agents or GMOs, hazardous chemicals, radioactive substances.</li></ul></p>"
+      },
+      {
+        "key": "fechaInicio",
+        "type": "datepicker",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Date"
+        }
+      }
+    ]
+  }
+]

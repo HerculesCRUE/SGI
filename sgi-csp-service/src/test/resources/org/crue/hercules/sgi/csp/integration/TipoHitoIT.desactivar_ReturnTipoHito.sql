@@ -1,2 +1,8 @@
 -- TIPO HITO
-INSERT INTO test.tipo_hito (id, nombre,descripcion, activo) VALUES (1, 'nombre1','descripción1' ,true);
+INSERT INTO test.tipo_hito (id, activo) VALUES (1, true);
+
+-- TIPO HITO NOMBRE
+INSERT INTO test.tipo_hito_nombre (tipo_hito_id, lang, value_) VALUES (1, 'es', 'nombre1');
+
+-- TIPO HITO DESCRIPCIÓN
+INSERT INTO test.tipo_hito_descripcion (tipo_hito_id, lang, value_) VALUES (1, 'es', 'descripción1');

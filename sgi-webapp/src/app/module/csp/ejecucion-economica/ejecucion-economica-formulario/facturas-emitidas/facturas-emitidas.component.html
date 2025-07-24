@@ -7,17 +7,18 @@
 
     <form *ngIf="formPart.formGroupFechas" [formGroup]="formPart.formGroupFechas" fxLayout="column" fxLayout.gt-sm="row"
       fxLayoutAlign="start center" fxLayoutGap="10px">
-      <mat-card fxLayout="column">
-        <mat-card-title>Fecha Factura</mat-card-title>
+      <mat-card fxLayout="column"
+        *ngIf="isSgeEjecucionEconomicaFiltroEnabled(SGE_EJECUCION_ECONOMICA_FILTROS.ECC_FILTRO_FACTURAS_EMITIDAS_FECHA_FACTURA)">
+        <mat-card-title>{{'sge.dato-economico.fecha-factura' | translate}}</mat-card-title>
         <mat-card-content fxLayout="column" fxLayout.gt-md="row" fxLayoutGap="10px">
           <mat-form-field>
-            <mat-label>entre</mat-label>
+            <mat-label>{{'sge.dato-economico.filtro.entre' | translate}}</mat-label>
             <input matInput [matDatepicker]="pickerFacturaDesde" formControlName="facturaDesde">
             <mat-datepicker-toggle matSuffix [for]="pickerFacturaDesde"></mat-datepicker-toggle>
             <mat-datepicker #pickerFacturaDesde></mat-datepicker>
           </mat-form-field>
           <mat-form-field>
-            <mat-label>y</mat-label>
+            <mat-label>{{'sge.dato-economico.filtro.y' | translate}}</mat-label>
             <input matInput [matDatepicker]="pickerFacturaHasta" formControlName="facturaHasta">
             <mat-datepicker-toggle matSuffix [for]="pickerFacturaHasta"></mat-datepicker-toggle>
             <mat-datepicker #pickerFacturaHasta></mat-datepicker>
@@ -59,7 +60,8 @@
           </mat-cell>
         </ng-container>
 
-        <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+        <ng-container *ngFor="let column of formPart.columns$ | async; trackBy: formPart.trackByColumnId"
+          [matColumnDef]="column.id">
           <mat-header-cell *matHeaderCellDef [class.computed]="column.compute">{{column.name}}
           </mat-header-cell>
           <mat-cell *matCellDef="let element" [class.computed]="column.compute">

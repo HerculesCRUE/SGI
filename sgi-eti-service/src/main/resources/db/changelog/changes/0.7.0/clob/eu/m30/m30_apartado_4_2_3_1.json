@@ -1,0 +1,50 @@
+[
+  {
+    "key": "ap4_2_3_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.1 Esposizioaren kontrola"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Agente biologikoekin edo/eta genetikoki eraldatutako organismoekin lotutako zereginak egiten dituztenez gain, beste norbaitek ere badu esposizio arriskua?</p>"
+      },
+      {
+        "key": "riesgoExposicion",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Zehaztu nork (mantentze lanetako taldea, garbiketako langileak, animaliategiko langileak, etab.), edo erantzuna ezezkoa bada, justifikatu.",
+        "hideExpression": "!model.riesgoExposicion"
+      },
+      {
+        "key": "especificarQuienes",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.riesgoExposicion",
+        "templateOptions": {
+          "label": "Zehaztu:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

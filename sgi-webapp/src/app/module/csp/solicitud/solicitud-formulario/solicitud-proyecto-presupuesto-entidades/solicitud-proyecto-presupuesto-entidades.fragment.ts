@@ -1,4 +1,5 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IEntidadFinanciadora } from '@core/models/csp/entidad-financiadora';
 import { ISolicitudProyecto, TipoPresupuesto } from '@core/models/csp/solicitud-proyecto';
 import { ISolicitudProyectoEntidad } from '@core/models/csp/solicitud-proyecto-entidad';
@@ -10,11 +11,12 @@ import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { BehaviorSubject, EMPTY, from, merge, Observable, of, Subject } from 'rxjs';
 import { catchError, map, mergeAll, switchMap, takeLast, tap } from 'rxjs/operators';
 import { SolicitudProyectoEntidadFinanciadoraAjenaData } from '../solicitud-proyecto-entidades-financiadoras/solicitud-proyecto-entidades-financiadoras.fragment';
+import { NGXLogger } from 'ngx-logger';
 
 export interface EntidadFinanciadoraDesglosePresupuesto {
   solicitudProyectoEntidadId: number;
   entidadFinanciadora: IEntidadFinanciadora;
-  fuenteFinanciacion: string;
+  fuenteFinanciacion: I18nFieldValue[];
   ajena: boolean;
 }
 
@@ -29,6 +31,7 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
   private solicitudProyecto: ISolicitudProyecto;
 
   constructor(
+    private readonly logger: NGXLogger,
     key: number,
     public readonly convocatoriaId: number,
     private solicitudService: SolicitudService,
@@ -305,6 +308,10 @@ export class SolicitudProyectoPresupuestoEntidadesFragment extends FormFragment<
                       solicitudProyectoEntidad.entidadFinanciadora.empresa = empresa;
                       return solicitudProyectoEntidad;
                     }),
+                    catchError((err) => {
+                      this.logger.error(err);
+                      return of(solicitudProyectoEntidad);
+                    })
                   );
 
               }),

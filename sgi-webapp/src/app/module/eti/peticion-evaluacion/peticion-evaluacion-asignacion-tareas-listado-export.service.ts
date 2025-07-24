@@ -3,6 +3,7 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ITareaWithIsEliminable } from '@core/models/eti/tarea-with-is-eliminable';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -22,13 +23,14 @@ const ASIGNACION_TAREAS_EXPERIENCIA_FORMACION_KEY = marker('eti.peticion-evaluac
 
 @Injectable()
 export class PeticionEvaluacionAsignacionTareasListadoExportService extends
-  AbstractTableExportFillService<IPeticionEvaluacionReportData, IPeticionEvaluacionReportOptions>{
+  AbstractTableExportFillService<IPeticionEvaluacionReportData, IPeticionEvaluacionReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     protected readonly peticionEvaluacionService: PeticionEvaluacionService,
-    private readonly personaService: PersonaService
+    private readonly personaService: PersonaService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -58,14 +60,27 @@ export class PeticionEvaluacionAsignacionTareasListadoExportService extends
         if (peticionData.asignacionTareas === undefined || peticionData.asignacionTareas === null) {
           peticionData.asignacionTareas = [];
         }
-        peticionData.asignacionTareas.push({
+        let asignacion: IPeticionEvaluacionAsignacionTareaReportData = {
           nombre: persona.nombre,
           apellidos: persona.apellidos,
           memoria: tarea.memoria.numReferencia,
-          tarea: tarea.memoria.comite.id in [1, 3] ? tarea.tarea : tarea.memoria.comite.id === 2 ? tarea.tipoTarea.nombre : '',
-          experiencia: tarea.memoria.comite.id in [1, 3] ? tarea.formacion : tarea.memoria.comite.id === 2 ?
-            tarea.formacionEspecifica.nombre : ''
-        });
+          tarea: '',
+          experiencia: ''
+        };
+        if (tarea.memoria.comite.tareaNombreLibre) {
+          asignacion.tarea = this.languageService.getFieldValue(tarea.tipoTarea?.nombre) ?? '';
+        }
+        else {
+          asignacion.tarea = this.languageService.getFieldValue(tarea.nombre) ?? '';
+        }
+        if (tarea.memoria.comite.tareaExperienciaLibre) {
+          asignacion.experiencia = this.languageService.getFieldValue(tarea.formacion) ?? '';
+        }
+        else {
+          asignacion.experiencia = this.languageService.getFieldValue(tarea.formacionEspecifica?.nombre) ?? '';
+        }
+
+        peticionData.asignacionTareas.push(asignacion);
         return peticionData;
       })
     );

@@ -40,6 +40,8 @@ import org.crue.hercules.sgi.csp.repository.specification.GrupoSpecifications;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.GrupoAuthorityHelper;
 import org.crue.hercules.sgi.csp.util.PeriodDateUtil;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.springframework.data.domain.Page;
@@ -47,6 +49,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 
 import lombok.RequiredArgsConstructor;
@@ -146,6 +149,7 @@ public class GrupoService {
       data.setProyectoSgeRef(grupoActualizar.getProyectoSgeRef());
       data.setFechaInicio(grupoActualizar.getFechaInicio());
       data.setFechaFin(grupoActualizar.getFechaFin());
+      data.setResumen(grupoActualizar.getResumen());
 
       data = this.updateTipo(data, grupoActualizar);
 
@@ -265,9 +269,9 @@ public class GrupoService {
   public Page<Grupo> findAll(String query, Pageable paging) {
     log.debug("findAll(String query, Pageable paging) - start");
 
-    Specification<Grupo> specs = GrupoSpecifications.distinct()
-        .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));
-    Page<Grupo> returnValue = repository.findAll(specs, paging);
+    Specification<Grupo> specs = SgiRSQLJPASupport.toSpecification(query,
+        GrupoPredicateResolver.getInstance(sgiConfigProperties, authorityHelper));
+    Page<Grupo> returnValue = repository.findAllDistinct(specs, paging);
 
     log.debug("findAll(String query, Pageable paging) - end");
     return returnValue;
@@ -284,15 +288,11 @@ public class GrupoService {
   public Page<Grupo> findActivos(String query, Pageable paging) {
     log.debug("findActivos(String query, Pageable paging) - start");
 
-    Specification<Grupo> specs = GrupoSpecifications.distinct()
-        .and(GrupoSpecifications.activos())
-        .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));
+    Specification<Grupo> specs = GrupoSpecifications.activos()
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            GrupoPredicateResolver.getInstance(sgiConfigProperties, authorityHelper)));
 
-    if (authorityHelper.isUserInvestigador()) {
-      specs = specs.and(authorityHelper.getSpecificationsUserInvestigadorGruposCanView());
-    }
-
-    Page<Grupo> returnValue = repository.findAll(specs, paging);
+    Page<Grupo> returnValue = repository.findAllDistinct(specs, paging);
 
     log.debug("findActivos(String query, Pageable paging) - end");
     return returnValue;
@@ -308,10 +308,9 @@ public class GrupoService {
   public Page<Grupo> findGruposUsuario(Pageable paging) {
     log.debug("findGruposUsuario(Pageable paging) - start");
 
-    Specification<Grupo> specs = GrupoSpecifications.distinct()
-        .and(GrupoSpecifications.activos())
+    Specification<Grupo> specs = GrupoSpecifications.activos()
         .and(GrupoSpecifications.byPersonaInGrupoEquipo(authorityHelper.getAuthenticationPersonaRef()));
-    Page<Grupo> returnValue = repository.findAll(specs, paging);
+    Page<Grupo> returnValue = repository.findAllDistinct(specs, paging);
 
     log.debug("findGruposUsuario(Pageable paging) - end");
     return returnValue;
@@ -434,12 +433,24 @@ public class GrupoService {
     log.debug("findRelacionesEjecucionEconomicaGrupos(String query, Pageable pageable) - start");
 
     Specification<Grupo> specs = GrupoSpecifications.activos().and(GrupoSpecifications.byProyectoSgeRefNotNull());
-    if (query != null) {
+    if (StringUtils.hasText(query)) {
       specs = specs
-          .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));
+          .and(SgiRSQLJPASupport.toSpecification(query,
+              GrupoPredicateResolver.getInstance(sgiConfigProperties, authorityHelper)));
     }
 
-    Page<RelacionEjecucionEconomica> returnValue = repository.findRelacionesEjecucionEconomica(specs, pageable);
+    Page<RelacionEjecucionEconomica> returnValue = repository.findAllDistinct(specs, pageable)
+        .map(grupo -> RelacionEjecucionEconomica.builder()
+            .id(grupo.getId())
+            .nombre(grupo.getNombre().stream()
+                .map(titulo -> new I18nFieldValueDto(titulo.getLang(), titulo.getValue()))
+                .collect(Collectors.toSet()))
+            .fechaInicio(grupo.getFechaInicio())
+            .fechaFin(grupo.getFechaFin())
+            .proyectoSgeRef(grupo.getProyectoSgeRef())
+            .tipoEntidad(RelacionEjecucionEconomica.TipoEntidad.GRUPO)
+            .build());
+
     log.debug("findRelacionesEjecucionEconomicaGrupos(String query, Pageable pageable) - end");
     return returnValue;
   }
@@ -455,7 +466,8 @@ public class GrupoService {
     log.debug("findIdsGruposModificados(String query) - start");
 
     Specification<Grupo> specs = GrupoSpecifications.activos()
-        .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            GrupoPredicateResolver.getInstance(sgiConfigProperties, authorityHelper)));
 
     List<Long> returnValue = repository.findIds(specs);
 
@@ -476,7 +488,8 @@ public class GrupoService {
     log.debug("findIdsGruposEliminados(String query) - start");
 
     Specification<Grupo> specs = GrupoSpecifications.notActivos()
-        .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            GrupoPredicateResolver.getInstance(sgiConfigProperties, authorityHelper)));
 
     List<Long> returnValue = repository.findIds(specs);
 
@@ -498,8 +511,9 @@ public class GrupoService {
 
     Instant fechaActual = Instant.now().atZone(sgiConfigProperties.getTimeZone().toZoneId()).toInstant();
 
-    Specification<Grupo> specs = GrupoSpecifications.activos().and(GrupoSpecifications.distinct())
-        .and(SgiRSQLJPASupport.toSpecification(query, GrupoPredicateResolver.getInstance(sgiConfigProperties)));
+    Specification<Grupo> specs = GrupoSpecifications.activos()
+        .and(SgiRSQLJPASupport.toSpecification(query,
+            GrupoPredicateResolver.getInstance(sgiConfigProperties, authorityHelper)));
 
     List<String> returnValue = repository.findIds(specs).stream()
         .flatMap(
@@ -507,7 +521,7 @@ public class GrupoService {
                 grupoEquipoRepository.findPersonaRefInvestigadoresPrincipales(grupoId, fechaActual).stream(),
                 grupoPersonaAutorizadaRepository.findPersonaRefs(grupoId, fechaActual).stream()))
         .distinct()
-        .collect(Collectors.toList());
+        .toList();
 
     log.debug("findPersonaRefInvestigadoresPrincipalesAndAutorizadas(String query) - end");
 
@@ -562,9 +576,19 @@ public class GrupoService {
    * @return Lista de {@link GrupoDto}
    */
   public List<GrupoDto> findAllByAnio(Integer anio) {
-
     Instant fechaBaremacion = PeriodDateUtil.calculateFechaFinBaremacionByAnio(anio, sgiConfigProperties.getTimeZone());
-    return repository.findAllByAnio(fechaBaremacion);
+
+    Specification<Grupo> specs = GrupoSpecifications.activos()
+        .and(GrupoSpecifications.isBaremable(fechaBaremacion));
+
+    return repository.findAllDistinct(specs, Pageable.unpaged())
+        .map(grupo -> GrupoDto.builder()
+            .id(grupo.getId())
+            .nombre(I18nHelper.getFieldValue(grupo.getNombre()))
+            .fechaInicio(grupo.getFechaInicio())
+            .fechaFin(grupo.getFechaFin())
+            .build())
+        .getContent();
   }
 
   /*
@@ -670,10 +694,9 @@ public class GrupoService {
       return Page.empty();
     }
 
-    Specification<Grupo> specs = GrupoSpecifications.distinct()
-        .and(GrupoSpecifications.activos())
+    Specification<Grupo> specs = GrupoSpecifications.activos()
         .and(GrupoSpecifications.byPersonaInGrupoEquipo(personaRef, fechaInicio, fechaFin));
-    Page<Grupo> returnValue = repository.findAll(specs, paging);
+    Page<Grupo> returnValue = repository.findAllDistinct(specs, paging);
 
     log.debug("findGruposPersona(String personaRef, Instant fechaInicio, Instant fechaFin) - end");
     return returnValue;

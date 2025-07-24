@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.converter.GrupoConverter;
@@ -15,18 +17,25 @@ import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
+import org.crue.hercules.sgi.csp.model.EstadoSolicitudComentario;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.RolSocio;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudDocumento;
+import org.crue.hercules.sgi.csp.model.SolicitudDocumentoComentario;
+import org.crue.hercules.sgi.csp.model.SolicitudDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.SolicitudHito;
+import org.crue.hercules.sgi.csp.model.SolicitudHitoComentario;
 import org.crue.hercules.sgi.csp.model.SolicitudModalidad;
+import org.crue.hercules.sgi.csp.model.SolicitudObservaciones;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto.TipoPresupuesto;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuestoObservaciones;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
+import org.crue.hercules.sgi.csp.model.SolicitudTitulo;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
 import org.crue.hercules.sgi.csp.model.TipoHito;
@@ -55,6 +64,8 @@ import org.crue.hercules.sgi.csp.service.SolicitudProyectoService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoSocioService;
 import org.crue.hercules.sgi.csp.service.SolicitudRrhhService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -187,10 +198,14 @@ class SolicitudControllerTest extends BaseControllerTest {
     Solicitud solicitud = generarMockSolicitud(1L);
 
     BDDMockito.given(service.create(ArgumentMatchers.<Solicitud>any())).willAnswer((InvocationOnMock invocation) -> {
+
+      Set<SolicitudTitulo> solicitudTitulo = new HashSet<>();
+      solicitudTitulo.add(new SolicitudTitulo(Language.ES, "titulo"));
+
       Solicitud newSolicitud = new Solicitud();
       BeanUtils.copyProperties(invocation.getArgument(0), newSolicitud);
       newSolicitud.setId(1L);
-      newSolicitud.setTitulo("titulo");
+      newSolicitud.setTitulo(solicitudTitulo);
       return newSolicitud;
     });
 
@@ -209,7 +224,8 @@ class SolicitudControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("convocatoriaId").value(solicitud.getConvocatoriaId()))
         .andExpect(MockMvcResultMatchers.jsonPath("creadorRef").isNotEmpty())
         .andExpect(MockMvcResultMatchers.jsonPath("solicitanteRef").value(solicitud.getSolicitanteRef()))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(solicitud.getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(solicitud.getObservaciones(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("unidadGestionRef").value(solicitud.getUnidadGestionRef()));
   }
 
@@ -237,7 +253,9 @@ class SolicitudControllerTest extends BaseControllerTest {
     // given: Existing Solicitud to be updated
     Solicitud solicitudExistente = generarMockSolicitud(1L);
     Solicitud solicitud = generarMockSolicitud(1L);
-    solicitud.setObservaciones("observaciones actualizadas");
+    Set<SolicitudObservaciones> solicitudObservaciones = new HashSet<>();
+    solicitudObservaciones.add(new SolicitudObservaciones(Language.ES, "observaciones actualizadas"));
+    solicitud.setObservaciones(solicitudObservaciones);
 
     BDDMockito.given(service.update(ArgumentMatchers.<Solicitud>any()))
         .willAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -251,14 +269,16 @@ class SolicitudControllerTest extends BaseControllerTest {
         // then: Solicitud is updated
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(solicitudExistente.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("titulo").value(solicitudExistente.getTitulo()))
+        .andExpect(MockMvcResultMatchers.jsonPath("titulo[0].value")
+            .value(I18nHelper.getValueForLanguage(solicitudExistente.getTitulo(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("codigoRegistroInterno")
             .value(solicitudExistente.getCodigoRegistroInterno()))
         .andExpect(MockMvcResultMatchers.jsonPath("estado.id").value(solicitudExistente.getEstado().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("convocatoriaId").value(solicitudExistente.getConvocatoriaId()))
         .andExpect(MockMvcResultMatchers.jsonPath("creadorRef").value(solicitudExistente.getCreadorRef()))
         .andExpect(MockMvcResultMatchers.jsonPath("solicitanteRef").value(solicitudExistente.getSolicitanteRef()))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(solicitud.getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(solicitud.getObservaciones(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("unidadGestionRef").value(solicitudExistente.getUnidadGestionRef()));
   }
 
@@ -387,7 +407,7 @@ class SolicitudControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("convocatoriaId").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("creadorRef").value("usr-001"))
         .andExpect(MockMvcResultMatchers.jsonPath("solicitanteRef").value("usr-002"))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value("observaciones-001"))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value").value("observaciones-001"))
         .andExpect(MockMvcResultMatchers.jsonPath("unidadGestionRef").value("2"));
   }
 
@@ -449,7 +469,8 @@ class SolicitudControllerTest extends BaseControllerTest {
         });
     for (int i = 31; i <= 37; i++) {
       Solicitud solicitud = solicitudesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(solicitud.getObservaciones()).isEqualTo("observaciones-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(solicitud.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
 
@@ -517,7 +538,8 @@ class SolicitudControllerTest extends BaseControllerTest {
         });
     for (int i = 31; i <= 37; i++) {
       Solicitud solicitud = solicitudesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(solicitud.getObservaciones()).isEqualTo("observaciones-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(solicitud.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
 
@@ -668,8 +690,7 @@ class SolicitudControllerTest extends BaseControllerTest {
           int toIndex = fromIndex + size;
           toIndex = toIndex > estadosSolicitud.size() ? estadosSolicitud.size() : toIndex;
           List<EstadoSolicitud> content = estadosSolicitud.subList(fromIndex, toIndex);
-          Page<EstadoSolicitud> pageResponse = new PageImpl<>(content, pageable, estadosSolicitud.size());
-          return pageResponse;
+          return new PageImpl<>(content, pageable, estadosSolicitud.size());
         });
 
     // when: Get page=3 with pagesize=10
@@ -695,7 +716,8 @@ class SolicitudControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       EstadoSolicitud estadoSolicitud = estadosSolicitudResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(estadoSolicitud.getComentario()).isEqualTo("Estado-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(estadoSolicitud.getComentario(), Language.ES))
+          .isEqualTo("Estado-" + i);
     }
   }
 
@@ -879,7 +901,8 @@ class SolicitudControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       SolicitudHito solicitudHito = solicitudHitoResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(solicitudHito.getComentario()).isEqualTo("comentario-" + String.format("%02d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(solicitudHito.getComentario(), Language.ES))
+          .isEqualTo("comentario-" + String.format("%02d", i));
     }
   }
 
@@ -1210,7 +1233,9 @@ class SolicitudControllerTest extends BaseControllerTest {
       SolicitudProyectoPresupuesto solicitudProyectoEntidadFinanciadoraAjena = solicitudProyectoEntidadFinanciadoraAjenasResponse
           .get(i - (page * pageSize) - 1);
       Assertions.assertThat(solicitudProyectoEntidadFinanciadoraAjena.getId()).isEqualTo(Long.valueOf(i));
-      Assertions.assertThat(solicitudProyectoEntidadFinanciadoraAjena.getObservaciones())
+      Assertions
+          .assertThat(I18nHelper.getValueForLanguage(solicitudProyectoEntidadFinanciadoraAjena.getObservaciones(),
+              Language.ES))
           .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
@@ -1275,13 +1300,19 @@ class SolicitudControllerTest extends BaseControllerTest {
     Programa programa = new Programa();
     programa.setId(1L);
 
+    Set<SolicitudTitulo> solicitudTitulo = new HashSet<>();
+    solicitudTitulo.add(new SolicitudTitulo(Language.ES, "titulo"));
+
+    Set<SolicitudObservaciones> solicitudObservaciones = new HashSet<>();
+    solicitudObservaciones.add(new SolicitudObservaciones(Language.ES, "observaciones-" + String.format("%03d", id)));
+
     Solicitud solicitud = new Solicitud();
     solicitud.setId(id);
-    solicitud.setTitulo("titulo");
+    solicitud.setTitulo(solicitudTitulo);
     solicitud.setCodigoExterno(null);
     solicitud.setConvocatoriaId(1L);
     solicitud.setSolicitanteRef("usr-002");
-    solicitud.setObservaciones("observaciones-" + String.format("%03d", id));
+    solicitud.setObservaciones(solicitudObservaciones);
     solicitud.setConvocatoriaExterna(null);
     solicitud.setUnidadGestionRef("2");
     solicitud.setFormularioSolicitud(FormularioSolicitud.GRUPO);
@@ -1326,11 +1357,17 @@ class SolicitudControllerTest extends BaseControllerTest {
   private SolicitudDocumento generarSolicitudDocumento(Long solicitudDocumentoId, Long solicitudId,
       Long tipoDocumentoId) {
 
-    SolicitudDocumento solicitudDocumento = SolicitudDocumento.builder().id(solicitudDocumentoId)
-        .solicitudId(solicitudId).comentario("comentarios-" + solicitudDocumentoId)
-        .documentoRef("documentoRef-" + solicitudDocumentoId).nombre("nombreDocumento-" + solicitudDocumentoId)
+    Set<SolicitudDocumentoNombre> solicitudDocumentoNombre = new HashSet<>();
+    solicitudDocumentoNombre.add(new SolicitudDocumentoNombre(Language.ES, "nombreDocumento-" + solicitudDocumentoId));
+
+    Set<SolicitudDocumentoComentario> solicitudDocumentoComentarios = new HashSet<>();
+    solicitudDocumentoComentarios
+        .add(new SolicitudDocumentoComentario(Language.ES, "comentarios-" + solicitudDocumentoId));
+
+    return SolicitudDocumento.builder().id(solicitudDocumentoId)
+        .solicitudId(solicitudId).comentario(solicitudDocumentoComentarios)
+        .documentoRef("documentoRef-" + solicitudDocumentoId).nombre(solicitudDocumentoNombre)
         .tipoDocumento(TipoDocumento.builder().id(tipoDocumentoId).build()).build();
-    return solicitudDocumento;
   }
 
   /**
@@ -1340,9 +1377,12 @@ class SolicitudControllerTest extends BaseControllerTest {
    * @return el objeto EstadoSolicitud
    */
   private EstadoSolicitud generarMockEstadoSolicitud(Long id) {
+    Set<EstadoSolicitudComentario> comentarioEstadoSolicitud = new HashSet<>();
+    comentarioEstadoSolicitud.add(new EstadoSolicitudComentario(Language.ES, "Estado-" + id));
+
     EstadoSolicitud estadoSolicitud = new EstadoSolicitud();
     estadoSolicitud.setId(id);
-    estadoSolicitud.setComentario("Estado-" + id);
+    estadoSolicitud.setComentario(comentarioEstadoSolicitud);
     estadoSolicitud.setEstado(EstadoSolicitud.Estado.BORRADOR);
     estadoSolicitud.setFechaEstado(Instant.now());
     estadoSolicitud.setSolicitudId(1L);
@@ -1360,8 +1400,12 @@ class SolicitudControllerTest extends BaseControllerTest {
    */
   private SolicitudHito generarSolicitudHito(Long solicitudHitoId, Long solicitudId, Long tipoDocumentoId) {
 
+    Set<SolicitudHitoComentario> comentarioHito = new HashSet<>();
+    comentarioHito
+        .add(new SolicitudHitoComentario(Language.ES, "comentario-" + solicitudHitoId));
+
     SolicitudHito solicitudHito = SolicitudHito.builder().id(solicitudHitoId).solicitudId(solicitudId)
-        .comentario("comentario-" + solicitudHitoId).fecha(Instant.now())
+        .comentario(comentarioHito).fecha(Instant.now())
         .tipoHito(TipoHito.builder().id(tipoDocumentoId).build()).build();
 
     return solicitudHito;
@@ -1450,6 +1494,10 @@ class SolicitudControllerTest extends BaseControllerTest {
 
     String suffix = String.format("%03d", id);
 
+    Set<SolicitudProyectoPresupuestoObservaciones> solicitudProyectoPresupuestoObservaciones = new HashSet<>();
+    solicitudProyectoPresupuestoObservaciones.add(
+        new SolicitudProyectoPresupuestoObservaciones(Language.ES, "observaciones-" + suffix));
+
     SolicitudProyectoPresupuesto solicitudProyectoPresupuesto = SolicitudProyectoPresupuesto
         .builder()// @formatter:off
         .id(id)
@@ -1457,7 +1505,7 @@ class SolicitudControllerTest extends BaseControllerTest {
         .conceptoGasto(ConceptoGasto.builder().id(conceptoGastoId).build())
         .anualidad(1000)
         .importeSolicitado(new BigDecimal("335"))
-        .observaciones("observaciones-" + suffix)
+        .observaciones(solicitudProyectoPresupuestoObservaciones)
         .solicitudProyectoEntidadId(null)
         .build();// @formatter:on
 

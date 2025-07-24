@@ -1,6 +1,7 @@
+import { I18nFieldValueRequest } from "@core/i18n/i18n-field-request";
 
 export interface ISolicitudRrhhMemoriaRequest {
-  tituloTrabajo: string;
-  resumen: string;
-  observaciones: string;
+  tituloTrabajo: I18nFieldValueRequest[];
+  resumen: I18nFieldValueRequest[];
+  observaciones: I18nFieldValueRequest[];
 }

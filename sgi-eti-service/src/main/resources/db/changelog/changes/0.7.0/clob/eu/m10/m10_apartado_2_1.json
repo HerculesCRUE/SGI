@@ -1,0 +1,101 @@
+[
+  {
+    "key": "ap2_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "2.1 Gizakiekin eta haien lagin edo/eta datuekin lotutako zereginak egingo dituzten langileak"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Jarraian, ikertzaile taldeko kide guztien datuak ageri dira, eta horien artean daude eskatzailearenak ere. Erantsi atal honetan proiektuan laguntzen duen beste edozein pertsona (errekrutatzaile gisa, inkestari gisa...). Tutoretzapeko proiektua bada, erantsi tutorea edo zuzendaria. <br><br>Zehaztu hauek pertsona bakoitzarentzat: <br><br><ul><li>Identifikazio datuak (izena, e-maila, lotura eta maila akademikoa)</li><li>‘3.2 Diseinu metodologikoa’ atalean deskribatutakoaren arabera izango dituen zeregin zehatzak (adierazi behar beste zeregin)</li><li>Zer formakuntza eta aurretiko esperientzia duen zehazki zeregin bakoitzean (inkestak egiten, parte hartzaileak biltzen, laginak hartzen, datuak tratatzen, laborategiko lanean, tesiak zuzentzen, etab.). </li></ul></p><p>Atal hau automatikoki betetzen da, <b>Ebaluazio eskaerako</b> <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/tareas' target='_blank'><b>Zereginen esleipena</b></a> atalean sartutako datuetatik abiatuta. Beharrezko aldaketak egiteko, joan menuko puntu horretara. </p> ",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "type": "table-crud",
+        "key": "equipoInvestigador",
+        "templateOptions": {
+          "entity": "ikertzaile taldea",
+          "gender": "male",
+          "disabled": true
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Ikertzaile taldea"
+          },
+          "fieldGroup": [
+            {
+              "key": "nombre",
+              "type": "input",
+              "templateOptions": {
+                "label": "Izena",
+                "order": 10,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.nombre"
+              }
+            },
+            {
+              "key": "apellidos",
+              "type": "input",
+              "templateOptions": {
+                "label": "Abizenak",
+                "order": 20,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.apellidos"
+              }
+            },
+            {
+              "key": "email",
+              "type": "input",
+              "templateOptions": {
+                "label": "E-maila",
+                "order": 30,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.emails?.find((e)=>e.principal)?.email"
+              }
+            },
+            {
+              "key": "vinculacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Lotura",
+                "order": 40,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.vinculacion?.categoriaProfesional?.nombre"
+              }
+            },
+            {
+              "key": "nivelAcademico",
+              "type": "input",
+              "templateOptions": {
+                "label": "Maila akademikoa",
+                "order": 50,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona.datosAcademicos?.nivelAcademico?.nombre"
+              }
+            },
+            {
+              "key": "tarea",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Zeregina",
+                "order": 60,
+                "expressionModelValue": "formState.tareas[$1].nombre"
+              }
+            },
+            {
+              "key": "experiencia",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Esperientzia",
+                "order": 70,
+                "expressionModelValue": "formState.tareas[$1].formacion"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

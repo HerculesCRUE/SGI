@@ -7,6 +7,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { TipoPropiedad } from '@core/enums/tipo-propiedad';
 import { IViaProteccion } from '@core/models/pii/via-proteccion';
+import { LanguageService } from '@core/services/language.service';
 import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
@@ -45,12 +46,13 @@ export class SelectViaProteccionComponent extends SelectServiceExtendedComponent
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation: PlatformLocation,
     dialog: MatDialog,
-    private viaProteccionService: ViaProteccionService,
-    private authService: SgiAuthService
+    private authService: SgiAuthService,
+    private viaProteccionService: ViaProteccionService
   ) {
-    super(defaultErrorStateMatcher, ngControl, platformLocation, dialog);
+    super(defaultErrorStateMatcher, ngControl, languageService, platformLocation, dialog);
     this.addTarget = ViaProteccionModalComponent;
   }
 
@@ -63,7 +65,7 @@ export class SelectViaProteccionComponent extends SelectServiceExtendedComponent
     const findOptions: SgiRestFindOptions = {
       filter: new RSQLSgiRestFilter('activo', SgiRestFilterOperator.EQUALS, 'true')
         .and('tipoPropiedad', SgiRestFilterOperator.EQUALS, this.tipoPropiedad),
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
+      sort: new RSQLSgiRestSort('nombre.value', SgiRestSortDirection.ASC)
     };
     return this.viaProteccionService.findTodos(findOptions).pipe(map(({ items }) => items));
   }

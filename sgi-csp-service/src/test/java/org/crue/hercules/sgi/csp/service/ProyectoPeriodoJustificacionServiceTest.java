@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -14,9 +16,12 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotDelet
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.Configuracion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.repository.EstadoProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoPeriodoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -104,7 +109,8 @@ class ProyectoPeriodoJustificacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       ProyectoPeriodoJustificacion proyecto = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(proyecto.getObservaciones()).isEqualTo("observaciones-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyecto.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
 
@@ -269,10 +275,13 @@ class ProyectoPeriodoJustificacionServiceTest extends BaseServiceTest {
 
   private ProyectoPeriodoJustificacion generarMockProyectoPeriodoJustificacion(Long id, String idJustificacion,
       String observaciones) {
+    Set<ProyectoPeriodoJustificacionObservaciones> observacionesProyectoPeriodoJustificacion = new HashSet<>();
+    observacionesProyectoPeriodoJustificacion
+        .add(new ProyectoPeriodoJustificacionObservaciones(Language.ES, observaciones));
     return ProyectoPeriodoJustificacion.builder()
         .id(id)
         .identificadorJustificacion(idJustificacion)
-        .observaciones(observaciones)
+        .observaciones(observacionesProyectoPeriodoJustificacion)
         .build();
   }
 

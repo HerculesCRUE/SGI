@@ -7,9 +7,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
@@ -23,6 +20,8 @@ import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiCnfService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -71,8 +70,7 @@ public class ComunicadosService {
                 .toInstant(),
             yearMonth.atEndOfMonth().atStartOfDay(zoneId).withHour(23).withMinute(59).withSecond(59).toInstant());
 
-    List<Long> proyectoIds = periodos.stream().map(ProyectoPeriodoJustificacion::getProyectoId)
-        .collect(Collectors.toList());
+    List<Long> proyectoIds = periodos.stream().map(ProyectoPeriodoJustificacion::getProyectoId).toList();
 
     if (CollectionUtils.isEmpty(proyectoIds)) {
       log.info(
@@ -128,7 +126,7 @@ public class ComunicadosService {
     EmailOutput emailOutput = emailService
         .createComunicadoInicioPresentacionJustificacionGastosEmail(
             CspComInicioPresentacionGastoData.builder().fecha(yearMonth.atDay(1)).proyectos(
-                proyectosEmail).build(),
+                proyectosEmail).enlaceAplicacion(sgiConfigProperties.getWebUrl()).build(),
             recipients);
     emailService.sendEmail(emailOutput.getId());
   }
@@ -140,7 +138,7 @@ public class ComunicadosService {
 
     return destinatarios.stream()
         .map(destinatario -> Recipient.builder().name(destinatario).address(destinatario).build())
-        .collect(Collectors.toList());
+        .toList();
   }
 
   private Map<Long, List<ProyectoPeriodoJustificacion>> getPeriodosJustificacionGastoByProyecto(

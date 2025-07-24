@@ -1,6 +1,8 @@
+import { Router } from '@angular/router';
 import { IComite } from '@core/models/eti/comite';
 import { ESTADO_RETROSPECTIVA } from '@core/models/eti/estado-retrospectiva';
 import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
+import { DialogService } from '@core/services/dialog.service';
 import { ApartadoService } from '@core/services/eti/apartado.service';
 import { BloqueService } from '@core/services/eti/bloque.service';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
@@ -8,9 +10,12 @@ import { FormularioService } from '@core/services/eti/formulario.service';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { RespuestaService } from '@core/services/eti/respuesta.service';
+import { TipoDocumentoService } from '@core/services/eti/tipo-documento.service';
+import { LanguageService } from '@core/services/language.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
+import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { MemoriaFormlyFormFragment } from '../../memoria-formly-form.fragment';
@@ -32,7 +37,12 @@ export class MemoriaRetrospectivaFragment extends MemoriaFormlyFormFragment {
     datosAcademicosService: DatosAcademicosService,
     personaService: PersonaService,
     memoriaService: MemoriaService,
-    evaluacionService: EvaluacionService
+    evaluacionService: EvaluacionService,
+    translateService: TranslateService,
+    dialogService: DialogService,
+    router: Router,
+    languageService: LanguageService,
+    tipoDocumentoService: TipoDocumentoService
   ) {
     super(
       logger,
@@ -50,8 +60,14 @@ export class MemoriaRetrospectivaFragment extends MemoriaFormlyFormFragment {
       vinculacionService,
       datosAcademicosService,
       personaService,
-      apartadoService
+      apartadoService,
+      translateService,
+      dialogService,
+      router,
+      languageService,
+      tipoDocumentoService
     );
+
   }
 
   protected isEditable(): boolean {

@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { SeguimientoJustificacionService } from '@core/services/sge/seguimiento-justificacion/seguimiento-justificacion.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -81,9 +82,9 @@ export class GastoRequerimientoJustificacionModalComponent
       aceptado: new FormControl(this.gastoRequerimiento.aceptado, Validators.required),
       importeAceptado: new FormControl(this.gastoRequerimiento.importeAceptado),
       importeRechazado: new FormControl(this.gastoRequerimiento.importeRechazado),
-      incidencia: new FormControl(this.gastoRequerimiento.incidencia, Validators.maxLength(2000)),
+      incidencia: new FormControl(this.gastoRequerimiento.incidencia, I18nValidators.maxLength(2000)),
       importeAlegado: new FormControl(this.gastoRequerimiento.importeAlegado),
-      alegacion: new FormControl(this.gastoRequerimiento.alegacion, Validators.maxLength(2000)),
+      alegacion: new FormControl(this.gastoRequerimiento.alegacion, I18nValidators.maxLength(2000)),
     });
 
     if (!this.isEdit()) {

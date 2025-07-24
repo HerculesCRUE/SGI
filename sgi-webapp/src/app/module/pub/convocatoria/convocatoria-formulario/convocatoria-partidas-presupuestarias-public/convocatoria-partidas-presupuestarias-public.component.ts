@@ -6,6 +6,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { TIPO_PARTIDA_MAP } from '@core/enums/tipo-partida';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatoria-partida-presupuestaria';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
@@ -36,7 +37,8 @@ export class ConvocatoriaPartidaPresupuestariaPublicComponent extends FragmentCo
   }
 
   constructor(
-    public actionService: ConvocatoriaPublicActionService
+    public actionService: ConvocatoriaPublicActionService,
+    private readonly languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.PARTIDAS_PRESUPUESTARIAS, actionService);
     this.formPart = this.fragment as ConvocatoriaPartidaPresupuestariaPublicFragment;
@@ -51,7 +53,7 @@ export class ConvocatoriaPartidaPresupuestariaPublicComponent extends FragmentCo
           case 'codigo':
             return wrapper.value.codigo;
           case 'descripcion':
-            return wrapper.value.descripcion;
+            return this.languageService.getFieldValue(wrapper.value.descripcion);
           case 'tipoPartida':
             return wrapper.value.tipoPartida;
           default:
@@ -67,4 +69,6 @@ export class ConvocatoriaPartidaPresupuestariaPublicComponent extends FragmentCo
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
+
+  protected setupI18N(): void { }
 }

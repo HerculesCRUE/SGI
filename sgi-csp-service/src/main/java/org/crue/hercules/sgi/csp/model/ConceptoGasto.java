@@ -1,15 +1,25 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity.OnActivar;
+import org.crue.hercules.sgi.csp.validation.UniqueNombreConceptoGastoActivo;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,7 +34,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
+@UniqueNombreConceptoGastoActivo(groups = { BaseEntity.Create.class, BaseEntity.Update.class, OnActivar.class })
 public class ConceptoGasto extends BaseEntity {
 
   /**
@@ -40,15 +50,18 @@ public class ConceptoGasto extends BaseEntity {
   private Long id;
 
   /** Nombre */
-  @Column(name = "nombre", length = 50, nullable = false)
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "concepto_gasto_nombre", joinColumns = @JoinColumn(name = "concepto_gasto_id"))
   @NotEmpty
-  @Size(max = 50)
-  private String nombre;
+  @Valid
+  @Builder.Default
+  private Set<ConceptoGastoNombre> nombre = new HashSet<>();
 
-  /** Descripcion */
-  @Column(name = "descripcion", length = 250, nullable = true)
-  @Size(max = 250)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "concepto_gasto_descripcion", joinColumns = @JoinColumn(name = "concepto_gasto_id"))
+  @Valid
+  @Builder.Default
+  private Set<ConceptoGastoDescripcion> descripcion = new HashSet<>();
 
   /** Costes indirectos */
   @Column(name = "costes_indirectos", columnDefinition = "boolean default false", nullable = false)

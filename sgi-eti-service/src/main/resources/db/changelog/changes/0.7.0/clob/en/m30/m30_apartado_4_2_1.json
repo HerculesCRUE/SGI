@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1 Place where the handling of biological agents or genetically modified organisms"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>The handling of biological agents or materials likely to contain them requires specific workplace conditions in accordance with the degree of danger of the agent and level of risk that guarantee safety.<br>The type of laboratory should be appropriate to the level of risk. In case of exposure to more than one biological agent, <b>the one with the highest risk</b> will be taken into account.</p><ul><li>Containment level C1: Basic laboratory</li><li>Containment level C2: Basic laboratory with a biological safety cabinet or other appropriate personal protection or physical containment devices.</li><li>C3 containment level: Restricted laboratory with biological safety cabinet or other appropriate personal protection or physical containment devices</li><li>C4 containment level: Maximum containment sealed laboratory</li></ul><p>For more information on measures and containment levels, consult <b><a href='https://boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#anv' target='_blank'>Annex V of Royal Decree 664-97</a></b>.</p>"
+      }
+    ]
+  }
+]

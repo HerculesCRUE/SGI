@@ -1,0 +1,129 @@
+[
+  {
+    "key": "ap2_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "2.1 Personnel carrying out work with biological agents and/or GMOS"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Below are all the members of the research team. In this section you can add any other person collaborating in the project performing tasks related to biological agents and/or GMOs.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "This section is completed automatically based on the data entered in the section <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/tareas' target='_blank'><b>Task assignment</b></a> of the <b>Evaluation Request</b>. Access this menu item to make the necessary modifications.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "type": "table-crud",
+        "key": "equipoInvestigador",
+        "templateOptions": {
+          "entity": "research team",
+          "gender": "male",
+          "disabled": true
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Research team"
+          },
+          "fieldGroup": [
+            {
+              "key": "nombre",
+              "type": "input",
+              "templateOptions": {
+                "label": "Name",
+                "order": 10,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.nombre"
+              }
+            },
+            {
+              "key": "apellidos",
+              "type": "input",
+              "templateOptions": {
+                "label": "Surname",
+                "order": 20,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.apellidos"
+              }
+            },
+            {
+              "key": "email",
+              "type": "input",
+              "templateOptions": {
+                "label": "E-mail",
+                "order": 30,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.emails?.find((e)=>e.principal)?.email"
+              }
+            },
+            {
+              "key": "vinculacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Links",
+                "order": 40,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.vinculacion?.categoriaProfesional?.nombre"
+              }
+            },
+            {
+              "key": "nivelAcademico",
+              "type": "input",
+              "templateOptions": {
+                "label": "Academic level",
+                "order": 50,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona.datosAcademicos?.nivelAcademico?.nombre"
+              }
+            },
+            {
+              "key": "tarea",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Task",
+                "order": 60,
+                "expressionModelValue": "formState.tareas[$1].nombre"
+              }
+            },
+            {
+              "key": "experiencia",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Biological risk training",
+                "order": 70,
+                "expressionModelValue": "formState.tareas[$1].formacion"
+              }
+            },
+            {
+              "key": "organismo",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Accrediting agency",
+                "order": 80,
+                "expressionModelValue": "formState.tareas[$1].organismo"
+              }
+            },
+            {
+              "key": "anio",
+              "type": "input",
+              "templateOptions": {
+                "type": "number",
+                "label": "Year",
+                "order": 90,
+                "expressionModelValue": "formState.tareas[$1].anio"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: Please remember that you have to provide a copy of all the research team's accreditations '5.1 Accreditations' so that they are filed alongside the project report.</p>"
+      }
+    ]
+  }
+]

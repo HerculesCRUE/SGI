@@ -1,0 +1,85 @@
+[
+  {
+    "key": "ap4_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1 Laztasuna baloratzea eta animalien min, sufrimendu edo estutasunari aurre egiteko neurri zuzentzaileak hartzea"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Kontuan hartuta ‘Animaliari aplikatzen zaizkion prozedurak/esku hartzeak’ atalean zerrendatako prozedurak/esku hartzeak, aipatu zer neurri zuzentzaile aurreikusi diren (adib., anestesia edo analgesia), min, sufrimendu edo antsietate posiblea txikiagotzeko:<ul><li><strong>Nahita lortu nahi den ondorioa</strong>: prozedura/esku hartzearen bidez animaliarengan lortu nahi den ondorioa: barea erauztea, parametro jakin bat igotzea, kirurgiarako animalia anestesiatzea. </li><li><strong>Albo ondorioak, sekundarioak edo aurkako erreakzioak</strong>: lortu nahi zena ez den beste edozein ondorio, zeinak mina, sufrimendua, estutasuna edo min iraunkorra eragin diezaiokeen animaliari, orratz bat sartzeak eragiten duenaren parekoa edo hori baino handiagoa. </li><li><strong>Neurri zuzentzaileak</strong>: animaliaren sufrimendua arintzeko edozein neurri edo/eta lortu nahi den efektuari traba egin gabe aplikatzen diren albo ondorioak. </li></ul></p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "valoracionSeveridadTable",
+        "templateOptions": {
+          "entity": "neurri zuzentzailea",
+          "gender": "female"
+        },
+        "expressionProperties": {
+          "templateOptions.required": "formState.bloques[3].ap3_7?.ap3_7_1?.procedimientoIntervencionMedidaCorrectoraTable.length > 0"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Neurri zuzentzailea"
+          },
+          "fieldGroup": [
+            {
+              "key": "intervencion",
+              "type": "selector-procedimientos",
+              "templateOptions": {
+                "label": "Prozedura/Esku hartzea",
+                "options": [],
+                "order": 10
+              },
+              "expressionProperties": {
+                "templateOptions.options": "formState.bloques[3].ap3_7?.ap3_7_1?.procedimientoIntervencionMedidaCorrectoraTable"
+              }
+            },
+            {
+              "key": "severidad",
+              "type": "input",
+              "templateOptions": {
+                "label": "Laztasun kategoria",
+                "order": 20,
+                "disabled": true
+              }
+            },
+            {
+              "key": "efectoBuscado",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Nahita lortu nahi den ondorioa",
+                "order": 30
+              }
+            },
+            {
+              "key": "efectoColateral",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Albo ondorioa",
+                "order": 40
+              }
+            },
+            {
+              "key": "medidasCorrectoras",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Neurri zuzentzaileak",
+                "order": 50
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: gogoratu salbuespen kasuetan dagokion dokumentua aurkeztu behar dela ‘5.4 Egoera bereziak’ atalean; 53/2013 EDren IX. eranskina. </p>"
+      }
+    ]
+  }
+]

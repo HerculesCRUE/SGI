@@ -2,15 +2,19 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoFinanciacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
+import org.crue.hercules.sgi.csp.model.TipoFinanciacionDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFinanciacionNombre;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
 import org.crue.hercules.sgi.csp.service.TipoFinanciacionService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -29,6 +33,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * TipoFinanciacionControllerTest
@@ -103,7 +109,7 @@ class TipoFinanciacionControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Modifica el TipoFinanciacion y lo devuelve
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1"));
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1"));
   }
 
   @Test
@@ -143,44 +149,6 @@ class TipoFinanciacionControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findById_WithExistingId_ReturnsTipoFinanciacion() throws Exception {
-
-    // given: Entidad con un determinado Id
-    TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(1L);
-
-    BDDMockito.given(service.findById(tipoFinanciacion.getId())).willReturn(tipoFinanciacion);
-
-    // when: Se busca la entidad por ese Id
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Se recupera la entidad con el Id
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("id").value(tipoFinanciacion.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoFinanciacion.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoFinanciacion.getDescripcion()));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findById_WithNoExistingId_Returns404() throws Exception {
-
-    BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
-      throw new TipoFinanciacionNotFoundException(invocation.getArgument(0));
-    });
-
-    // when: Se busca entidad con ese id
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Se produce error porque no encuentra la entidad con ese Id
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
-  }
-
-  @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFNA-R" })
   void reactivar_WithExistingId_ReturnTipoFinanciacion() throws Exception {
     // given: existing id
@@ -202,8 +170,10 @@ class TipoFinanciacionControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: TipoFinanciacion is updated
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoFinanciacion.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoFinanciacion.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoFinanciacion.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoFinanciacion.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -245,8 +215,10 @@ class TipoFinanciacionControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: TipoFinanciacion is updated
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoFinanciacion.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoFinanciacion.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoFinanciacion.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoFinanciacion.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(false));
   }
 
@@ -314,7 +286,7 @@ class TipoFinanciacionControllerTest extends BaseControllerTest {
     // containing Nombre='Nombre-31' to 'Nombre-40'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFinanciacion item = actual.get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + j);
     }
   }
 
@@ -384,7 +356,7 @@ class TipoFinanciacionControllerTest extends BaseControllerTest {
     // containing Nombre='Nombre-31' to 'Nombre-40'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFinanciacion item = actual.get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + j);
     }
   }
 
@@ -428,11 +400,17 @@ class TipoFinanciacionControllerTest extends BaseControllerTest {
    */
   TipoFinanciacion generarMockTipoFinanciacion(Long id, String nombre) {
 
+    Set<TipoFinanciacionNombre> tipoFinanciacionNombre = new HashSet<>();
+    tipoFinanciacionNombre.add(new TipoFinanciacionNombre(Language.ES, nombre));
+
+    Set<TipoFinanciacionDescripcion> tipoFinanciacionDescripcion = new HashSet<>();
+    tipoFinanciacionDescripcion.add(new TipoFinanciacionDescripcion(Language.ES, "descripcion-" + 1));
+
     TipoFinanciacion tipoFinanciacion = new TipoFinanciacion();
     tipoFinanciacion.setId(id);
     tipoFinanciacion.setActivo(true);
-    tipoFinanciacion.setNombre(nombre);
-    tipoFinanciacion.setDescripcion("descripcion-" + 1);
+    tipoFinanciacion.setNombre(tipoFinanciacionNombre);
+    tipoFinanciacion.setDescripcion(tipoFinanciacionDescripcion);
 
     return tipoFinanciacion;
   }

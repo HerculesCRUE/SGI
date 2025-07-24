@@ -5,16 +5,14 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ESTADO_FINANCIACION_MAP, IPeticionEvaluacion, TIPO_VALOR_SOCIAL_MAP } from '@core/models/eti/peticion-evaluacion';
-import { ITipoActividad } from '@core/models/eti/tipo-actividad';
-import { ITipoInvestigacionTutelada } from '@core/models/eti/tipo-investigacion-tutelada';
+import { ITipoActividad, TIPO_ACTIVIDAD_MAP } from '@core/models/eti/tipo-actividad';
+import { ITipoInvestigacionTutelada, TIPO_INVESTIGACION_TUTELADA_MAP } from '@core/models/eti/tipo-investigacion-tutelada';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { TipoActividadService } from '@core/services/eti/tipo-actividad.service';
 import { TipoInvestigacionTuteladaService } from '@core/services/eti/tipo-investigacion-tutelada.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiCkEditorConfig } from '@shared/sgi-ckeditor-config';
-import Editor from 'ckeditor5-custom-build/build/ckeditor';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
@@ -48,9 +46,6 @@ const PETICION_EVALUACION_DURACION_ERROR_KEY = marker('error.peticion-evaluacion
 
 export class PeticionEvaluacionDatosGeneralesComponent extends FormFragmentComponent<IPeticionEvaluacion> implements OnInit, OnDestroy {
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
-
-  public readonly CkEditor = Editor;
-  public readonly configCkEditor = SgiCkEditorConfig.defaultConfig;
 
   FormGroupUtil = FormGroupUtil;
   fxFlexProperties: FxFlexProperties;
@@ -94,13 +89,29 @@ export class PeticionEvaluacionDatosGeneralesComponent extends FormFragmentCompo
     return TipoColectivo.TUTOR_CSP;
   }
 
+  readonly displayerTipoActividad = (option: ITipoActividad): string => {
+    return option?.id
+      ? (TIPO_ACTIVIDAD_MAP.get(option.id)
+        ? this.translate.instant(TIPO_ACTIVIDAD_MAP.get(option.id))
+        : option?.nombre ?? '')
+      : option?.nombre ?? '';
+  };
+
+  readonly displayerTipoInvestigacionTutelada = (option: ITipoInvestigacionTutelada): string => {
+    return option?.id
+      ? (TIPO_INVESTIGACION_TUTELADA_MAP.get(option.id)
+        ? this.translate.instant(TIPO_INVESTIGACION_TUTELADA_MAP.get(option.id))
+        : option?.nombre ?? '')
+      : option?.nombre ?? '';
+  };
+
   constructor(
     private readonly tipoActividadService: TipoActividadService,
     private readonly tipoInvestigacionTuteladaService: TipoInvestigacionTuteladaService,
     private actionService: PeticionEvaluacionActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(100%-10px)';
     this.fxFlexProperties.md = '0 1 calc(100%-10px)';
@@ -129,7 +140,6 @@ export class PeticionEvaluacionDatosGeneralesComponent extends FormFragmentCompo
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
     this.actionService.initializeEquiposInvestigador();
 
     this.suscripciones.push(this.formGroup.controls.tipoActividad.valueChanges.subscribe(value => {
@@ -137,7 +147,7 @@ export class PeticionEvaluacionDatosGeneralesComponent extends FormFragmentCompo
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.suscripciones.push(this.translate.get(
       PETICION_EVALUACION_CODIGO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap3_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.4 Type of exposure"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Exposure to biological agents can be of two types.</p><br><ul><li>Exposure due to deliberate intent to use or manipulate a biological agent, which constitutes the main purpose of the work. Activities of this type would be those carried out with deliberately infected animals or in laboratories whose main activity is working with biological agents. Other activities included in this group would be, for example, those related to biotechnology industries: pharmaceutical industries (for obtaining antibiotics, enzymes, viral vaccines); food industry (beer, cheese, yoghurt); etc</li><li>Unintentional or incidental exposure to the primary purpose of the work. In this case, the activity does not involve manipulation, work in direct contact or deliberate use of the biological agent, but there is a risk of contamination by biological agents. This would be the case of work in contact with human beings or animals or their products (tissues, blood or fluids), as well as contact with elements or media where such agent lives or can survive (materials, water, soil, food, waste...), which would serve as a source of exposure.</li></ul><p>This report also includes exposure to GMOs in confined use tasks.</p>"
+      }
+    ]
+  }
+]

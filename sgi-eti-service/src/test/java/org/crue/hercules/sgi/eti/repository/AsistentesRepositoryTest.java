@@ -1,18 +1,25 @@
 package org.crue.hercules.sgi.eti.repository;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.Asistentes;
+import org.crue.hercules.sgi.eti.model.AsistentesMotivo;
 import org.crue.hercules.sgi.eti.model.CargoComite;
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.ComiteNombre;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionLugar;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionOrdenDia;
 import org.crue.hercules.sgi.eti.model.Evaluador;
+import org.crue.hercules.sgi.eti.model.EvaluadorResumen;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -106,8 +113,11 @@ public class AsistentesRepositoryTest extends BaseRepositoryTest {
    * 
    * @return el objeto Formulario
    */
-  public Formulario generarMockFormulario() {
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
+  private Formulario generarMockFormulario() {
+    Formulario formulario = new Formulario();
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+    formulario.setCodigo("M10/2020/002");
+
     return formulario;
   }
 
@@ -117,8 +127,25 @@ public class AsistentesRepositoryTest extends BaseRepositoryTest {
    * @param formulario el formulario
    * @return el objeto Comite
    */
-  public Comite generarMockComite(Formulario formulario) {
-    return new Comite(null, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+  private Comite generarMockComite(Formulario formulario) {
+    Set<ComiteNombre> nombre = new HashSet<>();
+    nombre.add(new ComiteNombre(Language.ES, "NombreComite1", ComiteNombre.Genero.M));
+    Comite comite = new Comite();
+    comite.setCodigo("Comite1");
+    comite.setNombre(nombre);
+    comite.setFormularioMemoriaId(formulario.getId());
+    comite.setFormularioSeguimientoAnualId(formulario.getId());
+    comite.setFormularioSeguimientoFinalId(formulario.getId());
+    comite.setRequiereRetrospectiva(Boolean.FALSE);
+    comite.setPermitirRatificacion(Boolean.FALSE);
+    comite.setPrefijoReferencia("M10");
+    comite.setTareaNombreLibre(Boolean.TRUE);
+    comite.setTareaExperienciaLibre(Boolean.TRUE);
+    comite.setTareaExperienciaDetalle(Boolean.TRUE);
+    comite.setMemoriaTituloLibre(Boolean.TRUE);
+    comite.setActivo(Boolean.TRUE);
+
+    return comite;
   }
 
   /**
@@ -126,7 +153,7 @@ public class AsistentesRepositoryTest extends BaseRepositoryTest {
    * 
    * @return el objeto TipoConvocatoriaReunion
    */
-  public TipoConvocatoriaReunion generarMockTipoConvocatoriaReunion() {
+  private TipoConvocatoriaReunion generarMockTipoConvocatoriaReunion() {
     return new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
   }
 
@@ -137,17 +164,22 @@ public class AsistentesRepositoryTest extends BaseRepositoryTest {
    * @param tipoConvocatoriaReunion el objeto TipoConvocatoriaReunion
    * @return el objeto Asistentes
    */
-  public ConvocatoriaReunion generarMockConvocatoriaReunion(Comite comite,
+  private ConvocatoriaReunion generarMockConvocatoriaReunion(Comite comite,
       TipoConvocatoriaReunion tipoConvocatoriaReunion) {
 
+    Set<ConvocatoriaReunionLugar> lugar = new HashSet<>();
+    lugar.add(new ConvocatoriaReunionLugar(Language.ES, "Lugar"));
+    Set<ConvocatoriaReunionOrdenDia> ordenDia = new HashSet<>();
+    ordenDia.add(new ConvocatoriaReunionOrdenDia(Language.ES,
+        "Orden del día convocatoria reunión"));
     ConvocatoriaReunion convocatoriaReunion = new ConvocatoriaReunion();
     convocatoriaReunion.setComite(comite);
     convocatoriaReunion.setFechaEvaluacion(Instant.parse("2020-08-01T00:00:00Z"));
     convocatoriaReunion.setFechaLimite(Instant.now());
     convocatoriaReunion.setVideoconferencia(false);
     convocatoriaReunion.setVideoconferencia(false);
-    convocatoriaReunion.setLugar("Lugar");
-    convocatoriaReunion.setOrdenDia("Orden del día convocatoria reunión");
+    convocatoriaReunion.setLugar(lugar);
+    convocatoriaReunion.setOrdenDia(ordenDia);
     convocatoriaReunion.setAnio(2020);
     convocatoriaReunion.setNumeroActa(100L);
     convocatoriaReunion.setTipoConvocatoriaReunion(tipoConvocatoriaReunion);
@@ -165,7 +197,7 @@ public class AsistentesRepositoryTest extends BaseRepositoryTest {
    * 
    * @return el objeto CargoComite
    */
-  public CargoComite generarMockCargoComite() {
+  private CargoComite generarMockCargoComite() {
     return new CargoComite(1L, "CargoComite1", Boolean.TRUE);
   }
 
@@ -177,8 +209,17 @@ public class AsistentesRepositoryTest extends BaseRepositoryTest {
    * @return el objeto Evaluador
    */
   private Evaluador generarMockEvaluador(CargoComite cargoComite, Comite comite) {
-    return new Evaluador(null, cargoComite, comite, Instant.parse("2020-08-01T00:00:00Z"), null, "Resumen", "user-001",
-        Boolean.TRUE);
+    Set<EvaluadorResumen> res = new HashSet<>();
+    res.add(new EvaluadorResumen(Language.ES, "Resumen"));
+    Evaluador evaluador = new Evaluador();
+    evaluador.setCargoComite(cargoComite);
+    evaluador.setComite(comite);
+    evaluador.setFechaAlta(Instant.parse("2020-08-01T00:00:00Z"));
+    evaluador.setResumen(res);
+    evaluador.setPersonaRef("user-001");
+    evaluador.setActivo(Boolean.TRUE);
+
+    return evaluador;
   }
 
   /**
@@ -189,7 +230,15 @@ public class AsistentesRepositoryTest extends BaseRepositoryTest {
    * @return el objeto Asistentes
    */
   private Asistentes generarMockAsistentes(Evaluador evaluador, ConvocatoriaReunion convocatoriaReunion) {
-    return new Asistentes(null, evaluador, convocatoriaReunion, Boolean.TRUE, "Motivo1");
+    Set<AsistentesMotivo> motivo = new HashSet<>();
+    motivo.add(new AsistentesMotivo(Language.ES, "Motivo1"));
+    Asistentes asistentes = new Asistentes();
+    asistentes.setEvaluador(evaluador);
+    asistentes.setConvocatoriaReunion(convocatoriaReunion);
+    asistentes.setMotivo(motivo);
+    asistentes.setAsistencia(Boolean.TRUE);
+
+    return asistentes;
   }
 
 }

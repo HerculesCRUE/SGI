@@ -41,14 +41,18 @@
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-financiacion.nombre' | translate}}
         </th>
-        <td mat-cell *matCellDef="let tipoFinanciacion">{{tipoFinanciacion.nombre}}</td>
+        <td mat-cell *matCellDef="let tipoFinanciacion">
+          <sgi-i18n-table-field [field]="tipoFinanciacion.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Descripción -->
       <ng-container matColumnDef="descripcion">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-financiacion.descripcion' | translate}}
         </th>
-        <td mat-cell *matCellDef="let tipoFinanciacion">{{tipoFinanciacion.descripcion}}</td>
+        <td mat-cell *matCellDef="let tipoFinanciacion">
+          <sgi-i18n-table-field [field]="tipoFinanciacion.descripcion"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Activo -->

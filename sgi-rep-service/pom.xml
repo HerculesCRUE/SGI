@@ -6,11 +6,11 @@
   <parent>
     <groupId>org.crue.hercules.sgi</groupId>
     <artifactId>sgi-starter-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </parent>
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-rep-service</artifactId>
-  <version>0.5.1</version>
+  <version>0.6.0</version>
   <packaging>jar</packaging>
   <name>sgi-rep-service</name>
   <description>Informes SGI HERCULES</description>
@@ -36,14 +36,14 @@
     <!-- Manifest data for the Apache Maven JAR Plugin -->
     <manifest.name>org/crue/hercules/sgi/csp</manifest.name>
     <!-- Versions -->
-    <sgi-framework-spring.version>0.1.0</sgi-framework-spring.version>
-    <com-deepoove-poi-tl.version>1.12.1</com-deepoove-poi-tl.version>
+    <sgi-framework-spring.version>0.2.0</sgi-framework-spring.version>
+    <com-deepoove-poi-tl.version>1.12.2</com-deepoove-poi-tl.version>
     <com-deepoove-poi-tl-jsonmodel-support.version>1.0.0</com-deepoove-poi-tl-jsonmodel-support.version>
     <io.github.draco1023-poi-tl-ext.version>0.4.8-poi5</io.github.draco1023-poi-tl-ext.version>
-    <org-apache-poi.version>5.2.4</org-apache-poi.version>
-    <fr-opensagres-xdocreport.version>2.0.4</fr-opensagres-xdocreport.version>
-    <org-commons-csv.version>1.10.0</org-commons-csv.version>
-    <commons-io.version>2.15.0</commons-io.version>
+    <org-apache-poi.version>5.3.0</org-apache-poi.version>
+    <fr-opensagres-xdocreport.version>2.1.0</fr-opensagres-xdocreport.version>
+    <org-commons-csv.version>1.11.0</org-commons-csv.version>
+    <commons-io.version>2.16.1</commons-io.version>
   </properties>
   <profiles>
     <profile>
@@ -129,6 +129,11 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
+    <!-- Include HttpClient 4 needed for RestTemplate in tests -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
     <!--
       H2 - Database Engine.
       https://www.h2database.com/html/main.html
@@ -211,8 +216,8 @@
       https://www.oracle.com/database/technologies/appdev/jdbc.html
     -->
     <dependency>
-      <groupId>com.oracle.ojdbc</groupId>
-      <artifactId>ojdbc8</artifactId>
+      <groupId>com.oracle.database.jdbc</groupId>
+      <artifactId>ojdbc11</artifactId>
       <scope>runtime</scope>
     </dependency>
     <!-- 

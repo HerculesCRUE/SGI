@@ -1,8 +1,6 @@
 import { IEstadoAutorizacion } from '@core/models/csp/estado-autorizacion';
-import { IEstadoSolicitud } from '@core/models/csp/estado-solicitud';
 import { Fragment } from '@core/services/action-service';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
-import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';

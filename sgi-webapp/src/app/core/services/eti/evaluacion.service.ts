@@ -1,12 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { COMENTARIO_CONVERTER } from '@core/converters/eti/comentario.converter';
-import { EVALUACION_WITH_IS_ELIMINABLE_CONVERTER } from '@core/converters/eti/evaluacion-with-is-eliminable.converter';
-import { EVALUACION_CONVERTER } from '@core/converters/eti/evaluacion.converter';
 import { DOCUMENTO_CONVERTER } from '@core/converters/sgdoc/documento.converter';
-import { IComentarioBackend } from '@core/models/eti/backend/comentario-backend';
-import { IEvaluacionBackend } from '@core/models/eti/backend/evaluacion-backend';
-import { IEvaluacionWithIsEliminableBackend } from '@core/models/eti/backend/evaluacion-with-is-eliminable-backend';
 import { IComentario } from '@core/models/eti/comentario';
 import { IDictamen } from '@core/models/eti/dictamen';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
@@ -14,22 +8,49 @@ import { IEvaluacionWithIsEliminable } from '@core/models/eti/evaluacion-with-is
 import { IDocumentoBackend } from '@core/models/sgdoc/backend/documento-backend';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { environment } from '@env';
-import { SgiMutableRestService, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
+import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IComentarioResponse } from './comentario/comentario-response';
+import { COMENTARIO_RESPONSE_CONVERTER } from './comentario/comentario-response.converter';
+import { IEvaluacionResponse } from './evaluacion/evaluacion-response';
+import { EVALUACION_RESPONSE_CONVERTER } from './evaluacion/evaluacion-response.converter';
+import { IEvaluacionWithIsEliminableResponse } from './evaluacion/evaluacion-with-is-eliminable-response';
+import { EVALUACION_WITH_IS_ELIMINABLE_RESPONSE_CONVERTER } from './evaluacion/evaluacion-with-is-eliminable-response.converter';
+
+
+
+const _EvaluacionServiceMixinBase:
+  CreateCtor<IEvaluacion, IEvaluacion, IEvaluacionResponse, IEvaluacionResponse> &
+  UpdateCtor<number, IEvaluacion, IEvaluacion, IEvaluacionResponse, IEvaluacionResponse> &
+  FindByIdCtor<number, IEvaluacion, IEvaluacionResponse> &
+  FindAllCtor<IEvaluacion, IEvaluacionResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinFindById(
+      mixinUpdate(
+        mixinCreate(
+          SgiRestBaseService,
+          EVALUACION_RESPONSE_CONVERTER,
+          EVALUACION_RESPONSE_CONVERTER
+        ),
+        EVALUACION_RESPONSE_CONVERTER,
+        EVALUACION_RESPONSE_CONVERTER
+      ),
+      EVALUACION_RESPONSE_CONVERTER
+    ),
+    EVALUACION_RESPONSE_CONVERTER
+  );
 
 @Injectable({
   providedIn: 'root'
 })
-export class EvaluacionService extends SgiMutableRestService<number, IEvaluacionBackend, IEvaluacion> {
+export class EvaluacionService extends _EvaluacionServiceMixinBase {
   private static readonly MAPPING = '/evaluaciones';
 
   constructor(protected http: HttpClient) {
     super(
-      EvaluacionService.name,
       `${environment.serviceServers.eti}${EvaluacionService.MAPPING}`,
-      http,
-      EVALUACION_CONVERTER
+      http
     );
   }
 
@@ -39,10 +60,10 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param convocatoriaId id convocatoria.
    */
   findAllByConvocatoriaReunionId(convocatoriaId: number): Observable<SgiRestListResult<IEvaluacion>> {
-    return this.find<IEvaluacionBackend, IEvaluacion>(
+    return this.find<IEvaluacionResponse, IEvaluacion>(
       `${this.endpointUrl}/convocatoriareuniones/${convocatoriaId}`,
       null,
-      EVALUACION_CONVERTER
+      EVALUACION_RESPONSE_CONVERTER
     );
   }
 
@@ -53,13 +74,13 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param options Opciones de paginación
    */
   getComentariosGestor(id: number, options?: SgiRestFindOptions): Observable<IComentario[]> {
-    return this.http.get<IComentarioBackend[]>(
+    return this.get<IComentarioResponse[]>(
       `${this.endpointUrl}/${id}/comentarios-gestor`).pipe(
         map(r => {
           if (r == null) {
             return [];
           }
-          return COMENTARIO_CONVERTER.toTargetArray(r);
+          return COMENTARIO_RESPONSE_CONVERTER.toTargetArray(r);
         })
       );
   }
@@ -71,13 +92,13 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param options Opciones de paginación
    */
   getComentariosEvaluador(id: number, options?: SgiRestFindOptions): Observable<IComentario[]> {
-    return this.http.get<IComentarioBackend[]>(
+    return this.get<IComentarioResponse[]>(
       `${this.endpointUrl}/${id}/comentarios-evaluador`).pipe(
         map(r => {
           if (r == null) {
             return [];
           }
-          return COMENTARIO_CONVERTER.toTargetArray(r);
+          return COMENTARIO_RESPONSE_CONVERTER.toTargetArray(r);
         })
       );
   }
@@ -91,12 +112,12 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
   getComentariosActa(id: number, isRolGestor: boolean): Observable<IComentario[]> {
     const urlGestor = 'comentarios-acta-gestor';
     const urlEvaluador = 'comentarios-acta-evaluador';
-    return this.http.get<IComentarioBackend[]>(`${this.endpointUrl}/${id}/${isRolGestor ? urlGestor : urlEvaluador}`).pipe(
+    return this.get<IComentarioResponse[]>(`${this.endpointUrl}/${id}/${isRolGestor ? urlGestor : urlEvaluador}`).pipe(
       map(r => {
         if (r == null) {
           return [];
         }
-        return COMENTARIO_CONVERTER.toTargetArray(r);
+        return COMENTARIO_RESPONSE_CONVERTER.toTargetArray(r);
       })
     );
   }
@@ -108,11 +129,11 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param comentario Comentario a crear
    */
   createComentarioGestor(id: number, comentario: IComentario): Observable<IComentario> {
-    return this.http.post<IComentarioBackend>(
+    return this.post<IComentarioResponse, IComentarioResponse>(
       `${this.endpointUrl}/${id}/comentario-gestor`,
-      COMENTARIO_CONVERTER.fromTarget(comentario)
+      COMENTARIO_RESPONSE_CONVERTER.fromTarget(comentario)
     ).pipe(
-      map(response => COMENTARIO_CONVERTER.toTarget(response))
+      map(response => COMENTARIO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -123,11 +144,11 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param comentario Comentario a crear
    */
   createComentarioEvaluador(id: number, comentario: IComentario): Observable<IComentario> {
-    return this.http.post<IComentarioBackend>(
+    return this.post<IComentarioResponse, IComentarioResponse>(
       `${this.endpointUrl}/${id}/comentario-evaluador`,
-      COMENTARIO_CONVERTER.fromTarget(comentario)
+      COMENTARIO_RESPONSE_CONVERTER.fromTarget(comentario)
     ).pipe(
-      map(response => COMENTARIO_CONVERTER.toTarget(response))
+      map(response => COMENTARIO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -140,11 +161,11 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
   createComentarioActa(id: number, comentario: IComentario, isRolGestor: boolean): Observable<IComentario> {
     const urlGestor = 'comentario-acta-gestor';
     const urlEvaluador = 'comentario-acta-evaluador';
-    return this.http.post<IComentarioBackend>(
+    return this.post<IComentarioResponse, IComentarioResponse>(
       `${this.endpointUrl}/${id}/${isRolGestor ? urlGestor : urlEvaluador}`,
-      COMENTARIO_CONVERTER.fromTarget(comentario)
+      COMENTARIO_RESPONSE_CONVERTER.fromTarget(comentario)
     ).pipe(
-      map(response => COMENTARIO_CONVERTER.toTarget(response))
+      map(response => COMENTARIO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -156,11 +177,11 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param idComentario Id del Comentario
    */
   updateComentarioGestor(id: number, comentario: IComentario, idComentario: number): Observable<IComentario> {
-    return this.http.put<IComentarioBackend>(
+    return this.put<IComentarioResponse, IComentarioResponse>(
       `${this.endpointUrl}/${id}/comentario-gestor/${idComentario}`,
-      COMENTARIO_CONVERTER.fromTarget(comentario)
+      COMENTARIO_RESPONSE_CONVERTER.fromTarget(comentario)
     ).pipe(
-      map(response => COMENTARIO_CONVERTER.toTarget(response))
+      map(response => COMENTARIO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -172,11 +193,11 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param idComentario Id del Comentario
    */
   updateComentarioEvaluador(id: number, comentario: IComentario, idComentario: number): Observable<IComentario> {
-    return this.http.put<IComentarioBackend>(
+    return this.put<IComentarioResponse, IComentarioResponse>(
       `${this.endpointUrl}/${id}/comentario-evaluador/${idComentario}`,
-      COMENTARIO_CONVERTER.fromTarget(comentario)
+      COMENTARIO_RESPONSE_CONVERTER.fromTarget(comentario)
     ).pipe(
-      map(response => COMENTARIO_CONVERTER.toTarget(response))
+      map(response => COMENTARIO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -222,10 +243,10 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param options SgiRestFindOptions.
    */
   findAllByMemoriaAndRetrospectivaEnEvaluacion(options?: SgiRestFindOptions): Observable<SgiRestListResult<IEvaluacion>> {
-    return this.find<IEvaluacionBackend, IEvaluacion>(
+    return this.find<IEvaluacionResponse, IEvaluacion>(
       `${environment.serviceServers.eti}${EvaluacionService.MAPPING}/evaluables`,
       options,
-      EVALUACION_CONVERTER
+      EVALUACION_RESPONSE_CONVERTER
     );
   }
 
@@ -238,10 +259,10 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    */
   findAllByConvocatoriaReunionIdAndNoEsRevMinima(idConvocatoria: number, options?: SgiRestFindOptions):
     Observable<SgiRestListResult<IEvaluacionWithIsEliminable>> {
-    return this.find<IEvaluacionWithIsEliminableBackend, IEvaluacionWithIsEliminable>(
+    return this.find<IEvaluacionWithIsEliminableResponse, IEvaluacionWithIsEliminable>(
       `${this.endpointUrl}/convocatoriareunionnorevminima/${idConvocatoria}`,
       options,
-      EVALUACION_WITH_IS_ELIMINABLE_CONVERTER
+      EVALUACION_WITH_IS_ELIMINABLE_RESPONSE_CONVERTER
     );
   }
 
@@ -253,10 +274,10 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    */
 
   findSeguimientoMemoria(options?: SgiRestFindOptions): Observable<SgiRestListResult<IEvaluacion>> {
-    return this.find<IEvaluacionBackend, IEvaluacion>(
+    return this.find<IEvaluacionResponse, IEvaluacion>(
       `${environment.serviceServers.eti}${EvaluacionService.MAPPING}/memorias-seguimiento-final`,
       options,
-      EVALUACION_CONVERTER
+      EVALUACION_RESPONSE_CONVERTER
     );
   }
 
@@ -265,7 +286,7 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param idEvaluacion identificador de la evaluación
    */
   getDocumentoEvaluador(idEvaluacion: number): Observable<IDocumento> {
-    return this.http.get<IDocumentoBackend>(
+    return this.get<IDocumentoBackend>(
       `${this.endpointUrl}/${idEvaluacion}/documento-evaluador`
     ).pipe(
       map(response => DOCUMENTO_CONVERTER.toTarget(response))
@@ -277,7 +298,7 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param idEvaluacion identificador de la evaluación
    */
   getDocumentoEvaluacion(idEvaluacion: number): Observable<IDocumento> {
-    return this.http.get<IDocumentoBackend>(
+    return this.get<IDocumentoBackend>(
       `${this.endpointUrl}/${idEvaluacion}/documento-evaluacion`
     ).pipe(
       map(response => DOCUMENTO_CONVERTER.toTarget(response))
@@ -357,13 +378,13 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
    * @param options Opciones de paginación
    */
   getComentariosPersonaEvaluador(id: number, personaRef: string): Observable<IComentario[]> {
-    return this.http.get<IComentarioBackend[]>(`${this.endpointUrl}/${id}/comentarios-evaluador/${personaRef}/persona`)
+    return this.get<IComentarioResponse[]>(`${this.endpointUrl}/${id}/comentarios-evaluador/${personaRef}/persona`)
       .pipe(
         map(r => {
           if (r == null) {
             return [];
           }
-          return COMENTARIO_CONVERTER.toTargetArray(r);
+          return COMENTARIO_RESPONSE_CONVERTER.toTargetArray(r);
         })
       );
   }
@@ -375,13 +396,13 @@ export class EvaluacionService extends SgiMutableRestService<number, IEvaluacion
   * @param options Opciones de paginación
   */
   getComentariosPersonaActa(id: number, personaRef: string): Observable<IComentario[]> {
-    return this.http.get<IComentarioBackend[]>(`${this.endpointUrl}/${id}/comentarios-acta-evaluador/${personaRef}/persona`)
+    return this.get<IComentarioResponse[]>(`${this.endpointUrl}/${id}/comentarios-acta-evaluador/${personaRef}/persona`)
       .pipe(
         map(r => {
           if (r == null) {
             return [];
           }
-          return COMENTARIO_CONVERTER.toTargetArray(r);
+          return COMENTARIO_RESPONSE_CONVERTER.toTargetArray(r);
         })
       );
   }

@@ -59,13 +59,13 @@ export class GrupoPersonaAutorizadaComponent extends FragmentComponent implement
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.PERSONA_AUTORIZADA, actionService);
+    super(actionService.FRAGMENT.PERSONA_AUTORIZADA, actionService, translate);
     this.formPart = this.fragment as GrupoPersonaAutorizadaFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IGrupoPersonaAutorizada>, property: string) => {
@@ -91,7 +91,7 @@ export class GrupoPersonaAutorizadaComponent extends FragmentComponent implement
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       GRUPO_PERSONA_AUTORIZADA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

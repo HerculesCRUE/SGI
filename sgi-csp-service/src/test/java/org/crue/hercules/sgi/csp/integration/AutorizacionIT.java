@@ -2,8 +2,11 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.AutorizacionController;
@@ -11,15 +14,19 @@ import org.crue.hercules.sgi.csp.dto.AutorizacionInput;
 import org.crue.hercules.sgi.csp.dto.AutorizacionOutput;
 import org.crue.hercules.sgi.csp.dto.AutorizacionWithFirstEstado;
 import org.crue.hercules.sgi.csp.dto.CertificadoAutorizacionOutput;
-import org.crue.hercules.sgi.csp.dto.ConvocatoriaTituloOutput;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaOnlyTituloOutput;
 import org.crue.hercules.sgi.csp.dto.DocumentoOutput;
 import org.crue.hercules.sgi.csp.dto.EstadoAutorizacionOutput;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.CertificadoAutorizacion;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion;
+import org.crue.hercules.sgi.csp.model.EstadoAutorizacionComentario;
 import org.crue.hercules.sgi.csp.repository.EstadoAutorizacionRepository;
 import org.crue.hercules.sgi.csp.service.AutorizacionComService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -86,9 +93,7 @@ class AutorizacionIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s",
         tokenBuilder.buildToken(USER_PERSONA_REF, roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-    return request;
-
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -103,7 +108,7 @@ class AutorizacionIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_ReturnsAutorizacion() throws Exception {
-    AutorizacionInput toCreate = buildMockAutorizacion(null);
+    AutorizacionInput toCreate = buildMockAutorizacion();
     String roles = "CSP-AUT-INV-C";
 
     final ResponseEntity<AutorizacionOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
@@ -115,10 +120,12 @@ class AutorizacionIT extends BaseIT {
     Assertions.assertThat(created.getId()).as("getId()").isNotNull();
     Assertions.assertThat(created.getConvocatoriaId()).as("getConvocaoriaId()")
         .isEqualTo(toCreate.getConvocatoriaId());
-    Assertions.assertThat(created.getObservaciones()).as("getObservaciones()")
-        .isEqualTo(toCreate.getObservaciones());
-    Assertions.assertThat(created.getDatosConvocatoria()).as("getDatosConvocatoria()")
-        .isEqualTo(toCreate.getDatosConvocatoria());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getObservaciones(), Language.ES))
+        .as("getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toCreate.getObservaciones(), Language.ES));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getDatosConvocatoria(), Language.ES))
+        .as("getDatosConvocatoria()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toCreate.getDatosConvocatoria(), Language.ES));
     Assertions.assertThat(created.getDatosEntidad()).as("getDatosEntidad()")
         .isEqualTo(toCreate.getDatosEntidad());
     Assertions.assertThat(created.getDatosResponsable()).as("getDatosResponsable()")
@@ -131,8 +138,9 @@ class AutorizacionIT extends BaseIT {
         .isEqualTo(toCreate.getResponsableRef());
     Assertions.assertThat(created.getSolicitanteRef()).as("getSolicitanteRef()")
         .isEqualTo(USER_PERSONA_REF);
-    Assertions.assertThat(created.getTituloProyecto()).as("getTituloProyecto()")
-        .isEqualTo(toCreate.getTituloProyecto());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getTituloProyecto(), Language.ES))
+        .as("getTituloProyecto()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toCreate.getTituloProyecto(), Language.ES));
   }
 
   @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -150,8 +158,12 @@ class AutorizacionIT extends BaseIT {
   void update_ReturnsAutorizacion() throws Exception {
     String roles = "CSP-AUT-INV-ER";
     Long idAutorizacion = 1L;
-    AutorizacionInput toUpdate = buildMockAutorizacion(1L);
-    toUpdate.setObservaciones("observaciones actualizadas");
+
+    List<I18nFieldValueDto> observacionesAutorizacion = new ArrayList<>();
+    observacionesAutorizacion.add(new I18nFieldValueDto(Language.ES, "observaciones actualizadas"));
+
+    AutorizacionInput toUpdate = buildMockAutorizacion();
+    toUpdate.setObservaciones(observacionesAutorizacion);
 
     final ResponseEntity<AutorizacionOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, toUpdate, roles), AutorizacionOutput.class, idAutorizacion);
@@ -163,10 +175,12 @@ class AutorizacionIT extends BaseIT {
     Assertions.assertThat(updated.getId()).as("getId()").isEqualTo(idAutorizacion);
     Assertions.assertThat(updated.getConvocatoriaId()).as("getConvocaoriaId()")
         .isEqualTo(toUpdate.getConvocatoriaId());
-    Assertions.assertThat(updated.getObservaciones()).as("getObservaciones()")
-        .isEqualTo(toUpdate.getObservaciones());
-    Assertions.assertThat(updated.getDatosConvocatoria()).as("getDatosConvocatoria()")
-        .isEqualTo(toUpdate.getDatosConvocatoria());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getObservaciones(), Language.ES))
+        .as("getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toUpdate.getObservaciones(), Language.ES));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getDatosConvocatoria(), Language.ES))
+        .as("getDatosConvocatoria()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toUpdate.getDatosConvocatoria(), Language.ES));
     Assertions.assertThat(updated.getDatosEntidad()).as("getDatosEntidad()")
         .isEqualTo(toUpdate.getDatosEntidad());
     Assertions.assertThat(updated.getDatosResponsable()).as("getDatosResponsable()")
@@ -179,8 +193,9 @@ class AutorizacionIT extends BaseIT {
         .isEqualTo(toUpdate.getResponsableRef());
     Assertions.assertThat(updated.getSolicitanteRef()).as("getSolicitanteRef()")
         .isEqualTo(DEFAULT_SOLICITANTE_REF);
-    Assertions.assertThat(updated.getTituloProyecto()).as("getTituloProyecto()")
-        .isEqualTo(toUpdate.getTituloProyecto());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getTituloProyecto(), Language.ES))
+        .as("getTituloProyecto()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toUpdate.getTituloProyecto(), Language.ES));
 
   }
 
@@ -278,7 +293,8 @@ class AutorizacionIT extends BaseIT {
     "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
     "classpath:scripts/convocatoria.sql",
-    "classpath:scripts/autorizacion.sql"
+    "classpath:scripts/autorizacion.sql",
+    "classpath:scripts/estado_autorizacion.sql"
     // @formatter:on
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
@@ -319,7 +335,8 @@ class AutorizacionIT extends BaseIT {
     "classpath:scripts/tipo_regimen_concurrencia.sql",
     "classpath:scripts/tipo_ambito_geografico.sql",
     "classpath:scripts/convocatoria.sql",
-    "classpath:scripts/autorizacion.sql"
+    "classpath:scripts/autorizacion.sql",
+    "classpath:scripts/estado_autorizacion.sql"
     // @formatter:on
   })
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
@@ -398,12 +415,16 @@ class AutorizacionIT extends BaseIT {
   void cambiarEstado_ReturnsAutorizacion() throws Exception {
     String roles = "CSP-AUT-E";
     Long idAutorizacion = 1L;
+
+    Set<EstadoAutorizacionComentario> comentarioEstadoAutorizacion = new HashSet<>();
+    comentarioEstadoAutorizacion.add(new EstadoAutorizacionComentario(Language.ES, "Nuevo estado"));
+
     EstadoAutorizacion nuevoEstado = EstadoAutorizacion.builder()
         .id(1L)
         .estado(EstadoAutorizacion.Estado.REVISION)
         .autorizacionId(idAutorizacion)
         .fecha(Instant.now())
-        .comentario("Nuevo estado")
+        .comentario(comentarioEstadoAutorizacion)
         .build();
 
     final ResponseEntity<AutorizacionOutput> response = restTemplate.exchange(
@@ -588,8 +609,8 @@ class AutorizacionIT extends BaseIT {
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_CONVOCATORIA)
         .buildAndExpand(autorizacionId).toUri();
 
-    final ResponseEntity<ConvocatoriaTituloOutput> response = restTemplate.exchange(uri, HttpMethod.GET,
-        buildRequest(null, null, "CSP-AUT-INV-ER"), ConvocatoriaTituloOutput.class);
+    final ResponseEntity<ConvocatoriaOnlyTituloOutput> response = restTemplate.exchange(uri, HttpMethod.GET,
+        buildRequest(null, null, "CSP-AUT-INV-ER"), ConvocatoriaOnlyTituloOutput.class);
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     Assertions.assertThat(response.getBody()).isNotNull();
@@ -779,17 +800,26 @@ class AutorizacionIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
   }
 
-  private AutorizacionInput buildMockAutorizacion(Long id) {
+  private AutorizacionInput buildMockAutorizacion() {
+    List<I18nFieldValueDto> tituloProyectoAutorizacion = new ArrayList<>();
+    tituloProyectoAutorizacion.add(new I18nFieldValueDto(Language.ES, DEFAULT_TITULO_PROYECTO));
+
+    List<I18nFieldValueDto> datosConvocatoriaAutorizacion = new ArrayList<>();
+    datosConvocatoriaAutorizacion.add(new I18nFieldValueDto(Language.ES, DEFAULT_DATOS_CONVOCATORIA));
+
+    List<I18nFieldValueDto> observacionesAutorizacion = new ArrayList<>();
+    observacionesAutorizacion.add(new I18nFieldValueDto(Language.ES, DEFAULT_OBSERVACIONES));
+
     return AutorizacionInput.builder()
         .convocatoriaId(DEFAULT_CONVOCATORIA_ID)
-        .datosConvocatoria(DEFAULT_DATOS_CONVOCATORIA)
+        .datosConvocatoria(datosConvocatoriaAutorizacion)
         .datosEntidad(DEFAULT_DATOS_ENTIDAD)
         .datosResponsable(DEFAULT_DATOS_RESPONSABLES)
         .entidadRef(DEFAULT_ENTIDAD_REF)
         .horasDedicacion(DEFAULT_HORAS_DEDICADAS)
-        .observaciones(DEFAULT_OBSERVACIONES)
+        .observaciones(observacionesAutorizacion)
         .responsableRef(DEFAULT_RESPONSABLE_REF)
-        .tituloProyecto(DEFAULT_TITULO_PROYECTO)
+        .tituloProyecto(datosConvocatoriaAutorizacion)
         .build();
   }
 

@@ -1,13 +1,17 @@
 package org.crue.hercules.sgi.csp.exceptions;
 
-public class ProyectoAreaConocimientoNotFoundException extends CspNotFoundException {
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 
+public class ProyectoAreaConocimientoNotFoundException extends CspNotFoundException {
+  public static final String MSG_MODEL_PROYECTO_AREA_CONOCIMIENTO = "org.crue.hercules.sgi.csp.model.ProyectoAreaConocimiento.message";
   /**
    * Excepcion para Area conocimiento no encontrada
    */
   private static final long serialVersionUID = 1L;
 
   public ProyectoAreaConocimientoNotFoundException(Long proyectoAreaConocimientoId) {
-    super("ProyectoAreaConocimiento " + proyectoAreaConocimientoId + " does not exist.");
+    super(ApplicationContextSupport.getMessage("notFoundException",
+        new Object[] { ApplicationContextSupport.getMessage(MSG_MODEL_PROYECTO_AREA_CONOCIMIENTO),
+            proyectoAreaConocimientoId }));
   }
 }

@@ -1,3 +1,4 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from "@core/i18n/i18n-field.converter";
 import { IInformePatentabilidad } from "@core/models/pii/informe-patentabilidad";
 import { IInvencion } from "@core/models/pii/invencion";
 import { IResultadoInformePatentibilidad } from "@core/models/pii/resultado-informe-patentabilidad";
@@ -7,7 +8,7 @@ import { LuxonUtils } from "@core/utils/luxon-utils";
 import { SgiBaseConverter } from "@sgi/framework/core";
 import { IInformePatentabilidadRequest } from "./informe-patentabilidad-request";
 
-class InformePatentabilidadRequestConverter extends SgiBaseConverter<IInformePatentabilidadRequest, IInformePatentabilidad>{
+class InformePatentabilidadRequestConverter extends SgiBaseConverter<IInformePatentabilidadRequest, IInformePatentabilidad> {
 
   toTarget(value: IInformePatentabilidadRequest): IInformePatentabilidad {
     if (!value) {
@@ -17,13 +18,13 @@ class InformePatentabilidadRequestConverter extends SgiBaseConverter<IInformePat
       id: undefined,
       invencion: { id: value.invencionId } as IInvencion,
       fecha: LuxonUtils.fromBackend(value.fecha),
-      nombre: value.nombre,
+      nombre: value.nombre ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.nombre) : [],
       documento: { documentoRef: value.documentoRef } as IDocumento,
       resultadoInformePatentabilidad: { id: value.resultadoInformePatentabilidadId } as IResultadoInformePatentibilidad,
       entidadCreadora: { id: value.entidadCreadoraRef } as IEmpresa,
       contactoEntidadCreadora: value.contactoEntidadCreadora,
       contactoExaminador: value.contactoExaminador,
-      comentarios: value.comentarios
+      comentarios: value.comentarios ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.comentarios) : []
     };
   }
 
@@ -34,13 +35,13 @@ class InformePatentabilidadRequestConverter extends SgiBaseConverter<IInformePat
     return {
       invencionId: value.invencion?.id,
       fecha: LuxonUtils.toBackend(value.fecha),
-      nombre: value.nombre,
+      nombre: value.nombre ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.nombre) : [],
       documentoRef: value.documento?.documentoRef,
       resultadoInformePatentabilidadId: value.resultadoInformePatentabilidad?.id,
       entidadCreadoraRef: value.entidadCreadora?.id,
       contactoEntidadCreadora: value.contactoEntidadCreadora,
       contactoExaminador: value.contactoExaminador,
-      comentarios: value.comentarios
+      comentarios: value.comentarios ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.comentarios) : []
     };
   }
 }

@@ -2,9 +2,11 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.converter.AlegacionRequerimientoConverter;
@@ -17,13 +19,23 @@ import org.crue.hercules.sgi.csp.dto.IncidenciaDocumentacionRequerimientoOutput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionInput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.model.AlegacionRequerimiento;
+import org.crue.hercules.sgi.csp.model.AlegacionRequerimientoObservaciones;
 import org.crue.hercules.sgi.csp.model.GastoRequerimientoJustificacion;
+import org.crue.hercules.sgi.csp.model.GastoRequerimientoJustificacionAlegacion;
+import org.crue.hercules.sgi.csp.model.GastoRequerimientoJustificacionIncidencia;
 import org.crue.hercules.sgi.csp.model.IncidenciaDocumentacionRequerimiento;
+import org.crue.hercules.sgi.csp.model.IncidenciaDocumentacionRequerimientoAlegacion;
+import org.crue.hercules.sgi.csp.model.IncidenciaDocumentacionRequerimientoIncidencia;
+import org.crue.hercules.sgi.csp.model.IncidenciaDocumentacionRequerimientoNombreDocumento;
 import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
+import org.crue.hercules.sgi.csp.model.RequerimientoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.service.AlegacionRequerimientoService;
 import org.crue.hercules.sgi.csp.service.GastoRequerimientoJustificacionService;
 import org.crue.hercules.sgi.csp.service.IncidenciaDocumentacionRequerimientoService;
 import org.crue.hercules.sgi.csp.service.RequerimientoJustificacionService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -49,7 +61,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
  * RequerimientoJustificacionControllerTest
  */
 @WebMvcTest(RequerimientoJustificacionController.class)
-public class RequerimientoJustificacionControllerTest extends BaseControllerTest {
+class RequerimientoJustificacionControllerTest extends BaseControllerTest {
 
   @MockBean
   private RequerimientoJustificacionService service;
@@ -81,8 +93,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
     Long id = 1L;
     BDDMockito.given(service.findById(ArgumentMatchers.anyLong())).willAnswer((InvocationOnMock invocation) -> {
       Long paramId = invocation.getArgument(0);
-      RequerimientoJustificacion requerimientoJustificacion = generarMockRequerimientoJustificacion(paramId);
-      return requerimientoJustificacion;
+      return generarMockRequerimientoJustificacion(paramId);
     });
     BDDMockito.given(converter.convert(ArgumentMatchers.<RequerimientoJustificacion>any()))
         .willAnswer(new Answer<RequerimientoJustificacionOutput>() {
@@ -160,7 +171,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
         // then: response is CREATED
         // and the created RequerimientoJustificacion is resturned as JSON object
         .andExpect(MockMvcResultMatchers.status().isCreated())
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(observaciones));
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value").value(observaciones));
   }
 
   @Test
@@ -186,8 +197,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
         });
     BDDMockito.given(service.update(ArgumentMatchers.<RequerimientoJustificacion>any()))
         .willAnswer((InvocationOnMock invocation) -> {
-          RequerimientoJustificacion requerimientoJustificacion = invocation.getArgument(0);
-          return requerimientoJustificacion;
+          return invocation.getArgument(0);
         });
     BDDMockito.given(converter.convert(ArgumentMatchers.<RequerimientoJustificacion>any()))
         .willAnswer(new Answer<RequerimientoJustificacionOutput>() {
@@ -210,7 +220,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
         // and the updated RequerimientoJustificacion is resturned as JSON object
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(requerimientoJustificacionId))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(observaciones));
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value").value(observaciones));
   }
 
   @Test
@@ -242,8 +252,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
             int toIndex = fromIndex + size;
             toIndex = toIndex > incidencias.size() ? incidencias.size() : toIndex;
             List<IncidenciaDocumentacionRequerimiento> content = incidencias.subList(fromIndex, toIndex);
-            Page<IncidenciaDocumentacionRequerimiento> page = new PageImpl<>(content, pageable, incidencias.size());
-            return page;
+            return new PageImpl<>(content, pageable, incidencias.size());
           }
         });
     BDDMockito
@@ -253,13 +262,11 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
           @Override
           public Page<IncidenciaDocumentacionRequerimientoOutput> answer(InvocationOnMock invocation) throws Throwable {
             Page<IncidenciaDocumentacionRequerimiento> pageInput = invocation.getArgument(0);
-            List<IncidenciaDocumentacionRequerimientoOutput> content = pageInput.getContent().stream().map(input -> {
-              return generarMockIncidenciaDocumentacionRequerimientoOutput(input);
-            }).collect(Collectors.toList());
-            Page<IncidenciaDocumentacionRequerimientoOutput> pageOutput = new PageImpl<>(content,
-                pageInput.getPageable(),
-                pageInput.getTotalElements());
-            return pageOutput;
+            List<IncidenciaDocumentacionRequerimientoOutput> content = pageInput.getContent().stream()
+                .map(
+                    RequerimientoJustificacionControllerTest.this::generarMockIncidenciaDocumentacionRequerimientoOutput)
+                .toList();
+            return new PageImpl<>(content, pageInput.getPageable(), pageInput.getTotalElements());
           }
         });
 
@@ -288,7 +295,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
     for (int i = 31; i <= 37; i++) {
       IncidenciaDocumentacionRequerimientoOutput incidencia = incidenciasResponse
           .get(i - (page * pageSize) - 1);
-      Assertions.assertThat(incidencia.getNombreDocumento())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(incidencia.getNombreDocumento(), Language.ES))
           .isEqualTo("IncidenciaDocumentacionRequerimiento-" + String.format("%03d", i));
     }
   }
@@ -311,8 +318,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
           @Override
           public Page<IncidenciaDocumentacionRequerimiento> answer(InvocationOnMock invocation) throws Throwable {
             Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<IncidenciaDocumentacionRequerimiento> page = new PageImpl<>(requerimientos, pageable, 0);
-            return page;
+            return new PageImpl<>(requerimientos, pageable, 0);
           }
         });
     BDDMockito
@@ -321,8 +327,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
         .willAnswer(new Answer<Page<IncidenciaDocumentacionRequerimientoOutput>>() {
           @Override
           public Page<IncidenciaDocumentacionRequerimientoOutput> answer(InvocationOnMock invocation) throws Throwable {
-            Page<IncidenciaDocumentacionRequerimientoOutput> page = new PageImpl<>(Collections.emptyList());
-            return page;
+            return new PageImpl<>(Collections.emptyList());
           }
         });
 
@@ -366,8 +371,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
             int toIndex = fromIndex + size;
             toIndex = toIndex > gastos.size() ? gastos.size() : toIndex;
             List<GastoRequerimientoJustificacion> content = gastos.subList(fromIndex, toIndex);
-            Page<GastoRequerimientoJustificacion> page = new PageImpl<>(content, pageable, gastos.size());
-            return page;
+            return new PageImpl<>(content, pageable, gastos.size());
           }
         });
     BDDMockito
@@ -377,13 +381,10 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
           @Override
           public Page<GastoRequerimientoJustificacionOutput> answer(InvocationOnMock invocation) throws Throwable {
             Page<GastoRequerimientoJustificacion> pageInput = invocation.getArgument(0);
-            List<GastoRequerimientoJustificacionOutput> content = pageInput.getContent().stream().map(input -> {
-              return generarMockGastoRequerimientoJustificacionOutput(input);
-            }).collect(Collectors.toList());
-            Page<GastoRequerimientoJustificacionOutput> pageOutput = new PageImpl<>(content,
-                pageInput.getPageable(),
-                pageInput.getTotalElements());
-            return pageOutput;
+            List<GastoRequerimientoJustificacionOutput> content = pageInput.getContent().stream()
+                .map(RequerimientoJustificacionControllerTest.this::generarMockGastoRequerimientoJustificacionOutput)
+                .toList();
+            return new PageImpl<>(content, pageInput.getPageable(), pageInput.getTotalElements());
           }
         });
 
@@ -412,7 +413,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
     for (int i = 31; i <= 37; i++) {
       GastoRequerimientoJustificacionOutput gasto = gastoResponse
           .get(i - (page * pageSize) - 1);
-      Assertions.assertThat(gasto.getAlegacion())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(gasto.getAlegacion(), Language.ES))
           .isEqualTo("Alegacion-" + String.format("%03d", i));
     }
   }
@@ -435,8 +436,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
           @Override
           public Page<GastoRequerimientoJustificacion> answer(InvocationOnMock invocation) throws Throwable {
             Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<GastoRequerimientoJustificacion> page = new PageImpl<>(gastos, pageable, 0);
-            return page;
+            return new PageImpl<>(gastos, pageable, 0);
           }
         });
     BDDMockito
@@ -445,8 +445,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
         .willAnswer(new Answer<Page<GastoRequerimientoJustificacionOutput>>() {
           @Override
           public Page<GastoRequerimientoJustificacionOutput> answer(InvocationOnMock invocation) throws Throwable {
-            Page<GastoRequerimientoJustificacionOutput> page = new PageImpl<>(Collections.emptyList());
-            return page;
+            return new PageImpl<>(Collections.emptyList());
           }
         });
 
@@ -474,8 +473,7 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
           @Override
           public AlegacionRequerimientoOutput answer(InvocationOnMock invocation) throws Throwable {
             AlegacionRequerimiento input = invocation.getArgument(0, AlegacionRequerimiento.class);
-            AlegacionRequerimientoOutput output = generarMockAlegacionRequerimientoOutput(input);
-            return output;
+            return generarMockAlegacionRequerimientoOutput(input);
           }
         });
     // when: Buscamos la AlegacionRequerimiento asociada
@@ -514,19 +512,24 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
   }
 
   private RequerimientoJustificacion generarMockRequerimientoJustificacion(RequerimientoJustificacionInput input) {
-    return generarMockRequerimientoJustificacion(null, input.getObservaciones(), input.getRequerimientoPrevioId());
+    return generarMockRequerimientoJustificacion(input, null);
   }
 
   private RequerimientoJustificacion generarMockRequerimientoJustificacion(RequerimientoJustificacionInput input,
       Long id) {
-    return generarMockRequerimientoJustificacion(id, input.getObservaciones(), input.getRequerimientoPrevioId());
+    return generarMockRequerimientoJustificacion(id,
+        I18nHelper.getValueForLanguage(input.getObservaciones(), Language.ES), input.getRequerimientoPrevioId());
   }
 
   private RequerimientoJustificacion generarMockRequerimientoJustificacion(Long id, String observaciones,
       Long requerimientoPrevioId) {
+    Set<RequerimientoJustificacionObservaciones> observacionesRequerimientoJustificacion = new HashSet<>();
+    observacionesRequerimientoJustificacion
+        .add(new RequerimientoJustificacionObservaciones(Language.ES, observaciones));
+
     return RequerimientoJustificacion.builder()
         .id(id)
-        .observaciones(observaciones)
+        .observaciones(observacionesRequerimientoJustificacion)
         .requerimientoPrevioId(requerimientoPrevioId)
         .build();
   }
@@ -537,7 +540,9 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
         requerimientoJustificacion.getObservaciones(), requerimientoJustificacion.getRequerimientoPrevioId());
   }
 
-  private RequerimientoJustificacionOutput generarMockRequerimientoJustificacionOutput(Long id, String observaciones,
+  private RequerimientoJustificacionOutput generarMockRequerimientoJustificacionOutput(
+      Long id,
+      Collection<RequerimientoJustificacionObservaciones> observaciones,
       Long requerimientoPrevioId) {
     return RequerimientoJustificacionOutput.builder()
         .id(id)
@@ -552,8 +557,11 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
 
   private RequerimientoJustificacionInput generarMockRequerimientoJustificacionInput(String observaciones,
       Long proyectoProyectoSgeId, Long requerimientoPrevioId, Long tipoRequerimientoId) {
+    List<I18nFieldValueDto> observacionesRequerimientoJustificacion = new ArrayList<I18nFieldValueDto>();
+    observacionesRequerimientoJustificacion.add(new I18nFieldValueDto(Language.ES, observaciones));
+
     return RequerimientoJustificacionInput.builder()
-        .observaciones(observaciones)
+        .observaciones(observacionesRequerimientoJustificacion)
         .proyectoProyectoSgeId(proyectoProyectoSgeId)
         .requerimientoPrevioId(requerimientoPrevioId)
         .tipoRequerimientoId(tipoRequerimientoId)
@@ -569,33 +577,33 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
 
   private IncidenciaDocumentacionRequerimientoOutput generarMockIncidenciaDocumentacionRequerimientoOutput(
       IncidenciaDocumentacionRequerimiento incidenciaDocumentacionRequerimiento) {
-    return generarMockIncidenciaDocumentacionRequerimientoOutput(incidenciaDocumentacionRequerimiento.getId(),
-        incidenciaDocumentacionRequerimiento.getAlegacion(),
-        incidenciaDocumentacionRequerimiento.getIncidencia(),
-        incidenciaDocumentacionRequerimiento.getNombreDocumento(),
-        incidenciaDocumentacionRequerimiento.getRequerimientoJustificacionId());
+    return IncidenciaDocumentacionRequerimientoOutput.builder()
+        .id(incidenciaDocumentacionRequerimiento.getId())
+        .alegacion(incidenciaDocumentacionRequerimiento.getAlegacion())
+        .incidencia(incidenciaDocumentacionRequerimiento.getIncidencia())
+        .nombreDocumento(incidenciaDocumentacionRequerimiento.getNombreDocumento())
+        .requerimientoJustificacionId(incidenciaDocumentacionRequerimiento.getRequerimientoJustificacionId())
+        .build();
   }
 
   private IncidenciaDocumentacionRequerimiento generarMockIncidenciaDocumentacionRequerimiento(Long id,
       String alegacion,
       String incidencia, String nombreDocumento, Long requerimientoJustificacionId) {
+    Set<IncidenciaDocumentacionRequerimientoNombreDocumento> nombreDocumentoIncidencia = new HashSet<>();
+    nombreDocumentoIncidencia
+        .add(new IncidenciaDocumentacionRequerimientoNombreDocumento(Language.ES, nombreDocumento));
+
+    Set<IncidenciaDocumentacionRequerimientoIncidencia> incidenciaDocumentacion = new HashSet<>();
+    incidenciaDocumentacion.add(new IncidenciaDocumentacionRequerimientoIncidencia(Language.ES, incidencia));
+
+    Set<IncidenciaDocumentacionRequerimientoAlegacion> alegacionDocumentacion = new HashSet<>();
+    alegacionDocumentacion.add(new IncidenciaDocumentacionRequerimientoAlegacion(Language.ES, alegacion));
+
     return IncidenciaDocumentacionRequerimiento.builder()
         .id(id)
-        .alegacion(alegacion)
-        .incidencia(incidencia)
-        .nombreDocumento(nombreDocumento)
-        .requerimientoJustificacionId(requerimientoJustificacionId)
-        .build();
-  }
-
-  private IncidenciaDocumentacionRequerimientoOutput generarMockIncidenciaDocumentacionRequerimientoOutput(Long id,
-      String alegacion,
-      String incidencia, String nombreDocumento, Long requerimientoJustificacionId) {
-    return IncidenciaDocumentacionRequerimientoOutput.builder()
-        .id(id)
-        .alegacion(alegacion)
-        .incidencia(incidencia)
-        .nombreDocumento(nombreDocumento)
+        .alegacion(alegacionDocumentacion)
+        .incidencia(incidenciaDocumentacion)
+        .nombreDocumento(nombreDocumentoIncidencia)
         .requerimientoJustificacionId(requerimientoJustificacionId)
         .build();
   }
@@ -611,50 +619,42 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
 
   private GastoRequerimientoJustificacionOutput generarMockGastoRequerimientoJustificacionOutput(
       GastoRequerimientoJustificacion gastoRequerimientoJustificacion) {
-    return generarMockGastoRequerimientoJustificacionOutput(gastoRequerimientoJustificacion.getId(),
-        gastoRequerimientoJustificacion.getAceptado(),
-        gastoRequerimientoJustificacion.getAlegacion(),
-        gastoRequerimientoJustificacion.getGastoRef(),
-        gastoRequerimientoJustificacion.getIdentificadorJustificacion(),
-        gastoRequerimientoJustificacion.getImporteAceptado(),
-        gastoRequerimientoJustificacion.getImporteAlegado(),
-        gastoRequerimientoJustificacion.getImporteRechazado(),
-        gastoRequerimientoJustificacion.getIncidencia(),
-        gastoRequerimientoJustificacion.getRequerimientoJustificacionId());
+    return GastoRequerimientoJustificacionOutput.builder()
+        .id(gastoRequerimientoJustificacion.getId())
+        .aceptado(gastoRequerimientoJustificacion.getAceptado())
+        .alegacion(gastoRequerimientoJustificacion.getAlegacion())
+        .gastoRef(gastoRequerimientoJustificacion.getGastoRef())
+        .identificadorJustificacion(gastoRequerimientoJustificacion.getIdentificadorJustificacion())
+        .importeAceptado(gastoRequerimientoJustificacion.getImporteAceptado())
+        .importeAlegado(gastoRequerimientoJustificacion.getImporteAlegado())
+        .importeRechazado(gastoRequerimientoJustificacion.getImporteRechazado())
+        .incidencia(gastoRequerimientoJustificacion.getIncidencia())
+        .requerimientoJustificacionId(gastoRequerimientoJustificacion.getRequerimientoJustificacionId())
+        .build();
   }
 
   private GastoRequerimientoJustificacion generarMockGastoRequerimientoJustificacion(Long id, Boolean aceptado,
       String alegacion, String gastoRef, String identificadorJustificacion, BigDecimal importeAceptado,
       BigDecimal importeAlegado, BigDecimal importeRechazado,
       String incidencia, Long requerimientoJustificacionId) {
+
+    Set<GastoRequerimientoJustificacionIncidencia> incidenciaGastoRequerimientoJustificacion = new HashSet<>();
+    incidenciaGastoRequerimientoJustificacion
+        .add(new GastoRequerimientoJustificacionIncidencia(Language.ES, incidencia));
+
+    Set<GastoRequerimientoJustificacionAlegacion> alegacionGastoRequerimientoJustificacion = new HashSet<>();
+    alegacionGastoRequerimientoJustificacion.add(new GastoRequerimientoJustificacionAlegacion(Language.ES, alegacion));
+
     return GastoRequerimientoJustificacion.builder()
         .id(id)
         .aceptado(aceptado)
-        .alegacion(alegacion)
+        .alegacion(alegacionGastoRequerimientoJustificacion)
         .gastoRef(gastoRef)
         .identificadorJustificacion(identificadorJustificacion)
         .importeAceptado(importeAceptado)
         .importeAlegado(importeAlegado)
         .importeRechazado(importeRechazado)
-        .incidencia(incidencia)
-        .requerimientoJustificacionId(requerimientoJustificacionId)
-        .build();
-  }
-
-  private GastoRequerimientoJustificacionOutput generarMockGastoRequerimientoJustificacionOutput(
-      Long id, Boolean aceptado, String alegacion, String gastoRef, String identificadorJustificacion,
-      BigDecimal importeAceptado, BigDecimal importeAlegado, BigDecimal importeRechazado, String incidencia,
-      Long requerimientoJustificacionId) {
-    return GastoRequerimientoJustificacionOutput.builder()
-        .id(id)
-        .aceptado(aceptado)
-        .alegacion(alegacion)
-        .gastoRef(gastoRef)
-        .identificadorJustificacion(identificadorJustificacion)
-        .importeAceptado(importeAceptado)
-        .importeAlegado(importeAlegado)
-        .importeRechazado(importeRechazado)
-        .incidencia(incidencia)
+        .incidencia(incidenciaGastoRequerimientoJustificacion)
         .requerimientoJustificacionId(requerimientoJustificacionId)
         .build();
   }
@@ -668,26 +668,23 @@ public class RequerimientoJustificacionControllerTest extends BaseControllerTest
 
   private AlegacionRequerimiento generarMockAlegacionRequerimiento(Long id,
       String justificanteReintegro, String observaciones, Long requerimientoJustificacionId) {
+    Set<AlegacionRequerimientoObservaciones> observacionesAlegacionRequerimiento = new HashSet<>();
+    observacionesAlegacionRequerimiento.add(new AlegacionRequerimientoObservaciones(Language.ES, observaciones));
+
     return AlegacionRequerimiento.builder()
         .id(id)
         .justificanteReintegro(justificanteReintegro)
-        .observaciones(observaciones)
+        .observaciones(observacionesAlegacionRequerimiento)
         .requerimientoJustificacionId(requerimientoJustificacionId)
         .build();
   }
 
   private AlegacionRequerimientoOutput generarMockAlegacionRequerimientoOutput(AlegacionRequerimiento input) {
-    return generarMockAlegacionRequerimientoOutput(input.getId(), input.getJustificanteReintegro(),
-        input.getObservaciones(), input.getRequerimientoJustificacionId());
-  }
-
-  private AlegacionRequerimientoOutput generarMockAlegacionRequerimientoOutput(Long id,
-      String justificanteReintegro, String observaciones, Long requerimientoJustificacionId) {
     return AlegacionRequerimientoOutput.builder()
-        .id(id)
-        .justificanteReintegro(justificanteReintegro)
-        .observaciones(observaciones)
-        .requerimientoJustificacionId(requerimientoJustificacionId)
+        .id(input.getId())
+        .justificanteReintegro(input.getJustificanteReintegro())
+        .observaciones(input.getObservaciones())
+        .requerimientoJustificacionId(input.getRequerimientoJustificacionId())
         .build();
   }
 }

@@ -1,0 +1,28 @@
+[
+  {
+    "key": "ap4_3_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.3 Bizirik mantentzea"
+    },
+    "hideExpression": "!formState.mainModel.ap4_3.ap4_3_2.reutilizacionRadio || formState.mainModel.ap4_3.ap4_3_2.reutilizacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "Animaliak aurretik erabili badira edo geroago berriro erabiliko badira, azaldu ea betetzen diren legeak ezarritako baldintzak, edo justifikatu salbuespena."
+      },
+      {
+        "key": "excepcionReutilizacion",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Justifikatu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

@@ -5,7 +5,10 @@ export interface IChecklistResponse {
   personaRef: string;
   formly: {
     id: number;
-    esquema: FormlyFieldConfig[];
+    definicion: {
+      lang: string;
+      esquema: FormlyFieldConfig[]
+    }[]
   };
   fechaCreacion: string;
   respuesta: {

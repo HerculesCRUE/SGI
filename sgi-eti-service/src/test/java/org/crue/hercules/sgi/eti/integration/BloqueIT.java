@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.Bloque;
-import org.crue.hercules.sgi.eti.model.Formulario;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -57,10 +56,9 @@ public class BloqueIT extends BaseIT {
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    final Bloque Bloque = response.getBody();
+    final Bloque bloque = response.getBody();
 
-    Assertions.assertThat(Bloque.getId()).isEqualTo(1L);
-    Assertions.assertThat(Bloque.getNombre()).isEqualTo("Bloque1");
+    Assertions.assertThat(bloque.getId()).isEqualTo(1L);
   }
 
   @Test
@@ -82,18 +80,13 @@ public class BloqueIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Page")).isEqualTo("1");
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("8");
-
-    // Contiene de nombre='Bloque6' a 'Bloque8'
-    Assertions.assertThat(bloques.get(0).getNombre()).isEqualTo("Bloque6");
-    Assertions.assertThat(bloques.get(1).getNombre()).isEqualTo("Bloque7");
-    Assertions.assertThat(bloques.get(2).getNombre()).isEqualTo("Bloque8");
   }
 
   @Test
   public void findAll_WithSearchQuery_ReturnsFilteredBloqueList() throws Exception {
     // when: Búsqueda por nombre like e id equals
     Long id = 5L;
-    String query = "nombre=ke=Bloque;id==" + id;
+    String query = "id==" + id;
 
     URI uri = UriComponentsBuilder.fromUriString(BLOQUE_CONTROLLER_BASE_PATH).queryParam("q", query).build(false)
         .toUri();
@@ -109,13 +102,12 @@ public class BloqueIT extends BaseIT {
     final List<Bloque> bloques = response.getBody();
     Assertions.assertThat(bloques.size()).isEqualTo(1);
     Assertions.assertThat(bloques.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(bloques.get(0).getNombre()).startsWith("Bloque");
   }
 
   @Test
   public void findAll_WithSortQuery_ReturnsOrderedBloqueList() throws Exception {
     // when: Ordenación por nombre desc
-    String query = "nombre,desc";
+    String query = "id,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(BLOQUE_CONTROLLER_BASE_PATH).queryParam("s", query).build(false)
         .toUri();
@@ -131,9 +123,8 @@ public class BloqueIT extends BaseIT {
     final List<Bloque> bloques = response.getBody();
     Assertions.assertThat(bloques.size()).isEqualTo(8);
     for (int i = 0; i < 8; i++) {
-      Bloque Bloque = bloques.get(i);
-      Assertions.assertThat(Bloque.getId()).isEqualTo(8 - i);
-      Assertions.assertThat(Bloque.getNombre()).isEqualTo("Bloque" + String.format("%d", 8 - i));
+      Bloque bloque = bloques.get(i);
+      Assertions.assertThat(bloque.getId()).isEqualTo(8 - i);
     }
   }
 
@@ -144,11 +135,12 @@ public class BloqueIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     // when: Ordena por nombre desc
-    String sort = "nombre,desc";
+    String sort = "id,desc";
     // when: Filtra por nombre like
-    String filter = "nombre=ke=Bloque";
+    String filter = "orden==1,orden==2,orden==3";
 
-    URI uri = UriComponentsBuilder.fromUriString(BLOQUE_CONTROLLER_BASE_PATH).queryParam("s", sort)
+    URI uri = UriComponentsBuilder.fromUriString(BLOQUE_CONTROLLER_BASE_PATH).queryParam("s",
+        sort)
         .queryParam("q", filter).build(false).toUri();
 
     final ResponseEntity<List<Bloque>> response = restTemplate.exchange(uri, HttpMethod.GET,
@@ -163,38 +155,8 @@ public class BloqueIT extends BaseIT {
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).isEqualTo("3");
-    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).isEqualTo("8");
+    Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).isEqualTo("3");
 
-    // Contiene nombre='Bloque8', 'Bloque7',
-    // 'Bloque6'
-    Assertions.assertThat(bloques.get(0).getNombre()).isEqualTo("Bloque" + String.format("%d", 8));
-    Assertions.assertThat(bloques.get(1).getNombre()).isEqualTo("Bloque" + String.format("%d", 7));
-    Assertions.assertThat(bloques.get(2).getNombre()).isEqualTo("Bloque" + String.format("%d", 6));
-
-  }
-
-  /**
-   * Función que devuelve un objeto Bloque
-   * 
-   * @param id     id del Bloque
-   * @param nombre el nombre de Bloque
-   * @return el objeto Bloque
-   */
-
-  public Bloque generarMockBloque(Long id, String nombre) {
-
-    Formulario formulario = new Formulario();
-    formulario.setId(1L);
-    formulario.setNombre("Formulario1");
-    formulario.setDescripcion("Descripcion formulario 1");
-
-    Bloque Bloque = new Bloque();
-    Bloque.setId(id);
-    Bloque.setFormulario(formulario);
-    Bloque.setNombre(nombre);
-    Bloque.setOrden(1);
-
-    return Bloque;
   }
 
 }

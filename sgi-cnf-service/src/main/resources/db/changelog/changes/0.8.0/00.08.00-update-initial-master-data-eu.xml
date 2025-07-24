@@ -1,0 +1,397 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <property name="defaultLang" value="" />
+
+  <changeSet context="!test" author="master" id="00.08.00-resources-new-eu">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <changeLogPropertyDefined property="defaultLang" value="eu" />
+      </not>
+    </preConditions>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-csp-certificado-autorizacion-proyecto-externo-docx-eu" />
+      <column name="description"
+        value="Informe del certificado de autorización del proyecto externo en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-acta-docx-eu" />
+      <column name="description"
+        value="Informe del acta en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-eti-acta.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-acta.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-acta-docx-eu" />
+      <column name="description"
+        value="Informe de los bloques apartados acta en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-eti-bloque-apartado-acta.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-bloque-apartado-acta.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-ficha-evaluador-docx-eu" />
+      <column name="description"
+        value="Informe de los bloques apartados de la ficha de evaluador en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-docx-eu" />
+      <column name="description"
+        value="Informe bloques apartados de las evaluaciones en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-eti-bloque-apartado.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-bloque-apartado.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-modificacion-docx-eu" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria de modificación en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx-eu" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria nueva en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx-eu" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria de ratificación en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-retrospectiva-docx-eu" />
+      <column name="description"
+        value="Informe de evaluación favorable de memoria de retrospectiva en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-retrospectiva.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-retrospectiva.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-docx-eu" />
+      <column name="description"
+        value="Informe de evaluación en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-eti-ficha-evaluador-docx-eu" />
+      <column name="description"
+        value="Informe de la ficha de evaluador en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-eti-ficha-evaluador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-ficha-evaluador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-detalle-grupo-docx-eu" />
+      <column name="description"
+        value="Informe del detalle de grupo en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-prc-detalle-grupo.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-prc-detalle-grupo.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-detalle-produccion-investigador-docx-eu" />
+      <column name="description"
+        value="Informe del detalle de grupos de producción por investigador en euskera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-prc-detalle-produccion-investigador.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-prc-detalle-produccion-investigador.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="rep-prc-resumen-puntuacion-grupos-docx-eu" />
+      <column name="description"
+        value="Informe del resumen de puntuación de grupos en esukera" />
+      <column name="value"
+        valueBlobFile="blob/rep/eu/rep-prc-resumen-puntuacion-grupos.docx" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-prc-resumen-puntuacion-grupos.docx" />
+      <column name="public_access" valueBoolean="false" />
+    </insert>
+
+    <insert tableName="resources">
+      <column name="name" value="web-i18n-eu" />
+      <column name="description" value="i18n eu" />
+      <column name="value" valueBlobFile="blob/web/web-i18n-eu.json" />
+      <column name="default_value" valueBlobFile="blob/web/web-i18n-eu.json" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.08.00-resources-update-eu">
+    <preConditions onFail="MARK_RAN">
+      <changeLogPropertyDefined property="defaultLang" value="eu" />
+    </preConditions>
+
+    <update tableName="resources">
+      <column name="name"
+        value="rep-csp-certificado-autorizacion-proyecto-externo-docx-eu" />
+      <column
+        name="description"
+        value="Informe del certificado de autorización del proyecto externo en euskera" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/eu/rep-csp-certificado-autorizacion-proyecto-externo.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-csp-certificado-autorizacion-proyecto-externo-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-acta-docx-eu" />
+      <column name="description"
+        value="Informe del acta en euskera" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-acta.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-acta-docx-eu" />
+      <column name="description"
+        value="Informe de los bloques apartados acta en euskera" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-bloque-apartado-acta.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-acta-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-ficha-evaluador-docx-eu" />
+      <column
+        name="description"
+        value="Informe de los bloques apartados de la ficha de evaluador en euskera" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-bloque-apartado-ficha-evaluador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-ficha-evaluador-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-bloque-apartado-docx-eu" />
+      <column name="description"
+        value="Informe bloques apartados de las evaluaciones en euskera" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-bloque-apartado.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-bloque-apartado-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name"
+        value="rep-eti-evaluacion-favorable-memoria-modificacion-docx-eu" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria de modificación en euskera" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-favorable-memoria-modificacion.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-modificacion-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx-eu" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria nueva en euskera" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-favorable-memoria-nueva.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-nueva-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name"
+        value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx-eu" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria de ratificación en euskera" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-favorable-memoria-ratificacion.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-favorable-memoria-ratificacion-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-retrospectiva-docx-eu" />
+      <column
+        name="description"
+        value="Informe de evaluación favorable de memoria de retrospectiva en euskera" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion-retrospectiva.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-retrospectiva-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-evaluacion-docx-eu" />
+      <column name="description"
+        value="Informe de evaluación en euskera" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-evaluacion.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-evaluacion-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-eti-ficha-evaluador-docx-eu" />
+      <column name="description"
+        value="Informe de la ficha de evaluador en euskera" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-eti-ficha-evaluador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-eti-ficha-evaluador-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-prc-detalle-grupo-docx-eu" />
+      <column name="description"
+        value="Informe del detalle de grupo en euskera" />
+      <column name="default_value"
+        valueBlobFile="blob/rep/eu/rep-prc-detalle-grupo.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-prc-detalle-grupo-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-prc-detalle-produccion-investigador-docx-eu" />
+      <column
+        name="description"
+        value="Informe del detalle de grupos de producción por investigador en euskera" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/eu/rep-prc-detalle-produccion-investigador.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-prc-detalle-produccion-investigador-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="rep-prc-resumen-puntuacion-grupos-docx-eu" />
+      <column
+        name="description" value="Informe del resumen de puntuación de grupos en euskera" />
+      <column
+        name="default_value"
+        valueBlobFile="blob/rep/eu/rep-prc-resumen-puntuacion-grupos.docx" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="rep-prc-resumen-puntuacion-grupos-docx" />
+      </whereParams>
+    </update>
+
+    <update tableName="resources">
+      <column name="name" value="web-i18n-eu" />
+      <column
+        name="description" value="i18n eu" />
+      <column name="default_value"
+        valueBlobFile="blob/web/web-i18n-eu.json" />
+      <where>:name=:value</where>
+      <whereParams>
+        <param name="name" value="web-i18n-es" />
+      </whereParams>
+    </update>
+  </changeSet>
+
+  <changeSet context="!test" author="master" id="00.08.00-resources-web-eu">
+    <insert tableName="resources">
+      <column name="name" value="rep-font-eu" />
+      <column name="description" value="Fuente para los informes en euskera" />
+      <column name="value" valueBlobFile="blob/fonts/EHUSerif.otf" />
+      <column name="default_value" valueBlobFile="blob/fonts/EHUSerif.otf" />
+      <column name="public_access" valueBoolean="true" />
+    </insert>
+  </changeSet>
+
+</databaseChangeLog>

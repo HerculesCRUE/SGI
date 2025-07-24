@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap4_6_7",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.7 Pribatutasunaren babesa"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Zer neurri hartuko dira taldean informazio iturri den ikasle bakoitzaren pribatutasuna bermatzeko </p><p>datuak biltzean, probak egitean edo/eta baimena ezeztatzean?</p>"
+      },
+      {
+        "key": "proteccionPrivacidad",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Neurriak",
+          "placeholder": "Neurriak",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

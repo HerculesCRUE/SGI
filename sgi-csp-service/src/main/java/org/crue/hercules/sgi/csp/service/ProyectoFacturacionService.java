@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.time.Instant;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
@@ -9,11 +10,13 @@ import org.crue.hercules.sgi.csp.model.EstadoValidacionIP;
 import org.crue.hercules.sgi.csp.model.EstadoValidacionIP.TipoEstadoValidacion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
+import org.crue.hercules.sgi.csp.model.ProyectoFacturacionComentario;
 import org.crue.hercules.sgi.csp.repository.EstadoValidacionIPRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoFacturacionRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFacturacionRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoFacturacionPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoFacturacionSpecifications;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoFacturacionAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
@@ -21,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +56,7 @@ public class ProyectoFacturacionService {
     Specification<ProyectoFacturacion> specs = ProyectoFacturacionSpecifications.byProyectoId(proyectoId);
 
     if (StringUtils.isNotBlank(query)) {
-      specs = specs.and(SgiRSQLJPASupport.toSpecification(query));
+      specs = specs.and(SgiRSQLJPASupport.toSpecification(query, ProyectoFacturacionPredicateResolver.getInstance()));
     }
 
     return this.proyectoFacturacionRepository.findAll(specs, paging);
@@ -69,7 +71,7 @@ public class ProyectoFacturacionService {
   @Transactional
   public ProyectoFacturacion create(ProyectoFacturacion toCreate) {
 
-    Assert.isNull(toCreate.getId(), "ProyectoFacturacion id tiene que ser null para crear un item de facturación");
+    AssertHelper.idIsNull(toCreate.getId(), ProyectoFacturacion.class);
 
     authorityHelper.checkUserHasAuthorityModifyProyecto(toCreate.getProyectoId());
 
@@ -97,14 +99,17 @@ public class ProyectoFacturacionService {
     ProyectoFacturacion beforeUpdate = this.proyectoFacturacionRepository.findById(toUpdate.getId())
         .orElseThrow(() -> new ProyectoFacturacionNotFoundException(toUpdate.getId()));
 
-    beforeUpdate.setComentario(toUpdate.getComentario());
-    beforeUpdate.setImporteBase(toUpdate.getImporteBase());
-    beforeUpdate.setPorcentajeIVA(toUpdate.getPorcentajeIVA());
-    beforeUpdate.setTipoFacturacion(toUpdate.getTipoFacturacion());
-    beforeUpdate.setFechaEmision(toUpdate.getFechaEmision());
+    beforeUpdate.setComentario((toUpdate.getComentario().stream()
+        .map(comentario -> new ProyectoFacturacionComentario(comentario.getLang(), comentario.getValue()))
+        .collect(Collectors.toSet())));
     beforeUpdate.setFechaConformidad(toUpdate.getFechaConformidad());
+    beforeUpdate.setFechaEmision(toUpdate.getFechaEmision());
+    beforeUpdate.setImporteBase(toUpdate.getImporteBase());
+    beforeUpdate.setNumeroFacturaSge(toUpdate.getNumeroFacturaSge());
+    beforeUpdate.setPorcentajeIVA(toUpdate.getPorcentajeIVA());
     beforeUpdate.setProyectoProrrogaId(toUpdate.getProyectoProrrogaId());
     beforeUpdate.setProyectoSgeRef(toUpdate.getProyectoSgeRef());
+    beforeUpdate.setTipoFacturacion(toUpdate.getTipoFacturacion());
 
     if (toUpdate.getEstadoValidacionIP().getEstado() != beforeUpdate.getEstadoValidacionIP().getEstado()) {
       beforeUpdate.setEstadoValidacionIP(persistEstadoValidacionIP(toUpdate.getEstadoValidacionIP(), toUpdate.getId()));
@@ -167,8 +172,7 @@ public class ProyectoFacturacionService {
   private boolean checkIfCanSendComunicado(ProyectoFacturacion proyectoFacturacion) {
     boolean res = false;
     switch (proyectoFacturacion.getEstadoValidacionIP().getEstado()) {
-      case RECHAZADA:
-      case VALIDADA:
+      case RECHAZADA, VALIDADA:
         res = !((!TipoEstadoValidacion.VALIDADA.equals(proyectoFacturacion.getEstadoValidacionIP().getEstado())
             && !TipoEstadoValidacion.RECHAZADA.equals(proyectoFacturacion.getEstadoValidacionIP().getEstado()))
             || ((!authorityHelper.checkIfUserIsInvestigadorPrincipal(proyectoFacturacion.getProyectoId()))
@@ -184,7 +188,10 @@ public class ProyectoFacturacionService {
   }
 
   private EstadoValidacionIP persistEstadoValidacionIP(EstadoValidacionIP fromEstado, Long proyectoFacturacionId) {
-    return this.estadoValidacionIPRepository.save(EstadoValidacionIP.builder().comentario(fromEstado.getComentario())
+    return this.estadoValidacionIPRepository.save(EstadoValidacionIP.builder()
+        .comentario((fromEstado.getComentario().stream()
+            .map(comentario -> new ProyectoFacturacionComentario(comentario.getLang(), comentario.getValue()))
+            .collect(Collectors.toSet())))
         .estado(fromEstado.getEstado()).proyectoFacturacionId(proyectoFacturacionId).build());
   }
 
@@ -227,6 +234,26 @@ public class ProyectoFacturacionService {
 
     return proyectoFacturacionRepository.findAll(specs, pageable);
 
+  }
+
+  /**
+   * Busca los {@link ProyectoFacturacion} sin número de factura sge que cumpla
+   * con los criterios de busqueda.
+   * 
+   * @param query  información del filtro.
+   * @param paging Información de paginación
+   * @return la lista de {@link ProyectoFacturacion} que cumple con los criterios
+   *         de busqueda.
+   * 
+   */
+  public Page<ProyectoFacturacion> findFacturasPrevistasPendientesEmitir(String query, Pageable paging) {
+    Specification<ProyectoFacturacion> specs = ProyectoFacturacionSpecifications.byNumeroFacturaSgeNull();
+
+    if (StringUtils.isNotBlank(query)) {
+      specs = specs.and(SgiRSQLJPASupport.toSpecification(query, ProyectoFacturacionPredicateResolver.getInstance()));
+    }
+
+    return this.proyectoFacturacionRepository.findAll(specs, paging);
   }
 
 }

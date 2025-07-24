@@ -24,6 +24,7 @@ import { GrupoActionService } from '../../grupo.action.service';
 import { GrupoEquipoModalComponent, GrupoEquipoModalData } from '../../modals/grupo-equipo-modal/grupo-equipo-modal.component';
 import { GrupoEquipoInvestigacionExportService } from './grupo-equipo-investigacion-export.service';
 import { GrupoEquipoInvestigacionFragment, IGrupoEquipoListado } from './grupo-equipo-investigacion.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 const MSG_DELETE = marker('msg.delete.entity');
 const GRUPO_EQUIPO_MIEMBRO_KEY = marker('csp.grupo-equipo.miembro');
@@ -72,15 +73,16 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
     private dialogService: DialogService,
     private readonly exportService: GrupoEquipoInvestigacionExportService,
     private readonly translate: TranslateService,
-    private readonly logger: NGXLogger
+    private readonly logger: NGXLogger,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.EQUIPO_INVESTIGACION, actionService);
+    super(actionService.FRAGMENT.EQUIPO_INVESTIGACION, actionService, translate);
     this.formPart = this.fragment as GrupoEquipoInvestigacionFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.buildFormGroup();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -93,7 +95,7 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
           case 'apellidos':
             return wrapper.value.persona.apellidos;
           case 'rolEquipo':
-            return wrapper.value.rol.nombre;
+            return this.languageService.getFieldValue(wrapper.value.rol.nombre);
           case 'categoria':
             return wrapper.value.categoriaProfesional?.nombre;
           case 'fechaInicio':
@@ -126,7 +128,7 @@ export class GrupoEquipoInvestigacionComponent extends FragmentComponent impleme
     });
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       GRUPO_EQUIPO_MIEMBRO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

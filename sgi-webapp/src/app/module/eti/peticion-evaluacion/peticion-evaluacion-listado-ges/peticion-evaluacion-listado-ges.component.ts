@@ -23,7 +23,7 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { PeticionEvaluacionListadoExportModalComponent } from '../modals/peticion-evaluacion-listado-export-modal/peticion-evaluacion-listado-export-modal.component';
@@ -66,10 +66,6 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     return TipoColectivo.SOLICITANTE_ETICA;
   }
 
-  get ESTADO_MEMORIA_MAP() {
-    return ESTADO_MEMORIA_MAP;
-  }
-
   constructor(
     private readonly logger: NGXLogger,
     private readonly peticionesEvaluacionService: PeticionEvaluacionService,
@@ -80,7 +76,7 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     private readonly comiteService: ComiteService,
     private readonly memoriaService: MemoriaService
   ) {
-    super();
+    super(translate);
 
     this.totalElementos = 0;
 
@@ -95,11 +91,17 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
 
+    this.resolveSortProperty = (column: string) => {
+      if (column == 'titulo') {
+        return 'titulo.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
 
     const findOptions: SgiRestFindOptions = {
@@ -128,7 +130,7 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
       }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PETICION_EVALUACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -144,71 +146,65 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IPeticionEvaluacionWithMemorias>> {
     return this.peticionesEvaluacionService.findAll(this.getFindOptions(reset)).pipe(
-      map((response) => {
-        // Return the values
-        return response;
-      }),
       switchMap((response) => {
         if (!response.items || response.items.length === 0) {
           return of({} as SgiRestListResult<IPeticionEvaluacionWithMemorias>);
         }
-        const personaIdsEvaluadores = new Set<string>();
 
         const items = response.items as unknown as IPeticionEvaluacionWithMemorias[];
+        const personaIdsEvaluadores = new Set<string>();
 
-        items.forEach((peticionEvaluacion: IPeticionEvaluacionWithMemorias) => {
+        const peticionesConMemorias$ = items.map((peticionEvaluacion) => {
           personaIdsEvaluadores.add(peticionEvaluacion?.solicitante?.id);
-          this.peticionesEvaluacionService
-            .findMemorias(
-              peticionEvaluacion.id
-            ).pipe(
-              map((response) => {
-                // Return the values
-                return response.items as IMemoriaPeticionEvaluacion[];
-              }),
-              catchError(() => {
-                return of([]);
-              })
-            ).subscribe((memorias: IMemoriaPeticionEvaluacion[]) => {
+
+          const memorias$ = this.peticionesEvaluacionService.findMemorias(peticionEvaluacion.id).pipe(
+            map((res) => res.items as IMemoriaPeticionEvaluacion[]),
+            catchError(() => of([]))
+          );
+
+          const asignables$ = this.memoriaService.findAllMemoriasAsignablesPeticionEvaluacion(peticionEvaluacion.id).pipe(
+            map((res) => res.items as IMemoria[]),
+            catchError(() => of([]))
+          );
+
+          return forkJoin([memorias$, asignables$]).pipe(
+            map(([memorias, asignables]) => {
               peticionEvaluacion.memorias = memorias;
-            });
+              peticionEvaluacion.memoriasAsignables = asignables;
+              return peticionEvaluacion;
+            })
+          );
+        });
 
-          this.memoriaService
-            .findAllMemoriasAsignablesPeticionEvaluacion(
-              peticionEvaluacion.id
-            ).pipe(
-              map((response) => {
-                // Return the values
-                return response.items as IMemoria[];
+        return forkJoin(peticionesConMemorias$).pipe(
+          switchMap((peticionesConMemorias) => {
+            return this.personaService.findAllByIdIn([...personaIdsEvaluadores]).pipe(
+              map((result) => {
+                const personas = result.items;
+                peticionesConMemorias.forEach((peticion) => {
+                  const datosPersona = personas.find(p => p.id === peticion.solicitante.id);
+                  if (datosPersona) {
+                    peticion.solicitante = datosPersona;
+                  }
+                });
+
+                return {
+                  page: response.page,
+                  total: response.total,
+                  items: peticionesConMemorias
+                } as SgiRestListResult<IPeticionEvaluacionWithMemorias>;
               }),
-              catchError(() => {
-                return of([]);
+              catchError((error) => {
+                this.logger.error(error);
+                return of({
+                  page: response.page,
+                  total: response.total,
+                  items: peticionesConMemorias
+                });
               })
-            ).subscribe((memorias: IMemoria[]) => {
-              peticionEvaluacion.memoriasAsignables = memorias;
-            });
-        });
-
-        const personaSubscription = this.personaService.findAllByIdIn([...personaIdsEvaluadores]).subscribe((result) => {
-          const personas = result.items;
-          items.forEach((peticionEvaluacion: IPeticionEvaluacionWithMemorias) => {
-            const datosPersona = personas.find((persona) =>
-              peticionEvaluacion.solicitante.id === persona.id);
-            peticionEvaluacion.solicitante = datosPersona;
-          });
-        },
-          (error) => {
-            this.logger.error(error);
-            this.processError(error);
-          }
+            );
+          })
         );
-        this.suscripciones.push(personaSubscription);
-        let peticionesListado: SgiRestListResult<IPeticionEvaluacionWithMemorias>;
-        return of(peticionesListado = {
-          page: response.page,
-          total: response.total,
-          items: items
-        });
       }),
       catchError((error) => {
         this.logger.error(error);
@@ -225,7 +221,7 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
     return new RSQLSgiRestFilter('numReferencia', SgiRestFilterOperator.LIKE_ICASE, controls.referenciaMemoria.value)
-      .and('peticionEvaluacion.titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
+      .and('peticionEvaluacion.titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('comite.id', SgiRestFilterOperator.EQUALS, controls.comite.value?.id?.toString())
       .and('estadoActual.id', SgiRestFilterOperator.EQUALS, controls.tipoEstadoMemoria.value?.toString())
       .and('peticionEvaluacion.personaRef', SgiRestFilterOperator.EQUALS, controls.solicitante.value.id);
@@ -262,9 +258,9 @@ export class PeticionEvaluacionListadoGesComponent extends AbstractTablePaginati
     if (memorias?.length > 0) {
       memorias.forEach(memoria => {
         if (memoria.retrospectiva && memoria.retrospectiva?.estadoRetrospectiva.id > 1) {
-          memoriasColumn.push(memoria.numReferencia + '-' + memoria.estadoActual.nombre + '-' + memoria.version + '-Ret.');
+          memoriasColumn.push(memoria.numReferencia + '-' + this.translate.instant(ESTADO_MEMORIA_MAP.get(memoria.estadoActual?.id)) + '-' + memoria.version + '-Ret.');
         } else {
-          memoriasColumn.push(memoria.numReferencia + '-' + memoria.estadoActual.nombre + '-' + (memoria.version === 0 ? '1' : memoria.version));
+          memoriasColumn.push(memoria.numReferencia + '-' + this.translate.instant(ESTADO_MEMORIA_MAP.get(memoria.estadoActual?.id)) + '-' + (memoria.version === 0 ? '1' : memoria.version));
         }
       });
       return memoriasColumn.join(', ');

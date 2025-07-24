@@ -10,8 +10,9 @@ import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http';
+import { NGXLogger } from 'ngx-logger';
 import { Observable, from, of } from 'rxjs';
-import { map, mergeMap, switchMap, toArray } from 'rxjs/operators';
+import { catchError, map, mergeMap, switchMap, toArray } from 'rxjs/operators';
 
 export interface IEvaluadorWithComentariosAndEnviados extends IEvaluador {
   numComentarios: number;
@@ -34,6 +35,7 @@ export class ActaListadoComentariosEquipoEvaluadorComponent extends AbstractTabl
   public showComentariosEquipoEvaluador = true;
 
   constructor(
+    private readonly logger: NGXLogger,
     protected readonly snackBarService: SnackBarService,
     private readonly personaService: PersonaService,
     private readonly evaluadorService: EvaluadorService,
@@ -69,6 +71,10 @@ export class ActaListadoComentariosEquipoEvaluadorComponent extends AbstractTabl
                         evaluador.numComentarios = 0;
                         evaluador.comentariosEnviados = false;
                         return evaluador;
+                      }),
+                      catchError(err => {
+                        this.logger.error(err);
+                        return of(evaluador);
                       })
                     );
                   }

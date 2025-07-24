@@ -12,6 +12,7 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
@@ -78,9 +79,11 @@ export class ProyectoCalendarioFacturacionComponent extends FragmentComponent im
     public actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService) {
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
+  ) {
 
-    super(actionService.FRAGMENT.CALENDARIO_FACTURACION, actionService);
+    super(actionService.FRAGMENT.CALENDARIO_FACTURACION, actionService, translate);
     this.formPart = this.fragment as ProyectoCalendarioFacturacionFragment;
   }
 
@@ -90,11 +93,11 @@ export class ProyectoCalendarioFacturacionComponent extends FragmentComponent im
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.initDataTable();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_CALENDARIO_FACTURACION_ITEM_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -127,7 +130,7 @@ export class ProyectoCalendarioFacturacionComponent extends FragmentComponent im
     this.dataSource.sortingDataAccessor = (wrapper, property) => {
       switch (property) {
         case 'tipoFacturacion':
-          return wrapper.value.tipoFacturacion.nombre;
+          return this.languageService.getFieldValue(wrapper.value.tipoFacturacion.nombre);
         case 'importeTotal':
           return this.getImporteTotal(wrapper.value.importeBase, wrapper.value.porcentajeIVA);
         case 'validacionIP':
@@ -138,6 +141,8 @@ export class ProyectoCalendarioFacturacionComponent extends FragmentComponent im
           return wrapper.value.porcentajeIVA;
         case 'prorroga':
           return wrapper.value.proyectoProrroga.numProrroga;
+        case 'comentario':
+          return this.languageService.getFieldValue(wrapper.value.comentario);
         default:
           return wrapper.value[property];
       }
@@ -193,7 +198,7 @@ export class ProyectoCalendarioFacturacionComponent extends FragmentComponent im
       porcentajeIVA: proyectoFacturacion.porcentajeIVA || this.formPart.proyectoIVA,
       action,
       proyectosSge: this.formPart.proyectosSGE$.value,
-      isCalendarioFacturacionSgeEnabled: this.formPart.isCalendarioFacturacionSgeEnabled
+      calendarioFacturacionSgeIntegration: this.formPart.calendarioFacturacionSgeIntegration
     };
 
     const config = {
@@ -246,7 +251,7 @@ export class ProyectoCalendarioFacturacionComponent extends FragmentComponent im
   }
 
   public notificarIP(item: StatusWrapper<IProyectoFacturacionData>, rowIndex: number): void {
-    if (this.formPart.isCalendarioFacturacionSgeEnabled && this.formPart.proyectosSGE$.value.length === 0) {
+    if (this.formPart.isCalendarioFacturacionSgeWriteIntegrationEnabled && this.formPart.proyectosSGE$.value.length === 0) {
       this.subscriptions.push(
         this.dialogService.showInfoDialog(this.msgNotAvailableNotificar).subscribe()
       );

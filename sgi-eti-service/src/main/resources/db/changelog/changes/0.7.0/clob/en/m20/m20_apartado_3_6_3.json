@@ -1,0 +1,46 @@
+[
+  {
+    "key": "ap3_6_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.6.3 Protected or endangered animals"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Threatened and endangered species can be consulted on the CITES website (<a target='_blank' href='https://cites.org/esp/app/appendices.php'>Annex A to Regulation (EC) No 338/97</a>).</p><p>The regulation of the experimental use of these species is specified in the <a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a20'>article 20</a> of Royal Decree 53/13, according to which these animals can only be used if the following two conditions are met:</p><ul><li>The project has one of the following purposes:<ul><li>a) Prevention, prophylaxis, diagnosis or treatment of diseases, health problems or other anomalies or their effects on humans, animals or plants</li><li>b) The protection of the natural environment in the interest of the health or well-being of humans or animals.</li><li>c) Research aimed at the conservation of species.</li></ul></li><li>It has been scientifically justified that this purpose cannot be achieved using animals of other species.</li></ul><p>This section also includes the use of primates as experimental animals, for which the provisions of the <strong>Royal Decree 1386/2018</strong>, of November 19, which modifies Royal Decree 53/2013.</p>"
+      },
+      {
+        "template": "Are they protected or endangered animals?"
+      },
+      {
+        "key": "animalesProtegidosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: please remember that exceptions require providing the respective document in section '5.4 Special situations'.</p>"
+      }
+    ]
+  }
+]

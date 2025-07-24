@@ -6,12 +6,15 @@ import static org.mockito.Mockito.verify;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoNombre;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
@@ -23,6 +26,7 @@ import org.crue.hercules.sgi.csp.repository.ProyectoConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.service.BaseServiceTest;
 import org.crue.hercules.sgi.csp.service.ProyectoConceptoGastoService;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -80,7 +84,7 @@ class ProyectoConceptoGastoServiceImplTest extends BaseServiceTest {
 
     Assertions.assertThatThrownBy(() -> this.service.create(proyectoConceptoGasto)).isInstanceOf(
         IllegalArgumentException.class)
-        .hasMessage("La fecha de inicio no puede ser posterior a la fecha de fin del proyecto");
+        .hasMessage("La fecha de inicio no puede ser superior a la fecha de fin");
   }
 
   @Test
@@ -109,7 +113,7 @@ class ProyectoConceptoGastoServiceImplTest extends BaseServiceTest {
 
     Assertions.assertThatThrownBy(() -> this.service.update(proyectoConceptoGasto)).isInstanceOf(
         IllegalArgumentException.class)
-        .hasMessage("La fecha de inicio no puede ser posterior a la fecha de fin del proyecto");
+        .hasMessage("La fecha de inicio no puede ser superior a la fecha de fin");
   }
 
   @Test
@@ -167,9 +171,11 @@ class ProyectoConceptoGastoServiceImplTest extends BaseServiceTest {
   }
 
   private ConceptoGasto buildMockConceptoGasto(Long id, String nombre) {
+    Set<ConceptoGastoNombre> nombreConceptoGasto = new HashSet<>();
+    nombreConceptoGasto.add(new ConceptoGastoNombre(Language.ES, nombre));
     return ConceptoGasto.builder()
         .id(id)
-        .nombre(nombre)
+        .nombre(nombreConceptoGasto)
         .activo(true)
         .build();
   }

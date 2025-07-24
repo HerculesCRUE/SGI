@@ -15,7 +15,9 @@ import {
   mixinFindAll,
   mixinFindById,
   mixinUpdate,
+  RSQLSgiRestFilter,
   SgiRestBaseService,
+  SgiRestFilterOperator,
   SgiRestFindOptions, SgiRestListResult,
   UpdateCtor
 } from '@sgi/framework/http';
@@ -67,6 +69,20 @@ export class ProyectoAnualidadService extends _ProyectoAnualidadServiceMixinBase
       `${environment.serviceServers.csp}${ProyectoAnualidadService.MAPPING}`,
       http
     );
+  }
+
+  /**
+   * Busca todas las anualidades de los proyectos que tengan alguno de los ids de la lista
+   *
+   * @param proyectoIds lista de identificadores de proyecto
+   * @returns la lista de anualidades de los proyectos
+   */
+  findAllByProyectoIdIn(proyectoIds: string[]): Observable<SgiRestListResult<IProyectoAnualidad>> {
+    const options: SgiRestFindOptions = {
+      filter: new RSQLSgiRestFilter('proyectoId', SgiRestFilterOperator.IN, proyectoIds)
+    };
+
+    return this.findAll(options);
   }
 
   /**

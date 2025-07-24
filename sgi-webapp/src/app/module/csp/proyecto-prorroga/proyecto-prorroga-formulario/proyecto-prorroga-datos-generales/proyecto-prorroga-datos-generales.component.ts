@@ -36,7 +36,7 @@ export class ProyectoProrrogaDatosGeneralesComponent extends FormFragmentCompone
     protected actionService: ProyectoProrrogaActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as ProyectoProrrogaDatosGeneralesFragment;
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(36%-10px)';
@@ -58,10 +58,10 @@ export class ProyectoProrrogaDatosGeneralesComponent extends FormFragmentCompone
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_PRORROGA_OBSERVACIONES,
       MSG_PARAMS.CARDINALIRY.PLURAL

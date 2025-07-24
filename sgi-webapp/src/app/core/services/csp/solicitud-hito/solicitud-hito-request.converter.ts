@@ -1,3 +1,4 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { ISolicitudHito } from '@core/models/csp/solicitud-hito';
 import { ITipoHito } from '@core/models/csp/tipos-configuracion';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -16,8 +17,9 @@ class SolicitudHitoRequestConverter extends SgiBaseConverter<ISolicitudHitoReque
       tipoHito: {
         id: value.tipoHitoId
       } as ITipoHito,
-      comentario: value.comentario,
+      comentario: value.comentario ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.comentario) : [],
       solicitudId: value.solicitudId,
+      createdBy: null,
       aviso: value.aviso ? {
         email: {
           id: undefined,
@@ -41,7 +43,7 @@ class SolicitudHitoRequestConverter extends SgiBaseConverter<ISolicitudHitoReque
     return {
       fecha: LuxonUtils.toBackend(value.fecha),
       tipoHitoId: value.tipoHito?.id,
-      comentario: value.comentario,
+      comentario: value.comentario ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.comentario) : [],
       solicitudId: value.solicitudId,
       aviso: value.aviso ? {
         fechaEnvio: LuxonUtils.toBackend(value.aviso.task.instant),

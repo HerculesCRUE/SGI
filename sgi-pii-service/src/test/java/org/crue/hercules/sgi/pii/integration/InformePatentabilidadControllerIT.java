@@ -1,10 +1,14 @@
 package org.crue.hercules.sgi.pii.integration;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.dto.InformePatentabilidadInput;
 import org.crue.hercules.sgi.pii.dto.InformePatentabilidadOutput;
 import org.junit.jupiter.api.Test;
@@ -106,7 +110,8 @@ class InformePatentabilidadControllerIT extends BaseIT {
     final InformePatentabilidadOutput created = response.getBody();
 
     Assertions.assertThat(created.getId()).as("id").isNotNull();
-    Assertions.assertThat(created.getComentarios()).as("getComentarios()").isEqualTo(toCreate.getComentarios());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getComentarios(), Language.ES)).as("getComentarios()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toCreate.getComentarios(), Language.ES));
     Assertions.assertThat(created.getContactoEntidadCreadora()).as("getContactoEntidadCreadora()")
         .isEqualTo(toCreate.getContactoEntidadCreadora());
     Assertions.assertThat(created.getContactoExaminador()).as("getContactoExaminador()")
@@ -116,7 +121,8 @@ class InformePatentabilidadControllerIT extends BaseIT {
         .isEqualTo(toCreate.getEntidadCreadoraRef());
     Assertions.assertThat(created.getFecha()).as("getFecha()").isEqualTo(fecha);
     Assertions.assertThat(created.getInvencionId()).as("getInvencionId()").isEqualTo(invencionId);
-    Assertions.assertThat(created.getNombre()).as("getNombre()").isEqualTo(toCreate.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toCreate.getNombre(), Language.ES));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -175,7 +181,8 @@ class InformePatentabilidadControllerIT extends BaseIT {
     final InformePatentabilidadOutput created = response.getBody();
 
     Assertions.assertThat(created.getId()).as("id").isEqualTo(toUpdateId);
-    Assertions.assertThat(created.getComentarios()).as("getComentarios()").isEqualTo(toUpdate.getComentarios());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getComentarios(), Language.ES)).as("getComentarios()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toUpdate.getComentarios(), Language.ES));
     Assertions.assertThat(created.getContactoEntidadCreadora()).as("getContactoEntidadCreadora()")
         .isEqualTo(toUpdate.getContactoEntidadCreadora());
     Assertions.assertThat(created.getContactoExaminador()).as("getContactoExaminador()")
@@ -185,7 +192,8 @@ class InformePatentabilidadControllerIT extends BaseIT {
         .isEqualTo(toUpdate.getEntidadCreadoraRef());
     Assertions.assertThat(created.getFecha()).as("getFecha()").isEqualTo(fecha);
     Assertions.assertThat(created.getInvencionId()).as("getInvencionId()").isEqualTo(invencionId);
-    Assertions.assertThat(created.getNombre()).as("getNombre()").isEqualTo(toUpdate.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toUpdate.getNombre(), Language.ES));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -242,15 +250,22 @@ class InformePatentabilidadControllerIT extends BaseIT {
   }
 
   private InformePatentabilidadInput buildMockInformePatentabilidadInput(Long invencionId, Instant fecha) {
+
+    List<I18nFieldValueDto> nombreInformePatentabilidad = new ArrayList<>();
+    nombreInformePatentabilidad.add(new I18nFieldValueDto(Language.ES, "mocked informe patentabilidad"));
+
+    List<I18nFieldValueDto> comentariosInformePatentabilidad = new ArrayList<>();
+    comentariosInformePatentabilidad.add(new I18nFieldValueDto(Language.ES, "mocked informe"));
+
     return InformePatentabilidadInput.builder()
-        .comentarios("mocked informe")
+        .comentarios(comentariosInformePatentabilidad)
         .invencionId(invencionId)
         .contactoEntidadCreadora("mocked contacto entidad creadora")
         .contactoExaminador("mocked contacto examinador")
         .documentoRef("mocked documento ref")
         .entidadCreadoraRef("entidad creadora ref")
         .fecha(fecha)
-        .nombre("mocked informe patentabilidad")
+        .nombre(nombreInformePatentabilidad)
         .resultadoInformePatentabilidadId(1L)
         .build();
   }

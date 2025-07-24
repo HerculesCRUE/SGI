@@ -143,6 +143,10 @@ mat-form-field {
   box-shadow: 0 5px 6px -6px map-get($sgi-custom-colors, divider);
 }
 
+.field-info-tooltip {
+  white-space: pre-line;
+}
+
 /**/
 /** FIN MENSAJES */
 /**/
@@ -405,4 +409,53 @@ mat-form-field {
 
 /**/
 /** FIN CKEDITOR */
+/**/
+
+/**/
+/** I18N Components */
+/**/
+.mat-form-field-type-sgi-i18n-textarea,
+.mat-form-field-type-i18n-textarea {
+  .mat-form-field-label-wrapper {
+    margin-left: 50px;
+    width: calc(100% - 50px);
+  }
+
+  &.mat-form-field-should-float {
+    .mat-form-field-label-wrapper {
+      margin-left: 0px;
+    }
+  }
+}
+
+.mat-form-field-type-sgi-i18n-input,
+.mat-form-field-type-i18n-input {
+  .mat-form-field-label-wrapper {
+    margin-left: 50px;
+    width: calc(100% - 50px);
+  }
+
+  &.mat-form-field-should-float {
+    .mat-form-field-label-wrapper {
+      margin-left: 0px;
+    }
+  }
+}
+
+.mat-form-field-type-sgi-input-linea-investigacion,
+.mat-form-field-type-input-linea-investigacion {
+  .mat-form-field-label-wrapper {
+    margin-left: 50px;
+    width: calc(100% - 50px);
+  }
+
+  &.mat-form-field-should-float {
+    .mat-form-field-label-wrapper {
+      margin-left: 0px;
+    }
+  }
+}
+
+/**/
+/** Fin I18N Components */
 /**/

@@ -1,10 +1,17 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaDocumentoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumento;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumentoNombre;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumentoObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaDocumentoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -59,9 +66,11 @@ class ConvocatoriaDocumentoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("tipoFase.id").value(convocatoriaDocumento.getTipoFase().getId()))
         .andExpect(
             MockMvcResultMatchers.jsonPath("tipoDocumento.id").value(convocatoriaDocumento.getTipoDocumento().getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(convocatoriaDocumento.getNombre()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoriaDocumento.getNombre(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("publico").value(convocatoriaDocumento.getPublico()))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(convocatoriaDocumento.getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoriaDocumento.getObservaciones(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("documentoRef").value(convocatoriaDocumento.getDocumentoRef()));
   }
 
@@ -90,8 +99,13 @@ class ConvocatoriaDocumentoControllerTest extends BaseControllerTest {
     // given: Existing ConvocatoriaDocumento to be updated
     ConvocatoriaDocumento convocatoriaDocumentoExistente = generarMockConvocatoriaDocumento(1L);
     ConvocatoriaDocumento convocatoriaDocumento = generarMockConvocatoriaDocumento(1L);
-    convocatoriaDocumento.setNombre("nombre-modificado");
-    convocatoriaDocumento.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaDocumentoNombre> convocatoriaDocumentonombre = new HashSet<>();
+    convocatoriaDocumentonombre.add(new ConvocatoriaDocumentoNombre(Language.ES, "nombre-modificado"));
+    convocatoriaDocumento.setNombre(convocatoriaDocumentonombre);
+    Set<ConvocatoriaDocumentoObservaciones> convocatoriaDocumentoObservaciones = new HashSet<>();
+    convocatoriaDocumentoObservaciones
+        .add(new ConvocatoriaDocumentoObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoriaDocumento.setObservaciones(convocatoriaDocumentoObservaciones);
     convocatoriaDocumento.setDocumentoRef("documentoRef-modificado");
 
     BDDMockito.given(service.findById(ArgumentMatchers.<Long>any())).willReturn(convocatoriaDocumentoExistente);
@@ -114,9 +128,11 @@ class ConvocatoriaDocumentoControllerTest extends BaseControllerTest {
             MockMvcResultMatchers.jsonPath("tipoFase.id").value(convocatoriaDocumentoExistente.getTipoFase().getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoDocumento.id")
             .value(convocatoriaDocumentoExistente.getTipoDocumento().getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(convocatoriaDocumento.getNombre()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoriaDocumento.getNombre(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("publico").value(convocatoriaDocumentoExistente.getPublico()))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(convocatoriaDocumento.getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(convocatoriaDocumento.getObservaciones(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("documentoRef").value(convocatoriaDocumento.getDocumentoRef()));
   }
 
@@ -226,15 +242,21 @@ class ConvocatoriaDocumentoControllerTest extends BaseControllerTest {
     TipoFase tipoFase = TipoFase.builder().id(id).build();
     TipoDocumento tipoDocumento = TipoDocumento.builder().id(id).build();
 
+    Set<ConvocatoriaDocumentoNombre> convocatoriaDocumentonombre = new HashSet<>();
+    convocatoriaDocumentonombre.add(new ConvocatoriaDocumentoNombre(Language.ES, "nombre doc-" + id));
+
+    Set<ConvocatoriaDocumentoObservaciones> convocatoriaDocumentoObservaciones = new HashSet<>();
+    convocatoriaDocumentoObservaciones.add(new ConvocatoriaDocumentoObservaciones(Language.ES, "observaciones-" + id));
+
     // @formatter:off
     return ConvocatoriaDocumento.builder()
         .id(id)
         .convocatoriaId(1L)
         .tipoFase(tipoFase)
         .tipoDocumento(tipoDocumento)
-        .nombre("nombre doc-" + id)
+        .nombre(convocatoriaDocumentonombre)
         .publico(Boolean.TRUE)
-        .observaciones("observaciones-" + id)
+        .observaciones(convocatoriaDocumentoObservaciones)
         .documentoRef("documentoRef" + id)
         .build();
     // @formatter:on

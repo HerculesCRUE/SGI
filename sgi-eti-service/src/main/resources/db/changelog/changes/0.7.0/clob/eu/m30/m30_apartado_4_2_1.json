@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.1 Zer lekutan erabiliko diren agente biologikoak edo genetikoki eraldatutako organismoak"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Agente biologikoak edo halakoak izan ditzaketen materialak manipulatzeko, agentearen arriskugarritasun eta arrisku mailarekin bat datozen baldintza zehatz batzuk bete behar ditu lanerako lekuak, segurtasuna bermatzeko.<br>Laborategi motak arrisku mailarako egokia izan behar du. Agente biologiko baten baino gehiagoren eraginpean egonez gero, <b>arrisku handienekoa</b> hartuko da kontuan.</p><ul><li>E1 euste maila: oinarrizko laborategia</li><li>E2 euste maila: oinarrizko laborategia, segurtasun biologikoko kabinarekin, edo babes pertsonalerako edo euste fisikorako egokiak diren beste gailu batzuekin. </li><li>E3 euste maila: laborategi mugatua, segurtasun biologikoko kabinarekin, edo babes pertsonalerako edo euste fisikorako egokiak diren beste gailu batzuekin. </li><li>E4 euste maila: gehienezko euste maila duen laborategi hermetikoa.</li></ul><p>Euste neurri eta mailei buruzko informazio gehiagorako, kontsultatu <b><a href='https://boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#anv' target='_blank'> 664-97 EDren V. eranskina</a></b>.</p>"
+      }
+    ]
+  }
+]

@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.dto.ProyectoFaseInput;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoFaseNotFoundException;
@@ -11,6 +14,7 @@ import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
 import org.crue.hercules.sgi.csp.model.ProyectoFaseAviso;
+import org.crue.hercules.sgi.csp.model.ProyectoFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoFaseRepository;
@@ -19,7 +23,11 @@ import org.crue.hercules.sgi.csp.repository.TipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoFaseSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoFaseAvisoService;
 import org.crue.hercules.sgi.csp.service.ProyectoFaseService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,6 +44,20 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoFaseServiceImpl implements ProyectoFaseService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_MODELO = "modelo";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_MODEL_MODELO_TIPO_FASE = "org.crue.hercules.sgi.csp.model.ModeloTipoFase.message";
+  private static final String MSG_MODEL_PROYECTO_FASE = "org.crue.hercules.sgi.csp.model.ProyectoFase.message";
+  private static final String MSG_MODEL_TIPO_FASE = "org.crue.hercules.sgi.csp.model.TipoFase.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODELO_EJECUCION_INACTIVO = "org.springframework.util.Assert.entity.modeloEjecucion.inactivo.message";
+  private static final String MSG_PROYECTO_ASSIGN_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.exceptions.AssignModeloEjecucion.message";
+  private static final String MSG_PROYECTO_SIN_MODELO_ASIGNADO = "org.crue.hercules.sgi.csp.model.Proyecto.sinModeloEjecucion.message";
+  private static final String MSG_NO_DISPONIBLE_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.model.ModeloEjecucion.noDisponible.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP = "org.springframework.util.Assert.date.overloap.message";
+  private static final String MSG_PROYECTO_FASE_INDICAR_FECHA = "proyectoFase.indicarFecha";
 
   private final ProyectoFaseRepository repository;
   private final ProyectoRepository proyectoRepository;
@@ -74,7 +96,10 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
     ProyectoFase toCreate = ProyectoFase.builder()
         .fechaFin(proyectoFaseInput.getFechaFin())
         .fechaInicio(proyectoFaseInput.getFechaInicio())
-        .observaciones(proyectoFaseInput.getObservaciones())
+        .observaciones(
+            (proyectoFaseInput.getObservaciones().stream()
+                .map(observaciones -> new ProyectoFaseObservaciones(observaciones.getLang(), observaciones.getValue()))
+                .collect(Collectors.toSet())))
         .proyectoId(proyectoFaseInput.getProyectoId())
         .tipoFase(tipoFaseRepository.findById(proyectoFaseInput.getTipoFaseId())
             .orElseThrow(() -> new TipoFaseNotFoundException(proyectoFaseInput.getTipoFaseId())))
@@ -107,16 +132,22 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
   public ProyectoFase update(Long id, ProyectoFaseInput proyectoFaseActualizar) {
     log.debug("update(ProyectoFase ProyectoFaseActualizar) - start");
 
-    Assert.notNull(id, "ProyectoFase id no puede ser null para actualizar un ProyectoFase");
+    AssertHelper.idNotNull(id, ProyectoFase.class);
     this.validarRequeridosProyectoFase(proyectoFaseActualizar);
 
     return repository.findById(id).map(proyectoFase -> {
 
       validarProyectoFase(proyectoFaseActualizar, id);
 
+      List<I18nFieldValueDto> listaObservaciones = proyectoFaseActualizar.getObservaciones();
+
+      Set<ProyectoFaseObservaciones> setObservaciones = listaObservaciones.stream()
+          .map(dto -> new ProyectoFaseObservaciones(dto.getLang(), dto.getValue()))
+          .collect(Collectors.toSet());
+
       proyectoFase.setFechaInicio(proyectoFaseActualizar.getFechaInicio());
       proyectoFase.setFechaFin(proyectoFaseActualizar.getFechaFin());
-      proyectoFase.setObservaciones(proyectoFaseActualizar.getObservaciones());
+      proyectoFase.setObservaciones(setObservaciones);
       proyectoFase.setTipoFase(this.tipoFaseRepository.findById(proyectoFaseActualizar.getTipoFaseId())
           .orElseThrow(() -> new TipoFaseNotFoundException(proyectoFaseActualizar.getTipoFaseId())));
 
@@ -162,7 +193,7 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ProyectoFase id no puede ser null para eliminar un ProyectoFase");
+    AssertHelper.idNotNull(id, ProyectoFase.class);
     Optional<ProyectoFase> toDelete = repository.findById(id);
     if (!toDelete.isPresent()) {
       throw new ProyectoFaseNotFoundException(id);
@@ -233,8 +264,7 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
       datosProyectoFase.setFechaFin(datosProyectoFase.getFechaInicio());
     }
 
-    Assert.isTrue(datosProyectoFase.getFechaFin().compareTo(datosProyectoFase.getFechaInicio()) >= 0,
-        "La fecha de fin debe ser posterior a la fecha de inicio");
+    AssertHelper.isBefore(datosProyectoFase.getFechaFin().compareTo(datosProyectoFase.getFechaInicio()) >= 0);
 
     // Se comprueba la existencia del proyecto
     Long proyectoId = datosProyectoFase.getProyectoId();
@@ -251,22 +281,41 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
 
     // Está asignado al ModeloEjecucion
     Assert.isTrue(modeloTipoFase.isPresent(),
-        "Tipo Fase no disponible para el ModeloEjecucion '"
-            + ((modeloEjecucion.isPresent()) ? modeloEjecucion.get().getNombre() : "Proyecto sin modelo asignado")
-            + "'");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROYECTO_ASSIGN_MODELO_EJECUCION)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+            .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+            .parameter(MSG_KEY_MODELO, ((modeloEjecucion.isPresent()) ? modeloEjecucion.get().getNombre()
+                : ApplicationContextSupport.getMessage(MSG_PROYECTO_SIN_MODELO_ASIGNADO)))
+            .build());
 
     // La asignación al ModeloEjecucion está activa
-    Assert.isTrue(modeloTipoFase.get().getActivo(), "ModeloTipoFase '" + modeloTipoFase.get().getTipoFase().getNombre()
-        + "' no está activo para el ModeloEjecucion '" + modeloTipoFase.get().getModeloEjecucion().getNombre() + "'");
+    Assert.isTrue(modeloTipoFase.get().getActivo(),
+        () -> ProblemMessage.builder()
+            .key(MSG_MODELO_EJECUCION_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_FASE))
+            .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+            .parameter(MSG_KEY_MODELO, modeloTipoFase.get().getModeloEjecucion().getNombre())
+            .build());
 
     // El TipoFase está activo
     Assert.isTrue(modeloTipoFase.get().getTipoFase().getActivo(),
-        "TipoFase '" + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+            .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+            .build());
 
     datosProyectoFase.setTipoFaseId(modeloTipoFase.get().getTipoFase().getId());
 
     Assert.isTrue(!existsProyectoFaseConFechasSolapadas(datosProyectoFase, id),
-        "Ya existe un registro para la misma Fase en ese rango de fechas");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_DATE_OVERLOAP)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_PROYECTO_FASE))
+            .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                MSG_MODEL_TIPO_FASE))
+            .build());
 
     log.debug("validarProyectoFase(ProyectoFase datosProyectoFase) - end");
   }
@@ -280,14 +329,11 @@ public class ProyectoFaseServiceImpl implements ProyectoFaseService {
   private void validarRequeridosProyectoFase(ProyectoFaseInput datosProyectoFase) {
     log.debug("validarRequeridosProyectoFase(ProyectoFase datosProyectoFase) - start");
 
-    Assert.isTrue(datosProyectoFase.getProyectoId() != null,
-        "Id Proyecto no puede ser null para realizar la acción sobre ProyectoFase");
-
-    Assert.isTrue(datosProyectoFase.getTipoFaseId() != null,
-        "Id Tipo Fase no puede ser null para realizar la acción sobre ProyectoFase");
+    AssertHelper.idNotNull(datosProyectoFase.getProyectoId(), Proyecto.class);
+    AssertHelper.idNotNull(datosProyectoFase.getTipoFaseId(), TipoFase.class);
 
     Assert.isTrue(datosProyectoFase.getFechaInicio() != null || datosProyectoFase.getFechaFin() != null,
-        "Debe indicarse al menos una fecha para realizar la acción sobre ProyectoFase");
+        ApplicationContextSupport.getMessage(MSG_PROYECTO_FASE_INDICAR_FECHA));
 
     log.debug("validarRequeridosProyectoFase(ProyectoFase datosProyectoFase) - end");
 

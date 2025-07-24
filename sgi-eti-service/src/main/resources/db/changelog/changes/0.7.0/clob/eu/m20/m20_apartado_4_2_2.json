@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap4_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.2 Neurri zuzentzailerik ez aplikatzea"
+    },
+    "fieldGroup": [
+      {
+        "template": "Prozedura edo esku hartzeren batean neurri zuzentzailerik aplikatuko ez bada, justifikatu arrazoia."
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Neurri zuzentzaileei (anestesia eta analgesia) buruzko informazio gehiagorako, ikusi 53/13 EDren 26. art. "
+      },
+      {
+        "key": "justificarRazon",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Justifikatu",
+          "required": false
+        }
+      }
+    ]
+  }
+]

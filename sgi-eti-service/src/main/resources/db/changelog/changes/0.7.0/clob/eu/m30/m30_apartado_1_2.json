@@ -1,0 +1,31 @@
+[
+  {
+    "key": "ap1_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "1.2 Agente biologikoen erabilera justifikatzea"
+    },
+    "fieldGroup": [
+      {
+        "template": " <p>Labur-labur azaltzea ikerketa jardueran deskribatzen diren agente biologiko eta GEO guztiak erabiltzeko beharra.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Agente biologikoak: agente biologikoak honela definituta daude langilea lanean agente biologikoen eraginpean egoteak dakartzan arriskuetatik babesteari buruzko maiatzaren <a href='https://www.boe.es/buscar/act.php?id=BOE-A-1997-11144' target='_blank'>12ko 664/199 Errege Dekretuaren 2</a>. artikuluan: edozein motatako infekzioak, alergiak edo toxikotasuna eragin dezaketen mikroorganismoak (genetikoki eraldatutakoak barne), zelula kultiboak eta giza endoparasitoak.</p>"
+      },
+      {
+        "key": "justificacion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Justifikazioa",
+          "required": true
+        }
+      }
+    ]
+  }
+]

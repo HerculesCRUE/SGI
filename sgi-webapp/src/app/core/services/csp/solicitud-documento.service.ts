@@ -1,23 +1,41 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SOLICITUD_DOCUMENTO_CONVERTER } from '@core/converters/csp/solicitud-documento.converter';
-import { ISolicitudDocumentoBackend } from '@core/models/csp/backend/solicitud-documento-backend';
 import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
+import { ISolicitudDocumentoResponse } from '@core/services/csp/solicitud-documento/solicitud-documento-response';
+import { SOLICITUD_DOCUMENTO_RESPONSE_CONVERTER } from '@core/services/csp/solicitud-documento/solicitud-documento-response.converter';
 import { environment } from '@env';
-import { SgiMutableRestService } from '@sgi/framework/http';
+import { CreateCtor, mixinCreate, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
+import { Observable } from 'rxjs';
+
+const _SolicitudDocumentoServiceMixinBase:
+  CreateCtor<ISolicitudDocumento, ISolicitudDocumento, ISolicitudDocumentoResponse, ISolicitudDocumentoResponse> &
+  UpdateCtor<number, ISolicitudDocumento, ISolicitudDocumento, ISolicitudDocumentoResponse, ISolicitudDocumentoResponse> &
+  typeof SgiRestBaseService =
+  mixinUpdate(
+    mixinCreate(
+      SgiRestBaseService,
+      SOLICITUD_DOCUMENTO_RESPONSE_CONVERTER,
+      SOLICITUD_DOCUMENTO_RESPONSE_CONVERTER
+    ),
+    SOLICITUD_DOCUMENTO_RESPONSE_CONVERTER,
+    SOLICITUD_DOCUMENTO_RESPONSE_CONVERTER
+  );
 
 @Injectable({
   providedIn: 'root'
 })
-export class SolicitudDocumentoService extends SgiMutableRestService<number, ISolicitudDocumentoBackend, ISolicitudDocumento> {
+export class SolicitudDocumentoService extends _SolicitudDocumentoServiceMixinBase {
   private static readonly MAPPING = '/solicituddocumentos';
 
   constructor(protected http: HttpClient) {
     super(
-      SolicitudDocumentoService.name,
       `${environment.serviceServers.csp}${SolicitudDocumentoService.MAPPING}`,
-      http,
-      SOLICITUD_DOCUMENTO_CONVERTER
+      http
     );
   }
+
+  deleteById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${id}`);
+  }
+
 }

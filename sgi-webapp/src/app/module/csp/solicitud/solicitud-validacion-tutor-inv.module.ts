@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { CspSharedModule } from '../shared/csp-shared.module';
 import { SolicitudDataResolver } from './solicitud-data.resolver';
 import { SolicitudValidacionTutorRoutingInvModule } from './solicitud-validacion-tutor-routing-inv.module';
@@ -25,7 +26,8 @@ import { ValidacionTutorListadoInvComponent } from './validacion-tutor-listado-i
     FormsModule,
     CspSharedModule,
     SgiAuthModule,
-    SgempSharedModule
+    SgempSharedModule,
+    SgpSharedModule
   ],
   providers: [
     SolicitudDataResolver

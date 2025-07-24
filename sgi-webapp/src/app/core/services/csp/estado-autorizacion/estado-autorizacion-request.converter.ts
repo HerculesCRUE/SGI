@@ -1,3 +1,4 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IAutorizacion } from '@core/models/csp/autorizacion';
 import { IEstadoAutorizacion } from '@core/models/csp/estado-autorizacion';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -15,7 +16,7 @@ class EstadoAutorizacionRequestConverter
       autorizacion: {
         id: value.autorizacionId
       } as IAutorizacion,
-      comentario: value.comentario,
+      comentario: value.comentario ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.comentario) : [],
       fecha: LuxonUtils.fromBackend(value.fecha),
       estado: value.estado
     };
@@ -27,7 +28,7 @@ class EstadoAutorizacionRequestConverter
     }
     return {
       autorizacionId: value.autorizacion?.id,
-      comentario: value.comentario,
+      comentario: value.comentario ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.comentario) : [],
       estado: value.estado,
       fecha: LuxonUtils.toBackend(value.fecha),
     };

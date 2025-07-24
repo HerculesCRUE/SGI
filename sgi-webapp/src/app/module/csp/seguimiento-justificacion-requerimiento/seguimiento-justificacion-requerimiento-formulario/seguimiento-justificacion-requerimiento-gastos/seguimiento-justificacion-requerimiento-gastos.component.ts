@@ -13,7 +13,6 @@ import { DialogService } from '@core/services/dialog.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 import { GastoRequerimientoJustificacionModalComponent, GastoRequerimientoJustificacionModalData } from '../../modals/gasto-requerimiento-justificacion-modal/gasto-requerimiento-justificacion-modal.component';
 import { GastosJustificadosModalComponent, IGastosJustificadosModalData } from '../../modals/gastos-justificados-modal/gastos-justificados-modal.component';
 import { SeguimientoJustificacionRequerimientoActionService } from '../../seguimiento-justificacion-requerimiento.action.service';
@@ -49,9 +48,9 @@ export class SeguimientoJustificacionRequerimientoGastosComponent extends Fragme
     private readonly dialogService: DialogService,
     private readonly translate: TranslateService,
   ) {
-    super(actionService.FRAGMENT.GASTOS, actionService);
+    super(actionService.FRAGMENT.GASTOS, actionService, translate);
     this.formPart = this.fragment as SeguimientoJustificacionRequerimientoGastosFragment;
-    this.setupI18N();
+
   }
 
   ngOnInit(): void {
@@ -137,7 +136,7 @@ export class SeguimientoJustificacionRequerimientoGastosComponent extends Fragme
     return (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

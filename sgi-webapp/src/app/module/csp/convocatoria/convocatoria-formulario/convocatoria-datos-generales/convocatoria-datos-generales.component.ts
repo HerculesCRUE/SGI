@@ -8,8 +8,10 @@ import { FormFragmentComponent } from '@core/component/fragment.component';
 import { CLASIFICACION_CVN_MAP } from '@core/enums/clasificacion-cvn';
 import { FORMULARIO_SOLICITUD_MAP } from '@core/enums/formulario-solicitud';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { ESTADO_MAP, IConvocatoria } from '@core/models/csp/convocatoria';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -23,7 +25,7 @@ const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 const CONVOCATORIA_FECHA_PROVISIONAL_KEY = marker('csp.convocatoria.fecha-provisional');
 const CONVOCATORIA_FECHA_CONCESION_KEY = marker('csp.convocatoria.fecha-concesion');
 const CONVOCATORIA_AMBITO_GEOGRAFICO_KEY = marker('csp.convocatoria.ambito-geografico');
-const CONVOCATORIA_CODIGO_REFERENCIA_KEY = marker('csp.convocatoria.codigo-referencia');
+const CONVOCATORIA_CODIGO_REFERENCIA_KEY = marker('csp.convocatoria.codigo-externo');
 const CONVOCATORIA_DESCRIPCION_KEY = marker('csp.convocatoria.descripcion');
 const CONVOCATORIA_DURACION_KEY = marker('csp.convocatoria.duracion');
 const CONVOCATORIA_FINALIDAD_KEY = marker('csp.convocatoria.finalidad');
@@ -33,10 +35,11 @@ const CONVOCATORIA_TITULO_KEY = marker('csp.convocatoria.titulo');
 const CONVOCATORIA_UNIDAD_GESTION_KEY = marker('csp.convocatoria.unidad-gestion');
 const CONVOCATORIA_FORMULARIO_SOLICITUD_KEY = marker('csp.convocatoria.tipo-formulario');
 const CONVOCATORIA_VINCULADA_TOOLTIP_KEY = marker('csp.convocatoria.campo.vinculada');
+const CONVOCATORIA_CODIGO_INTERNO_KEY = marker('csp.convocatoria.codigo-interno');
 
 export interface AreaTematicaListado {
-  padre: string;
-  areasTematicas: string;
+  padre: I18nFieldValue[];
+  areasTematicas: I18nFieldValue[][];
 }
 
 @Component({
@@ -65,6 +68,7 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
   msgParamUnidadGestionEntity = {};
   msgParamFormularioSolicitud = {};
   msgTooltip = {};
+  msgParamCodigoInternoEntity = {};
   textoDeleteAreaTematica: string;
 
   convocatoriaAreaTematicas = new MatTableDataSource<AreaTematicaListado>();
@@ -88,15 +92,16 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
     protected actionService: ConvocatoriaActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaDatosGeneralesFragment;
   }
 
   ngOnInit() {
     super.ngOnInit();
-    this.setupI18N();
+
     this.convocatoriaAreaTematicas.paginator = this.paginator;
     this.convocatoriaAreaTematicas.sort = this.sort;
     this.subscriptions.push(this.formPart.areasTematicas$.subscribe((data) => {
@@ -105,7 +110,7 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
       } else {
         const listadoAreas: AreaTematicaListado = {
           padre: data[0]?.padre.nombre,
-          areasTematicas: data.map(area => area.convocatoriaAreaTematica.value.areaTematica.nombre).join(', ')
+          areasTematicas: data.map(area => area.convocatoriaAreaTematica.value.areaTematica.nombre).sort(this.sortAreasTematicasByNombre)
         };
         this.convocatoriaAreaTematicas.data = [listadoAreas];
       }
@@ -113,109 +118,110 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
     ));
   }
 
-  private setupI18N(): void {
-    this.translate.get(
+  protected setupI18N(): void {
+    this.subscriptions.push(this.translate.get(
       AREA_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
-    ).subscribe((value) => this.msgParamAreaEntities = { entity: value });
+    ).subscribe((value) => this.msgParamAreaEntities = { entity: value }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       AREA_TEMATICA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamAreaTematicaEntity = { entity: value });
+    ).subscribe((value) => this.msgParamAreaTematicaEntity = { entity: value }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       AREA_TEMATICA_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
-    ).subscribe((value) => this.msgParamAreaTematicaEntities = { entity: value });
+    ).subscribe((value) => this.msgParamAreaTematicaEntities = { entity: value }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_FORMULARIO_SOLICITUD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe(
       (value) => this.msgParamFormularioSolicitud = {
         entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR
       }
-    );
-    this.translate.get(
+    ));
+
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_CODIGO_REFERENCIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe(
       (value) => this.msgParamCodigoReferenciaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
-    );
+    ));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_UNIDAD_GESTION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamUnidadGestionEntity =
-      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_FECHA_PROVISIONAL_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaProvisionalEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
+    ).subscribe((value) => this.msgParamFechaProvisionalEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_FECHA_CONCESION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaConcesionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
+    ).subscribe((value) => this.msgParamFechaConcesionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_TITULO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamTituloEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamTituloEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_MODELO_EJECUCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamModeloEjecucionEntity =
-      { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+      { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_MODELO_EJECUCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamModeloEjecucionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+    ).subscribe((value) => this.msgParamModeloEjecucionEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_FINALIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamFinalidadEntity =
-      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+      { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_DURACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamDuracionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
+    ).subscribe((value) => this.msgParamDuracionEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_AMBITO_GEOGRAFICO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamAmbitoGeograficoEntity =
-      { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+      { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_DESCRIPCION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).subscribe((value) => this.msgParamDescripcionEntity = {
       entity: value,
       ...MSG_PARAMS.GENDER.MALE,
       ...MSG_PARAMS.CARDINALIRY.SINGULAR
-    });
+    }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_OBSERVACIONES_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
     ).subscribe((value) => this.msgParamObservacionesEntity = {
       entity: value,
       ...MSG_PARAMS.GENDER.FEMALE,
       ...MSG_PARAMS.CARDINALIRY.PLURAL
-    });
+    }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       CONVOCATORIA_VINCULADA_TOOLTIP_KEY
-    ).subscribe((value) => this.msgTooltip = { entity: value });
+    ).subscribe((value) => this.msgTooltip = { entity: value }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       AREA_TEMATICA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
     ).pipe(
@@ -225,7 +231,14 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
           { entity: value, ...MSG_PARAMS.GENDER.MALE }
         );
       })
-    ).subscribe((value) => this.textoDeleteAreaTematica = value);
+    ).subscribe((value) => this.textoDeleteAreaTematica = value));
+
+    this.subscriptions.push(this.translate.get(
+      CONVOCATORIA_CODIGO_INTERNO_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).subscribe(
+      (value) => this.msgParamCodigoInternoEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }
+    ));
   }
 
   openModal(): void {
@@ -259,4 +272,11 @@ export class ConvocatoriaDatosGeneralesComponent extends FormFragmentComponent<I
       )
     );
   }
+
+  private sortAreasTematicasByNombre: (a1: I18nFieldValue[], a2: I18nFieldValue[]) => number = (a1, a2) => {
+    const nombreA = this.languageService.getFieldValue(a1);
+    const nombreB = this.languageService.getFieldValue(a2);
+    return nombreA.localeCompare(nombreB);
+  };
+
 }

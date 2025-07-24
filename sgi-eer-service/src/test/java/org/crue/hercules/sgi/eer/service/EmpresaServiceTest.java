@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.eer.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -12,7 +14,10 @@ import javax.validation.ValidationException;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eer.exceptions.EmpresaNotFoundException;
 import org.crue.hercules.sgi.eer.model.Empresa;
+import org.crue.hercules.sgi.eer.model.EmpresaNombreRazonSocial;
 import org.crue.hercules.sgi.eer.repository.EmpresaRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,7 +71,8 @@ class EmpresaServiceTest extends BaseServiceTest {
     Empresa empresa = empresaService.findById(1L);
     Assertions.assertThat(empresa.getId()).isEqualTo(1L);
     Assertions.assertThat(empresa.getActivo()).isEqualTo(Boolean.TRUE);
-    Assertions.assertThat(empresa.getNombreRazonSocial()).isEqualTo("Empresa1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(empresa.getNombreRazonSocial(), Language.ES))
+        .isEqualTo("Empresa1");
 
   }
 
@@ -123,7 +129,8 @@ class EmpresaServiceTest extends BaseServiceTest {
 
     // then: El tipo Fase se actualiza correctamente.
     Assertions.assertThat(empresaActualizada.getId()).isEqualTo(1L);
-    Assertions.assertThat(empresaActualizada.getNombreRazonSocial()).isEqualTo("Empresa1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(empresaActualizada.getNombreRazonSocial(), Language.ES))
+        .isEqualTo("Empresa1 actualizada");
 
   }
 
@@ -220,7 +227,8 @@ class EmpresaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       Empresa empresa = page.getContent().get(i);
-      Assertions.assertThat(empresa.getNombreRazonSocial()).isEqualTo("Empresa" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(empresa.getNombreRazonSocial(), Language.ES))
+          .isEqualTo("Empresa" + String.format("%03d", j));
     }
   }
 
@@ -241,9 +249,11 @@ class EmpresaServiceTest extends BaseServiceTest {
    * @return el objeto Empresa
    */
   public Empresa generarMockEmpresa(Long id, String nombreRazonSocial) {
+    Set<EmpresaNombreRazonSocial> nombreEmpresa = new HashSet<>();
+    nombreEmpresa.add(new EmpresaNombreRazonSocial(Language.ES, nombreRazonSocial));
     Empresa empresa = new Empresa();
     empresa.setId(id);
-    empresa.setNombreRazonSocial(nombreRazonSocial);
+    empresa.setNombreRazonSocial(nombreEmpresa);
     empresa.setActivo(Boolean.TRUE);
     return empresa;
   }

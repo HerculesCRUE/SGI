@@ -13,6 +13,7 @@ import { SgiRestListResult } from '@sgi/framework/http';
 import { BehaviorSubject, EMPTY, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { IEntidadFinanciadora } from '../proyecto-entidades-financiadoras/proyecto-entidades-financiadoras.fragment';
+import { NGXLogger } from 'ngx-logger';
 
 export interface IProyectoPeriodoAmortizacionListado extends IProyectoPeriodoAmortizacion {
   periodo: number;
@@ -29,6 +30,7 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
   private _amortizacionFondosSgeEnabled: boolean;
 
   constructor(
+    private readonly logger: NGXLogger,
     key: number,
     public readonly anualidades: boolean,
     public readonly solicitudId: number,
@@ -92,7 +94,12 @@ export class ProyectoAmortizacionFondosFragment extends Fragment {
                           map((empresa) => {
                             periodoAmortizacion.value.proyectoEntidadFinanciadora.empresa = empresa;
                             return periodoAmortizacion;
-                          }))
+                          }),
+                          catchError((error) => {
+                            this.logger.error(error);
+                            return of(periodoAmortizacion);
+                          })
+                        )
                       )
                     );
                   }),

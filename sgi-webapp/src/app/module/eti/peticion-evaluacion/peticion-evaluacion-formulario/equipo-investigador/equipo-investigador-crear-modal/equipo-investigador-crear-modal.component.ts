@@ -78,7 +78,7 @@ export class EquipoInvestigadorCrearModalComponent extends DialogFormComponent<I
   protected getValue(): IEquipoTrabajo {
     const equipoTrabajo: IEquipoTrabajo = {
       id: null,
-      peticionEvaluacion: null,
+      peticionEvaluacionId: null,
       persona: this.formGroup.controls.persona.value
     };
     return equipoTrabajo;

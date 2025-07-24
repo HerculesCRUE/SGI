@@ -1,7 +1,9 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -9,7 +11,10 @@ import javax.persistence.PersistenceUnitUtil;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoRequerimiento;
+import org.crue.hercules.sgi.csp.model.TipoRequerimientoNombre;
 import org.crue.hercules.sgi.csp.repository.TipoRequerimientoRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -74,8 +79,7 @@ class TipoRequerimientoServiceTest extends BaseServiceTest {
             int fromIndex = size * index;
             int toIndex = fromIndex + size;
             List<TipoRequerimiento> content = tipoRequerimientoList.subList(fromIndex, toIndex);
-            Page<TipoRequerimiento> page = new PageImpl<>(content, pageable, tipoRequerimientoList.size());
-            return page;
+            return new PageImpl<>(content, pageable, tipoRequerimientoList.size());
           }
         });
 
@@ -85,13 +89,14 @@ class TipoRequerimientoServiceTest extends BaseServiceTest {
 
     // then: A Page with ten TipoRequerimientoes are returned containing
     // descripcion='TipoRequerimiento031' to 'TipoRequerimiento040'
-    Assertions.assertThat(page.getContent().size()).isEqualTo(10);
+    Assertions.assertThat(page.getContent()).hasSize(10);
     Assertions.assertThat(page.getNumber()).isEqualTo(3);
     Assertions.assertThat(page.getSize()).isEqualTo(10);
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoRequerimiento tipoRequerimiento = page.getContent().get(i);
-      Assertions.assertThat(tipoRequerimiento.getNombre()).isEqualTo("TipoRequerimiento-" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoRequerimiento.getNombre(), Language.ES))
+          .isEqualTo("TipoRequerimiento-" + String.format("%03d", j));
     }
   }
 
@@ -101,10 +106,13 @@ class TipoRequerimientoServiceTest extends BaseServiceTest {
   }
 
   private TipoRequerimiento generarMockTipoRequerimiento(Long id, String nombre, Boolean activo) {
+    Set<TipoRequerimientoNombre> nombreTipoRequerimiento = new HashSet<>();
+    nombreTipoRequerimiento.add(new TipoRequerimientoNombre(Language.ES, nombre));
+
     return TipoRequerimiento.builder()
         .activo(activo)
         .id(id)
-        .nombre(nombre)
+        .nombre(nombreTipoRequerimiento)
         .build();
   }
 }

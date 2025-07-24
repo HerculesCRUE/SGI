@@ -15,8 +15,11 @@ import org.crue.hercules.sgi.csp.repository.ModeloTipoDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaDocumentoSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaDocumentoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -24,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,6 +37,21 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 
 public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoService {
+
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_DOCUMENTO_REF = "convocatoriaDocumento.documentoRef";
+  private static final String MSG_KEY_PUBLICO = "convocatoriaDocumento.publico";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_KEY_MODELO = "modelo";
+  private static final String MSG_MODEL_MODELO_TIPO_FASE = "org.crue.hercules.sgi.csp.model.ModeloTipoFase.message";
+  private static final String MSG_MODEL_TIPO_FASE = "org.crue.hercules.sgi.csp.model.TipoFase.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODEL_MODELO_TIPO_DOCUMENTO = "org.crue.hercules.sgi.csp.model.ModeloTipoDocumento.message";
+  private static final String MSG_MODEL_TIPO_DOCUMENTO = "org.crue.hercules.sgi.csp.model.TipoDocumento.message";
+  private static final String MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.exceptions.AssignModeloEjecucion.message";
+  private static final String MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO = "org.crue.hercules.sgi.csp.model.Convocatoria.sinModeloEjecucion.message";
+  private static final String MSG_NO_DISPONIBLE_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.model.ModeloEjecucion.noDisponible.message";
 
   private final ConvocatoriaDocumentoRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
@@ -65,8 +82,7 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
   public ConvocatoriaDocumento create(ConvocatoriaDocumento convocatoriaDocumento) {
     log.debug("create(ConvocatoriaDocumento convocatoriaDocumento) - start");
 
-    Assert.isNull(convocatoriaDocumento.getId(),
-        "ConvocatoriaDocumento id tiene que ser null para crear un nuevo ConvocatoriaDocumento");
+    AssertHelper.idIsNull(convocatoriaDocumento.getId(), ConvocatoriaDocumento.class);
 
     validarRequeridosConvocatoriaDocumento(convocatoriaDocumento);
     validarConvocatoriaDcoumento(convocatoriaDocumento, null);
@@ -90,8 +106,7 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
   public ConvocatoriaDocumento update(ConvocatoriaDocumento convocatoriaDocumentoActualizar) {
     log.debug("update(ConvocatoriaDocumento convocatoriaDocumentoActualizar) - start");
 
-    Assert.notNull(convocatoriaDocumentoActualizar.getId(),
-        "ConvocatoriaDocumento id no puede ser null para actualizar un ConvocatoriaDocumento");
+    AssertHelper.idNotNull(convocatoriaDocumentoActualizar.getId(), ConvocatoriaDocumento.class);
 
     validarRequeridosConvocatoriaDocumento(convocatoriaDocumentoActualizar);
 
@@ -123,7 +138,8 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ConvocatoriaDocumento id no puede ser null para eliminar un ConvocatoriaDocumento");
+    AssertHelper.idNotNull(id, ConvocatoriaDocumento.class);
+
     if (!repository.existsById(id)) {
       throw new ConvocatoriaDocumentoNotFoundException(id);
     }
@@ -213,11 +229,13 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
 
       // TipoFase está asignado al ModeloEjecucion
       Assert.isTrue(modeloTipoFase.isPresent(),
-          "TipoFase '" + datosConvocatoriaDocumento.getTipoFase().getNombre()
-              + "' no disponible para el ModeloEjecucion '"
-              + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
-                  : "Convocatoria sin modelo asignado")
-              + "'");
+          () -> ProblemMessage.builder()
+              .key(MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+              .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+              .parameter(MSG_KEY_MODELO, ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
+                  : ApplicationContextSupport.getMessage(MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO)))
+              .build());
 
       // Comprobar solamente si estamos creando o se ha modificado el TipoFase
       if (datosOriginales == null || datosOriginales.getTipoFase() == null
@@ -225,13 +243,19 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
 
         // La asignación al ModeloEjecucion está activa
         Assert.isTrue(modeloTipoFase.get().getActivo(),
-            "ModeloTipoFase '" + modeloTipoFase.get().getTipoFase().getNombre()
-                + "' no está activo para el ModeloEjecucion '" + modeloTipoFase.get().getModeloEjecucion().getNombre()
-                + "'");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_FASE))
+                .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+                .build());
 
         // El TipoFase está activo
         Assert.isTrue(modeloTipoFase.get().getTipoFase().getActivo(),
-            "TipoFase '" + modeloTipoFase.get().getTipoFase().getNombre() + "' no está activo");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_FASE))
+                .parameter(MSG_KEY_FIELD, modeloTipoFase.get().getTipoFase().getNombre())
+                .build());
       }
       convocatoriaDocumentoModeloTipoFase = modeloTipoFase.get();
 
@@ -254,15 +278,13 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
 
       // Está asignado al ModeloEjecucion y ModeloTipoFase
       Assert.isTrue(modeloTipoDocumento.isPresent(),
-          "TipoDocumento '" + datosConvocatoriaDocumento.getTipoDocumento().getNombre()
-              + "' no disponible para el ModeloEjecucion '"
-              + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
-                  : "Convocatoria sin modelo asignado")
-              + "' y TipoFase '"
-              + ((convocatoriaDocumentoModeloTipoFase != null)
-                  ? convocatoriaDocumentoModeloTipoFase.getTipoFase().getNombre()
-                  : "Sin Asignar")
-              + "'");
+          () -> ProblemMessage.builder()
+              .key(MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_DOCUMENTO))
+              .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+              .parameter(MSG_KEY_MODELO, ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
+                  : ApplicationContextSupport.getMessage(MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO)))
+              .build());
 
       // Comprobar solamente si estamos creando o se ha modificado el documento
       if (datosOriginales == null || datosOriginales.getTipoDocumento() == null
@@ -271,13 +293,19 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
 
         // La asignación al ModeloEjecucion está activa
         Assert.isTrue(modeloTipoDocumento.get().getActivo(),
-            "ModeloTipoDocumento '" + modeloTipoDocumento.get().getTipoDocumento().getNombre()
-                + "' no está activo para el ModeloEjecucion '"
-                + modeloTipoDocumento.get().getModeloEjecucion().getNombre() + "'");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_DOCUMENTO))
+                .parameter(MSG_KEY_FIELD, modeloTipoDocumento.get().getTipoDocumento().getNombre())
+                .build());
 
         // El TipoDocumento está activo
         Assert.isTrue(modeloTipoDocumento.get().getTipoDocumento().getActivo(),
-            "TipoDocumento '" + modeloTipoDocumento.get().getTipoDocumento().getNombre() + "' no está activo");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_DOCUMENTO))
+                .parameter(MSG_KEY_FIELD, modeloTipoDocumento.get().getTipoDocumento().getNombre())
+                .build());
 
       }
       datosConvocatoriaDocumento.setTipoDocumento(modeloTipoDocumento.get().getTipoDocumento());
@@ -299,16 +327,12 @@ public class ConvocatoriaDocumentoServiceImpl implements ConvocatoriaDocumentoSe
     log.debug("validarRequeridosConvocatoriaDocumento(ConvocatoriaDocumento datosConvocatoriaDocumento) - start");
 
     /** Obligatorios */
-    Assert.isTrue(datosConvocatoriaDocumento.getConvocatoriaId() != null,
-        "Id Convocatoria no puede ser null en ConvocatoriaDocumento");
-
-    Assert.isTrue(StringUtils.isNotBlank(datosConvocatoriaDocumento.getNombre()),
-        "Es necesario indicar el nombre del documento");
-
-    Assert.isTrue(datosConvocatoriaDocumento.getPublico() != null, "Es necesario indicar si el documento es público");
-
-    Assert.isTrue(datosConvocatoriaDocumento.getDocumentoRef() != null,
-        "Es necesario indicar la referencia al documento");
+    AssertHelper.idNotNull(datosConvocatoriaDocumento.getConvocatoriaId(), Convocatoria.class);
+    AssertHelper.fieldNotNull(datosConvocatoriaDocumento.getNombre(), ConvocatoriaDocumento.class,
+        AssertHelper.MESSAGE_KEY_NAME);
+    AssertHelper.fieldNotNull(datosConvocatoriaDocumento.getPublico(), ConvocatoriaDocumento.class, MSG_KEY_PUBLICO);
+    AssertHelper.fieldNotNull(datosConvocatoriaDocumento.getDocumentoRef(), ConvocatoriaDocumento.class,
+        MSG_KEY_DOCUMENTO_REF);
 
     log.debug("validarRequeridosConvocatoriaDocumento(ConvocatoriaDocumento datosConvocatoriaDocumento) - end");
   }

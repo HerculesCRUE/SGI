@@ -1,14 +1,21 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.Set;
+import java.util.HashSet;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.validation.UniqueNombreTipoAmbitoGeograficoActivo;
 import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
@@ -44,11 +51,12 @@ public class TipoAmbitoGeografico extends BaseActivableEntity {
   @SequenceGenerator(name = "tipo_ambito_geografico_seq", sequenceName = "tipo_ambito_geografico_seq", allocationSize = 1)
   private Long id;
 
-  /** Nombre */
-  @Column(name = "nombre", length = NOMBRE_LENGTH, nullable = false)
+    /** Nombre */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name="tipo_ambito_geografico_nombre", joinColumns= @JoinColumn(name="tipo_ambito_geografico_id"))
   @NotEmpty
-  @Size(max = 50)
-  private String nombre;
+  @Valid
+  private Set<TipoAmbitoGeograficoNombre> nombre = new HashSet<>();
 
   /**
    * Interfaz para marcar validaciones en la creación de la entidad.

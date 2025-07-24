@@ -3,22 +3,28 @@ package org.crue.hercules.sgi.eti.service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.AsistentesNotFoundException;
 import org.crue.hercules.sgi.eti.model.Asistentes;
+import org.crue.hercules.sgi.eti.model.AsistentesMotivo;
 import org.crue.hercules.sgi.eti.model.CargoComite;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionLugar;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionOrdenDia;
 import org.crue.hercules.sgi.eti.model.Evaluador;
-import org.crue.hercules.sgi.eti.model.Formulario;
+import org.crue.hercules.sgi.eti.model.EvaluadorResumen;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.AsistentesRepository;
 import org.crue.hercules.sgi.eti.service.impl.AsistentesServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -60,7 +66,7 @@ public class AsistentesServiceTest extends BaseServiceTest {
     Assertions.assertThat(asistente.getConvocatoriaReunion().getId()).isEqualTo(1L);
     Assertions.assertThat(asistente.getEvaluador().getId()).isEqualTo(1L);
     Assertions.assertThat(asistente.getAsistencia()).isTrue();
-    Assertions.assertThat(asistente.getMotivo()).isEqualTo("Motivo 1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(asistente.getMotivo(), Language.ES)).isEqualTo("Motivo 1");
 
   }
 
@@ -119,7 +125,8 @@ public class AsistentesServiceTest extends BaseServiceTest {
     Assertions.assertThat(asistenteActualizadoBBDD.getConvocatoriaReunion().getId()).isEqualTo(1L);
     Assertions.assertThat(asistenteActualizadoBBDD.getEvaluador().getId()).isEqualTo(1L);
     Assertions.assertThat(asistenteActualizadoBBDD.getAsistencia()).isFalse();
-    Assertions.assertThat(asistenteActualizadoBBDD.getMotivo()).isEqualTo("Motivo 1 actualizado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(asistenteActualizadoBBDD.getMotivo(), Language.ES))
+        .isEqualTo("Motivo 1 actualizado");
 
   }
 
@@ -238,7 +245,8 @@ public class AsistentesServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       Asistentes asistente = page.getContent().get(i);
-      Assertions.assertThat(asistente.getMotivo()).isEqualTo("Motivo" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(asistente.getMotivo(), Language.ES))
+          .isEqualTo("Motivo" + String.format("%03d", j));
     }
   }
 
@@ -340,11 +348,13 @@ public class AsistentesServiceTest extends BaseServiceTest {
 
   private Asistentes generarMockAsistentes(Long id, String motivo, Boolean asistencia) {
 
+    Set<AsistentesMotivo> mot = new HashSet<>();
+    mot.add(new AsistentesMotivo(Language.ES, motivo));
     Asistentes asistentes = new Asistentes();
     asistentes.setId(id);
     asistentes.setEvaluador(generarMockEvaluador(id, "Resumen " + motivo));
     asistentes.setConvocatoriaReunion(getMockConvocatoriaReunion(id, id));
-    asistentes.setMotivo(motivo);
+    asistentes.setMotivo(mot);
     asistentes.setAsistencia(asistencia);
 
     return asistentes;
@@ -364,16 +374,20 @@ public class AsistentesServiceTest extends BaseServiceTest {
     cargoComite.setNombre("CargoComite1");
     cargoComite.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
+    Set<EvaluadorResumen> res = new HashSet<>();
+    res.add(new EvaluadorResumen(Language.ES, resumen));
     Evaluador evaluador = new Evaluador();
     evaluador.setId(id);
     evaluador.setCargoComite(cargoComite);
     evaluador.setComite(comite);
     evaluador.setFechaAlta(Instant.now());
     evaluador.setFechaBaja(Instant.now());
-    evaluador.setResumen(resumen);
+    evaluador.setResumen(res);
     evaluador.setPersonaRef("user-" + String.format("%03d", id));
     evaluador.setActivo(Boolean.TRUE);
 
@@ -389,19 +403,25 @@ public class AsistentesServiceTest extends BaseServiceTest {
    */
   private ConvocatoriaReunion getMockConvocatoriaReunion(Long id, Long comiteId) {
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(comiteId, "Comite" + comiteId, "nombreInvestigacion", Genero.M, formulario,
-        Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(comiteId);
+    comite.setCodigo("Comite" + comiteId);
+    comite.setActivo(Boolean.TRUE);
 
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
 
+    Set<ConvocatoriaReunionLugar> lugar = new HashSet<>();
+    lugar.add(new ConvocatoriaReunionLugar(Language.ES, "Lugar " + String.format("%03d", id)));
+    Set<ConvocatoriaReunionOrdenDia> ordenDia = new HashSet<>();
+    ordenDia.add(new ConvocatoriaReunionOrdenDia(Language.ES,
+        "Orden del día convocatoria reunión " + String.format("%03d", id)));
     final ConvocatoriaReunion data = new ConvocatoriaReunion();
     data.setId(id);
     data.setComite(comite);
     data.setFechaEvaluacion(Instant.parse("2020-07-20T00:00:00Z"));
     data.setFechaLimite(Instant.parse("2020-08-20T23:59:59Z"));
-    data.setLugar("Lugar " + String.format("%03d", id));
-    data.setOrdenDia("Orden del día convocatoria reunión " + String.format("%03d", id));
+    data.setLugar(lugar);
+    data.setOrdenDia(ordenDia);
     data.setAnio(2020);
     data.setNumeroActa(100L);
     data.setTipoConvocatoriaReunion(tipoConvocatoriaReunion);

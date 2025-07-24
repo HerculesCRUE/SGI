@@ -4,15 +4,21 @@ import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoDescripcion;
 import org.crue.hercules.sgi.csp.model.EstadoGastoProyecto;
+import org.crue.hercules.sgi.csp.model.EstadoGastoProyectoComentario;
 import org.crue.hercules.sgi.csp.model.EstadoGastoProyecto.TipoEstadoGasto;
 import org.crue.hercules.sgi.csp.model.GastoProyecto;
+import org.crue.hercules.sgi.csp.model.GastoProyectoObservaciones;
 import org.crue.hercules.sgi.csp.repository.EstadoGastoProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.GastoProyectoRepository;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -65,6 +71,8 @@ class GastoProyectoServiceTest extends BaseServiceTest {
 
   private GastoProyecto buildMockGastoProyecto(Long id, ConceptoGasto conceptoGasto, EstadoGastoProyecto estado,
       Instant fechaCongreso, BigDecimal importeInscripcion, String observaciones) {
+    Set<GastoProyectoObservaciones> observacionesGastoProyecto = new HashSet<>();
+    observacionesGastoProyecto.add(new GastoProyectoObservaciones(Language.ES, observaciones));
 
     return GastoProyecto.builder()
         .id(id)
@@ -72,21 +80,26 @@ class GastoProyectoServiceTest extends BaseServiceTest {
         .estado(estado)
         .fechaCongreso(fechaCongreso)
         .importeInscripcion(importeInscripcion)
-        .observaciones(observaciones)
+        .observaciones(observacionesGastoProyecto)
         .build();
   }
 
   private ConceptoGasto buildMockConceptoGasto() {
+    Set<ConceptoGastoDescripcion> descripcionConceptoGasto = new HashSet<>();
+    descripcionConceptoGasto.add(new ConceptoGastoDescripcion(Language.ES, "Testing concepto gasto"));
     return ConceptoGasto.builder()
         .activo(Boolean.TRUE)
         .id(1L)
-        .descripcion("Testing concepto gasto")
+        .descripcion(descripcionConceptoGasto)
         .build();
   }
 
   private EstadoGastoProyecto buildModkEstadoGastoProyecto(String comentario, TipoEstadoGasto tipoEstado) {
+    Set<EstadoGastoProyectoComentario> comentarioEstadoGastoProyecto = new HashSet<>();
+    comentarioEstadoGastoProyecto.add(new EstadoGastoProyectoComentario(Language.ES, comentario));
+
     return EstadoGastoProyecto.builder()
-        .comentario(comentario)
+        .comentario(comentarioEstadoGastoProyecto)
         .estado(tipoEstado)
         .build();
   }

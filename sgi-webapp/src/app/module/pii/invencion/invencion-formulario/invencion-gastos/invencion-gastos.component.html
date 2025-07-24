@@ -3,7 +3,8 @@
     <mat-table [dataSource]="dataSource" matSort>
 
       <!-- Columnas dinamicas -->
-      <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+      <ng-container *ngFor="let column of formPart.columns$ | async; trackBy: formPart.trackByColumnId"
+        [matColumnDef]="column.id">
         <mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
           {{column.name}}
         </mat-header-cell>
@@ -33,7 +34,7 @@
           {{'pii.invencion-gasto.solicitud-proteccion' | translate}}
         </mat-header-cell>
         <mat-cell mat-cell *matCellDef="let wrapper">
-          {{wrapper.value.solicitudProteccion?.titulo }}
+          <sgi-i18n-table-field [field]="wrapper.value.solicitudProteccion?.titulo"></sgi-i18n-table-field>
         </mat-cell>
       </ng-container>
 

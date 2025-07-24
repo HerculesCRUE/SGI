@@ -1,10 +1,13 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
+import { IGrupo } from '@core/models/csp/grupo';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IInvencion } from '@core/models/pii/invencion';
 import { IRelacion, TIPO_ENTIDAD_HREF_MAP, TipoEntidad } from '@core/models/rel/relacion';
 import { IPersona } from '@core/models/sgp/persona';
 import { Fragment } from '@core/services/action-service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
+import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { InvencionService } from '@core/services/pii/invencion/invencion.service';
 import { RelacionService } from '@core/services/rel/relaciones/relacion.service';
@@ -14,11 +17,16 @@ import { BehaviorSubject, forkJoin, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { IProyectoListadoData } from '../../proyecto-listado/proyecto-listado.component';
 
+// Define the extended IGrupoWithTitulo interface
+export interface IGrupoWithTitulo extends IGrupo {
+  titulo: I18nFieldValue[];
+}
+
 export interface IProyectoRelacionTableData {
   id: number;
-  entidadRelacionada: IConvocatoria | IInvencion | IProyecto;
+  entidadRelacionada: IConvocatoria | IInvencion | IProyecto | IGrupoWithTitulo;
   entidadRelacionadaHref?: string;
-  observaciones: string;
+  observaciones: I18nFieldValue[];
   tipoEntidadRelacionada: TipoEntidad;
   entidadConvocanteRef: string;
   codigosSge: string;
@@ -48,6 +56,7 @@ export class ProyectoRelacionFragment extends Fragment {
     private convocatoriaService: ConvocatoriaService,
     private invencionService: InvencionService,
     private proyectoService: ProyectoService,
+    private grupoService: GrupoService,
     private sgiAuthService: SgiAuthService,
   ) {
     super(key);
@@ -137,6 +146,16 @@ export class ProyectoRelacionFragment extends Fragment {
           }),
           catchError(() => of(wrapper))
         );
+      case TipoEntidad.GRUPO:
+        return this.grupoService.findById(wrapper.value.entidadRelacionada.id).pipe(
+          map((grupo) => {
+            wrapper.value.entidadRelacionada = this.fillGrupoWithTitulo(grupo);
+            wrapper.value.entidadRelacionadaHref = this.createEntidadRelacionadaHref(grupo.id, tipoEntidad);
+            wrapper.value.codigosSge = grupo.proyectoSge?.id;
+            return wrapper;
+          }),
+          catchError(() => of(wrapper))
+        );
 
       default:
         return of(wrapper);
@@ -176,6 +195,10 @@ export class ProyectoRelacionFragment extends Fragment {
     if (relacion.tipoEntidadRelacionada === TipoEntidad.PROYECTO) {
       wrapped.value.codigosSge = (relacion.entidadRelacionada as IProyectoListadoData)?.proyectosSGE;
       wrapped.value.entidadConvocanteRef = (relacion.entidadRelacionada as IProyecto).codigoExterno;
+    }
+    if (relacion.tipoEntidadRelacionada === TipoEntidad.GRUPO) {
+      wrapped.value.codigosSge = (relacion.entidadRelacionada as IGrupo)?.proyectoSge?.id;
+      wrapped.value.entidadRelacionada = this.fillGrupoWithTitulo(wrapped.value.entidadRelacionada as IGrupo)
     }
     wrapped.setCreated();
     const current = this.proyectoRelacionesTableData$.value;
@@ -295,11 +318,11 @@ export class ProyectoRelacionFragment extends Fragment {
     };
   }
 
-  private getEntidadOrigenProyecto(proyectoRelacion: IProyectoRelacionTableData): IConvocatoria | IInvencion | IProyecto {
+  private getEntidadOrigenProyecto(proyectoRelacion: IProyectoRelacionTableData): IConvocatoria | IInvencion | IProyecto | IGrupoWithTitulo {
     return proyectoRelacion.tipoRelacion === TipoRelacion.PADRE ? this.proyecto : proyectoRelacion.entidadRelacionada;
   }
 
-  private getEntidadDestinoProyecto(proyectoRelacion: IProyectoRelacionTableData): IConvocatoria | IInvencion | IProyecto {
+  private getEntidadDestinoProyecto(proyectoRelacion: IProyectoRelacionTableData): IConvocatoria | IInvencion | IProyecto | IGrupoWithTitulo {
     return proyectoRelacion.tipoRelacion === TipoRelacion.PADRE ? proyectoRelacion.entidadRelacionada : this.proyecto;
   }
 
@@ -320,6 +343,14 @@ export class ProyectoRelacionFragment extends Fragment {
   ): void {
     target.entidadRelacionada = source.entidadRelacionada;
     target.entidadRelacionadaHref = source.entidadRelacionadaHref;
+    target.codigosSge = source.codigosSge;
+  }
+
+  private fillGrupoWithTitulo(grupo: IGrupo): IGrupoWithTitulo {
+    return {
+      ...grupo,
+      titulo: grupo.nombre
+    };
   }
 
 }

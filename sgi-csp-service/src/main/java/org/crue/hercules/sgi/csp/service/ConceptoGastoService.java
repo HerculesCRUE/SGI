@@ -1,8 +1,12 @@
 package org.crue.hercules.sgi.csp.service;
 
+import javax.validation.Valid;
+
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Service Interface para gestionar {@link ConceptoGasto}.
@@ -15,7 +19,8 @@ public interface ConceptoGastoService {
    * @param conceptoGasto la entidad {@link ConceptoGasto} a guardar.
    * @return la entidad {@link ConceptoGasto} persistida.
    */
-  ConceptoGasto create(ConceptoGasto conceptoGasto);
+  @Validated({ BaseEntity.Create.class })
+  ConceptoGasto create(@Valid ConceptoGasto conceptoGasto);
 
   /**
    * Actualizar {@link ConceptoGasto}.
@@ -23,7 +28,8 @@ public interface ConceptoGastoService {
    * @param conceptoGastoActualizar la entidad {@link ConceptoGasto} a actualizar.
    * @return la entidad {@link ConceptoGasto} persistida.
    */
-  ConceptoGasto update(ConceptoGasto conceptoGastoActualizar);
+  @Validated({ BaseEntity.Update.class })
+  ConceptoGasto update(@Valid ConceptoGasto conceptoGastoActualizar);
 
   /**
    * Reactiva el {@link ConceptoGasto}.

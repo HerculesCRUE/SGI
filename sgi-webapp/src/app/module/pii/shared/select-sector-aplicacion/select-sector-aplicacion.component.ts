@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { ISectorAplicacion } from '@core/models/pii/sector-aplicacion';
+import { LanguageService } from '@core/services/language.service';
 import { SectorAplicacionService } from '@core/services/pii/sector-aplicacion/sector-aplicacion.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
@@ -41,12 +42,13 @@ export class SelectSectorAplicacionComponent extends SelectServiceExtendedCompon
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation: PlatformLocation,
     dialog: MatDialog,
-    private sectorAplicacionService: SectorAplicacionService,
     private authService: SgiAuthService,
+    private sectorAplicacionService: SectorAplicacionService,
   ) {
-    super(defaultErrorStateMatcher, ngControl, platformLocation, dialog);
+    super(defaultErrorStateMatcher, ngControl, languageService, platformLocation, dialog);
     this.disableWith = (option) => {
       if (this.excluded.length) {
         return this.excluded.some((excluded) => excluded.id === option.id);
@@ -58,7 +60,7 @@ export class SelectSectorAplicacionComponent extends SelectServiceExtendedCompon
 
   protected loadServiceOptions(): Observable<ISectorAplicacion[]> {
     const findOptions: SgiRestFindOptions = {
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
+      sort: new RSQLSgiRestSort('nombre.value', SgiRestSortDirection.ASC)
     };
     return this.sectorAplicacionService.findAll(findOptions).pipe(map(({ items }) => items));
   }

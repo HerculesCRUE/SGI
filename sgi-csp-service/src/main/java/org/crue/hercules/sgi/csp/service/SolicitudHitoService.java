@@ -14,9 +14,11 @@ import org.crue.hercules.sgi.csp.dto.tp.SgiApiInstantTaskOutput;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudHitoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.SolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.TipoHitoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToModifySolicitudException;
 import org.crue.hercules.sgi.csp.model.Solicitud;
 import org.crue.hercules.sgi.csp.model.SolicitudHito;
 import org.crue.hercules.sgi.csp.model.SolicitudHitoAviso;
+import org.crue.hercules.sgi.csp.model.SolicitudHitoComentario;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.repository.SolicitudHitoAvisoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudHitoRepository;
@@ -26,7 +28,11 @@ import org.crue.hercules.sgi.csp.repository.specification.SolicitudHitoSpecifica
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -45,6 +51,18 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class SolicitudHitoService {
 
+  private static final String MSG_KEY_DATE = "date";
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_ID = "id";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_MODEL_TIPO_HITO = "org.crue.hercules.sgi.csp.model.TipoHito.message";
+  private static final String MSG_MODEL_SOLICITUD_HITO = "org.crue.hercules.sgi.csp.model.SolicitudHito.message";
+  private static final String MSG_ENTITY_IN_FECHA_EXISTS = "org.springframework.util.Assert.fecha.exists.message";
+  private static final String MSG_ENTITY_MODIFICABLE = "org.springframework.util.Assert.entity.modificable.message";
+  private static final String MSG_MODEL_FECHA_ENVIO = "org.crue.hercules.sgi.csp.model.FechaEnvio.message";
+  private static final String MSG_ENTITY_FECHA_ANTERIOR = "org.springframework.util.Assert.entity.fecha.anterior.message";
+  private static final String MSG_AVISO_ENVIADO = "avisoEnviado.message";
+
   private final SolicitudHitoRepository repository;
 
   private final SolicitudRepository solicitudRepository;
@@ -57,13 +75,15 @@ public class SolicitudHitoService {
   private final SgiApiComService emailService;
   private final SgiApiTpService sgiApiTaskService;
   private final SgiApiSgpService personaService;
+  private final SolicitudAuthorityHelper solicitudAuthorityHelper;
 
   public SolicitudHitoService(SolicitudHitoRepository repository, SolicitudRepository solicitudRepository,
       TipoHitoRepository tipoHitoRepository, SolicitudService solicitudService,
       SolicitudHitoAvisoRepository solicitudHitoAvisoRepository,
       SgiApiComService emailService,
       SgiApiTpService sgiApiTaskService,
-      SgiApiSgpService personaService) {
+      SgiApiSgpService personaService,
+      SolicitudAuthorityHelper solicitudAuthorityHelper) {
     this.repository = repository;
     this.solicitudRepository = solicitudRepository;
     this.tipoHitoRepository = tipoHitoRepository;
@@ -72,6 +92,7 @@ public class SolicitudHitoService {
     this.emailService = emailService;
     this.sgiApiTaskService = sgiApiTaskService;
     this.personaService = personaService;
+    this.solicitudAuthorityHelper = solicitudAuthorityHelper;
   }
 
   /**
@@ -85,13 +106,20 @@ public class SolicitudHitoService {
   public SolicitudHito create(SolicitudHitoInput solicitudHitoInput) {
     log.debug("create(SolicitudHito solicitudHito) - start");
 
-    Assert.notNull(solicitudHitoInput.getSolicitudId(), "La solicitud no puede ser null para crear la SolicitudHito");
-    Assert.notNull(solicitudHitoInput.getFecha(), "La fecha no puede ser null para crear la SolicitudHito");
-    Assert.notNull(solicitudHitoInput.getTipoHitoId(), "El tipo hito no puede ser null para crear la SolicitudHito");
+    AssertHelper.idNotNull(solicitudHitoInput.getSolicitudId(), Solicitud.class);
+    AssertHelper.idNotNull(solicitudHitoInput.getTipoHitoId(), TipoHito.class);
+    AssertHelper.fieldNotNull(solicitudHitoInput.getFecha(), SolicitudHito.class, AssertHelper.MESSAGE_KEY_DATE);
 
-    Assert.isTrue(!repository.findBySolicitudIdAndFechaAndTipoHitoId(solicitudHitoInput.getSolicitudId(),
-        solicitudHitoInput.getFecha(), solicitudHitoInput.getTipoHitoId()).isPresent(),
-        "Ya existe un Hito con el mismo tipo en esa fecha");
+    solicitudAuthorityHelper.checkUserHasAuthorityModifySolicitud(solicitudHitoInput.getSolicitudId());
+
+    Assert.isTrue(
+        !repository.findBySolicitudIdAndFechaAndTipoHitoId(solicitudHitoInput.getSolicitudId(),
+            solicitudHitoInput.getFecha(), solicitudHitoInput.getTipoHitoId()).isPresent(),
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_IN_FECHA_EXISTS)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_HITO))
+            .parameter(MSG_KEY_ID, solicitudHitoInput.getTipoHitoId())
+            .build());
 
     if (!solicitudRepository.existsById(solicitudHitoInput.getSolicitudId())) {
       throw new SolicitudNotFoundException(solicitudHitoInput.getSolicitudId());
@@ -104,7 +132,9 @@ public class SolicitudHitoService {
     solicitudHito.setSolicitudId(solicitudHitoInput.getSolicitudId());
     solicitudHito.setTipoHito(tipoHito);
     solicitudHito.setFecha(solicitudHitoInput.getFecha());
-    solicitudHito.setComentario(solicitudHitoInput.getComentario());
+    solicitudHito.setComentario(solicitudHitoInput.getComentario().stream()
+        .map(comentario -> new SolicitudHitoComentario(comentario.getLang(), comentario.getValue()))
+        .collect(Collectors.toSet()));
 
     solicitudHito = repository.save(solicitudHito);
 
@@ -133,35 +163,39 @@ public class SolicitudHitoService {
   public SolicitudHito update(Long id, SolicitudHitoInput solicitudHitoInput) {
     log.debug("update(SolicitudHito solicitudHito) - start");
 
-    Assert.notNull(solicitudHitoInput.getSolicitudId(),
-        "La solicitud no puede ser null para actualizar la SolicitudHito");
-    Assert.notNull(solicitudHitoInput.getFecha(),
-        "Nombre documento no puede ser null para actualizar la SolicitudHito");
-    Assert.notNull(solicitudHitoInput.getTipoHitoId(),
-        "La referencia del documento no puede ser null para actualizar la SolicitudHito");
+    AssertHelper.idNotNull(solicitudHitoInput.getSolicitudId(), Solicitud.class);
+    AssertHelper.idNotNull(solicitudHitoInput.getTipoHitoId(), TipoHito.class);
+    AssertHelper.fieldNotNull(solicitudHitoInput.getFecha(), SolicitudHito.class, AssertHelper.MESSAGE_KEY_DATE);
+
+    this.checkUserHasAuthorityModifySolicitudHito(id);
 
     repository
         .findBySolicitudIdAndFechaAndTipoHitoId(solicitudHitoInput.getSolicitudId(), solicitudHitoInput.getFecha(),
             solicitudHitoInput.getTipoHitoId())
-        .ifPresent((solicitudHitoExistente) -> {
-          Assert.isTrue(id.equals(solicitudHitoExistente.getId()),
-              "Ya existe un Hito con el mismo tipo en esa fecha");
-        });
-
-    if (!solicitudRepository.existsById(solicitudHitoInput.getSolicitudId())) {
-      throw new SolicitudNotFoundException(solicitudHitoInput.getSolicitudId());
-    }
+        .ifPresent((solicitudHitoExistente) -> Assert.isTrue(id.equals(solicitudHitoExistente.getId()),
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_IN_FECHA_EXISTS)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_HITO))
+                .parameter(MSG_KEY_ID, solicitudHitoInput.getTipoHitoId())
+                .build()));
 
     TipoHito tipoHito = tipoHitoRepository.findById(solicitudHitoInput.getTipoHitoId())
         .orElseThrow(() -> new TipoHitoNotFoundException(solicitudHitoInput.getTipoHitoId()));
 
     // comprobar si la solicitud es modificable
     Assert.isTrue(solicitudService.modificable(solicitudHitoInput.getSolicitudId()),
-        "No se puede modificar SolicitudHito");
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_MODIFICABLE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_HITO))
+            .parameter(MSG_KEY_MSG, null)
+            .build());
 
     return repository.findById(id).map((solicitudHito) -> {
 
-      solicitudHito.setComentario(solicitudHitoInput.getComentario());
+      solicitudHito
+          .setComentario(solicitudHitoInput.getComentario().stream()
+              .map(comentario -> new SolicitudHitoComentario(comentario.getLang(), comentario.getValue()))
+              .collect(Collectors.toSet()));
       solicitudHito.setFecha(solicitudHitoInput.getFecha());
       solicitudHito.setTipoHito(tipoHito);
 
@@ -177,7 +211,8 @@ public class SolicitudHitoService {
         SgiApiInstantTaskOutput task = sgiApiTaskService
             .findInstantTaskById(Long.parseLong(solicitudHito.getSolicitudHitoAviso().getTareaProgramadaRef()));
 
-        Assert.isTrue(task.getInstant().isAfter(Instant.now()), "El aviso ya se ha enviado.");
+        Assert.isTrue(task.getInstant().isAfter(Instant.now()),
+            ApplicationContextSupport.getMessage(MSG_AVISO_ENVIADO));
 
         sgiApiTaskService
             .deleteTask(Long.parseLong(solicitudHito.getSolicitudHitoAviso().getTareaProgramadaRef()));
@@ -217,8 +252,12 @@ public class SolicitudHitoService {
 
   private SolicitudHitoAviso createAviso(Long solicitudHitoId, SolicitudHitoAvisoInput avisoInput) {
     Instant now = Instant.now();
+
     Assert.isTrue(avisoInput.getFechaEnvio().isAfter(now),
-        "La fecha de envio debe ser anterior a " + now.toString());
+        () -> ProblemMessage.builder().key(MSG_ENTITY_FECHA_ANTERIOR)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_FECHA_ENVIO))
+            .parameter(MSG_KEY_DATE, now.toString())
+            .build());
 
     Long emailId = this.emailService.createSolicitudHitoEmail(
         solicitudHitoId,
@@ -266,10 +305,10 @@ public class SolicitudHitoService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "SolicitudHito id no puede ser null para eliminar un SolicitudHito");
-    if (!repository.existsById(id)) {
-      throw new SolicitudHitoNotFoundException(id);
-    }
+    AssertHelper.idNotNull(id, SolicitudHito.class);
+    SolicitudHito solicitudHito = repository.findById(id).orElseThrow(() -> new SolicitudHitoNotFoundException(id));
+
+    this.checkUserHasAuthorityModifySolicitudHito(solicitudHito);
 
     Optional<SolicitudHitoAviso> aviso = solicitudHitoAvisoRepository.findBySolicitudHitoId(id);
     if (aviso.isPresent()) {
@@ -294,6 +333,8 @@ public class SolicitudHitoService {
    */
   public Page<SolicitudHito> findAllBySolicitud(Long solicitudId, String query, Pageable paging) {
     log.debug("findAllBySolicitud(Long solicitudId, String query, Pageable paging) - start");
+
+    solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(solicitudId);
 
     Specification<SolicitudHito> specs = SolicitudHitoSpecifications.bySolicitudId(solicitudId)
         .and(SgiRSQLJPASupport.toSpecification(query));
@@ -327,5 +368,31 @@ public class SolicitudHitoService {
     }
 
     return recipients;
+  }
+
+  private boolean createdByCurrentUser(SolicitudHito solicitudHito) {
+    if (solicitudHito == null || solicitudHito.getCreatedBy() == null) {
+      return false;
+    }
+
+    return solicitudHito.getCreatedBy().equals(solicitudAuthorityHelper.getAuthenticationPersonaRef());
+  }
+
+  private void checkUserHasAuthorityModifySolicitudHito(Long solicitudHitoId) {
+    SolicitudHito solicitudHito = repository.findById(solicitudHitoId)
+        .orElseThrow(() -> new SolicitudHitoNotFoundException(solicitudHitoId));
+
+    checkUserHasAuthorityModifySolicitudHito(solicitudHito);
+  }
+
+  private void checkUserHasAuthorityModifySolicitudHito(SolicitudHito solicitudHito) {
+    Solicitud solicitud = solicitudRepository.findById(solicitudHito.getSolicitudId())
+        .orElseThrow(() -> new SolicitudNotFoundException(solicitudHito.getSolicitudId()));
+
+    if ((!solicitudAuthorityHelper.hasAuthorityEditUnidadGestion(solicitud.getUnidadGestionRef())
+        && (!solicitudAuthorityHelper.hasAuthorityEditInvestigador(solicitud) || !createdByCurrentUser(solicitudHito)))
+        || solicitud.getActivo().equals(Boolean.FALSE)) {
+      throw new UserNotAuthorizedToModifySolicitudException();
+    }
   }
 }

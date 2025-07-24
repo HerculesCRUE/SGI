@@ -1,3 +1,4 @@
+import { I18nFieldValueRequest } from '@core/i18n/i18n-field-request';
 import { TipoEntidad } from '@core/models/rel/relacion';
 
 export interface IRelacionRequest {
@@ -5,5 +6,5 @@ export interface IRelacionRequest {
   tipoEntidadDestino: TipoEntidad;
   entidadOrigenRef: string;
   entidadDestinoRef: string;
-  observaciones: string;
+  observaciones: I18nFieldValueRequest[];
 }

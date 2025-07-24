@@ -23,7 +23,9 @@
       <ng-container matColumnDef="comentario">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'csp.autorizacion-historico-estado.comentario' | translate}} </th>
-        <td mat-cell *matCellDef="let wrapper">{{wrapper.value.comentario}}</td>
+        <td mat-cell *matCellDef="let wrapper">
+          <sgi-i18n-table-field [field]="wrapper.value.comentario"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

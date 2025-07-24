@@ -5,15 +5,18 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoriaDocumento } from '@core/models/csp/convocatoria-documento';
 import { ITipoFase } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { Group } from '@core/services/action-service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
 import { Subscription } from 'rxjs';
@@ -30,6 +33,7 @@ const CONVOCATORIA_DOCUMENTO_KEY = marker('csp.convocatoria-documento');
 const CONVOCATORIA_DOCUMENTO_FICHERO_KEY = marker('csp.convocatoria-documento.fichero');
 const CONVOCATORIA_DOCUMENTO_NOMBRE_KEY = marker('csp.documento.nombre');
 const CONVOCATORIA_DOCUMENTO_PUBLICO_KEY = marker('csp.convocatoria-documento.publico');
+const CONVOCATORIA_DOCUMENTO_OBSERVACIONES_KEY = marker('csp.convocatoria-documento.observaciones');
 
 enum VIEW_MODE {
   NONE = '',
@@ -69,6 +73,7 @@ export class ConvocatoriaDocumentosComponent extends FragmentComponent implement
   msgParamNombreEntity = {};
   msgParamFicheroEntity = {};
   msgParamPublicoEntity = {};
+  msgParamObservacionesEntity = {};
   textoDelete: string;
 
   private getLevel = (node: NodeDocumento) => node.level;
@@ -83,9 +88,10 @@ export class ConvocatoriaDocumentosComponent extends FragmentComponent implement
     public actionService: ConvocatoriaActionService,
     private documentoService: DocumentoService,
     private snackBar: SnackBarService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DOCUMENTOS, actionService);
+    super(actionService.FRAGMENT.DOCUMENTOS, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -106,20 +112,20 @@ export class ConvocatoriaDocumentosComponent extends FragmentComponent implement
 
   ngOnInit() {
     super.ngOnInit();
-    this.setupI18N();
+
     this.subscriptions.push(this.formPart.documentos$.subscribe((documentos) => {
       this.dataSource.data = documentos;
     }));
     this.group.load(new FormGroup({
-      nombre: new FormControl('', [
-        Validators.required,
-        Validators.maxLength(50)
+      nombre: new FormControl([], [
+        I18nValidators.required,
+        I18nValidators.maxLength(50)
       ]),
       fichero: new FormControl(null, Validators.required),
       fase: new FormControl(null),
       tipoDocumento: new FormControl(null),
       publico: new FormControl(true, Validators.required),
-      observaciones: new FormControl('')
+      observaciones: new FormControl([], I18nValidators.maxLength(2000))
     }));
     this.group.initialize();
 
@@ -131,7 +137,7 @@ export class ConvocatoriaDocumentosComponent extends FragmentComponent implement
     this.switchToNone();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_DOCUMENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -163,6 +169,11 @@ export class ConvocatoriaDocumentosComponent extends FragmentComponent implement
         );
       })
     ).subscribe((value) => this.textoDelete = value);
+
+    this.translate.get(
+      CONVOCATORIA_DOCUMENTO_OBSERVACIONES_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).subscribe((value) => this.msgParamObservacionesEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
   }
 
   ngOnDestroy() {
@@ -331,5 +342,9 @@ export class ConvocatoriaDocumentosComponent extends FragmentComponent implement
         this.snackBar.showError(MSG_DOWNLOAD_ERROR);
       }
     ));
+  }
+
+  getI18nValue(i18nFieldValue: I18nFieldValue[]): string {
+    return this.languageService.getFieldValue(i18nFieldValue);
   }
 }

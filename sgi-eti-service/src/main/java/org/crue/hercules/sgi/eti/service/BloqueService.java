@@ -21,18 +21,19 @@ public interface BloqueService {
   Page<Bloque> findAll(String query, Pageable pageable);
 
   /**
-   * Obtiene {@link Bloque} por id.
+   * Obtiene {@link Bloque} por id y idioma.
    *
    * @param id el id de la entidad {@link Bloque}.
    * @return la entidad {@link Bloque}.
-   * @throws BloqueNotFoundException Si no existe ningún {@link Bloque} con ese
+   * @throws BloqueNotFoundException Si no existe ningún {@link Bloque} con
+   *                                 ese
    *                                 id.
    */
   Bloque findById(Long id) throws BloqueNotFoundException;
 
   /**
    * Obtener todas las entidades {@link Bloque} paginadas de una
-   * {@link Formulario}.
+   * {@link Formulario} en el idioma solicitado.
    * 
    * @param id       Id del formulario
    * @param pageable la información de la paginación.

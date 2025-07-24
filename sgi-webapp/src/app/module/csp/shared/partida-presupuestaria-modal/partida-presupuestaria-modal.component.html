@@ -62,9 +62,9 @@
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}</mat-label>
-          <textarea matInput formControlName="descripcion" type="text"
+          <sgi-i18n-textarea formControlName="descripcion"
             placeholder="{{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}">
-            </textarea>
+          </sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.get('descripcion').errors?.maxlength">
             {{'error.maxlength.entity' | translate:msgParamDescripcionEntity}}
           </mat-error>
@@ -116,9 +116,9 @@
       <div fxFlex fxLayout="row" fxLayoutGap="10px">
         <mat-form-field>
           <mat-label>{{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}</mat-label>
-          <textarea matInput formControlName="descripcionConvocatoria" type="text"
+          <sgi-i18n-textarea formControlName="descripcionConvocatoria"
             placeholder="{{'csp.proyecto-partida-presupuestaria.descripcion' | translate}}">
-                      </textarea>
+          </sgi-i18n-textarea>
         </mat-form-field>
       </div>
       <div fxFlex fxLayout="row" fxLayoutGap="10px" class="separation-button">

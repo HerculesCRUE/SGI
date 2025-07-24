@@ -30,6 +30,7 @@ import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
 import { catchError, map, mergeAll, mergeMap, switchMap, tap } from 'rxjs/operators';
 import { INV_ROUTE_NAMES } from 'src/app/module/inv/inv-route-names';
 import { CONVOCATORIA_ID_KEY } from '../../solicitud/solicitud-crear/solicitud-crear.guard';
+import { NGXLogger } from 'ngx-logger';
 
 const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 
@@ -74,6 +75,7 @@ export class ConvocatoriaListadoInvComponent extends AbstractTablePaginationComp
   }
 
   constructor(
+    private logger: NGXLogger,
     private convocatoriaService: ConvocatoriaService,
     private empresaService: EmpresaService,
     private personaService: PersonaService,
@@ -83,7 +85,7 @@ export class ConvocatoriaListadoInvComponent extends AbstractTablePaginationComp
     private translate: TranslateService,
     private authService: SgiAuthService
   ) {
-    super();
+    super(translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -98,7 +100,7 @@ export class ConvocatoriaListadoInvComponent extends AbstractTablePaginationComp
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.formGroup = new FormGroup({
       codigo: new FormControl(''),
       titulo: new FormControl(''),
@@ -118,7 +120,7 @@ export class ConvocatoriaListadoInvComponent extends AbstractTablePaginationComp
     this.filter = this.createFilter();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       AREA_TEMATICA_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
@@ -175,8 +177,9 @@ export class ConvocatoriaListadoInvComponent extends AbstractTablePaginationComp
                           return convocatoriaListado;
                         }),
                         catchError((error) => {
-                          this.processError(error);
-                          return EMPTY;
+                          this.logger.error(error);
+                          convocatoriaListado.entidadFinanciadoraEmpresa = convocatoriaListado.entidadFinanciadora.empresa;
+                          return of(convocatoriaListado);
                         })
                       );
                     }
@@ -208,8 +211,9 @@ export class ConvocatoriaListadoInvComponent extends AbstractTablePaginationComp
                               return convocatoriaListado;
                             }),
                             catchError((error) => {
-                              this.processError(error);
-                              return EMPTY;
+                              this.logger.error(error);
+                              convocatoriaListado.entidadConvocanteEmpresa = convocatoriaListado.entidadConvocante.entidad;
+                              return of(convocatoriaListado);
                             })
                           );
                         }

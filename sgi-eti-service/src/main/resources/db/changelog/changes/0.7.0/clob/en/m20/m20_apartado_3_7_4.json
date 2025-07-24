@@ -1,0 +1,34 @@
+[
+  {
+    "key": "ap3_7_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.4 Surgical Procedures/Interventions"
+    },
+    "fieldGroup": [
+      {
+        "template": "Are they going to undergo surgery at any point in the experimentation process?"
+      },
+      {
+        "key": "intervencionQuirurgicaRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

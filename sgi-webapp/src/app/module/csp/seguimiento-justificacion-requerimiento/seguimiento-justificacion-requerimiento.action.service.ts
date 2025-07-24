@@ -9,6 +9,7 @@ import { GastoRequerimientoJustificacionService } from '@core/services/csp/gasto
 import { IncidenciaDocumentacionRequerimientoService } from '@core/services/csp/incidencia-documentacion-requerimiento/incidencia-documentacion-requerimiento.service';
 import { ProyectoPeriodoJustificacionService } from '@core/services/csp/proyecto-periodo-justificacion/proyecto-periodo-justificacion.service';
 import { RequerimientoJustificacionService } from '@core/services/csp/requerimiento-justificacion/requerimiento-justificacion.service';
+import { LanguageService } from '@core/services/language.service';
 import { SeguimientoJustificacionService } from '@core/services/sge/seguimiento-justificacion/seguimiento-justificacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
@@ -55,6 +56,7 @@ export class SeguimientoJustificacionRequerimientoActionService extends ActionSe
     seguimientoJustificacionService: SeguimientoJustificacionService,
     gastoRequerimientoJustificacionService: GastoRequerimientoJustificacionService,
     alegacionRequerimientoService: AlegacionRequerimientoService,
+    languageService: LanguageService
   ) {
     super();
     this.data = {} as IRequerimientoJustificacionData;
@@ -87,7 +89,8 @@ export class SeguimientoJustificacionRequerimientoActionService extends ActionSe
         requerimientoJustificacionService,
         seguimientoJustificacionService,
         proyectoPeriodoJustificacionService,
-        gastoRequerimientoJustificacionService
+        gastoRequerimientoJustificacionService,
+        languageService
       );
 
       this.respuestaAlegacion = new SeguimientoJustificacionRequerimientoRespuestaAlegacionFragment(

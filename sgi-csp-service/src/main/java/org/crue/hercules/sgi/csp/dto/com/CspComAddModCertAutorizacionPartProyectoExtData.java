@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.csp.dto.com;
 
 import java.io.Serializable;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,7 +16,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class CspComAddModCertAutorizacionPartProyectoExtData  implements Serializable{
-  private String tituloProyectoExt;
+public class CspComAddModCertAutorizacionPartProyectoExtData implements Serializable {
+  private Collection<? extends I18nFieldValue> tituloProyectoExt;
   private String enlaceAplicacion;
 }

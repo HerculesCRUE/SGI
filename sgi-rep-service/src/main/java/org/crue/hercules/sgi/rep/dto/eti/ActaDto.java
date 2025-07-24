@@ -1,7 +1,9 @@
 package org.crue.hercules.sgi.rep.dto.eti;
 
 import java.io.Serializable;
+import java.util.List;
 
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.crue.hercules.sgi.rep.dto.BaseRestDto;
 
 import lombok.AllArgsConstructor;
@@ -23,7 +25,7 @@ public class ActaDto extends BaseRestDto {
   private Integer minutoInicio;
   private Integer horaFin;
   private Integer minutoFin;
-  private String resumen;
+  private List<I18nFieldValueDto> resumen;
   private Integer numero;
   private TipoEstadoActaDto estadoActual;
   private Boolean inactiva;

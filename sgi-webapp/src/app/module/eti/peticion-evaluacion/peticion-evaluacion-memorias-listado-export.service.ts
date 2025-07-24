@@ -26,7 +26,7 @@ const MEMORIA_FECHA_EVALUACION_KEY = marker('eti.peticion-evaluacion.report.memo
 
 @Injectable()
 export class PeticionEvaluacionMemoriasListadoExportService extends
-  AbstractTableExportFillService<IPeticionEvaluacionReportData, IPeticionEvaluacionReportOptions>{
+  AbstractTableExportFillService<IPeticionEvaluacionReportData, IPeticionEvaluacionReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -52,7 +52,7 @@ export class PeticionEvaluacionMemoriasListadoExportService extends
             }
             peticionData.memorias.push({
               referencia: memoria.numReferencia,
-              comite: memoria.comite.comite,
+              comite: memoria.comite.codigo,
               estado: ESTADO_MEMORIA_MAP.get(memoria.estadoActual.id),
               fechaEvaluacion: memoria.fechaEvaluacion
             });

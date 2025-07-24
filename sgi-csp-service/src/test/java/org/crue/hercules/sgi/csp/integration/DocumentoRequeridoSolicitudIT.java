@@ -1,10 +1,15 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
+import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitudObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -66,9 +71,13 @@ class DocumentoRequeridoSolicitudIT extends BaseIT {
   void update_ReturnsDocumentoRequeridoSolicitud() throws Exception {
 
     // given: existing DocumentoRequeridoSolicitud to be updated
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(
+        new DocumentoRequeridoSolicitudObservaciones(Language.ES, "obbservaciones-modificadas"));
+
     DocumentoRequeridoSolicitud documentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L, 1L);
     documentoRequeridoSolicitud.getTipoDocumento().setId(2L);
-    documentoRequeridoSolicitud.setObservaciones("obbservaciones-modificadas");
+    documentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
 
     // when: update DocumentoRequeridoSolicitud
     final ResponseEntity<DocumentoRequeridoSolicitud> response = restTemplate.exchange(
@@ -124,8 +133,8 @@ class DocumentoRequeridoSolicitudIT extends BaseIT {
     Assertions.assertThat(responseData.getId()).as("getId()").isEqualTo(documentoRequeridoSolicitudId);
     Assertions.assertThat(responseData.getConfiguracionSolicitudId()).as("getConfiguracionSolicitudId()").isEqualTo(1L);
     Assertions.assertThat(responseData.getTipoDocumento().getId()).as("getTipoDocumento().getId()").isEqualTo(2L);
-    Assertions.assertThat(responseData.getObservaciones()).as("getObservaciones()")
-        .isEqualTo("Observaciones documento 2");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("Observaciones documento 2");
   }
 
   /**
@@ -137,11 +146,15 @@ class DocumentoRequeridoSolicitudIT extends BaseIT {
   private DocumentoRequeridoSolicitud generarMockDocumentoRequeridoSolicitud(Long id, Long configuracionSolicitudId,
       Long tipoDocumentoId) {
     // @formatter:off
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(
+        new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observacionesDocumentoRequeridoSolicitud-" + id));
+
     return DocumentoRequeridoSolicitud.builder()
         .id(id)
         .configuracionSolicitudId(configuracionSolicitudId)
         .tipoDocumento(TipoDocumento.builder().id(tipoDocumentoId).build())
-        .observaciones("observacionesDocumentoRequeridoSolicitud-" + id)
+        .observaciones(obsDocumentoRequerido)
         .build();
     // @formatter:on
   }

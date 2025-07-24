@@ -1,0 +1,43 @@
+[
+  {
+    "key": "ap4_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.1 Risk level"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Please indicate the overall risk level of the activity. In the case of handling several agents with different risk levels, consider the highest level.</p>"
+      },
+      {
+        "key": "nivelRiesgo",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "nivel_1",
+              "label": "Level I: Little or no individual and population risk. Microorganisms that are unlikely to cause disease in humans or animals."
+            },
+            {
+              "value": "nivel_2",
+              "label": "Level II: Moderate individual risk, low population risk. Pathogens that can cause human or animal disease but are unlikely to pose a serious risk to laboratory personnel, the public, livestock or the environment. Exposure in the laboratory can cause serious infection, but effective preventive and therapeutic measures are available and the risk of spread is limited."
+            },
+            {
+              "value": "nivel_3",
+              "label": "Level III: High individual risk, low population risk. Pathogens that usually cause serious human or animal diseases, but do not ordinarily spread from one individual to another. There are effective preventive and therapeutic measures."
+            },
+            {
+              "value": "nivel_4",
+              "label": "Level IV: High individual and population risk. Pathogens that usually cause serious diseases in humans or animals and that are easily transmitted from one individual to another, directly or indirectly. Effective preventive and therapeutic measures are usually not available."
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

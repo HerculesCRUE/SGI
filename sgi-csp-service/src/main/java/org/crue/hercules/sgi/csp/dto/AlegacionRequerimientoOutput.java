@@ -3,6 +3,9 @@ package org.crue.hercules.sgi.csp.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.csp.model.AlegacionRequerimientoObservaciones;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +31,5 @@ public class AlegacionRequerimientoOutput implements Serializable {
   private BigDecimal interesesReintegrados;
   private Instant fechaReintegro;
   private String justificanteReintegro;
-  private String observaciones;
+  private Collection<AlegacionRequerimientoObservaciones> observaciones;
 }

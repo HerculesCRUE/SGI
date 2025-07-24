@@ -2,7 +2,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { IProyectoFacturacion } from '@core/models/csp/proyecto-facturacion';
 import { environment } from '@env';
-import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
+import { CreateCtor, FindAllCtor, FindByIdCtor, mixinCreate, mixinFindAll, mixinFindById, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, UpdateCtor } from '@sgi/framework/http';
 import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { IProyectoFacturacionRequest } from './proyecto-facturacion-request';
@@ -61,6 +61,21 @@ export class ProyectoFacturacionService extends _ProyectoFacturacionMixinBase {
     ).pipe(
       map(response => PROYECTO_FACTURACION_RESPONSE_CONVERTER.toTarget(response))
     );
+  }
+
+  /**
+   * Devuelve la lista de IProyectoFacturacion que no tienen numeroFacturaSge y que cumplen con los criterios de busqueda
+   * 
+   * @param options opciones de busqueda
+   * @returns la lista de IProyectoFacturacion que cumplen con los criterios de busqueda
+   */
+  findFacturasPendientesEmitir(options: SgiRestFindOptions): Observable<IProyectoFacturacion[]> {
+    return this.find<IProyectoFacturacionResponse, IProyectoFacturacion>(
+      `${this.endpointUrl}/facturas-pendientes-emitir`,
+      options,
+      PROYECTO_FACTURACION_RESPONSE_CONVERTER).pipe(
+        map(response => response.items)
+      );
   }
 
 }

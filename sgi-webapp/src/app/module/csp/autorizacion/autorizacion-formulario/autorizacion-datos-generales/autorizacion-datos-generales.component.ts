@@ -65,7 +65,7 @@ export class AutorizacionDatosGeneralesComponent extends FormFragmentComponent<I
     public authService: SgiAuthService,
     private readonly translate: TranslateService,
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as AutorizacionDatosGeneralesFragment;
 
     this.fxFlexProperties2 = new FxFlexProperties();
@@ -101,11 +101,11 @@ export class AutorizacionDatosGeneralesComponent extends FormFragmentComponent<I
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       AUTORIZACION_KEY,

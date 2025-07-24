@@ -11,9 +11,7 @@ import java.util.stream.Collectors;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioPeriodoPagoNotFoundException;
-import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioPeriodoPago;
-import org.crue.hercules.sgi.csp.model.RolSocio;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioPeriodoPagoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoSocioPeriodoPagoServiceImpl;
@@ -147,7 +145,6 @@ class ProyectoSocioPeriodoPagoServiceTest extends BaseServiceTest {
     // given: Un ProyectoSocioPeriodoPago actualizado con un id que no existe
     Long solicitudProyectoSocioId = 1L;
     ProyectoSocioPeriodoPago proyectoPeriodoPago = generarMockProyectoSocioPeriodoPago(1L);
-    Long proyectoSocioId = 1L;
 
     List<ProyectoSocioPeriodoPago> proyectoPeriodoPagoExistentes = new ArrayList<>();
     proyectoPeriodoPagoExistentes.add(generarMockProyectoSocioPeriodoPago(3L));
@@ -185,7 +182,7 @@ class ProyectoSocioPeriodoPagoServiceTest extends BaseServiceTest {
     // ProyectoSocio
     Assertions.assertThatThrownBy(() -> service.update(proyectoSocioId, Arrays.asList(proyectoPeriodoPago)))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("No se puede modificar el proyecto socio del ProyectoSocioPeriodoPago");
+        .hasMessage("No se puede Modificar Proyecto Socio para Proyecto Socio Periodo Pago");
   }
 
   @Test
@@ -254,27 +251,6 @@ class ProyectoSocioPeriodoPagoServiceTest extends BaseServiceTest {
           .get(i - (page.getSize() * page.getNumber()) - 1);
       Assertions.assertThat(proyectoPeriodoPagoRecuperado.getId()).isEqualTo(i);
     }
-  }
-
-  private ProyectoSocio generarMockProyectoSocio(Long id) {
-    // @formatter:off
-    RolSocio rolSocio = RolSocio.builder()
-        .id(id).abreviatura("001")
-        .nombre("nombre-001")
-        .descripcion("descripcion-001")
-        .coordinador(Boolean.FALSE)
-        .activo(Boolean.TRUE)
-        .build();
-
-    ProyectoSocio proyectoSocio = ProyectoSocio.builder()
-        .id(id)
-        .proyectoId(id)
-        .empresaRef("empresa-0041")
-        .rolSocio(rolSocio)
-        .build();
-    // @formatter:on
-
-    return proyectoSocio;
   }
 
   /**

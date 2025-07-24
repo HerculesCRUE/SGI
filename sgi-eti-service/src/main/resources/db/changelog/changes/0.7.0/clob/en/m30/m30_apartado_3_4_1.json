@@ -1,0 +1,82 @@
+[
+  {
+    "key": "ap3_4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.1 Unintentional or incidental exposure"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>In this activity, are tasks performed in which there may be unintentional or incidental exposure to biological agents?</p>"
+      },
+      {
+        "key": "agentesBiologicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Type of biological material used",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "muestrasBiologicasCheck",
+        "hideExpression": "!model.agentesBiologicosRadio || model.agentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Options:",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "criaymanejoanimales",
+              "label": "Animal husbandry and management"
+            },
+            {
+              "value": "tejidossangrefluidosanimales",
+              "label": "Animal tissues/blood/fluids"
+            },
+            {
+              "value": "tejidossangrefluidoshumanos",
+              "label": "Human tissues/blood/fluids"
+            },
+            {
+              "value": "otros",
+              "label": "Other"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please indicate the type of biological material",
+        "hideExpression": "!((model.agentesBiologicosRadio && model.agentesBiologicosRadio === 'si') && (model.muestrasBiologicasCheck && model.muestrasBiologicasCheck.find((m) => m === 'otros')))"
+      },
+      {
+        "key": "tipoMaterialBiologico",
+        "type": "i18n-textarea",
+        "hideExpression": "!((model.agentesBiologicosRadio && model.agentesBiologicosRadio === 'si') && (model.muestrasBiologicasCheck && model.muestrasBiologicasCheck.find((m) => m === 'otros')))",
+        "templateOptions": {
+          "label": "Please indicate:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

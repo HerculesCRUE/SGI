@@ -1,21 +1,30 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoDescripcion;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoNombre;
 import org.crue.hercules.sgi.csp.repository.ConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConceptoGastoServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -25,24 +34,24 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ConceptoGastoServiceTest
  */
+@Import({ ConceptoGastoServiceImpl.class })
 class ConceptoGastoServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private ConceptoGastoRepository repository;
 
+  @Autowired
   private ConceptoGastoService service;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    service = new ConceptoGastoServiceImpl(repository);
-  }
 
   @Test
   void create_ReturnsConceptoGasto() {
     // given: Un nuevo ConceptoGasto
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(null);
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre())).willReturn(Optional.empty());
+    BDDMockito
+        .given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
+        .willReturn(Optional.empty());
 
     BDDMockito.given(repository.save(conceptoGasto)).will((InvocationOnMock invocation) -> {
       ConceptoGasto conceptoGastoCreado = invocation.getArgument(0);
@@ -68,7 +77,7 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     // when: Creamos el ConceptoGasto
     // then: Lanza una excepcion porque el ConceptoGasto ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(conceptoGasto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("The Identifier from Spend Concept must be null");
+        .hasMessage("Identificador de Concepto de Gasto debe ser nulo");
   }
 
   @Test
@@ -77,13 +86,17 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     ConceptoGasto conceptoGastoNew = generarMockConceptoGasto(null, "nombreRepetido");
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L, "nombreRepetido");
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(conceptoGastoNew.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(conceptoGasto));
 
-    // when: Creamos el ConceptoGasto
-    // then: Lanza una excepcion porque hay otro ConceptoGasto con ese nombre
-    Assertions.assertThatThrownBy(() -> service.create(conceptoGastoNew)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un ConceptoGasto con el nombre " + conceptoGastoNew.getNombre());
+    Assertions.assertThatThrownBy(
+        // when: create ConceptoGasto
+        () -> service.create(conceptoGastoNew))
+        // then: throw exception as Nombre already exists
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un concepto de gasto con el nombre '%s'",
+            I18nHelper.getValueForLanguage(conceptoGastoNew.getNombre(), Language.ES));
   }
 
   @Test
@@ -92,7 +105,8 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L);
     ConceptoGasto conceptoGastoNombreActualizado = generarMockConceptoGasto(1L, "NombreActualizado");
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(conceptoGastoNombreActualizado.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.empty());
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(conceptoGasto));
@@ -115,7 +129,9 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     // given: Un ConceptoGasto actualizado con un id que no existe
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L, "ConceptoGasto");
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre())).willReturn(Optional.empty());
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
+        .willReturn(Optional.empty());
 
     // when: Actualizamos el ConceptoGasto
     // then: Lanza una excepcion porque el ConceptoGasto no existe
@@ -129,14 +145,16 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     ConceptoGasto conceptoGastoActualizado = generarMockConceptoGasto(1L, "nombreRepetido");
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(2L, "nombreRepetido");
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(conceptoGastoActualizado.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(conceptoGasto));
 
     // when: Actualizamos el ConceptoGasto
-    // then: Lanza una excepcion porque hay otro ConceptoGasto con ese nombre
+    // then: Lanza una excepcion porque ya existe otro ConceptoGasto con ese nombre
     Assertions.assertThatThrownBy(() -> service.update(conceptoGastoActualizado))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un ConceptoGasto con el nombre " + conceptoGastoActualizado.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un concepto de gasto con el nombre '%s'",
+            I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES));
   }
 
   @Test
@@ -146,7 +164,9 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     conceptoGasto.setActivo(false);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(conceptoGasto));
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre())).willReturn(Optional.empty());
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
+        .willReturn(Optional.empty());
     BDDMockito.given(repository.save(ArgumentMatchers.<ConceptoGasto>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
 
@@ -167,13 +187,17 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     conceptoGasto.setActivo(false);
     ConceptoGasto conceptoGastoRepetido = generarMockConceptoGasto(2L, "nombreRepetido");
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(conceptoGasto.getNombre()))
+    BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(conceptoGasto));
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(conceptoGastoRepetido));
 
-    // when: Activamos el ConceptoGasto
-    // then: Lanza una excepcion porque hay otro ConceptoGasto con ese nombre
-    Assertions.assertThatThrownBy(() -> service.update(conceptoGasto)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un ConceptoGasto con el nombre %s", conceptoGasto.getNombre());
+    // when: activamos el ConceptoGasto
+    // then: Lanza una excepcion porque el ConceptoGasto no existe
+    Assertions.assertThatThrownBy(() -> service.enable(conceptoGasto.getId()))
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un concepto de gasto con el nombre '%s'",
+            I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES));
   }
 
   @Test
@@ -222,14 +246,16 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     ConceptoGasto conceptoGastoUpdated = generarMockConceptoGasto(1L, "nombreRepetido");
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(2L, "nombreRepetido");
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(conceptoGastoUpdated.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(conceptoGasto));
 
     // when: Actualizamos el ConceptoGasto
-    // then: Lanza una excepcion porque ya existe otro ConceptoGasto con ese
-    // nombre
+    // then: Lanza una excepcion porque ya existe otro ConceptoGasto con ese nombre
     Assertions.assertThatThrownBy(() -> service.update(conceptoGastoUpdated))
-        .isInstanceOf(IllegalArgumentException.class);
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un concepto de gasto con el nombre '%s'",
+            I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES));
   }
 
   @Test
@@ -269,7 +295,8 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       ConceptoGasto conceptoGasto = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(conceptoGasto.getNombre()).isEqualTo("ConceptoGasto" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES))
+          .isEqualTo("ConceptoGasto" + String.format("%03d", i));
     }
   }
 
@@ -310,7 +337,8 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       ConceptoGasto conceptoGasto = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(conceptoGasto.getNombre()).isEqualTo("ConceptoGasto" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES))
+          .isEqualTo("ConceptoGasto" + String.format("%03d", i));
     }
   }
 
@@ -326,7 +354,8 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
     // then: el ConceptoGasto
     Assertions.assertThat(conceptoGasto).as("isNotNull()").isNotNull();
     Assertions.assertThat(conceptoGasto.getId()).as("getId()").isEqualTo(idBuscado);
-    Assertions.assertThat(conceptoGasto.getNombre()).as("getNombre()").isEqualTo("nombre-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-1");
     Assertions.assertThat(conceptoGasto.getActivo()).as("getActivo()").isTrue();
   }
 
@@ -359,10 +388,16 @@ class ConceptoGastoServiceTest extends BaseServiceTest {
    * @return el objeto ConceptoGasto
    */
   private ConceptoGasto generarMockConceptoGasto(Long id, String nombre) {
+    Set<ConceptoGastoNombre> nombreConceptoGasto = new HashSet<>();
+    nombreConceptoGasto.add(new ConceptoGastoNombre(Language.ES, nombre));
+
+    Set<ConceptoGastoDescripcion> descripcionConceptoGasto = new HashSet<>();
+    descripcionConceptoGasto.add(new ConceptoGastoDescripcion(Language.ES, "descripcion-" + id));
+
     ConceptoGasto conceptoGasto = new ConceptoGasto();
     conceptoGasto.setId(id);
-    conceptoGasto.setNombre(nombre);
-    conceptoGasto.setDescripcion("descripcion-" + id);
+    conceptoGasto.setNombre(nombreConceptoGasto);
+    conceptoGasto.setDescripcion(descripcionConceptoGasto);
     conceptoGasto.setActivo(true);
     conceptoGasto.setCostesIndirectos(true);
 

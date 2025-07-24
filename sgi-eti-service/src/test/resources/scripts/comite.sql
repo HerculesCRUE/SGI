@@ -6,13 +6,16 @@
 */
 
 -- COMITÉ
-INSERT INTO test.comite (id, comite, nombre_investigacion, genero, formulario_id, activo) VALUES (1, 'CEI', 'nombreInvestigacion', 'M', 1, true);
-INSERT INTO test.comite (id, comite, nombre_investigacion, genero, formulario_id, activo) VALUES (2, 'CEEA', 'nombreInvestigacion', 'M', 2, true);
-INSERT INTO test.comite (id, comite, nombre_investigacion, genero, formulario_id, activo) VALUES (3, 'CBE', 'nombreInvestigacion', 'M', 3, true);
-INSERT INTO test.comite (id, comite, nombre_investigacion, genero, formulario_id, activo) VALUES (4, 'Comite4', 'nombreInvestigacion', 'M', 4, true);
-INSERT INTO test.comite (id, comite, nombre_investigacion, genero, formulario_id, activo) VALUES (5, 'Comite5', 'nombreInvestigacion', 'M', 5, true);
-INSERT INTO test.comite (id, comite, nombre_investigacion, genero, formulario_id, activo) VALUES (6, 'Comite6', 'nombreInvestigacion', 'M', 6, true);
-INSERT INTO test.comite (id, comite, nombre_investigacion, genero, formulario_id, activo) VALUES (7, 'Comite7', 'nombreInvestigacion', 'M', 1, true);
-INSERT INTO test.comite (id, comite, nombre_investigacion, genero, formulario_id, activo) VALUES (8, 'Comite8', 'nombreInvestigacion', 'M', 2, true);
+INSERT INTO test.comite (id, codigo, formulario_memoria_id, formulario_seguimiento_anual_id, formulario_seguimiento_final_id, formulario_retrospectiva_id, requiere_retrospectiva, prefijo_referencia, permitir_ratificacion, tarea_nombre_libre, tarea_experiencia_libre, tarea_experiencia_detalle, memoria_titulo_libre, activo) 
+  VALUES (1, 'CEI', 1, 4, 5, 6, false, 'M10', true, true, true, false, false, true);
+INSERT INTO test.comite (id, codigo, formulario_memoria_id, formulario_seguimiento_anual_id, formulario_seguimiento_final_id, formulario_retrospectiva_id, requiere_retrospectiva, prefijo_referencia, permitir_ratificacion, tarea_nombre_libre, tarea_experiencia_libre, tarea_experiencia_detalle, memoria_titulo_libre, activo) 
+  VALUES (2, 'CEEA', 2, 4, 5, 6, true, 'M20', false, false, false, true, true, true);
+INSERT INTO test.comite (id, codigo, formulario_memoria_id, formulario_seguimiento_anual_id, formulario_seguimiento_final_id, formulario_retrospectiva_id, requiere_retrospectiva, prefijo_referencia, permitir_ratificacion, tarea_nombre_libre, tarea_experiencia_libre, tarea_experiencia_detalle, memoria_titulo_libre, activo) 
+  VALUES (3, 'CBE', 3, 4, 5, 6, false, 'M30', true, true, true, true, false, true);
 
- ALTER SEQUENCE test.comite_seq RESTART WITH 9;
+--COMITE NOMBRES
+INSERT INTO test.comite_nombre(comite_id, lang, value_, genero) VALUES(1, 'es', 'nombreInvestigacion', 'M');
+INSERT INTO test.comite_nombre(comite_id, lang, value_, genero) VALUES(2, 'es', 'nombreInvestigacion', 'M');
+INSERT INTO test.comite_nombre(comite_id, lang, value_, genero) VALUES(3, 'es', 'nombreInvestigacion', 'M');
+
+ ALTER SEQUENCE test.comite_seq RESTART WITH 4;

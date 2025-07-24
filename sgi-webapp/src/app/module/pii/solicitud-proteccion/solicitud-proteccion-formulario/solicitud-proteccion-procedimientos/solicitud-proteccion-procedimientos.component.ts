@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { IProcedimiento } from '@core/models/pii/procedimiento';
 import { SolicitudProteccionActionService } from '../../solicitud-proteccion.action.service';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'sgi-solicitud-proteccion-procedimientos',
@@ -12,8 +13,9 @@ export class SolicitudProteccionProcedimientosComponent extends FormFragmentComp
 
   constructor(
     protected actionService: SolicitudProteccionActionService,
+    private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.PROCEDIMIENTOS, actionService);
+    super(actionService.FRAGMENT.PROCEDIMIENTOS, actionService, translate);
   }
 
   ngOnDestroy(): void {
@@ -22,4 +24,5 @@ export class SolicitudProteccionProcedimientosComponent extends FormFragmentComp
   ngOnInit(): void {
   }
 
+  protected setupI18N(): void { }
 }

@@ -26,13 +26,17 @@
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-GIN-V', 'CSP-GIN-C', 'CSP-GIN-E', 'CSP-GIN-B', 'CSP-GIN-R']"
     [route]="[CSP_ROUTE_NAMES.GRUPO]" icon="group" title="{{'csp.grupo' | translate:MSG_PARAMS.CARDINALIRY.PLURAL}}">
   </sgi-menu-item>
-  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-    [route]="[CSP_ROUTE_NAMES.EJECUCION_ECONOMICA]" icon="functions"
-    title="{{'menu.csp.ejecucion-economica' | translate}}">
-  </sgi-menu-item>
-  <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-E']" [route]="[CSP_ROUTE_NAMES.NOTIFICACION_PRESUPUESTO_SGE]"
-    icon="swap_horiz" title="{{'menu.csp.notificacion-presupuesto-sge' | translate}}">
-  </sgi-menu-item>
+  <ng-container *ngIf="isEjecucionEconomicaEnabled">
+    <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+      [route]="[CSP_ROUTE_NAMES.EJECUCION_ECONOMICA]" icon="functions"
+      title="{{'menu.csp.ejecucion-economica' | translate}}">
+    </sgi-menu-item>
+  </ng-container>
+  <ng-container *ngIf="isNotificacionPresupuestoSgeEnabled">
+    <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-E']" [route]="[CSP_ROUTE_NAMES.NOTIFICACION_PRESUPUESTO_SGE]"
+      icon="swap_horiz" title="{{'menu.csp.notificacion-presupuesto-sge' | translate}}">
+    </sgi-menu-item>
+  </ng-container>
   <sgi-menu-item *sgiHasAnyAuthorityForAnyUO="['AUTH']" icon="insert_invitation"
     title="{{'menu.csp.timesheet' | translate}}">
   </sgi-menu-item>

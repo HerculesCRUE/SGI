@@ -16,4 +16,14 @@ public interface ProyectoFacturacionRepository
   Optional<ProyectoFacturacion> findFirstByProyectoIdOrderByNumeroPrevisionDesc(Long proyectoId);
 
   boolean existsByProyectoProrrogaId(Long proyectoProrrogaId);
+
+  /**
+   * Indica si existen {@link ProyectoFacturacion} asociados al proyectoSgeRef
+   * 
+   * @param proyectoSgeRef identificador del proyecto en el SGE
+   * @return {@code true} si existe al menos un {@link ProyectoFacturacion}
+   *         asociado al proyectoSgeRef, {@code false} en caso contrario.
+   */
+  boolean existsByProyectoSgeRef(String proyectoSgeRef);
+
 }

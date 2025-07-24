@@ -11,6 +11,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { ROUTE_NAMES } from '@core/route.names';
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subject, Subscription } from 'rxjs';
@@ -73,8 +74,9 @@ export class ProyectoConceptosGastoComponent extends FragmentComponent implement
     private dialogService: DialogService,
     private proyectoConceptoGastoService: ProyectoConceptoGastoService,
     private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.ELEGIBILIDAD, actionService);
+    super(actionService.FRAGMENT.ELEGIBILIDAD, actionService, translate);
     this.formPart = this.fragment as ProyectoConceptosGastoFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -91,7 +93,7 @@ export class ProyectoConceptosGastoComponent extends FragmentComponent implement
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSourcePermitidos = new MatTableDataSource<ConceptoGastoListado>();
     this.dataSourcePermitidos.paginator = this.paginatorPermitidos;
     this.dataSourcePermitidos.sort = this.sortPermitidos;
@@ -108,23 +110,35 @@ export class ProyectoConceptosGastoComponent extends FragmentComponent implement
     }));
 
     this.dataSourcePermitidos.sortingDataAccessor =
-      (wrapper: ConceptoGastoListado, property: string) => {
+      (listadocg: ConceptoGastoListado, property: string) => {
         switch (property) {
+          case 'conceptoGasto.nombre':
+            return this.languageService.getFieldValue(listadocg.conceptoGasto);
+          case 'conceptoGasto.descripcion':
+            return this.languageService.getFieldValue(listadocg.descripcion);
+          case 'conceptoGasto.observaciones':
+            return this.languageService.getFieldValue(listadocg.observaciones);
           default:
-            return wrapper[property];
+            return listadocg[property];
         }
       };
 
     this.dataSourceNoPermitidos.sortingDataAccessor =
-      (wrapper: ConceptoGastoListado, property: string) => {
+      (listadocg: ConceptoGastoListado, property: string) => {
         switch (property) {
+          case 'conceptoGasto.nombre':
+            return this.languageService.getFieldValue(listadocg.conceptoGasto);
+          case 'conceptoGasto.descripcion':
+            return this.languageService.getFieldValue(listadocg.descripcion);
+          case 'conceptoGasto.observaciones':
+            return this.languageService.getFieldValue(listadocg.observaciones);
           default:
-            return wrapper[property];
+            return listadocg[property];
         }
       };
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_CONCEPTO_GASTO_PERMITIDO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -194,7 +208,7 @@ export class ProyectoConceptosGastoComponent extends FragmentComponent implement
   }
 
   displayerCosteIndirecto(costeIndirecto: IProyectoConceptoGasto): string {
-    const nombreCosteIndirecto = costeIndirecto?.conceptoGasto?.nombre;
+    const nombreCosteIndirecto = costeIndirecto?.conceptoGasto?.nombre ? this.languageService.getFieldValue(costeIndirecto.conceptoGasto.nombre) : '';
     let mesesCosteIndirecto = '';
     if (costeIndirecto?.fechaInicio) {
       mesesCosteIndirecto = ' (' + costeIndirecto.fechaInicio + (costeIndirecto.fechaFin ? (' - ' + costeIndirecto.fechaFin) : '') + ')';

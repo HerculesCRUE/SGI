@@ -4,14 +4,19 @@ import { FormFragment } from '@core/services/action-service';
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { DateValidator } from '@core/validators/date-validator';
-import { NullIdValidador } from '@core/validators/null-id-validador';
-import { Observable } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { NGXLogger } from 'ngx-logger';
+import { Observable, of } from 'rxjs';
+import { catchError, map, switchMap } from 'rxjs/operators';
 
 export class EvaluadorDatosGeneralesFragment extends FormFragment<IEvaluador> {
 
   private evaluador: IEvaluador;
-  constructor(private fb: FormBuilder, key: number, private service: EvaluadorService, private personaService: PersonaService) {
+  constructor(
+    private readonly logger: NGXLogger,
+    private fb: FormBuilder,
+    key: number,
+    private service: EvaluadorService,
+    private personaService: PersonaService) {
     super(key, true);
     this.setComplete(true);
     this.evaluador = {} as IEvaluador;
@@ -24,7 +29,7 @@ export class EvaluadorDatosGeneralesFragment extends FormFragment<IEvaluador> {
       fechaAlta: [null, Validators.required],
       fechaBaja: [null],
       cargoComite: [null, Validators.required],
-      resumen: [''],
+      resumen: [[]],
       persona: [{ value: null, disabled: this.isEdit() }, Validators.required]
     }, {
       validators: [DateValidator.isAfter('fechaAlta', 'fechaBaja')]
@@ -39,6 +44,10 @@ export class EvaluadorDatosGeneralesFragment extends FormFragment<IEvaluador> {
             map(persona => {
               value.persona = persona;
               return value;
+            }),
+            catchError(err => {
+              this.logger.error(err);
+              return of(value);
             })
           );
       })

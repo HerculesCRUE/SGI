@@ -6,8 +6,9 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.plan-investigacion.nombre' | translate}}</mat-label>
-          <input matInput formControlName="nombre" type="text" id="nombre"
+          <sgi-i18n-input formControlName="nombre" type="text"
             placeholder="{{'csp.plan-investigacion.nombre' | translate}}" required>
+          </sgi-i18n-input>
           <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
             {{'error.required.entity' | translate:msgParamNombreEntity}}
           </mat-error>
@@ -24,8 +25,9 @@
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field fxFill>
           <mat-label>{{'csp.plan-investigacion.descripcion' | translate}}</mat-label>
-          <textarea matInput formControlName="descripcion" id="descripcion"
-            placeholder="{{'csp.plan-investigacion.descripcion' | translate}}"></textarea>
+          <sgi-i18n-textarea formControlName="descripcion"
+            placeholder="{{'csp.plan-investigacion.descripcion' | translate}}">
+          </sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.descripcion.errors?.maxlength">
             {{'error.maxlength.entity' | translate:msgParamDescripcionEntity}}
           </mat-error>

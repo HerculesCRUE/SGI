@@ -5,6 +5,7 @@ import { MatTree, MatTreeFlatDataSource, MatTreeFlattener } from '@angular/mater
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
 import { ITipoDocumento } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -12,10 +13,12 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { Group } from '@core/services/action-service';
 import { ConfiguracionSolicitudPublicService } from '@core/services/csp/configuracion-solicitud-public.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoPublicService } from '@core/services/sgdoc/documento-public.service';
 import { triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
@@ -33,6 +36,7 @@ const MSG_DELETE = marker('msg.delete.entity');
 const SOLICITUD_DOCUMENTOS_KEY = marker('csp.documento');
 const SOLICITUD_DOCUMENTO_FICHERO_KEY = marker('csp.documento.fichero');
 const SOLICITUD_DOCUMENTO_NOMBRE_KEY = marker('csp.documento.nombre');
+const SOLICITUD_DOCUMENTO_COMENTARIOS_KEY = marker('csp.documento.comentarios');
 
 enum VIEW_MODE {
   NONE = '',
@@ -77,6 +81,7 @@ export class SolicitudDocumentosPublicComponent extends FragmentComponent implem
   msgParamEntity = {};
   msgParamNombreEntity = {};
   msgParamFicheroEntity = {};
+  msgParamComentariosEntity = {};
   textoDelete: string;
 
   private getLevel = (node: NodeDocumentoSolicitud) => node.level;
@@ -98,9 +103,10 @@ export class SolicitudDocumentosPublicComponent extends FragmentComponent implem
     private configuracionSolicitudService: ConfiguracionSolicitudPublicService,
     private snackBar: SnackBarService,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DOCUMENTOS, actionService);
+    super(actionService.FRAGMENT.DOCUMENTOS, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -121,7 +127,7 @@ export class SolicitudDocumentosPublicComponent extends FragmentComponent implem
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subcription = this.formPart.documentos$.subscribe(
       (documentos) => {
         this.dataSource.data = documentos;
@@ -132,13 +138,13 @@ export class SolicitudDocumentosPublicComponent extends FragmentComponent implem
     );
     this.subscriptions.push(subcription);
     this.group.load(new FormGroup({
-      nombre: new FormControl('', [
-        Validators.required,
-        Validators.maxLength(50)
+      nombre: new FormControl([], [
+        I18nValidators.required,
+        I18nValidators.maxLength(50)
       ]),
       fichero: new FormControl(null, Validators.required),
       tipoDocumento: new FormControl(null, IsEntityValidator.isValid),
-      comentarios: new FormControl('')
+      comentarios: new FormControl([], I18nValidators.maxLength(2000))
     }));
 
     if (this.formPart.readonly) {
@@ -162,7 +168,7 @@ export class SolicitudDocumentosPublicComponent extends FragmentComponent implem
     this.switchToNone();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_DOCUMENTOS_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -190,6 +196,11 @@ export class SolicitudDocumentosPublicComponent extends FragmentComponent implem
         );
       })
     ).subscribe((value) => this.textoDelete = value);
+
+    this.translate.get(
+      SOLICITUD_DOCUMENTO_COMENTARIOS_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).subscribe((value) => this.msgParamComentariosEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
 
   }
 
@@ -377,6 +388,10 @@ export class SolicitudDocumentosPublicComponent extends FragmentComponent implem
     // See: https://github.com/angular/components/issues/11381
     this.matTree.renderNodeChanges([]);
     this.matTree.renderNodeChanges(nodes);
+  }
+
+  getI18nValue(i18nFieldValue: I18nFieldValue[]): string {
+    return this.languageService.getFieldValue(i18nFieldValue);
   }
 
 }

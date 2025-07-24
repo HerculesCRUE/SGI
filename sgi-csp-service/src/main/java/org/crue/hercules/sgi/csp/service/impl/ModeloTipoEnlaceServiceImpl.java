@@ -11,7 +11,10 @@ import org.crue.hercules.sgi.csp.repository.ModeloTipoEnlaceRepository;
 import org.crue.hercules.sgi.csp.repository.TipoEnlaceRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ModeloTipoEnlaceSpecifications;
 import org.crue.hercules.sgi.csp.service.ModeloTipoEnlaceService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,6 +31,11 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ModeloTipoEnlaceServiceImpl implements ModeloTipoEnlaceService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_MODEL_TIPO_ENLACE = "org.crue.hercules.sgi.csp.model.TipoEnlace.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODELO_EJECUCION_EXISTS = "org.springframework.util.Assert.entity.modeloEjecucion.exists.message";
 
   private final ModeloEjecucionRepository modeloEjecucionRepository;
   private final ModeloTipoEnlaceRepository modeloTipoEnlaceRepository;
@@ -51,11 +59,9 @@ public class ModeloTipoEnlaceServiceImpl implements ModeloTipoEnlaceService {
   public ModeloTipoEnlace create(ModeloTipoEnlace modeloTipoEnlace) {
     log.debug("create(ModeloTipoEnlace modeloTipoEnlace) - start");
 
-    Assert.isNull(modeloTipoEnlace.getId(), "Id tiene que ser null para crear ModeloTipoEnlace");
-    Assert.notNull(modeloTipoEnlace.getModeloEjecucion().getId(),
-        "Id ModeloEjecucion no puede ser null para crear un ModeloTipoEnlace");
-    Assert.notNull(modeloTipoEnlace.getTipoEnlace().getId(),
-        "Id TipoEnlace no puede ser null para crear un ModeloTipoEnlace");
+    AssertHelper.idIsNull(modeloTipoEnlace.getId(), ModeloTipoEnlace.class);
+    AssertHelper.idNotNull(modeloTipoEnlace.getModeloEjecucion().getId(), ModeloEjecucion.class);
+    AssertHelper.idNotNull(modeloTipoEnlace.getTipoEnlace().getId(), TipoEnlace.class);
 
     modeloTipoEnlace
         .setModeloEjecucion(modeloEjecucionRepository.findById(modeloTipoEnlace.getModeloEjecucion().getId())
@@ -63,13 +69,21 @@ public class ModeloTipoEnlaceServiceImpl implements ModeloTipoEnlaceService {
 
     modeloTipoEnlace.setTipoEnlace(tipoEnlaceRepository.findById(modeloTipoEnlace.getTipoEnlace().getId())
         .orElseThrow(() -> new TipoEnlaceNotFoundException(modeloTipoEnlace.getTipoEnlace().getId())));
-    Assert.isTrue(modeloTipoEnlace.getTipoEnlace().getActivo(), "El TipoEnlace debe estar Activo");
+    Assert.isTrue(modeloTipoEnlace.getTipoEnlace().getActivo(),
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_ENLACE))
+            .parameter(MSG_KEY_FIELD, modeloTipoEnlace.getTipoEnlace().getNombre())
+            .build());
 
     modeloTipoEnlaceRepository.findByModeloEjecucionIdAndTipoEnlaceId(modeloTipoEnlace.getModeloEjecucion().getId(),
         modeloTipoEnlace.getTipoEnlace().getId()).ifPresent(modeloTipoEnlaceExistente -> {
 
           Assert.isTrue(!modeloTipoEnlaceExistente.getActivo(),
-              "Ya existe una asociación activa para ese ModeloEjecucion y ese TipoEnlace");
+              () -> ProblemMessage.builder()
+                  .key(MSG_MODELO_EJECUCION_EXISTS)
+                  .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_ENLACE))
+                  .build());
 
           modeloTipoEnlace.setId(modeloTipoEnlaceExistente.getId());
         });
@@ -91,7 +105,7 @@ public class ModeloTipoEnlaceServiceImpl implements ModeloTipoEnlaceService {
   public ModeloTipoEnlace disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "ModeloTipoEnlace id no puede ser null para desactivar un ModeloTipoEnlace");
+    AssertHelper.idNotNull(id, ModeloTipoEnlace.class);
 
     return modeloTipoEnlaceRepository.findById(id).map(modeloTipoEnlace -> {
       modeloTipoEnlace.setActivo(false);

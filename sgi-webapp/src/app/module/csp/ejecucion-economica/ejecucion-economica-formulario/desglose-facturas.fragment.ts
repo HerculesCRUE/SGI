@@ -1,4 +1,5 @@
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
+import { Language } from '@core/i18n/language';
 import { IConfiguracion } from '@core/models/csp/configuracion';
 import { IRelacionEjecucionEconomica } from '@core/models/csp/relacion-ejecucion-economica';
 import { IColumna } from '@core/models/sge/columna';
@@ -6,8 +7,10 @@ import { IFacturaEmitida } from '@core/models/sge/factura-emitida';
 import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { Fragment } from '@core/services/action-service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { DateTime } from 'luxon';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, Observable, Subject, forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 
 export interface IColumnDefinitionFacturaEmitida {
@@ -80,8 +83,11 @@ export interface IDesgloseFacturaEmitidaExportData extends IBaseExportModalData 
 export abstract class DesgloseFacturaEmitidaFragment<T extends IFacturaEmitida> extends Fragment {
   readonly relaciones$ = new BehaviorSubject<IRelacionEjecucionEconomica[]>([]);
 
+  private columnsLanguage: Map<Language, IColumnDefinitionFacturaEmitida[]> = new Map();
+
   displayColumns: string[] = [];
   columns: IColumnDefinitionFacturaEmitida[] = [];
+  columns$ = new BehaviorSubject<IColumnDefinitionFacturaEmitida[]>([]);
   readonly desglose$: Subject<RowTreeDesgloseFacturaEmitida<T>[]> = new BehaviorSubject<RowTreeDesgloseFacturaEmitida<T>[]>([]);
 
   get isEjecucionEconomicaGruposEnabled(): boolean {
@@ -93,6 +99,7 @@ export abstract class DesgloseFacturaEmitidaFragment<T extends IFacturaEmitida> 
     protected proyectoSge: IProyectoSge,
     protected relaciones: IRelacionEjecucionEconomicaWithResponsables[],
     protected proyectoService: ProyectoService,
+    protected readonly languageService: LanguageService,
     protected readonly config: IConfiguracion
   ) {
     super(key);
@@ -101,6 +108,21 @@ export abstract class DesgloseFacturaEmitidaFragment<T extends IFacturaEmitida> 
 
   protected onInitialize(): void {
     this.relaciones$.next([...this.relaciones]);
+
+    this.subscriptions.push(
+      this.languageService.languageChange$.pipe(
+        switchMap(language => forkJoin({
+          columns: this.columnsLanguage.has(language) ? of(this.columnsLanguage.get(language)) : this.getColumns(),
+          language: of(language)
+        }))
+      ).subscribe(({ columns, language }) => {
+        this.columns = columns;
+        this.columnsLanguage.set(language, this.columns);
+        this.columns$.next(this.columns);
+        this.displayColumns = this.getDisplayColumns(this.columns);
+      }
+      )
+    );
   }
 
   protected abstract getColumns(reducida?: boolean): Observable<IColumnDefinitionFacturaEmitida[]>;
@@ -119,11 +141,16 @@ export abstract class DesgloseFacturaEmitidaFragment<T extends IFacturaEmitida> 
     return of(void 0);
   }
 
-
   public clearDesglose(): void {
     const regs: RowTreeDesgloseFacturaEmitida<T>[] = [];
     this.desglose$.next(regs);
   }
+
+  public trackByColumnId(index, column: IColumnDefinitionFacturaEmitida): string {
+    return column.id;
+  }
+
+  protected abstract getDisplayColumns(columns: IColumnDefinitionFacturaEmitida[]): string[];
 
   protected abstract getFacturasEmitidas(fechaFacturaRange?: { desde: DateTime, hasta: DateTime }): Observable<IFacturaEmitida[]>;
 

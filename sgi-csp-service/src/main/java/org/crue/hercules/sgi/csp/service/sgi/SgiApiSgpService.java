@@ -7,6 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.config.RestApiProperties;
 import org.crue.hercules.sgi.csp.dto.sgp.PersonaOutput;
 import org.crue.hercules.sgi.csp.enums.ServiceType;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -18,6 +21,9 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 @Slf4j
 public class SgiApiSgpService extends SgiApiBaseService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String PROBLEM_MESSAGE_NOTNULL = "notNull";
 
   public SgiApiSgpService(RestApiProperties restApiProperties, RestTemplate restTemplate) {
     super(restApiProperties, restTemplate);
@@ -32,7 +38,7 @@ public class SgiApiSgpService extends SgiApiBaseService {
   public PersonaOutput findById(String id) {
     log.debug("findById({}) - start", id);
 
-    Assert.notNull(id, "ID is required");
+    AssertHelper.fieldNotNull(id, PersonaOutput.class, AssertHelper.MESSAGE_KEY_ID);
 
     ServiceType serviceType = ServiceType.SGP;
     String relativeUrl = "/personas/{id}";
@@ -56,8 +62,18 @@ public class SgiApiSgpService extends SgiApiBaseService {
   public List<PersonaOutput> findAllByIdIn(List<String> ids) {
     log.debug("findAllByIdIn({}) - start", ids);
 
-    Assert.notEmpty(ids, "At least one ID is required");
-    Assert.noNullElements(ids, "The IDs list must not contain null elements");
+    Assert.notEmpty(ids,
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(AssertHelper.MESSAGE_KEY_ID))
+            .parameter(MSG_KEY_ENTITY,
+                PersonaOutput.class)
+            .build());
+    Assert.noNullElements(ids,
+        () -> ProblemMessage.builder().key(Assert.class, PROBLEM_MESSAGE_NOTNULL)
+            .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(AssertHelper.MESSAGE_KEY_ID))
+            .parameter(MSG_KEY_ENTITY,
+                PersonaOutput.class)
+            .build());
 
     String in = ids.stream().map(id -> StringUtils.wrap(id, "\"")).collect(Collectors.joining(","));
 

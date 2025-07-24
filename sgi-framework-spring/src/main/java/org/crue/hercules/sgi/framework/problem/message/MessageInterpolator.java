@@ -9,6 +9,7 @@ import javax.validation.Path;
 import javax.validation.metadata.ConstraintDescriptor;
 
 import org.hibernate.validator.internal.engine.MessageInterpolatorContext;
+import org.hibernate.validator.messageinterpolation.ExpressionLanguageFeatureLevel;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -34,7 +35,8 @@ class MessageInterpolator {
 
     Map<String, Object> expressionVariables = Collections.emptyMap();
     MessageInterpolatorContext messageInterpolatorContext = new MessageInterpolatorContext(constraintDescriptor,
-        validatedValue, rootBeanType, propertyPath, messageParameters, expressionVariables);
+        validatedValue, rootBeanType, propertyPath, messageParameters, expressionVariables,
+        ExpressionLanguageFeatureLevel.DEFAULT, false);
     return messageInterpolator.interpolate(message, messageInterpolatorContext, getLocale());
   }
 

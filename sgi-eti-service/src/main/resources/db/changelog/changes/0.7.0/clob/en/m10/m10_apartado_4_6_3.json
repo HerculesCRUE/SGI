@@ -1,0 +1,130 @@
+[
+  {
+    "key": "ap4_6_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.3 Academic link with the research team"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Will the students who participate have an academic link with the research team?</p>"
+      },
+      {
+        "key": "vinculacionAcademicaEquipoInvestigadorRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please specify what this connection is and justify the need for that choice",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "key": "especificarVinculacion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'",
+        "templateOptions": {
+          "label": "Please specify",
+          "placeholder": "Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "<p>What special measures will be adopted to protect the voluntary nature of students academically linked to the research team?</p>",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>It is important to minimise the possible influence on the students at the time of recruitment, both by the teaching staff and by the pressure exerted by the group.</p><ul><li><strong>Direct recruitment:</strong> It is what the teacher does in the classroom or speaking with the students, offering academic incentives, etc. It is the least recommended, since coercion occurs.</li><li><strong>Interposition of a third person not academically linked to the students:</strong> When direct recruitment is necessary, it is recommended that it is not the teacher who carries out the recruitment, but rather a third person with no connection to the students.</li><li><strong>Indirect recruitment:</strong> through advertisements, brochures, etc.</li></ul>",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "template": "<p>Measures</p>",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "key": "medidasEspecialesEquipoInvestigadorRadio",
+        "type": "radio",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'",
+        "className": "vertical-radio",
+        "required": true,
+        "templateOptions": {
+          "label": "Options:",
+          "options": [
+            {
+              "value": "reclutamientoIndirecto",
+              "label": "Indirect recruitment: Make sure it is described in section 3.4.1"
+            },
+            {
+              "value": "interposicionTerceraPersona",
+              "label": "Interposition of a third person to obtain consent, store personal data and encode it, direct contact with the student when carrying out tests or experiments. Identify and provide a descriptive document of your tasks and a commitment signature to carry them out if applicable. Please describe in section 3.4.1"
+            },
+            {
+              "value": "otras",
+              "label": "Others"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please specify",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si' || !model.medidasEspecialesEquipoInvestigadorRadio || model.medidasEspecialesEquipoInvestigadorRadio !== 'otras'"
+      },
+      {
+        "key": "especificarOtras",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si' || !model.medidasEspecialesEquipoInvestigadorRadio || model.medidasEspecialesEquipoInvestigadorRadio !== 'otras'",
+        "templateOptions": {
+          "label": "Please specify",
+          "placeholder": "Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "<p>Is any member of the research team going to grade the students?</p>"
+      },
+      {
+        "key": "calificacionEstudiantesRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

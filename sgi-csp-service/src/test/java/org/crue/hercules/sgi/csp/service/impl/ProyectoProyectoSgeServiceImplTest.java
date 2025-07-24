@@ -13,11 +13,16 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoProyectoSgeNotFoundException
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessProyectoException;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
+import org.crue.hercules.sgi.csp.repository.AnualidadGastoRepository;
+import org.crue.hercules.sgi.csp.repository.AnualidadIngresoRepository;
 import org.crue.hercules.sgi.csp.repository.GastoProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoFacturacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProyectoSgeRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoResponsableEconomicoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoSeguimientoJustificacionRepository;
+import org.crue.hercules.sgi.csp.repository.RequerimientoJustificacionRepository;
 import org.crue.hercules.sgi.csp.service.BaseServiceTest;
 import org.crue.hercules.sgi.csp.service.ConfiguracionService;
 import org.crue.hercules.sgi.csp.service.ProyectoAnualidadService;
@@ -53,23 +58,47 @@ class ProyectoProyectoSgeServiceImplTest extends BaseServiceTest {
   private ProyectoAnualidadService proyectoAnualidadService;
   @Mock
   private GastoProyectoRepository gastoProyectoRepository;
+  @Mock
+  private AnualidadGastoRepository anualidadGastoRepository;
+  @Mock
+  private AnualidadIngresoRepository anualidadIngresoRepository;
+  @Mock
+  private ProyectoFacturacionRepository proyectoFacturacionRepository;
+  @Mock
+  private ProyectoSeguimientoJustificacionRepository proyectoSeguimientoJustificacionRepository;
+  @Mock
+  private RequerimientoJustificacionRepository requerimientoJustificacionRepository;
 
   private ProyectoHelper proyectoHelper;
   private ProyectoProyectoSgeService service;
 
   @BeforeEach
   void setup() {
-    this.proyectoHelper = new ProyectoHelper(proyectoRepository, proyectoEquipoRepository,
+    this.proyectoHelper = new ProyectoHelper(
+        proyectoRepository,
+        proyectoEquipoRepository,
         proyectoResponsableEconomicoRepository);
-    this.service = new ProyectoProyectoSgeServiceImpl(repository, proyectoRepository, this.proyectoHelper,
-        sgiConfigProperties, configuracionService, proyectoAnualidadService, gastoProyectoRepository);
+
+    this.service = new ProyectoProyectoSgeServiceImpl(
+        repository,
+        proyectoRepository,
+        this.proyectoHelper,
+        sgiConfigProperties,
+        configuracionService,
+        proyectoAnualidadService,
+        gastoProyectoRepository,
+        anualidadGastoRepository,
+        anualidadIngresoRepository,
+        proyectoFacturacionRepository,
+        proyectoSeguimientoJustificacionRepository,
+        requerimientoJustificacionRepository);
   }
 
   @Test
   void delete_ReturnProyectoProyectoSgeNotFoundException() {
     Long id = 1L;
 
-    BDDMockito.given(this.repository.existsById(id)).willReturn(Boolean.FALSE);
+    BDDMockito.given(this.repository.findById(id)).willReturn(Optional.empty());
 
     Assertions.assertThatThrownBy(() -> this.service.delete(id))
         .isInstanceOf(ProyectoProyectoSgeNotFoundException.class);

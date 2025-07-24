@@ -1,16 +1,18 @@
-import { Directive } from '@angular/core';
+import { Directive, OnDestroy, OnInit } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { SgiError, SgiProblem } from '@core/errors/sgi-error';
-import { BehaviorSubject } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { BehaviorSubject, Subscription } from 'rxjs';
 
 const MSG_GENERIC_ERROR_TITLE = marker('error.generic.title');
 const MSG_GENERIC_ERROR_CONTENT = marker('error.generic.message');
 
 @Directive()
 // tslint:disable-next-line: directive-class-suffix
-export abstract class AbstractMenuContentComponent {
+export abstract class AbstractMenuContentComponent implements OnInit, OnDestroy {
 
   readonly problems$: BehaviorSubject<SgiProblem[]>;
+  suscripciones: Subscription[] = [];
 
   public readonly processError: (error: Error) => void = (error: Error) => {
     if (error instanceof SgiError) {
@@ -27,8 +29,14 @@ export abstract class AbstractMenuContentComponent {
     }
   }
 
-  protected constructor() {
+  protected constructor(translateService?: TranslateService) {
     this.problems$ = new BehaviorSubject<SgiProblem[]>([]);
+
+    if (translateService) {
+      this.suscripciones.push(translateService.onLangChange.subscribe(() => {
+        this.setupI18N();
+      }));
+    }
   }
 
   pushProblems(problem: SgiProblem | SgiProblem[]): void {
@@ -58,4 +66,13 @@ export abstract class AbstractMenuContentComponent {
     );
   }
 
+  ngOnInit(): void {
+    this.setupI18N();
+  }
+
+  ngOnDestroy(): void {
+    this.suscripciones.forEach(x => x.unsubscribe());
+  }
+
+  protected abstract setupI18N(): void;
 }

@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,8 +16,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.model.CertificadoAutorizacion.OnActualizar;
 import org.crue.hercules.sgi.csp.model.CertificadoAutorizacion.OnCrear;
@@ -38,7 +45,6 @@ public class CertificadoAutorizacion extends BaseEntity {
 
   protected static final String TABLE_NAME = "certificado_autorizacion";
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";
-  public static final int MAX_LENGTH = 250;
 
   /**
    * Serial version
@@ -58,14 +64,19 @@ public class CertificadoAutorizacion extends BaseEntity {
   private Long autorizacionId;
 
   /** Documento Ref */
-  @Column(name = "documento_ref", length = CertificadoAutorizacion.MAX_LENGTH, nullable = true)
-  @Size(max = CertificadoAutorizacion.MAX_LENGTH)
-  private String documentoRef;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "certificado_autorizacion_documento_ref", joinColumns = @JoinColumn(name = "certificado_autorizacion_id"))
+  @Valid
+  @NotEmpty
+  @Builder.Default
+  private Set<CertificadoAutorizacionDocumentoRef> documentoRef = new HashSet<>();
 
   /** Nombre */
-  @Column(name = "nombre", length = CertificadoAutorizacion.MAX_LENGTH, nullable = true)
-  @Size(max = CertificadoAutorizacion.MAX_LENGTH)
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "certificado_autorizacion_nombre", joinColumns = @JoinColumn(name = "certificado_autorizacion_id"))
+  @Valid
+  @Builder.Default
+  private Set<CertificadoAutorizacionNombre> nombre = new HashSet<>();
 
   /** Visible */
   @Column(name = "visible", nullable = false)

@@ -1,0 +1,98 @@
+[
+  {
+    "key": "ap3_7_9",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.9 Blood collection"
+    },
+    "fieldGroup": [
+      {
+        "template": "Is animal blood to be drawn?"
+      },
+      {
+        "key": "extraccionSangreRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "type": "table-crud",
+        "key": "extraccionSangreTable",
+        "hideExpression": "!field.parent.model.extraccionSangreRadio || field.parent.model.extraccionSangreRadio === 'no'",
+        "templateOptions": {
+          "entity": "blood extraction",
+          "gender": "female"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Blood Extraction"
+          },
+          "fieldGroup": [
+            {
+              "key": "lugarAnatomico",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Anatomical site",
+                "order": 10
+              }
+            },
+            {
+              "key": "volumen",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Volume",
+                "order": 20
+              }
+            },
+            {
+              "key": "pauta",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Guideline",
+                "order": 30
+              }
+            },
+            {
+              "key": "analgesiaAnestesia",
+              "type": "select",
+              "templateOptions": {
+                "label": "Analgesia/Anaesthesia",
+                "order": 40,
+                "options": [
+                  {
+                    "label": "Analgesia",
+                    "value": "1"
+                  },
+                  {
+                    "label": "Anaesthesia",
+                    "value": "2"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: if analgesia/anaesthesia is used, specify guideline in the respective section (3.7.6 and 3.7.14).</p>"
+      }
+    ]
+  }
+]

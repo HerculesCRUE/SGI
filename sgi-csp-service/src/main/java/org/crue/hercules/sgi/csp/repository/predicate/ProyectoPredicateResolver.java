@@ -36,6 +36,8 @@ import org.crue.hercules.sgi.csp.model.ProyectoEquipo_;
 import org.crue.hercules.sgi.csp.model.ProyectoFacturacion;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
+import org.crue.hercules.sgi.csp.model.ProyectoPalabraClave;
+import org.crue.hercules.sgi.csp.model.ProyectoPalabraClave_;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
@@ -49,6 +51,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoSocio_;
 import org.crue.hercules.sgi.csp.model.Proyecto_;
 import org.crue.hercules.sgi.csp.model.RolProyecto_;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
+import org.crue.hercules.sgi.csp.repository.specification.ProyectoSpecifications;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgempService;
 import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
 import org.crue.hercules.sgi.framework.data.jpa.domain.Auditable_;
@@ -62,22 +65,26 @@ import io.github.perplexhub.rsql.RSQLOperators;
 
 public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proyecto> {
   private enum Property {
-    /* Plan investigación */
-    PLAN_INVESTIGACION("planInvestigacion"),
-    /* Responsable proyecto */
-    RESPONSABLE_PROYECTO("responsableProyecto"),
-    /* Finalizado */
-    FINALIZADO("finalizado"),
-    /* Prorrogado */
-    PRORROGADO("prorrogado"),
     /* Fecha eliminacion */
     FECHA_ELIMINACION("fechaEliminacion"),
     /* Fecha modificación */
     FECHA_MODIFICACION("fechaModificacion"),
+    /* Finalizado */
+    FINALIZADO("finalizado"),
+    /* Miembros equipos actuales */
+    MIEMBROS_EQUIPO_ACTUALES("miembrosEquipoActuales"),
+    /* Pakabras clave */
+    PALABRAS_CLAVE("palabrasClave"),
     /* Con participación actual */
     PARTICIPACION_ACTUAL("participacionActual"),
+    /* Plan investigación */
+    PLAN_INVESTIGACION("planInvestigacion"),
     /* Pais socio proyecto */
-    PROYECTO_SOCIO_PAIS_ID("socios.paisRef");
+    PROYECTO_SOCIO_PAIS_ID("socios.paisRef"),
+    /* Prorrogado */
+    PRORROGADO("prorrogado"),
+    /* Responsable proyecto */
+    RESPONSABLE_PROYECTO("responsableProyecto");
 
     private String code;
 
@@ -111,6 +118,40 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
       SgiApiSgempService sgiApiSgempService,
       SgiConfigProperties sgiConfigProperties) {
     return new ProyectoPredicateResolver(programaRepository, sgiApiSgempService, sgiConfigProperties);
+  }
+
+  private Predicate buildByMiembrosEquipoActuales(ComparisonNode node, Root<Proyecto> root, CriteriaQuery<?> query,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.IN);
+
+    List<String> personaRefs = node.getArguments();
+
+    Subquery<Long> subquery = query.subquery(Long.class);
+    Root<Proyecto> subqueryRoot = subquery.from(Proyecto.class);
+    Predicate specificationPredicate = ProyectoSpecifications.byMiembrosEquipo(personaRefs, Instant.now())
+        .toPredicate(subqueryRoot, query, cb);
+
+    subquery.select(subqueryRoot.get(Proyecto_.id)).where(specificationPredicate);
+
+    return root.get(Proyecto_.id).in(subquery);
+  }
+
+  private static Predicate buildByPalabrasClave(ComparisonNode node, Root<Proyecto> root, CriteriaQuery<?> query,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.IN);
+
+    List<String> palabrasClave = node.getArguments();
+
+    Subquery<ProyectoPalabraClave> subquery = query.subquery(ProyectoPalabraClave.class);
+    Root<Proyecto> rootSubquery = subquery.from(Proyecto.class);
+    Join<Proyecto, ProyectoPalabraClave> joinPalabrasClave = rootSubquery.join(Proyecto_.palabrasClave);
+
+    subquery.select(joinPalabrasClave);
+    subquery.where(
+        cb.and(joinPalabrasClave.get(ProyectoPalabraClave_.palabraClaveRef).in(palabrasClave)),
+        cb.equal(root, rootSubquery));
+
+    return cb.exists(subquery);
   }
 
   private Predicate buildByPlanInvestigacion(ComparisonNode node, Root<Proyecto> root, CriteriaBuilder cb) {
@@ -354,22 +395,26 @@ public class ProyectoPredicateResolver implements SgiRSQLPredicateResolver<Proye
     }
 
     switch (property) {
-      case PLAN_INVESTIGACION:
-        return buildByPlanInvestigacion(node, root, criteriaBuilder);
-      case RESPONSABLE_PROYECTO:
-        return buildByResponsableEquipo(node, root, criteriaBuilder);
-      case FINALIZADO:
-        return buildByFinalizado(node, root, criteriaBuilder);
-      case PRORROGADO:
-        return buildByProrrogado(node, root, query, criteriaBuilder);
       case FECHA_ELIMINACION:
         return buildByFechaEliminacion(node, root, criteriaBuilder);
       case FECHA_MODIFICACION:
         return buildByFechaModificacion(node, root, criteriaBuilder);
+      case FINALIZADO:
+        return buildByFinalizado(node, root, criteriaBuilder);
+      case MIEMBROS_EQUIPO_ACTUALES:
+        return buildByMiembrosEquipoActuales(node, root, query, criteriaBuilder);
+      case PALABRAS_CLAVE:
+        return buildByPalabrasClave(node, root, query, criteriaBuilder);
       case PARTICIPACION_ACTUAL:
         return buildByParticipacionActual(node, root, criteriaBuilder);
+      case PLAN_INVESTIGACION:
+        return buildByPlanInvestigacion(node, root, criteriaBuilder);
       case PROYECTO_SOCIO_PAIS_ID:
         return buildByProyectoSocioPaisId(node, root, criteriaBuilder);
+      case PRORROGADO:
+        return buildByProrrogado(node, root, query, criteriaBuilder);
+      case RESPONSABLE_PROYECTO:
+        return buildByResponsableEquipo(node, root, criteriaBuilder);
       default:
         return null;
     }

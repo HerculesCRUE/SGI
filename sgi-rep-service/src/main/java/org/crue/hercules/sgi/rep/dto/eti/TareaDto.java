@@ -1,7 +1,9 @@
 package org.crue.hercules.sgi.rep.dto.eti;
 
 import java.io.Serializable;
+import java.util.List;
 
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.crue.hercules.sgi.rep.dto.BaseRestDto;
 
 import lombok.AllArgsConstructor;
@@ -20,10 +22,10 @@ public class TareaDto extends BaseRestDto {
 
   private EquipoTrabajoDto equipoTrabajo;
   private MemoriaDto memoria;
-  private String tarea;
-  private String formacion;
+  private List<I18nFieldValueDto> nombre;
+  private List<I18nFieldValueDto> formacion;
   private FormacionEspecificaDto formacionEspecifica;
-  private String organismo;
+  private List<I18nFieldValueDto> organismo;
   private Integer anio;
   private TipoTareaDto tipoTarea;
 
@@ -48,7 +50,7 @@ public class TareaDto extends BaseRestDto {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private String nombre;
+    private List<I18nFieldValueDto> nombre;
     private Boolean activo;
   }
 
@@ -61,7 +63,7 @@ public class TareaDto extends BaseRestDto {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-    private String nombre;
+    private List<I18nFieldValueDto> nombre;
     private Boolean activo;
   }
 

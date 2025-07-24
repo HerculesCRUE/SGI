@@ -1,18 +1,17 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
-import org.crue.hercules.sgi.csp.exceptions.ContextoProyectoNotFoundException;
-
 import java.util.Optional;
 
+import org.crue.hercules.sgi.csp.exceptions.ContextoProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
-import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ContextoProyecto;
+import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.repository.ContextoProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.service.ContextoProyectoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,12 +42,11 @@ public class ContextoProyectoServiceImpl implements ContextoProyectoService {
   public ContextoProyecto create(ContextoProyecto contextoProyecto) {
     log.debug("create(ContextoProyecto contextoProyecto) - start");
 
-    Assert.isNull(contextoProyecto.getId(), "Id tiene que ser null para crear ContextoProyecto");
+    AssertHelper.idIsNull(contextoProyecto.getId(), ContextoProyecto.class);
+    AssertHelper.idNotNull(contextoProyecto.getProyectoId(), Proyecto.class);
 
-    Assert.isTrue(contextoProyecto.getProyectoId() != null, "Proyecto no puede ser null para crear ContextoProyecto");
-
-    Assert.isTrue(!repository.existsByProyectoId(contextoProyecto.getProyectoId()),
-        "Ya existe ContextoProyecto para el proyecto " + contextoProyecto.getProyectoId());
+    AssertHelper.entityExists(!repository.existsByProyectoId(contextoProyecto.getProyectoId()),
+        Proyecto.class, ContextoProyecto.class);
 
     ContextoProyecto returnValue = repository.save(contextoProyecto);
 
@@ -70,7 +68,7 @@ public class ContextoProyectoServiceImpl implements ContextoProyectoService {
   public ContextoProyecto update(ContextoProyecto contextoProyectoActualizar, Long idProyecto) {
     log.debug("update(ContextoProyecto contextoProyectoActualizar) - start");
 
-    Assert.notNull(idProyecto, "Id Proyecto no puede ser null para actualizar ContextoProyecto");
+    AssertHelper.idNotNull(idProyecto, Proyecto.class);
 
     return repository.findByProyectoId(idProyecto).map(contextoProyecto -> {
 

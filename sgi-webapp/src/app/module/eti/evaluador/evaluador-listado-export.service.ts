@@ -9,8 +9,8 @@ import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core
 import { ReportService } from '@core/services/rep/report.service';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { concat, Observable, of, zip } from 'rxjs';
-import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concat, from, Observable, of, zip } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { EvaluadorConflictosInteresListadoExportService } from './evaluador-conflictos-interes-listado-export.service';
 import { EvaluadorGeneralListadoExportService } from './evaluador-general-listado-export.service';
 
@@ -88,12 +88,19 @@ export class EvaluadorListadoExportService extends
         return evaluadores.items.map((evaluador) => evaluador as IEvaluadorReportData);
       }),
       switchMap((evaluadoresReportData) => {
-        const requestsEvaluador: Observable<IEvaluadorReportData>[] = [];
+        const requestsEvaluador: IEvaluadorReportData[] = [];
 
-        evaluadoresReportData.forEach(peticion => {
-          requestsEvaluador.push(this.getDataReportInner(peticion, reportConfig.reportOptions));
-        });
-        return zip(...requestsEvaluador);
+        return from(evaluadoresReportData).pipe(
+          mergeMap((peticion) => {
+            return this.getDataReportInner(peticion, reportConfig.reportOptions)
+          }, this.DEFAULT_CONCURRENT)
+        ).pipe(
+          map(r => {
+            requestsEvaluador.push(r);
+            return requestsEvaluador;
+          }),
+          takeLast(1)
+        )
       }),
       takeLast(1)
     );

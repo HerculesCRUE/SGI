@@ -2,26 +2,31 @@ package org.crue.hercules.sgi.eti.service;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.InformeNotFoundException;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.EstadoRetrospectiva;
-import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.Informe;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.MemoriaTitulo;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
-import org.crue.hercules.sgi.eti.model.TipoMemoria;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
 import org.crue.hercules.sgi.eti.repository.InformeRepository;
 import org.crue.hercules.sgi.eti.service.impl.InformeServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -59,8 +64,6 @@ public class InformeServiceTest extends BaseServiceTest {
 
     Assertions.assertThat(informe.getId()).isEqualTo(1L);
 
-    Assertions.assertThat(informe.getDocumentoRef()).isEqualTo("DocumentoFormulario1");
-
   }
 
   @Test
@@ -85,7 +88,6 @@ public class InformeServiceTest extends BaseServiceTest {
     // then: El Informe se crea correctamente
     Assertions.assertThat(informeCreado).isNotNull();
     Assertions.assertThat(informeCreado.getId()).isEqualTo(1L);
-    Assertions.assertThat(informeCreado.getDocumentoRef()).isEqualTo("DocumentoFormularioNew");
   }
 
   @Test
@@ -112,7 +114,6 @@ public class InformeServiceTest extends BaseServiceTest {
 
     // then: El informe se actualiza correctamente.
     Assertions.assertThat(informeActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(informeActualizado.getDocumentoRef()).isEqualTo("DocumentoFormulario1 actualizado");
 
   }
 
@@ -219,12 +220,13 @@ public class InformeServiceTest extends BaseServiceTest {
     // given: One hundred Informes
     List<Informe> informes = new ArrayList<>();
     for (int i = 1; i <= 100; i++) {
-      informes.add(generarMockInforme(Long.valueOf(i), "DocumentoFormulario" + String.format("%03d", i)));
+      informes.add(generarMockInforme(Long.valueOf(i), "DocumentoFormulario" +
+          String.format("%03d", i)));
     }
 
-    BDDMockito
-        .given(
-            informeRepository.findAll(ArgumentMatchers.<Specification<Informe>>any(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito.given(
+        informeRepository.findAll(ArgumentMatchers.<Specification<Informe>>any(),
+            ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<Informe>>() {
           @Override
           public Page<Informe> answer(InvocationOnMock invocation) throws Throwable {
@@ -251,7 +253,7 @@ public class InformeServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       Informe informe = page.getContent().get(i);
-      Assertions.assertThat(informe.getDocumentoRef()).isEqualTo("DocumentoFormulario" + String.format("%03d", j));
+      Assertions.assertThat(informe.getId()).isEqualTo(j);
     }
   }
 
@@ -262,14 +264,18 @@ public class InformeServiceTest extends BaseServiceTest {
     // given: 10 Informes
     List<Informe> informes = new ArrayList<>();
     for (int i = 1; i <= 10; i++) {
-      informes.add(generarMockInforme(Long.valueOf(i), "Informe" + String.format("%03d", i)));
+      informes.add(generarMockInforme(Long.valueOf(i), "Informe" +
+          String.format("%03d", i)));
     }
 
-    BDDMockito.given(informeRepository.findByMemoriaId(ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito
+        .given(informeRepository.findByMemoriaId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.<Pageable>any()))
         .willReturn(new PageImpl<>(informes));
 
     // when: Se buscan todos las datos
-    Page<Informe> result = informeService.findByMemoria(informeId, Pageable.unpaged());
+    Page<Informe> result = informeService.findByMemoria(informeId,
+        Pageable.unpaged());
 
     // then: Se recuperan todos los datos
     Assertions.assertThat(result.getContent()).isEqualTo(informes);
@@ -281,7 +287,8 @@ public class InformeServiceTest extends BaseServiceTest {
   @Test
   public void deleteInformeMemoria() {
 
-    BDDMockito.given(informeRepository.findFirstByMemoriaIdOrderByVersionDesc(ArgumentMatchers.anyLong()))
+    BDDMockito
+        .given(informeRepository.findFirstByMemoriaIdOrderByVersionDesc(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockInforme(1L, "DocumentoFormulario1")));
 
     BDDMockito.doNothing().when(informeRepository).delete(ArgumentMatchers.<Informe>any());
@@ -297,7 +304,8 @@ public class InformeServiceTest extends BaseServiceTest {
   @Test
   public void deleteInformeMemoria_informeNull() {
 
-    BDDMockito.given(informeRepository.findFirstByMemoriaIdOrderByVersionDesc(ArgumentMatchers.anyLong()))
+    BDDMockito
+        .given(informeRepository.findFirstByMemoriaIdOrderByVersionDesc(ArgumentMatchers.anyLong()))
         .willReturn(Optional.empty());
 
     Assertions.assertThatCode(
@@ -316,41 +324,73 @@ public class InformeServiceTest extends BaseServiceTest {
    * @return el objeto Informe
    */
 
-  public Informe generarMockInforme(Long id, String documentoRef) {
+  private Informe generarMockInforme(Long id, String documentoRef) {
     TipoActividad tipoActividad = new TipoActividad();
     tipoActividad.setId(1L);
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> peTitulo = new HashSet<>();
+    peTitulo.add(new PeticionEvaluacionTitulo(Language.ES, "PeticionEvaluacion1"));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen"));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos1"));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico1"));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo1");
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico1");
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos1");
-    peticionEvaluacion.setResumen("Resumen");
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria");
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo("PeticionEvaluacion1");
+    peticionEvaluacion.setTitulo(peTitulo);
     peticionEvaluacion.setPersonaRef("user-001");
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
-    Comite comite = new Comite(1L, "Comite1", "nombreInvestigacion", Genero.M, formulario, Boolean.TRUE);
+    Comite comite = new Comite();
+    comite.setId(1L);
+    comite.setCodigo("Comite1");
+    comite.setActivo(Boolean.TRUE);
 
-    TipoMemoria tipoMemoria = new TipoMemoria();
-    tipoMemoria.setId(id);
-    tipoMemoria.setNombre("TipoMemoria1");
-    tipoMemoria.setActivo(Boolean.TRUE);
+    TipoEstadoMemoria tipoEstadoMemoria = new TipoEstadoMemoria();
+    tipoEstadoMemoria.setId(1L);
+    tipoEstadoMemoria.setNombre("En elaboración");
+    tipoEstadoMemoria.setActivo(Boolean.TRUE);
 
-    Memoria memoria = new Memoria(1L, "numRef-001", peticionEvaluacion, comite, "Memoria1", "user-001", tipoMemoria,
-        new TipoEstadoMemoria(1L, "En elaboración", Boolean.TRUE), Instant.now(), Boolean.FALSE,
-        new Retrospectiva(id, new EstadoRetrospectiva(1L, "Pendiente", Boolean.TRUE), Instant.now()), 3, Boolean.TRUE,
-        null);
+    EstadoRetrospectiva estadoRetrospectiva = new EstadoRetrospectiva();
+    estadoRetrospectiva.setId(1L);
+    estadoRetrospectiva.setNombre("Pendiente");
+    estadoRetrospectiva.setActivo(Boolean.TRUE);
+
+    Retrospectiva retrospectiva = new Retrospectiva();
+    retrospectiva.setId(id);
+    retrospectiva.setEstadoRetrospectiva(estadoRetrospectiva);
+    retrospectiva.setFechaRetrospectiva(Instant.now());
+
+    Set<MemoriaTitulo> mTitulo = new HashSet<>();
+    mTitulo.add(new MemoriaTitulo(Language.ES, "Memoria1"));
+    Memoria memoria = new Memoria();
+    memoria.setId(1L);
+    memoria.setNumReferencia("numRef-001");
+    memoria.setPeticionEvaluacion(peticionEvaluacion);
+    memoria.setComite(comite);
+    memoria.setTitulo(mTitulo);
+    memoria.setPersonaRef("user-001");
+    memoria.setTipo(Memoria.Tipo.NUEVA);
+    memoria.setEstadoActual(tipoEstadoMemoria);
+    memoria.setFechaEnvioSecretaria(Instant.now());
+    memoria.setRequiereRetrospectiva(Boolean.FALSE);
+    memoria.setRetrospectiva(retrospectiva);
+    memoria.setVersion(3);
+    memoria.setActivo(Boolean.TRUE);
 
     TipoEvaluacion tipoEvaluacion = new TipoEvaluacion();
     tipoEvaluacion.setId(1L);
@@ -359,7 +399,6 @@ public class InformeServiceTest extends BaseServiceTest {
 
     Informe informe = new Informe();
     informe.setId(id);
-    informe.setDocumentoRef(documentoRef);
     informe.setMemoria(memoria);
     informe.setVersion(3);
     informe.setTipoEvaluacion(tipoEvaluacion);

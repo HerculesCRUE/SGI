@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -86,21 +85,6 @@ public class ProyectoDocumentoController {
     log.debug("deleteById(Long id) - start");
     service.delete(id);
     log.debug("deleteById(Long id) - end");
-  }
-
-  /**
-   * Devuelve el {@link ProyectoDocumento} con el id indicado.
-   * 
-   * @param id Identificador de {@link ProyectoDocumento}.
-   * @return ProyectoDocumento {@link ProyectoDocumento} correspondiente al id
-   */
-  @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  public ProyectoDocumento findById(@PathVariable Long id) {
-    log.debug("ProyectoDocumento findById(Long id) - start");
-    ProyectoDocumento returnValue = service.findById(id);
-    log.debug("ProyectoDocumento findById(Long id) - end");
-    return returnValue;
   }
 
 }

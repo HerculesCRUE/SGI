@@ -5,6 +5,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { IProyectoProrroga } from '@core/models/csp/proyecto-prorroga';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { Observable, of } from 'rxjs';
@@ -41,10 +42,11 @@ export class SelectProyectoProrrogaComponent extends SelectServiceComponent<IPro
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private service: ProyectoService,
     private luxonDatePipe: LuxonDatePipe
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
     // Override default displayWith
     this.displayWith = (option) => option ? `${option.numProrroga?.toString()}  - ${this.luxonDatePipe.transform(LuxonUtils.toBackend(option.fechaConcesion, true), 'shortDate')}` : '';
   }

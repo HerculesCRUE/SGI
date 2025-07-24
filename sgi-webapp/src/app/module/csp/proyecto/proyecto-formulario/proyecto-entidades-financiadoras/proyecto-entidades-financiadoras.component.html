@@ -8,7 +8,8 @@
           <!-- Nombre Column -->
           <ng-container matColumnDef="nombre">
             <th mat-header-cell *matHeaderCellDef>{{'csp.proyecto-entidad-financiadora.nombre' | translate}}</th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.empresa?.nombre}}
+            <td mat-cell *matCellDef="let wrapper" sgempNotFoundError [model]="wrapper.value.empresa">
+              {{wrapper.value.empresa?.nombre}}
             </td>
           </ng-container>
 
@@ -23,7 +24,8 @@
           <ng-container matColumnDef="fuenteFinanciacion">
             <th mat-header-cell *matHeaderCellDef>
               {{'csp.proyecto-entidad-financiadora.fuente-financiacion' | translate}}</th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fuenteFinanciacion?.nombre}}
+            <td mat-cell *matCellDef="let wrapper">
+              <sgi-i18n-table-field [field]="wrapper.value.fuenteFinanciacion?.nombre"></sgi-i18n-table-field>
             </td>
           </ng-container>
 
@@ -32,7 +34,8 @@
             <th mat-header-cell *matHeaderCellDef>
               {{'csp.proyecto-entidad-financiadora.ambito' | translate}}</th>
             <td mat-cell *matCellDef="let wrapper">
-              {{wrapper.value.fuenteFinanciacion?.tipoAmbitoGeografico?.nombre}}
+              <sgi-i18n-table-field
+                [field]="wrapper.value.fuenteFinanciacion?.tipoAmbitoGeografico?.nombre"></sgi-i18n-table-field>
             </td>
           </ng-container>
 
@@ -40,7 +43,9 @@
           <ng-container matColumnDef="tipoFinanciacion">
             <th mat-header-cell *matHeaderCellDef>
               {{'csp.proyecto-entidad-financiadora.tipo-financiacion' | translate}}</th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoFinanciacion?.nombre}} </td>
+            <td mat-cell *matCellDef="let wrapper">
+              <sgi-i18n-table-field [field]="wrapper.value.tipoFinanciacion?.nombre"></sgi-i18n-table-field>
+            </td>
           </ng-container>
 
           <!-- Porcentaje financiación Column -->
@@ -112,7 +117,8 @@
           <!-- Nombre Column -->
           <ng-container matColumnDef="nombre">
             <th mat-header-cell *matHeaderCellDef>{{'csp.proyecto-entidad-financiadora.nombre' | translate}}</th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.empresa?.nombre}}
+            <td mat-cell *matCellDef="let wrapper" sgempNotFoundError [model]="wrapper.value.empresa">
+              {{wrapper.value.empresa?.nombre}}
             </td>
           </ng-container>
 
@@ -127,7 +133,8 @@
           <ng-container matColumnDef="fuenteFinanciacion">
             <th mat-header-cell *matHeaderCellDef>
               {{'csp.proyecto-entidad-financiadora.fuente-financiacion' | translate}}</th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.fuenteFinanciacion?.nombre}}
+            <td mat-cell *matCellDef="let wrapper">
+              <sgi-i18n-table-field [field]="wrapper.value.fuenteFinanciacion?.nombre"></sgi-i18n-table-field>
             </td>
           </ng-container>
 
@@ -136,7 +143,8 @@
             <th mat-header-cell *matHeaderCellDef>
               {{'csp.proyecto-entidad-financiadora.ambito' | translate}}</th>
             <td mat-cell *matCellDef="let wrapper">
-              {{wrapper.value.fuenteFinanciacion?.tipoAmbitoGeografico?.nombre}}
+              <sgi-i18n-table-field
+                [field]="wrapper.value.fuenteFinanciacion?.tipoAmbitoGeografico?.nombre"></sgi-i18n-table-field>
             </td>
           </ng-container>
 
@@ -144,7 +152,9 @@
           <ng-container matColumnDef="tipoFinanciacion">
             <th mat-header-cell *matHeaderCellDef>
               {{'csp.proyecto-entidad-financiadora.tipo-financiacion' | translate}}</th>
-            <td mat-cell *matCellDef="let wrapper"> {{wrapper.value.tipoFinanciacion?.nombre}} </td>
+            <td mat-cell *matCellDef="let wrapper">
+              <sgi-i18n-table-field [field]="wrapper.value.tipoFinanciacion?.nombre"></sgi-i18n-table-field>
+            </td>
           </ng-container>
 
           <!-- Porcentaje financiación Column -->

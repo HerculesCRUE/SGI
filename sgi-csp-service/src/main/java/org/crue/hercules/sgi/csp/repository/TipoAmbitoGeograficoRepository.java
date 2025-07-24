@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -20,15 +21,16 @@ public interface TipoAmbitoGeograficoRepository
    * @param nombre el nombre de {@link TipoAmbitoGeografico}.
    * @return el {@link TipoAmbitoGeografico} con el nombre indicado
    */
-  Optional<TipoAmbitoGeografico> findByNombre(String nombre);
+  Optional<TipoAmbitoGeografico> findByNombreValue(String nombre);
 
   /**
    * Obtiene la entidad {@link TipoAmbitoGeografico} activo con el nombre
    * indicado
    *
+   * @param lang el language de {@link TipoAmbitoGeografico}.
    * @param nombre el nombre de {@link TipoAmbitoGeografico}.
    * @return el {@link TipoAmbitoGeografico} con el nombre indicado
    */
-  Optional<TipoAmbitoGeografico> findByNombreAndActivoIsTrue(String nombre);
+  Optional<TipoAmbitoGeografico> findByNombreLangAndNombreValueAndActivoIsTrue(Language lang, String nombre);
 
 }

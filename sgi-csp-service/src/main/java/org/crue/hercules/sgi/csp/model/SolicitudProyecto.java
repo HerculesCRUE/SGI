@@ -1,12 +1,17 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,6 +19,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 
@@ -86,19 +92,25 @@ public class SolicitudProyecto extends BaseEntity {
   private Boolean coordinado;
 
   /** Objetivos */
-  @Column(name = "objetivos", length = 2000, nullable = true)
-  @Size(max = 2000)
-  private String objetivos;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "solicitud_proyecto_objetivos", joinColumns = @JoinColumn(name = "solicitud_proyecto_id"))
+  @Valid
+  @Builder.Default
+  private Set<SolicitudProyectoObjetivos> objetivos = new HashSet<>();
 
   /** Intereses */
-  @Column(name = "intereses", length = 2000, nullable = true)
-  @Size(max = 2000)
-  private String intereses;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "solicitud_proyecto_intereses", joinColumns = @JoinColumn(name = "solicitud_proyecto_id"))
+  @Valid
+  @Builder.Default
+  private Set<SolicitudProyectoIntereses> intereses = new HashSet<>();
 
   /** Resultados previstos */
-  @Column(name = "resultados_previstos", length = 2000, nullable = true)
-  @Size(max = 2000)
-  private String resultadosPrevistos;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "solicitud_proyecto_resultados_previstos", joinColumns = @JoinColumn(name = "solicitud_proyecto_id"))
+  @Valid
+  @Builder.Default
+  private Set<SolicitudProyectoResultadosPrevistos> resultadosPrevistos = new HashSet<>();
 
   /** Área temática */
   @ManyToOne

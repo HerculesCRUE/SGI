@@ -1,14 +1,17 @@
 package org.crue.hercules.sgi.eti.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.TipoTareaNotFoundException;
 import org.crue.hercules.sgi.eti.model.TipoTarea;
+import org.crue.hercules.sgi.eti.model.TipoTareaNombre;
 import org.crue.hercules.sgi.eti.service.TipoTareaService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -27,6 +30,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * TipoTareaControllerTest
@@ -51,7 +56,7 @@ public class TipoTareaControllerTest extends BaseControllerTest {
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("TipoTarea1"));
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("TipoTarea1"));
     ;
   }
 
@@ -65,94 +70,6 @@ public class TipoTareaControllerTest extends BaseControllerTest {
         .perform(MockMvcRequestBuilders.get(TIPO_TAREA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isNotFound());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "ETI-TIPOTAREA-EDITAR" })
-  public void newTipoTarea_ReturnsTipoTarea() throws Exception {
-    // given: Un tipo tarea nuevo
-    String nuevoTipoTareaJson = "{\"id\": 1, \"nombre\": \"TipoTarea1\", \"activo\": \"true\"}";
-
-    TipoTarea tipoTarea = generarMockTipoTarea(1L, "TipoTarea1");
-
-    BDDMockito.given(tipoTareaService.create(ArgumentMatchers.<TipoTarea>any())).willReturn(tipoTarea);
-
-    // when: Creamos un tipo tarea
-    mockMvc
-        .perform(MockMvcRequestBuilders.post(TIPO_TAREA_CONTROLLER_BASE_PATH)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(nuevoTipoTareaJson))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Crea el nuevo tipo tarea y lo devuelve
-        .andExpect(MockMvcResultMatchers.status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("TipoTarea1"));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "ETI-TIPOTAREA-EDITAR" })
-  public void newTipoTarea_Error_Returns400() throws Exception {
-    // given: Un tipo tarea nuevo que produce un error al crearse
-    String nuevoTipoTareaJson = "{\"id\": 1, \"nombre\": \"TipoTarea1\", \"activo\": \"true\"}";
-
-    BDDMockito.given(tipoTareaService.create(ArgumentMatchers.<TipoTarea>any()))
-        .willThrow(new IllegalArgumentException());
-
-    // when: Creamos un tipo tarea
-    mockMvc
-        .perform(MockMvcRequestBuilders.post(TIPO_TAREA_CONTROLLER_BASE_PATH)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(nuevoTipoTareaJson))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devueve un error 400
-        .andExpect(MockMvcResultMatchers.status().isBadRequest());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "ETI-TIPOTAREA-EDITAR" })
-  public void replaceTipoTarea_ReturnsTipoTarea() throws Exception {
-    // given: Un tipo tarea a modificar
-    String replaceTipoTareaJson = "{\"id\": 1, \"nombre\": \"TipoTarea1\", \"activo\": \"true\"}";
-
-    TipoTarea tipoTarea = generarMockTipoTarea(1L, "Replace TipoTarea1");
-
-    BDDMockito.given(tipoTareaService.update(ArgumentMatchers.<TipoTarea>any())).willReturn(tipoTarea);
-
-    mockMvc
-        .perform(MockMvcRequestBuilders.put(TIPO_TAREA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(replaceTipoTareaJson))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Modifica el tipo tarea y lo devuelve
-        .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("Replace TipoTarea1"));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "ETI-TIPOTAREA-EDITAR" })
-  public void replaceTipoTarea_NotFound() throws Exception {
-    // given: Un tipo tarea a modificar
-    String replaceTipoTareaJson = "{\"id\": 1, \"nombre\": \"TipoTarea1\", \"activo\": \"true\"}";
-
-    BDDMockito.given(tipoTareaService.update(ArgumentMatchers.<TipoTarea>any())).will((InvocationOnMock invocation) -> {
-      throw new TipoTareaNotFoundException(((TipoTarea) invocation.getArgument(0)).getId());
-    });
-    mockMvc
-        .perform(MockMvcRequestBuilders.put(TIPO_TAREA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(replaceTipoTareaJson))
-        .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isNotFound());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "ETI-TIPOTAREA-EDITAR" })
-  public void removeTipoTarea_ReturnsOk() throws Exception {
-    BDDMockito.given(tipoTareaService.findById(ArgumentMatchers.anyLong()))
-        .willReturn(generarMockTipoTarea(1L, "TipoTarea1"));
-
-    mockMvc
-        .perform(MockMvcRequestBuilders.delete(TIPO_TAREA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk());
   }
 
   @Test
@@ -240,7 +157,8 @@ public class TipoTareaControllerTest extends BaseControllerTest {
     // containing nombre='TipoTarea031' to 'TipoTarea040'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoTarea tipoTarea = actual.get(i);
-      Assertions.assertThat(tipoTarea.getNombre()).isEqualTo("TipoTarea" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoTarea.getNombre(), Language.ES))
+          .isEqualTo("TipoTarea" + String.format("%03d", j));
     }
   }
 
@@ -252,7 +170,7 @@ public class TipoTareaControllerTest extends BaseControllerTest {
     for (int i = 1; i <= 100; i++) {
       tiposTarea.add(generarMockTipoTarea(Long.valueOf(i), "TipoTarea" + String.format("%03d", i)));
     }
-    String query = "nombre~TipoTarea%,id:5";
+    String query = "nombre.value~TipoTarea%,id:5";
 
     BDDMockito.given(tipoTareaService.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<TipoTarea>>() {
@@ -260,7 +178,8 @@ public class TipoTareaControllerTest extends BaseControllerTest {
           public Page<TipoTarea> answer(InvocationOnMock invocation) throws Throwable {
             List<TipoTarea> content = new ArrayList<>();
             for (TipoTarea tipoTarea : tiposTarea) {
-              if (tipoTarea.getNombre().startsWith("TipoTarea") && tipoTarea.getId().equals(5L)) {
+              if (I18nHelper.getValueForLanguage(tipoTarea.getNombre(), Language.ES).startsWith("TipoTarea")
+                  && tipoTarea.getId().equals(5L)) {
                 content.add(tipoTarea);
               }
             }
@@ -286,10 +205,12 @@ public class TipoTareaControllerTest extends BaseControllerTest {
    * @param nombre la descripción del tipo de tarea
    * @return el objeto tipo tarea
    */
-  public TipoTarea generarMockTipoTarea(Long id, String nombre) {
+  private TipoTarea generarMockTipoTarea(Long id, String nombre) {
+    Set<TipoTareaNombre> nom = new HashSet<>();
+    nom.add(new TipoTareaNombre(Language.ES, nombre));
     TipoTarea tipoTarea = new TipoTarea();
     tipoTarea.setId(id);
-    tipoTarea.setNombre(nombre);
+    tipoTarea.setNombre(nom);
     tipoTarea.setActivo(Boolean.TRUE);
 
     return tipoTarea;

@@ -35,7 +35,8 @@ public interface ApartadoService {
 
   /**
    * Obtiene las entidades {@link Apartado} filtradas y paginadas según por el id
-   * de su {@link Bloque}. Solamente se devuelven los Apartados de primer nivel
+   * de su {@link Bloque} y el idioma solicitado. Solamente se devuelven los
+   * Apartados de primer nivel
    * (sin padre).
    *
    * @param id       id del {@link Bloque}.
@@ -46,7 +47,7 @@ public interface ApartadoService {
 
   /**
    * Obtiene las entidades {@link Apartado} filtradas y paginadas según por el id
-   * de su padre {@link Apartado}.
+   * de su padre {@link Apartado} y el idioma.
    *
    * @param id       id del {@link Apartado} padre.
    * @param pageable pageable
@@ -56,7 +57,8 @@ public interface ApartadoService {
 
   /**
    * Obtiene las entidades {@link ApartadoTreeOutput} paginadas por el id
-   * de su {@link Bloque}. Se devuelven los Apartados de primer nivel
+   * de su {@link Bloque} y el idioma solicitado. Se devuelven los Apartados de
+   * primer nivel
    * (sin padre) con sus arboles de apartados hijos.
    *
    * @param id       id del {@link Bloque}.

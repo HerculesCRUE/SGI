@@ -18,6 +18,7 @@ import { SeguimientoListadoComponent } from './seguimiento-listado/seguimiento-l
 import { SeguimientoPerfilEvaluadorRoutingModule } from './seguimiento-perfil-evaluador-routing.module';
 import { SeguimientoRoutingModule } from './seguimiento-routing.module';
 import { SeguimientoResolver } from './seguimiento.resolver';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 @NgModule({
   declarations: [
@@ -38,7 +39,8 @@ import { SeguimientoResolver } from './seguimiento.resolver';
     ReactiveFormsModule,
     DocumentacionMemoriaModule,
     EvaluacionModule,
-    EtiSharedModule
+    EtiSharedModule,
+    SgpSharedModule
   ],
   providers: [
     SeguimientoResolver,

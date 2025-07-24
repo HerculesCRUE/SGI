@@ -1,0 +1,62 @@
+[
+  {
+    "key": "ap5_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.1 Communication of the use of biological agents"
+    },
+    "fieldGroup": [
+      {
+        "template": "Has the Prevention Service been informed that you are going to work with biological agents/material?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>The use of biological agents of group 2, 3 or 4 for the first time in a research activity should be reported.</p><p>A new notification will be made whenever substantial changes are introduced in a work process whose repercussions on health and safety conditions invalidate the previous notification. <b><a href='https://www.boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#a10' target='_blank'>(Article 10 RD664/1997)</a></b>.</p>"
+      },
+      {
+        "key": "comunicacionAgentesBiologicos",
+        "type": "documento",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": "USO_AGENTES",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "key": "fecha",
+        "type": "datepicker",
+        "hideExpression": "!model.comunicacionAgentesBiologicos || model.comunicacionAgentesBiologicos === 0",
+        "templateOptions": {
+          "required": true,
+          "type": "text",
+          "label": "Date"
+        }
+      },
+      {
+        "key": "especificarNegativo",
+        "type": "i18n-textarea",
+        "hideExpression": "model.comunicacionAgentesBiologicos !== 0",
+        "templateOptions": {
+          "label": "Supporting evidence",
+          "placeholder": "Supporting evidence",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

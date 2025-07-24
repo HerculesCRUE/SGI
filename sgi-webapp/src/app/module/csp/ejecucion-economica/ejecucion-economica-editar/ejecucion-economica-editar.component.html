@@ -4,62 +4,96 @@
       [title]="(actionService.isEjecucionEconomicaGruposEnabled ? 'menu.csp.ejecucion-economica.proyectos-grupos' : 'menu.csp.ejecucion-economica.proyectos') | translate"
       [fragment]="actionService.getFragment(actionService.FRAGMENT.PROYECTOS)">
     </sgi-action-fragment-menu-item>
-    <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-      [title]="'menu.csp.ejecucion-economica.ejecucion-presupuestaria' | translate">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL]"
-        [title]="'menu.csp.ejecucion-economica.ejecucion-presupuestaria.estado-actual' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.EJECUCION_PRESUPUESTARIA_GASTOS]"
-        [title]="'menu.csp.ejecucion-economica.ejecucion-presupuestaria.gastos' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.EJECUCION_PRESUPUESTARIA_GASTOS)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.EJECUCION_PRESUPUESTARIA_INGRESOS]"
-        [title]="'menu.csp.ejecucion-economica.ejecucion-presupuestaria.ingresos' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.EJECUCION_PRESUPUESTARIA_INGRESOS)">
-      </sgi-action-fragment-menu-item>
-    </sgi-action-fragment-menu-group>
-    <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-      [title]="'menu.csp.ejecucion-economica.detalle-operaciones' | translate">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.DETALLE_OPERACIONES_GASTOS]"
-        [title]="'menu.csp.ejecucion-economica.detalle-operaciones.gastos' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.DETALLE_OPERACIONES_GASTOS)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.DETALLE_OPERACIONES_INGRESOS]"
-        [title]="'menu.csp.ejecucion-economica.detalle-operaciones.ingresos' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.DETALLE_OPERACIONES_INGRESOS)">
-      </sgi-action-fragment-menu-item>
-      <ng-container *ngIf="isDetalleOperacionesModificacionesEnabled">
-        <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-          [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.DETALLE_OPERACIONES_MODIFICACIONES]"
-          [title]="'menu.csp.ejecucion-economica.detalle-operaciones.modificaciones' | translate"
-          [fragment]="actionService.getFragment(actionService.FRAGMENT.DETALLE_OPERACIONES_MODIFICACIONES)">
-        </sgi-action-fragment-menu-item>
-      </ng-container>
-    </sgi-action-fragment-menu-group>
-    <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-      [title]="'menu.csp.ejecucion-economica.facturas-justificantes' | translate">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.FACTURAS_GASTOS]"
-        [title]="'menu.csp.ejecucion-economica.facturas-justificantes.facturas-gastos' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.FACTURAS_GASTOS)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.VIAJES_DIETAS]"
-        [title]="'menu.csp.ejecucion-economica.facturas-justificantes.viajes-dietas' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.VIAJES_DIETAS)">
-      </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.PERSONAL_CONTRATADO]"
-        [title]="'menu.csp.ejecucion-economica.facturas-justificantes.personal-contratado' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.PERSONAL_CONTRATADO)">
-      </sgi-action-fragment-menu-item>
-    </sgi-action-fragment-menu-group>
+    <ng-container
+      *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL) || isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_EJECUCION_PRESUPUESTARIA_GASTOS) || isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_EJECUCION_PRESUPUESTARIA_INGRESOS)">
+      <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+        [title]="'menu.csp.ejecucion-economica.ejecucion-presupuestaria' | translate">
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL]"
+            [title]="'menu.csp.ejecucion-economica.ejecucion-presupuestaria.estado-actual' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.EJECUCION_PRESUPUESTARIA_ESTADO_ACTUAL)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_EJECUCION_PRESUPUESTARIA_GASTOS)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.EJECUCION_PRESUPUESTARIA_GASTOS]"
+            [title]="'menu.csp.ejecucion-economica.ejecucion-presupuestaria.gastos' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.EJECUCION_PRESUPUESTARIA_GASTOS)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_EJECUCION_PRESUPUESTARIA_INGRESOS)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.EJECUCION_PRESUPUESTARIA_INGRESOS]"
+            [title]="'menu.csp.ejecucion-economica.ejecucion-presupuestaria.ingresos' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.EJECUCION_PRESUPUESTARIA_INGRESOS)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+      </sgi-action-fragment-menu-group>
+    </ng-container>
+    <ng-container
+      *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_DETALLE_OPERACIONES_GASTOS) || isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_DETALLE_OPERACIONES_INGRESOS) || isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_DETALLE_OPERACIONES_MODIFICACIONES)">
+      <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+        [title]="'menu.csp.ejecucion-economica.detalle-operaciones' | translate">
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_DETALLE_OPERACIONES_GASTOS)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.DETALLE_OPERACIONES_GASTOS]"
+            [title]="'menu.csp.ejecucion-economica.detalle-operaciones.gastos' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.DETALLE_OPERACIONES_GASTOS)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_DETALLE_OPERACIONES_INGRESOS)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.DETALLE_OPERACIONES_INGRESOS]"
+            [title]="'menu.csp.ejecucion-economica.detalle-operaciones.ingresos' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.DETALLE_OPERACIONES_INGRESOS)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_DETALLE_OPERACIONES_MODIFICACIONES)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.DETALLE_OPERACIONES_MODIFICACIONES]"
+            [title]="'menu.csp.ejecucion-economica.detalle-operaciones.modificaciones' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.DETALLE_OPERACIONES_MODIFICACIONES)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+      </sgi-action-fragment-menu-group>
+    </ng-container>
+    <ng-container
+      *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS) || isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_FACTURAS_JUSTIFICANTES_VIAJES_DIETAS) || isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO)">
+      <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+        [title]="'menu.csp.ejecucion-economica.facturas-justificantes' | translate">
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_FACTURAS_JUSTIFICANTES_FACTURAS_GASTOS)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.FACTURAS_GASTOS]"
+            [title]="'menu.csp.ejecucion-economica.facturas-justificantes.facturas-gastos' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.FACTURAS_GASTOS)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_FACTURAS_JUSTIFICANTES_VIAJES_DIETAS)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.VIAJES_DIETAS]"
+            [title]="'menu.csp.ejecucion-economica.facturas-justificantes.viajes-dietas' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.VIAJES_DIETAS)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_FACTURAS_JUSTIFICANTES_PERSONAL_CONTRATADO)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.PERSONAL_CONTRATADO]"
+            [title]="'menu.csp.ejecucion-economica.facturas-justificantes.personal-contratado' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.PERSONAL_CONTRATADO)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+      </sgi-action-fragment-menu-group>
+    </ng-container>
     <ng-container *ngIf="isClasificacionGastosEnabled">
       <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
         [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.CLASIFICACION_GASTOS]"
@@ -74,24 +108,35 @@
         [fragment]="actionService.getFragment(actionService.FRAGMENT.VALIDACION_GASTOS)">
       </sgi-action-fragment-menu-item>
     </ng-container>
-    <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
-      [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.FACTURAS_EMITIDAS]"
-      [title]="'menu.csp.ejecucion-economica.facturas-emitidas' | translate"
-      [fragment]="actionService.getFragment(actionService.FRAGMENT.FACTURAS_EMITIDAS)">
-    </sgi-action-fragment-menu-item>
-    <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-SJUS-V', 'CSP-SJUS-E']"
-      [title]="'menu.csp.ejecucion-economica.seguimiento-justificacion' | translate">
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-SJUS-V', 'CSP-SJUS-E']"
-        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.SEGUIMIENTO_JUSTIFICACION_RESUMEN]"
-        [title]="'menu.csp.ejecucion-economica.seguimiento-justificacion.resumen' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_RESUMEN)">
+    <ng-container *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_FACTURAS_EMITIDAS)">
+      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-EJEC-V', 'CSP-EJEC-E']"
+        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.FACTURAS_EMITIDAS]"
+        [title]="'menu.csp.ejecucion-economica.facturas-emitidas' | translate"
+        [fragment]="actionService.getFragment(actionService.FRAGMENT.FACTURAS_EMITIDAS)">
       </sgi-action-fragment-menu-item>
-      <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-SJUS-V', 'CSP-SJUS-E']"
-        [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS]"
-        [title]="'menu.csp.ejecucion-economica.seguimiento-justificacion.requerimientos' | translate"
-        [fragment]="actionService.getFragment(actionService.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS)">
-      </sgi-action-fragment-menu-item>
-    </sgi-action-fragment-menu-group>
+    </ng-container>
+    <ng-container
+      *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_SEGUIMIENTO_JUSTIFICACION_RESUMEN) || isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS)">
+      <sgi-action-fragment-menu-group *sgiHasAnyAuthorityForAnyUO="['CSP-SJUS-V', 'CSP-SJUS-E']"
+        [title]="'menu.csp.ejecucion-economica.seguimiento-justificacion' | translate">
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_SEGUIMIENTO_JUSTIFICACION_RESUMEN)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-SJUS-V', 'CSP-SJUS-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.SEGUIMIENTO_JUSTIFICACION_RESUMEN]"
+            [title]="'menu.csp.ejecucion-economica.seguimiento-justificacion.resumen' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_RESUMEN)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+        <ng-container
+          *ngIf="isOpcionHabilitadaIntegracionesEcc(SGE_INTEGRACIONES_ECC_MENUS.ECC_SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS)">
+          <sgi-action-fragment-menu-item *sgiHasAnyAuthorityForAnyUO="['CSP-SJUS-V', 'CSP-SJUS-E']"
+            [route]="[EJECUCION_ECONOMICA_ROUTE_NAMES.SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS]"
+            [title]="'menu.csp.ejecucion-economica.seguimiento-justificacion.requerimientos' | translate"
+            [fragment]="actionService.getFragment(actionService.FRAGMENT.SEGUIMIENTO_JUSTIFICACION_REQUERIMIENTOS)">
+          </sgi-action-fragment-menu-item>
+        </ng-container>
+      </sgi-action-fragment-menu-group>
+    </ng-container>
   </ng-container>
   <ng-container footer>
     <sgi-action-footer [texto]="textoEditar" [actionService]="actionService"></sgi-action-footer>

@@ -1,3 +1,5 @@
+import { I18nFieldValueResponse } from "@core/i18n/i18n-field-response";
+
 export interface IProyectoPaqueteTrabajoBackend {
   /** Id */
   id: number;
@@ -12,5 +14,5 @@ export interface IProyectoPaqueteTrabajoBackend {
   /** personaMes */
   personaMes: number;
   /** descripcion */
-  descripcion: string;
+  descripcion: I18nFieldValueResponse[];
 }

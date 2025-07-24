@@ -5,6 +5,7 @@ import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -42,7 +43,8 @@ export class ProyectoConsultaPresupuestoExportService
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    protected reportService: ReportService
+    protected reportService: ReportService,
+    private readonly languageService: LanguageService
   ) {
     super(reportService);
   }
@@ -56,7 +58,7 @@ export class ProyectoConsultaPresupuestoExportService
         elements: []
       };
       row.elements.push(item.proyectoAnualidad?.anio ?? '');
-      row.elements.push(item.conceptoGasto?.nombre ?? 'Sin clasificar');
+      row.elements.push(this.languageService.getFieldValue(item.conceptoGasto.nombre));
       row.elements.push(item.proyectoPartida?.codigo ?? 'Sin clasificar');
       row.elements.push(item.codigoEconomico?.id ?? '');
       row.elements.push(item.codigoEconomico?.nombre ?? '');

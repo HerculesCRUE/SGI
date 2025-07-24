@@ -1,10 +1,14 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.TipoPartida;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPartidaDescripcion;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -113,7 +117,10 @@ class ConvocatoriaPartidaIT extends BaseIT {
   void update_ReturnsConvocatoriaPartida() throws Exception {
     Long convocatoriaPartidaId = 1L;
     ConvocatoriaPartida convocatoriaPartidaToUpdate = buildMockConvocatoriaPartida(1L);
-    convocatoriaPartidaToUpdate.setDescripcion("DES-UPDATED");
+
+    Set<ConvocatoriaPartidaDescripcion> descripcionConvocatoriaPartida = new HashSet<>();
+    descripcionConvocatoriaPartida.add(new ConvocatoriaPartidaDescripcion(Language.ES, "DES-UPDATED"));
+    convocatoriaPartidaToUpdate.setDescripcion(descripcionConvocatoriaPartida);
 
     final ResponseEntity<ConvocatoriaPartida> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, convocatoriaPartidaToUpdate, "CSP-CON-E"),
@@ -180,10 +187,13 @@ class ConvocatoriaPartidaIT extends BaseIT {
   }
 
   private ConvocatoriaPartida buildMockConvocatoriaPartida(Long convocatoriaPartidaId) throws Exception {
+    Set<ConvocatoriaPartidaDescripcion> descripcionConvocatoriaPartida = new HashSet<>();
+    descripcionConvocatoriaPartida.add(new ConvocatoriaPartidaDescripcion(Language.ES, "Test Created Success"));
+
     return ConvocatoriaPartida.builder()
         .codigo("formato-partida-presupuestaria")
         .convocatoriaId(1L)
-        .descripcion("Test Created Success")
+        .descripcion(descripcionConvocatoriaPartida)
         .tipoPartida(TipoPartida.GASTO)
         .id(convocatoriaPartidaId)
         .build();

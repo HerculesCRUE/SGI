@@ -1,20 +1,26 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaConceptoGastoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoNombre;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoObservaciones;
 import org.crue.hercules.sgi.csp.repository.ConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaConceptoGastoServiceImpl;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -61,7 +67,7 @@ class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque el ConvocatoriaConceptoGasto ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(newConvocatoriaConceptoGasto))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id tiene que ser null para crear ConvocatoriaConceptoGasto");
+        .hasMessage("Identificador de Convocatoria Concepto Gasto debe ser nulo");
   }
 
   @Test
@@ -74,7 +80,7 @@ class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque la convocatoria es null
     Assertions.assertThatThrownBy(() -> service.create(convocatoriaConceptoGasto))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Convocatoria no puede ser null para crear ConvocatoriaConceptoGasto");
+        .hasMessage("Identificador de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -89,7 +95,8 @@ class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
     // when: Creamos el ConvocatoriaEnlace
     // then: Lanza una excepcion porque el enlace está inactivo
     Assertions.assertThatThrownBy(() -> service.create(convocatoriaConceptoGasto))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El ConceptoGasto debe estar activo");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage(convocatoriaConceptoGasto.getConceptoGasto().getNombre() + " de Concepto de Gasto no está activo");
   }
 
   @Test
@@ -101,7 +108,7 @@ class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
     // when: Creamos el ConvocatoriaConceptoGasto
     // then: Lanza una excepcion porque el concepto gasto es null
     Assertions.assertThatThrownBy(() -> service.update(convocatoriaConceptoGastoActualizar))
-        .isInstanceOf(ConceptoGastoNotFoundException.class).hasMessage("ConceptoGasto 1 does not exist.");
+        .isInstanceOf(ConceptoGastoNotFoundException.class).hasMessage("Concepto de Gasto 1 no existe");
   }
 
   @Test
@@ -143,7 +150,8 @@ class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
     // then: el ConvocatoriaConceptoGasto
     Assertions.assertThat(convocatoriaConceptoGasto).as("isNotNull()").isNotNull();
     Assertions.assertThat(convocatoriaConceptoGasto.getId()).as("getId()").isEqualTo(idBuscado);
-    Assertions.assertThat(convocatoriaConceptoGasto.getObservaciones()).as("getObservaciones()").isEqualTo("Obs-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaConceptoGasto.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("Obs-1");
     Assertions.assertThat(convocatoriaConceptoGasto.getConvocatoriaId()).as("getConvocatoria()").isEqualTo(1L);
 
   }
@@ -206,15 +214,22 @@ class ConvocatoriaConceptoGastoServiceTest extends BaseServiceTest {
    * @return el objeto ConvocatoriaConceptoGasto
    */
   private ConvocatoriaConceptoGasto generarMockConvocatoriaConceptoGasto(Long id) {
+    Set<ConceptoGastoNombre> nombreConceptoGasto = new HashSet<>();
+    nombreConceptoGasto.add(new ConceptoGastoNombre(Language.ES, "conceptoGasto"));
+
     ConceptoGasto conceptoGasto = new ConceptoGasto();
     conceptoGasto.setId(id == null ? 1 : id);
-
+    conceptoGasto.setNombre(nombreConceptoGasto);
     conceptoGasto.setActivo(true);
+
+    Set<ConvocatoriaConceptoGastoObservaciones> observacionesConvocatoriaConceptoGasto = new HashSet<>();
+    observacionesConvocatoriaConceptoGasto
+        .add(new ConvocatoriaConceptoGastoObservaciones(Language.ES, "Obs-" + id));
 
     ConvocatoriaConceptoGasto convocatoriaConceptoGasto = new ConvocatoriaConceptoGasto();
     convocatoriaConceptoGasto.setId(id);
     convocatoriaConceptoGasto.setConvocatoriaId(id == null ? 1 : id);
-    convocatoriaConceptoGasto.setObservaciones("Obs-" + id);
+    convocatoriaConceptoGasto.setObservaciones(observacionesConvocatoriaConceptoGasto);
     convocatoriaConceptoGasto.setConceptoGasto(conceptoGasto);
     convocatoriaConceptoGasto.setImporteMaximo(400.0);
     convocatoriaConceptoGasto.setMesInicial(4);

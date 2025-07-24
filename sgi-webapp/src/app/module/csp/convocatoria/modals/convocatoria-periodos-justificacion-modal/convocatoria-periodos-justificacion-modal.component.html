@@ -115,10 +115,10 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.convocatoria-periodo-justificacion.observaciones' | translate}}</mat-label>
-        <textarea matInput formControlName="observaciones" type="text" id="observaciones"
+        <sgi-i18n-textarea formControlName="observaciones"
           placeholder="{{'csp.convocatoria-periodo-justificacion.observaciones' | translate}}">
-                </textarea>
-        <mat-error *ngIf="formGroup.controls.observaciones.errors?.after">
+        </sgi-i18n-textarea>
+        <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxLength">
           {{ 'error.maxlength.entity' | translate:msgParamObservacionesEntity }}
         </mat-error>
       </mat-form-field>

@@ -86,7 +86,7 @@ export class ModuladoresRangosComponent extends FormFragmentComponent<Moduladore
     private readonly translate: TranslateService,
     private readonly snackBarService: SnackBarService
   ) {
-    super(actionService.FRAGMENT.MODULADORES_RANGOS, actionService);
+    super(actionService.FRAGMENT.MODULADORES_RANGOS, actionService, translate);
     this.formPart = this.fragment as ModuladoresRangosFragment;
   }
 
@@ -101,7 +101,7 @@ export class ModuladoresRangosComponent extends FormFragmentComponent<Moduladore
     this.subscribeToRangos(TipoRango.CUANTIA_CONTRATOS);
     this.subscribeToRangos(TipoRango.CUANTIA_COSTES_INDIRECTOS);
     this.subscribeToRangos(TipoRango.LICENCIA);
-    this.setupI18N();
+
 
     this.subscriptions.push(
       this.formPart.hasCostesIndirectosTipoRango$.subscribe(value => {
@@ -336,7 +336,7 @@ export class ModuladoresRangosComponent extends FormFragmentComponent<Moduladore
     return msg;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       RANGOS_CONTRATOS_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

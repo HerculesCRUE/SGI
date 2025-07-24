@@ -5,12 +5,12 @@ import org.crue.hercules.sgi.eti.model.EstadoMemoria;
 import org.crue.hercules.sgi.eti.repository.EstadoMemoriaRepository;
 import org.crue.hercules.sgi.eti.service.EstadoMemoriaService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -36,7 +36,7 @@ public class EstadoMemoriaServiceImpl implements EstadoMemoriaService {
   @Transactional
   public EstadoMemoria create(EstadoMemoria estadoMemoria) {
     log.debug("Petición a create EstadoMemoria : {} - start", estadoMemoria);
-    Assert.isNull(estadoMemoria.getId(), "EstadoMemoria id tiene que ser null para crear un nuevo estadoMemoria");
+    AssertHelper.idIsNull(estadoMemoria.getId(), EstadoMemoria.class);
 
     return estadoMemoriaRepository.save(estadoMemoria);
   }
@@ -82,7 +82,7 @@ public class EstadoMemoriaServiceImpl implements EstadoMemoriaService {
   @Transactional
   public void delete(Long id) throws EstadoMemoriaNotFoundException {
     log.debug("Petición a delete EstadoMemoria : {}  - start", id);
-    Assert.notNull(id, "El id de EstadoMemoria no puede ser null.");
+    AssertHelper.idNotNull(id, EstadoMemoria.class);
     if (!estadoMemoriaRepository.existsById(id)) {
       throw new EstadoMemoriaNotFoundException(id);
     }
@@ -117,8 +117,7 @@ public class EstadoMemoriaServiceImpl implements EstadoMemoriaService {
   public EstadoMemoria update(final EstadoMemoria estadoMemoriaActualizar) {
     log.debug("update(EstadoMemoria EstadoMemoriaActualizar) - start");
 
-    Assert.notNull(estadoMemoriaActualizar.getId(),
-        "EstadoMemoria id no puede ser null para actualizar un estado memoria");
+    AssertHelper.idNotNull(estadoMemoriaActualizar.getId(), EstadoMemoria.class);
 
     return estadoMemoriaRepository.findById(estadoMemoriaActualizar.getId()).map(estadoMemoria -> {
       estadoMemoria.setMemoria(estadoMemoriaActualizar.getMemoria());

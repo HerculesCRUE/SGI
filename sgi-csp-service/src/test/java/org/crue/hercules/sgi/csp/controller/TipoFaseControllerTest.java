@@ -1,14 +1,18 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoFaseNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.service.TipoFaseService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -29,6 +33,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * TipoFaseControllerTest
  */
@@ -46,7 +52,7 @@ class TipoFaseControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-C" })
   void create_ReturnsTipoFase() throws Exception {
     // given: Un TipoFase nuevo
-    String tipoFaseJson = "{ \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\",  \"activo\": \"true\"  }";
+    String tipoFaseJson = "{ \"nombre\": [{\"lang\": \"es\", \"value\": \"nombre-1\"}], \"descripcion\": [{\"lang\": \"es\", \"value\": \"descripcion-1\"}],  \"activo\": \"true\"  }";
     BDDMockito.given(tipoFaseService.create(ArgumentMatchers.<TipoFase>any())).will((InvocationOnMock invocation) -> {
       TipoFase tipoFaseCreado = invocation.getArgument(0);
       tipoFaseCreado.setId(1L);
@@ -61,8 +67,8 @@ class TipoFaseControllerTest extends BaseControllerTest {
         // then: Crea el nuevo TipoFase y lo devuelve
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -70,7 +76,7 @@ class TipoFaseControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-C" })
   void create_WithId_Returns400() throws Exception {
     // given: Un TipoFase que produce un error al crearse porque ya tiene id
-    String tipoFaseJson = "{ \"id\": \"1\", \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
+    String tipoFaseJson = "{ \"id\": \"1\", \"nombre\": [{\"lang\": \"es\", \"value\": \"nombre-1\"}], \"descripcion\": [{\"lang\": \"es\", \"value\": \"descripcion-1\"}] }";
     BDDMockito.given(tipoFaseService.create(ArgumentMatchers.<TipoFase>any()))
         .willThrow(new IllegalArgumentException());
     // when: Creamos un TipoFase
@@ -87,7 +93,7 @@ class TipoFaseControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-E" })
   void update_ReturnsTipoFase() throws Exception {
     // given: Un TipoFase a modificar
-    String tipoFaseJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
+    String tipoFaseJson = "{\"id\": \"1\", \"nombre\": [{\"lang\": \"es\", \"value\": \"nombre-1-modificado\"}], \"descripcion\": [{\"lang\": \"es\", \"value\": \"descripcion-1\"}], \"activo\": true }";
 
     BDDMockito.given(tipoFaseService.update(ArgumentMatchers.<TipoFase>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -99,8 +105,8 @@ class TipoFaseControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Modifica el TipoFase y lo devuelve
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1-modificado"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("nombre-1-modificado"))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value").value("descripcion-1"))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -108,7 +114,7 @@ class TipoFaseControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-E" })
   void update_WithIdNotExist_ReturnsNotFound() throws Exception {
     // given: Un TipoFase a modificar
-    String replaceTipoFaseJson = "{\"id\": \"1\", \"nombre\": \"nombre-1-modificado\", \"descripcion\": \"descripcion-1\", \"activo\": true }";
+    String replaceTipoFaseJson = "{\"id\": \"1\", \"nombre\": [{\"lang\": \"es\", \"value\": \"nombre-1-modificado\"}], \"descripcion\": [{\"lang\": \"es\", \"value\": \"descripcion-1\"}], \"activo\": true }";
     BDDMockito.given(tipoFaseService.update(ArgumentMatchers.<TipoFase>any())).will((InvocationOnMock invocation) -> {
       throw new TipoFaseNotFoundException(((TipoFase) invocation.getArgument(0)).getId());
     });
@@ -126,7 +132,7 @@ class TipoFaseControllerTest extends BaseControllerTest {
   void update_WithNombreRepetido_Returns400() throws Exception {
     // given: Un TipoFase que produce un error porque ya existe otro con el
     // mismo nombre
-    String tipoFaseJson = "{ \"id\": \"2\", \"nombre\": \"nombre-1\", \"descripcion\": \"descripcion-1\" }";
+    String tipoFaseJson = "{ \"id\": \"2\", \"nombre\": [{\"lang\": \"es\", \"value\": \"nombre-1\"}], \"descripcion\": [{\"lang\": \"es\", \"value\": \"descripcion-1\"}] }";
     BDDMockito.given(tipoFaseService.update(ArgumentMatchers.<TipoFase>any()))
         .willThrow(new IllegalArgumentException());
     // when: Actualizamos el TipoFase
@@ -183,7 +189,8 @@ class TipoFaseControllerTest extends BaseControllerTest {
         });
     for (int i = 31; i <= 37; i++) {
       TipoFase tipoFase = tiposFaseResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(tipoFase.getNombre()).isEqualTo("TipoFase" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFase.getNombre(), Language.ES))
+          .isEqualTo("TipoFase" + String.format("%03d", i));
     }
   }
 
@@ -258,7 +265,8 @@ class TipoFaseControllerTest extends BaseControllerTest {
         });
     for (int i = 31; i <= 37; i++) {
       TipoFase tipoFase = tiposFaseResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(tipoFase.getNombre()).isEqualTo("TipoFase" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFase.getNombre(), Language.ES))
+          .isEqualTo("TipoFase" + String.format("%03d", i));
     }
   }
 
@@ -290,24 +298,6 @@ class TipoFaseControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findById_ReturnsTipoFase() throws Exception {
-    // given: Un TipoFase con el id buscado
-    Long idBuscado = 1L;
-    BDDMockito.given(tipoFaseService.findById(ArgumentMatchers.anyLong())).willReturn((generarMockTipoFase(idBuscado)));
-    // when: Buscamos el TipoFase por su id
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(TIPO_FASE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, idBuscado)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()))
-        // then: Devuelve TipoFase
-        .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("nombre-1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value("descripcion-1"))
-        .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
-  }
-
-  @Test
   @WithMockUser(username = "user", authorities = { "CSP-TFASE-R" })
   void reactivar_WithExistingId_ReturnTipoFase() throws Exception {
     // given: existing id
@@ -329,8 +319,10 @@ class TipoFaseControllerTest extends BaseControllerTest {
         // then: return enabled TipoFase
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(tipoFase.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoFase.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoFase.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoFase.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoFase.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(Boolean.TRUE));
   }
 
@@ -377,8 +369,10 @@ class TipoFaseControllerTest extends BaseControllerTest {
         // then: return disabled TipoFase
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(idBuscado))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(tipoFase.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(tipoFase.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoFase.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(tipoFase.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(Boolean.FALSE));
   }
 
@@ -418,10 +412,16 @@ class TipoFaseControllerTest extends BaseControllerTest {
    * @return el objeto TipoFase
    */
   TipoFase generarMockTipoFase(Long id, String nombre) {
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, nombre));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcion-" + id));
+
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id);
-    tipoFase.setNombre(nombre);
-    tipoFase.setDescripcion("descripcion-" + id);
+    tipoFase.setNombre(nombreTipoFase);
+    tipoFase.setDescripcion(descripcionTipoFase);
     tipoFase.setActivo(Boolean.TRUE);
     return tipoFase;
   }

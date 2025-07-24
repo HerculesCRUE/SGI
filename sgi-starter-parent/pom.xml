@@ -7,12 +7,12 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>2.3.9.RELEASE</version>
+    <version>2.7.18</version>
   </parent>
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-starter-parent</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <packaging>pom</packaging>
   <name>sgi-starter-parent</name>
   <description>Parent pom providing dependency and plugin management for applications built with Maven</description>
@@ -44,27 +44,25 @@
     <dist.repo.snap.url>http://nexus.treelogic.local/content/repositories/snapshots/</dist.repo.snap.url>
     <!-- spring-boot-starter-parent version to allow reconfiguration of spring boot dependencies
     defined there  -->
-    <spring-boot-starter-parent.version>2.3.9.RELEASE</spring-boot-starter-parent.version>
-    <!-- Dependencies versions (not defined in parent pom) -->
-    <classic-core.version>8.3.0.25-1402</classic-core.version>
+    <spring-boot-starter-parent.version>2.7.18</spring-boot-starter-parent.version>
+    <!-- Overide Java target version -->
+    <java.version>21</java.version>
     <commons-collections4.version>4.4</commons-collections4.version>
     <commons-email.version>1.5</commons-email.version>
-    <greenmail.version>1.6.5</greenmail.version>
-    <httpclient5.version>5.1.3</httpclient5.version>
-    <jakarta.validation-api.version>2.0.2</jakarta.validation-api.version>
-    <jslt.version>0.1.11</jslt.version>
-    <json-path.version>2.6.0</json-path.version>
-    <liquibase-hibernate5.version>3.8</liquibase-hibernate5.version>
-    <liquibase.version>3.8.9</liquibase.version>
-    <lombok.version>1.18.20</lombok.version> <!-- Update Lombok to be JDK 16 compatible -->
-    <modelmapper.version>2.3.9</modelmapper.version>
-    <rsql-jpa-spring-boot-starter.version>5.0.9</rsql-jpa-spring-boot-starter.version>
+    <greenmail.version>1.6.15</greenmail.version>
+    <jslt.version>0.1.14</jslt.version>
+    <liquibase-hibernate5.version>${liquibase.version}</liquibase-hibernate5.version>
+    <lombok.version>1.18.30</lombok.version>
+    <modelmapper.version>3.2.0</modelmapper.version>
+    <rsql-jpa-spring-boot-starter.version>5.1.1</rsql-jpa-spring-boot-starter.version>
     <spel-scriptengine.version>1.0.0</spel-scriptengine.version>
-    <wiremock-jre8.version>2.31.0</wiremock-jre8.version>
+    <wiremock-jre8.version>2.34.0</wiremock-jre8.version>
+    <preliquibase-spring-boot-starter.version>1.2.2</preliquibase-spring-boot-starter.version>
+    <nashorn.version>15.4</nashorn.version>
     <!-- Plugin versions (not defined in parent pom) -->
-    <liquibase-maven-plugin.version>3.8.9</liquibase-maven-plugin.version>
-    <sonar-maven-plugin.version>3.7.0.1746</sonar-maven-plugin.version>
-    <jacoco-maven-plugin.version>0.8.7</jacoco-maven-plugin.version>
+    <liquibase-maven-plugin.version>${liquibase.version}</liquibase-maven-plugin.version>
+    <sonar-maven-plugin.version>3.11.0.3922</sonar-maven-plugin.version>
+    <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
     <!-- Test execution modifiers -->
     <skipTests>false</skipTests>
     <skipUnitTests>${skipTests}</skipUnitTests>
@@ -87,21 +85,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!-- 
-        Pentaho Reporting Engine Classic Core - Java class library for generating reports
-        https://github.com/pentaho/pentaho-reporting
-      -->
-      <dependency>
-        <groupId>org.pentaho.reporting.engine</groupId>
-        <artifactId>classic-core</artifactId>
-        <version>${classic-core.version}</version>
-        <exclusions>
-          <exclusion>
-            <groupId>xml-apis</groupId>
-            <artifactId>xml-apis-ext</artifactId>
-          </exclusion>
-        </exclusions>
-      </dependency>
       <!-- 
         Apache Commons Collections - Powerful data structures that accelerate development of most
       significant Java applications
@@ -139,15 +122,6 @@
         <groupId>com.schibsted.spt.data</groupId>
         <artifactId>jslt</artifactId>
         <version>${jslt.version}</version>
-      </dependency>
-      <!-- 
-        Jayway JsonPath - A Java DSL for reading JSON documents.
-        https://github.com/json-path/JsonPath
-      -->
-      <dependency>
-        <groupId>com.jayway.jsonpath</groupId>
-        <artifactId>json-path</artifactId>
-        <version>${json-path.version}</version>
       </dependency>
       <!--
         ModelMapper - Makes object mapping easy.
@@ -203,6 +177,26 @@
         <groupId>com.github.tomakehurst</groupId>
         <artifactId>wiremock-jre8</artifactId>
         <version>${wiremock-jre8.version}</version>
+      </dependency>
+      <!--
+        Allow running scripts before liquibase. After SpringBoot 2.5 if liquibase is enabled database
+      initialization trought .sql files in resources is disabled.
+        See https://github.com/spring-projects/spring-boot/issues/22741.
+        
+        https://github.com/lbruun-net/Pre-Liquibase
+      -->
+      <dependency>
+        <groupId>net.lbruun.springboot</groupId>
+        <artifactId>preliquibase-spring-boot-starter</artifactId>
+        <version>${preliquibase-spring-boot-starter.version}</version>
+      </dependency>
+      <!-- Nashorn is JavaScript ScriptEngine. From Java 11 onwards isn't included in the JRE. 
+        https://github.com/openjdk/nashorn
+      -->
+      <dependency>
+        <groupId>org.openjdk.nashorn</groupId>
+        <artifactId>nashorn-core</artifactId>
+        <version>${nashorn.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -360,7 +354,7 @@
             <dependency>
               <groupId>jakarta.validation</groupId>
               <artifactId>jakarta.validation-api</artifactId>
-              <version>${jakarta.validation-api.version}</version>
+              <version>${jakarta-validation.version}</version>
             </dependency>
           </dependencies>
         </plugin>

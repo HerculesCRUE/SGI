@@ -1,12 +1,16 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.dto.SolicitudHitoInput;
 import org.crue.hercules.sgi.csp.dto.SolicitudHitoOutput;
-import org.crue.hercules.sgi.csp.model.SolicitudHito;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -55,8 +59,8 @@ class SolicitudHitoIT extends BaseIT {
         .isEqualTo(solicitudHito.getSolicitudId());
     Assertions.assertThat(solicitudHitoCreado.getTipoHito().getId()).as("getTipoHito().getId()")
         .isEqualTo(solicitudHito.getTipoHitoId());
-    Assertions.assertThat(solicitudHitoCreado.getComentario()).as("getComentario()")
-        .isEqualTo(solicitudHito.getComentario());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(solicitudHitoCreado.getComentario(), Language.ES))
+        .as("getComentario()").isEqualTo("comentario");
   }
 
   @Sql
@@ -64,8 +68,12 @@ class SolicitudHitoIT extends BaseIT {
   @Test
   void update_ReturnsSolicitudHito() throws Exception {
     Long idSolicitudHito = 1L;
+
+    List<I18nFieldValueDto> hitoComentario = new ArrayList<I18nFieldValueDto>();
+    hitoComentario.add(new I18nFieldValueDto(Language.ES, "comentario-modificado"));
+
     SolicitudHitoInput solicitudHito = generarSolicitudHito(1L, 1L);
-    solicitudHito.setComentario("comentario-modificado");
+    solicitudHito.setComentario(hitoComentario);
 
     final ResponseEntity<SolicitudHitoOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, solicitudHito), SolicitudHitoOutput.class, idSolicitudHito);
@@ -74,9 +82,11 @@ class SolicitudHitoIT extends BaseIT {
 
     SolicitudHitoOutput solicitudHitoActualizado = response.getBody();
     Assertions.assertThat(solicitudHitoActualizado.getId()).as("getId()").isEqualTo(idSolicitudHito);
-    Assertions.assertThat(solicitudHitoActualizado.getComentario()).as("getComentario()")
-        .isEqualTo(solicitudHito.getComentario());
-
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(solicitudHitoActualizado.getComentario(), Language.ES))
+        .as("getComentario()")
+        .isEqualTo(I18nHelper.getValueForLanguage(solicitudHito.getComentario(), Language.ES));
   }
 
   @Sql
@@ -95,22 +105,6 @@ class SolicitudHitoIT extends BaseIT {
 
   }
 
-  @Sql
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void findById_ReturnsSolicitudHito() throws Exception {
-    Long idSolicitudHito = 1L;
-
-    final ResponseEntity<SolicitudHito> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
-        HttpMethod.GET, buildRequest(null, null), SolicitudHito.class, idSolicitudHito);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    SolicitudHito solicitudHito = response.getBody();
-    Assertions.assertThat(solicitudHito.getId()).as("getId()").isEqualTo(idSolicitudHito);
-    Assertions.assertThat(solicitudHito.getSolicitudId()).as("getSolicitudId()").isEqualTo(1);
-    Assertions.assertThat(solicitudHito.getComentario()).as("getComentario()").isEqualTo("comentario-001");
-  }
-
   /**
    * Función que devuelve un objeto SolicitudHito
    * 
@@ -121,8 +115,13 @@ class SolicitudHitoIT extends BaseIT {
    */
   private SolicitudHitoInput generarSolicitudHito(Long solicitudId, Long tipoDocumentoId) {
 
+    List<I18nFieldValueDto> hitoComentario = new ArrayList<I18nFieldValueDto>();
+    hitoComentario.add(new I18nFieldValueDto(Language.ES, "comentario"));
+
     SolicitudHitoInput solicitudHito = SolicitudHitoInput.builder().solicitudId(solicitudId)
-        .comentario("comentario").fecha(Instant.now())
+        .comentario(
+            hitoComentario)
+        .fecha(Instant.now())
         .tipoHitoId(tipoDocumentoId).build();
 
     return solicitudHito;

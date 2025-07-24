@@ -1,6 +1,9 @@
 import { FormControl } from '@angular/forms';
 import { IBaseExportModalData } from '@core/component/base-export/base-export-modal-data';
-import { IConfiguracion } from '@core/models/csp/configuracion';
+import { Language } from '@core/i18n/language';
+import { IConfiguracion, SgeFiltroAnualidades } from '@core/models/csp/configuracion';
+import { IProyecto } from '@core/models/csp/proyecto';
+import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IRelacionEjecucionEconomica, TipoEntidad } from '@core/models/csp/relacion-ejecucion-economica';
 import { IColumna } from '@core/models/sge/columna';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
@@ -8,12 +11,13 @@ import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { Fragment } from '@core/services/action-service';
 import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/proyecto-anualidad.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
-import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { LanguageService } from '@core/services/language.service';
+import { BehaviorSubject, Observable, Subject, forkJoin, from, of } from 'rxjs';
+import { distinctUntilChanged, map, mergeMap, reduce, switchMap } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 
 export interface IRowConfig {
+  actionsShow: boolean;
   anualidadGroupBy: boolean;
   anualidadShow: boolean;
   aplicacionPresupuestariaGroupBy: boolean;
@@ -32,6 +36,12 @@ export interface IColumnDefinition {
   name: string;
   compute: boolean;
   importeReparto?: boolean;
+}
+
+interface IDesgloseEconomicoAnualidades {
+  anualidades: string[];
+  hasAnualidadesPresupuesto: boolean;
+  hasAnualidadesFechas: boolean;
 }
 
 abstract class RowTree<T> {
@@ -100,19 +110,43 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
   readonly relaciones$ = new BehaviorSubject<IRelacionEjecucionEconomica[]>([]);
   readonly anualidades$ = new BehaviorSubject<string[]>([]);
 
+  private columnsLanguage: Map<Language, IColumnDefinition[]> = new Map();
+  private hasAnualidadesPresupuesto = false;
+  private hasAnualidadesFechas = false;
+
   displayColumns: string[] = [];
   columns: IColumnDefinition[] = [];
+  columns$ = new BehaviorSubject<IColumnDefinition[]>([]);
   readonly desglose$: Subject<RowTreeDesglose<T>[]> = new BehaviorSubject<RowTreeDesglose<T>[]>([]);
   readonly aniosControl = new FormControl();
+  limiteRegistrosExportacionExcel: number;
 
   get isEjecucionEconomicaGruposEnabled(): boolean {
     return this.config.ejecucionEconomicaGruposEnabled ?? false;
   }
 
+  get isAnualidadesRequired(): boolean {
+    return this.config.sgeFiltroAnualidades === SgeFiltroAnualidades.ANUALIDADES_OBLIGATORIAS;
+  }
+
+  /**
+   * Si el proyecto no tiene anualidades en el presupuesto pero si tiene anualiades obtenidas de las fechas del proyecto
+   * se oculta el filtro de anualidades
+   * 
+   * @returns true si no tiene anualidades en el presupuesto y tiene anualidades obtenidas de las fechas del proyecto
+   */
+  get hideFilterAnualidades(): boolean {
+    return !this.hasAnualidadesPresupuesto && this.hasAnualidadesFechas;
+  }
+
+  private _searchDisabled = new BehaviorSubject<boolean>(false);
+  public searchDisabled$ = this._searchDisabled.asObservable();
+
   constructor(
     key: number,
     protected proyectoSge: IProyectoSge,
     protected relaciones: IRelacionEjecucionEconomicaWithResponsables[],
+    protected readonly languageService: LanguageService,
     protected proyectoService: ProyectoService,
     private proyectoAnualidadService: ProyectoAnualidadService,
     protected readonly config: IConfiguracion
@@ -124,12 +158,51 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
   protected onInitialize(): void {
     this.relaciones$.next([...this.relaciones]);
 
-    this.subscriptions.push(this.getAnualidades().subscribe(
-      (anios) => this.anualidades$.next(anios)
-    ));
+    this.subscriptions.push(
+      this.getAnualidades(this.isAnualidadesRequired).subscribe(desgloseEconomicoAnualidades => {
+        this.anualidades$.next(desgloseEconomicoAnualidades.anualidades);
+        this.hasAnualidadesPresupuesto = desgloseEconomicoAnualidades.hasAnualidadesPresupuesto;
+        this.hasAnualidadesFechas = desgloseEconomicoAnualidades.hasAnualidadesFechas;
+        if (this.isAnualidadesRequired) {
+          this.aniosControl.setValue(desgloseEconomicoAnualidades.anualidades);
+        }
+      })
+    );
+
+    this.subscriptions.push(
+      this.aniosControl.statusChanges.pipe(
+        map(() => !!this.aniosControl.errors),
+        distinctUntilChanged()
+      ).subscribe(hasErrors => {
+        this._searchDisabled.next(hasErrors);
+      })
+    );
+
+    this.subscriptions.push(
+      this.languageService.languageChange$.pipe(
+        switchMap(language => forkJoin({
+          columns: this.columnsLanguage.has(language) ? of(this.columnsLanguage.get(language)) : this.getColumns(),
+          language: of(language)
+        }))
+      ).subscribe(({ columns, language }) => {
+        this.columns = columns;
+        this.columnsLanguage.set(language, this.columns);
+        this.columns$.next(this.columns);
+        this.displayColumns = this.getDisplayColumns(this.getRowConfig(), this.columns);
+      }
+      )
+    );
+
+    this.subscriptions.push(
+      this.getLimiteRegistrosExportacionExcel().subscribe(limite => this.limiteRegistrosExportacionExcel = limite)
+    );
   }
 
   protected abstract getColumns(reducida?: boolean): Observable<IColumnDefinition[]>;
+
+  protected abstract getDisplayColumns(rowConfig: IRowConfig, columns: IColumnDefinition[]): string[];
+
+  protected abstract getLimiteRegistrosExportacionExcel(): Observable<number>;
 
   protected toColumnDefinition(columnas: IColumna[]): IColumnDefinition[] {
     return columnas.map(columna => {
@@ -141,33 +214,69 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
     });
   }
 
-  private getAnualidades(): Observable<string[]> {
-    const proyectoIds = this.relaciones
+  /**
+   * Obtiene las anualidades asociadas a los proyectos relacionados,
+   * si los proyectos no tienen presupuesto por anualidades y anualidadesRequired
+   * es true se recuperan las anualidades de las fechas del proyecto 
+   * 
+   * @returns lista de anualidades en formato string
+   */
+  private getAnualidades(anualidadesRequired: boolean): Observable<IDesgloseEconomicoAnualidades> {
+    const proyectoIds: string[] = this.relaciones
       .filter(relacion => relacion.tipoEntidad === TipoEntidad.PROYECTO)
       .map(relacion => relacion.id.toString());
 
     if (proyectoIds.length === 0) {
-      return of([] as string[]);
+      return of({
+        anualidades: [],
+        hasAnualidadesFechas: false,
+        hasAnualidadesPresupuesto: false
+      });
     }
 
-    const options: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter(
-        'proyectoId',
-        SgiRestFilterOperator.IN,
-        proyectoIds
-      )
-    };
-    return this.proyectoAnualidadService.findAll(options).pipe(
-      map(anualidades => {
-        const anios = new Set<number>();
-        anualidades.items.forEach(anualidad => {
-          if (anualidad.anio) {
-            anios.add(anualidad.anio);
-          }
-        });
-        const response: string[] = [];
-        anios.forEach(val => response.push(val.toString()));
-        return response;
+    return this.proyectoAnualidadService.findAllByProyectoIdIn(proyectoIds).pipe(
+      map(response => response.items),
+      switchMap((proyectoAnualidadesPresupuesto: IProyectoAnualidad[]) => {
+
+        const proyectosConAnualidades = new Set<string>(
+          proyectoAnualidadesPresupuesto
+            .filter(anualidad => anualidad.proyecto?.id)
+            .map(anualidad => anualidad.proyecto.id.toString())
+        );
+
+        const proyectosSinAnualidades = proyectoIds.filter(id => !proyectosConAnualidades.has(id));
+
+        if (proyectosSinAnualidades.length === 0 || !anualidadesRequired) {
+          return of({
+            anualidades: [... new Set(proyectoAnualidadesPresupuesto.map(anualidad => anualidad.anio.toString()))],
+            hasAnualidadesFechas: false,
+            hasAnualidadesPresupuesto: !!proyectoAnualidadesPresupuesto?.length
+          });
+        }
+
+        return from(proyectosSinAnualidades).pipe(
+          mergeMap(proyectoId =>
+            this.proyectoService.getAnualidadesProyecto(Number(proyectoId)).pipe(
+              map(anualidades => anualidades.map(anualidad => ({
+                anio: Number(anualidad),
+                proyecto: { id: Number(proyectoId) } as IProyecto,
+              } as IProyectoAnualidad)))
+            )
+          ),
+          reduce<IProyectoAnualidad[], IProyectoAnualidad[]>((acc, proyectoAnualidadesFechas) => [...acc, ...proyectoAnualidadesFechas], []),
+          map((proyectoAnualidadesFechas: IProyectoAnualidad[]) => {
+            const proyectoAnualidades = [
+              ...proyectoAnualidadesPresupuesto,
+              ...proyectoAnualidadesFechas
+            ];
+
+            return {
+              anualidades: [... new Set(proyectoAnualidades.map(anualidad => anualidad.anio.toString()).sort())],
+              hasAnualidadesFechas: !!proyectoAnualidadesFechas?.length,
+              hasAnualidadesPresupuesto: !!proyectoAnualidadesPresupuesto?.length
+            };
+          })
+        );
       })
     );
   }
@@ -182,9 +291,10 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
       data: [],
       columns: []
     };
+    const reducida = false;
     return of(exportData).pipe(
       switchMap((exportDataResult) => {
-        return this.getDatosEconomicos(anualidades).pipe(
+        return this.getDatosEconomicos(anualidades, reducida).pipe(
           map(data => {
             exportDataResult.data = data;
             return exportDataResult;
@@ -192,7 +302,7 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
         );
       }),
       switchMap((exportDataResult) => {
-        return this.getColumns(false).pipe(
+        return this.getColumns(reducida).pipe(
           map((columns) => {
             exportDataResult.columns = columns;
             return exportDataResult;
@@ -205,7 +315,8 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
   public loadDesglose(): void {
     const anualidades = this.aniosControl.value ?? [];
     this.clearProblems();
-    this.getDatosEconomicos(anualidades)
+    const reducida = true;
+    this.getDatosEconomicos(anualidades, reducida)
       .pipe(
         switchMap(response => this.buildRows(response, this.getRowConfig()))
       ).subscribe(
@@ -226,7 +337,11 @@ export abstract class DesgloseEconomicoFragment<T extends IDatoEconomico> extend
     this.desglose$.next(regs);
   }
 
-  protected abstract getDatosEconomicos(anualidades: string[]): Observable<IDatoEconomico[]>;
+  public trackByColumnId(index, column: IColumnDefinition): string {
+    return column.id;
+  }
+
+  protected abstract getDatosEconomicos(anualidades: string[], reducida: boolean): Observable<IDatoEconomico[]>;
 
   protected abstract buildRows(datosEconomicos: IDatoEconomico[], rowConfig: IRowConfig): Observable<RowTreeDesglose<T>[]>;
 

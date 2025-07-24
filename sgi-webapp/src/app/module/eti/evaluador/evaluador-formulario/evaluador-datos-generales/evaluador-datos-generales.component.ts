@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { CargoComite } from '@core/models/eti/cargo-comite';
+import { CARGO_COMITE_MAP, CargoComite } from '@core/models/eti/cargo-comite';
 import { IEvaluador } from '@core/models/eti/evaluador';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { CargoComiteService } from '@core/services/eti/cargo-comite.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { EvaluadorActionService } from '../../evaluador.action.service';
@@ -35,6 +35,8 @@ export class EvaluadorDatosGeneralesComponent extends FormFragmentComponent<IEva
   cargosComite$: Observable<CargoComite[]>;
   evaluador: IEvaluador;
 
+  private subscriptions: Subscription[] = [];
+
   msgParamComiteEntity = {};
   msgParamFechaAltaEntity = {};
   msgParamFechaBajaEntity = {};
@@ -50,12 +52,20 @@ export class EvaluadorDatosGeneralesComponent extends FormFragmentComponent<IEva
     return TipoColectivo.EVALUADOR_ETICA;
   }
 
+  readonly displayerCargoComite = (option: CargoComite): string => {
+    return option?.id
+      ? (CARGO_COMITE_MAP.get(option.id)
+        ? this.translate.instant(CARGO_COMITE_MAP.get(option.id))
+        : option?.nombre ?? '')
+      : option?.nombre ?? '';
+  };
+
   constructor(
     private cargoComiteService: CargoComiteService,
     actionService: EvaluadorActionService,
-    private translate: TranslateService
+    private translate: TranslateService,
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.datosGeneralesFragment = this.fragment as EvaluadorDatosGeneralesFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -79,43 +89,45 @@ export class EvaluadorDatosGeneralesComponent extends FormFragmentComponent<IEva
 
   ngOnInit() {
     super.ngOnInit();
-    this.setupI18N();
 
     this.cargosComite$ = this.cargoComiteService.findAll().pipe(
-      map(response => response.items)
-    );
+      map(response => response.items));
   }
 
-  private setupI18N(): void {
-    this.translate.get(
+  protected setupI18N(): void {
+    this.subscriptions.push(this.translate.get(
       EVALUDADOR_COMITE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamComiteEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamComiteEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       EVALUADOR_CARGO_COMITE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamCargoComiteEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamCargoComiteEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       EVALUADOR_FECHA_ALTA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaAltaEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    ).subscribe((value) => this.msgParamFechaAltaEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.SINGULAR }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       EVALUADOR_FECHA_BAJA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamFechaBajaEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE });
+    ).subscribe((value) => this.msgParamFechaBajaEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       EVALUADOR_RESUMEN_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamResumenEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE });
+    ).subscribe((value) => this.msgParamResumenEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE }));
 
-    this.translate.get(
+    this.subscriptions.push(this.translate.get(
       EVALUADOR_PERSONA_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL
-    ).subscribe((value) => this.msgParamPersonaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
+    ).subscribe((value) => this.msgParamPersonaEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL }));
+  }
+
+  ngOnDestroy() {
+    this.subscriptions?.forEach(subscription => subscription.unsubscribe());
   }
 
 }

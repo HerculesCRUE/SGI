@@ -9,6 +9,7 @@ import { INotificacionProyectoExternoCVN } from '@core/models/csp/notificacion-p
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { NotificacionProyectoExternoCvnService } from '@core/services/csp/notificacion-proyecto-externo-cvn/notificacion-proyecto-externo-cvn.service';
+import { LanguageService } from '@core/services/language.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -35,7 +36,7 @@ export class NotificacionCvnAsociarAutorizacionModalComponent
   confirmDialogService: any;
 
   readonly displayerAutorizacion = (autorizacion: IAutorizacion): string => {
-    return `${autorizacion?.tituloProyecto} - ${autorizacion.entidad?.nombre}` ?? '';
+    return `${this.languageService.getFieldValue(autorizacion?.tituloProyecto)} - ${autorizacion.entidad?.nombre}`;
   }
 
   constructor(
@@ -46,7 +47,8 @@ export class NotificacionCvnAsociarAutorizacionModalComponent
     private autorizacionService: AutorizacionService,
     private notificacionProyectoExternoCvnService: NotificacionProyectoExternoCvnService,
     private empresaService: EmpresaService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
     super(matDialogRef, true);
   }

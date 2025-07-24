@@ -10,7 +10,6 @@ import org.crue.hercules.sgi.csp.service.ConvocatoriaConceptoGastoCodigoEcServic
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,21 +36,6 @@ public class ConvocatoriaConceptoGastoCodigoEcController {
    */
   public ConvocatoriaConceptoGastoCodigoEcController(ConvocatoriaConceptoGastoCodigoEcService service) {
     this.service = service;
-  }
-
-  /**
-   * Devuelve el {@link ConvocatoriaConceptoGastoCodigoEc} con el id indicado.
-   * 
-   * @param id Identificador de {@link ConvocatoriaConceptoGastoCodigoEc}.
-   * @return {@link ConvocatoriaConceptoGastoCodigoEc} correspondiente al id.
-   */
-  @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  public ConvocatoriaConceptoGastoCodigoEc findById(@PathVariable Long id) {
-    log.debug("findById(Long id) - start");
-    ConvocatoriaConceptoGastoCodigoEc returnValue = service.findById(id);
-    log.debug("findById(Long id) - end");
-    return returnValue;
   }
 
   /**

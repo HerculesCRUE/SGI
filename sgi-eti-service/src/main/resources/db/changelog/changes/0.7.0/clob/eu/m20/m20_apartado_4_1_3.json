@@ -1,0 +1,24 @@
+[
+  {
+    "key": "ap4_1_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.3 Espeziearen aukeraketa"
+    },
+    "fieldGroup": [
+      {
+        "template": "Azaldu zergatik aukeratu den espeziea eta zergatik ez den planteatzen horren ordez mina, sufrimendua, estutasuna edo kalte iraunkorra sentitzeko ahalmen txikiagoa duen beste espezie bat erabiltzea (53/2013 EDren 24. art.)."
+      },
+      {
+        "key": "motivosEleccion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Aukeraketaren arrazoiak",
+          "required": true
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,34 @@
+[
+  {
+    "key": "ap5_7",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.7 Dokumentazio osagarria"
+    },
+    "fieldGroup": [
+      {
+        "template": "Baduzu beste dokumentazio osagarririk proiekturako?"
+      },
+      {
+        "key": "documentacionAdicional",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "Ez"
+            },
+            {
+              "value": "ADICIONAL",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

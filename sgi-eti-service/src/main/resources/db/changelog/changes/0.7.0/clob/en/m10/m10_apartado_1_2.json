@@ -1,0 +1,26 @@
+[
+  {
+    "key": "ap1_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "1.2 Justification for the use of human beings"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Briefly explain the need to use human beings, their samples or their data, relating it to the expected benefits regarding increased knowledge or improved living conditions.</p><p>If it is also expected to benefit the population studied, please explain how it will do so.</p>"
+      },
+      {
+        "key": "justificacion",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Supporting evidence",
+          "required": true
+        }
+      }
+    ]
+  }
+]

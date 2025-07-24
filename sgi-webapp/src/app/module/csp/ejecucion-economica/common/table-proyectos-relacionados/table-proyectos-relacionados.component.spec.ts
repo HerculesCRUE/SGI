@@ -1,3 +1,4 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { FlexLayoutModule, FlexModule } from '@angular/flex-layout';
 import { FormsModule } from '@angular/forms';
@@ -18,12 +19,13 @@ describe('TableProyectosRelacionadosComponent', () => {
       ],
       imports: [
         TestUtils.getIdiomas(),
-        MaterialDesignModule,
         BrowserAnimationsModule,
-        LoggerTestingModule,
+        FlexLayoutModule,
         FlexModule,
         FormsModule,
-        FlexLayoutModule
+        HttpClientTestingModule,
+        LoggerTestingModule,
+        MaterialDesignModule
       ]
     })
       .compileComponents();

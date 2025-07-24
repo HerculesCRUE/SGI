@@ -18,7 +18,11 @@ import org.crue.hercules.sgi.csp.repository.SolicitudProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudProyectoPresupuestoSpecifications;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoPresupuestoService;
 import org.crue.hercules.sgi.csp.service.SolicitudService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -36,15 +40,24 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 public class SolicitudProyectoPresupuestoServiceImpl implements SolicitudProyectoPresupuestoService {
 
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_MODEL_SOLICITUD_PROYECTO_PRESUPUESTO = "org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto.message";
+  private static final String MSG_ENTITY_MODIFICABLE = "org.springframework.util.Assert.entity.modificable.message";
+
   private final SolicitudProyectoPresupuestoRepository repository;
   private final SolicitudService solicitudService;
   private final SolicitudProyectoRepository solicitudProyectoRepository;
+  private final SolicitudAuthorityHelper solicitudAuthorityHelper;
 
   public SolicitudProyectoPresupuestoServiceImpl(SolicitudProyectoPresupuestoRepository repository,
-      SolicitudService solicitudService, SolicitudProyectoRepository solicitudProyectoRepository) {
+      SolicitudService solicitudService,
+      SolicitudProyectoRepository solicitudProyectoRepository,
+      SolicitudAuthorityHelper solicitudAuthorityHelper) {
     this.repository = repository;
     this.solicitudService = solicitudService;
     this.solicitudProyectoRepository = solicitudProyectoRepository;
+    this.solicitudAuthorityHelper = solicitudAuthorityHelper;
   }
 
   /**
@@ -61,8 +74,10 @@ public class SolicitudProyectoPresupuestoServiceImpl implements SolicitudProyect
   public SolicitudProyectoPresupuesto create(SolicitudProyectoPresupuesto solicitudProyectoPresupuesto) {
     log.debug("create(SolicitudProyectoPresupuesto solicitudProyectoPresupuesto) - start");
 
-    Assert.isNull(solicitudProyectoPresupuesto.getId(),
-        "Id tiene que ser null para crear la SolicitudProyectoPresupuesto");
+    AssertHelper.idIsNull(solicitudProyectoPresupuesto.getId(), SolicitudProyectoPresupuesto.class);
+
+    solicitudAuthorityHelper
+        .checkUserHasAuthorityModifySolicitud(solicitudProyectoPresupuesto.getSolicitudProyectoId());
 
     SolicitudProyectoPresupuesto returnValue = repository.save(solicitudProyectoPresupuesto);
 
@@ -83,15 +98,21 @@ public class SolicitudProyectoPresupuestoServiceImpl implements SolicitudProyect
   public SolicitudProyectoPresupuesto update(SolicitudProyectoPresupuesto solicitudProyectoPresupuesto) {
     log.debug("update(SolicitudProyectoPresupuesto solicitudProyectoPresupuesto) - start");
 
-    Assert.notNull(solicitudProyectoPresupuesto.getId(),
-        "Id no puede ser null para actualizar SolicitudProyectoPresupuesto");
+    AssertHelper.idNotNull(solicitudProyectoPresupuesto.getId(), SolicitudProyectoPresupuesto.class);
+
+    solicitudAuthorityHelper
+        .checkUserHasAuthorityModifySolicitud(solicitudProyectoPresupuesto.getSolicitudProyectoId());
 
     // comprobar si la solicitud es modificable
     SolicitudProyecto solicitudProyecto = solicitudProyectoRepository
         .findById(solicitudProyectoPresupuesto.getSolicitudProyectoId()).orElseThrow(
             () -> new SolicitudProyectoNotFoundException(solicitudProyectoPresupuesto.getSolicitudProyectoId()));
     Assert.isTrue(solicitudService.modificable(solicitudProyecto.getId()),
-        "No se puede modificar SolicitudProyectoPresupuesto");
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_MODIFICABLE)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_SOLICITUD_PROYECTO_PRESUPUESTO))
+            .parameter(MSG_KEY_MSG, null)
+            .build());
 
     return repository.findById(solicitudProyectoPresupuesto.getId()).map((solicitudProyectoPresupuestoExistente) -> {
 
@@ -134,11 +155,13 @@ public class SolicitudProyectoPresupuestoServiceImpl implements SolicitudProyect
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id,
-        "SolicitudProyectoPresupuesto id no puede ser null para eliminar un SolicitudProyectoPresupuesto");
-    if (!repository.existsById(id)) {
-      throw new SolicitudProyectoPresupuestoNotFoundException(id);
-    }
+    AssertHelper.idNotNull(id, SolicitudProyectoPresupuesto.class);
+
+    SolicitudProyectoPresupuesto solicitudProyectoPresupuesto = repository.findById(id)
+        .orElseThrow(() -> new SolicitudProyectoPresupuestoNotFoundException(id));
+
+    solicitudAuthorityHelper
+        .checkUserHasAuthorityModifySolicitud(solicitudProyectoPresupuesto.getSolicitudProyectoId());
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
@@ -157,6 +180,8 @@ public class SolicitudProyectoPresupuestoServiceImpl implements SolicitudProyect
   @Override
   public Page<SolicitudProyectoPresupuesto> findAllBySolicitud(Long solicitudId, String query, Pageable paging) {
     log.debug("findAllBySolicitud(Long solicitudId, String query, Pageable paging) - start");
+
+    solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(solicitudId);
 
     Specification<SolicitudProyectoPresupuesto> specs = SolicitudProyectoPresupuestoSpecifications
         .bySolicitudId(solicitudId).and(SgiRSQLJPASupport.toSpecification(query));
@@ -192,6 +217,7 @@ public class SolicitudProyectoPresupuestoServiceImpl implements SolicitudProyect
   @Override
   public SolicitudProyectoPresupuestoTotales getTotales(Long solicitudId) {
     log.debug("getTotales(Long solicitudId) - start");
+    solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(solicitudId);
     final SolicitudProyectoPresupuestoTotales returnValue = repository.getTotales(solicitudId);
     log.debug("getTotales(Long solicitudId) - end");
     return returnValue;
@@ -208,6 +234,7 @@ public class SolicitudProyectoPresupuestoServiceImpl implements SolicitudProyect
   public List<SolicitudProyectoPresupuestoTotalConceptoGasto> findAllSolicitudProyectoPresupuestoTotalConceptoGastos(
       Long solicitudId) {
     log.debug("findAllSolicitudProyectoPresupuestoTotalConceptoGastos(Long solicitudId) - start");
+    solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(solicitudId);
     final List<SolicitudProyectoPresupuestoTotalConceptoGasto> returnValue = repository
         .getSolicitudProyectoPresupuestoTotalConceptoGastos(solicitudId);
     log.debug("findAllSolicitudProyectoPresupuestoTotalConceptoGastos(Long solicitudId) - end");

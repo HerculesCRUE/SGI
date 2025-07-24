@@ -5,6 +5,7 @@ import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { TipoPartida } from '@core/enums/tipo-partida';
 import { IPartidaPresupuestariaSge } from '@core/models/sge/partida-presupuestaria-sge';
+import { LanguageService } from '@core/services/language.service';
 import { PartidaPresupuestariaGastoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-gasto-sge.service';
 import { PartidaPresupuestariaIngresoSgeService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-ingreso-sge.service';
 import { SgiRestListResult } from '@sgi/framework/http';
@@ -42,10 +43,12 @@ export class SelectPartidaPresupuestariaSgeComponent extends SelectServiceCompon
 
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
+    @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private partidaPresupuestariaGastoSgeServiceice: PartidaPresupuestariaGastoSgeService,
-    private partidaPresupuestariaIngresoSgeServiceice: PartidaPresupuestariaIngresoSgeService,
-    @Self() @Optional() ngControl: NgControl) {
-    super(defaultErrorStateMatcher, ngControl);
+    private partidaPresupuestariaIngresoSgeServiceice: PartidaPresupuestariaIngresoSgeService
+  ) {
+    super(defaultErrorStateMatcher, ngControl, languageService);
     this.displayWith = (option) => option?.codigo ?? '';
   }
 

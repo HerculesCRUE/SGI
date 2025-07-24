@@ -2,9 +2,12 @@ package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +31,7 @@ public class ConvocatoriaFaseInput implements Serializable {
   @NotNull
   private Instant fechaFin;
 
-  private String observaciones;
+  private List<I18nFieldValueDto> observaciones;
   @Valid
   private ConvocatoriaFaseAvisoInput aviso1;
   private ConvocatoriaFaseAvisoInput aviso2;

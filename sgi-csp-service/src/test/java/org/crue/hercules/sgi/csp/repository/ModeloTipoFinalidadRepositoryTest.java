@@ -1,11 +1,18 @@
 package org.crue.hercules.sgi.csp.repository;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionDescripcion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -20,10 +27,22 @@ class ModeloTipoFinalidadRepositoryTest extends BaseRepositoryTest {
   void findByModeloEjecucionIdAndTipoFinalidadId_ReturnsModeloTipoFinalidad() throws Exception {
 
     // given: data ModeloTipoFinalidad to find by ModeloEjecucion and TipoFinalidad
-    ModeloEjecucion modeloEjecucion = new ModeloEjecucion(null, "nombre-me-1", "descripcion-me-1", Boolean.TRUE,
-        Boolean.FALSE, Boolean.FALSE);
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombre-me-1"));
+    Set<ModeloEjecucionDescripcion> descripcionModeloEjecucion1 = new HashSet<>();
+    descripcionModeloEjecucion1.add(new ModeloEjecucionDescripcion(Language.ES, "descripcion-me-1"));
+    ModeloEjecucion modeloEjecucion = new ModeloEjecucion(null, nombreModeloEjecucion, descripcionModeloEjecucion1,
+        Boolean.TRUE,
+        Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
     entityManager.persistAndFlush(modeloEjecucion);
-    TipoFinalidad tipoFinalidad = new TipoFinalidad(null, "nombre-tf-1", "descripcion-tf-1", Boolean.TRUE);
+
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "nombre-tf-1"));
+
+    Set<TipoFinalidadDescripcion> descripcionTipoFinalidad = new HashSet<>();
+    descripcionTipoFinalidad.add(new TipoFinalidadDescripcion(Language.ES, "descripcion-tf-1"));
+
+    TipoFinalidad tipoFinalidad = new TipoFinalidad(null, nombreTipoFinalidad, descripcionTipoFinalidad, Boolean.TRUE);
     entityManager.persistAndFlush(tipoFinalidad);
     ModeloTipoFinalidad modeloTipoFinalidad = new ModeloTipoFinalidad(null, tipoFinalidad, modeloEjecucion,
         Boolean.TRUE);
@@ -44,10 +63,22 @@ class ModeloTipoFinalidadRepositoryTest extends BaseRepositoryTest {
   @Test
   void findByModeloEjecucionIdAndTipoFinalidadId_ReturnsNull() throws Exception {
     // given: data ModeloTipoFinalidad to find by ModeloEjecucion and TipoFinalidad
-    ModeloEjecucion modeloEjecucion = new ModeloEjecucion(null, "nombre-me-1", "descripcion-me-1", Boolean.TRUE,
-        Boolean.FALSE, Boolean.FALSE);
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombre-me-1"));
+    Set<ModeloEjecucionDescripcion> descripcionModeloEjecucion1 = new HashSet<>();
+    descripcionModeloEjecucion1.add(new ModeloEjecucionDescripcion(Language.ES, "descripcion-me-1"));
+    ModeloEjecucion modeloEjecucion = new ModeloEjecucion(null, nombreModeloEjecucion, descripcionModeloEjecucion1,
+        Boolean.TRUE,
+        Boolean.FALSE, Boolean.FALSE, Boolean.FALSE);
     entityManager.persistAndFlush(modeloEjecucion);
-    TipoFinalidad tipoFinalidad = new TipoFinalidad(null, "nombre-tf-1", "descripcion-tf-1", Boolean.TRUE);
+
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "nombre-tf-1"));
+
+    Set<TipoFinalidadDescripcion> descripcionTipoFinalidad = new HashSet<>();
+    descripcionTipoFinalidad.add(new TipoFinalidadDescripcion(Language.ES, "descripcion-tf-1"));
+
+    TipoFinalidad tipoFinalidad = new TipoFinalidad(null, nombreTipoFinalidad, descripcionTipoFinalidad, Boolean.TRUE);
     entityManager.persistAndFlush(tipoFinalidad);
 
     // when: find by ModeloEjecucion and TipoFinalidad

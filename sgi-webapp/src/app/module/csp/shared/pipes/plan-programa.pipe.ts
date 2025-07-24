@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IPrograma } from '@core/models/csp/programa';
 
 @Pipe({
@@ -6,9 +7,9 @@ import { IPrograma } from '@core/models/csp/programa';
 })
 export class PlanProgramaPipe implements PipeTransform {
 
-  transform(programa: IPrograma): string {
+  transform(programa: IPrograma): I18nFieldValue[] {
     if (!!!programa) {
-      return '';
+      return [];
     }
 
     return this.getPlan(programa).nombre;

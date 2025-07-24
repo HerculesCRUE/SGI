@@ -1,0 +1,18 @@
+[
+  {
+    "key": "ap4_4_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.4.2 Nahitaez eman beharreko gutxieneko informazioa"
+    },
+    "hideExpression": "!formState.mainModel.ap4_4.informacionConsentimientoRadio || formState.mainModel.ap4_4.informacionConsentimientoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Hauek dira baimen informatuaren helburuak:<ul><li>Ikerketa jarduerako parte hartzaile potentzialei jardueraren arrisku eta onura potentzialen berri ematea.</li><li>Ziurtatzea parte hartzaileek informazio hori ulertu dutela eta borondatez har ditzaketela ikerketan parte hartzeari buruzko erabakiak.</li><li>Jakinaraztea nahi dutenean utz diezaioketela parte hartzeari eta horrek ez diela inolako errepresaliarik ekarriko.</li></ul></p><p>Baimen informatuko dokumentuak (BID) parte hartzailearen onespena berresteko balio du. Idatzizkoa eta espezifikoa izan behar du. Ez du izan behar ez oso luzea, ez oso konplexua, eta ez ditu hitz teknikoak, esaldi oso luzeak edo letra oso txikia erabili behar, eta ez du informazio iruzurtirik eman behar, ezta argia ez den informaziorik ere. Adingabeen kasuan, 12 urtetik 18 urtera bitartekoek beren hizkerara moldatutako baimen dokumentu bat sinatuko dute, eta haien legezko ordezkariek (gurasoak/tutoreak) baimen informatuko dokumentua sinatuko dute.</p><p>Consulte con la Secretaría Técnica del Comité de Ética las pautas de elaboración del DCI</p>"
+      }
+    ]
+  }
+]

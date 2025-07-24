@@ -14,7 +14,8 @@ import { PaisService } from '@core/services/sgo/pais/pais.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
-import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
+import { NGXLogger } from 'ngx-logger';
+import { BehaviorSubject, forkJoin, from, merge, Observable, of } from 'rxjs';
 import { catchError, filter, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 
 export interface IContratoAsociadoTableData {
@@ -32,6 +33,7 @@ export class InvencionContratosFragment extends Fragment {
 
   constructor(
     key: number,
+    private logger: NGXLogger,
     public candEdit: boolean,
     private sectorLicenciadoService: SectorLicenciadoService,
     private relacionService: RelacionService,
@@ -87,25 +89,23 @@ export class InvencionContratosFragment extends Fragment {
 
   private fillEntidadesFinanciadorasData$(contratoAsociado: IContratoAsociadoTableData): Observable<IContratoAsociadoTableData> {
     return this.proyectoService.findEntidadesFinanciadoras(contratoAsociado.contrato.id).pipe(
-      map(response => {
-        contratoAsociado.entidadesFinanciadoras = response.items.map(item => item.empresa);
-        return contratoAsociado;
+      mergeMap(response => {
+        const requests = response.items.map(entidadFinanciadora =>
+          this.empresaService.findById(entidadFinanciadora.empresa.id).pipe(
+            catchError(err => {
+              this.logger.error(err);
+              return of(entidadFinanciadora.empresa);
+            })
+          )
+        );
+        return forkJoin(requests).pipe(
+          map(entidades => {
+            contratoAsociado.entidadesFinanciadoras = entidades as IEmpresa[];
+            return contratoAsociado;
+          })
+        );
       }),
-      mergeMap(contratoAsociadoWithIdsOfEntidadesFinanciadoras =>
-        this.fillEntidadFinanciadoraData$(contratoAsociadoWithIdsOfEntidadesFinanciadoras)),
       catchError(() => of(contratoAsociado))
-    );
-  }
-
-  private fillEntidadFinanciadoraData$(contratoAsociado: IContratoAsociadoTableData): Observable<IContratoAsociadoTableData> {
-    return from(contratoAsociado.entidadesFinanciadoras).pipe(
-      mergeMap(entidadFinanciadora => this.empresaService.findById(entidadFinanciadora.id)
-      ),
-      toArray(),
-      map(entidadesFinanciadoras => {
-        contratoAsociado.entidadesFinanciadoras = entidadesFinanciadoras;
-        return contratoAsociado;
-      })
     );
   }
 

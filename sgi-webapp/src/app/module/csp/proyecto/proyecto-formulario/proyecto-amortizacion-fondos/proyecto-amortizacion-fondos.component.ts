@@ -74,7 +74,7 @@ export class ProyectoAmortizacionFondosComponent extends FragmentComponent imple
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.AMORTIZACION_FONDOS, actionService);
+    super(actionService.FRAGMENT.AMORTIZACION_FONDOS, actionService, translate);
     this.formPart = this.fragment as ProyectoAmortizacionFondosFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -91,7 +91,7 @@ export class ProyectoAmortizacionFondosComponent extends FragmentComponent imple
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSourceEntidades.paginator = this.paginatorEntidades;
     this.dataSourceEntidades.sort = this.sortEntidades;
@@ -106,7 +106,7 @@ export class ProyectoAmortizacionFondosComponent extends FragmentComponent imple
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_ENTIDAD_FINANCIADORA_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL

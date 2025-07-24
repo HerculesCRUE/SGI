@@ -61,7 +61,7 @@ export class ConvocatoriaConceptoGastoDatosGeneralesFragment extends FormFragmen
           ])
         ]
       ),
-      observaciones: new FormControl('')
+      observaciones: new FormControl([])
     });
     if (!this.canEdit) {
       form.disable();

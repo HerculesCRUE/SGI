@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.RespuestaNotFoundException;
 import org.crue.hercules.sgi.eti.model.Apartado;
@@ -32,6 +30,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * RespuestaControllerTest
@@ -331,7 +331,7 @@ public class RespuestaControllerTest extends BaseControllerTest {
    * @return el objeto Respuesta
    */
 
-  public Respuesta generarMockRespuesta(Long id) {
+  private Respuesta generarMockRespuesta(Long id) {
     Memoria memoria = new Memoria();
     memoria.setId(id);
 
@@ -342,8 +342,8 @@ public class RespuestaControllerTest extends BaseControllerTest {
 
     Respuesta respuesta = new Respuesta();
     respuesta.setId(id);
-    respuesta.setMemoria(memoria);
-    respuesta.setApartado(apartado);
+    respuesta.setMemoriaId(memoria.getId());
+    respuesta.setApartadoId(apartado.getId());
     respuesta.setValor("{\"valor\":\"Valor" + id + "\"}");
 
     return respuesta;
@@ -360,20 +360,19 @@ public class RespuestaControllerTest extends BaseControllerTest {
    */
   private Apartado getMockApartado(Long id, Long bloqueId, Long padreId) {
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion1");
-    Bloque Bloque = new Bloque(bloqueId, formulario, "Bloque " + bloqueId, bloqueId.intValue());
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+
+    Bloque bloque = new Bloque(bloqueId, formulario, 1, null);
 
     Apartado padre = (padreId != null) ? getMockApartado(padreId, bloqueId, null) : null;
 
-    String txt = (id % 2 == 0) ? String.valueOf(id) : "0" + String.valueOf(id);
-
     final Apartado data = new Apartado();
     data.setId(id);
-    data.setBloque(Bloque);
-    data.setNombre("Apartado" + txt);
+    data.setBloque(bloque);
     data.setPadre(padre);
     data.setOrden(id.intValue());
-    data.setEsquema("{\"nombre\":\"EsquemaApartado" + txt + "\"}");
 
     return data;
   }

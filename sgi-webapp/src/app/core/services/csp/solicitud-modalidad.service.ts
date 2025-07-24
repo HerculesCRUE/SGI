@@ -1,24 +1,41 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { SOLICITUD_MODALIDAD_CONVERTER } from '@core/converters/csp/solicitud-modalidad.converter';
-import { ISolicitudModalidadBackend } from '@core/models/csp/backend/solicitud-modalidad-backend';
 import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
+import { SOLICITUD_MODALIDAD_RESPONSE_CONVERTER } from '@core/services/csp/solicitud-modalidad/solicitud-modalidad-response.converter';
 import { environment } from '@env';
-import { SgiMutableRestService } from '@sgi/framework/http';
+import { CreateCtor, mixinCreate, mixinUpdate, SgiRestBaseService, UpdateCtor } from '@sgi/framework/http';
+import { Observable } from 'rxjs';
+import { ISolicitudModalidadResponse } from './solicitud-modalidad/solicitud-modalidad-response';
+
+// tslint:disable-next-line: variable-name
+const _SolicitudModalidadServiceMixinBase:
+  CreateCtor<ISolicitudModalidad, ISolicitudModalidad, ISolicitudModalidadResponse, ISolicitudModalidadResponse> &
+  UpdateCtor<number, ISolicitudModalidad, ISolicitudModalidad, ISolicitudModalidadResponse, ISolicitudModalidadResponse> &
+  typeof SgiRestBaseService = mixinCreate(
+    mixinUpdate(
+      SgiRestBaseService,
+      SOLICITUD_MODALIDAD_RESPONSE_CONVERTER,
+      SOLICITUD_MODALIDAD_RESPONSE_CONVERTER
+    ),
+    SOLICITUD_MODALIDAD_RESPONSE_CONVERTER,
+    SOLICITUD_MODALIDAD_RESPONSE_CONVERTER
+  );
 
 @Injectable({
   providedIn: 'root'
 })
-export class SolicitudModalidadService extends SgiMutableRestService<number, ISolicitudModalidadBackend, ISolicitudModalidad> {
+export class SolicitudModalidadService extends _SolicitudModalidadServiceMixinBase {
   static readonly MAPPING = '/solicitudmodalidades';
 
   constructor(protected http: HttpClient) {
     super(
-      SolicitudModalidadService.name,
       `${environment.serviceServers.csp}${SolicitudModalidadService.MAPPING}`,
-      http,
-      SOLICITUD_MODALIDAD_CONVERTER
+      http
     );
+  }
+
+  deleteById(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.endpointUrl}/${id}`);
   }
 
 }

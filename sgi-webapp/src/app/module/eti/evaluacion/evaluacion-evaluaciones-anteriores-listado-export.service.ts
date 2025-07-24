@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DICTAMEN_MAP } from '@core/models/eti/dictamen';
 import { IEvaluacionWithNumComentario } from '@core/models/eti/evaluacion-with-num-comentario';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { MemoriaService } from '@core/services/eti/memoria.service';
@@ -22,7 +23,7 @@ const EVALUACION_DICTAMEN_KEY = marker('eti.evaluacion.report.dictamen');
 
 @Injectable()
 export class EvaluacionEvaluacionesAnterioresListadoExportService extends
-  AbstractTableExportFillService<IEvaluacionReportData, IEvaluacionReportOptions>{
+  AbstractTableExportFillService<IEvaluacionReportData, IEvaluacionReportOptions> {
 
   private _tipoComentario: TipoComentario;
 
@@ -119,7 +120,7 @@ export class EvaluacionEvaluacionesAnterioresListadoExportService extends
     if (evaluacion) {
       elementsRow.push(evaluacion.evaluacion?.version ?? '');
       elementsRow.push(LuxonUtils.toBackend(evaluacion.evaluacion?.fechaDictamen) ?? '');
-      elementsRow.push(evaluacion.evaluacion?.dictamen?.nombre ?? '');
+      elementsRow.push(evaluacion.evaluacion?.dictamen ? this.translate.instant(DICTAMEN_MAP.get(evaluacion.evaluacion.dictamen.id)) ?? '' : '');
 
     } else {
       elementsRow.push('');

@@ -9,6 +9,7 @@ import { TIPO_JUSTIFICACION_MAP } from '@core/enums/tipo-justificacion';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPeriodoJustificacion } from '@core/models/csp/convocatoria-periodo-justificacion';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -49,19 +50,22 @@ export class ConvocatoriaPeriodosJustificacionComponent extends FragmentComponen
     protected actionService: ConvocatoriaActionService,
     private matDialog: MatDialog,
     private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.PERIODO_JUSTIFICACION, actionService);
+    super(actionService.FRAGMENT.PERIODO_JUSTIFICACION, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaPeriodosJustificacionFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource = new MatTableDataSource<StatusWrapper<IConvocatoriaPeriodoJustificacion>>();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IConvocatoriaPeriodoJustificacion>, property: string) => {
         switch (property) {
+          case 'observaciones':
+            return this.languageService.getFieldValue(wrapper.value.observaciones);
           default:
             return wrapper.value[property];
         }
@@ -75,7 +79,7 @@ export class ConvocatoriaPeriodosJustificacionComponent extends FragmentComponen
   }
 
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_PERIODO_JUSTIFICACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

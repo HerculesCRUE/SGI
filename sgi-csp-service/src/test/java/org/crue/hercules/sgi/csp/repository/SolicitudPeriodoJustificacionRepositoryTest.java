@@ -2,17 +2,15 @@ package org.crue.hercules.sgi.csp.repository;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
-import org.crue.hercules.sgi.csp.model.RolProyecto;
-import org.crue.hercules.sgi.csp.model.RolSocio;
-import org.crue.hercules.sgi.csp.model.Solicitud;
-import org.crue.hercules.sgi.csp.model.SolicitudProyecto;
+import org.crue.hercules.sgi.csp.model.*;
 import org.crue.hercules.sgi.csp.model.SolicitudProyecto.TipoPresupuesto;
-import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocio;
-import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacion;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -30,9 +28,12 @@ class SolicitudPeriodoJustificacionRepositoryTest extends BaseRepositoryTest {
     // solicitudProyectoSocio
     // buscado
     // @formatter:off
+    Set<SolicitudTitulo> solicitudTitulo = new HashSet<>();
+    solicitudTitulo.add(new SolicitudTitulo(Language.ES, "titulo"));
+
     Solicitud solicitud1 = entityManager.persistAndFlush(Solicitud.builder()
         .creadorRef("user-001")
-        .titulo("titulo")
+        .titulo(solicitudTitulo)
         .solicitanteRef("user-002")
         .unidadGestionRef("1")
         .formularioSolicitud(FormularioSolicitud.GRUPO)
@@ -43,20 +44,38 @@ class SolicitudPeriodoJustificacionRepositoryTest extends BaseRepositoryTest {
         SolicitudProyecto.builder().id(solicitud1.getId()).colaborativo(Boolean.TRUE)
             .coordinado(Boolean.TRUE).colaborativo(Boolean.TRUE).tipoPresupuesto(TipoPresupuesto.GLOBAL).build());
 
+    Set<RolSocioAbreviatura> rolSocioAbreviatura = new HashSet<>();
+    rolSocioAbreviatura.add(new RolSocioAbreviatura(Language.ES, "001"));
+
+    Set<RolSocioNombre> rolSocioNombre = new HashSet<>();
+    rolSocioNombre.add(new RolSocioNombre(Language.ES, "Lider"));
+
+    Set<RolSocioDescripcion> rolSocioDescripcion = new HashSet<>();
+    rolSocioDescripcion.add(new RolSocioDescripcion(Language.ES, "Lider"));
+
     // @formatter:off
     RolSocio rolSocio = RolSocio.builder()
-        .abreviatura("001")
-        .nombre("Lider")
-        .descripcion("Lider")
+        .abreviatura(rolSocioAbreviatura)
+        .nombre(rolSocioNombre)
+        .descripcion(rolSocioDescripcion)
         .coordinador(Boolean.FALSE)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(rolSocio);
 
+    Set<RolProyectoNombre> nombre = new HashSet<>();
+    nombre.add(new RolProyectoNombre(Language.ES, "Rol1"));
+
+    Set<RolProyectoDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new RolProyectoDescripcion(Language.ES, "Rol1"));
+
+    Set<RolProyectoAbreviatura> abreviatura = new HashSet<>();
+    abreviatura.add(new RolProyectoAbreviatura(Language.ES, "001"));
+
     RolProyecto rolProyecto = RolProyecto.builder()
-        .abreviatura("001")
-        .nombre("Rol1")
-        .descripcion("Rol1")
+        .abreviatura(abreviatura)
+        .nombre(nombre)
+        .descripcion(descripcion)
         .rolPrincipal(Boolean.FALSE)
         .orden(null)
         .equipo(RolProyecto.Equipo.INVESTIGACION)

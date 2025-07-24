@@ -1,9 +1,10 @@
 import { Inject, LOCALE_ID, Pipe, PipeTransform } from '@angular/core';
+import { LocaleId } from '@core/i18n/locale-id';
 import { DateTime, Info } from 'luxon';
 
-@Pipe({ name: 'luxon', pure: true })
+@Pipe({ name: 'luxon', pure: false })
 export class LuxonDatePipe implements PipeTransform {
-  constructor(@Inject(LOCALE_ID) private locale: string) { }
+  constructor(@Inject(LOCALE_ID) private locale: LocaleId) { }
 
   /**
    * @param value The date expression: a `Date` object,  a number
@@ -48,7 +49,7 @@ export class LuxonDatePipe implements PipeTransform {
         return luxonDate.toFormat(
           this.getLuxonFormat(format),
           {
-            locale: locale || this.locale,
+            locale: locale || this.locale.toString(),
             timeZone: Info.normalizeZone(timezone).name
           }
         );

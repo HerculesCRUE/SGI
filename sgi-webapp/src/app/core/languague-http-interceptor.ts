@@ -1,14 +1,15 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
-import { Inject, Injectable, LOCALE_ID } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { LanguageService } from './services/language.service';
 
 @Injectable()
 export class SgiLanguageHttpInterceptor implements HttpInterceptor {
 
-  constructor(@Inject(LOCALE_ID) private locale: string) { }
+  constructor(private languageService: LanguageService) { }
 
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const authRequest = req.clone({ setHeaders: { 'Accept-Language': this.locale } });
+    const authRequest = req.clone({ setHeaders: { 'Accept-Language': this.languageService.getLanguage().code } });
     return next.handle(authRequest);
   }
 }

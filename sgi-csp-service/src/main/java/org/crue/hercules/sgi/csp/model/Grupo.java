@@ -1,10 +1,15 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,7 +20,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -24,6 +30,7 @@ import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -46,8 +53,6 @@ public class Grupo extends BaseActivableEntity {
   protected static final String TABLE_NAME = "grupo";
   private static final String SEQUENCE_NAME = TABLE_NAME + "_seq";
 
-  public static final int NOMBRE_LENGTH = 250;
-  public static final int DESCRIPCION_LENGTH = 250;
   public static final int PROYECTO_SGE_REF_LENGTH = 50;
   public static final int DEPARTAMENTO_ORIGEN_REF_LENGTH = 50;
   public static final int CODIGO_LENGTH = 50;
@@ -60,10 +65,12 @@ public class Grupo extends BaseActivableEntity {
   private Long id;
 
   /** Nombre */
-  @Column(name = "nombre", length = Grupo.NOMBRE_LENGTH, nullable = false)
-  @Size(max = Grupo.NOMBRE_LENGTH)
-  @NotBlank
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "grupo_nombre", joinColumns = @JoinColumn(name = "grupo_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<GrupoNombre> nombre = new HashSet<>();
 
   /** Fecha inicio */
   @Column(name = "fecha_inicio", nullable = false)
@@ -102,6 +109,13 @@ public class Grupo extends BaseActivableEntity {
   @OneToOne()
   @JoinColumn(name = "grupo_especial_investigacion_id", nullable = true, foreignKey = @ForeignKey(name = "FK_GRUPO_GRUPOESPECIALINVESTIGACION"))
   private GrupoEspecialInvestigacion especialInvestigacion;
+
+  /** Resumen */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "grupo_resumen", joinColumns = @JoinColumn(name = "grupo_id"))
+  @Valid
+  @Builder.Default
+  private Set<GrupoResumen> resumen = new HashSet<>();
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne

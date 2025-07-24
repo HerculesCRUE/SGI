@@ -2,6 +2,7 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
+import { LanguageService } from '@core/services/language.service';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../../ejecucion-economica.action.service';
 
 @Component({
@@ -42,10 +43,20 @@ export class TableProyectosRelacionadosComponent implements OnInit {
     return this._isEjecucionEconomicaGruposEnabled ?? false;
   }
 
-  constructor() { }
+  constructor(
+    private readonly languageService: LanguageService
+  ) { }
 
   ngOnInit(): void {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor = (relacionEjecucionEconomica: IRelacionEjecucionEconomicaWithResponsables, property: string) => {
+      switch (property) {
+        case 'nombre':
+          return this.languageService.getFieldValue(relacionEjecucionEconomica.nombre);
+        default:
+          return relacionEjecucionEconomica[property];
+      }
+    };
     this.dataSource.sort = this.sort;
   }
 

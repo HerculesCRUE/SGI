@@ -19,23 +19,12 @@ export class InvencionRepartoDataResolverService {
     private readonly gastosInvencionService: GastosInvencionService,
   ) { }
 
-  getGastosReparto(invencionId: string): Observable<IDatoEconomico[]> {
-    return this.gastosInvencionService.getGastos(invencionId, TipoOperacion.REPARTO);
+  getGastosReparto(invencionId: number): Observable<IDatoEconomico[]> {
+    return this.gastosInvencionService.getGastos(invencionId.toString(), TipoOperacion.REPARTO);
   }
 
-  getGastosColumns(invencionId: string): Observable<IColumnDefinition[]> {
-    return this.gastosInvencionService.getColumnas(invencionId)
-      .pipe(
-        map(columnas => columnas.map(columna => {
-          return {
-            id: columna.id,
-            name: columna.nombre,
-            compute: columna.acumulable,
-            importeReparto: columna.importeReparto
-          };
-        })
-        )
-      );
+  getGastosColumns(invencionId: number): Observable<IColumnDefinition[]> {
+    return this.gastosInvencionService.getColumnas(invencionId.toString());
   }
 
   /**
@@ -85,17 +74,6 @@ export class InvencionRepartoDataResolverService {
   }
 
   getIngresosColumns(): Observable<IColumnDefinition[]> {
-    return this.ingresosInvencionService.getColumnas().pipe(
-      map((columnas) =>
-        columnas.map((columna) => {
-          return {
-            id: columna.id,
-            name: columna.nombre,
-            compute: columna.acumulable,
-            importeReparto: columna.importeReparto
-          };
-        })
-      )
-    );
+    return this.ingresosInvencionService.getColumnas();
   }
 }

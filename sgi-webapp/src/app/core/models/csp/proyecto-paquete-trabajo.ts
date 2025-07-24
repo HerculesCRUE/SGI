@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 
 export interface IProyectoPaqueteTrabajo {
@@ -14,5 +15,5 @@ export interface IProyectoPaqueteTrabajo {
   /** personaMes */
   personaMes: number;
   /** descripcion */
-  descripcion: string;
+  descripcion: I18nFieldValue[];
 }

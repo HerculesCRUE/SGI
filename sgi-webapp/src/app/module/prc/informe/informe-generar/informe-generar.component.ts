@@ -9,6 +9,7 @@ import { IPersona } from '@core/models/sgp/persona';
 import { ROUTE_NAMES } from '@core/route.names';
 import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
+import { LanguageService } from '@core/services/language.service';
 import { ConvocatoriaBaremacionService } from '@core/services/prc/convocatoria-baremacion/convocatoria-baremacion.service';
 import { PrcReportService } from '@core/services/prc/report/prc-report.service';
 import { triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
@@ -76,7 +77,7 @@ export class InformeGenerarComponent extends AbstractMenuContentComponent implem
   }
 
   displayerInvestigador = (persona: IPersona): string => this.personaNombreCompletoPipe.transform(persona);
-  displayerGrupo = (grupo: IGrupo): string => `${grupo.codigo} - ${grupo.nombre}`;
+  displayerGrupo = (grupo: IGrupo): string => `${grupo.codigo} - ${this.languageService.getFieldValue(grupo.nombre)}`;
 
   displayerAnios = (anio: number): string => anio?.toString();
   comparerAnios = (anio1: number, anio2: number): boolean => anio1 === anio2;
@@ -91,13 +92,14 @@ export class InformeGenerarComponent extends AbstractMenuContentComponent implem
     private readonly grupoService: GrupoService,
     private readonly grupoEquipoService: GrupoEquipoService,
     private readonly personaService: PersonaService,
-    private readonly personaNombreCompletoPipe: PersonaNombreCompletoPipe
+    private readonly personaNombreCompletoPipe: PersonaNombreCompletoPipe,
+    private readonly languageService: LanguageService
   ) {
-    super();
+    super(translate);
   }
 
   ngOnInit(): void {
-    this.setupI18N();
+
     this.initFormGroup();
     this.anios$ = this.convocatoriaBaremacionService.findAniosWithConvocatoriasBaremacion();
     this.subscribeTipoInformeValueChanges();
@@ -229,7 +231,7 @@ export class InformeGenerarComponent extends AbstractMenuContentComponent implem
     });
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

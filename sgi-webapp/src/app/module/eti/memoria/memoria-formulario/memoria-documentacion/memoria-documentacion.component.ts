@@ -6,20 +6,20 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { COMITE } from '@core/models/eti/comite';
 import { IDocumentacionMemoria } from '@core/models/eti/documentacion-memoria';
 import { ESTADO_RETROSPECTIVA, IEstadoRetrospectiva } from '@core/models/eti/estado-retrospectiva';
-import { FORMULARIO } from '@core/models/eti/formulario';
+import { FormularioSeguimientoAnualDocumentacionTitle, IFormulario } from '@core/models/eti/formulario';
 import { ESTADO_MEMORIA, TipoEstadoMemoria } from '@core/models/eti/tipo-estado-memoria';
 import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { MemoriaActionService } from '../../memoria.action.service';
 import { MemoriaDocumentacionMemoriaModalComponent, MemoriaDocumentacionMemoriaModalData } from '../../modals/memoria-documentacion-memoria-modal/memoria-documentacion-memoria-modal.component';
@@ -76,14 +76,16 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
   private sortingDataAccesor = (wrapper: StatusWrapper<IDocumentacionMemoria>, property: string) => {
     switch (property) {
       case 'tipoDocumento':
-        return wrapper.value.tipoDocumento?.nombre;
+        return this.languageService.getFieldValue(wrapper.value.tipoDocumento?.nombre);
+      case 'nombre':
+        return this.languageService.getFieldValue(wrapper.value.nombre);
       default:
         return wrapper.value[property];
     }
   }
 
-  get formularioComite(): FORMULARIO {
-    return this.actionService.getComite().id;
+  get formulario(): IFormulario {
+    return this.actionService.getMemoria().formulario;
   }
 
   private get estadoMemoria(): TipoEstadoMemoria {
@@ -94,8 +96,8 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
     return this.actionService.getRetrospectiva()?.estadoRetrospectiva;
   }
 
-  get FORMULARIO() {
-    return FORMULARIO;
+  get FORMULARIO_SEGUIMIENTO_ANUAL_TITLE() {
+    return FormularioSeguimientoAnualDocumentacionTitle;
   }
 
   get TIPO_DOCUMENTACION() {
@@ -103,7 +105,7 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
   }
 
   get showRetrospectiva(): boolean {
-    return this.actionService.getComite().id === COMITE.CEEA;
+    return this.actionService.getComite().requiereRetrospectiva;
   }
 
   constructor(
@@ -112,16 +114,18 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
     private actionService: MemoriaActionService,
     private readonly documentoService: DocumentoService,
     private readonly translate: TranslateService,
-    private readonly authService: SgiAuthService) {
+    private readonly authService: SgiAuthService,
+    private readonly languageService: LanguageService
+  ) {
 
-    super(actionService.FRAGMENT.DOCUMENTACION, actionService);
+    super(actionService.FRAGMENT.DOCUMENTACION, actionService, translate);
 
     this.formPart = this.fragment as MemoriaDocumentacionFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSourceDocumentoMemoria.paginator = this.paginatorDocumentacionMemoria;
     this.dataSourceDocumentoMemoria.sort = this.sortDocumentacionMemoria;
@@ -156,7 +160,7 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
     this.dataSourceRetrospectiva.sortingDataAccessor = this.sortingDataAccesor;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       DOCUMENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -192,7 +196,7 @@ export class MemoriaDocumentacionComponent extends FragmentComponent implements 
         break;
     }
     const data: MemoriaDocumentacionMemoriaModalData = {
-      memoriaId: this.fragment.getKey() as number,
+      memoria: this.actionService.getMemoria(),
       tipoEvaluacion,
       showTipoDocumentos: this.formPart.isInvestigador && !this.actionService.readonly,
       comite: this.actionService.getComite()

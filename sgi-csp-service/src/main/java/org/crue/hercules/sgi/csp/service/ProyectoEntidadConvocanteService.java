@@ -36,24 +36,6 @@ public interface ProyectoEntidadConvocanteService {
   ProyectoEntidadConvocante create(ProyectoEntidadConvocante proyectoEntidadConvocante);
 
   /**
-   * Establece el {@link Programa} de {@link ProyectoEntidadConvocante}.
-   *
-   * @param idProyectoEntidadConvocante el id de la entidad
-   *                                    {@link ProyectoEntidadConvocante} a
-   *                                    actualizar.
-   * @param programa                    el {@link Programa} a fijar.
-   * @return la entidad {@link ProyectoEntidadConvocante} persistida.
-   */
-  ProyectoEntidadConvocante setPrograma(Long idProyectoEntidadConvocante, Programa programa);
-
-  /**
-   * Elimina el {@link ProyectoEntidadConvocante}.
-   *
-   * @param id Id del {@link ProyectoEntidadConvocante}.
-   */
-  void delete(Long id);
-
-  /**
    * Obtiene las {@link ProyectoEntidadConvocante} para una {@link Proyecto}.
    *
    * @param idProyecto el id de la {@link Proyecto}.

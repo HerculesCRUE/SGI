@@ -68,9 +68,9 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'eti.comentario' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}</mat-label>
-        <textarea matInput formControlName="comentario" type="text"
+        <sgi-i18n-textarea formControlName="comentario"
           placeholder="{{'eti.comentario' | translate:MSG_PARAMS.CARDINALIRY.SINGULAR}}" required>
-        </textarea>
+        </sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.controls.comentario.errors?.required">
           {{'error.required.entity' | translate:msgParamComentarioEntity}}
         </mat-error>

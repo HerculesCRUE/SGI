@@ -1,0 +1,101 @@
+[
+  {
+    "key": "ap3_4_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.4 Substantzia kimiko arriskutsuak"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Jarduera honetan substantzia kimiko arriskutsuak erabiltzen dira?</p>"
+      },
+      {
+        "key": "sustanciasQuimicasPeligrosas",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Zer motatako substantzia kimiko arriskutsua erabiltzen da?",
+        "hideExpression": "!model.sustanciasQuimicasPeligrosas || model.sustanciasQuimicasPeligrosas === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tiposSustanciasQuimicas",
+        "hideExpression": "!model.sustanciasQuimicasPeligrosas || model.sustanciasQuimicasPeligrosas === 'no'",
+        "templateOptions": {
+          "label": "Aukerak:",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "inflamable",
+              "label": "Sukoia"
+            },
+            {
+              "value": "explosiva",
+              "label": "Leherkorra"
+            },
+            {
+              "value": "corrosiva",
+              "label": "Korrosiboa"
+            },
+            {
+              "value": "toxica",
+              "label": "Toxikoa"
+            },
+            {
+              "value": "cancerigena",
+              "label": "Kantzerigenoa"
+            },
+            {
+              "value": "mutagena",
+              "label": "Mutagenoa"
+            },
+            {
+              "value": "irritante",
+              "label": "Narritagarria"
+            },
+            {
+              "value": "otra",
+              "label": "Beste bat"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otraTexto",
+        "type": "i18n-textarea",
+        "hideExpression": "model.sustanciasQuimicasPeligrosas==='no' || (!model.tiposSustanciasQuimicas || !model.tiposSustanciasQuimicas.find((c) => c === 'otra'))",
+        "templateOptions": {
+          "placeholder": "Zehaztu",
+          "label": "Zehaztu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Oharra: Segurtasun Fitxa erantsi behar duzu Dokumentazio Osagarrian."
+      }
+    ]
+  }
+]

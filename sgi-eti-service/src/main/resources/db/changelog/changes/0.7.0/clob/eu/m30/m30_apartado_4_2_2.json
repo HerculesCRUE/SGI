@@ -1,0 +1,49 @@
+[
+  {
+    "key": "ap4_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.2 Ordezkatzea"
+    },
+    "fieldGroup": [
+      {
+        "template": " Jarduera hau egin al daiteke osasunerako edo ingurumenerako arrisku txikiagoa duten agente/material biologikoak, substantzia kimiko arriskutsuak, substantzia erradioaktiboak edo/eta nanopartikulak erabiliz?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Jarduerak aukera ematen badu, ikertzaileak material/agente biologiko arriskutsuak erabiltzea saihestu behar du, eskura duen informazio tekniko eta zientifikoa kontuan hartuta; horretarako, horien ordez beste agente batzuk erabiliko ditu, erabilera baldintzen arabera langileen segurtasun edo osasunerako eta ingurumenerako arriskutsuak izango ez diren agenteak, edo arrisku maila txikiagoa izango dutenak. <b><a href='https://boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#a5' target='_blank'>(664/1997 EDren 5. artikulua)</a></b>."
+      },
+      {
+        "key": "realizarseInvestigacion",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarRealizarseInvestigacion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!(model.realizarseInvestigacion && model.realizarseInvestigacion === 'si')",
+        "templateOptions": {
+          "name": "Justifikatu:",
+          "required": true
+        }
+      }
+    ]
+  }
+]

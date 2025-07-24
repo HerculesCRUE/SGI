@@ -1,21 +1,21 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC_CONVERTER } from '@core/converters/csp/convocatoria-concepto-gasto-codigo-ec.converter';
-import { CONVOCATORIA_CONCEPTO_GASTO_CONVERTER } from '@core/converters/csp/convocatoria-concepto-gasto.converter';
-import { IConvocatoriaConceptoGastoBackend } from '@core/models/csp/backend/convocatoria-concepto-gasto-backend';
-import { IConvocatoriaConceptoGastoCodigoEcBackend } from '@core/models/csp/backend/convocatoria-concepto-gasto-codigo-ec-backend';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
+import { IConvocatoriaConceptoGastoCodigoEcResponse } from '@core/services/csp/convocatoria-concepto-gasto-codigo-ec/convocatoria-concepto-gasto-codigo-ec-response';
+import { CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC_RESPONSE_CONVERTER } from '@core/services/csp/convocatoria-concepto-gasto-codigo-ec/convocatoria-concepto-gasto-codigo-ec-response.converter';
 import { environment } from '@env';
 import { FindByIdCtor, mixinFindById, SgiRestBaseService, SgiRestListResult } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
+import { IConvocatoriaConceptoGastoResponse } from './convocatoria-concepto-gasto/convocatoria-concepto-gasto-response';
+import { CONVOCATORIA_CONCEPTO_GASTO_RESPONSE_CONVERTER } from './convocatoria-concepto-gasto/convocatoria-concepto-gasto-response.converter';
 
 // tslint:disable-next-line: variable-name
 const _ConvocatoriaConceptoGastoMixinBase:
-  FindByIdCtor<number, IConvocatoriaConceptoGasto, IConvocatoriaConceptoGastoBackend> &
+  FindByIdCtor<number, IConvocatoriaConceptoGasto, IConvocatoriaConceptoGastoResponse> &
   typeof SgiRestBaseService = mixinFindById(
     SgiRestBaseService,
-    CONVOCATORIA_CONCEPTO_GASTO_CONVERTER
+    CONVOCATORIA_CONCEPTO_GASTO_RESPONSE_CONVERTER
   );
 
 @Injectable({
@@ -39,8 +39,8 @@ export class ConvocatoriaConceptoGastoPublicService extends _ConvocatoriaConcept
    */
   findAllConvocatoriaConceptoGastoCodigoEcs(id: number): Observable<SgiRestListResult<IConvocatoriaConceptoGastoCodigoEc>> {
     const endpointUrl = `${this.endpointUrl}/${id}/convocatoriagastocodigoec`;
-    return this.find<IConvocatoriaConceptoGastoCodigoEcBackend, IConvocatoriaConceptoGastoCodigoEc>(
-      endpointUrl, undefined, CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC_CONVERTER);
+    return this.find<IConvocatoriaConceptoGastoCodigoEcResponse, IConvocatoriaConceptoGastoCodigoEc>(
+      endpointUrl, undefined, CONVOCATORIA_CONCEPTO_GASTO_CODIGO_EC_RESPONSE_CONVERTER);
   }
 
 }

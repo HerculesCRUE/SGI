@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,8 +19,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -72,9 +77,11 @@ public class EstadoGastoProyecto extends BaseEntity {
   private Instant fechaEstado;
 
   /** Comentario */
-  @Column(name = "comentario", length = 250, nullable = true)
-  @Size(max = 250)
-  private String comentario;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "estado_gasto_proyecto_comentario", joinColumns = @JoinColumn(name = "estado_gasto_proyecto_id"))
+  @Valid
+  @Builder.Default
+  private Set<EstadoGastoProyectoComentario> comentario = new HashSet<>();
 
   // Relation mappings for JPA metamodel generation only
   @ManyToOne

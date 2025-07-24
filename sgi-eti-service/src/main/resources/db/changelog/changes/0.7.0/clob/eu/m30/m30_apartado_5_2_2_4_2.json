@@ -1,0 +1,150 @@
+[
+  {
+    "key": "ap5_2_2_4_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.4.2 Organismo emailea(k). Zehaztu izen zientifikoa eta arrunta"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Utzi puntu hau bete gabe, ez badago organismo emailerik edo organismo hartzailearen berdina bada."
+      },
+      {
+        "key": "organismoDonanteOMGCheck",
+        "type": "multicheckbox",
+        "templateOptions": {
+          "label": "Hautatu",
+          "required": false,
+          "type": "array",
+          "options": [
+            {
+              "value": "humanoDonanteOMG",
+              "label": "Gizakia"
+            },
+            {
+              "value": "animalDonanteOMG",
+              "label": "Animalia"
+            },
+            {
+              "value": "plantaDonanteOMG",
+              "label": "Landarea"
+            },
+            {
+              "value": "bacteriaDonanteOMG",
+              "label": "Bakterioa"
+            },
+            {
+              "value": "hongoDonanteOMG",
+              "label": "Onddoa"
+            },
+            {
+              "value": "virusDonanteOMG",
+              "label": "Birusa"
+            },
+            {
+              "value": "protozoosDonanteOMG",
+              "label": "Protozooak"
+            }
+          ]
+        }
+      },
+      {
+        "key": "detallarHumanoDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'humanoDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Zehaztu",
+          "label": "Gizakia",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarAnimalDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'animalDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Zehaztu",
+          "label": "Animalia",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarPlantaDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'plantaDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Zehaztu",
+          "label": "Landarea",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarBacteriaDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'bacteriaDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Zehaztu",
+          "label": "Bakterioa",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarHongoDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'hongoDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Zehaztu",
+          "label": "Onddoa",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarVirusDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'virusDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Zehaztu",
+          "label": "Birusa",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      },
+      {
+        "key": "detallarProtozoosDonante",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.organismoDonanteOMGCheck || !model.organismoDonanteOMGCheck.some(donante => donante === 'protozoosDonanteOMG')",
+        "templateOptions": {
+          "placeholder": "Zehaztu",
+          "label": "Protozooak",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

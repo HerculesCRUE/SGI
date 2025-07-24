@@ -62,7 +62,7 @@ export class ConvocatoriaReunionAsignacionMemoriasListadoComponent extends Fragm
     private actionService: ConvocatoriaReunionActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.ASIGNACION_MEMORIAS, actionService);
+    super(actionService.FRAGMENT.ASIGNACION_MEMORIAS, actionService, translate);
     this.listadoFragment = this.fragment as ConvocatoriaReunionAsignacionMemoriasListadoFragment;
     this.evaluaciones$ = (this.fragment as ConvocatoriaReunionAsignacionMemoriasListadoFragment).evaluaciones$;
 
@@ -71,7 +71,7 @@ export class ConvocatoriaReunionAsignacionMemoriasListadoComponent extends Fragm
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.actionService.initializeDatosGenerales();
     this.evaluaciones$.subscribe((evaluaciones) => {
       this.datasource.data = evaluaciones;
@@ -94,7 +94,7 @@ export class ConvocatoriaReunionAsignacionMemoriasListadoComponent extends Fragm
       };
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MEMORIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

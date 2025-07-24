@@ -2,40 +2,20 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { PROYECTO_AREA_CONOCIMIENTO_CONVERTER } from '@core/converters/csp/proyecto-area-conocimiento.converter';
 import { PROYECTO_CLASIFICACION_CONVERTER } from '@core/converters/csp/proyecto-clasificacion.converter';
-import { PROYECTO_CONCEPTO_GASTO_CODIGO_EC_CONVERTER } from '@core/converters/csp/proyecto-concepto-gasto-codigo-ec.converter';
-import { PROYECTO_CONCEPTO_GASTO_CONVERTER } from '@core/converters/csp/proyecto-concepto-gasto.converter';
-import { PROYECTO_CONTEXTO_CONVERTER } from '@core/converters/csp/proyecto-contexto.converter';
-import { PROYECTO_DOCUMENTO_CONVERTER } from '@core/converters/csp/proyecto-documento.converter';
-import { PROYECTO_ENTIDAD_CONVOCANTE_CONVERTER } from '@core/converters/csp/proyecto-entidad-convocante.converter';
 import { PROYECTO_ENTIDAD_FINANCIADORA_CONVERTER } from '@core/converters/csp/proyecto-entidad-financiadora.converter';
 import { PROYECTO_ENTIDAD_GESTORA_CONVERTER } from '@core/converters/csp/proyecto-entidad-gestora.converter';
-import { PROYECTO_EQUIPO_CONVERTER } from '@core/converters/csp/proyecto-equipo.converter';
 import { PROYECTO_IVA_CONVERTER } from '@core/converters/csp/proyecto-iva.converter';
 import { PROYECTO_PAQUETE_TRABAJO_CONVERTER } from '@core/converters/csp/proyecto-paquete-trabajo.converter';
-import { PROYECTO_PERIODO_SEGUIMIENTO_CONVERTER } from '@core/converters/csp/proyecto-periodo-seguimiento.converter';
-import { PROYECTO_PRORROGA_CONVERTER } from '@core/converters/csp/proyecto-prorroga.converter';
 import { PROYECTO_PROYECTO_SGE_CONVERTER } from '@core/converters/csp/proyecto-proyecto-sge.converter';
-import { PROYECTO_SOCIO_CONVERTER } from '@core/converters/csp/proyecto-socio.converter';
-import { PROYECTO_CONVERTER } from '@core/converters/csp/proyecto.converter';
 import { TipoPartida } from '@core/enums/tipo-partida';
 import { IAnualidadGasto } from '@core/models/csp/anualidad-gasto';
 import { IProyectoAreaConocimientoBackend } from '@core/models/csp/backend/proyecto-area-conocimiento-backend';
-import { IProyectoBackend } from '@core/models/csp/backend/proyecto-backend';
 import { IProyectoClasificacionBackend } from '@core/models/csp/backend/proyecto-clasificacion-backend';
-import { IProyectoConceptoGastoBackend } from '@core/models/csp/backend/proyecto-concepto-gasto-backend';
-import { IProyectoConceptoGastoCodigoEcBackend } from '@core/models/csp/backend/proyecto-concepto-gasto-codigo-ec-backend';
-import { IProyectoContextoBackend } from '@core/models/csp/backend/proyecto-contexto-backend';
-import { IProyectoDocumentoBackend } from '@core/models/csp/backend/proyecto-documento-backend';
-import { IProyectoEntidadConvocanteBackend } from '@core/models/csp/backend/proyecto-entidad-convocante-backend';
 import { IProyectoEntidadFinanciadoraBackend } from '@core/models/csp/backend/proyecto-entidad-financiadora-backend';
 import { IProyectoEntidadGestoraBackend } from '@core/models/csp/backend/proyecto-entidad-gestora-backend';
-import { IProyectoEquipoBackend } from '@core/models/csp/backend/proyecto-equipo-backend';
 import { IProyectoIVABackend } from '@core/models/csp/backend/proyecto-iva-backend';
 import { IProyectoPaqueteTrabajoBackend } from '@core/models/csp/backend/proyecto-paquete-trabajo-backend';
-import { IProyectoPeriodoSeguimientoBackend } from '@core/models/csp/backend/proyecto-periodo-seguimiento-backend';
-import { IProyectoProrrogaBackend } from '@core/models/csp/backend/proyecto-prorroga-backend';
 import { IProyectoProyectoSgeBackend } from '@core/models/csp/backend/proyecto-proyecto-sge-backend';
-import { IProyectoSocioBackend } from '@core/models/csp/backend/proyecto-socio-backend';
 import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IEstadoProyecto } from '@core/models/csp/estado-proyecto';
 import { IProyecto } from '@core/models/csp/proyecto';
@@ -73,28 +53,50 @@ import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-just
 import { ESTADO_PROYECTO_REQUEST_CONVERTER } from '@core/services/csp/estado-proyecto/estado-proyecto-request.converter';
 import { IEstadoProyectoResponse } from '@core/services/csp/estado-proyecto/estado-proyecto-response';
 import { ESTADO_PROYECTO_RESPONSE_CONVERTER } from '@core/services/csp/estado-proyecto/estado-proyecto-response.converter';
+import { PROYECTO_CONCEPTO_GASTO_RESPONSE_CONVERTER } from '@core/services/csp/proyecto-concepto-gasto/proyecto-concepto-gasto-response.converter';
+import { IProyectoContextoResponse } from '@core/services/csp/proyecto-contexto/proyecto-contexto-response';
+import { PROYECTO_CONTEXTO_RESPONSE_CONVERTER } from '@core/services/csp/proyecto-contexto/proyecto-contexto-response.converter';
+import { IProyectoDocumentoResponse } from '@core/services/csp/proyecto-documento/proyecto-documento-response';
+import { PROYECTO_DOCUMENTO_RESPONSE_CONVERTER } from '@core/services/csp/proyecto-documento/proyecto-documento-response.converter';
+import { IProyectoEntidadConvocanteResponse } from '@core/services/csp/proyecto-entidad-convocante/proyecto-entidad-convocante-response';
+import { PROYECTO_ENTIDAD_CONVOCANTE_RESPONSE_CONVERTER } from '@core/services/csp/proyecto-entidad-convocante/proyecto-entidad-convocante-response.converter';
+import { IProyectoResponse } from '@core/services/csp/proyecto/proyecto-response';
+import { PROYECTO_RESPONSE_CONVERTER } from '@core/services/csp/proyecto/proyecto-response.converter';
 import { environment } from '@env';
 import { FormlyFieldConfig } from '@ngx-formly/core';
 import {
+  CreateCtor,
+  FindAllCtor,
+  FindByIdCtor,
+  mixinCreate,
+  mixinFindAll,
+  mixinFindById,
+  mixinUpdate,
   RSQLSgiRestFilter,
-  SgiMutableRestService,
+  SgiRestBaseService,
   SgiRestFilterOperator,
   SgiRestFindOptions,
-  SgiRestListResult
+  SgiRestListResult,
+  UpdateCtor
 } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IAnualidadGastoResponse } from './anualidad-gasto/anualidad-gasto-response';
 import { ANUALIDAD_GASTO_RESPONSE_CONVERTER } from './anualidad-gasto/anualidad-gasto-response.converter';
-import { IConvocatoriaTituloResponse } from './convocatoria/convocatoria-titulo-response';
-import { CONVOCATORIA_TITULO_RESPONSE_CONVERTER } from './convocatoria/convocatoria-titulo-response.converter';
+import { IConvocatoriaOnlyTituloResponse } from './convocatoria/convocatoria-only-titulo-response';
+import { CONVOCATORIA_ONLY_TITULO_RESPONSE_CONVERTER } from './convocatoria/convocatoria-only-titulo-response.converter';
 import { IProyectoAgrupacionGastoResponse } from './proyecto-agrupacion-gasto/proyecto-agrupacion-gasto-response';
 import { PROYECTO_AGRUPACION_GASTO_RESPONSE_CONVERTER } from './proyecto-agrupacion-gasto/proyecto-agrupacion-gasto-response.converter';
 import { IProyectoAnualidadResponse } from './proyecto-anualidad/proyecto-anualidad-response';
 import { PROYECTO_ANUALIDAD_RESPONSE_CONVERTER } from './proyecto-anualidad/proyecto-anualidad-response.converter';
 import { IProyectoAnualidadResumenResponse } from './proyecto-anualidad/proyecto-anualidad-resumen-response';
 import { PROYECTO_ANUALIDAD_RESUMEN_RESPONSE_CONVERTER } from './proyecto-anualidad/proyecto-anualidad-resumen-response.converter';
+import { IProyectoConceptoGastoCodigoEcResponse } from './proyecto-concepto-gasto-codigo-ec/proyecto-concepto-gasto-codigo-ec-response';
+import { PROYECTO_CONCEPTO_GASTO_CODIGO_EC_RESPONSE_CONVERTER } from './proyecto-concepto-gasto-codigo-ec/proyecto-concepto-gasto-codigo-ec-response.converter';
+import { IProyectoConceptoGastoResponse } from './proyecto-concepto-gasto/proyecto-concepto-gasto-response';
+import { IProyectoEquipoResponse } from './proyecto-equipo/proyecto-equipo-response';
+import { PROYECTO_EQUIPO_RESPONSE_CONVERTER } from './proyecto-equipo/proyecto-equipo-response.converter';
 import { IProyectoFacturacionResponse } from './proyecto-facturacion/proyecto-facturacion-response';
 import { PROYECTO_FACTURACION_RESPONSE_CONVERTER } from './proyecto-facturacion/proyecto-facturacion-response.converter';
 import { IProyectoFaseResponse } from './proyecto-fase/proyecto-fase-response';
@@ -108,27 +110,51 @@ import { IProyectoPartidaPresupuestariaResponse } from './proyecto-partida-presu
 import { PROYECTO_PARTIDA_PRESUPUESTARIA_RESPONSE_CONVERTER } from './proyecto-partida-presupuestaria/proyecto-partida-presupuestaria-response.converter';
 import { IProyectoPeriodoJustificacionResponse } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response';
 import { PROYECTO_PERIODO_JUSTIFICACION_RESPONSE_CONVERTER } from './proyecto-periodo-justificacion/proyecto-periodo-justificacion-response.converter';
+import { IProyectoPeriodoSeguimientoResponse } from './proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-response';
+import { PROYECTO_PERIODO_SEGUIMIENTO_RESPONSE_CONVERTER } from './proyecto-periodo-seguimiento/proyecto-periodo-seguimiento-response.converter';
+import { IProyectoProrrogaResponse } from './proyecto-prorroga/proyecto-prorroga-response';
+import { PROYECTO_PRORROGA_RESPONSE_CONVERTER } from './proyecto-prorroga/proyecto-prorroga-response.converter';
 import { IProyectoResponsableEconomicoResponse } from './proyecto-responsable-economico/proyecto-responsable-economico-response';
 import { PROYECTO_RESPONSABLE_ECONOMICO_RESPONSE_CONVERTER } from './proyecto-responsable-economico/proyecto-responsable-economico-response.converter';
+import { IProyectoSocioResponse } from './proyecto-socio/proyecto-socio-response';
+import { PROYECTO_SOCIO_RESPONSE_CONVERTER } from './proyecto-socio/proyecto-socio.converter';
 import { IProyectosCompetitivosPersonasResponse } from './proyectos-competitivos-personas/proyectos-competitivos-personas-response';
 import { PROYECTOS_COMPETITIVOS_PERSONAS_RESPONSE_CONVERTER } from './proyectos-competitivos-personas/proyectos-competitivos-personas-response.converter';
 import { IRequerimientoJustificacionResponse } from './requerimiento-justificacion/requerimiento-justificacion-response';
 import { REQUERIMIENTO_JUSTIFICACION_RESPONSE_CONVERTER } from './requerimiento-justificacion/requerimiento-justificacion-response.converter';
 
+const _ProyectoServiceMixinBase:
+  CreateCtor<IProyecto, IProyecto, IProyectoResponse, IProyectoResponse> &
+  UpdateCtor<number, IProyecto, IProyecto, IProyectoResponse, IProyectoResponse> &
+  FindAllCtor<IProyecto, IProyectoResponse> &
+  FindByIdCtor<number, IProyecto, IProyectoResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinFindById(
+      mixinUpdate(
+        mixinCreate(
+          SgiRestBaseService,
+          PROYECTO_RESPONSE_CONVERTER,
+          PROYECTO_RESPONSE_CONVERTER
+        ),
+        PROYECTO_RESPONSE_CONVERTER,
+        PROYECTO_RESPONSE_CONVERTER
+      ),
+      PROYECTO_RESPONSE_CONVERTER),
+    PROYECTO_RESPONSE_CONVERTER
+  );
+
 @Injectable({
   providedIn: 'root'
 })
-export class ProyectoService extends SgiMutableRestService<number, IProyectoBackend, IProyecto> {
+export class ProyectoService extends _ProyectoServiceMixinBase {
 
   private static readonly MAPPING = '/proyectos';
   private static readonly ENTIDAD_CONVOCANTES_MAPPING = 'entidadconvocantes';
 
   constructor(readonly logger: NGXLogger, protected http: HttpClient) {
     super(
-      ProyectoService.name,
       `${environment.serviceServers.csp}${ProyectoService.MAPPING}`,
-      http,
-      PROYECTO_CONVERTER
+      http
     );
   }
 
@@ -138,7 +164,7 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param options opciones de búsqueda.
    */
   findTodos(options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyecto>> {
-    return this.find<IProyectoBackend, IProyecto>(`${this.endpointUrl}/todos`, options, PROYECTO_CONVERTER);
+    return this.find<IProyectoResponse, IProyecto>(`${this.endpointUrl}/todos`, options, PROYECTO_RESPONSE_CONVERTER);
   }
 
   /**
@@ -147,7 +173,7 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param options opciones de búsqueda.
    */
   findAllInvestigador(options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyecto>> {
-    return this.find<IProyectoBackend, IProyecto>(`${this.endpointUrl}/investigador`, options, PROYECTO_CONVERTER);
+    return this.find<IProyectoResponse, IProyecto>(`${this.endpointUrl}/investigador`, options, PROYECTO_RESPONSE_CONVERTER);
   }
 
   /**
@@ -182,10 +208,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param proyectoID Id del proyecto
    */
   findProyectoContexto(proyectoID: number): Observable<IProyectoContexto> {
-    return this.http.get<IProyectoContextoBackend>(
+    return this.http.get<IProyectoContextoResponse>(
       `${this.endpointUrl}/${proyectoID}/proyecto-contextoproyectos`
     ).pipe(
-      map(response => PROYECTO_CONTEXTO_CONVERTER.toTarget(response))
+      map(response => PROYECTO_CONTEXTO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -283,10 +309,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @returns observable con la lista de IProyectoSocio del proyecto
    */
   findAllProyectoSocioProyecto(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyectoSocio>> {
-    return this.find<IProyectoSocioBackend, IProyectoSocio>(
+    return this.find<IProyectoSocioResponse, IProyectoSocio>(
       `${this.endpointUrl}/${id}/proyectosocios`,
       options,
-      PROYECTO_SOCIO_CONVERTER
+      PROYECTO_SOCIO_RESPONSE_CONVERTER
     );
   }
 
@@ -296,10 +322,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param id Id del IProyecto
    */
   findAllProyectoEquipo(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyectoEquipo>> {
-    return this.find<IProyectoEquipoBackend, IProyectoEquipo>(
+    return this.find<IProyectoEquipoResponse, IProyectoEquipo>(
       `${this.endpointUrl}/${id}/proyectoequipos`,
       options,
-      PROYECTO_EQUIPO_CONVERTER
+      PROYECTO_EQUIPO_RESPONSE_CONVERTER
     );
   }
 
@@ -309,10 +335,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @returns Listado de ProyectoEntidadConvocante.
    */
   findAllEntidadConvocantes(idProyecto: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyectoEntidadConvocante>> {
-    return this.find<IProyectoEntidadConvocanteBackend, IProyectoEntidadConvocante>(
+    return this.find<IProyectoEntidadConvocanteResponse, IProyectoEntidadConvocante>(
       `${this.endpointUrl}/${idProyecto}/${ProyectoService.ENTIDAD_CONVOCANTES_MAPPING}`,
       options,
-      PROYECTO_ENTIDAD_CONVOCANTE_CONVERTER
+      PROYECTO_ENTIDAD_CONVOCANTE_RESPONSE_CONVERTER
     );
   }
 
@@ -320,11 +346,11 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
     idProyecto: number,
     entidadesConvocantes: IProyectoEntidadConvocante[]
   ): Observable<IProyectoEntidadConvocante[]> {
-    return this.http.patch<IProyectoEntidadConvocanteBackend[]>(
+    return this.http.patch<IProyectoEntidadConvocanteResponse[]>(
       `${this.endpointUrl}/${idProyecto}/${ProyectoService.ENTIDAD_CONVOCANTES_MAPPING}`,
-      PROYECTO_ENTIDAD_CONVOCANTE_CONVERTER.fromTargetArray(entidadesConvocantes)
+      PROYECTO_ENTIDAD_CONVOCANTE_RESPONSE_CONVERTER.fromTargetArray(entidadesConvocantes)
     ).pipe(
-      map((response => PROYECTO_ENTIDAD_CONVOCANTE_CONVERTER.toTargetArray(response)))
+      map((response => PROYECTO_ENTIDAD_CONVOCANTE_RESPONSE_CONVERTER.toTargetArray(response)))
     );
   }
 
@@ -337,10 +363,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    */
   findAllProyectoPeriodoSeguimientoProyecto(id: number, options?: SgiRestFindOptions):
     Observable<SgiRestListResult<IProyectoPeriodoSeguimiento>> {
-    return this.find<IProyectoPeriodoSeguimientoBackend, IProyectoPeriodoSeguimiento>(
+    return this.find<IProyectoPeriodoSeguimientoResponse, IProyectoPeriodoSeguimiento>(
       `${this.endpointUrl}/${id}/proyectoperiodoseguimientos`,
       options,
-      PROYECTO_PERIODO_SEGUIMIENTO_CONVERTER
+      PROYECTO_PERIODO_SEGUIMIENTO_RESPONSE_CONVERTER
     );
   }
 
@@ -352,10 +378,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @returns observable con la lista de IProyectoProrroga del proyecto
    */
   findAllProyectoProrrogaProyecto(id: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyectoProrroga>> {
-    return this.find<IProyectoProrrogaBackend, IProyectoProrroga>(
+    return this.find<IProyectoProrrogaResponse, IProyectoProrroga>(
       `${this.endpointUrl}/${id}/proyecto-prorrogas`,
       options,
-      PROYECTO_PRORROGA_CONVERTER
+      PROYECTO_PRORROGA_RESPONSE_CONVERTER
     );
   }
 
@@ -391,10 +417,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param options opciones de búsqueda
    */
   findAllProyectoDocumentos(idProyecto: number, options?: SgiRestFindOptions): Observable<SgiRestListResult<IProyectoDocumento>> {
-    return this.find<IProyectoDocumentoBackend, IProyectoDocumento>(
+    return this.find<IProyectoDocumentoResponse, IProyectoDocumento>(
       `${this.endpointUrl}/${idProyecto}/documentos`,
       options,
-      PROYECTO_DOCUMENTO_CONVERTER
+      PROYECTO_DOCUMENTO_RESPONSE_CONVERTER
     );
   }
 
@@ -420,11 +446,11 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param id identificador de la solicitud a copiar
    */
   crearProyectoBySolicitud(id: number, proyecto: IProyecto): Observable<IProyecto> {
-    return this.http.post<IProyectoBackend>(
+    return this.http.post<IProyectoResponse>(
       `${this.endpointUrl}/${id}/solicitud`,
-      this.converter.fromTarget(proyecto)
+      PROYECTO_RESPONSE_CONVERTER.fromTarget(proyecto)
     ).pipe(
-      map(response => this.converter.toTarget(response))
+      map(response => PROYECTO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -572,10 +598,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param options opciones de búsqueda.
    */
   findAllProyectoConceptosGastoPermitidos(id: number): Observable<SgiRestListResult<IProyectoConceptoGasto>> {
-    return this.find<IProyectoConceptoGastoBackend, IProyectoConceptoGasto>(
+    return this.find<IProyectoConceptoGastoResponse, IProyectoConceptoGasto>(
       `${this.endpointUrl}/${id}/proyectoconceptosgasto/permitidos`,
       undefined,
-      PROYECTO_CONCEPTO_GASTO_CONVERTER
+      PROYECTO_CONCEPTO_GASTO_RESPONSE_CONVERTER
     );
   }
 
@@ -585,10 +611,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param options opciones de búsqueda.
    */
   findAllProyectoConceptosGastoNoPermitidos(id: number): Observable<SgiRestListResult<IProyectoConceptoGasto>> {
-    return this.find<IProyectoConceptoGastoBackend, IProyectoConceptoGasto>(
+    return this.find<IProyectoConceptoGastoResponse, IProyectoConceptoGasto>(
       `${this.endpointUrl}/${id}/proyectoconceptosgasto/nopermitidos`,
       undefined,
-      PROYECTO_CONCEPTO_GASTO_CONVERTER
+      PROYECTO_CONCEPTO_GASTO_RESPONSE_CONVERTER
     );
   }
 
@@ -597,10 +623,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param id proyecto
    */
   findAllProyectoConceptoGastoCodigosEcsPermitidos(id: number): Observable<SgiRestListResult<IProyectoConceptoGastoCodigoEc>> {
-    return this.find<IProyectoConceptoGastoCodigoEcBackend, IProyectoConceptoGastoCodigoEc>(
+    return this.find<IProyectoConceptoGastoCodigoEcResponse, IProyectoConceptoGastoCodigoEc>(
       `${this.endpointUrl}/${id}/proyectoconceptosgastocodigosecs/permitidos`,
       undefined,
-      PROYECTO_CONCEPTO_GASTO_CODIGO_EC_CONVERTER
+      PROYECTO_CONCEPTO_GASTO_CODIGO_EC_RESPONSE_CONVERTER
     );
   }
 
@@ -609,10 +635,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param id proyecto
    */
   findAllProyectoConceptoGastoCodigosEcsNoPermitidos(id: number): Observable<SgiRestListResult<IProyectoConceptoGastoCodigoEc>> {
-    return this.find<IProyectoConceptoGastoCodigoEcBackend, IProyectoConceptoGastoCodigoEc>(
+    return this.find<IProyectoConceptoGastoCodigoEcResponse, IProyectoConceptoGastoCodigoEc>(
       `${this.endpointUrl}/${id}/proyectoconceptosgastocodigosecs/nopermitidos`,
       undefined,
-      PROYECTO_CONCEPTO_GASTO_CODIGO_EC_CONVERTER);
+      PROYECTO_CONCEPTO_GASTO_CODIGO_EC_RESPONSE_CONVERTER);
   }
 
   /**
@@ -841,10 +867,10 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @param id Id del proyecto
    */
   findConvocatoria(id: number): Observable<IConvocatoria> {
-    return this.http.get<IConvocatoriaTituloResponse>(
+    return this.http.get<IConvocatoriaOnlyTituloResponse>(
       `${this.endpointUrl}/${id}/convocatoria`
     ).pipe(
-      map(response => CONVOCATORIA_TITULO_RESPONSE_CONVERTER.toTarget(response))
+      map(response => CONVOCATORIA_ONLY_TITULO_RESPONSE_CONVERTER.toTarget(response))
     );
   }
 
@@ -859,8 +885,8 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @return la lista de investigadores principales del proyecto en el momento actual.
    */
   findInvestigadoresPrincipalesActuales(id: number): Observable<IProyectoEquipo[]> {
-    return this.http.get<IProyectoEquipoBackend[]>(`${this.endpointUrl}/${id}/investigadoresprincipalesactuales`).pipe(
-      map((response => PROYECTO_EQUIPO_CONVERTER.toTargetArray(response ?? [])))
+    return this.http.get<IProyectoEquipoResponse[]>(`${this.endpointUrl}/${id}/investigadoresprincipalesactuales`).pipe(
+      map((response => PROYECTO_EQUIPO_RESPONSE_CONVERTER.toTargetArray(response ?? [])))
     );
   }
 
@@ -874,8 +900,8 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    * @return la lista de investigadores principales del proyecto en cualquier momento.
    */
   findInvestigadoresPrincipales(id: number): Observable<IProyectoEquipo[]> {
-    return this.http.get<IProyectoEquipoBackend[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`).pipe(
-      map((response => PROYECTO_EQUIPO_CONVERTER.toTargetArray(response ?? [])))
+    return this.http.get<IProyectoEquipoResponse[]>(`${this.endpointUrl}/${id}/investigadoresprincipales`).pipe(
+      map((response => PROYECTO_EQUIPO_RESPONSE_CONVERTER.toTargetArray(response ?? [])))
     );
   }
 
@@ -986,6 +1012,19 @@ export class ProyectoService extends SgiMutableRestService<number, IProyectoBack
    */
   initFechaInicio(id: number): Observable<IProyecto> {
     return this.http.patch<IProyecto>(`${this.endpointUrl}/${id}/init-fecha-inicio`, undefined);
+  }
+
+  /**
+   * Obtiene la lista de anualidades de un proyecto comprendidas entre su fecha
+   * de inicio y us fecha de fin o fecha de fin definitiva si esta informada
+   * 
+   * @param id Identificador de {@link Proyecto}
+   * @return la lista de anualidades del proyecto, y una lista vacia si no tiene anualidades 
+   */
+  getAnualidadesProyecto(id: number): Observable<string[]> {
+    return this.get<string[]>(`${this.endpointUrl}/${id}/anualidades-fechas-proyecto`).pipe(
+      map(response => response ?? [])
+    );
   }
 
 }

@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-
-import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.BloqueNotFoundException;
 import org.crue.hercules.sgi.eti.model.Apartado;
 import org.crue.hercules.sgi.eti.model.Bloque;
@@ -32,6 +29,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+
 /**
  * BloqueControllerTest
  */
@@ -51,23 +50,24 @@ public class BloqueControllerTest extends BaseControllerTest {
   @Test
   @WithMockUser(username = "user", authorities = { "ETI-Bloque-VER" })
   public void getBloque_WithId_ReturnsBloque() throws Exception {
-    BDDMockito.given(bloqueService.findById(ArgumentMatchers.anyLong())).willReturn((generarMockBloque(1L, "Bloque1")));
+    BDDMockito.given(bloqueService.findById(ArgumentMatchers.anyLong()))
+        .willReturn((generarMockBloqueOutput(1L)));
 
     mockMvc
         .perform(MockMvcRequestBuilders.get(BLOQUE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("Bloque1"));
+        .andExpect(MockMvcResultMatchers.jsonPath("id").value(1));
     ;
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "ETI-Bloque-VER" })
   public void getBloque_NotFound_Returns404() throws Exception {
-    BDDMockito.given(bloqueService.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
-      throw new BloqueNotFoundException(invocation.getArgument(0));
-    });
+    BDDMockito.given(bloqueService.findById(ArgumentMatchers.anyLong()))
+        .will((InvocationOnMock invocation) -> {
+          throw new BloqueNotFoundException(invocation.getArgument(0));
+        });
     mockMvc
         .perform(MockMvcRequestBuilders.get(BLOQUE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
@@ -158,7 +158,6 @@ public class BloqueControllerTest extends BaseControllerTest {
     // containing nombre='Bloque031' to 'Bloque040'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       Bloque bloque = actual.get(i);
-      Assertions.assertThat(bloque.getNombre()).isEqualTo("Bloque" + String.format("%03d", j));
     }
   }
 
@@ -178,7 +177,7 @@ public class BloqueControllerTest extends BaseControllerTest {
           public Page<Bloque> answer(InvocationOnMock invocation) throws Throwable {
             List<Bloque> content = new ArrayList<>();
             for (Bloque bloque : bloques) {
-              if (bloque.getNombre().startsWith("Bloque") && bloque.getId() == 5L) {
+              if (bloque.getId() == 5L) {
                 content.add(bloque);
               }
             }
@@ -205,7 +204,9 @@ public class BloqueControllerTest extends BaseControllerTest {
     final String url = new StringBuffer(BLOQUE_CONTROLLER_BASE_PATH).append(PATH_PARAMETER_ID)
         .append(PATH_PARAMETER_APARTADOS).toString();
 
-    BDDMockito.given(apartadoService.findByBloqueId(ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito
+        .given(apartadoService.findByBloqueId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.<Pageable>any()))
         .willReturn(new PageImpl<>(Collections.emptyList()));
 
     // when: Se buscan todos los datos
@@ -229,7 +230,9 @@ public class BloqueControllerTest extends BaseControllerTest {
       apartados.add(apartado);
     }
 
-    BDDMockito.given(apartadoService.findByBloqueId(ArgumentMatchers.anyLong(), ArgumentMatchers.<Pageable>any()))
+    BDDMockito
+        .given(apartadoService.findByBloqueId(ArgumentMatchers.anyLong(),
+            ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<Apartado>>() {
           @Override
           public Page<Apartado> answer(InvocationOnMock invocation) throws Throwable {
@@ -258,17 +261,37 @@ public class BloqueControllerTest extends BaseControllerTest {
    * @return el objeto Bloque
    */
 
-  public Bloque generarMockBloque(Long id, String nombre) {
+  private Bloque generarMockBloque(Long id, String nombre) {
 
     Formulario formulario = new Formulario();
     formulario.setId(1L);
-    formulario.setNombre("Formulario1");
-    formulario.setDescripcion("Descripcion formulario 1");
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
 
     Bloque bloque = new Bloque();
     bloque.setId(id);
     bloque.setFormulario(formulario);
-    bloque.setNombre(nombre);
+    bloque.setOrden(1);
+
+    return bloque;
+  }
+
+  /**
+   * Función que devuelve un objeto Bloque
+   * 
+   * @param id     id del Bloque
+   * @param nombre el nombre de Bloque
+   * @return el objeto Bloque
+   */
+
+  private Bloque generarMockBloqueOutput(Long id) {
+
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+
+    Bloque bloque = new Bloque();
+    bloque.setId(id);
+    bloque.setFormulario(formulario);
     bloque.setOrden(1);
 
     return bloque;
@@ -285,20 +308,18 @@ public class BloqueControllerTest extends BaseControllerTest {
    */
   private Apartado getMockApartado(Long id, Long bloqueId, Long padreId) {
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion1");
-    Bloque bloque = new Bloque(bloqueId, formulario, "Bloque " + bloqueId, bloqueId.intValue());
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+    Bloque bloque = new Bloque(bloqueId, formulario, 1, null);
 
     Apartado padre = (padreId != null) ? getMockApartado(padreId, bloqueId, null) : null;
-
-    String txt = (id % 2 == 0) ? String.valueOf(id) : "0" + String.valueOf(id);
 
     final Apartado data = new Apartado();
     data.setId(id);
     data.setBloque(bloque);
-    data.setNombre("Apartado" + txt);
     data.setPadre(padre);
     data.setOrden(id.intValue());
-    data.setEsquema("{\"nombre\":\"EsquemaApartado" + txt + "\"}");
 
     return data;
   }

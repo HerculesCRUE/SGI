@@ -2,10 +2,13 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.converter.ConvocatoriaHitoComentarioConverter;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaHitoInput;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
@@ -13,13 +16,23 @@ import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaHitoNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaHitoComentario;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObjeto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.ModeloTipoHito;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.model.TipoHito;
+import org.crue.hercules.sgi.csp.model.TipoHitoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoHitoNombre;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaHitoAvisoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaHitoRepository;
@@ -31,6 +44,9 @@ import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -80,15 +96,18 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   @Mock
   SgiApiSgpService personaService;
 
+  @Mock
+  private ConvocatoriaHitoComentarioConverter convocatoriaHitoComentarioConverter;
+
   private ConvocatoriaAuthorityHelper authorityHelper;
   private ConvocatoriaHitoService service;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     this.authorityHelper = new ConvocatoriaAuthorityHelper(convocatoriaRepository, configuracionSolicitudRepository);
     service = new ConvocatoriaHitoService(repository, convocatoriaRepository, modeloTipoHitoRepository,
-        convocatoriaHitoAvisoRepository, solicitudRepository,
-        proyectoEquipoRepository, emailService, sgiApiTaskService, personaService, authorityHelper);
+        convocatoriaHitoAvisoRepository, solicitudRepository, proyectoEquipoRepository, emailService, sgiApiTaskService,
+        personaService, authorityHelper, convocatoriaHitoComentarioConverter);
   }
 
   @Test
@@ -100,6 +119,11 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     ConvocatoriaHitoInput convocatoriaHitoInput = generarMockConvocatoriaHitoInput(convocatoriaId);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
+
+    BDDMockito
+        .given(convocatoriaHitoComentarioConverter.convertAll(ArgumentMatchers.<I18nFieldValueDto>anyList()))
+        .willReturn(Set.of(new ConvocatoriaHitoComentario(Language.ES, "comentario")));
+
     BDDMockito
         .given(modeloTipoHitoRepository.findByModeloEjecucionIdAndTipoHitoId(ArgumentMatchers.anyLong(),
             ArgumentMatchers.anyLong()))
@@ -121,8 +145,9 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         .isEqualTo(convocatoriaHito.getConvocatoriaId());
     Assertions.assertThat(convocatoriaHitoCreado.getFecha()).as("getFechaInicio()")
         .isEqualTo(convocatoriaHito.getFecha());
-    Assertions.assertThat(convocatoriaHitoCreado.getComentario()).as("getComentario()")
-        .isEqualTo(convocatoriaHito.getComentario());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriaHitoCreado.getComentario(), Language.ES))
+        .as("getComentario()")
+        .isEqualTo(I18nHelper.getValueForLanguage(convocatoriaHito.getComentario(), Language.ES));
     Assertions.assertThat(convocatoriaHitoCreado.getTipoHito().getId()).as("getTipoHito().getId()")
         .isEqualTo(convocatoriaHito.getTipoHito().getId());
     Assertions.assertThat(convocatoriaHitoCreado.getConvocatoriaHitoAviso()).as("getConvocatoriaHitoAviso()")
@@ -152,7 +177,8 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         () -> service.create(
             convocatoriaHitoInput))
         // then: throw exception as fecha is null
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Ya existe un Hito con el mismo tipo en esa fecha");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage(
+            "Tipo Hito con el identificador %s ya existe para esa fecha", convocatoriaHitoInput.getTipoHitoId());
   }
 
   @Test
@@ -186,8 +212,7 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         () -> service.create(convocatoriaHito))
         // then: throw exception as ModeloEjecucion not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ID TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaHito.getTipoHitoId(), "Convocatoria sin modelo asignado");
+        .hasMessage("Tipo Hito no disponible para el Modelo Ejecución Convocatoria sin modelo asignado");
   }
 
   @Test
@@ -207,8 +232,8 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         () -> service.create(convocatoriaHito))
         // then: throw exception as ModeloTipoHito not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ID TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaHito.getTipoHitoId(), convocatoria.getModeloEjecucion().getNombre());
+        .hasMessage("Tipo Hito no disponible para el Modelo Ejecución %s",
+            convocatoria.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -232,7 +257,7 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
             convocatoriaHitoInput))
         // then: throw exception as ModeloTipoHito is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoHito '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Tipo Hito no está activo para el modelo ejecución %s",
             convocatoriaHito.getTipoHito().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -257,7 +282,7 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
             convocatoriaHitoInput))
         // then: throw exception as TipoHito is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoHito '%s' no está activo", convocatoriaHito.getTipoHito().getNombre());
+        .hasMessage("%s de Tipo Hito no está activo", convocatoriaHito.getTipoHito().getNombre());
   }
 
   @Test
@@ -279,7 +304,9 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
             Optional.of(generarMockModeloTipoHito(1L, convocatoria, convocatoriaHitoActualizado, Boolean.TRUE)));
     BDDMockito.given(repository.save(ArgumentMatchers.<ConvocatoriaHito>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
-
+    BDDMockito
+        .given(convocatoriaHitoComentarioConverter.convertAll(ArgumentMatchers.<I18nFieldValueDto>anyList()))
+        .willReturn(Set.of(new ConvocatoriaHitoComentario(Language.ES, "comentario")));
     // when: Actualizamos el ConvocatoriaHito
     ConvocatoriaHito updated = service.update(1L, convocatoriaHitoActualizadoInput);
 
@@ -288,8 +315,8 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     Assertions.assertThat(updated.getId()).as("getId()").isEqualTo(convocatoriaHito.getId());
     Assertions.assertThat(updated.getConvocatoriaId()).as("getConvocatoriaId()")
         .isEqualTo(convocatoriaHito.getConvocatoriaId());
-    Assertions.assertThat(updated.getComentario()).as("getComentario()")
-        .isEqualTo(convocatoriaHitoActualizado.getComentario());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getComentario(), Language.ES)).as("getComentario()")
+        .isEqualTo(I18nHelper.getValueForLanguage(convocatoriaHitoActualizado.getComentario(), Language.ES));
     Assertions.assertThat(updated.getTipoHito().getId()).as("getTipoHito().getId()")
         .isEqualTo(convocatoriaHitoActualizado.getTipoHito().getId());
     Assertions.assertThat(updated.getFecha()).as("getFecha()").isEqualTo(convocatoriaHitoActualizado.getFecha());
@@ -319,7 +346,9 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
     // when: Actualizamos el ConvocatoriaHito
     // then: Lanza una excepcion porque la fecha no existe
     Assertions.assertThatThrownBy(() -> service.update(1L, convocatoriaHitoActualizadoInput))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Ya existe un Hito con el mismo tipo en esa fecha");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Tipo Hito con el identificador 1 ya existe para esa fecha",
+            convocatoriaHitoActualizadoInput.getTipoHitoId());
   }
 
   @Test
@@ -356,8 +385,7 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         () -> service.update(1L, convocatoriaHitoActualizado))
         // then: throw exception as ModeloTipoHito not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ID TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaHitoActualizado.getTipoHitoId(), "Convocatoria sin modelo asignado");
+        .hasMessage("Tipo Hito no disponible para el Modelo Ejecución Convocatoria sin modelo asignado");
   }
 
   @Test
@@ -381,8 +409,8 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         () -> service.update(1L, convocatoriaHitoActualizado))
         // then: throw exception as ModeloTipoHito not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ID TipoHito '%s' no disponible para el ModeloEjecucion '%s'",
-            convocatoriaHitoActualizado.getTipoHitoId(), convocatoria.getModeloEjecucion().getNombre());
+        .hasMessage("Tipo Hito no disponible para el Modelo Ejecución %s",
+            convocatoria.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -410,7 +438,7 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         () -> service.update(1L, convocatoriaHitoActualizadoInput))
         // then: throw exception as ModeloTipoHito is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoHito '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Tipo Hito no está activo para el modelo ejecución %s",
             convocatoriaHitoActualizado.getTipoHito().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -437,7 +465,7 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         () -> service.update(1L, convocatoriaHitoActualizadoInput))
         // then: throw exception as TipoHito is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoHito '%s' no está activo", convocatoriaHitoActualizado.getTipoHito().getNombre());
+        .hasMessage("%s de Tipo Hito no está activo", convocatoriaHitoActualizado.getTipoHito().getNombre());
   }
 
   @Test
@@ -456,7 +484,7 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Long id = 1L;
 
@@ -530,7 +558,7 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findById_WithIdNotExist_ThrowsConvocatoriaHitoNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaHitoNotFoundException() {
     // given: Ningun ConvocatoriaHito con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -555,19 +583,25 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
    */
   private Convocatoria generarMockConvocatoria(Long convocatoriaId, Long unidadGestionId, Long modeloEjecucionId,
       Long modeloTipoFinalidadId, Long tipoRegimenConcurrenciaId, Long tipoAmbitoGeogragicoId, Boolean activo) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(
+        new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId)));
 
-    // @formatter:off
     ModeloEjecucion modeloEjecucion = (modeloEjecucionId == null) ? null
         : ModeloEjecucion.builder()
             .id(modeloEjecucionId)
-            .nombre("nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId))
+            .nombre(nombreModeloEjecucion)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(
+        new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId)));
 
     TipoFinalidad tipoFinalidad = (modeloTipoFinalidadId == null) ? null
         : TipoFinalidad.builder()
             .id(modeloTipoFinalidadId)
-            .nombre("nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId))
+            .nombre(nombreTipoFinalidad)
             .activo(Boolean.TRUE)
             .build();
 
@@ -579,21 +613,39 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
             .activo(Boolean.TRUE)
             .build();
 
+    Set<TipoRegimenConcurrenciaNombre> tipoRegimenConcurrenciaNombre = new HashSet<>();
+    tipoRegimenConcurrenciaNombre.add(new TipoRegimenConcurrenciaNombre(Language.ES,
+        "nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId)));
+
     TipoRegimenConcurrencia tipoRegimenConcurrencia = (tipoRegimenConcurrenciaId == null) ? null
         : TipoRegimenConcurrencia.builder()
             .id(tipoRegimenConcurrenciaId)
-            .nombre("nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId))
+            .nombre(tipoRegimenConcurrenciaNombre)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoAmbitoGeograficoNombre> nombre = new HashSet<>();
+    nombre.add(new TipoAmbitoGeograficoNombre(Language.ES,
+        "nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId)));
 
     TipoAmbitoGeografico tipoAmbitoGeografico = (tipoAmbitoGeogragicoId == null) ? null
         : TipoAmbitoGeografico.builder()
             .id(tipoAmbitoGeogragicoId)
-            .nombre("nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId))
+            .nombre(nombre)
             .activo(Boolean.TRUE)
             .build();
 
-    Convocatoria convocatoria = Convocatoria.builder()
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObjeto> convocatoriaObjeto = new HashSet<>();
+    convocatoriaObjeto.add(new ConvocatoriaObjeto(Language.ES, "objeto-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones
+        .add(new ConvocatoriaObservaciones(Language.ES, "observaciones-" + String.format("%03d", convocatoriaId)));
+
+    return Convocatoria.builder()
         .id(convocatoriaId)
         .unidadGestionRef((unidadGestionId == null) ? null : "unidad-" + String.format("%03d", unidadGestionId))
         .modeloEjecucion(modeloEjecucion)
@@ -601,9 +653,9 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaProvisional(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaConcesion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo-" + String.format("%03d", convocatoriaId))
-        .objeto("objeto-" + String.format("%03d", convocatoriaId))
-        .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
+        .titulo(convocatoriaTitulo)
+        .objeto(convocatoriaObjeto)
+        .observaciones(convocatoriaObservaciones)
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
         .estado(Convocatoria.Estado.REGISTRADA)
@@ -612,9 +664,6 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
         .clasificacionCVN(ClasificacionCVN.AYUDAS)
         .activo(activo)
         .build();
-    // @formatter:on
-
-    return convocatoria;
   }
 
   /**
@@ -625,11 +674,16 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
    * @return el objeto TipoHito
    */
   private TipoHito generarMockTipoHito(Long id, Boolean activo) {
+    Set<TipoHitoNombre> nombreTipoHito = new HashSet<>();
+    nombreTipoHito.add(new TipoHitoNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoHitoDescripcion> descripcionTipoHito = new HashSet<>();
+    descripcionTipoHito.add(new TipoHitoDescripcion(Language.ES, "descripcion-" + id));
 
     TipoHito tipoHito = new TipoHito();
     tipoHito.setId(id);
-    tipoHito.setNombre("nombre-" + id);
-    tipoHito.setDescripcion("descripcion-" + id);
+    tipoHito.setNombre(nombreTipoHito);
+    tipoHito.setDescripcion(descripcionTipoHito);
     tipoHito.setActivo(activo);
 
     return tipoHito;
@@ -665,11 +719,14 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   private ConvocatoriaHito generarMockConvocatoriaHito(Long id, Long convocatoriaId) {
 
     // @formatter:off
+    Set<ConvocatoriaHitoComentario> comentarioConvocatoriaHito = new HashSet<>();
+    comentarioConvocatoriaHito.add(new ConvocatoriaHitoComentario(Language.ES, "comentario"));
+
     return ConvocatoriaHito.builder()
         .id(id)
         .convocatoriaId(convocatoriaId)
         .fecha(Instant.parse("2020-10-19T00:00:00Z"))
-        .comentario("comentario")
+        .comentario(comentarioConvocatoriaHito)
         .tipoHito(generarMockTipoHito(1L, Boolean.TRUE))
         .convocatoriaHitoAviso(null)
         .build();
@@ -679,10 +736,13 @@ class ConvocatoriaHitoServiceTest extends BaseServiceTest {
   private ConvocatoriaHitoInput generarMockConvocatoriaHitoInput(Long convocatoriaId) {
 
     // @formatter:off
+    List<I18nFieldValueDto> comentarioConvocatoriaHito = new ArrayList();
+    comentarioConvocatoriaHito.add(new I18nFieldValueDto(Language.ES, "comentario"));
+
     return ConvocatoriaHitoInput.builder()
         .convocatoriaId(convocatoriaId)
         .fecha(Instant.parse("2020-10-19T00:00:00Z"))
-        .comentario("comentario")
+        .comentario(comentarioConvocatoriaHito)
         .tipoHitoId(1L)
         .aviso(null)
         .build();

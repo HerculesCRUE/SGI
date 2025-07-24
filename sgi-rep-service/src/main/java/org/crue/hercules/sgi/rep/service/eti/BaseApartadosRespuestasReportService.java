@@ -2,31 +2,26 @@ package org.crue.hercules.sgi.rep.service.eti;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.swing.table.DefaultTableModel;
 import javax.validation.Valid;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ObjectUtils;
-import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
+import org.crue.hercules.sgi.rep.dto.eti.ApartadoDefinicionDto;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoDto;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoOutput;
 import org.crue.hercules.sgi.rep.dto.eti.BloqueDto;
+import org.crue.hercules.sgi.rep.dto.eti.BloqueNombreDto;
 import org.crue.hercules.sgi.rep.dto.eti.BloqueOutput;
 import org.crue.hercules.sgi.rep.dto.eti.BloquesReportInput;
 import org.crue.hercules.sgi.rep.dto.eti.BloquesReportOutput;
 import org.crue.hercules.sgi.rep.dto.eti.ComentarioDto;
-import org.crue.hercules.sgi.rep.dto.eti.ElementOutput;
 import org.crue.hercules.sgi.rep.dto.eti.RespuestaDto;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
-import org.crue.hercules.sgi.rep.service.SgiReportExcelService;
-import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
+import org.crue.hercules.sgi.rep.util.SgiReportContextHolder;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,23 +33,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class BaseApartadosRespuestasReportService {
 
-  private static final Long DICTAMEN_NO_PROCEDE_EVALUAR = 4L;
-
   private final BloqueService bloqueService;
   private final ApartadoService apartadoService;
   private final SgiFormlyService sgiFormlyService;
   private final RespuestaService respuestaService;
-  private final SgiReportExcelService sgiExcelService;
 
-  public BaseApartadosRespuestasReportService(SgiConfigProperties sgiConfigProperties,
-      SgiApiConfService sgiApiConfService, BloqueService bloqueService,
-      ApartadoService apartadoService, SgiFormlyService sgiFormlyService, RespuestaService respuestaService,
-      SgiReportExcelService sgiExcelService) {
+  public BaseApartadosRespuestasReportService(
+      BloqueService bloqueService,
+      ApartadoService apartadoService, SgiFormlyService sgiFormlyService, RespuestaService respuestaService) {
     this.bloqueService = bloqueService;
     this.apartadoService = apartadoService;
     this.sgiFormlyService = sgiFormlyService;
     this.respuestaService = respuestaService;
-    this.sgiExcelService = sgiExcelService;
   }
 
   public ApartadoService getApartadoService() {
@@ -98,7 +88,7 @@ public class BaseApartadosRespuestasReportService {
       }
     } catch (Exception e) {
       log.error(e.getMessage());
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     return bloquesReportOutput;
   }
@@ -106,9 +96,11 @@ public class BaseApartadosRespuestasReportService {
   private void parseBloque(BloquesReportInput input, BloquesReportOutput bloquesReportOutput, BloqueDto bloque,
       int tamBloques) {
 
-    String nombre = bloque.getNombre();
+    Optional<BloqueNombreDto> bloqueNombre = bloque.getNombre().stream()
+        .filter(n -> n.getLang().equalsIgnoreCase(SgiReportContextHolder.getLanguage().getCode())).findFirst();
+    String nombre = bloqueNombre.get().getValue();
     if (bloque.getFormulario() != null) {
-      nombre = bloque.getOrden() + ". " + bloque.getNombre();
+      nombre = bloque.getOrden() + ". " + nombre;
     }
 
     // @formatter:off
@@ -144,7 +136,7 @@ public class BaseApartadosRespuestasReportService {
     return apartadoOutput;
   }
 
-  public List<ApartadoOutput> findApartadosHijosAndRespuestas(BloquesReportInput input, Long idPadre) {
+  private List<ApartadoOutput> findApartadosHijosAndRespuestas(BloquesReportInput input, Long idPadre) {
     List<ApartadoOutput> apartadosHijosResult = new ArrayList<>();
 
     List<ApartadoDto> apartados = apartadoService.findByPadreId(idPadre);
@@ -165,7 +157,7 @@ public class BaseApartadosRespuestasReportService {
     return apartadosHijosResult;
   }
 
-  public ApartadoOutput parseApartadoOutput(BloquesReportInput input, ApartadoDto apartado) {
+  private ApartadoOutput parseApartadoOutput(BloquesReportInput input, ApartadoDto apartado) {
     ApartadoOutput apartadoOutput = null;
 
     List<ComentarioDto> comentarios = new ArrayList<>();
@@ -185,12 +177,15 @@ public class BaseApartadosRespuestasReportService {
       respuestaDto = respuestaService.findByMemoriaIdAndApartadoId(input.getIdMemoria(), apartado.getId());
     }
 
+    Optional<ApartadoDefinicionDto> apartadoDefinicion = apartado.getDefinicion().stream()
+        .filter(d -> d.getLang().equalsIgnoreCase(SgiReportContextHolder.getLanguage().getCode())).findFirst();
+
     // @formatter:off
     apartadoOutput = ApartadoOutput.builder()
       .id(apartado.getId())
-      .nombre(apartado.getNombre())
+      .nombre(apartadoDefinicion.get().getNombre())
       .orden(apartado.getOrden())
-      .esquema(apartado.getEsquema())
+      .esquema(apartadoDefinicion.get().getEsquema())
       .respuesta(respuestaDto)
       .comentarios(comentarios)
       .mostrarContenidoApartado(input.getMostrarContenidoApartado())
@@ -210,84 +205,4 @@ public class BaseApartadosRespuestasReportService {
             .equals(respuestaAnteriorDto.getValor());
   }
 
-  public ApartadoOutput getApartadoOutputFromElementRow(int index, List<ApartadoOutput> jerarquiaApartados) {
-    ApartadoOutput apartadoOutput = null;
-    if (jerarquiaApartados.size() >= index + 1 && null != jerarquiaApartados.get(index)) {
-      apartadoOutput = jerarquiaApartados.get(index);
-      if (null == apartadoOutput.getOrden()) {
-        apartadoOutput.setOrden(0);
-      }
-      if (null == apartadoOutput.getId()) {
-        apartadoOutput.setId(0L);
-      }
-      if (null == apartadoOutput.getTitulo()) {
-        apartadoOutput.setTitulo("");
-      }
-    } else {
-      apartadoOutput = ApartadoOutput.builder().id(0L).titulo("").orden(0).build();
-    }
-
-    return apartadoOutput;
-  }
-
-  /**
-   * Obtiene el DefaultTableModel de un campo de tipo table-crud
-   * 
-   * @param elemento ElementOutput
-   * @return DefaultTableModel
-   */
-  public DefaultTableModel parseTableCrudTableModel(ElementOutput elemento) {
-    DefaultTableModel tableModel = new DefaultTableModel();
-    try {
-      ObjectMapper mapper = new ObjectMapper();
-      List<List<ElementOutput>> elementsTableCrud = mapper.readValue(elemento.getContent(),
-          new TypeReference<List<List<ElementOutput>>>() {
-          });
-
-      Vector<Object> columns = new Vector<>();
-      Vector<Vector<Object>> elements = new Vector<>();
-      for (int i = 0; i < elementsTableCrud.size(); i++) {
-        List<ElementOutput> rowElementTableCrud = elementsTableCrud.get(i);
-
-        Vector<Object> elementsRow = new Vector<>();
-        for (ElementOutput elementTableCrud : rowElementTableCrud) {
-          if (i == 0) {
-            String columnName = null != elementTableCrud.getNombre() ? elementTableCrud.getNombre() : "";
-            columns.add(columnName);
-          }
-          String content = null != elementTableCrud.getContent() ? elementTableCrud.getContent() : "";
-          elementsRow.add(content);
-        }
-        elements.add(elementsRow);
-      }
-
-      tableModel.setDataVector(elements, columns);
-    } catch (Exception e) {
-      log.error(e.getMessage());
-    }
-    return tableModel;
-  }
-
-  public ApartadoOutput generateApartadoOutputBasic(int apartadoIndex, String apartadoTitle) {
-    // @formatter:off
-    return ApartadoOutput.builder()
-      .id(Long.valueOf(apartadoIndex))
-      .nombre(apartadoTitle)
-      .titulo(apartadoTitle)
-      .orden(apartadoIndex)
-      .elementos(new ArrayList<>())
-      .apartadosHijos(new ArrayList<>())
-      .build();
-    // @formatter:on
-  }
-
-  public ElementOutput generateTemplateElementOutput(String question, String answer) {
-    // @formatter:off
-    return ElementOutput.builder()
-      .nombre("")
-      .tipo(SgiFormlyService.TEMPLATE_PROPERTY)
-      .content(SgiFormlyService.P_HTML + question + SgiFormlyService.I_HTML + answer + SgiFormlyService.I_CLOSE_HTML +  SgiFormlyService.P_CLOSE_HTML )
-      .build();
-    // @formatter:on
-  }
 }

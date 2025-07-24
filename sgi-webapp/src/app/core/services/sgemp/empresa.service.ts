@@ -55,9 +55,12 @@ export class EmpresaService extends SgiRestService<string, IEmpresa> {
     return this.findAll(options);
   }
 
-  findAutocomplete(term: string): Observable<IEmpresa[]> {
+  findAutocomplete(term: string, onlyEmpresasPrincipales?: boolean): Observable<IEmpresa[]> {
     let params: HttpParams = new HttpParams();
     params = params.append('busqueda', term);
+    if (onlyEmpresasPrincipales) {
+      params = params.append('onlyEmpresasPrincipales', onlyEmpresasPrincipales.toString());
+    }
     return this.http.get<IEmpresa[]>(`${this.endpointUrl}Fast`, { params });
   }
 

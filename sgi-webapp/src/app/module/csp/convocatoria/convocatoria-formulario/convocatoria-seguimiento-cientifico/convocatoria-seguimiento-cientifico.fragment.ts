@@ -1,6 +1,6 @@
 import { IConvocatoriaPeriodoSeguimientoCientifico } from '@core/models/csp/convocatoria-periodo-seguimiento-cientifico';
 import { Fragment } from '@core/services/action-service';
-import { ConvocatoriaSeguimientoCientificoService } from '@core/services/csp/convocatoria-seguimiento-cientifico.service';
+import { ConvocatoriaSeguimientoCientificoService } from '@core/services/csp/convocatoria-periodo-seguimiento-cientifico/convocatoria-seguimiento-cientifico.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, Observable } from 'rxjs';

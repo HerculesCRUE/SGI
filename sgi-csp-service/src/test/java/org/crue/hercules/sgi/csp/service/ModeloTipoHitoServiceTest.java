@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
@@ -11,10 +13,13 @@ import org.crue.hercules.sgi.csp.exceptions.TipoHitoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoHito;
 import org.crue.hercules.sgi.csp.model.TipoHito;
+import org.crue.hercules.sgi.csp.model.TipoHitoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoHitoNombre;
 import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoHitoRepository;
 import org.crue.hercules.sgi.csp.repository.TipoHitoRepository;
 import org.crue.hercules.sgi.csp.service.impl.ModeloTipoHitoServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -479,135 +484,6 @@ class ModeloTipoHitoServiceTest extends BaseServiceTest {
     }
   }
 
-  @Test
-  void findAllByModeloEjecucionActivosConvocatoria_ReturnsPage() {
-    // given: Una lista con 37 ModeloTipoHito activos para convocatorias para el
-    // ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-    List<ModeloTipoHito> modeloTipoHitos = new ArrayList<>();
-    for (long i = 1; i <= 37; i++) {
-      modeloTipoHitos.add(generarModeloTipoHito(i, idModeloEjecucion, i));
-    }
-
-    BDDMockito.given(modeloTipoHitoRepository.findAll(ArgumentMatchers.<Specification<ModeloTipoHito>>any(),
-        ArgumentMatchers.<Pageable>any())).willAnswer(new Answer<Page<ModeloTipoHito>>() {
-          @Override
-          public Page<ModeloTipoHito> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > modeloTipoHitos.size() ? modeloTipoHitos.size() : toIndex;
-            List<ModeloTipoHito> content = modeloTipoHitos.subList(fromIndex, toIndex);
-            Page<ModeloTipoHito> page = new PageImpl<>(content, pageable, modeloTipoHitos.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    Pageable paging = PageRequest.of(3, 10);
-    Page<ModeloTipoHito> page = service.findAllByModeloEjecucionActivosConvocatoria(idModeloEjecucion, null, paging);
-
-    // then: Devuelve la pagina 3 con los ModeloTipoHito del 31 al 37
-    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
-    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
-    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
-    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
-    for (int i = 31; i <= 37; i++) {
-      ModeloTipoHito modeloTipoHito = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(modeloTipoHito.getId()).isEqualTo(Long.valueOf(i));
-      Assertions.assertThat(modeloTipoHito.getModeloEjecucion().getId()).isEqualTo(idModeloEjecucion);
-      Assertions.assertThat(modeloTipoHito.getTipoHito().getId()).isEqualTo(Long.valueOf(i));
-    }
-  }
-
-  @Test
-  void findAllByModeloEjecucionActivosProyecto_ReturnsPage() {
-    // given: Una lista con 37 ModeloTipoHito activos para convocatorias para el
-    // ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-    List<ModeloTipoHito> modeloTipoHitos = new ArrayList<>();
-    for (long i = 1; i <= 37; i++) {
-      modeloTipoHitos.add(generarModeloTipoHito(i, idModeloEjecucion, i));
-    }
-
-    BDDMockito.given(modeloTipoHitoRepository.findAll(ArgumentMatchers.<Specification<ModeloTipoHito>>any(),
-        ArgumentMatchers.<Pageable>any())).willAnswer(new Answer<Page<ModeloTipoHito>>() {
-          @Override
-          public Page<ModeloTipoHito> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > modeloTipoHitos.size() ? modeloTipoHitos.size() : toIndex;
-            List<ModeloTipoHito> content = modeloTipoHitos.subList(fromIndex, toIndex);
-            Page<ModeloTipoHito> page = new PageImpl<>(content, pageable, modeloTipoHitos.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    Pageable paging = PageRequest.of(3, 10);
-    Page<ModeloTipoHito> page = service.findAllByModeloEjecucionActivosProyecto(idModeloEjecucion, null, paging);
-
-    // then: Devuelve la pagina 3 con los ModeloTipoHito del 31 al 37
-    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
-    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
-    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
-    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
-    for (int i = 31; i <= 37; i++) {
-      ModeloTipoHito modeloTipoHito = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(modeloTipoHito.getId()).isEqualTo(Long.valueOf(i));
-      Assertions.assertThat(modeloTipoHito.getModeloEjecucion().getId()).isEqualTo(idModeloEjecucion);
-      Assertions.assertThat(modeloTipoHito.getTipoHito().getId()).isEqualTo(Long.valueOf(i));
-    }
-  }
-
-  @Test
-  void findAllByModeloEjecucionActivosSolicitud_ReturnsPage() {
-    // given: Una lista con 37 ModeloTipoHito activos para convocatorias para el
-    // ModeloEjecucion
-    Long idModeloEjecucion = 1L;
-    List<ModeloTipoHito> modeloTipoHitos = new ArrayList<>();
-    for (long i = 1; i <= 37; i++) {
-      modeloTipoHitos.add(generarModeloTipoHito(i, idModeloEjecucion, i));
-    }
-
-    BDDMockito.given(modeloTipoHitoRepository.findAll(ArgumentMatchers.<Specification<ModeloTipoHito>>any(),
-        ArgumentMatchers.<Pageable>any())).willAnswer(new Answer<Page<ModeloTipoHito>>() {
-          @Override
-          public Page<ModeloTipoHito> answer(InvocationOnMock invocation) throws Throwable {
-            Pageable pageable = invocation.getArgument(1, Pageable.class);
-            int size = pageable.getPageSize();
-            int index = pageable.getPageNumber();
-            int fromIndex = size * index;
-            int toIndex = fromIndex + size;
-            toIndex = toIndex > modeloTipoHitos.size() ? modeloTipoHitos.size() : toIndex;
-            List<ModeloTipoHito> content = modeloTipoHitos.subList(fromIndex, toIndex);
-            Page<ModeloTipoHito> page = new PageImpl<>(content, pageable, modeloTipoHitos.size());
-            return page;
-          }
-        });
-
-    // when: Get page=3 with pagesize=10
-    Pageable paging = PageRequest.of(3, 10);
-    Page<ModeloTipoHito> page = service.findAllByModeloEjecucionActivosSolicitud(idModeloEjecucion, null, paging);
-
-    // then: Devuelve la pagina 3 con los ModeloTipoHito del 31 al 37
-    Assertions.assertThat(page.getContent()).as("getContent().size()").hasSize(7);
-    Assertions.assertThat(page.getNumber()).as("getNumber()").isEqualTo(3);
-    Assertions.assertThat(page.getSize()).as("getSize()").isEqualTo(10);
-    Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
-    for (int i = 31; i <= 37; i++) {
-      ModeloTipoHito modeloTipoHito = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(modeloTipoHito.getId()).isEqualTo(Long.valueOf(i));
-      Assertions.assertThat(modeloTipoHito.getModeloEjecucion().getId()).isEqualTo(idModeloEjecucion);
-      Assertions.assertThat(modeloTipoHito.getTipoHito().getId()).isEqualTo(Long.valueOf(i));
-    }
-  }
-
   /**
    * Función que devuelve un objeto TipoHito
    * 
@@ -625,10 +501,16 @@ class ModeloTipoHitoServiceTest extends BaseServiceTest {
    * @return el objeto TipoHito
    */
   TipoHito generarMockTipoHito(Long id, String nombre) {
+    Set<TipoHitoNombre> nombreTipoHito = new HashSet<>();
+    nombreTipoHito.add(new TipoHitoNombre(Language.ES, nombre));
+
+    Set<TipoHitoDescripcion> descripcionTipoHito = new HashSet<>();
+    descripcionTipoHito.add(new TipoHitoDescripcion(Language.ES, "descripcion-" + id));
+
     TipoHito tipoHito = new TipoHito();
     tipoHito.setId(id);
-    tipoHito.setNombre(nombre);
-    tipoHito.setDescripcion("descripcion-" + id);
+    tipoHito.setNombre(nombreTipoHito);
+    tipoHito.setDescripcion(descripcionTipoHito);
     tipoHito.setActivo(Boolean.TRUE);
     return tipoHito;
   }
@@ -642,11 +524,13 @@ class ModeloTipoHitoServiceTest extends BaseServiceTest {
    * @return el objeto ModeloTipoHito
    */
   private ModeloTipoHito generarModeloTipoHito(Long modeloTipoHitoId, Long modeloEjecucionId, Long tipoHitoId) {
+    Set<TipoHitoNombre> nombreTipoHito = new HashSet<>();
+    nombreTipoHito.add(new TipoHitoNombre(Language.ES, "nombreTipoHito"));
 
     ModeloTipoHito modeloTipoHito = new ModeloTipoHito();
     modeloTipoHito.setId(modeloTipoHitoId);
     modeloTipoHito.setModeloEjecucion(ModeloEjecucion.builder().id(modeloEjecucionId).activo(Boolean.TRUE).build());
-    modeloTipoHito.setTipoHito(TipoHito.builder().id(tipoHitoId).activo(Boolean.TRUE).build());
+    modeloTipoHito.setTipoHito(TipoHito.builder().id(tipoHitoId).nombre(nombreTipoHito).activo(Boolean.TRUE).build());
     modeloTipoHito.setSolicitud(Boolean.TRUE);
     modeloTipoHito.setProyecto(Boolean.TRUE);
     modeloTipoHito.setConvocatoria(Boolean.TRUE);

@@ -11,7 +11,10 @@ import org.crue.hercules.sgi.csp.repository.ProyectoPaqueteTrabajoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoPaqueteTrabajoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoPaqueteTrabajoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -19,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import io.micrometer.core.instrument.util.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -29,6 +31,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajoService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_FIELD_PERSONA_MES = "proyectoPaqueteTrabajo.personaMes";
+  private static final String MSG_MODEL_PROYECTO_PAQUETE_TRABAJO = "org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo.message";
+  private static final String MSG_PAQUETES_TRABAJO_NO_CONFIGURADOS_PROYECTO = "paquetesTrabajo.proyecto.noConfigurados";
+  private static final String MSG_PAQUETES_TRABAJO_PERIODO_PROYECTO_FUERA_RANGO = "paquetesTrabajo.proyecto.periodoFueraRango";
+  private static final String MSG_PROBLEM_NOT_EMPTY = "org.springframework.util.Assert.notEmpty.message";
 
   private final ProyectoPaqueteTrabajoRepository repository;
   private final ProyectoRepository proyectoRepository;
@@ -52,8 +61,7 @@ public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajo
   public ProyectoPaqueteTrabajo create(ProyectoPaqueteTrabajo proyectoPaqueteTrabajo) {
     log.debug("create(ProyectoPaqueteTrabajo ProyectoPaqueteTrabajo) - start");
 
-    Assert.isNull(proyectoPaqueteTrabajo.getId(),
-        "ProyectoPaqueteTrabajo id tiene que ser null para crear un nuevo ProyectoPaqueteTrabajo");
+    AssertHelper.idIsNull(proyectoPaqueteTrabajo.getId(), ProyectoPaqueteTrabajo.class);
 
     this.validarRequeridosProyectoPaqueteTrabajo(proyectoPaqueteTrabajo);
     this.validarProyectoPaqueteTrabajo(proyectoPaqueteTrabajo, null);
@@ -78,8 +86,7 @@ public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajo
   public ProyectoPaqueteTrabajo update(ProyectoPaqueteTrabajo proyectoPaqueteTrabajoActualizar) {
     log.debug("update(ProyectoPaqueteTrabajo ProyectoPaqueteTrabajoActualizar) - start");
 
-    Assert.notNull(proyectoPaqueteTrabajoActualizar.getId(),
-        "ProyectoPaqueteTrabajo id no puede ser null para actualizar un ProyectoPaqueteTrabajo");
+    AssertHelper.idNotNull(proyectoPaqueteTrabajoActualizar.getId(), ProyectoPaqueteTrabajo.class);
 
     this.validarRequeridosProyectoPaqueteTrabajo(proyectoPaqueteTrabajoActualizar);
 
@@ -113,7 +120,7 @@ public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajo
     // TODO: Implementar borrado en cascada cuando esté listo
     // PaqueteTrabajoInvestigadores
 
-    Assert.notNull(id, "ProyectoPaqueteTrabajo id no puede ser null para eliminar un ProyectoPaqueteTrabajo");
+    AssertHelper.idNotNull(id, ProyectoPaqueteTrabajo.class);
     if (!repository.existsById(id)) {
       throw new ProyectoPaqueteTrabajoNotFoundException(id);
     }
@@ -122,7 +129,7 @@ public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajo
     // del proyecto, el campo "Paquetes de trabajo" tiene valor afirmativo
     Optional<Boolean> permiteProyectoPaqueteTrabajo = repository.getPermitePaquetesTrabajo(id);
     Assert.isTrue(permiteProyectoPaqueteTrabajo.isPresent() && permiteProyectoPaqueteTrabajo.get(),
-        "El proyecto no está configurado para utilizar paquetes de trabajo");
+        ApplicationContextSupport.getMessage(MSG_PAQUETES_TRABAJO_NO_CONFIGURADOS_PROYECTO));
 
     repository.deleteById(id);
     log.debug("delete(Long id) - end");
@@ -177,9 +184,8 @@ public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajo
     log.debug(
         "validarProyectoPaqueteTrabajo(ProyectoPaqueteTrabajo datosProyectoPaqueteTrabajo, ProyectoPaqueteTrabajo datosOriginales) - start");
 
-    Assert.isTrue(
-        datosProyectoPaqueteTrabajo.getFechaFin().compareTo(datosProyectoPaqueteTrabajo.getFechaInicio()) >= 0,
-        "La fecha de fin debe ser posterior a la fecha de inicio");
+    AssertHelper.isBefore(
+        datosProyectoPaqueteTrabajo.getFechaFin().compareTo(datosProyectoPaqueteTrabajo.getFechaInicio()) >= 0);
 
     // Se comprueba la existencia del proyecto
     Long proyectoId = datosProyectoPaqueteTrabajo.getProyectoId();
@@ -190,23 +196,21 @@ public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajo
     // del proyecto, el campo "Paquetes de trabajo" tiene valor afirmativo
     Optional<Boolean> permiteProyectoPaqueteTrabajo = proyectoRepository.getPermitePaquetesTrabajo(proyectoId);
     Assert.isTrue(permiteProyectoPaqueteTrabajo.isPresent() && permiteProyectoPaqueteTrabajo.get(),
-        "El proyecto no está configurado para utilizar paquetes de trabajo");
+        ApplicationContextSupport.getMessage(MSG_PAQUETES_TRABAJO_NO_CONFIGURADOS_PROYECTO));
 
     // Nombre único en el proyecto
     if (datosOriginales == null) {
-      Assert.isTrue(
+      AssertHelper.entityExists(
           !(repository.existsProyectoPaqueteTrabajoByProyectoIdAndNombre(proyectoId,
               datosProyectoPaqueteTrabajo.getNombre())),
-          "Ya existe un ProyectoPaqueteTrabajo en el proyecto con el nombre '" + datosProyectoPaqueteTrabajo.getNombre()
-              + "'");
+          Proyecto.class, ProyectoPaqueteTrabajo.class);
     } else {
       // Si se está modificando se excluye de la búsqueda el propio
       // ProyectoPaqueteTrabajo
-      Assert.isTrue(
+      AssertHelper.entityExists(
           !(repository.existsProyectoPaqueteTrabajoByIdNotAndProyectoIdAndNombre(datosOriginales.getId(), proyectoId,
               datosProyectoPaqueteTrabajo.getNombre())),
-          "Ya existe un ProyectoPaqueteTrabajo en el proyecto con el nombre '" + datosProyectoPaqueteTrabajo.getNombre()
-              + "'");
+          Proyecto.class, ProyectoPaqueteTrabajo.class);
     }
 
     // Fechas dentro del rango del proyecto
@@ -215,12 +219,12 @@ public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajo
 
     if (proyecto.getFechaInicio() != null) {
       Assert.isTrue(!datosProyectoPaqueteTrabajo.getFechaInicio().isBefore(proyecto.getFechaInicio()),
-          "El periodo del ProyectoPaqueteTrabajo no se encuentra dentro del rango de fechas definido para el proyecto");
+          ApplicationContextSupport.getMessage(MSG_PAQUETES_TRABAJO_PERIODO_PROYECTO_FUERA_RANGO));
     }
 
     if (proyectoFechaFin != null) {
       Assert.isTrue(!datosProyectoPaqueteTrabajo.getFechaFin().isAfter(proyectoFechaFin),
-          "El periodo del ProyectoPaqueteTrabajo no se encuentra dentro del rango de fechas definido para el proyecto");
+          ApplicationContextSupport.getMessage(MSG_PAQUETES_TRABAJO_PERIODO_PROYECTO_FUERA_RANGO));
     }
 
     log.debug(
@@ -236,21 +240,23 @@ public class ProyectoPaqueteTrabajoServiceImpl implements ProyectoPaqueteTrabajo
   private void validarRequeridosProyectoPaqueteTrabajo(ProyectoPaqueteTrabajo datosProyectoPaqueteTrabajo) {
     log.debug("validarRequeridosProyectoPaqueteTrabajo(ProyectoPaqueteTrabajo datosProyectoPaqueteTrabajo) - start");
 
-    Assert.isTrue(datosProyectoPaqueteTrabajo.getProyectoId() != null,
-        "Id Proyecto no puede ser null para realizar la acción sobre ProyectoPaqueteTrabajo");
-
-    Assert.isTrue(StringUtils.isNotBlank(datosProyectoPaqueteTrabajo.getNombre()),
-        "Nombre PaqueteTrabajo no puede ser null para realizar la acción sobre ProyectoPaqueteTrabajo");
-
-    Assert.notNull(datosProyectoPaqueteTrabajo.getFechaInicio(),
-        "Fecha inicio no puede ser null para realizar la acción sobre ProyectoPaqueteTrabajo");
-
-    Assert.notNull(datosProyectoPaqueteTrabajo.getFechaFin(),
-        "Fecha fin no puede ser null para realizar la acción sobre ProyectoPaqueteTrabajo");
+    AssertHelper.idNotNull(datosProyectoPaqueteTrabajo.getProyectoId(), Proyecto.class);
+    AssertHelper.fieldNotNull(datosProyectoPaqueteTrabajo.getNombre(), ProyectoPaqueteTrabajo.class,
+        AssertHelper.MESSAGE_KEY_NAME);
+    AssertHelper.fieldNotNull(datosProyectoPaqueteTrabajo.getFechaInicio(), ProyectoPaqueteTrabajo.class,
+        AssertHelper.MESSAGE_KEY_DATE_START);
+    AssertHelper.fieldNotNull(datosProyectoPaqueteTrabajo.getFechaFin(), ProyectoPaqueteTrabajo.class,
+        AssertHelper.MESSAGE_KEY_DATE_END);
 
     Assert.isTrue(
         datosProyectoPaqueteTrabajo.getPersonaMes() != null && datosProyectoPaqueteTrabajo.getPersonaMes() >= 0,
-        "Persona/Mes debe tener un valor para realizar la acción sobre ProyectoPaqueteTrabajo");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_NOT_EMPTY)
+            .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                MSG_FIELD_PERSONA_MES))
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                MSG_MODEL_PROYECTO_PAQUETE_TRABAJO))
+            .build());
 
     log.debug("validarRequeridosProyectoPaqueteTrabajo(ProyectoPaqueteTrabajo datosProyectoPaqueteTrabajo) - end");
 

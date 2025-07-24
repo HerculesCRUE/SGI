@@ -35,16 +35,16 @@ export class GrupoLineaInvestigacionDatosGeneralesComponent extends FormFragment
     actionService: GrupoLineaInvestigacionActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.datosGeneralesFragment = this.fragment as GrupoLineaInvestigacionDatosGeneralesFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       GRUPO_LINEA_INVESTIGACION_LINEA_INVESTIGACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

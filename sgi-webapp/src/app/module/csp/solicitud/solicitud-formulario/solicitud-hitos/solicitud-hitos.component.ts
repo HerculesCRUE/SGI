@@ -11,8 +11,10 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
+import { SgiAuthService } from '@sgi/framework/auth';
 import { Subscription } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { SolicitudHitosModalComponent, SolicitudHitosModalComponentData } from '../../modals/solicitud-hitos-modal/solicitud-hitos-modal.component';
@@ -53,16 +55,18 @@ export class SolicitudHitosComponent extends FragmentComponent implements OnInit
     public readonly actionService: SolicitudActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private authService: SgiAuthService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.HITOS, actionService);
+    super(actionService.FRAGMENT.HITOS, actionService, translate);
 
     this.formPart = this.fragment as SolicitudHitosFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -71,9 +75,9 @@ export class SolicitudHitosComponent extends FragmentComponent implements OnInit
           case 'fechaInicio':
             return wrapper.value.fecha;
           case 'tipoHito':
-            return wrapper.value.tipoHito.nombre;
+            return this.languageService.getFieldValue(wrapper.value.tipoHito.nombre);
           case 'comentario':
-            return wrapper.value.comentario;
+            return this.languageService.getFieldValue(wrapper.value.comentario);
           default:
             return wrapper[property];
         }
@@ -86,7 +90,7 @@ export class SolicitudHitosComponent extends FragmentComponent implements OnInit
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_HITO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -114,7 +118,7 @@ export class SolicitudHitosComponent extends FragmentComponent implements OnInit
       hitos: this.dataSource.data.filter(existing => existing !== wrapper).map(hito => hito.value),
       hito: wrapper ? wrapper.value : {} as ISolicitudHito,
       idModeloEjecucion: this.actionService.modeloEjecucionId,
-      readonly: this.formPart.readonly,
+      readonly: wrapper ? !this.modificable(wrapper) : this.formPart.readonly,
       unidadGestionId: this.actionService.solicitud?.unidadGestion?.id,
       tituloSolicitud: this.actionService.solicitud?.titulo,
       tituloConvocatoria: this.actionService.convocatoriaTitulo
@@ -156,6 +160,11 @@ export class SolicitudHitosComponent extends FragmentComponent implements OnInit
 
   ngOnDestroy(): void {
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
+  }
+
+  modificable(solicitudHito: StatusWrapper<ISolicitudHito>): boolean {
+    return !this.formPart.readonly
+      && (!solicitudHito.value?.createdBy || solicitudHito.value.createdBy === this.authService.authStatus$?.getValue()?.userRefId);
   }
 
 }

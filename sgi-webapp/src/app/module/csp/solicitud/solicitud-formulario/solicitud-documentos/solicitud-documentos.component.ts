@@ -5,22 +5,24 @@ import { MatTree, MatTreeFlatDataSource, MatTreeFlattener } from '@angular/mater
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { ISolicitudDocumento } from '@core/models/csp/solicitud-documento';
 import { ITipoDocumento } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { Group } from '@core/services/action-service';
-import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { SgiFileUploadComponent, UploadEvent } from '@shared/file-upload/file-upload.component';
 import { NGXLogger } from 'ngx-logger';
 import { Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { switchMap } from 'rxjs/operators';
 import { SolicitudActionService } from '../../solicitud.action.service';
 import { NodeDocumentoSolicitud, SolicitudDocumentosFragment } from './solicitud-documentos.fragment';
 
@@ -32,6 +34,7 @@ const MSG_DELETE = marker('msg.delete.entity');
 const SOLICITUD_DOCUMENTOS_KEY = marker('csp.documento');
 const SOLICITUD_DOCUMENTO_FICHERO_KEY = marker('csp.documento.fichero');
 const SOLICITUD_DOCUMENTO_NOMBRE_KEY = marker('csp.documento.nombre');
+const SOLICITUD_DOCUMENTO_COMENTARIOS_KEY = marker('csp.documento.comentarios');
 
 enum VIEW_MODE {
   NONE = '',
@@ -71,11 +74,11 @@ export class SolicitudDocumentosComponent extends FragmentComponent implements O
   uploading = false;
 
   disableUpload = true;
-  tiposDocumento: ITipoDocumento[] = [];
 
   msgParamEntity = {};
   msgParamNombreEntity = {};
   msgParamFicheroEntity = {};
+  msgParamComentariosEntity = {};
   textoDelete: string;
 
   private getLevel = (node: NodeDocumentoSolicitud) => node.level;
@@ -94,12 +97,12 @@ export class SolicitudDocumentosComponent extends FragmentComponent implements O
     private readonly logger: NGXLogger,
     public readonly actionService: SolicitudActionService,
     private documentoService: DocumentoService,
-    private configuracionSolicitudService: ConfiguracionSolicitudService,
     private snackBar: SnackBarService,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DOCUMENTOS, actionService);
+    super(actionService.FRAGMENT.DOCUMENTOS, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -120,7 +123,7 @@ export class SolicitudDocumentosComponent extends FragmentComponent implements O
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subcription = this.formPart.documentos$.subscribe(
       (documentos) => {
         this.dataSource.data = documentos;
@@ -131,13 +134,14 @@ export class SolicitudDocumentosComponent extends FragmentComponent implements O
     );
     this.subscriptions.push(subcription);
     this.group.load(new FormGroup({
-      nombre: new FormControl('', [
-        Validators.required,
-        Validators.maxLength(50)
+      nombre: new FormControl([], [
+        I18nValidators.required,
+        I18nValidators.maxLength(50)
       ]),
       fichero: new FormControl(null, Validators.required),
+      fase: new FormControl(null),
       tipoDocumento: new FormControl(null, IsEntityValidator.isValid),
-      comentarios: new FormControl('')
+      comentarios: new FormControl([], I18nValidators.maxLength(2000))
     }));
 
     if (this.formPart.readonly) {
@@ -145,23 +149,10 @@ export class SolicitudDocumentosComponent extends FragmentComponent implements O
     }
 
     this.group.initialize();
-    const convocatoriaId = this.actionService.convocatoriaId;
-    if (convocatoriaId) {
-      this.subscriptions.push(
-        this.configuracionSolicitudService.findAllTipoDocumentosFasePresentacion(convocatoriaId)
-          .pipe(
-            map(tipoDocumentos => tipoDocumentos.items)
-          ).subscribe(
-            (tipos) => {
-              this.tiposDocumento = this.sortTipoDocumentos(tipos);
-            }
-          )
-      );
-    }
     this.switchToNone();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_DOCUMENTOS_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -190,18 +181,11 @@ export class SolicitudDocumentosComponent extends FragmentComponent implements O
       })
     ).subscribe((value) => this.textoDelete = value);
 
-  }
+    this.translate.get(
+      SOLICITUD_DOCUMENTO_COMENTARIOS_KEY,
+      MSG_PARAMS.CARDINALIRY.PLURAL
+    ).subscribe((value) => this.msgParamComentariosEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
 
-  private sortTipoDocumentos(tipoDocumentos: ITipoDocumento[]): ITipoDocumento[] {
-    return tipoDocumentos.sort((a, b) => {
-      if (a.nombre < b.nombre) {
-        return -1;
-      }
-      if (a.nombre > b.nombre) {
-        return 1;
-      }
-      return 0;
-    });
   }
 
   ngOnDestroy(): void {
@@ -239,6 +223,7 @@ export class SolicitudDocumentosComponent extends FragmentComponent implements O
     this.formGroup.reset();
     this.formGroup.get('nombre').patchValue(node?.documento?.value?.nombre);
     this.formGroup.get('fichero').patchValue(node?.fichero);
+    this.formGroup.get('fase').setValue(node?.documento?.value?.tipoFase);
     this.formGroup.get('tipoDocumento').patchValue(node?.documento?.value?.tipoDocumento);
     this.formGroup.get('comentarios').patchValue(node?.documento?.value?.comentario);
 
@@ -302,6 +287,7 @@ export class SolicitudDocumentosComponent extends FragmentComponent implements O
     const detail = this.viewingNode;
     detail.documento.value.nombre = this.formGroup.get('nombre').value;
     detail.title = detail.documento.value.nombre;
+    detail.documento.value.tipoFase = this.formGroup.get('fase').value;
     detail.documento.value.tipoDocumento = this.formGroup.get('tipoDocumento').value;
     detail.documento.value.comentario = this.formGroup.get('comentarios').value;
     detail.fichero = this.formGroup.get('fichero').value;
@@ -347,6 +333,7 @@ export class SolicitudDocumentosComponent extends FragmentComponent implements O
     this.viewMode = VIEW_MODE.EDIT;
     this.loadDetails(this.viewingNode);
     this.formGroup.get('tipoDocumento').disable();
+    this.formGroup.get('fase').disable();
   }
 
   deleteDetail(): void {
@@ -376,6 +363,10 @@ export class SolicitudDocumentosComponent extends FragmentComponent implements O
     // See: https://github.com/angular/components/issues/11381
     this.matTree.renderNodeChanges([]);
     this.matTree.renderNodeChanges(nodes);
+  }
+
+  getI18nValue(i18nFieldValue: I18nFieldValue[]): string {
+    return this.languageService.getFieldValue(i18nFieldValue);
   }
 
 }

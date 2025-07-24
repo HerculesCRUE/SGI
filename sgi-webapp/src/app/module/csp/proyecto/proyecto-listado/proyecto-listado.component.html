@@ -301,7 +301,9 @@
       <ng-container matColumnDef="titulo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header scope="header"> {{'csp.proyecto.titulo' | translate}}
         </th>
-        <td mat-cell *matCellDef="let proyecto">{{proyecto.titulo}}</td>
+        <td mat-cell *matCellDef="let proyecto">
+          <sgi-i18n-table-field [field]="proyecto.titulo"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Referencia en entidad convocante -->

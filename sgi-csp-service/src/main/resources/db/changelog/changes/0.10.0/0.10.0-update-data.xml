@@ -1,0 +1,29 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <changeSet context="!test" author="master" id="0.10.0-solicitud">
+    <update tableName="solicitud">
+      <column name="origen_solicitud" value="CONVOCATORIA_SGI" />
+      <column name="modelo_ejecucion_id"
+        valueComputed="(SELECT c.modelo_ejecucion_id FROM ${schemaPrefix}convocatoria c WHERE c.id = solicitud.convocatoria_id)" />
+      <column
+        name="tipo_finalidad_id"
+        valueComputed="(SELECT c.tipo_finalidad_id FROM ${schemaPrefix}convocatoria c WHERE c.id = solicitud.convocatoria_id)" />
+      <column
+        name="convocatoria_externa"
+        valueComputed="(SELECT c.codigo FROM ${schemaPrefix}convocatoria c WHERE c.id = solicitud.convocatoria_id)" />
+     <where>convocatoria_id IS NOT NULL</where>
+    </update>
+    <update tableName="solicitud">
+      <column name="origen_solicitud" value="CONVOCATORIA_NO_SGI" />
+      <where>convocatoria_id IS NULL</where>
+    </update>
+  </changeSet>
+
+</databaseChangeLog>

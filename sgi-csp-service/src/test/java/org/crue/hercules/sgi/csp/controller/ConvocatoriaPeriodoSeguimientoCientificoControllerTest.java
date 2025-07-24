@@ -2,12 +2,17 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaPeriodoSeguimientoCientificoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientificoObservaciones;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaPeriodoSeguimientoCientificoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -88,8 +93,9 @@ class ConvocatoriaPeriodoSeguimientoCientificoControllerTest extends BaseControl
             .value(convocatoriaPeriodoSeguimientoCientificos.get(0).getMesFinal()))
         .andExpect(MockMvcResultMatchers.jsonPath("$[0].fechaInicioPresentacion").value("2020-10-10T00:00:00Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("$[0].fechaFinPresentacion").value("2020-11-20T23:59:59Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$[0].observaciones")
-            .value(convocatoriaPeriodoSeguimientoCientificos.get(0).getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(
+                convocatoriaPeriodoSeguimientoCientificos.get(0).getObservaciones(), Language.ES)))
 
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(5))
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].convocatoriaId").value(convocatoriaId))
@@ -101,8 +107,9 @@ class ConvocatoriaPeriodoSeguimientoCientificoControllerTest extends BaseControl
             .value(convocatoriaPeriodoSeguimientoCientificos.get(1).getMesFinal()))
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].fechaInicioPresentacion").value("2020-10-10T00:00:00Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].fechaFinPresentacion").value("2020-11-20T23:59:59Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$[1].observaciones")
-            .value(convocatoriaPeriodoSeguimientoCientificos.get(1).getObservaciones()));
+        .andExpect(MockMvcResultMatchers.jsonPath("$[1].observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(
+                convocatoriaPeriodoSeguimientoCientificos.get(1).getObservaciones(), Language.ES)));
   }
 
   @Test
@@ -199,6 +206,9 @@ class ConvocatoriaPeriodoSeguimientoCientificoControllerTest extends BaseControl
    */
   private ConvocatoriaPeriodoSeguimientoCientifico generarMockConvocatoriaPeriodoSeguimientoCientifico(Long id,
       Integer mesInicial, Integer mesFinal, Long convocatoriaId) {
+    Set<ConvocatoriaPeriodoSeguimientoCientificoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ConvocatoriaPeriodoSeguimientoCientificoObservaciones(Language.ES, "observaciones-" + id));
+
     ConvocatoriaPeriodoSeguimientoCientifico convocatoriaPeriodoSeguimientoCientifico = new ConvocatoriaPeriodoSeguimientoCientifico();
     convocatoriaPeriodoSeguimientoCientifico.setId(id);
     convocatoriaPeriodoSeguimientoCientifico.setConvocatoriaId(convocatoriaId == null ? 1 : convocatoriaId);
@@ -207,7 +217,7 @@ class ConvocatoriaPeriodoSeguimientoCientificoControllerTest extends BaseControl
     convocatoriaPeriodoSeguimientoCientifico.setMesFinal(mesFinal);
     convocatoriaPeriodoSeguimientoCientifico.setFechaInicioPresentacion(Instant.parse("2020-10-10T00:00:00Z"));
     convocatoriaPeriodoSeguimientoCientifico.setFechaFinPresentacion(Instant.parse("2020-11-20T23:59:59Z"));
-    convocatoriaPeriodoSeguimientoCientifico.setObservaciones("observaciones-" + id);
+    convocatoriaPeriodoSeguimientoCientifico.setObservaciones(observaciones);
 
     return convocatoriaPeriodoSeguimientoCientifico;
   }

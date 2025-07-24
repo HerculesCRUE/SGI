@@ -5,6 +5,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaFase } from '@core/models/csp/convocatoria-fase';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
@@ -32,7 +33,8 @@ export class ConvocatoriaPlazosFasesPublicComponent extends FragmentComponent im
   }
 
   constructor(
-    public actionService: ConvocatoriaPublicActionService
+    public actionService: ConvocatoriaPublicActionService,
+    private readonly languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.FASES, actionService);
     this.formPart = this.fragment as ConvocatoriaPlazosFasesPublicFragment;
@@ -42,11 +44,17 @@ export class ConvocatoriaPlazosFasesPublicComponent extends FragmentComponent im
     super.ngOnInit();
     this.dataSource = new MatTableDataSource<StatusWrapper<IConvocatoriaFase>>();
     this.dataSource.paginator = this.paginator;
-    this.dataSource.sortingDataAccessor = (wrapper, property) => {
-      if (property === 'aviso') {
-        return !!wrapper.value.aviso1 || !!wrapper.value.aviso2 ? 's' : 'n';
+    this.dataSource.sortingDataAccessor = (wrapper: StatusWrapper<IConvocatoriaFase>, property: string) => {
+      switch (property) {
+        case 'aviso':
+          return !!wrapper.value.aviso1 || !!wrapper.value.aviso2 ? 's' : 'n';
+        case 'observaciones':
+          return this.languageService.getFieldValue(wrapper.value.observaciones);
+        case 'tipoFase':
+          return this.languageService.getFieldValue(wrapper.value.tipoFase?.nombre);
+        default:
+          return wrapper[property];
       }
-      return wrapper.value[property];
     }
     this.dataSource.sort = this.sort;
 
@@ -59,4 +67,5 @@ export class ConvocatoriaPlazosFasesPublicComponent extends FragmentComponent im
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  protected setupI18N(): void { }
 }

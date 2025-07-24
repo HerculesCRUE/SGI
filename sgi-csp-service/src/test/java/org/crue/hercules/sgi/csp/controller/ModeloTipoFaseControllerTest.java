@@ -1,10 +1,16 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.crue.hercules.sgi.csp.exceptions.ModeloTipoFaseNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.service.ModeloTipoFaseService;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -132,44 +138,6 @@ class ModeloTipoFaseControllerTest extends BaseControllerTest {
   }
 
   @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findById_WithExistingId_ReturnsModeloTipoFase() throws Exception {
-
-    // given: Entidad con un determinado Id
-    ModeloTipoFase modeloTipoFase = generarModeloTipoFaseConTipoFaseId(1L);
-
-    BDDMockito.given(modeloTipoFaseService.findById(modeloTipoFase.getId())).willReturn(modeloTipoFase);
-
-    // when: Se busca la entidad por ese Id
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(MODELO_TIPO_FASE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Se recupera la entidad con el Id
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("id").value(modeloTipoFase.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("tipoFase").value(modeloTipoFase.getTipoFase()))
-        .andExpect(MockMvcResultMatchers.jsonPath("proyecto").value(modeloTipoFase.getProyecto()));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "AUTH" })
-  void findById_WithNoExistingId_Returns404() throws Exception {
-
-    BDDMockito.given(modeloTipoFaseService.findById(ArgumentMatchers.anyLong())).will((InvocationOnMock invocation) -> {
-      throw new ModeloTipoFaseNotFoundException(invocation.getArgument(0));
-    });
-
-    // when: Se busca entidad con ese id
-    mockMvc
-        .perform(MockMvcRequestBuilders.get(MODELO_TIPO_FASE_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Se produce error porque no encuentra la entidad con ese Id
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
-  }
-
-  @Test
   @WithMockUser(username = "user", authorities = { "CSP-ME-E" })
   void disableById_Returns204() throws Exception {
     // given: ModeloTipoFase con el id buscado
@@ -194,11 +162,16 @@ class ModeloTipoFaseControllerTest extends BaseControllerTest {
    * @return el objeto TipoDocumento
    */
   private TipoFase generarMockTipoFase(Long id, String nombre) {
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, nombre));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcion-" + id));
 
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id);
-    tipoFase.setNombre(nombre);
-    tipoFase.setDescripcion("descripcion-" + id);
+    tipoFase.setNombre(nombreTipoFase);
+    tipoFase.setDescripcion(descripcionTipoFase);
     tipoFase.setActivo(Boolean.TRUE);
 
     return tipoFase;

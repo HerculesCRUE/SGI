@@ -13,9 +13,12 @@ import java.util.Scanner;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 
+import org.crue.hercules.sgi.framework.web.config.SgiI18nConfig;
 import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.SgiDynamicReportDto;
 import org.crue.hercules.sgi.rep.dto.SgiReportDto;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,6 +26,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 /**
  * BaseReportServiceTest
  */
+@ContextConfiguration(classes = SgiI18nConfig.class, loader = AnnotationConfigContextLoader.class)
 public abstract class BaseReportServiceTest extends BaseServiceTest {
 
   protected SgiDynamicReportDto generarMockSgiDynamicReport(OutputType outputType) {

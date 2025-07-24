@@ -21,11 +21,11 @@ import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria_;
 import org.crue.hercules.sgi.eti.util.Constantes;
+import org.crue.hercules.sgi.framework.data.jpa.repository.query.SgiQueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Component;
 
 import lombok.extern.slf4j.Slf4j;
@@ -99,7 +99,7 @@ public class CustomPeticionEvaluacionRepositoryImpl implements CustomPeticionEva
     cq.where(predicates.toArray(new Predicate[] {}));
     countQuery.where(predicatesCount.toArray(new Predicate[] {}));
 
-    List<Order> orders = QueryUtils.toOrders(pageable.getSort(), root, cb);
+    List<Order> orders = SgiQueryUtils.toOrders(pageable.getSort(), root, cb);
     cq.orderBy(orders);
 
     Long count = entityManager.createQuery(countQuery).getSingleResult();

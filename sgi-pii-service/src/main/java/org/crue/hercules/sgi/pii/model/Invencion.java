@@ -1,10 +1,15 @@
 package org.crue.hercules.sgi.pii.model;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,11 +19,14 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
 import org.crue.hercules.sgi.pii.model.Invencion.OnActualizar;
 
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -47,20 +55,31 @@ public class Invencion extends BaseActivableEntity {
   private Long id;
 
   /** Título */
-  @Column(name = "titulo", length = TITULO_LENGTH, nullable = false)
-  private String titulo;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "invencion_titulo", joinColumns = @JoinColumn(name = "invencion_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<InvencionTitulo> titulo = new HashSet<>();
 
   /** Fecha Comunicación. */
   @Column(name = "fecha_comunicacion", nullable = false)
   private Instant fechaComunicacion;
 
   /** Descripcion */
-  @Column(name = "descripcion", length = LONG_TEXT_LENGTH, nullable = false)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "invencion_descripcion", joinColumns = @JoinColumn(name = "invencion_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<InvencionDescripcion> descripcion = new HashSet<>();
 
   /** Comentarios */
-  @Column(name = "comentarios", length = LONG_TEXT_LENGTH, nullable = true)
-  private String comentarios;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "invencion_comentarios", joinColumns = @JoinColumn(name = "invencion_id"))
+  @Valid
+  @Builder.Default
+  private Set<InvencionComentarios> comentarios = new HashSet<>();
 
   /** Proyecto ref */
   @Column(name = "proyecto_ref", length = REF_LENGTH, nullable = true)

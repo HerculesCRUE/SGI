@@ -2,7 +2,10 @@ package org.crue.hercules.sgi.csp.dto.com;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.List;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +22,7 @@ public class CspComSolicitudCambioEstadoProvisionalData implements Serializable 
   /** Serial version */
   private static final long serialVersionUID = 1L;
 
-  private String tituloConvocatoria;
+  private Collection<? extends I18nFieldValue> tituloConvocatoria;
   private Instant fechaProvisionalConvocatoria;
   private List<Enlace> enlaces;
 

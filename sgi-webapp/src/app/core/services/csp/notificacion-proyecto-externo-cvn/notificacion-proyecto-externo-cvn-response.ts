@@ -1,6 +1,8 @@
+import { I18nFieldValueResponse } from "@core/i18n/i18n-field-response";
+
 export interface INotificacionProyectoExternoCVNResponse {
   id: number;
-  titulo: string;
+  titulo: I18nFieldValueResponse[];
   autorizacionId: number;
   proyectoId: number;
   ambitoGeografico: string;

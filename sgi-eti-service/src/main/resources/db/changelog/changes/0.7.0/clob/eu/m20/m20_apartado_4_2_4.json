@@ -1,0 +1,24 @@
+[
+  {
+    "key": "ap4_2_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.4 Gainbegiratzeko protokoloa"
+    },
+    "fieldGroup": [
+      {
+        "template": "Prestatu animalia gainbegiratzeko protokoloa, eta kuantifikatu gainbegiratuko diren parametroak, honako hauek adierazita: prozeduraren/esku hartzearen zer unetan hasiko den kontrola, eta zenbat iraungo duen eta zer maiztasun izango duen ikuskapenak."
+      },
+      {
+        "key": "protocoloSupervision",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Gainbegiratzeko protokoloa",
+          "required": true
+        }
+      }
+    ]
+  }
+]

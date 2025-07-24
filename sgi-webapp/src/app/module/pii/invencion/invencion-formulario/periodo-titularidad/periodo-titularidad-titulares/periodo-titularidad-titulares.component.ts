@@ -48,13 +48,13 @@ export class PeriodoTitularidadTitularesComponent extends FragmentComponent impl
     private readonly translate: TranslateService,
     private readonly matDialog: MatDialog,
     private readonly dialogService: DialogService) {
-    super(actionService.FRAGMENT.PERIODOS_TITULARIDAD, actionService);
+    super(actionService.FRAGMENT.PERIODOS_TITULARIDAD, actionService, translate);
     this.formPart = this.fragment as PeriodoTitularidadFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor = (item: StatusWrapper<IPeriodoTitularidadTitular>, property: string) => {
@@ -121,7 +121,7 @@ export class PeriodoTitularidadTitularesComponent extends FragmentComponent impl
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       PERIODO_TITULARIDAD_TITULARES_KEY,

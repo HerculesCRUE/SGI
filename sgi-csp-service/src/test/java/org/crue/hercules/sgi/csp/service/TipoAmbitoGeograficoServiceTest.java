@@ -1,13 +1,18 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoAmbitoGeograficoNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.repository.TipoAmbitoGeograficoRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -69,7 +74,7 @@ class TipoAmbitoGeograficoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       TipoAmbitoGeografico tipoAmbitoGeografico = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(tipoAmbitoGeografico.getNombre())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoAmbitoGeografico.getNombre(), Language.ES))
           .isEqualTo("TipoAmbitoGeografico" + String.format("%03d", i));
     }
   }
@@ -87,7 +92,8 @@ class TipoAmbitoGeograficoServiceTest extends BaseServiceTest {
     // then: el TipoAmbitoGeografico
     Assertions.assertThat(tipoAmbitoGeografico).as("isNotNull()").isNotNull();
     Assertions.assertThat(tipoAmbitoGeografico.getId()).as("getId()").isEqualTo(idBuscado);
-    Assertions.assertThat(tipoAmbitoGeografico.getNombre()).as("getNombre()").isEqualTo("nombre-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoAmbitoGeografico.getNombre(), Language.ES))
+        .as("getNombre()").isEqualTo("nombre-1");
     Assertions.assertThat(tipoAmbitoGeografico.getActivo()).as("getActivo()").isTrue();
   }
 
@@ -121,9 +127,12 @@ class TipoAmbitoGeograficoServiceTest extends BaseServiceTest {
    * @return el objeto TipoAmbitoGeografico
    */
   private TipoAmbitoGeografico generarMockTipoAmbitoGeografico(Long id, String nombre) {
+    Set<TipoAmbitoGeograficoNombre> tipoAmbitoGeograficoNombre = new HashSet<>();
+    tipoAmbitoGeograficoNombre.add(new TipoAmbitoGeograficoNombre(Language.ES, nombre));
+
     TipoAmbitoGeografico tipoAmbitoGeografico = new TipoAmbitoGeografico();
     tipoAmbitoGeografico.setId(id);
-    tipoAmbitoGeografico.setNombre(nombre);
+    tipoAmbitoGeografico.setNombre(tipoAmbitoGeograficoNombre);
     tipoAmbitoGeografico.setActivo(true);
 
     return tipoAmbitoGeografico;

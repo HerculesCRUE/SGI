@@ -140,11 +140,11 @@
         <mat-form-field fxFill>
           <mat-label>{{'error.csp.convocatoria-elegibilidad-concepto-gasto.observaciones' | translate}}
           </mat-label>
-          <textarea #obs matInput formControlName="observaciones" type="text" id="observaciones"
+          <sgi-i18n-textarea #obs formControlName="observaciones"
             placeholder="{{'error.csp.convocatoria-elegibilidad-concepto-gasto.observaciones' | translate}}"
             maxlength="250">
-                         </textarea>
-          <mat-hint>{{obs.value.length}} / 250</mat-hint>
+          </sgi-i18n-textarea>
+          <mat-hint>{{obs.editingValue.length}} / 250</mat-hint>
         </mat-form-field>
       </div>
     </div>

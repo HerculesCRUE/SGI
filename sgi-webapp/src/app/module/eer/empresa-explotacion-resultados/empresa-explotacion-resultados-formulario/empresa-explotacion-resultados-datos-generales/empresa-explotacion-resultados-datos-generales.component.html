@@ -46,10 +46,9 @@
         <!-- Nombre razón social -->
         <mat-form-field *ngIf="this.formPart.showRazonSocial">
           <mat-label>{{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}</mat-label>
-          <input matInput type="text"
-            placeholder="{{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}"
+          <sgi-i18n-input placeholder="{{'eer.empresa-explotacion-resultados.nombre-razon-social' | translate}}"
             formControlName="nombreRazonSocial" [required]="this.formPart.showRazonSocial"
-            [readonly]="!this.formPart.showRazonSocial">
+            [disabled]="!this.formPart.showRazonSocial"></sgi-i18n-input>
           <mat-error *ngIf="formGroup.controls.nombreRazonSocial.errors?.required">
             {{ 'error.required.entity' | translate:msgParamNombreRazonSocialEntity }}
           </mat-error>
@@ -71,11 +70,10 @@
         <!--Objeto social -->
         <mat-form-field>
           <mat-label>{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}</mat-label>
-          <textarea matInput type="text" #objSocial
-            placeholder="{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}"
+          <sgi-i18n-textarea #objSocial placeholder="{{'eer.empresa-explotacion-resultados.objeto-social' | translate}}"
             formControlName="objetoSocial" maxLength="1000" required>
-            </textarea>
-          <mat-hint align="end">{{objSocial.value.length}} / 1000</mat-hint>
+          </sgi-i18n-textarea>
+          <mat-hint align="end">{{objSocial.editingValue.length}} / 1000</mat-hint>
           <mat-error *ngIf="formGroup.controls.objetoSocial.errors?.required">
             {{ 'error.required.entity' | translate:msgParamObjetoSocialEntity }}
           </mat-error>
@@ -91,11 +89,10 @@
           <mat-label>{{(formGroup.controls.tipoEmpresa.value === TIPO_EMPRESA.EBT ?
             'eer.empresa-explotacion-resultados.tecnologia' :'eer.empresa-explotacion-resultados.conocimiento') |
             translate}}</mat-label>
-          <textarea matInput formControlName="conocimientoTecnologia" type="text" #tecnologia
+          <sgi-i18n-textarea formControlName="conocimientoTecnologia" #tecnologia
             placeholder="{{(formGroup.controls.tipoEmpresa.value === TIPO_EMPRESA.EBT ? 'eer.empresa-explotacion-resultados.tecnologia' :'eer.empresa-explotacion-resultados.conocimiento') | translate}}"
-            maxLength="1000" required>
-                  </textarea>
-          <mat-hint align="end">{{tecnologia.value.length}} / 1000</mat-hint>
+            maxLength="1000" required> </sgi-i18n-textarea>
+          <mat-hint align="end">{{tecnologia.editingValue.length}} / 1000</mat-hint>
           <mat-error
             *ngIf="formGroup.controls.conocimientoTecnologia.errors?.maxlength && formGroup.controls.tipoEmpresa.value === TIPO_EMPRESA.EBT">
             {{ 'error.maxlength.entity' | translate:msgParamTecnologiaEntity }}
@@ -130,8 +127,8 @@
         <!-- Notario -->
         <mat-form-field>
           <mat-label>{{'eer.empresa-explotacion-resultados.notario' | translate}}</mat-label>
-          <input matInput type="text" placeholder="{{'eer.empresa-explotacion-resultados.notario' | translate}}"
-            formControlName="notario">
+          <sgi-i18n-input placeholder="{{'eer.empresa-explotacion-resultados.notario' | translate}}"
+            formControlName="notario"></sgi-i18n-input>
           <mat-error *ngIf="formGroup.controls.notario.errors?.maxlength">
             {{ 'error.maxlength.entity' | translate:msgParamNotarioEntity }}
           </mat-error>
@@ -184,9 +181,8 @@
         <!-- Observaciones -->
         <mat-form-field fxFlex="100%">
           <mat-label>{{'eer.empresa-explotacion-resultados.observaciones' | translate}}</mat-label>
-          <textarea matInput formControlName="observaciones" type="text"
-            placeholder="{{'eer.empresa-explotacion-resultados.observaciones' | translate}}">
-                  </textarea>
+          <sgi-i18n-textarea formControlName="observaciones"
+            placeholder="{{'eer.empresa-explotacion-resultados.observaciones' | translate}}"></sgi-i18n-textarea>
           <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
             {{ 'error.maxlength.entity' | translate:msgParamObservacionesEntity }}
           </mat-error>

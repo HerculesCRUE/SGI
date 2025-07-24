@@ -54,13 +54,13 @@ export class GrupoEnlaceComponent extends FragmentComponent implements OnInit, O
     private dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.ENLACE, actionService);
+    super(actionService.FRAGMENT.ENLACE, actionService, translate);
     this.formPart = this.fragment as GrupoEnlaceFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IGrupoEnlace>, property: string) => {
@@ -75,7 +75,7 @@ export class GrupoEnlaceComponent extends FragmentComponent implements OnInit, O
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       GRUPO_ENLACE_KEY,

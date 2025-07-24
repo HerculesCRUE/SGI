@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatAutocompleteTrigger } from '@angular/material/autocomplete';
 import { Router } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
@@ -10,7 +10,7 @@ import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-propert
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reunion.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiCkEditorConfig } from '@shared/sgi-ckeditor-config';
+import { CKEDITOR_CONFIG, CkEditorConfig } from '@shared/sgi-ckeditor-config';
 import Editor from 'ckeditor5-custom-build/build/ckeditor';
 import { Observable, Subscription } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -32,7 +32,6 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   public readonly CkEditor = Editor;
-  public readonly configCkEditor = SgiCkEditorConfig.defaultConfig;
 
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
@@ -55,9 +54,10 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
     private readonly convocatoriaReunionService: ConvocatoriaReunionService,
     public actionService: ActaActionService,
     public router: Router,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    @Inject(CKEDITOR_CONFIG) public readonly configCkEditor: CkEditorConfig
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -80,7 +80,7 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
 
   ngOnInit() {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.readonly = this.actionService.readonly;
 
@@ -103,7 +103,7 @@ export class ActaDatosGeneralesComponent extends FormFragmentComponent<IActa> im
     });
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       ACTA_CONVOCATORIA_REUNION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

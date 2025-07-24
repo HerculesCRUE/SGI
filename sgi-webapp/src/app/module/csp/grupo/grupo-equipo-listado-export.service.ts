@@ -5,6 +5,7 @@ import { IGrupoEquipo } from '@core/models/csp/grupo-equipo';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { IPersona } from '@core/models/sgp/persona';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -41,7 +42,8 @@ export class GrupoEquipoListadoExportService extends AbstractTableExportFillServ
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     private readonly grupoService: GrupoService,
-    private personaService: PersonaService,
+    private readonly personaService: PersonaService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -166,7 +168,7 @@ export class GrupoEquipoListadoExportService extends AbstractTableExportFillServ
       elementsRow.push(miembroEquipo.persona?.nombre ?? '');
       elementsRow.push(miembroEquipo.persona?.apellidos ?? '');
       elementsRow.push(this.getEmailPrincipal(miembroEquipo.persona));
-      elementsRow.push(miembroEquipo.rol?.nombre ?? '');
+      elementsRow.push(this.languageService.getFieldValue(miembroEquipo.rol?.nombre));
       elementsRow.push(LuxonUtils.toBackend(miembroEquipo.fechaInicio) ?? '');
       elementsRow.push(LuxonUtils.toBackend(miembroEquipo.fechaFin) ?? '');
       elementsRow.push(miembroEquipo?.participacion ? miembroEquipo?.participacion / 100 : '');

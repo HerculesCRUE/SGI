@@ -1,9 +1,9 @@
 package org.crue.hercules.sgi.eti.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.TareaNotFoundException;
@@ -11,8 +11,13 @@ import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
 import org.crue.hercules.sgi.eti.model.FormacionEspecifica;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Tarea;
+import org.crue.hercules.sgi.eti.model.TareaFormacion;
+import org.crue.hercules.sgi.eti.model.TareaNombre;
+import org.crue.hercules.sgi.eti.model.TareaOrganismo;
 import org.crue.hercules.sgi.eti.model.TipoTarea;
 import org.crue.hercules.sgi.eti.service.TareaService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -31,6 +36,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * TareaControllerTest
@@ -54,7 +61,7 @@ public class TareaControllerTest extends BaseControllerTest {
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("tarea").value("Tarea1"));
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("Tarea1"));
     ;
   }
 
@@ -74,7 +81,7 @@ public class TareaControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "ETI-TAREA-EDITAR" })
   public void replaceTarea_ReturnsTarea() throws Exception {
     // given: Una tarea a modificar
-    String replaceTareaJson = "{\"id\": 1, \"tarea\": \"Tarea1 actualizada\", \"equipoTrabajo\": {\"id\": 100}, \"memoria\": {\"id\": 200}, \"formacion\": \"Formacion1\", \"formacionEspecifica\": {\"id\": 300}, \"organismo\": \"Organismo1\", \"anio\": 2020}";
+    String replaceTareaJson = "{\"id\": 1, \"nombre\": [{\"lang\": \"es\", \"value\": \"Tarea1 actualizada\"}], \"equipoTrabajo\": {\"id\": 100}, \"memoria\": {\"id\": 200}, \"formacion\": [{\"lang\": \"es\", \"value\": \"Formacion1\"}], \"formacionEspecifica\": {\"id\": 300}, \"organismo\": [{\"lang\": \"es\", \"value\": \"Organismo1\"}], \"anio\": 2020}";
 
     Tarea tareaActualizada = generarMockTarea(1L, "Tarea1 actualizada");
 
@@ -87,14 +94,14 @@ public class TareaControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: Modifica la tarea y la devuelve
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("tarea").value("Tarea1 actualizada"));
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("Tarea1 actualizada"));
   }
 
   @Test
   @WithMockUser(username = "user", authorities = { "ETI-TAREA-EDITAR" })
   public void replaceTarea_NotFound() throws Exception {
     // given: Una tarea a modificar
-    String replaceTareaJson = "{\"id\": 1, \"tarea\": \"Tarea1 actualizada\", \"equipoTrabajo\": {\"id\": 100}, \"memoria\": {\"id\": 200}, \"formacion\": \"Formacion1\", \"formacionEspecifica\": {\"id\": 300}, \"organismo\": \"Organismo1\", \"anio\": 2020}";
+    String replaceTareaJson = "{\"id\": 1, \"nombre\": [{\"lang\": \"es\", \"value\": \"Tarea1 actualizada\"}], \"equipoTrabajo\": {\"id\": 100}, \"memoria\": {\"id\": 200}, \"formacion\": [{\"lang\": \"es\", \"value\": \"Formacion1\"}], \"formacionEspecifica\": {\"id\": 300}, \"organismo\": [{\"lang\": \"es\", \"value\": \"Organismo1\"}], \"anio\": 2020}";
 
     BDDMockito.given(tareaService.update(ArgumentMatchers.<Tarea>any())).will((InvocationOnMock invocation) -> {
       throw new TareaNotFoundException(((Tarea) invocation.getArgument(0)).getId());
@@ -175,7 +182,8 @@ public class TareaControllerTest extends BaseControllerTest {
     // containing tarea='Tarea031' to 'Tarea040'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       Tarea tarea = actual.get(i);
-      Assertions.assertThat(tarea.getTarea()).isEqualTo("Tarea" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getNombre(), Language.ES))
+          .isEqualTo("Tarea" + String.format("%03d", j));
     }
   }
 
@@ -195,7 +203,8 @@ public class TareaControllerTest extends BaseControllerTest {
           public Page<Tarea> answer(InvocationOnMock invocation) throws Throwable {
             List<Tarea> content = new ArrayList<>();
             for (Tarea tarea : tareas) {
-              if (tarea.getTarea().startsWith("Tarea") && tarea.getId().equals(5L)) {
+              if (I18nHelper.getValueForLanguage(tarea.getNombre(), Language.ES).startsWith("Tarea")
+                  && tarea.getId().equals(5L)) {
                 content.add(tarea);
               }
             }
@@ -238,7 +247,7 @@ public class TareaControllerTest extends BaseControllerTest {
    * @param descripcion descripcion de la tarea
    * @return el objeto Tarea
    */
-  public Tarea generarMockTarea(Long id, String descripcion) {
+  private Tarea generarMockTarea(Long id, String descripcion) {
     EquipoTrabajo equipoTrabajo = new EquipoTrabajo();
     equipoTrabajo.setId(100L);
 
@@ -250,17 +259,22 @@ public class TareaControllerTest extends BaseControllerTest {
 
     TipoTarea tipoTarea = new TipoTarea();
     tipoTarea.setId(1L);
-    tipoTarea.setNombre("Eutanasia");
-    tipoTarea.setActivo(Boolean.TRUE);
+
+    Set<TareaNombre> nombre = new HashSet<>();
+    nombre.add(new TareaNombre(Language.ES, descripcion));
+    Set<TareaFormacion> formacion = new HashSet<>();
+    formacion.add(new TareaFormacion(Language.ES, "Formacion" + id));
+    Set<TareaOrganismo> organismo = new HashSet<>();
+    organismo.add(new TareaOrganismo(Language.ES, "Organismo" + id));
 
     Tarea tarea = new Tarea();
     tarea.setId(id);
     tarea.setEquipoTrabajo(equipoTrabajo);
     tarea.setMemoria(memoria);
-    tarea.setTarea(descripcion);
-    tarea.setFormacion("Formacion" + id);
+    tarea.setNombre(nombre);
+    tarea.setFormacion(formacion);
     tarea.setFormacionEspecifica(formacionEspecifica);
-    tarea.setOrganismo("Organismo" + id);
+    tarea.setOrganismo(organismo);
     tarea.setAnio(2020);
     tarea.setTipoTarea(tipoTarea);
 

@@ -7,6 +7,8 @@ import java.util.List;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.TipoRequerimientoController;
 import org.crue.hercules.sgi.csp.dto.TipoRequerimientoOutput;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -20,7 +22,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class TipoRequerimientoIT extends BaseIT {
+class TipoRequerimientoIT extends BaseIT {
   private static final String REQUEST_MAPPING = TipoRequerimientoController.REQUEST_MAPPING;
 
   private HttpEntity<Object> buildRequest(HttpHeaders headers,
@@ -30,8 +32,7 @@ public class TipoRequerimientoIT extends BaseIT {
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-    return request;
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -48,7 +49,7 @@ public class TipoRequerimientoIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "nombre=ik=documental";
+    String filter = "nombre.value=ik=documental";
 
     URI uri = UriComponentsBuilder.fromUriString(REQUEST_MAPPING)
         .queryParam("s", sort).queryParam("q", filter).build().toUri();
@@ -65,9 +66,11 @@ public class TipoRequerimientoIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
-    Assertions.assertThat(grupoLineaClasificacion.get(0).getNombre()).as("get(0).getNombre()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(grupoLineaClasificacion.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre()")
         .isEqualTo("Resolución requerimiento documental");
-    Assertions.assertThat(grupoLineaClasificacion.get(1).getNombre()).as("get(1).getNombre()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(grupoLineaClasificacion.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre()")
         .isEqualTo("Requerimiento documental");
   }
 }

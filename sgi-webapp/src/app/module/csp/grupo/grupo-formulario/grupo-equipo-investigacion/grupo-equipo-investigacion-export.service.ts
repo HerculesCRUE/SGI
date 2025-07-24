@@ -4,6 +4,7 @@ import { DEDICACION_MAP } from '@core/models/csp/grupo-equipo';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportService, IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -29,7 +30,8 @@ export class GrupoEquipoInvestigacionExportService extends AbstractTableExportSe
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    protected reportService: ReportService
+    protected reportService: ReportService,
+    private languageService: LanguageService
   ) {
     super(reportService);
   }
@@ -53,7 +55,7 @@ export class GrupoEquipoInvestigacionExportService extends AbstractTableExportSe
           miembroGrupoInvestigacion.persona.emails?.map(e => e.email).join(', ') ?? '',
           miembroGrupoInvestigacion.persona.nombre,
           miembroGrupoInvestigacion.persona.apellidos,
-          miembroGrupoInvestigacion.rol.nombre,
+          this.languageService.getFieldValue(miembroGrupoInvestigacion.rol.nombre),
           miembroGrupoInvestigacion.categoriaProfesional?.nombre ?? '',
           LuxonUtils.toBackend(miembroGrupoInvestigacion.fechaInicio),
           LuxonUtils.toBackend(miembroGrupoInvestigacion.fechaFin),

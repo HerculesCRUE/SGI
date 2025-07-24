@@ -1,13 +1,14 @@
+import { I18N_FIELD_RESPONSE_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IProyectoPeriodoJustificacion } from '@core/models/csp/proyecto-periodo-justificacion';
 import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
-import { ITipoRequerimiento } from '@core/models/csp/tipo-requerimiento';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
+import { TIPO_REQUERIMIENTO_RESPONSE_CONVERTER } from '../tipo-requerimiento/tipo-requerimiento-response.converter';
 import { IRequerimientoJustificacionResponse } from './requerimiento-justificacion-response';
 
 class RequerimientoJustificacionResponseConverter extends
-  SgiBaseConverter<IRequerimientoJustificacionResponse, IRequerimientoJustificacion>{
+  SgiBaseConverter<IRequerimientoJustificacionResponse, IRequerimientoJustificacion> {
   toTarget(value: IRequerimientoJustificacionResponse): IRequerimientoJustificacion {
     if (!value) {
       return value as unknown as IRequerimientoJustificacion;
@@ -30,17 +31,14 @@ class RequerimientoJustificacionResponseConverter extends
       importeReintegrarCi: value.importeReintegrarCi,
       interesesReintegrar: value.interesesReintegrar,
       numRequerimiento: value.numRequerimiento,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.observaciones) : [],
       proyectoPeriodoJustificacion: value.proyectoPeriodoJustificacionId ?
         { id: value.proyectoPeriodoJustificacionId } as IProyectoPeriodoJustificacion : null,
       proyectoProyectoSge: value.proyectoProyectoSgeId ? { id: value.proyectoProyectoSgeId } as IProyectoProyectoSge : null,
       recursoEstimado: value.recursoEstimado,
       requerimientoPrevio: value.requerimientoPrevioId ? { id: value.requerimientoPrevioId } as IRequerimientoJustificacion : null,
       subvencionJustificada: value.subvencionJustificada,
-      tipoRequerimiento: {
-        id: value.tipoRequerimiento.id,
-        nombre: value.tipoRequerimiento.nombre
-      } as ITipoRequerimiento
+      tipoRequerimiento: TIPO_REQUERIMIENTO_RESPONSE_CONVERTER.toTarget(value.tipoRequerimiento)
     };
   }
   fromTarget(value: IRequerimientoJustificacion): IRequerimientoJustificacionResponse {
@@ -65,16 +63,13 @@ class RequerimientoJustificacionResponseConverter extends
       importeReintegrarCi: value.importeReintegrarCi,
       interesesReintegrar: value.interesesReintegrar,
       numRequerimiento: value.numRequerimiento,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.observaciones) : [],
       proyectoPeriodoJustificacionId: value.proyectoPeriodoJustificacion?.id,
       proyectoProyectoSgeId: value.proyectoProyectoSge?.id,
       recursoEstimado: value.recursoEstimado,
       requerimientoPrevioId: value.requerimientoPrevio?.id,
       subvencionJustificada: value.subvencionJustificada,
-      tipoRequerimiento: {
-        id: value.tipoRequerimiento.id,
-        nombre: value.tipoRequerimiento.nombre
-      } as ITipoRequerimiento
+      tipoRequerimiento: TIPO_REQUERIMIENTO_RESPONSE_CONVERTER.fromTarget(value.tipoRequerimiento)
     };
   }
 }

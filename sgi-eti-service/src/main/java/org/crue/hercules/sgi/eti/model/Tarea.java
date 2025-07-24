@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.eti.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -47,22 +54,28 @@ public class Tarea extends BaseEntity {
   @NotNull
   private Memoria memoria;
 
-  /** Tarea */
-  @Column(name = "tarea", length = 250, nullable = true)
-  private String tarea;
+  /** Nombre */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tarea_nombre", joinColumns = @JoinColumn(name = "tarea_id"))
+  @Valid
+  private Set<TareaNombre> nombre = new HashSet<>();
 
   /** Formacion */
-  @Column(name = "formacion", length = 250, nullable = true)
-  private String formacion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tarea_formacion", joinColumns = @JoinColumn(name = "tarea_id"))
+  @Valid
+  private Set<TareaFormacion> formacion = new HashSet<>();
 
   /** Formacion especifica */
   @ManyToOne
   @JoinColumn(name = "formacion_especifica_id", nullable = true, foreignKey = @ForeignKey(name = "FK_TAREA_FORMACIONESPECIFICA"))
   private FormacionEspecifica formacionEspecifica;
 
-  /** Formacion */
-  @Column(name = "organismo", length = 250, nullable = true)
-  private String organismo;
+  /** Organismo */
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tarea_organismo", joinColumns = @JoinColumn(name = "tarea_id"))
+  @Valid
+  private Set<TareaOrganismo> organismo = new HashSet<>();
 
   /** Anio */
   @Column(name = "anio", nullable = true)

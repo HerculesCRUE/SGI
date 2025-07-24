@@ -4,9 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
-import org.crue.hercules.sgi.rep.dto.OutputType;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeEvaluador;
 import org.crue.hercules.sgi.rep.exceptions.GetDataReportException;
+import org.crue.hercules.sgi.rep.service.InformeEvaluadorReportService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -45,31 +44,27 @@ class InformeEvaluadorReportServiceTest extends BaseReportEtiServiceTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    informeEvaluadorReportService = new InformeEvaluadorReportService(sgiConfigProperties,
+    informeEvaluadorReportService = new InformeEvaluadorReportService(
         sgiApiConfService, personaService, evaluacionService, baseApartadosrespuestasService);
   }
 
   @Test
   void getInformeEvaluacion_ReturnsMemoriaValidationException() throws Exception {
 
-    ReportInformeEvaluador report = new ReportInformeEvaluador();
-    report.setOutputType(OutputType.PDF);
-
     Assertions
-        .assertThatThrownBy(() -> informeEvaluadorReportService.getReportInformeEvaluadorEvaluacion(report, null))
+        .assertThatThrownBy(
+            () -> informeEvaluadorReportService.getReport(null))
         .isInstanceOf(GetDataReportException.class);
   }
 
   void getInformeEvaluacion_ReturnsEvaluacionMemoriaValidationException() throws Exception {
 
-    ReportInformeEvaluador report = new ReportInformeEvaluador();
-    report.setOutputType(OutputType.PDF);
-
     BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
         .willReturn(getResource("eti/docx/rep-eti-ficha-evaluador.docx"));
 
     Assertions
-        .assertThatThrownBy(() -> informeEvaluadorReportService.getReportInformeEvaluadorEvaluacion(report, null))
+        .assertThatThrownBy(
+            () -> informeEvaluadorReportService.getReport(null))
         .isInstanceOf(GetDataReportException.class);
   }
 
@@ -84,10 +79,7 @@ class InformeEvaluadorReportServiceTest extends BaseReportEtiServiceTest {
     BDDMockito.given(sgiApiConfService.getResource(ArgumentMatchers.<String>any()))
         .willReturn(getResource("eti/docx/rep-eti-ficha-evaluador.docx"));
 
-    ReportInformeEvaluador report = new ReportInformeEvaluador();
-    report.setOutputType(OutputType.PDF);
-
-    byte[] reportContent = informeEvaluadorReportService.getReportInformeEvaluadorEvaluacion(report, idEvaluacion);
+    byte[] reportContent = informeEvaluadorReportService.getReport(idEvaluacion);
 
     assertNotNull(reportContent);
   }

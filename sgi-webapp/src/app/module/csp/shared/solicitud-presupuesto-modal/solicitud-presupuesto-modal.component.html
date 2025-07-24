@@ -36,12 +36,15 @@
       <mat-header-cell *matHeaderCellDef>
         {{'csp.solicitud-desglose-presupuesto.entidades.entidades-financiadoras.fuente-financiacion' | translate}}
       </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{element.level > 0 && element.childs.length ?
-        element.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena ?
-        element.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena.fuenteFinanciacion?.nombre
-        : element.item.solicitudProyectoEntidad.convocatoriaEntidadFinanciadora
-        ? element.item.solicitudProyectoEntidad.convocatoriaEntidadFinanciadora.fuenteFinanciacion?.nombre : ''
-        : '' }}</mat-cell>
+      <mat-cell *matCellDef="let element">
+        <sgi-i18n-table-field [field]="element.level > 0 && element.childs.length ?
+          element.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena ?
+          element.item.solicitudProyectoEntidad.solicitudProyectoEntidadFinanciadoraAjena.fuenteFinanciacion?.nombre
+          : element.item.solicitudProyectoEntidad.convocatoriaEntidadFinanciadora
+          ? element.item.solicitudProyectoEntidad.convocatoriaEntidadFinanciadora.fuenteFinanciacion?.nombre : ''
+          : ''">
+        </sgi-i18n-table-field>
+      </mat-cell>
     </ng-container>
     <ng-container matColumnDef="ajena">
       <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.financiacion-ajena' | translate}}
@@ -53,14 +56,19 @@
     <ng-container matColumnDef="conceptoGasto">
       <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.concepto-gasto' | translate}}
       </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{!!!element.childs.length ?
-        element.item.conceptoGasto.nombre: ''}}</mat-cell>
+      <mat-cell *matCellDef="let element">
+        <sgi-i18n-table-field [field]="!!!element.childs.length ? element.item.conceptoGasto.nombre: ''">
+        </sgi-i18n-table-field>
+      </mat-cell>
     </ng-container>
     <ng-container matColumnDef="observaciones">
+
       <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.observaciones' | translate}}
       </mat-header-cell>
-      <mat-cell *matCellDef="let element">{{!!!element.childs.length ? element.item.observaciones :
-        ''}}</mat-cell>
+      <mat-cell *matCellDef="let element">
+        <sgi-i18n-table-field [field]="!!!element.childs.length ? element.item.observaciones :
+        ''"></sgi-i18n-table-field>
+      </mat-cell>
     </ng-container>
     <ng-container matColumnDef="importePresupuestado">
       <mat-header-cell *matHeaderCellDef>{{'csp.solicitud-proyecto-presupuesto.importe-presupuestado' | translate}}

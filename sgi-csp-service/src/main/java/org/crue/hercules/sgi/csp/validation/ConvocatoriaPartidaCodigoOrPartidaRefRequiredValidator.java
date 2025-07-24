@@ -28,7 +28,7 @@ public class ConvocatoriaPartidaCodigoOrPartidaRefRequiredValidator
       return false;
     }
 
-    boolean partidasPresupuestariasSGE = configuracion.getPartidasPresupuestariasSGE();
+    boolean partidasPresupuestariasSGE = configuracion.getPartidasPresupuestariasSgeEnabled();
 
     return (partidasPresupuestariasSGE && StringUtils.hasText(value.getPartidaRef()))
         || (!partidasPresupuestariasSGE && StringUtils.hasText(value.getCodigo()));

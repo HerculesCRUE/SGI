@@ -11,6 +11,7 @@ import { ITipoFinalidad } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -49,9 +50,10 @@ export class ModeloEjecucionTipoFinalidadComponent extends FragmentComponent imp
     private readonly dialogService: DialogService,
     private matDialog: MatDialog,
     actionService: ModeloEjecucionActionService,
+    private readonly languageService: LanguageService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.TIPO_FINALIDADES, actionService);
+    super(actionService.FRAGMENT.TIPO_FINALIDADES, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -68,7 +70,7 @@ export class ModeloEjecucionTipoFinalidadComponent extends FragmentComponent imp
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subscription = this.formPart.modeloTipoFinalidad$.subscribe(
       (wrappers: StatusWrapper<IModeloTipoFinalidad>[]) => {
         this.modelosTipoFinalidades.data = wrappers;
@@ -79,9 +81,9 @@ export class ModeloEjecucionTipoFinalidadComponent extends FragmentComponent imp
       (wrapper: StatusWrapper<IModeloTipoFinalidad>, property: string) => {
         switch (property) {
           case 'nombre':
-            return wrapper.value.tipoFinalidad.nombre;
+            return this.languageService.getFieldValue(wrapper.value.tipoFinalidad.nombre);
           case 'descripcion':
-            return wrapper.value.tipoFinalidad.descripcion;
+            return wrapper.value.tipoFinalidad.descripcion ? this.languageService.getFieldValue(wrapper.value.tipoFinalidad.descripcion) : '';
           case 'activo':
             return wrapper.value.tipoFinalidad.activo;
           default:
@@ -92,7 +94,7 @@ export class ModeloEjecucionTipoFinalidadComponent extends FragmentComponent imp
     this.subscriptions.push(subscription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MODELO_EJECUCION_TIPO_FINALIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

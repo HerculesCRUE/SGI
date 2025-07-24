@@ -1,12 +1,17 @@
 package org.crue.hercules.sgi.pii.model;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -18,11 +23,9 @@ import javax.persistence.PrePersist;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.crue.hercules.sgi.framework.validation.ActivableIsActivo;
-import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnActualizar;
-import org.crue.hercules.sgi.pii.model.SolicitudProteccion.OnCrear;
-import org.crue.hercules.sgi.pii.validation.UniqueSolicitudViaProteccion;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -40,7 +43,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@UniqueSolicitudViaProteccion(groups = { OnActualizar.class, OnCrear.class })
 public class SolicitudProteccion extends BaseEntity {
   /*
    * 
@@ -55,7 +57,7 @@ public class SolicitudProteccion extends BaseEntity {
   public static final int NUMERO_PUBLICACION_MAX_LENGTH = 24;
   public static final int NUMERO_CONCESION_MAX_LENGTH = 24;
   public static final int NUMERO_REGISTRO_MAX_LENGTH = 24;
-  public static final int COMENTARIOS_MAX_LENGTH = 500;
+  public static final int COMENTARIOS_MAX_LENGTH = 2000;
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQUENCE_NAME)
@@ -68,8 +70,12 @@ public class SolicitudProteccion extends BaseEntity {
   @ActivableIsActivo(entityClass = Invencion.class, groups = { OnCrear.class, OnActualizarInvencion.class })
   private Invencion invencion;
 
-  @Column(name = "titulo", length = TITULO_MAX_LENGTH, nullable = false)
-  private String titulo;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "solicitud_proteccion_titulo", joinColumns = @JoinColumn(name = "solicitud_proteccion_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<SolicitudProteccionTitulo> titulo = new HashSet<>();
 
   @Column(name = "fecha_prioridad_solicitud", nullable = false)
   private Instant fechaPrioridadSolicitud;
@@ -118,8 +124,11 @@ public class SolicitudProteccion extends BaseEntity {
   @Column(name = "pais_proteccion_ref", nullable = true)
   private String paisProteccionRef;
 
-  @Column(name = "comentarios", length = COMENTARIOS_MAX_LENGTH, nullable = true)
-  private String comentarios;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "solicitud_proteccion_comentarios", joinColumns = @JoinColumn(name = "solicitud_proteccion_id"))
+  @Valid
+  @Builder.Default
+  private Set<SolicitudProteccionComentarios> comentarios = new HashSet<>();
 
   @OneToMany(mappedBy = "solicitudProteccion")
   @Getter(AccessLevel.NONE)

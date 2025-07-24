@@ -2,14 +2,21 @@ package org.crue.hercules.sgi.eti.integration;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
 import org.crue.hercules.sgi.eti.model.FormacionEspecifica;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Tarea;
+import org.crue.hercules.sgi.eti.model.TareaFormacion;
+import org.crue.hercules.sgi.eti.model.TareaNombre;
+import org.crue.hercules.sgi.eti.model.TareaOrganismo;
 import org.crue.hercules.sgi.eti.model.TipoTarea;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -33,7 +40,6 @@ import org.springframework.web.util.UriComponentsBuilder;
   "classpath:scripts/formulario.sql", 
   "classpath:scripts/comite.sql", 
   "classpath:scripts/tipo_actividad.sql",
-  "classpath:scripts/tipo_memoria.sql",
   "classpath:scripts/estado_retrospectiva.sql", 
   "classpath:scripts/retrospectiva.sql",
   "classpath:scripts/formacion_especifica.sql", 
@@ -77,11 +83,14 @@ public class TareaIT extends BaseIT {
     Assertions.assertThat(tarea.getEquipoTrabajo().getId()).as("equipoTrabajo.id").isEqualTo(2L);
     Assertions.assertThat(tarea.getMemoria()).as("memoria").isNotNull();
     Assertions.assertThat(tarea.getMemoria().getId()).as("memoria.id").isEqualTo(3L);
-    Assertions.assertThat(tarea.getTarea()).as("tarea").isEqualTo("Tarea2");
-    Assertions.assertThat(tarea.getFormacion()).as("formacion").isEqualTo("Formacion2");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getNombre(), Language.ES)).as("nombre")
+        .isEqualTo("Tarea2");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getFormacion(), Language.ES)).as("formacion")
+        .isEqualTo("Formacion2");
     Assertions.assertThat(tarea.getFormacionEspecifica()).as("formacionEspecifica").isNotNull();
     Assertions.assertThat(tarea.getFormacionEspecifica().getId()).as("formacionEspecifica.id").isEqualTo(1L);
-    Assertions.assertThat(tarea.getOrganismo()).as("organismo").isEqualTo("Organismo2");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getOrganismo(), Language.ES)).as("organismo")
+        .isEqualTo("Organismo2");
     Assertions.assertThat(tarea.getAnio()).as("anio").isEqualTo(2020);
   }
 
@@ -102,11 +111,14 @@ public class TareaIT extends BaseIT {
     Assertions.assertThat(tarea.getEquipoTrabajo().getId()).as("equipoTrabajo.id").isEqualTo(2L);
     Assertions.assertThat(tarea.getMemoria()).as("memoria").isNotNull();
     Assertions.assertThat(tarea.getMemoria().getId()).as("memoria.id").isEqualTo(2L);
-    Assertions.assertThat(tarea.getTarea()).as("tarea").isEqualTo("Tarea1");
-    Assertions.assertThat(tarea.getFormacion()).as("formacion").isEqualTo("Formacion1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getNombre(), Language.ES)).as("nombre")
+        .isEqualTo("Tarea1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getFormacion(), Language.ES)).as("formacion")
+        .isEqualTo("Formacion1");
     Assertions.assertThat(tarea.getFormacionEspecifica()).as("formacionEspecifica").isNotNull();
     Assertions.assertThat(tarea.getFormacionEspecifica().getId()).as("formacionEspecifica.id").isEqualTo(1L);
-    Assertions.assertThat(tarea.getOrganismo()).as("organismo").isEqualTo("Organismo1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getOrganismo(), Language.ES)).as("organismo")
+        .isEqualTo("Organismo1");
     Assertions.assertThat(tarea.getAnio()).as("anio").isEqualTo(2020);
   }
 
@@ -133,15 +145,17 @@ public class TareaIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).as("x-total-count").isEqualTo("7");
 
     // Contiene de tarea='Tarea7' a 'Tarea8'
-    Assertions.assertThat(tareas.get(0).getTarea()).as("1.tarea").isEqualTo("Tarea7");
-    Assertions.assertThat(tareas.get(1).getTarea()).as("2.tarea").isEqualTo("Tarea8");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tareas.get(0).getNombre(), Language.ES)).as("1.nombre")
+        .isEqualTo("Tarea7");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tareas.get(1).getNombre(), Language.ES)).as("2.nombre")
+        .isEqualTo("Tarea8");
   }
 
   @Test
   public void findAll_WithSearchQuery_ReturnsFilteredTareaList() throws Exception {
     // when: Búsqueda por tarea like e id equals
     Long id = 5L;
-    String query = "tarea=ke=Tarea;id==" + id;
+    String query = "nombre.value=ke=Tarea;id==" + id;
 
     URI uri = UriComponentsBuilder.fromUriString(TAREA_CONTROLLER_BASE_PATH).queryParam("q", query).build(false)
         .toUri();
@@ -157,13 +171,14 @@ public class TareaIT extends BaseIT {
     final List<Tarea> tareas = response.getBody();
     Assertions.assertThat(tareas.size()).as("size").isEqualTo(1);
     Assertions.assertThat(tareas.get(0).getId()).as("id").isEqualTo(id);
-    Assertions.assertThat(tareas.get(0).getTarea()).as("tarea").startsWith("Tarea5");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tareas.get(0).getNombre(), Language.ES)).as("tarea")
+        .startsWith("Tarea5");
   }
 
   @Test
   public void findAll_WithSortQuery_ReturnsOrderedTareaList() throws Exception {
     // when: Ordenación por tarea desc
-    String sort = "tarea,desc";
+    String sort = "nombre.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(TAREA_CONTROLLER_BASE_PATH).queryParam("s", sort).build(false).toUri();
 
@@ -180,7 +195,8 @@ public class TareaIT extends BaseIT {
     for (int i = 0; i < 7; i++) {
       Tarea tarea = tareas.get(i);
       Assertions.assertThat(tarea.getId()).as((8 - i) + ".id").isEqualTo(8 - i);
-      Assertions.assertThat(tarea.getTarea()).as((8 - i) + ".tarea").isEqualTo("Tarea" + String.format("%d", 8 - i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tarea.getNombre(), Language.ES)).as((8 - i) + ".tarea")
+          .isEqualTo("Tarea" + String.format("%d", 8 - i));
     }
   }
 
@@ -191,9 +207,9 @@ public class TareaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     // when: Ordena por tarea desc
-    String sort = "tarea,desc";
+    String sort = "nombre.value,desc";
     // when: Filtra por tarea like
-    String filter = "tarea=ke=Tarea";
+    String filter = "nombre.value=ke=Tarea";
 
     URI uri = UriComponentsBuilder.fromUriString(TAREA_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -213,9 +229,12 @@ public class TareaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("x-total-count").isEqualTo("7");
 
     // Contiene tarea='Tarea8', 'Tarea7', 'Tarea6'
-    Assertions.assertThat(tareas.get(0).getTarea()).as("0.tarea").isEqualTo("Tarea" + String.format("%d", 8));
-    Assertions.assertThat(tareas.get(1).getTarea()).as("1.tarea").isEqualTo("Tarea" + String.format("%d", 7));
-    Assertions.assertThat(tareas.get(2).getTarea()).as("2.tarea").isEqualTo("Tarea" + String.format("%d", 6));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tareas.get(0).getNombre(), Language.ES)).as("0.tarea")
+        .isEqualTo("Tarea" + String.format("%d", 8));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tareas.get(1).getNombre(),
+        Language.ES)).as("1.tarea").isEqualTo("Tarea" + String.format("%d", 7));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tareas.get(2).getNombre(),
+        Language.ES)).as("2.tarea").isEqualTo("Tarea" + String.format("%d", 6));
   }
 
   /**
@@ -225,7 +244,7 @@ public class TareaIT extends BaseIT {
    * @param descripcion descripcion de la tarea
    * @return el objeto Tarea
    */
-  public Tarea generarMockTarea(Long id, String descripcion) {
+  private Tarea generarMockTarea(Long id, String descripcion) {
     EquipoTrabajo equipoTrabajo = new EquipoTrabajo();
     equipoTrabajo.setId(2L);
 
@@ -237,17 +256,22 @@ public class TareaIT extends BaseIT {
 
     TipoTarea tipoTarea = new TipoTarea();
     tipoTarea.setId(1L);
-    tipoTarea.setNombre("Diseño de proyecto y procedimientos");
-    tipoTarea.setActivo(Boolean.TRUE);
+
+    Set<TareaNombre> nombre = new HashSet<>();
+    nombre.add(new TareaNombre(Language.ES, descripcion));
+    Set<TareaFormacion> formacion = new HashSet<>();
+    formacion.add(new TareaFormacion(Language.ES, "Formacion" + (id != null ? id : "")));
+    Set<TareaOrganismo> organismo = new HashSet<>();
+    organismo.add(new TareaOrganismo(Language.ES, "Organismo" + (id != null ? id : "")));
 
     Tarea tarea = new Tarea();
     tarea.setId(id);
     tarea.setEquipoTrabajo(equipoTrabajo);
     tarea.setMemoria(memoria);
-    tarea.setTarea(descripcion);
-    tarea.setFormacion("Formacion" + (id != null ? id : ""));
+    tarea.setNombre(nombre);
+    tarea.setFormacion(formacion);
     tarea.setFormacionEspecifica(formacionEspecifica);
-    tarea.setOrganismo("Organismo" + (id != null ? id : ""));
+    tarea.setOrganismo(organismo);
     tarea.setAnio(2020);
     tarea.setTipoTarea(tipoTarea);
 

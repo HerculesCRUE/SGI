@@ -7,6 +7,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.UUID;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -68,7 +70,8 @@ public class Oauth2WireMockInitializer implements ApplicationContextInitializer<
       };
       configurableApplicationContext.getBeanFactory().registerSingleton("tokenBuilder", tokenBuilder);
       RSAKey rsaPublicJWK = rsaJWK.toPublicJWK();
-      String pubkey = rsaPublicJWK.toJSONObject().toString();
+      ObjectMapper objectMapper = new ObjectMapper();
+      String pubkey = objectMapper.writeValueAsString(rsaPublicJWK.toJSONObject());
 
       WireMockServer wireMockServer = new WireMockServer(new WireMockConfiguration().dynamicPort());
       wireMockServer.start();
@@ -89,7 +92,7 @@ public class Oauth2WireMockInitializer implements ApplicationContextInitializer<
           + wireMockServer.port() + "/auth/realms/DEMO/protocol/openid-connect/certs")
           .applyTo(configurableApplicationContext);
       log.debug("initialize(ConfigurableApplicationContext configurableApplicationContext) - end");
-    } catch (JOSEException e) {
+    } catch (JOSEException | JsonProcessingException e) {
       log.error("Error intializing WireMock", e);
       throw new Oauth2WireMockInitializationEsception(e);
     }

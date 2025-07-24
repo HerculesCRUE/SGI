@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
@@ -11,10 +13,12 @@ import org.crue.hercules.sgi.csp.exceptions.TipoFinalidadNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFinalidadRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFinalidadRepository;
 import org.crue.hercules.sgi.csp.service.impl.ModeloTipoFinalidadServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -352,11 +356,19 @@ class ModeloTipoFinalidadServiceTest extends BaseServiceTest {
   private ModeloTipoFinalidad generarModeloTipoFinalidad(Long modeloTipoFinalidadId, Long modeloEjecucionId,
       Long tipoFinalidadId) {
 
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad"));
+
     ModeloTipoFinalidad modeloTipoFinalidad = new ModeloTipoFinalidad();
     modeloTipoFinalidad.setId(modeloTipoFinalidadId);
     modeloTipoFinalidad
         .setModeloEjecucion(ModeloEjecucion.builder().id(modeloEjecucionId).activo(Boolean.TRUE).build());
-    modeloTipoFinalidad.setTipoFinalidad(TipoFinalidad.builder().id(tipoFinalidadId).activo(Boolean.TRUE).build());
+    modeloTipoFinalidad.setTipoFinalidad(
+        TipoFinalidad.builder()
+            .id(tipoFinalidadId)
+            .nombre(nombreTipoFinalidad)
+            .activo(Boolean.TRUE)
+            .build());
     modeloTipoFinalidad.setActivo(Boolean.TRUE);
 
     return modeloTipoFinalidad;

@@ -1,19 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
-import { IViaProteccion } from '@core/models/pii/via-proteccion';
-import { SgiRestListResult, SgiRestFilter } from '@sgi/framework/http';
-import { Observable, of } from 'rxjs';
-import { ROUTE_NAMES } from '@core/route.names';
+import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
-import { switchMap } from 'rxjs/operators';
-import { NGXLogger } from 'ngx-logger';
-import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
+import { IViaProteccion } from '@core/models/pii/via-proteccion';
+import { ROUTE_NAMES } from '@core/route.names';
 import { DialogService } from '@core/services/dialog.service';
 import { ViaProteccionService } from '@core/services/pii/via-proteccion/via-proteccion.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiError } from '@core/errors/sgi-error';
+import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http';
+import { NGXLogger } from 'ngx-logger';
+import { Observable, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { ViaProteccionModalComponent } from '../via-proteccion-modal/via-proteccion-modal.component';
 
 const MSG_CREATE = marker('btn.add.entity');
@@ -56,7 +56,16 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
     private dialogService: DialogService,
     private translate: TranslateService
   ) {
-    super();
+    super(translate);
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'nombre') {
+        return 'nombre.value';
+      } else if (column === 'descripcion') {
+        return 'descripcion.value';
+      }
+      return column;
+    }
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IViaProteccion>> {
@@ -77,10 +86,10 @@ export class ViaProteccionListadoComponent extends AbstractTablePaginationCompon
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       VIA_PROTECCION_KEY,

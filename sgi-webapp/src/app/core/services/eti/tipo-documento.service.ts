@@ -1,31 +1,44 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { FORMULARIO } from '@core/models/eti/formulario';
+import { IFormulario } from '@core/models/eti/formulario';
 import { ITipoDocumento } from '@core/models/eti/tipo-documento';
 import { environment } from '@env';
-import { SgiReadOnlyRestService } from '@sgi/framework/http/';
+import { FindAllCtor, FindByIdCtor, mixinFindAll, mixinFindById, SgiRestBaseService } from '@sgi/framework/http/';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { ITipoDocumentoResponse } from './tipo-documento/tipo-documento-response';
+import { TIPO_DOCUMENTO_RESPONSE_CONVERTER } from './tipo-documento/tipo-documento-response.converter';
+
+// tslint:disable-next-line: variable-name
+const _TipoDocumentoServiceMixinBase:
+  FindByIdCtor<number, ITipoDocumento, ITipoDocumentoResponse> &
+  FindAllCtor<ITipoDocumento, ITipoDocumentoResponse> &
+  typeof SgiRestBaseService = mixinFindAll(
+    mixinFindById(
+      SgiRestBaseService,
+      TIPO_DOCUMENTO_RESPONSE_CONVERTER
+    ),
+    TIPO_DOCUMENTO_RESPONSE_CONVERTER
+  );
 
 @Injectable({
   providedIn: 'root'
 })
-export class TipoDocumentoService extends SgiReadOnlyRestService<number, ITipoDocumento> {
+export class TipoDocumentoService extends _TipoDocumentoServiceMixinBase {
   private static readonly MAPPING = '/tipodocumentos';
 
   constructor(protected http: HttpClient) {
     super(
-      TipoDocumentoService.name,
       `${environment.serviceServers.eti}${TipoDocumentoService.MAPPING}`,
       http
     );
   }
 
-  findByFormulario(formulario: FORMULARIO): Observable<ITipoDocumento[]> {
-    return this.http.get<ITipoDocumento[]>(
-      `${this.endpointUrl}/formulario/${formulario}`
+  findByFormulario(formulario: IFormulario): Observable<ITipoDocumento[]> {
+    return this.http.get<ITipoDocumentoResponse[]>(
+      `${this.endpointUrl}/formulario/${formulario.id}`
     ).pipe(
-      map(response => response)
+      map(response => TIPO_DOCUMENTO_RESPONSE_CONVERTER.toTargetArray(response))
     );
   }
 

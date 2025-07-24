@@ -2,13 +2,19 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.GastoRequerimientoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.GastoRequerimientoJustificacion;
+import org.crue.hercules.sgi.csp.model.GastoRequerimientoJustificacionAlegacion;
+import org.crue.hercules.sgi.csp.model.GastoRequerimientoJustificacionIncidencia;
 import org.crue.hercules.sgi.csp.repository.GastoRequerimientoJustificacionRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -28,7 +34,7 @@ import org.springframework.data.jpa.domain.Specification;
  * GastoRequerimientoJustificacionServiceTest
  */
 @Import({ GastoRequerimientoJustificacionService.class, ApplicationContextSupport.class })
-public class GastoRequerimientoJustificacionServiceTest extends BaseServiceTest {
+class GastoRequerimientoJustificacionServiceTest extends BaseServiceTest {
 
   @MockBean
   private GastoRequerimientoJustificacionRepository gastoRequerimientoJustificacionRepository;
@@ -60,9 +66,7 @@ public class GastoRequerimientoJustificacionServiceTest extends BaseServiceTest 
             int toIndex = fromIndex + size;
             List<GastoRequerimientoJustificacion> content = gastoRequerimientoJustificacionList
                 .subList(fromIndex, toIndex);
-            Page<GastoRequerimientoJustificacion> page = new PageImpl<>(content, pageable,
-                gastoRequerimientoJustificacionList.size());
-            return page;
+            return new PageImpl<>(content, pageable, gastoRequerimientoJustificacionList.size());
           }
         });
 
@@ -82,7 +86,8 @@ public class GastoRequerimientoJustificacionServiceTest extends BaseServiceTest 
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       GastoRequerimientoJustificacion gastoRequerimientoJustificacion = page.getContent().get(i);
-      Assertions.assertThat(gastoRequerimientoJustificacion.getIncidencia())
+      Assertions
+          .assertThat(I18nHelper.getValueForLanguage(gastoRequerimientoJustificacion.getIncidencia(), Language.ES))
           .isEqualTo("Incidencia-" + String.format("%03d", j));
     }
   }
@@ -218,9 +223,7 @@ public class GastoRequerimientoJustificacionServiceTest extends BaseServiceTest 
             int toIndex = fromIndex + size;
             List<GastoRequerimientoJustificacion> content = gastoRequerimientoJustificacionList
                 .subList(fromIndex, toIndex);
-            Page<GastoRequerimientoJustificacion> page = new PageImpl<>(content, pageable,
-                gastoRequerimientoJustificacionList.size());
-            return page;
+            return new PageImpl<>(content, pageable, gastoRequerimientoJustificacionList.size());
           }
         });
 
@@ -238,7 +241,8 @@ public class GastoRequerimientoJustificacionServiceTest extends BaseServiceTest 
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       GastoRequerimientoJustificacion gastoRequerimientoJustificacion = page.getContent().get(i);
-      Assertions.assertThat(gastoRequerimientoJustificacion.getIncidencia())
+      Assertions
+          .assertThat(I18nHelper.getValueForLanguage(gastoRequerimientoJustificacion.getIncidencia(), Language.ES))
           .isEqualTo("Incidencia-" + String.format("%03d", j));
     }
   }
@@ -246,26 +250,40 @@ public class GastoRequerimientoJustificacionServiceTest extends BaseServiceTest 
   private GastoRequerimientoJustificacion generarMockGastoRequerimientoJustificacion(Long id,
       Long requerimientoJustificacionId) {
     String suffix = id != null ? String.format("%03d", id) : String.format("%03d", 1);
-    return generarMockGastoRequerimientoJustificacion(id, Boolean.TRUE, "Alegacion-" + suffix,
-        "gasto-ref-" + suffix, "11/1111",
-        null, null, null,
-        "Incidencia-" + suffix, requerimientoJustificacionId);
+    return generarMockGastoRequerimientoJustificacion(
+        id,
+        Boolean.TRUE,
+        "Alegacion-" + suffix,
+        "gasto-ref-" + suffix,
+        "11/1111",
+        null,
+        null,
+        null,
+        "Incidencia-" + suffix,
+        requerimientoJustificacionId);
   }
 
   private GastoRequerimientoJustificacion generarMockGastoRequerimientoJustificacion(Long id, Boolean aceptado,
       String alegacion, String gastoRef, String identificadorJustificacion, BigDecimal importeAceptado,
       BigDecimal importeAlegado, BigDecimal importeRechazado,
       String incidencia, Long requerimientoJustificacionId) {
+    Set<GastoRequerimientoJustificacionIncidencia> incidenciaGastoRequerimientoJustificacion = new HashSet<>();
+    incidenciaGastoRequerimientoJustificacion
+        .add(new GastoRequerimientoJustificacionIncidencia(Language.ES, incidencia));
+
+    Set<GastoRequerimientoJustificacionAlegacion> alegacionGastoRequerimientoJustificacion = new HashSet<>();
+    alegacionGastoRequerimientoJustificacion.add(new GastoRequerimientoJustificacionAlegacion(Language.ES, alegacion));
+
     return GastoRequerimientoJustificacion.builder()
         .id(id)
         .aceptado(aceptado)
-        .alegacion(alegacion)
+        .alegacion(alegacionGastoRequerimientoJustificacion)
         .gastoRef(gastoRef)
         .identificadorJustificacion(identificadorJustificacion)
         .importeAceptado(importeAceptado)
         .importeAlegado(importeAlegado)
         .importeRechazado(importeRechazado)
-        .incidencia(incidencia)
+        .incidencia(incidenciaGastoRequerimientoJustificacion)
         .requerimientoJustificacionId(requerimientoJustificacionId)
         .build();
   }

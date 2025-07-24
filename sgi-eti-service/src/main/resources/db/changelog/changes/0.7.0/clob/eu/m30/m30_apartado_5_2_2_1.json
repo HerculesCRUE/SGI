@@ -1,0 +1,39 @@
+[
+  {
+    "key": "ap5_2_2_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.1 1. Galdera"
+    },
+    "fieldGroup": [
+      {
+        "template": "Ebaluatu beharreko jarduerak berekin dakar genetikoki eraldatutako organismoen (GEO) erabilera konfinatua?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Genetikoki eraldatutako organismoak dira material genetikoa naturalki gertatzen ez den moduren batean aldatuta duten organismo guztiak, baldin eta eraldaketarako arauz ezarritako teknikak erabiltzen badira. Genetikoki eraldatutako organismotzat jotzeko, aldaketek iraunkorrak izan behar dute."
+      },
+      {
+        "key": "pregunta1OMGRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

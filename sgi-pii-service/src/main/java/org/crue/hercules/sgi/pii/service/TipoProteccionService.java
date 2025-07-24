@@ -15,8 +15,9 @@ import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.pii.exceptions.TipoProteccionNotFoundException;
+import org.crue.hercules.sgi.pii.model.BaseActivableEntity;
+import org.crue.hercules.sgi.pii.model.BaseEntity;
 import org.crue.hercules.sgi.pii.model.TipoProteccion;
-import org.crue.hercules.sgi.pii.model.TipoProteccion.OnActivar;
 import org.crue.hercules.sgi.pii.repository.TipoProteccionRepository;
 import org.crue.hercules.sgi.pii.repository.specification.TipoProteccionSpecifications;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -35,17 +37,13 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Validated
 public class TipoProteccionService {
 
   private final Validator validator;
 
   private final TipoProteccionRepository repository;
-
-  public TipoProteccionService(Validator validator, TipoProteccionRepository tipoProteccionRepository) {
-    this.validator = validator;
-    this.repository = tipoProteccionRepository;
-  }
 
   /**
    * Guardar un nuevo {@link TipoProteccion}.
@@ -54,7 +52,7 @@ public class TipoProteccionService {
    * @return la entidad {@link TipoProteccion} persistida.
    */
   @Transactional
-  @Validated({ TipoProteccion.OnCrear.class })
+  @Validated({ BaseEntity.Create.class })
   public TipoProteccion create(@Valid TipoProteccion tipoProteccion) {
     log.debug("create(@Valid TipoProteccion tipoProteccion) - start");
 
@@ -79,7 +77,7 @@ public class TipoProteccionService {
    * @return la entidad {@link TipoProteccion} persistida.
    */
   @Transactional
-  @Validated({ TipoProteccion.OnActualizar.class })
+  @Validated({ BaseEntity.Update.class })
   public TipoProteccion update(@Valid TipoProteccion tipoProteccion) {
     log.debug("update(TipoProteccion tipoProteccion) - start");
 
@@ -127,7 +125,8 @@ public class TipoProteccionService {
         return tipoProteccion;
       }
       // Invocar validaciones asociadas a OnActivar
-      Set<ConstraintViolation<TipoProteccion>> result = validator.validate(tipoProteccion, OnActivar.class);
+      Set<ConstraintViolation<TipoProteccion>> result = validator.validate(tipoProteccion,
+          BaseActivableEntity.OnActivar.class);
       if (!result.isEmpty()) {
         throw new ConstraintViolationException(result);
       }

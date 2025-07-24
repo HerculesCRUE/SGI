@@ -1,11 +1,12 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 
 
 export interface IRolProyecto {
   id: number;
-  abreviatura: string;
-  nombre: string;
-  descripcion: string;
+  abreviatura: I18nFieldValue[];
+  nombre: I18nFieldValue[];
+  descripcion: I18nFieldValue[];
   rolPrincipal: boolean;
   baremablePRC: boolean;
   orden: Orden;

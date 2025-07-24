@@ -4,6 +4,7 @@ import { ErrorStateMatcher } from '@angular/material/core';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceComponent } from '@core/component/select-service/select-service.component';
 import { ITipoDocumento } from '@core/models/sgp/tipo-documento';
+import { LanguageService } from '@core/services/language.service';
 import { TipoDocumentoPublicService } from '@core/services/sgp/tipo-documento-public.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -24,9 +25,10 @@ export class SelectTipoDocumentoPublicComponent extends SelectServiceComponent<I
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     private tipoDocumentoService: TipoDocumentoPublicService
   ) {
-    super(defaultErrorStateMatcher, ngControl);
+    super(defaultErrorStateMatcher, ngControl, languageService);
 
   }
 

@@ -6,6 +6,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { SgiAuthModule } from '@sgi/framework/auth';
 import { SharedModule } from '@shared/shared.module';
 
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { ComentarioModule } from '../comentario/comentario.module';
 import { DocumentacionMemoriaModule } from '../documentacion-memoria/documentacion-memoria.module';
 import {
@@ -20,7 +21,7 @@ import {
 import {
   EvaluacionListadoAnteriorMemoriaComponent,
 } from '../evaluacion-formulario/evaluacion-listado-anterior-memoria/evaluacion-listado-anterior-memoria.component';
-import { BloqueApartadoPipe } from '../shared/pipes/bloque-apartado.pipe';
+import { EtiSharedModule } from '../shared/eti-shared.module';
 import { EvaluacionEvaluacionComponent } from './evaluacion-evaluacion/evaluacion-evaluacion.component';
 import { EvaluacionListadoComentariosEquipoEvaluadorComponent } from './evaluacion-listado-comentarios-equipo-evaluador/evaluacion-listado-comentarios-equipo-evaluador.component';
 
@@ -34,6 +35,7 @@ import { EvaluacionListadoComentariosEquipoEvaluadorComponent } from './evaluaci
     EvaluacionListadoComentariosEquipoEvaluadorComponent
   ],
   imports: [
+    EtiSharedModule,
     SharedModule,
     CommonModule,
     TranslateModule,
@@ -42,7 +44,8 @@ import { EvaluacionListadoComentariosEquipoEvaluadorComponent } from './evaluaci
     FormsModule,
     ReactiveFormsModule,
     ComentarioModule,
-    DocumentacionMemoriaModule
+    DocumentacionMemoriaModule,
+    SgpSharedModule
   ],
   exports: [
     EvaluacionComentariosComponent,

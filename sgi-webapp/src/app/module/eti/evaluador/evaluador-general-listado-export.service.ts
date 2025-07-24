@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { CARGO_COMITE_MAP } from '@core/models/eti/cargo-comite';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { IPersona } from '@core/models/sgp/persona';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
@@ -25,7 +26,7 @@ const EVALUADOR_ESTADO_KEY = marker('eti.evaluador.report.estado');
 
 @Injectable()
 export class EvaluadorGeneralListadoExportService extends
-  AbstractTableExportFillService<IEvaluadorReportData, IEvaluadorReportOptions>{
+  AbstractTableExportFillService<IEvaluadorReportData, IEvaluadorReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -110,8 +111,8 @@ export class EvaluadorGeneralListadoExportService extends
       evaluadorData.persona?.nombre ?? '',
       evaluadorData.persona?.apellidos ?? '',
       this.getEmailPrincipal(evaluadorData),
-      evaluadorData.comite?.comite ?? '',
-      evaluadorData.cargoComite?.nombre ?? '',
+      evaluadorData.comite?.codigo ?? '',
+      evaluadorData.cargoComite?.id ? this.translate.instant(CARGO_COMITE_MAP.get(evaluadorData.cargoComite?.id)) : '',
       LuxonUtils.toBackend(evaluadorData.fechaAlta) ?? '',
       LuxonUtils.toBackend(evaluadorData.fechaBaja) ?? '',
       this.estadoEvaluadorPipe.transform(evaluadorData.fechaBaja) ?? ''

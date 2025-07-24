@@ -1,10 +1,15 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.crue.hercules.sgi.csp.exceptions.ProyectoPaqueteTrabajoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
+import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajoDescripcion;
 import org.crue.hercules.sgi.csp.service.ProyectoPaqueteTrabajoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -62,7 +67,8 @@ class ProyectoPaqueteTrabajoControllerTest extends BaseControllerTest {
             MockMvcResultMatchers.jsonPath("fechaInicio").value(proyectoPaqueteTrabajo.getFechaInicio().toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaFin").value(proyectoPaqueteTrabajo.getFechaFin().toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("personaMes").value(proyectoPaqueteTrabajo.getPersonaMes()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(proyectoPaqueteTrabajo.getDescripcion()));
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(proyectoPaqueteTrabajo.getDescripcion(), Language.ES)));
   }
 
   @Test
@@ -88,9 +94,13 @@ class ProyectoPaqueteTrabajoControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
   void update_ReturnsProyectoPaqueteTrabajo() throws Exception {
     // given: Existing ProyectoPaqueteTrabajo to be updated
+    Set<ProyectoPaqueteTrabajoDescripcion> proyectoPaqueteTrabajoDescripcion = new HashSet<>();
+    proyectoPaqueteTrabajoDescripcion.add(
+        new ProyectoPaqueteTrabajoDescripcion(Language.ES, "descripcion-modificada"));
+
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajoExistente = generarMockProyectoPaqueteTrabajo(1L, 1L);
     ProyectoPaqueteTrabajo proyectoPaqueteTrabajo = generarMockProyectoPaqueteTrabajo(1L, 1L);
-    proyectoPaqueteTrabajo.setDescripcion("descripcion-modificada");
+    proyectoPaqueteTrabajo.setDescripcion(proyectoPaqueteTrabajoDescripcion);
 
     BDDMockito.given(service.update(ArgumentMatchers.<ProyectoPaqueteTrabajo>any()))
         .willAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -112,7 +122,8 @@ class ProyectoPaqueteTrabajoControllerTest extends BaseControllerTest {
         .andExpect(
             MockMvcResultMatchers.jsonPath("fechaFin").value(proyectoPaqueteTrabajoExistente.getFechaFin().toString()))
         .andExpect(MockMvcResultMatchers.jsonPath("personaMes").value(proyectoPaqueteTrabajoExistente.getPersonaMes()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(proyectoPaqueteTrabajo.getDescripcion()));
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(proyectoPaqueteTrabajo.getDescripcion(), Language.ES)));
   }
 
   @Test
@@ -196,7 +207,8 @@ class ProyectoPaqueteTrabajoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("fechaInicio").value("2020-01-01T00:00:00Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaFin").value("2020-01-15T23:59:59Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("personaMes").value(1D)).andExpect(MockMvcResultMatchers
-            .jsonPath("descripcion").value("descripcion-proyecto-paquete-trabajo-" + String.format("%03d", id)));
+            .jsonPath("descripcion[0].value")
+            .value("descripcion-proyecto-paquete-trabajo-" + String.format("%03d", id)));
 
   }
 
@@ -226,6 +238,11 @@ class ProyectoPaqueteTrabajoControllerTest extends BaseControllerTest {
    */
   private ProyectoPaqueteTrabajo generarMockProyectoPaqueteTrabajo(Long id, Long proyectoId) {
 
+    Set<ProyectoPaqueteTrabajoDescripcion> proyectoPaqueteTrabajoDescripcion = new HashSet<>();
+    proyectoPaqueteTrabajoDescripcion.add(
+        new ProyectoPaqueteTrabajoDescripcion(Language.ES, "descripcion-proyecto-paquete-trabajo-" +
+            (id == null ? "" : String.format("%03d", id))));
+
     // @formatter:off
     return ProyectoPaqueteTrabajo.builder()
         .id(id)
@@ -234,7 +251,7 @@ class ProyectoPaqueteTrabajoControllerTest extends BaseControllerTest {
         .fechaInicio(Instant.parse("2020-01-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-01-15T23:59:59Z"))
         .personaMes(1D)
-        .descripcion("descripcion-proyecto-paquete-trabajo-" + (id == null ? "" : String.format("%03d", id)))
+        .descripcion(proyectoPaqueteTrabajoDescripcion)
         .build();
     // @formatter:on
   }

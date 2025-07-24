@@ -2,23 +2,19 @@ import { AfterViewInit, Component, OnDestroy, OnInit, ViewChild } from '@angular
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { DICTAMEN, IDictamen } from '@core/models/eti/dictamen';
-import { IMemoria } from '@core/models/eti/memoria';
+import { DICTAMEN } from '@core/models/eti/dictamen';
+import { IMemoria, MemoriaTipo } from '@core/models/eti/memoria';
 import { TIPO_EVALUACION } from '@core/models/eti/tipo-evaluacion';
-import { TIPO_MEMORIA } from '@core/models/eti/tipo-memoria';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
-import { TipoEvaluacionService } from '@core/services/eti/tipo-evaluacion.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { TranslateService } from '@ngx-translate/core';
-import { Observable, of, Subscription } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 import { EvaluacionFormularioActionService } from '../evaluacion-formulario.action.service';
-import {
-  EvaluacionListadoAnteriorMemoriaComponent
-} from '../evaluacion-listado-anterior-memoria/evaluacion-listado-anterior-memoria.component';
+import { EvaluacionListadoAnteriorMemoriaComponent } from '../evaluacion-listado-anterior-memoria/evaluacion-listado-anterior-memoria.component';
 import { EvaluacionEvaluacionFragment } from './evaluacion-evaluacion.fragment';
 
 const EVALUACION_DICTAMEN_KEY = marker('eti.dictamen');
@@ -38,7 +34,6 @@ export class EvaluacionEvaluacionComponent extends FormFragmentComponent<IMemori
   @ViewChild('evaluaciones') evaluaciones: EvaluacionListadoAnteriorMemoriaComponent;
 
   suscriptions: Subscription[] = [];
-  dictamenes$: Observable<IDictamen[]>;
 
   formPart: EvaluacionEvaluacionFragment;
 
@@ -55,7 +50,7 @@ export class EvaluacionEvaluacionComponent extends FormFragmentComponent<IMemori
     private readonly evaluacionService: EvaluacionService,
     private readonly documentoService: DocumentoService
   ) {
-    super(actionService.FRAGMENT.EVALUACIONES, actionService);
+    super(actionService.FRAGMENT.EVALUACIONES, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -74,30 +69,17 @@ export class EvaluacionEvaluacionComponent extends FormFragmentComponent<IMemori
     this.fxLayoutProperties.xs = 'column';
 
     this.formPart = this.fragment as EvaluacionEvaluacionFragment;
-
-    this.dictamenes$ = this.formPart.evaluacion$.pipe(
-      switchMap(evaluacion => {
-        if (evaluacion) {
-          return evaluacionService.findAllDictamenEvaluacion(
-            evaluacion.id
-          ).pipe(
-            map(response => response.items)
-          );
-        }
-        return of([]);
-      })
-    );
   }
 
   ngOnInit() {
     super.ngOnInit();
-    this.setupI18N();
+
     this.suscriptions.push(this.formGroup.controls.dictamen.valueChanges.subscribe((dictamen) => {
       this.actionService.setDictamen(dictamen);
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       EVALUACION_DICTAMEN_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -141,10 +123,10 @@ export class EvaluacionEvaluacionComponent extends FormFragmentComponent<IMemori
 
     if (this.formPart.evaluacion?.tipoEvaluacion?.id === TIPO_EVALUACION.MEMORIA) {
       const tipoMemoriaWithInforme = [
-        TIPO_MEMORIA.NUEVA,
-        TIPO_MEMORIA.RATIFICACION,
-        TIPO_MEMORIA.MODIFICACION,
-      ].includes(this.formPart.evaluacion?.memoria?.tipoMemoria?.id);
+        MemoriaTipo.NUEVA,
+        MemoriaTipo.RATIFICACION,
+        MemoriaTipo.MODIFICACION,
+      ].includes(this.formPart.evaluacion?.memoria?.tipo);
       const tipoDictamenConInforme = [
         DICTAMEN.DESFAVORABLE,
         DICTAMEN.FAVORABLE,

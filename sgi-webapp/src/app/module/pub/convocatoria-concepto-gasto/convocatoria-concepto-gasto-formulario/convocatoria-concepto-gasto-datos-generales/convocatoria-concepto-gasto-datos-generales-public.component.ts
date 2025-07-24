@@ -6,6 +6,7 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { Subscription } from 'rxjs';
 import { ConvocatoriaConceptoGastoPublicActionService } from '../../convocatoria-concepto-gasto-public.action.service';
 import { ConvocatoriaConceptoGastoDatosGeneralesPublicFragment } from './convocatoria-concepto-gasto-datos-generales-public.fragment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   templateUrl: './convocatoria-concepto-gasto-datos-generales-public.component.html',
@@ -20,9 +21,10 @@ export class ConvocatoriaConceptoGastoDatosGeneralesPublicComponent
   private subscriptions: Subscription[] = [];
 
   constructor(
-    public readonly actionService: ConvocatoriaConceptoGastoPublicActionService
+    public readonly actionService: ConvocatoriaConceptoGastoPublicActionService,
+    private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaConceptoGastoDatosGeneralesPublicFragment;
     this.fxLayoutProperties = new FxLayoutProperties();
     this.fxLayoutProperties.layout = 'row';
@@ -42,4 +44,5 @@ export class ConvocatoriaConceptoGastoDatosGeneralesPublicComponent
     this.subscriptions?.forEach(subscription => subscription.unsubscribe());
   }
 
+  protected setupI18N(): void { }
 }

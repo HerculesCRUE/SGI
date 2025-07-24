@@ -3,8 +3,7 @@ package org.crue.hercules.sgi.rep.service.eti;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
-import org.crue.hercules.sgi.rep.dto.OutputType;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableRatificacion;
+import org.crue.hercules.sgi.rep.service.InformeEvaluacionFavorableRatificacionReportService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
  */
 class InformeFavorableRatificacionReportServiceTest extends BaseReportEtiServiceTest {
 
-  private InformeFavorableRatificacionReportService informeFavorableRatificacionReportService;
+  private InformeEvaluacionFavorableRatificacionReportService informeFavorableRatificacionReportService;
 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
@@ -35,8 +34,8 @@ class InformeFavorableRatificacionReportServiceTest extends BaseReportEtiService
 
   @BeforeEach
   public void setUp() throws Exception {
-    informeFavorableRatificacionReportService = new InformeFavorableRatificacionReportService(
-        sgiConfigProperties, sgiApiConfService, personaService, evaluacionService);
+    informeFavorableRatificacionReportService = new InformeEvaluacionFavorableRatificacionReportService(
+        sgiApiConfService, personaService, evaluacionService);
   }
 
   @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-INV-EVALR" })
@@ -50,10 +49,7 @@ class InformeFavorableRatificacionReportServiceTest extends BaseReportEtiService
         .willReturn(getResource("eti/docx/rep-eti-evaluacion-favorable-memoria-ratificacion.docx"));
     BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
-    ReportInformeFavorableRatificacion report = new ReportInformeFavorableRatificacion();
-    report.setOutputType(OutputType.PDF);
-
-    byte[] reportContent = informeFavorableRatificacionReportService.getReportInformeFavorableRatificacion(report,
+    byte[] reportContent = informeFavorableRatificacionReportService.getReport(
         idEvaluacion);
     assertNotNull(reportContent);
 

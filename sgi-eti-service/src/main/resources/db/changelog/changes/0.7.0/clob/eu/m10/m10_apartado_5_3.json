@@ -1,0 +1,47 @@
+[
+  {
+    "key": "ap5_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.3 Baimen dokumentua"
+    },
+    "fieldGroup": [
+      {
+        "template": "Zure proiektuaren zati bat Unibertsitateko instalazioetatik kanpo gauzatzen bada, badaukazu zentro edo leku horretako arduradunak egindako baimen dokumentua?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oro har, Unibertsitateko instalazioetatik kanpo egiten den azterketa baten edozein alderditarako beharrezkoa izango da proiektuaren fase hori gauzatuko den leku edo zentroko arduradunak baimena edo akordioa sinatzea, honako hauetarako barne: azterketarako subjektuak biltzeko, proiektuari buruzko informazioa banatzeko, laginak hartzeko, inkestak egiteko, proba fisiko edo psikologikoak egiteko, datuak biltzeko, etab.</p>"
+      },
+      {
+        "key": "documentoAutorizacion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "Ez"
+            },
+            {
+              "value": "AUTORIZACION",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: deskribatu '3.4.1 Parte hartzaileak biltzeko prozesua' edo/eta ‘3.5.3 Esku hartzeen deskribapena’ ataletan. </p>"
+      }
+    ]
+  }
+]

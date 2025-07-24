@@ -2,8 +2,10 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -14,8 +16,12 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.RequerimientoJustificacionNotDeleteableException;
 import org.crue.hercules.sgi.csp.exceptions.RequerimientoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
+import org.crue.hercules.sgi.csp.model.RequerimientoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoRequerimiento;
+import org.crue.hercules.sgi.csp.model.TipoRequerimientoNombre;
 import org.crue.hercules.sgi.csp.repository.RequerimientoJustificacionRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -96,9 +102,7 @@ class RequerimientoJustificacionServiceTest extends BaseServiceTest {
             int fromIndex = size * index;
             int toIndex = fromIndex + size;
             List<RequerimientoJustificacion> content = requerimientoJustificacionList.subList(fromIndex, toIndex);
-            Page<RequerimientoJustificacion> page = new PageImpl<>(content, pageable,
-                requerimientoJustificacionList.size());
-            return page;
+            return new PageImpl<>(content, pageable, requerimientoJustificacionList.size());
           }
         });
 
@@ -116,7 +120,7 @@ class RequerimientoJustificacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       RequerimientoJustificacion requerimientoJustificacion = page.getContent().get(i);
-      Assertions.assertThat(requerimientoJustificacion.getObservaciones())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(requerimientoJustificacion.getObservaciones(), Language.ES))
           .isEqualTo("RequerimientoJustificacion-" + String.format("%03d", j));
     }
   }
@@ -335,9 +339,7 @@ class RequerimientoJustificacionServiceTest extends BaseServiceTest {
             int fromIndex = size * index;
             int toIndex = fromIndex + size;
             List<RequerimientoJustificacion> content = requerimientoJustificacionList.subList(fromIndex, toIndex);
-            Page<RequerimientoJustificacion> page = new PageImpl<>(content, pageable,
-                requerimientoJustificacionList.size());
-            return page;
+            return new PageImpl<>(content, pageable, requerimientoJustificacionList.size());
           }
         });
 
@@ -355,7 +357,7 @@ class RequerimientoJustificacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       RequerimientoJustificacion tipoRequerimiento = page.getContent().get(i);
-      Assertions.assertThat(tipoRequerimiento.getObservaciones())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoRequerimiento.getObservaciones(), Language.ES))
           .isEqualTo("RequerimientoJustificacion-" + String.format("%03d", j));
     }
   }
@@ -402,12 +404,6 @@ class RequerimientoJustificacionServiceTest extends BaseServiceTest {
         null, null);
   }
 
-  private RequerimientoJustificacion generarMockRequerimientoJustificacion(Long id, Long requerimientoPrevioId) {
-    String observacionSuffix = id != null ? String.format("%03d", id) : String.format("%03d", 1);
-    return generarMockRequerimientoJustificacion(id, "RequerimientoJustificacion-" + observacionSuffix,
-        requerimientoPrevioId, null);
-  }
-
   private RequerimientoJustificacion generarMockRequerimientoJustificacion(Long id,
       TipoRequerimiento tipoRequerimiento) {
     String observacionSuffix = id != null ? String.format("%03d", id) : String.format("%03d", 1);
@@ -417,9 +413,13 @@ class RequerimientoJustificacionServiceTest extends BaseServiceTest {
 
   private RequerimientoJustificacion generarMockRequerimientoJustificacion(Long id, String observaciones,
       Long requerimientoPrevioId, TipoRequerimiento tipoRequerimiento) {
+    Set<RequerimientoJustificacionObservaciones> observacionesRequerimientoJustificacion = new HashSet<>();
+    observacionesRequerimientoJustificacion
+        .add(new RequerimientoJustificacionObservaciones(Language.ES, observaciones));
+
     return RequerimientoJustificacion.builder()
         .id(id)
-        .observaciones(observaciones)
+        .observaciones(observacionesRequerimientoJustificacion)
         .requerimientoPrevioId(requerimientoPrevioId)
         .tipoRequerimiento(tipoRequerimiento)
         .build();
@@ -431,10 +431,13 @@ class RequerimientoJustificacionServiceTest extends BaseServiceTest {
   }
 
   private TipoRequerimiento generarMockTipoRequerimiento(Long id, String nombre, Boolean activo) {
+    Set<TipoRequerimientoNombre> nombreTipoRequerimiento = new HashSet<>();
+    nombreTipoRequerimiento.add(new TipoRequerimientoNombre(Language.ES, nombre));
+
     return TipoRequerimiento.builder()
         .activo(activo)
         .id(id)
-        .nombre(nombre)
+        .nombre(nombreTipoRequerimiento)
         .build();
   }
 
@@ -446,8 +449,7 @@ class RequerimientoJustificacionServiceTest extends BaseServiceTest {
             return null;
           }
           BeanWrapper wrapper = PropertyAccessorFactory.forBeanPropertyAccess(arg0);
-          Object id = wrapper.getPropertyValue("id");
-          return id;
+          return wrapper.getPropertyValue("id");
         });
     BDDMockito.given(entityManager.find(ArgumentMatchers.eq(clazz), ArgumentMatchers.anyLong())).willReturn(object);
   }

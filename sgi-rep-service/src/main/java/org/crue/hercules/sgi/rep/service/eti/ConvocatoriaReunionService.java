@@ -51,7 +51,7 @@ public class ConvocatoriaReunionService extends BaseRestTemplateService<Convocat
       resultados = response.getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     return resultados;
   }
@@ -77,7 +77,7 @@ public class ConvocatoriaReunionService extends BaseRestTemplateService<Convocat
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     return convocatoriaUltimaEvaluacion;

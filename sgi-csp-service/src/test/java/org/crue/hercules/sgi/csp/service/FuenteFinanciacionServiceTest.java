@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -13,9 +15,13 @@ import javax.validation.ValidationException;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.FuenteFinanciacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
+import org.crue.hercules.sgi.csp.model.FuenteFinanciacionDescripcion;
+import org.crue.hercules.sgi.csp.model.FuenteFinanciacionNombre;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoOrigenFuenteFinanciacion;
 import org.crue.hercules.sgi.csp.repository.FuenteFinanciacionRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -70,7 +76,9 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     mockActivableIsActivo(FuenteFinanciacion.class, null);
     mockActivableIsActivo(TipoAmbitoGeografico.class, fuenteFinanciacion.getTipoAmbitoGeografico());
     mockActivableIsActivo(TipoOrigenFuenteFinanciacion.class, fuenteFinanciacion.getTipoOrigenFuenteFinanciacion());
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(fuenteFinanciacion.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.empty());
     BDDMockito.given(repository.save(fuenteFinanciacion)).will((InvocationOnMock invocation) -> {
       FuenteFinanciacion fuenteFinanciacionCreado = invocation.getArgument(0);
@@ -144,7 +152,10 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     mockActivableIsActivo(FuenteFinanciacion.class, fuenteFinanciacion);
     mockActivableIsActivo(TipoAmbitoGeografico.class, fuenteFinanciacion.getTipoAmbitoGeografico());
     mockActivableIsActivo(TipoOrigenFuenteFinanciacion.class, fuenteFinanciacion.getTipoOrigenFuenteFinanciacion());
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(fuenteFinanciacionNew.getNombre()))
+    BDDMockito
+        .given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+            ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(fuenteFinanciacion));
 
     // when: Creamos el FuenteFinanciacion
@@ -161,7 +172,9 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     mockActivableIsActivo(FuenteFinanciacion.class, null);
     mockActivableIsActivo(TipoAmbitoGeografico.class, null);
     mockActivableIsActivo(TipoOrigenFuenteFinanciacion.class, fuenteFinanciacion.getTipoOrigenFuenteFinanciacion());
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(fuenteFinanciacion.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.empty());
 
     // when: Creamos el FuenteFinanciacion
@@ -177,12 +190,16 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     mockActivableIsActivo(FuenteFinanciacion.class, null);
     mockActivableIsActivo(TipoAmbitoGeografico.class, fuenteFinanciacion.getTipoAmbitoGeografico());
     mockActivableIsActivo(TipoOrigenFuenteFinanciacion.class, null);
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(fuenteFinanciacion.getNombre()))
+    BDDMockito
+        .given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+            ArgumentMatchers.<Language>any(),
+            ArgumentMatchers.<String>any()))
         .willReturn(Optional.empty());
 
     // when: Creamos el FuenteFinanciacion
     // then: Lanza una excepcion
-    Assertions.assertThatThrownBy(() -> service.create(fuenteFinanciacion)).isInstanceOf(ValidationException.class);
+    Assertions.assertThatThrownBy(() -> service.create(fuenteFinanciacion))
+        .isInstanceOf(ConstraintViolationException.class);
   }
 
   @Test
@@ -196,7 +213,9 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     mockActivableIsActivo(TipoOrigenFuenteFinanciacion.class, fuenteFinanciacion.getTipoOrigenFuenteFinanciacion());
     BDDMockito.given(entityManager.find(FuenteFinanciacion.class, fuenteFinanciacion.getId()))
         .willReturn(fuenteFinanciacion);
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(fuenteFinanciacionNombreActualizado.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.empty());
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(fuenteFinanciacion));
@@ -224,7 +243,9 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     mockActivableIsActivo(TipoAmbitoGeografico.class, fuenteFinanciacion.getTipoAmbitoGeografico());
     mockActivableIsActivo(TipoOrigenFuenteFinanciacion.class, fuenteFinanciacion.getTipoOrigenFuenteFinanciacion());
     BDDMockito.given(entityManager.find(FuenteFinanciacion.class, fuenteFinanciacion.getId())).willReturn(null);
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(fuenteFinanciacion.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.empty());
 
     // when: Actualizamos el FuenteFinanciacion
@@ -243,7 +264,9 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     mockActivableIsActivo(TipoOrigenFuenteFinanciacion.class, fuenteFinanciacion.getTipoOrigenFuenteFinanciacion());
     BDDMockito.given(entityManager.find(FuenteFinanciacion.class, fuenteFinanciacion.getId()))
         .willReturn(fuenteFinanciacion);
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(fuenteFinanciacionActualizado.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(fuenteFinanciacion));
 
     // when: Actualizamos el FuenteFinanciacion
@@ -329,7 +352,8 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     // when: Actualizamos el FuenteFinanciacion
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.update(fuenteFinanciacion)).isInstanceOf(ValidationException.class)
-        .hasMessageContaining("No Financial Source active with identifier '1' exists");
+        .hasMessageContaining(
+            "update.fuenteFinanciacion: No existe Fuente de Financiación activa con el identificador '1'");
   }
 
   @Test
@@ -342,7 +366,9 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     mockActivableIsActivo(TipoAmbitoGeografico.class, fuenteFinanciacion.getTipoAmbitoGeografico());
     mockActivableIsActivo(TipoOrigenFuenteFinanciacion.class, fuenteFinanciacion.getTipoOrigenFuenteFinanciacion());
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(fuenteFinanciacion));
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(fuenteFinanciacion.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.empty());
     BDDMockito.given(repository.save(ArgumentMatchers.<FuenteFinanciacion>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -372,13 +398,15 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     mockActivableIsActivo(TipoAmbitoGeografico.class, fuenteFinanciacion.getTipoAmbitoGeografico());
     mockActivableIsActivo(TipoOrigenFuenteFinanciacion.class, fuenteFinanciacion.getTipoOrigenFuenteFinanciacion());
     BDDMockito.given(repository.findById(fuenteFinanciacion.getId())).willReturn(Optional.of(fuenteFinanciacion));
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(fuenteFinanciacion.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        ArgumentMatchers.<Language>any(),
+        ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(fuenteFinanciacionRepetido));
 
     // when: Activamos el FuenteFinanciacion
     // then: Lanza una excepcion porque hay otro FuenteFinanciacion con ese nombre
     Assertions.assertThatThrownBy(() -> service.activar(id)).isInstanceOf(ConstraintViolationException.class)
-        .hasMessageContaining("A Financial Source with name 'nombreRepetido' already exists");
+        .hasMessageContaining("Nombre: Ya existe una Fuente de Financiación con el nombre 'nombreRepetido'");
   }
 
   @Test
@@ -473,7 +501,8 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       FuenteFinanciacion fuenteFinanciacion = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(fuenteFinanciacion.getNombre()).isEqualTo("FuenteFinanciacion" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(fuenteFinanciacion.getNombre(), Language.ES))
+          .isEqualTo("FuenteFinanciacion" + String.format("%03d", i));
     }
   }
 
@@ -513,7 +542,8 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       FuenteFinanciacion fuenteFinanciacion = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(fuenteFinanciacion.getNombre()).isEqualTo("FuenteFinanciacion" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(fuenteFinanciacion.getNombre(), Language.ES))
+          .isEqualTo("FuenteFinanciacion" + String.format("%03d", i));
     }
   }
 
@@ -529,7 +559,8 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     // then: el FuenteFinanciacion
     Assertions.assertThat(fuenteFinanciacion).as("isNotNull()").isNotNull();
     Assertions.assertThat(fuenteFinanciacion.getId()).as("getId()").isEqualTo(idBuscado);
-    Assertions.assertThat(fuenteFinanciacion.getNombre()).as("getNombre()").isEqualTo("nombre-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(fuenteFinanciacion.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-1");
     Assertions.assertThat(fuenteFinanciacion.getActivo()).as("getActivo()").isTrue();
   }
 
@@ -571,10 +602,16 @@ class FuenteFinanciacionServiceTest extends BaseServiceTest {
     tipoOrigenFuenteFinanciacion.setId(1L);
     tipoOrigenFuenteFinanciacion.setActivo(true);
 
+    Set<FuenteFinanciacionNombre> nombreFuenteFinanciacion = new HashSet<>();
+    nombreFuenteFinanciacion.add(new FuenteFinanciacionNombre(Language.ES, nombre));
+
+    Set<FuenteFinanciacionDescripcion> descripcionFuenteFinanciacion = new HashSet<>();
+    descripcionFuenteFinanciacion.add(new FuenteFinanciacionDescripcion(Language.ES, "descripcion-" + id));
+
     FuenteFinanciacion fuenteFinanciacion = new FuenteFinanciacion();
     fuenteFinanciacion.setId(id);
-    fuenteFinanciacion.setNombre(nombre);
-    fuenteFinanciacion.setDescripcion("descripcion-" + id);
+    fuenteFinanciacion.setNombre(nombreFuenteFinanciacion);
+    fuenteFinanciacion.setDescripcion(descripcionFuenteFinanciacion);
     fuenteFinanciacion.setFondoEstructural(true);
     fuenteFinanciacion.setTipoAmbitoGeografico(tipoAmbitoGeografico);
     fuenteFinanciacion.setTipoOrigenFuenteFinanciacion(tipoOrigenFuenteFinanciacion);

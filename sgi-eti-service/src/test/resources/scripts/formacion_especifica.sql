@@ -1,9 +1,19 @@
 -- FORMACIÓN ESPECÍFICA 
-INSERT INTO test.formacion_especifica (id, nombre, activo) VALUES (1, 'A: Cuidado de los animales', true);
-INSERT INTO test.formacion_especifica (id, nombre, activo) VALUES (2, 'B: Eutanasia de los animales', true);
-INSERT INTO test.formacion_especifica (id, nombre, activo) VALUES (3, 'C: Realización de los procedimientos', true);
-INSERT INTO test.formacion_especifica (id, nombre, activo) VALUES (4, 'D: Diseño de los proyectos y procedimientos', true);
-INSERT INTO test.formacion_especifica (id, nombre, activo) VALUES (5, 'E: Responsable de la supervisión in situ del bienestar y cuidado de los animales', true);
-INSERT INTO test.formacion_especifica (id, nombre, activo) VALUES (6, 'F: Veterinario designado', true);
-INSERT INTO test.formacion_especifica (id, nombre, activo) VALUES (7, 'G: Sin especificar', true);
-INSERT INTO test.formacion_especifica (id, nombre, activo) VALUES (8, 'H: No requiere', true);
+INSERT INTO test.formacion_especifica (id, activo) VALUES (1, true);
+INSERT INTO test.formacion_especifica (id, activo) VALUES (2, true);
+INSERT INTO test.formacion_especifica (id, activo) VALUES (3, true);
+INSERT INTO test.formacion_especifica (id, activo) VALUES (4, true);
+INSERT INTO test.formacion_especifica (id, activo) VALUES (5, true);
+INSERT INTO test.formacion_especifica (id, activo) VALUES (6, true);
+INSERT INTO test.formacion_especifica (id, activo) VALUES (7, true);
+INSERT INTO test.formacion_especifica (id, activo) VALUES (8, true);
+
+-- FORMACIÓN ESPECÍFICA NOMBRES
+INSERT INTO test.formacion_especifica_nombre(formacion_especifica_id, lang, value_) VALUES(1, 'es', 'A: Cuidado de los animales');
+INSERT INTO test.formacion_especifica_nombre(formacion_especifica_id, lang, value_) VALUES(2, 'es', 'B: Eutanasia de los animales');
+INSERT INTO test.formacion_especifica_nombre(formacion_especifica_id, lang, value_) VALUES(3, 'es', 'C: Realización de los procedimientos');
+INSERT INTO test.formacion_especifica_nombre(formacion_especifica_id, lang, value_) VALUES(4, 'es', 'D: Diseño de los proyectos y procedimientos');
+INSERT INTO test.formacion_especifica_nombre(formacion_especifica_id, lang, value_) VALUES(5, 'es', 'E: Responsable de la supervisión in situ del bienestar y cuidado de los animales');
+INSERT INTO test.formacion_especifica_nombre(formacion_especifica_id, lang, value_) VALUES(6, 'es', 'F: Veterinario designado');
+INSERT INTO test.formacion_especifica_nombre(formacion_especifica_id, lang, value_) VALUES(7, 'es', 'G: Sin especificar');
+INSERT INTO test.formacion_especifica_nombre(formacion_especifica_id, lang, value_) VALUES(8, 'es', 'H: No requiere');

@@ -1,15 +1,19 @@
 import { registerLocaleData } from '@angular/common';
-import { HttpClient, HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClient, HttpClientModule } from '@angular/common/http';
 import localeEs from '@angular/common/locales/es';
+import localeEu from '@angular/common/locales/eu';
 import { APP_INITIALIZER, LOCALE_ID, NgModule } from '@angular/core';
 import { CoreModule } from '@angular/flex-layout';
 import { MatPaginatorIntl } from '@angular/material/paginator';
 import { BrowserModule, Meta } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SgiErrorHttpInterceptor } from '@core/error-http-interceptor';
+import { Language } from '@core/i18n/language';
+import { LocaleId } from '@core/i18n/locale-id';
 import { SgiLanguageHttpInterceptor } from '@core/languague-http-interceptor';
 import { SgiRequestHttpInterceptor } from '@core/request-http-interceptor';
 import { ResourcePublicService } from '@core/services/cnf/resource-public.service';
+import { LanguageService } from '@core/services/language.service';
 import { TimeZoneService } from '@core/services/timezone.service';
 import { TIME_ZONE } from '@core/time-zone';
 import { environment } from '@env';
@@ -17,10 +21,12 @@ import { AppMatPaginatorIntl } from '@material/app-mat-paginator-intl';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { FormlyModule } from '@ngx-formly/core';
 import { TranslateCompiler, TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { SgiAuthMode, SgiAuthModule, SGI_AUTH_CONFIG } from '@sgi/framework/auth';
+import { SGI_AUTH_CONFIG, SgiAuthMode, SgiAuthModule } from '@sgi/framework/auth';
+import { CKEDITOR_CONFIG, CkEditorConfig, DEFAULT_CKEDITOR_CONFIG } from '@shared/sgi-ckeditor-config';
+import { CookieService } from 'ngx-cookie-service';
 import { LoggerModule } from 'ngx-logger';
 import { TranslateMessageFormatCompiler } from 'ngx-translate-messageformat-compiler';
-import { forkJoin, Observable, of } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -62,10 +68,17 @@ export class SgiTranslateLoader implements TranslateLoader {
 
 // Load supported locales
 registerLocaleData(localeEs);
+registerLocaleData(localeEu);
 
 const appInitializerFn = (appConfig: ConfigService) => {
   return () => {
     return appConfig.loadAppConfig();
+  };
+};
+
+const bootstrapLanguageService = (languageService: LanguageService) => {
+  return () => {
+    return languageService._bootstrap();
   };
 };
 
@@ -93,7 +106,7 @@ const appInitializerFn = (appConfig: ConfigService) => {
         provide: TranslateCompiler,
         useClass: TranslateMessageFormatCompiler
       },
-      defaultLanguage: 'es'
+      defaultLanguage: Language.ES.code
     }),
     BlockModule,
     HttpClientModule,
@@ -103,11 +116,18 @@ const appInitializerFn = (appConfig: ConfigService) => {
   providers: [
     Meta,
     ConfigService,
+    CookieService,
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializerFn,
       multi: true,
       deps: [ConfigService]
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: bootstrapLanguageService,
+      multi: true,
+      deps: [LanguageService]
     },
     {
       provide: MatPaginatorIntl,
@@ -123,7 +143,8 @@ const appInitializerFn = (appConfig: ConfigService) => {
     },
     {
       provide: LOCALE_ID,
-      useValue: 'es'
+      useClass: LocaleId,
+      deps: [LanguageService]
     },
     {
       provide: HTTP_INTERCEPTORS,
@@ -144,6 +165,23 @@ const appInitializerFn = (appConfig: ConfigService) => {
       provide: TIME_ZONE,
       useFactory: (timeZoneService: TimeZoneService) => timeZoneService.zone$,
       deps: [TimeZoneService]
+    },
+    {
+      provide: CKEDITOR_CONFIG,
+      useFactory: (languageService: LanguageService) => {
+        const defaultConfig = { ...DEFAULT_CKEDITOR_CONFIG }
+        //CkEditor internally use the spread operator. Because spread operator won't work for class getter/setter properties we need to use anonymous object. 
+        //See https://github.com/microsoft/TypeScript/issues/26547
+        return {
+          toolbar: defaultConfig.toolbar,
+          link: defaultConfig.link,
+          get language() {
+            return languageService.getLanguage().code;
+          },
+          table: defaultConfig.table
+        } as CkEditorConfig
+      },
+      deps: [LanguageService]
     }
   ],
   bootstrap: [AppComponent]

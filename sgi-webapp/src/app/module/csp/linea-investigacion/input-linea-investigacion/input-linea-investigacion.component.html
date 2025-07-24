@@ -1,0 +1,21 @@
+<div class="input-multilang">
+  <mat-select matPrefix [(ngModel)]="selectedLanguage">
+    <mat-select-trigger>
+      <span>{{selectedLanguage.codeExtended}}</span>
+    </mat-select-trigger>
+    <mat-option *ngFor="let language of enabledLanguages" [value]="language">
+      <span>{{language.translateKey |
+        translate}} ({{language.codeExtended}})</span>
+    </mat-option>
+  </mat-select>
+
+  <input matInput [(ngModel)]="editingValue" [matAutocomplete]="auto" [disabled]="disabled" [placeholder]="placeholder"
+    (change)="onEdit()" (focus)="onInputFocus()" (blur)="onInputBlur()">
+
+  <mat-autocomplete #auto="matAutocomplete" autoActiveFirstOption="true" style="max-height: 140px" class="sgi-results">
+    <mat-option *ngFor="let result of searchResult$ | async" [value]="result" [disabled]="true"
+      style="padding: 0px 10px; line-height: initial; height: auto; color: #ffacac;">
+      {{displayOptionAutocomplete(result)}}
+    </mat-option>
+  </mat-autocomplete>
+</div>

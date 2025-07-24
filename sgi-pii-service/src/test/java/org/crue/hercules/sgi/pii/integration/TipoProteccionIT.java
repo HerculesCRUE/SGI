@@ -1,14 +1,19 @@
 package org.crue.hercules.sgi.pii.integration;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.pii.controller.TipoProteccionController;
 import org.crue.hercules.sgi.pii.dto.TipoProteccionInput;
 import org.crue.hercules.sgi.pii.dto.TipoProteccionOutput;
 import org.crue.hercules.sgi.pii.enums.TipoPropiedad;
+import org.crue.hercules.sgi.pii.model.TipoProteccion;
 import org.crue.hercules.sgi.pii.repository.TipoProteccionRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +71,7 @@ class TipoProteccionIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "5");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter)
@@ -84,12 +89,15 @@ class TipoProteccionIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Page-Size")).isEqualTo("5");
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("3");
 
-    Assertions.assertThat(tipoProteccionOutput.get(0).getNombre()).isEqualTo(
-        "nombre-tipo-proteccion-" + String.format("%03d", 3));
-    Assertions.assertThat(tipoProteccionOutput.get(1).getNombre()).isEqualTo(
-        "nombre-tipo-proteccion-" + String.format("%03d", 2));
-    Assertions.assertThat(tipoProteccionOutput.get(2).getNombre()).isEqualTo(
-        "nombre-tipo-proteccion-" + String.format("%03d", 1));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutput.get(0).getNombre(), Language.ES))
+        .isEqualTo(
+            "nombre-tipo-proteccion-" + String.format("%03d", 3));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutput.get(1).getNombre(), Language.ES))
+        .isEqualTo(
+            "nombre-tipo-proteccion-" + String.format("%03d", 2));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutput.get(2).getNombre(), Language.ES))
+        .isEqualTo(
+            "nombre-tipo-proteccion-" + String.format("%03d", 1));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -106,7 +114,7 @@ class TipoProteccionIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     // when: find Convocatoria
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_TODOS).queryParam("s", sort).queryParam("q", filter)
@@ -124,11 +132,11 @@ class TipoProteccionIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("4");
 
-    Assertions.assertThat(tipoProteccionOutPut.get(0).getNombre()).as("0.nombre")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutPut.get(0).getNombre(), Language.ES)).as("0.nombre[0].value")
         .isEqualTo("nombre-tipo-proteccion-" + String.format("%03d", 6));
-    Assertions.assertThat(tipoProteccionOutPut.get(1).getNombre()).as("1.nombre")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutPut.get(1).getNombre(), Language.ES)).as("1.nombre[0].value")
         .isEqualTo("nombre-tipo-proteccion-" + String.format("%03d", 3));
-    Assertions.assertThat(tipoProteccionOutPut.get(2).getNombre()).as("2.nombre")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutPut.get(2).getNombre(), Language.ES)).as("2.nombre[0].value")
         .isEqualTo("nombre-tipo-proteccion-" + String.format("%03d", 2));
 
   }
@@ -149,7 +157,7 @@ class TipoProteccionIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     // when: find SubtiposProteccion
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_SUBTIPOS).queryParam("s", sort).queryParam("q", filter)
@@ -191,7 +199,7 @@ class TipoProteccionIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     // when: find SubtiposProteccion
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_SUBTIPOS + PATH_TODOS).queryParam("s", sort).queryParam("q", filter)
@@ -238,7 +246,7 @@ class TipoProteccionIT extends BaseIT {
     Assertions.assertThat(tipoProteccionOutput).isNotNull();
     Assertions.assertThat(tipoProteccionOutput.getId()).as("id")
         .isEqualTo(1);
-    Assertions.assertThat(tipoProteccionOutput.getNombre()).as("nombre")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutput.getNombre(), Language.ES)).as("nombre")
         .isEqualTo("nombre-tipo-proteccion-001");
 
   }
@@ -254,17 +262,18 @@ class TipoProteccionIT extends BaseIT {
     String[] roles = {"PII-TPR-R"};   
     Long tipoProteccionId = 6L;
 
-    final ResponseEntity<TipoProteccionOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_ACTIVAR, HttpMethod.PATCH,
-        buildRequest(null, null, roles), TipoProteccionOutput.class, tipoProteccionId);
+    final ResponseEntity<TipoProteccion> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID + PATH_ACTIVAR, HttpMethod.PATCH,
+        buildRequest(null, null, roles), TipoProteccion.class, tipoProteccionId);
+
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
 
-    TipoProteccionOutput tipoProteccionOutput = response.getBody();
+    TipoProteccion tipoProteccionOutput = response.getBody();
 
     Assertions.assertThat(tipoProteccionOutput).isNotNull();
     Assertions.assertThat(tipoProteccionOutput.getId()).as("id")
         .isEqualTo(6);
-    Assertions.assertThat(tipoProteccionOutput.getNombre()).as("nombre")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutput.getNombre(), Language.ES)).as("nombre")
         .isEqualTo("nombre-tipo-proteccion-006");
 
   }
@@ -290,7 +299,7 @@ class TipoProteccionIT extends BaseIT {
     Assertions.assertThat(tipoProteccionOutput).isNotNull();
     Assertions.assertThat(tipoProteccionOutput.getId()).as("id")
         .isEqualTo(1);
-    Assertions.assertThat(tipoProteccionOutput.getNombre()).as("nombre")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutput.getNombre(),Language.ES)).as("nombre")
         .isEqualTo("nombre-tipo-proteccion-001");
 
   }
@@ -314,7 +323,7 @@ class TipoProteccionIT extends BaseIT {
 
     TipoProteccionOutput tipoProteccionOutput = response.getBody();
     Assertions.assertThat(tipoProteccionOutput.getId()).isEqualTo(this.tipoProteccionRepository.count());
-    Assertions.assertThat(tipoProteccionOutput.getNombre()).isEqualTo(input.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutput.getNombre(), Language.ES)).isEqualTo(I18nHelper.getValueForLanguage(input.getNombre(), Language.ES));
     Assertions.assertThat(tipoProteccionOutput.getTipoPropiedad()).isEqualTo(input.getTipoPropiedad());
   }
 
@@ -338,14 +347,20 @@ class TipoProteccionIT extends BaseIT {
 
     TipoProteccionOutput tipoProteccionOutput = response.getBody();
     Assertions.assertThat(tipoProteccionOutput.getId()).isEqualTo(toUpdateId);
-    Assertions.assertThat(tipoProteccionOutput.getNombre()).isEqualTo(input.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoProteccionOutput.getNombre(), Language.ES)).isEqualTo(I18nHelper.getValueForLanguage(input.getNombre(), Language.ES));
     Assertions.assertThat(tipoProteccionOutput.getTipoPropiedad()).isEqualTo(input.getTipoPropiedad());
   }
 
   private TipoProteccionInput buildMockTipoProteccionInput() {
+    List<I18nFieldValueDto> nombreTipoProteccion = new ArrayList<>();
+    nombreTipoProteccion.add(new I18nFieldValueDto(Language.ES, "Testing tipo Proteccion"));
+
+    List<I18nFieldValueDto> descripcionTipoProteccion = new ArrayList<>();
+    descripcionTipoProteccion.add(new I18nFieldValueDto(Language.ES, "Testing tipo Proteccion"));
+
     return TipoProteccionInput.builder()
-    .nombre("Testing tipo Proteccion")
-    .descripcion("Testing tipo Proteccion")
+    .nombre(nombreTipoProteccion)
+    .descripcion(descripcionTipoProteccion)
     .tipoPropiedad(TipoPropiedad.INTELECTUAL)
     .build();
   }

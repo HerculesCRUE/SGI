@@ -1,0 +1,79 @@
+[
+  {
+    "key": "ap4_5_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.5.2 Genetic counselling"
+    },
+    "hideExpression": "!formState.mainModel.ap4_5.estudiosGeneticosRadio || formState.mainModel.ap4_5.estudiosGeneticosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Is genetic counselling to be provided?</p>"
+      },
+      {
+        "key": "proporcionarConsejoGeneticoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>If yes, does the team have a person with expertise in this field to inform the donor about the results?</p>"
+      },
+      {
+        "key": "personaExpertaConsejoGeneticoRadio",
+        "type": "radio",
+        "required": true,
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>If yes, has this information been included in the consent document? See section 4.4.10</p>"
+      },
+      {
+        "key": "documentoConsejoGeneticoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -44,7 +44,7 @@ export class BaremoPesoCuantiaComponent implements OnInit, OnDestroy, BaremoComp
 
   ngOnInit(): void {
     this.initFormGroup();
-    this.setupI18N();
+
   }
 
   ngOnDestroy(): void {
@@ -77,7 +77,7 @@ export class BaremoPesoCuantiaComponent implements OnInit, OnDestroy, BaremoComp
     });
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       BAREMO_PESO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

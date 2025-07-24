@@ -1,11 +1,14 @@
 package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.model.GrupoEquipoInstrumental;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,12 +27,10 @@ public class GrupoEquipoInstrumentalInput implements Serializable {
   @Size(max = GrupoEquipoInstrumental.NUM_REGISTRO_LENGTH)
   private String numRegistro;
 
-  @Size(max = GrupoEquipoInstrumental.NOMBRE_LENGTH)
-  @NotNull
-  private String nombre;
+  @NotEmpty
+  private List<I18nFieldValueDto> nombre;
 
-  @Size(max = GrupoEquipoInstrumental.DESCRIPCION_LENGTH)
-  private String descripcion;
+  private List<I18nFieldValueDto> descripcion;
 
   @NotNull
   private Long grupoId;

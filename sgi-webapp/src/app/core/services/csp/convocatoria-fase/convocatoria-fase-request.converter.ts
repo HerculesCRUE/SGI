@@ -1,10 +1,11 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from "@core/i18n/i18n-field.converter";
 import { IConvocatoriaFase } from "@core/models/csp/convocatoria-fase";
-import { IConvocatoriaFaseRequest } from "./convocatoria-fase-request";
-import { SgiBaseConverter } from '@sgi/framework/core';
-import { LuxonUtils } from "@core/utils/luxon-utils";
 import { ITipoFase } from "@core/models/csp/tipos-configuracion";
-import { IConvocatoriaFaseAvisoRequest } from "./convocatoria-fase-aviso-request";
+import { LuxonUtils } from "@core/utils/luxon-utils";
+import { SgiBaseConverter } from '@sgi/framework/core';
 import { IConvocatoriaFaseAviso } from "./convocatoria-fase-aviso";
+import { IConvocatoriaFaseAvisoRequest } from "./convocatoria-fase-aviso-request";
+import { IConvocatoriaFaseRequest } from "./convocatoria-fase-request";
 
 class ConvocatoriaFaseRequestConverter extends SgiBaseConverter<IConvocatoriaFaseRequest, IConvocatoriaFase> {
 
@@ -17,7 +18,7 @@ class ConvocatoriaFaseRequestConverter extends SgiBaseConverter<IConvocatoriaFas
         tipoFase: {
           id: value.tipoFaseId
         } as ITipoFase,
-        observaciones: value.observaciones,
+        observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.observaciones) : [],
         convocatoriaId: value.convocatoriaId,
         aviso1: this.getConvocatoriaFaseAviso(value.aviso1),
         aviso2: this.getConvocatoriaFaseAviso(value.aviso2)
@@ -31,7 +32,7 @@ class ConvocatoriaFaseRequestConverter extends SgiBaseConverter<IConvocatoriaFas
         tipoFaseId: value.tipoFase?.id,
         fechaInicio: LuxonUtils.toBackend(value.fechaInicio),
         fechaFin: LuxonUtils.toBackend(value.fechaFin),
-        observaciones: value.observaciones,
+        observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.observaciones) : [],
         aviso1: this.getConvocatoriaFaseAvisoRequest(value.aviso1),
         aviso2: this.getConvocatoriaFaseAvisoRequest(value.aviso2)
       }

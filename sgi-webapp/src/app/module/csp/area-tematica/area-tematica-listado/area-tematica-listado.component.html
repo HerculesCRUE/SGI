@@ -50,14 +50,19 @@
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.area-tematica.nombre-listado' | translate}}
         </th>
-        <td mat-cell *matCellDef="let areaTematica">{{areaTematica.nombre}}</td>
+        <td mat-cell *matCellDef="let areaTematica">
+          <sgi-i18n-table-field [field]="areaTematica.nombre"></sgi-i18n-table-field>
+        </td>
+
       </ng-container>
 
       <!-- Descripción -->
       <ng-container matColumnDef="descripcion">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.area-tematica.descripcion' | translate}}
         </th>
-        <td mat-cell *matCellDef="let areaTematica">{{areaTematica.descripcion}}</td>
+        <td mat-cell *matCellDef="let areaTematica">
+          <sgi-i18n-table-field [field]="areaTematica.descripcion"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Activo  -->

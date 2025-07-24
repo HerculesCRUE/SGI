@@ -6,6 +6,7 @@ import { IProyectoSocioPeriodoJustificacion } from '@core/models/csp/proyecto-so
 import { FormFragment } from '@core/services/action-service';
 import { ProyectoSocioPeriodoJustificacionService } from '@core/services/csp/proyecto-socio-periodo-justificacion.service';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { IRange, RangeValidator } from '@core/validators/range-validator';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -55,7 +56,7 @@ export class ProyectoSocioPeriodoJustificacionDatosGeneralesFragment extends For
         ]),
         fechaInicioPresentacion: new FormControl(null),
         fechaFinPresentacion: new FormControl(null),
-        observaciones: new FormControl('', [Validators.maxLength(2_000)]),
+        observaciones: new FormControl([], [I18nValidators.maxLength(2_000)]),
         documentacionRecibida: new FormControl(false),
         fechaRecepcion: new FormControl(null),
         importeJustificado: new FormControl('', [

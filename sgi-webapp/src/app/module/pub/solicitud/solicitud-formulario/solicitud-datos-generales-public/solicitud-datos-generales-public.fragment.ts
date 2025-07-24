@@ -5,8 +5,7 @@ import { IConvocatoriaEntidadConvocante } from '@core/models/csp/convocatoria-en
 import { Estado } from '@core/models/csp/estado-solicitud';
 import { IPrograma } from '@core/models/csp/programa';
 import { ISolicitanteExterno } from '@core/models/csp/solicitante-externo';
-import { ISolicitud } from '@core/models/csp/solicitud';
-import { ISolicitudGrupo } from '@core/models/csp/solicitud-grupo';
+import { ISolicitud, OrigenSolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
 import { ISolicitudRrhh } from '@core/models/csp/solicitud-rrhh';
 import { IEmpresa } from '@core/models/sgemp/empresa';
@@ -22,6 +21,7 @@ import { UnidadGestionPublicService } from '@core/services/csp/unidad-gestion-pu
 import { EmpresaPublicService } from '@core/services/sgemp/empresa-public.service';
 import { ClasificacionPublicService } from '@core/services/sgo/clasificacion-public.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, forkJoin, from, Observable, of, Subject } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
@@ -48,7 +48,6 @@ export interface SolicitudRrhhAreaAnepPublicListado {
 
 export class SolicitudDatosGeneralesPublicFragment extends FormFragment<SolicitudDatosGeneralesPublic> {
   public solicitud: SolicitudDatosGeneralesPublic;
-  private solicitudGrupo: ISolicitudGrupo;
   public solicitanteRef: string;
 
   entidadesConvocantes = [] as IConvocatoriaEntidadConvocante[];
@@ -144,11 +143,11 @@ export class SolicitudDatosGeneralesPublicFragment extends FormFragment<Solicitu
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
       estado: new FormControl({ value: Estado.BORRADOR, disabled: true }),
-      tituloConvocatoria: new FormControl({ value: '', disabled: true }),
+      tituloConvocatoria: new FormControl({ value: [], disabled: true }),
       codigoRegistro: new FormControl({ value: '', disabled: true }),
       codigoExterno: new FormControl('', Validators.maxLength(50)),
-      observaciones: new FormControl({ value: '', disabled: this.isEdit() }, Validators.maxLength(2000)),
-      comentariosEstado: new FormControl({ value: '', disabled: true }),
+      observaciones: new FormControl({ value: [], disabled: this.isEdit() }, I18nValidators.maxLength(2000)),
+      comentariosEstado: new FormControl({ value: [], disabled: true }),
       solicitanteExterno: new FormGroup({
         nombre: new FormControl(null, Validators.required),
         apellidos: new FormControl(null, Validators.required),
@@ -183,7 +182,7 @@ export class SolicitudDatosGeneralesPublicFragment extends FormFragment<Solicitu
 
     const formValues: { [key: string]: any } = {
       estado: solicitud?.estado?.estado,
-      tituloConvocatoria: solicitud?.convocatoria?.titulo ?? '',
+      tituloConvocatoria: solicitud?.convocatoria?.titulo ?? [],
       codigoRegistro: solicitud?.codigoRegistroInterno,
       codigoExterno: solicitud?.codigoExterno,
       observaciones: solicitud?.observaciones ?? '',
@@ -306,19 +305,18 @@ export class SolicitudDatosGeneralesPublicFragment extends FormFragment<Solicitu
 
   setDatosConvocatoria(convocatoria: IConvocatoria) {
     this.subscriptions.push(
-      this.unidadGestionService.findById(convocatoria.unidadGestion.id).subscribe(unidadGestion => {
-        this.solicitud.unidadGestion = unidadGestion;
-      })
-    );
-
-    this.subscriptions.push(
       this.loadEntidadesConvocantesModalidad(this.getValue().publicKey, convocatoria.id).subscribe(entidadesConvocantes => {
         this.entidadesConvocantesModalidad$.next(entidadesConvocantes);
       })
     );
 
     this.solicitud.convocatoriaId = convocatoria.id;
+    this.solicitud.origenSolicitud = OrigenSolicitud.CONVOCATORIA_SGI;
     this.tipoFormularioSolicitud = convocatoria.formularioSolicitud;
+    this.solicitud.convocatoriaExterna = convocatoria.codigo;
+    this.solicitud.tipoFinalidad = convocatoria.finalidad;
+    this.solicitud.modeloEjecucion = convocatoria.modeloEjecucion;
+    this.solicitud.unidadGestion = convocatoria.unidadGestion;
     this.solicitud.solicitante = {
       id: this.solicitanteRef
     } as IPersona;

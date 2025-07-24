@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.eer.integration;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eer.controller.EmpresaDocumentoController;
 import org.crue.hercules.sgi.eer.dto.EmpresaDocumentoInput;
 import org.crue.hercules.sgi.eer.dto.EmpresaDocumentoOutput;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -57,7 +62,8 @@ class EmpresaDocumentoIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     EmpresaDocumentoOutput responseData = response.getBody();
     Assertions.assertThat(responseData.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(responseData.getNombre()).as("getNombre()").isEqualTo(data.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(data.getNombre(), Language.ES));
     Assertions.assertThat(responseData.getDocumentoRef()).as("getDocumentoRef()").isEqualTo(data.getDocumentoRef());
   }
 
@@ -75,7 +81,9 @@ class EmpresaDocumentoIT extends BaseIT {
     String roles = "EER-EER-E";
     Long empresaDocumentoId = 1L;
     EmpresaDocumentoInput data = generateEmpresaDocumentoInputMock();
-    data.setNombre("nombre-actualizado");
+    List<I18nFieldValueDto> nombreDocumento = new ArrayList<>();
+    nombreDocumento.add(new I18nFieldValueDto(Language.ES, "nombre-actualizado"));
+    data.setNombre(nombreDocumento);
 
     // when: update EmpresaDocumento
     final ResponseEntity<EmpresaDocumentoOutput> response = restTemplate.exchange(
@@ -86,7 +94,8 @@ class EmpresaDocumentoIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     EmpresaDocumentoOutput responseData = response.getBody();
     Assertions.assertThat(responseData.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(responseData.getNombre()).as("getNombre()").isEqualTo(data.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(data.getNombre(), Language.ES));
     Assertions.assertThat(responseData.getDocumentoRef()).as("getDocumentoRef()").isEqualTo(data.getDocumentoRef());
   }
 
@@ -134,7 +143,8 @@ class EmpresaDocumentoIT extends BaseIT {
 
     EmpresaDocumentoOutput responseData = response.getBody();
     Assertions.assertThat(responseData.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(responseData.getNombre()).as("getNombre()").isEqualTo("Documento de procedimiento 1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("Documento de procedimiento 1");
     Assertions.assertThat(responseData.getDocumentoRef()).as("getDocumentoRef()").isEqualTo("documento-ref-1");
   }
 
@@ -145,11 +155,15 @@ class EmpresaDocumentoIT extends BaseIT {
 
   private EmpresaDocumentoInput generateEmpresaDocumentoInputMock(Long empresaId,
       Long tipoDocumentoId, String nombre, String comentarios, String documentoRef) {
+    List<I18nFieldValueDto> nombreDocumento = new ArrayList<>();
+    nombreDocumento.add(new I18nFieldValueDto(Language.ES, nombre));
+    List<I18nFieldValueDto> comentariosDocumento = new ArrayList<>();
+    comentariosDocumento.add(new I18nFieldValueDto(Language.ES, comentarios));
     return EmpresaDocumentoInput.builder()
-        .comentarios(comentarios)
+        .comentarios(comentariosDocumento)
         .documentoRef(documentoRef)
         .empresaId(empresaId)
-        .nombre(nombre)
+        .nombre(nombreDocumento)
         .tipoDocumentoId(tipoDocumentoId)
         .build();
   }

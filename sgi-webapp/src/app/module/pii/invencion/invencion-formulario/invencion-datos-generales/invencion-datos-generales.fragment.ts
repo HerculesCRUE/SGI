@@ -20,6 +20,7 @@ import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { PalabraClaveService } from '@core/services/sgo/palabra-clave.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, forkJoin, from, Observable, of, Subject } from 'rxjs';
@@ -79,13 +80,13 @@ export class InvencionDatosGeneralesFragment extends FormFragment<IInvencion> {
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
       id: new FormControl({ value: '', disabled: true }),
-      titulo: new FormControl('', [Validators.maxLength(250)]),
+      titulo: new FormControl([], [I18nValidators.maxLength(250)]),
       fechaComunicacion: new FormControl(this.getTodayAtFirstTime()),
-      descripcion: new FormControl('', [Validators.maxLength(2000)]),
+      descripcion: new FormControl([], [I18nValidators.maxLength(2000)]),
       tipoProteccion: new FormControl(null, [Validators.required]),
       subtipoProteccion: new FormControl(null),
       proyecto: new FormControl(null),
-      comentarios: new FormControl('', [Validators.maxLength(2000)]),
+      comentarios: new FormControl([], [I18nValidators.maxLength(2000)]),
       palabrasClave: new FormControl(null)
     });
 

@@ -51,7 +51,7 @@ public class SgiApiPrcService extends SgiApiBaseService {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     log.debug("getDataReportDetalleGrupo({},{}) - end", anio, grupoId);
 
@@ -75,7 +75,7 @@ public class SgiApiPrcService extends SgiApiBaseService {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     log.debug("getDataReportResumenPuntuacionGrupos({}) - end", anio);
 
@@ -100,7 +100,7 @@ public class SgiApiPrcService extends SgiApiBaseService {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     log.debug("getDataReportDetalleProduccionInvestigador({}, {}) - end", anio, personaRef);
 

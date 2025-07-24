@@ -29,8 +29,6 @@
           </mat-error>
         </mat-form-field>
       </div>
-
-
     </div>
 
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
@@ -50,20 +48,10 @@
           </mat-error>
         </mat-form-field>
       </div>
-      <!-- Importe Solicitado-->
-      <div *ngIf="formPart.isInvestigador" [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md"
-        [fxFlex.gt-md]="fxFlexProperties.gtMd" [fxFlexOrder]="fxFlexProperties.order">
-        <mat-form-field class="input-form">
-          <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.importeSolicitado' | translate}}</mat-label>
-          <input matInput formControlName="importeSolicitado" type="text" id="importeSolicitado"
-            sgiInputWithThousandSeparator
-            placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.importeSolicitado' | translate}}">
-        </mat-form-field>
-      </div>
     </div>
 
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10" *ngIf="!formPart.isInvestigador">
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <!-- Coordinado -->
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order">
@@ -115,16 +103,22 @@
 
     <!-- Tipo desglose presupuesto-->
     <div [fxLayout.xs]="fxLayoutProperties.xs" [fxLayout]="fxLayoutProperties.layout"
-      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10" *ngIf="!formPart.isInvestigador">
+      [fxLayoutGap]="fxLayoutProperties.gap" ngClass.gt-xs="ml-10">
       <div [fxFlex.sm]="fxFlexProperties.sm" [fxFlex.md]="fxFlexProperties.md" [fxFlex.gt-md]="fxFlexProperties.gtMd"
         [fxFlexOrder]="fxFlexProperties.order">
         <mat-form-field class="input-form">
           <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.tipo-desglose-presupuesto' | translate}}</mat-label>
-          <sgi-select-enum formControlName="tipoDesglosePresupuesto" [enumMap]="TIPO_PRESUPUESTO_MAP">
+          <sgi-select-enum formControlName="tipoDesglosePresupuesto" [enumMap]="tiposPresupuesto">
           </sgi-select-enum>
           <mat-error *ngIf="formGroup.controls.tipoDesglosePresupuesto.errors?.required">
             {{'error.required.entity' | translate:msgParamTipoDesglosePresupuestoEntity}}
           </mat-error>
+          <sgi-field-info matSuffix visible="true" [visible]="this.isOrigenSolicitudConvocatoriaSGI"
+            message="{{'info.csp.solicitud-proyecto.tipo-desglose-presupuesto.convocatoria-sgi' | translate}}">
+          </sgi-field-info>
+          <sgi-field-info matSuffix visible="true" [visible]="!this.isOrigenSolicitudConvocatoriaSGI"
+            message="{{'info.csp.solicitud-proyecto.tipo-desglose-presupuesto.convocatoria-no-sgi' | translate}}">
+          </sgi-field-info>
         </mat-form-field>
       </div>
     </div>
@@ -150,8 +144,11 @@
           [fxFlex.gt-md]="fxFlexProperties100.gtMd" [fxFlexOrder]="fxFlexProperties100.order">
           <mat-form-field fxFill>
             <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.objetivos' | translate}}</mat-label>
-            <textarea matInput formControlName="objetivos" id="objetivos"
-              placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.objetivos' | translate}}"></textarea>
+            <sgi-i18n-textarea matInput formControlName="objetivos"
+              placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.objetivos' | translate}}"></sgi-i18n-textarea>
+            <mat-error *ngIf="formGroup.controls.objetivos.errors?.maxlength">
+              {{'error.maxlength.entity' | translate:msgParamObjetivosEntity}}
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -164,8 +161,11 @@
           [fxFlex.gt-md]="fxFlexProperties100.gtMd" [fxFlexOrder]="fxFlexProperties100.order">
           <mat-form-field fxFill>
             <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.justificacion-interes' | translate}}</mat-label>
-            <textarea matInput formControlName="intereses" id="intereses"
-              placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.justificacion-interes' | translate}}"></textarea>
+            <sgi-i18n-textarea matInput formControlName="intereses"
+              placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.justificacion-interes' | translate}}"></sgi-i18n-textarea>
+            <mat-error *ngIf="formGroup.controls.intereses.errors?.maxlength">
+              {{'error.maxlength.entity' | translate:msgParamInteresesEntity}}
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -178,8 +178,11 @@
           [fxFlex.gt-md]="fxFlexProperties100.gtMd" [fxFlexOrder]="fxFlexProperties100.order">
           <mat-form-field fxFill>
             <mat-label>{{'csp.solicitud-datos-proyecto-ficha-general.resultados' | translate}}</mat-label>
-            <textarea matInput formControlName="resultadosPrevistos" id="resultadosPrevistos"
-              placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.resultados' | translate}}"></textarea>
+            <sgi-i18n-textarea matInput formControlName="resultadosPrevistos"
+              placeholder="{{'csp.solicitud-datos-proyecto-ficha-general.resultados' | translate}}"></sgi-i18n-textarea>
+            <mat-error *ngIf="formGroup.controls.resultadosPrevistos.errors?.maxlength">
+              {{'error.maxlength.entity' | translate:msgParamResultadosPrevistosEntity}}
+            </mat-error>
           </mat-form-field>
         </div>
       </div>
@@ -187,7 +190,7 @@
   </form>
 
   <!-- Áreas temáticas -->
-  <div class="separation-button">
+  <div class="separation-button" *ngIf="this.formPart.hasConvocatoria()">
     <h3>{{'list.entity' | translate:msgParamAreaTematicaEntities}}</h3>
     <div class="mat-elevation-z4">
       <table mat-table [dataSource]="listadoAreaTematicas" matSort matSortActive="id" matSortDirection="asc"
@@ -196,40 +199,44 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             {{'list.entity' | translate:msgParamAreaEntities}}
           </th>
-          <td mat-cell *matCellDef="let data">{{data.padre?.nombre}}</td>
+          <td mat-cell *matCellDef="let data">
+            <sgi-i18n-table-field [field]="data.padre?.nombre"></sgi-i18n-table-field>
+          </td>
         </ng-container>
         <ng-container matColumnDef="areaTematicaConvocatoria">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             {{'csp.area-tematica.nombre.convocatoria' | translate}}
           </th>
-          <td mat-cell *matCellDef="let data" matTooltip="{{data.areasTematicasConvocatoria}}">
-            {{data.areasTematicasConvocatoria}}
+          <td mat-cell *matCellDef="let data" matTooltip="{{data.areasTematicasConvocatoria | i18nFieldsValues}}">
+            <sgi-i18n-table-list-fields [fields]="data.areasTematicasConvocatoria"></sgi-i18n-table-list-fields>
           </td>
         </ng-container>
         <ng-container matColumnDef="areaTematicaSolicitud">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>
             {{'csp.area-tematica.nombre.solicitud' | translate}}
           </th>
-          <td mat-cell *matCellDef="let data"> {{data.areaTematicaSolicitud?.nombre}} </td>
+          <td mat-cell *matCellDef="let data">
+            <sgi-i18n-table-field [field]="data.areaTematicaSolicitud?.nombre"></sgi-i18n-table-field>
+          </td>
         </ng-container>
         <ng-container matColumnDef="acciones">
           <th mat-header-cell *matHeaderCellDef>{{'label.actions' | translate}}
           </th>
           <td mat-cell *matCellDef="let data">
-            <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-C', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']">
+            <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-INV-ER']">
               <button color="accent" *ngIf="!data.areaTematicaSolicitud && this.formPart.userCanEdit" mat-button
                 matTooltip="{{'csp.solicitud.select-area-tematica' | translate}}" (click)="openModal(data)">
                 <mat-icon>add_circle</mat-icon>
                 {{ 'csp.solicitud.select-area-tematica' | translate}}
               </button>
             </ng-container>
-            <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-C', 'CSP-SOL-INV-C' ,'CSP-SOL-INV-ER']">
+            <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-INV-ER']">
               <button color="primary" *ngIf="data.areaTematicaSolicitud && this.formPart.userCanEdit" mat-icon-button
                 matTooltip="{{'csp.solicitud.select-area-tematica' | translate}}" (click)="openModal(data)">
                 <mat-icon>border_color</mat-icon>
               </button>
             </ng-container>
-            <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-C', 'CSP-SOL-INV-C', 'CSP-SOL-INV-ER']">
+            <ng-container *sgiHasAnyAuthorityForAnyUO="['CSP-SOL-E', 'CSP-SOL-INV-ER']">
               <button color="warn" *ngIf="data.areaTematicaSolicitud && this.formPart.userCanEdit" mat-icon-button
                 matTooltip="{{'btn.delete' | translate}}" (click)="deleteAreaTematicaListado()">
                 <mat-icon>highlight_off</mat-icon>

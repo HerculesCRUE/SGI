@@ -8,6 +8,8 @@ import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.SolicitudProyectoEntidadController;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidad;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoPresupuesto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -156,12 +158,22 @@ class SolicitudProyectoEntidadIT extends BaseIT {
         .as("get(1).getImporteSolicitado()").isEqualTo(11000d);
     Assertions.assertThat(responseData.get(2).getImporteSolicitado().doubleValue())
         .as("get(2).getImporteSolicitado()").isEqualTo(10000d);
-
-    Assertions.assertThat(responseData.get(0).getObservaciones()).as("get(0).getObservaciones())")
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(responseData.get(0)
+            .getObservaciones(),
+            Language.ES))
+        .as("get(0).getObservaciones())")
         .isEqualTo("observaciones-" + String.format("%03d", 21));
-    Assertions.assertThat(responseData.get(1).getObservaciones()).as("get(1).getObservaciones())")
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(responseData.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())")
         .isEqualTo("observaciones-" + String.format("%03d", 22));
-    Assertions.assertThat(responseData.get(2).getObservaciones()).as("get(2).getObservaciones())")
+
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(responseData.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones())")
         .isEqualTo("observaciones-" + String.format("%03d", 23));
 
     Assertions.assertThat(responseData.get(0).getAnualidad()).as("get(0).getAnualidad()").isEqualTo(2022);

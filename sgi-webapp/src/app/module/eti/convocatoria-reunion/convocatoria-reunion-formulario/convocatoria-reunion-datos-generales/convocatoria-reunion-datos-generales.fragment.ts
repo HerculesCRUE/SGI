@@ -10,10 +10,11 @@ import { ConvocatoriaReunionService } from '@core/services/eti/convocatoria-reun
 import { EvaluadorService } from '@core/services/eti/evaluador.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NullIdValidador } from '@core/validators/null-id-validador';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { EMPTY, from, Observable, of } from 'rxjs';
+import { EMPTY, Observable, from, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast } from 'rxjs/operators';
 
 export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<IConvocatoriaReunionDatosGenerales> {
@@ -45,8 +46,8 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
       horaInicio: [null, Validators.required],
       horaInicioSegunda: [null],
       videoconferencia: [null, Validators.required],
-      lugar: ['', [Validators.maxLength(250)]],
-      ordenDia: ['', [Validators.maxLength(2000), Validators.required]],
+      lugar: [[], [I18nValidators.maxLength(250)]],
+      ordenDia: [[], [I18nValidators.maxLength(2000), I18nValidators.required]],
       convocantes: ['', Validators.required],
     },
       {
@@ -117,7 +118,9 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
     const personas = listado.items;
     evaluadores.forEach((convocante) => {
       const datosPersonaConvocante = personas.find((persona) => convocante.persona.id === persona.id);
-      convocante.persona = datosPersonaConvocante;
+      if (datosPersonaConvocante) {
+        convocante.persona = datosPersonaConvocante;
+      }
     });
     return evaluadores;
   }
@@ -292,13 +295,13 @@ export class ConvocatoriaReunionDatosGeneralesFragment extends FormFragment<ICon
     const lugarFormControl = formGroup.controls.lugar;
     if (!value) {
       lugarFormControl.setValidators([
-        Validators.required,
-        Validators.maxLength(250)
+        I18nValidators.required,
+        I18nValidators.maxLength(250)
       ]);
     }
     else {
       lugarFormControl.setValidators([
-        Validators.maxLength(250)
+        I18nValidators.maxLength(250)
       ]);
     }
     lugarFormControl.updateValueAndValidity({ emitEvent: false });

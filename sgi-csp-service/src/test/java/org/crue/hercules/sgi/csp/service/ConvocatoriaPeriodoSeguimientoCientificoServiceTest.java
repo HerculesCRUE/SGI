@@ -5,9 +5,11 @@ import java.time.Instant;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolationException;
@@ -21,13 +23,17 @@ import org.crue.hercules.sgi.csp.exceptions.PeriodoWrongOrderException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientificoObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaPeriodoSeguimientoCientificoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaPeriodoSeguimientoCientificoServiceImpl;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -214,7 +220,7 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
             Arrays.asList(convocatoriaPeriodoSeguimientoCientifico)))
         // then: throw exception
         .isInstanceOf(ConstraintViolationException.class)
-        .hasMessageContaining("End month must be bigger or equal than initial month");
+        .hasMessageContaining("mesFinal: El mes final debe ser mayor o igual que el mes inicial");
   }
 
   @Test
@@ -239,7 +245,7 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
             Arrays.asList(convocatoriaPeriodoSeguimientoCientifico)))
         // then: throw exception
         .isInstanceOf(ConstraintViolationException.class)
-        .hasMessageContaining("End date must be bigger or equal than initial date");
+        .hasMessageContaining("fechaFinPresentacion: La fecha final debe ser mayor o igual que la fecha inicial");
   }
 
   @Test
@@ -264,7 +270,7 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
             Arrays.asList(convocatoriaPeriodoSeguimientoCientifico)))
         // then: throw exception
         .isInstanceOf(PeriodoLongerThanConvocatoriaException.class)
-        .hasMessage("The Period goes beyond the duration of the Call");
+        .hasMessage("El Periodo se extiende más allá de la duración de la Convocatoria");
   }
 
   @Test
@@ -289,7 +295,7 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
             Arrays.asList(convocatoriaPeriodoSeguimientoCientifico1, convocatoriaPeriodoSeguimientoCientifico2)))
         // then: throw exception
         .isInstanceOf(PeriodoWrongOrderException.class).hasMessageContaining(
-            "The first Period must start in month 1 and all Periods must be consecutive, with no gaps");
+            "El primer Periodo debe comenzar en el mes 1 y todos los Periodos deben ser consecutivos, sin huecos");
   }
 
   @Test
@@ -358,6 +364,9 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
         .willReturn(Optional.of(configuracionSolicitud));
     for (int i = 1, j = 2; i <= 100; i++, j += 2) {
       // @formatter:off
+    Set<ConvocatoriaPeriodoSeguimientoCientificoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ConvocatoriaPeriodoSeguimientoCientificoObservaciones(Language.ES, "observaciones-" + i));
+
       listaConvocatoriaPeriodoSeguimientoCientifico.add(ConvocatoriaPeriodoSeguimientoCientifico
           .builder()
           .id(Long.valueOf(i))
@@ -365,7 +374,7 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
           .numPeriodo(i - 1)
           .mesInicial((i * 2) - 1)
           .mesFinal(j * 1)
-          .observaciones("observaciones-" + i)
+          .observaciones(observaciones)
           .build());
       // @formatter:on
     }
@@ -428,6 +437,9 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
    */
   private ConvocatoriaPeriodoSeguimientoCientifico generarMockConvocatoriaPeriodoSeguimientoCientifico(Long id,
       Integer mesInicial, Integer mesFinal, Long convocatoriaId, TipoSeguimiento tipoSeguimiento) {
+    Set<ConvocatoriaPeriodoSeguimientoCientificoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ConvocatoriaPeriodoSeguimientoCientificoObservaciones(Language.ES, "observaciones-" + id));
+
     ConvocatoriaPeriodoSeguimientoCientifico convocatoriaPeriodoSeguimientoCientifico = new ConvocatoriaPeriodoSeguimientoCientifico();
     convocatoriaPeriodoSeguimientoCientifico.setId(id);
     convocatoriaPeriodoSeguimientoCientifico.setConvocatoriaId(convocatoriaId == null ? 1 : convocatoriaId);
@@ -436,7 +448,7 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
     convocatoriaPeriodoSeguimientoCientifico.setMesFinal(mesFinal);
     convocatoriaPeriodoSeguimientoCientifico.setFechaInicioPresentacion(Instant.parse("2020-10-10T00:00:00Z"));
     convocatoriaPeriodoSeguimientoCientifico.setFechaFinPresentacion(Instant.parse("2020-11-20T23:59:59Z"));
-    convocatoriaPeriodoSeguimientoCientifico.setObservaciones("observaciones-" + id);
+    convocatoriaPeriodoSeguimientoCientifico.setObservaciones(observaciones);
     convocatoriaPeriodoSeguimientoCientifico.setTipoSeguimiento(tipoSeguimiento);
 
     return convocatoriaPeriodoSeguimientoCientifico;
@@ -465,12 +477,17 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
    */
   private ConfiguracionSolicitud generarMockConfiguracionSolicitud(Long configuracionSolicitudId, Long convocatoriaId,
       Long convocatoriaFaseId) {
-    // @formatter:off
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-1"));
+
     TipoFase tipoFase = TipoFase.builder()
         .id(convocatoriaFaseId)
-        .nombre("nombre-1")
+        .nombre(nombreTipoFase)
         .activo(Boolean.TRUE)
         .build();
+
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    obsConvocatoriaFase.add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones"));
 
     ConvocatoriaFase convocatoriaFase = ConvocatoriaFase.builder()
         .id(convocatoriaFaseId)
@@ -478,7 +495,7 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
         .tipoFase(tipoFase)
         .fechaInicio(Instant.parse("2020-10-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-10-15T00:00:00Z"))
-        .observaciones("observaciones")
+        .observaciones(obsConvocatoriaFase)
         .build();
 
     ConfiguracionSolicitud configuracionSolicitud = ConfiguracionSolicitud.builder()
@@ -488,7 +505,6 @@ class ConvocatoriaPeriodoSeguimientoCientificoServiceTest extends BaseServiceTes
         .fasePresentacionSolicitudes(convocatoriaFase)
         .importeMaximoSolicitud(BigDecimal.valueOf(12345))
         .build();
-    // @formatter:on
 
     return configuracionSolicitud;
   }

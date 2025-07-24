@@ -1,11 +1,11 @@
 package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
-import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +20,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TipoAmbitoGeograficoInput implements Serializable {
   @NotEmpty
-  @Size(max = TipoAmbitoGeografico.NOMBRE_LENGTH)
-  private String nombre;
+  private List<I18nFieldValueDto> nombre;
 
 }

@@ -1,13 +1,16 @@
 import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { DialogCommonComponent } from '@core/component/dialog-common.component';
 import { IEstadoValidacionIP, TIPO_ESTADO_VALIDACION_MAP } from '@core/models/csp/estado-validacion-ip';
 import { EstadoValidacionIPService } from '@core/services/csp/estado-validacion-ip/estado-validacion-ip.service';
+import { StatusWrapper } from '@core/utils/status-wrapper';
 import { RSQLSgiRestFilter, SgiRestFilterOperator } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { catchError, map } from 'rxjs/operators';
+import { LanguageService } from '@core/services/language.service';
+
 
 export interface IHistoricoIpModalData {
   proyectoFacturacionId: number;
@@ -33,13 +36,27 @@ export class HistoricoIpModalComponent extends DialogCommonComponent implements 
     private readonly logger: NGXLogger,
     @Inject(MAT_DIALOG_DATA) public data: IHistoricoIpModalData,
     matDialogRef: MatDialogRef<HistoricoIpModalComponent>,
-    private readonly estadoValidacionIPService: EstadoValidacionIPService
+    private readonly estadoValidacionIPService: EstadoValidacionIPService,
+    private readonly languageService: LanguageService
   ) {
     super(matDialogRef);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
+
+    this.dataSource.sortingDataAccessor =
+      (wrapper: IEstadoValidacionIP, property: string) => {
+        switch (property) {
+          case 'motivo':
+            return this.languageService.getFieldValue(wrapper.comentario);
+
+          default:
+            return wrapper[property];
+        }
+      };
+    this.dataSource.sort = this.sort;
+
     this.initializeDataTable();
   }
 

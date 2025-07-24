@@ -8,6 +8,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaEnlace } from '@core/models/csp/convocatoria-enlace';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -47,14 +48,15 @@ export class ConvocatoriaEnlaceComponent extends FragmentComponent implements On
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly translate: TranslateService,
+    private languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.ENLACES, actionService);
+    super(actionService.FRAGMENT.ENLACES, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaEnlaceFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IConvocatoriaEnlace>, property: string) => {
@@ -62,9 +64,9 @@ export class ConvocatoriaEnlaceComponent extends FragmentComponent implements On
           case 'url':
             return wrapper.value.url;
           case 'descripcion':
-            return wrapper.value.descripcion;
+            return this.languageService.getFieldValue(wrapper.value.descripcion);
           case 'tipoEnlace':
-            return wrapper.value.tipoEnlace.nombre;
+            return this.languageService.getFieldValue(wrapper.value.tipoEnlace?.nombre);
           default:
             return wrapper[property];
         }
@@ -75,7 +77,7 @@ export class ConvocatoriaEnlaceComponent extends FragmentComponent implements On
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_ENLACE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

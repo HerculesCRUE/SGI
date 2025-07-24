@@ -7,12 +7,12 @@
   <parent>
     <groupId>org.crue.hercules.sgi</groupId>
     <artifactId>sgi-starter-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </parent>
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-eti-service</artifactId>
-  <version>0.6.0</version>
+  <version>0.7.0</version>
   <packaging>jar</packaging>
   <name>sgi-eti-service</name>
   <description>Servicio Etica SGI HERCULES</description>
@@ -42,7 +42,7 @@
     <!-- Manifest data for the Apache Maven JAR Plugin -->
     <manifest.name>org/crue/hercules/sgi/eti</manifest.name>
     <!-- Versions -->
-    <sgi-framework-spring.version>0.1.0</sgi-framework-spring.version>
+    <sgi-framework-spring.version>0.2.0</sgi-framework-spring.version>
   </properties>
 
   <profiles>
@@ -97,6 +97,12 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
+    <!-- Include HttpClient 4 needed for RestTemplate -->
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
+
     <!--
       H2 - Database Engine.
       https://www.h2database.com/html/main.html
@@ -122,6 +128,14 @@
     <dependency>
       <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
+    </dependency>
+    <!-- Nashorn is JavaScript ScriptEngine. From Java 11 onwards isn't included in the JRE. 
+        https://github.com/openjdk/nashorn
+      -->
+    <dependency>
+      <groupId>org.openjdk.nashorn</groupId>
+      <artifactId>nashorn-core</artifactId>
+      <version>15.4</version>
     </dependency>
     <!--
       Hibernate Validator Annotation Processor - Detecs unsupported constraint usages, and raises an
@@ -171,8 +185,8 @@
       https://www.oracle.com/database/technologies/appdev/jdbc.html
     -->
     <dependency>
-      <groupId>com.oracle.ojdbc</groupId>
-      <artifactId>ojdbc8</artifactId>
+      <groupId>com.oracle.database.jdbc</groupId>
+      <artifactId>ojdbc11</artifactId>
       <scope>runtime</scope>
     </dependency>
     <!-- 

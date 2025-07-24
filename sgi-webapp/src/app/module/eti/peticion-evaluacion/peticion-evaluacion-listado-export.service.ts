@@ -11,8 +11,8 @@ import { ReportService } from '@core/services/rep/report.service';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { DateTime } from 'luxon';
 import { NGXLogger } from 'ngx-logger';
-import { concat, Observable, of, zip } from 'rxjs';
-import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concat, from, Observable, of, zip } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { PeticionEvaluacionAsignacionTareasListadoExportService } from './peticion-evaluacion-asignacion-tareas-listado-export.service';
 import { PeticionEvaluacionEquipoInvestigadorListadoExportService } from './peticion-evaluacion-equipo-investigador-listado-export.service';
 import { PeticionEvaluacionGeneralListadoExportService } from './peticion-evaluacion-general-listado-export.service';
@@ -124,12 +124,19 @@ export class PeticionEvaluacionListadoExportService extends
         return peticiones.items.map((peticion) => peticion as IPeticionEvaluacionReportData);
       }),
       switchMap((peticionesReportData) => {
-        const requestsPeticion: Observable<IPeticionEvaluacionReportData>[] = [];
+        const requestsPeticion: IPeticionEvaluacionReportData[] = [];
 
-        peticionesReportData.forEach(peticion => {
-          requestsPeticion.push(this.getDataReportInner(peticion, reportConfig.reportOptions));
-        });
-        return zip(...requestsPeticion);
+        return from(peticionesReportData).pipe(
+          mergeMap((peticion) => {
+            return this.getDataReportInner(peticion, reportConfig.reportOptions)
+          }, this.DEFAULT_CONCURRENT)
+        ).pipe(
+          map(r => {
+            requestsPeticion.push(r);
+            return requestsPeticion;
+          }),
+          takeLast(1)
+        )
       }),
       takeLast(1)
     );

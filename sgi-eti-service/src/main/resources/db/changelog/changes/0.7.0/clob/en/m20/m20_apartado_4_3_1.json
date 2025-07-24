@@ -1,0 +1,21 @@
+[
+  {
+    "key": "ap4_3_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.1 Justification of the sample size and statistical treatment"
+    },
+    "fieldGroup": [
+      {
+        "key": "justificacionMuestraEstadistica",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Supporting evidence",
+          "required": true
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,18 @@
+[
+  {
+    "key": "ap4_4_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.4.2 Información obligatoria mínima"
+    },
+    "hideExpression": "!formState.mainModel.ap4_4.informacionConsentimientoRadio || formState.mainModel.ap4_4.informacionConsentimientoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Los objetivos del Consentimiento Informado son:<ul><li>Informar a los potenciales sujetos participantes de la actividad de investigación, del y de los riesgos y beneficios potenciales, de la misma.</li><li>Asegurarse de que las personas han comprendido esa información y pueden tomar decisiones de manera voluntaria acerca de su participación en la investigación.</li><li>Trasmitirles que se puede abandonar la participación cuando lo deseen, sin que haya represalias de ningún tipo.</li></ul></p><p>El documento de consentimiento informado (DCI) sirve para ratificar la aceptación del participante: Ha de ser escrito y específico, no demasiado largo ni complejo ni con palabras técnicas, frases muy largas o letra muy pequeña o que contenga información engañosa o poco clara. En el caso de los menores de edad, a partir de los 12 años y hasta los 18, firmarán un Documento de asentimiento adaptado a su lenguaje y sus representantes legales (padres/tutores) firmarán el DCI.</p><p>Consulte con la Secretaría Técnica del Comité de Ética las pautas de elaboración del DCI.</p>"
+      }
+    ]
+  }
+]

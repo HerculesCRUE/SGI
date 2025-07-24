@@ -1,0 +1,139 @@
+[
+  {
+    "key": "ap3_5_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.4 Organismo modificado genéticamente"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4 || !formState.mainModel.ap3_4.ap3_4_3 || !formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio || formState.mainModel.ap3_4.ap3_4_3.tareasUsoConfinadoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>OMG Tipo 1: Aquel cuya probabilidad de causar una enfermedad en los seres vivos o un efecto adverso en el medio ambientes es insignificante.</p><p>OMG Tipo 2: Aquel que puede causar una enfermedad a los seres vivos, siendo poco probable que se propague a la colectividad y existiendo generalmente profilaxis o tratamiento eficaz; o puede causar un efecto adverso bajo en el medio ambiente.</p><p>OMG Tipo 3: Aquel que puede causar una enfermedad grave a los seres vivos, con riesgo de que se propague a la colectividad y existiendo generalmente una profilaxis o tratamiento eficaz; o puede causar un efecto adverso moderado en el medio ambiente.</p><p>OMT Tipo 4: Aquel que puede causar una enfermedad grave a los seres vivos con muchas probabilidades de que se propague a la colectividad y sin que exista generalmente una profilaxis o un tratamiento eficaz; o puede causar un efecto adverso alto en el medio ambiente.</p>"
+      },
+      {
+        "type": "table-crud",
+        "key": "microorganismosParasitosTable",
+        "templateOptions": {
+          "entity": "organismo modificado genéticamente",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "organismo modificado genéticamente"
+          },
+          "fieldGroup": [
+            {
+              "key": "organismoModificadoNombre",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Nombre",
+                "order": 10,
+                "placeholder": "Nombre",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoHuesped",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Huésped",
+                "order": 20,
+                "placeholder": "Huésped",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoVectorUtilizado",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Vector utilizado",
+                "order": 30,
+                "placeholder": "Vector utilizado",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoInsertoEspecie",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Inserto y especie de procedencia del inserto",
+                "order": 40,
+                "placeholder": "Inserto y especie de procedencia del inserto",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoProteina",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Proteína que codifica",
+                "order": 50,
+                "placeholder": "Proteína que codifica",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            },
+            {
+              "key": "organismoModificadoGrupoRiesgo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Grupo de riesgo",
+                "order": 60,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Grupo 1"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Grupo 2"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Grupo 3"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Grupo 4"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "organismoModificadoVolumenMaximo",
+              "type": "i18n-textarea",
+              "templateOptions": {
+                "label": "Volumen máximo de muestra que se maneja en cada vez o número de animales",
+                "order": 70,
+                "placeholder": "Volumen máximo de muestra que se maneja en cada vez o número de animales",
+                "required": true,
+                "autosize": true,
+                "autosizeMinRows": "1",
+                "autosizeMaxRows": "10"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

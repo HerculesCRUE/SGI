@@ -1,10 +1,11 @@
+import { I18N_FIELD_RESPONSE_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IProyectoPeriodoSeguimiento } from '@core/models/csp/proyecto-periodo-seguimiento';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IProyectoPeriodoSeguimientoResponse } from './proyecto-periodo-seguimiento-response';
 
 class ProyectoPeriodoSeguimientoResponseConverter
-  extends SgiBaseConverter<IProyectoPeriodoSeguimientoResponse, IProyectoPeriodoSeguimiento>{
+  extends SgiBaseConverter<IProyectoPeriodoSeguimientoResponse, IProyectoPeriodoSeguimiento> {
   toTarget(value: IProyectoPeriodoSeguimientoResponse): IProyectoPeriodoSeguimiento {
     if (!value) {
       return value as unknown as IProyectoPeriodoSeguimiento;
@@ -17,7 +18,7 @@ class ProyectoPeriodoSeguimientoResponseConverter
       fechaInicio: LuxonUtils.fromBackend(value.fechaInicio),
       fechaInicioPresentacion: LuxonUtils.fromBackend(value.fechaInicioPresentacion),
       numPeriodo: value.numPeriodo,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.observaciones) : [],
       proyectoId: value.proyectoId,
       tipoSeguimiento: value.tipoSeguimiento,
       fechaPresentacionDocumentacion: LuxonUtils.fromBackend(value.fechaPresentacionDocumentacion)
@@ -35,7 +36,7 @@ class ProyectoPeriodoSeguimientoResponseConverter
       fechaInicio: LuxonUtils.toBackend(value.fechaInicio),
       fechaInicioPresentacion: LuxonUtils.toBackend(value.fechaInicioPresentacion),
       numPeriodo: value.numPeriodo,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.observaciones) : [],
       proyectoId: value.proyectoId,
       tipoSeguimiento: value.tipoSeguimiento,
       fechaPresentacionDocumentacion: LuxonUtils.toBackend(value.fechaPresentacionDocumentacion)

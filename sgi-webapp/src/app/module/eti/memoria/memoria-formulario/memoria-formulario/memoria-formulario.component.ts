@@ -1,8 +1,12 @@
-import { StepperSelectionEvent, STEPPER_GLOBAL_OPTIONS } from '@angular/cdk/stepper';
+import { STEPPER_GLOBAL_OPTIONS, StepperSelectionEvent } from '@angular/cdk/stepper';
 import { Component, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { MatStepper } from '@angular/material/stepper';
 import { FragmentComponent } from '@core/component/fragment.component';
+import { IBloque } from '@core/models/eti/bloque';
 import { IComentario } from '@core/models/eti/comentario';
+import { Group } from '@core/services/action-service';
+import { LanguageService } from '@core/services/language.service';
+import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
 import { IBlock } from '../../memoria-formly-form.fragment';
 import { MemoriaActionService } from '../../memoria.action.service';
@@ -35,10 +39,31 @@ export class MemoriaFormularioComponent extends FragmentComponent implements OnI
   }
 
   constructor(
-    actionService: MemoriaActionService
+    private readonly actionService: MemoriaActionService,
+    private readonly languageService: LanguageService,
+    private readonly translateService: TranslateService
   ) {
-    super(actionService.FRAGMENT.FORMULARIO, actionService);
+    super(actionService.FRAGMENT.FORMULARIO, actionService, translateService);
     this.memoriaFormularioFragment = (this.fragment as MemoriaFormularioFragment);
+
+    this.subscriptions.push(this.translateService.onLangChange.subscribe((value) => {
+      this.blocks.forEach((block, index) => {
+        const lastBlock = this.memoriaFormularioFragment.getLastFilledBlockIndex();
+        if (index <= lastBlock) {
+          if (block.loaded$.value) {
+
+            const mapGroup = new Map<string, Group>();
+            block.formlyData.fields.forEach(f => {
+              mapGroup.set(f.key.toString(), f.group);
+            });
+
+            block.formlyData.fields = [];
+            this.memoriaFormularioFragment.fillFormlyData(true, block.formlyData.model, block.formlyData.options.formState, block.formlyData.fields, block.questions, mapGroup);
+          }
+        }
+      });
+
+    }));
   }
 
   ngOnInit(): void {
@@ -66,4 +91,16 @@ export class MemoriaFormularioComponent extends FragmentComponent implements OnI
   previousStep(): void {
     this.stepper.previous();
   }
+
+  getNombreBloque(bloque: IBloque): string {
+    return this.languageService.getFieldValue(bloque.nombre);
+  }
+
+  getOrdenBloque(key: string): number {
+    const keyString = key.replace(/ap/g, "");
+    const keyArray = keyString.split("_");
+    return Number(keyArray[0]);
+  }
+
+  protected setupI18N(): void { }
 }

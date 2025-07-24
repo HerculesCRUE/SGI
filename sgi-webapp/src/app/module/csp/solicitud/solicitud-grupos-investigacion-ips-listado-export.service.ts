@@ -53,31 +53,34 @@ export class SolicitudGruposInvestigacionIpListadoExportService
         if (!lastEstadoSolicitada) {
           return of(solicitudData);
         }
+        if (solicitudData.solicitante?.id) {
+          return this.grupoService.findGruposPersona(solicitudData.solicitante.id, lastEstadoSolicitada.fechaEstado, lastEstadoSolicitada.fechaEstado).pipe(
+            switchMap(grupos => from(grupos).pipe(
+              mergeMap(grupo => {
+                const options: SgiRestFindOptions = {
+                  filter: new RSQLSgiRestFilter('personaRef', SgiRestFilterOperator.EQUALS, solicitudData.solicitante.id)
+                    .and('fechaParticipacionAnterior', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(lastEstadoSolicitada.fechaEstado, false))
+                    .and('fechaParticipacionPosterior', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(lastEstadoSolicitada.fechaEstado, false))
+                };
 
-        return this.grupoService.findGruposPersona(solicitudData.solicitante.id, lastEstadoSolicitada.fechaEstado, lastEstadoSolicitada.fechaEstado).pipe(
-          switchMap(grupos => from(grupos).pipe(
-            mergeMap(grupo => {
-              const options: SgiRestFindOptions = {
-                filter: new RSQLSgiRestFilter('personaRef', SgiRestFilterOperator.EQUALS, solicitudData.solicitante.id)
-                  .and('fechaParticipacionAnterior', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(lastEstadoSolicitada.fechaEstado, false))
-                  .and('fechaParticipacionPosterior', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(lastEstadoSolicitada.fechaEstado, false))
-              };
+                return this.grupoService.findMiembrosEquipo(grupo.id, options).pipe(
+                  map(response => {
+                    if (response.items?.length) {
+                      solicitudData.gruposInvestigacionIp.push({
+                        ...grupo,
+                        participacion: response.items[0]
+                      });
+                    }
 
-              return this.grupoService.findMiembrosEquipo(grupo.id, options).pipe(
-                map(response => {
-                  if (response.items?.length) {
-                    solicitudData.gruposInvestigacionIp.push({
-                      ...grupo,
-                      participacion: response.items[0]
-                    });
-                  }
-
-                  return solicitudData;
-                })
-              );
-            }, this.DEFAULT_CONCURRENT),
-          ))
-        )
+                    return solicitudData;
+                  })
+                );
+              }, this.DEFAULT_CONCURRENT),
+            ))
+          )
+        } else {
+          return of(solicitudData);
+        }
       })
     );
   }

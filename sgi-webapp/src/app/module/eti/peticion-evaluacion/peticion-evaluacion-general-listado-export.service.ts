@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { TIPO_ACTIVIDAD_MAP } from '@core/models/eti/tipo-actividad';
+import { TIPO_INVESTIGACION_TUTELADA_MAP } from '@core/models/eti/tipo-investigacion-tutelada';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { IPersona } from '@core/models/sgp/persona';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -27,13 +30,14 @@ const FECHA_FIN_KEY = marker('eti.peticion-evaluacion.fecha-fin');
 
 @Injectable()
 export class PeticionEvaluacionGeneralListadoExportService extends
-  AbstractTableExportFillService<IPeticionEvaluacionReportData, IPeticionEvaluacionReportOptions>{
+  AbstractTableExportFillService<IPeticionEvaluacionReportData, IPeticionEvaluacionReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
     private readonly solicitudService: SolicitudService,
-    private readonly personaService: PersonaService
+    private readonly personaService: PersonaService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -136,10 +140,10 @@ export class PeticionEvaluacionGeneralListadoExportService extends
       peticionData.solicitante?.apellidos ?? '',
       peticionData.codigo ?? '',
       peticionData.codigoSolicitudConvocatoria ?? '',
-      peticionData.titulo ?? '',
-      peticionData.tipoActividad?.nombre ?? '',
-      peticionData.tipoInvestigacionTutelada?.nombre ?? '',
-      peticionData.fuenteFinanciacion ?? '',
+      this.languageService.getFieldValue(peticionData.titulo) ?? '',
+      peticionData.tipoActividad?.id ? this.translate.instant(TIPO_ACTIVIDAD_MAP.get(peticionData.tipoActividad?.id)) : '',
+      peticionData.tipoInvestigacionTutelada?.id ? this.translate.instant(TIPO_INVESTIGACION_TUTELADA_MAP.get(peticionData.tipoInvestigacionTutelada?.id)) : '',
+      this.languageService.getFieldValue(peticionData.fuenteFinanciacion) ?? '',
       peticionData.importeFinanciacion ?? '',
       LuxonUtils.toBackend(peticionData.fechaInicio) ?? '',
       LuxonUtils.toBackend(peticionData.fechaFin) ?? ''

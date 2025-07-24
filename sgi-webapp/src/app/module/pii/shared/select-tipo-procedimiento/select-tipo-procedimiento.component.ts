@@ -6,6 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
 import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { ITipoProcedimiento } from '@core/models/pii/tipo-procedimiento';
+import { LanguageService } from '@core/services/language.service';
 import { TipoProcedimientoService } from '@core/services/pii/tipo-procedimiento/tipo-procedimiento.service';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
@@ -29,18 +30,19 @@ export class SelectTipoProcedimientoComponent extends SelectServiceExtendedCompo
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation: PlatformLocation,
     dialog: MatDialog,
-    private tipoProcedimientoService: TipoProcedimientoService,
-    private authService: SgiAuthService
+    private authService: SgiAuthService,
+    private tipoProcedimientoService: TipoProcedimientoService
   ) {
-    super(defaultErrorStateMatcher, ngControl, platformLocation, dialog);
+    super(defaultErrorStateMatcher, ngControl, languageService, platformLocation, dialog);
     this.addTarget = TipoProcedimientoModalComponent;
   }
 
   protected loadServiceOptions(): Observable<ITipoProcedimiento[]> {
     const findOptions: SgiRestFindOptions = {
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
+      sort: new RSQLSgiRestSort('nombre.value', SgiRestSortDirection.ASC)
     };
     return this.tipoProcedimientoService.findAll(findOptions).pipe(map(({ items }) => items));
   }

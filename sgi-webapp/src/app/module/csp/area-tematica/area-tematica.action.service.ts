@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { ActionService } from '@core/services/action-service';
 import { AreaTematicaService } from '@core/services/csp/area-tematica.service';
+import { LanguageService } from '@core/services/language.service';
 import { NGXLogger } from 'ngx-logger';
 import { AreaTematicaArbolFragment } from './area-tematica-formulario/area-tematica-arbol/area-tematica-arbol.fragment';
 import { AreaTematicaDatosGeneralesFragment } from './area-tematica-formulario/area-tematica-datos-generales/area-tematica-datos-generales.fragment';
@@ -23,7 +24,8 @@ export class AreaTematicaActionService extends ActionService {
   constructor(
     private readonly logger: NGXLogger,
     route: ActivatedRoute,
-    areaTematicaService: AreaTematicaService
+    areaTematicaService: AreaTematicaService,
+    languageService: LanguageService
   ) {
     super();
     this.area = {} as IAreaTematica;
@@ -35,8 +37,12 @@ export class AreaTematicaActionService extends ActionService {
     this.datosGenerales = new AreaTematicaDatosGeneralesFragment(logger, this.area?.id,
       areaTematicaService);
 
-    this.areaTematicaArbol = new AreaTematicaArbolFragment(logger, this.area?.id,
-      areaTematicaService);
+    this.areaTematicaArbol = new AreaTematicaArbolFragment(
+      logger,
+      this.area?.id,
+      areaTematicaService,
+      languageService
+    );
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
     this.addFragment(this.FRAGMENT.AREAS_ARBOL, this.areaTematicaArbol);

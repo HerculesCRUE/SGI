@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.eti.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -58,7 +65,9 @@ public class Asistentes extends BaseEntity {
   private Boolean asistencia;
 
   /** Motivo */
-  @Column(name = "motivo", length = 250)
-  private String motivo;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "asistentes_motivo", joinColumns = @JoinColumn(name = "asistentes_id"))
+  @Valid
+  private Set<AsistentesMotivo> motivo = new HashSet<>();
 
 }

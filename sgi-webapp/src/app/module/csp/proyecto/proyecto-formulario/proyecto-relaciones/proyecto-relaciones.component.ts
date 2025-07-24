@@ -6,8 +6,10 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
-import { TipoEntidad, TIPO_ENTIDAD_MAP } from '@core/models/rel/relacion';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
+import { TIPO_ENTIDAD_MAP, TipoEntidad } from '@core/models/rel/relacion';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -55,14 +57,15 @@ export class ProyectoRelacionesComponent extends FragmentComponent implements On
     private readonly translate: TranslateService,
     private readonly dialogService: DialogService,
     private readonly matDialog: MatDialog,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.RELACIONES, actionService);
+    super(actionService.FRAGMENT.RELACIONES, actionService, translate);
     this.formPart = this.fragment as ProyectoRelacionFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.initProyectoRelacionesTable();
   }
 
@@ -78,13 +81,13 @@ export class ProyectoRelacionesComponent extends FragmentComponent implements On
           case 'tipoEntidadRelacionada':
             return wrapper.value.tipoEntidadRelacionada;
           case 'entidadRelacionada':
-            return wrapper.value.entidadRelacionada.titulo;
+            return this.languageService.getFieldValue(wrapper.value.entidadRelacionada.titulo as I18nFieldValue[]);
           case 'refEntidadConvocante':
             return wrapper.value.entidadConvocanteRef;
           case 'codigoSGE':
             return wrapper.value.codigosSge;
           case 'observaciones':
-            return wrapper.value.observaciones;
+            return this.languageService.getFieldValue(wrapper.value.observaciones);
           default:
             return wrapper[property];
         }
@@ -156,7 +159,7 @@ export class ProyectoRelacionesComponent extends FragmentComponent implements On
     return (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_RELACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

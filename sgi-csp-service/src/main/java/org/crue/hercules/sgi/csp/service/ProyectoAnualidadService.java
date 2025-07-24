@@ -168,7 +168,7 @@ public class ProyectoAnualidadService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ProyectoAnualidad id no puede ser null para eliminar un ProyectoAnualidad");
+    AssertHelper.idNotNull(id, ProyectoAnualidad.class);
 
     if (!repository.findById(id).isPresent()) {
       throw new ProyectoAnualidadNotFoundException(id);

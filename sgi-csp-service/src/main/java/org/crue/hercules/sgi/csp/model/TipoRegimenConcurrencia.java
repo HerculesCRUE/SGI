@@ -1,14 +1,21 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia.OnActualizar;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia.OnCrear;
@@ -46,10 +53,11 @@ public class TipoRegimenConcurrencia extends BaseActivableEntity {
   private Long id;
 
   /** Nombre */
-  @Column(name = "nombre", length = NOMBRE_LENGTH, nullable = false)
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "tipo_regimen_concurrencia_nombre", joinColumns = @JoinColumn(name = "tipo_regimen_concurrencia_id"))
   @NotEmpty
-  @Size(max = 50)
-  private String nombre;
+  @Valid
+  private Set<TipoRegimenConcurrenciaNombre> nombre = new HashSet<>();
 
   /**
    * Interfaz para marcar validaciones en la creación de la entidad.

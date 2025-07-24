@@ -4,7 +4,9 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ConvocatoriaController;
@@ -24,20 +26,30 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaDocumento;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlace;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaEnlaceDescripcion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObjeto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -100,10 +112,9 @@ class ConvocatoriaIT extends BaseIT {
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-C", "CSP-CON-B",
-        "CSP-CON-R", "CSP-CON-E", "CSP-CON-INV-V", "CSP-CON-V", "AUTH")));
+        "CSP-CON-R", "CSP-CON-E", "CSP-CON-INV-V", "CSP-CON-V")));
 
-    HttpEntity<Convocatoria> request = new HttpEntity<>(entity, headers);
-    return request;
+    return new HttpEntity<>(entity, headers);
   }
 
   private HttpEntity<Object> buildGenericRequest(HttpHeaders headers, Object entity, String... roles) throws Exception {
@@ -112,8 +123,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-    return request;
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql
@@ -171,8 +181,13 @@ class ConvocatoriaIT extends BaseIT {
     // given: existing Convocatoria to be updated
     Convocatoria convocatoria = generarMockConvocatoria(1L, 1L, 1L, 1L, 1L, 1L, Boolean.TRUE);
     convocatoria.setCodigo("codigo-modificado");
-    convocatoria.setTitulo("titulo-modificado");
-    convocatoria.setObservaciones("observaciones-modificadas");
+    Set<ConvocatoriaTitulo> tituloConvocatoria = new HashSet<>();
+    tituloConvocatoria.add(new ConvocatoriaTitulo(Language.ES, "titulo-modificado"));
+    convocatoria.setTitulo(tituloConvocatoria);
+
+    Set<ConvocatoriaObservaciones> observacionesConvocatoria = new HashSet<>();
+    observacionesConvocatoria.add(new ConvocatoriaObservaciones(Language.ES, "observaciones-modificadas"));
+    convocatoria.setObservaciones(observacionesConvocatoria);
 
     // when: update Convocatoria
     final ResponseEntity<Convocatoria> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -193,7 +208,8 @@ class ConvocatoriaIT extends BaseIT {
         .isEqualTo(convocatoria.getFechaProvisional());
     Assertions.assertThat(responseData.getFechaConcesion()).as("getFechaConcesion()")
         .isEqualTo(convocatoria.getFechaConcesion());
-    Assertions.assertThat(responseData.getTitulo()).as("getTitulo()").isEqualTo(convocatoria.getTitulo());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getTitulo(), Language.ES)).as("getTitulo()")
+        .isEqualTo("titulo-modificado");
     Assertions.assertThat(responseData.getObjeto()).as("getObjeto()").isEqualTo(convocatoria.getObjeto());
     Assertions.assertThat(responseData.getObservaciones()).as("getObservaciones()")
         .isEqualTo(convocatoria.getObservaciones());
@@ -392,9 +408,12 @@ class ConvocatoriaIT extends BaseIT {
         .isEqualTo(Instant.parse("2021-09-01T00:00:00Z"));
     Assertions.assertThat(responseData.getFechaConcesion()).as("getFechaConcesion()")
         .isEqualTo(Instant.parse("2021-10-01T00:00:00Z"));
-    Assertions.assertThat(responseData.getTitulo()).as("getTitulo()").isEqualTo("titulo-001");
-    Assertions.assertThat(responseData.getObjeto()).as("getObjeto()").isEqualTo("objeto-001");
-    Assertions.assertThat(responseData.getObservaciones()).as("getObservaciones()").isEqualTo("observaciones-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getTitulo(), Language.ES)).as("getTitulo()")
+        .isEqualTo("titulo-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getObjeto(), Language.ES)).as("getObjeto()")
+        .isEqualTo("objeto-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("observaciones-001");
     Assertions.assertThat(responseData.getFinalidad().getId()).as("getFinalidad().getId()").isEqualTo(1L);
     Assertions.assertThat(responseData.getRegimenConcurrencia().getId()).as("getRegimenConcurrencia().getId()")
         .isEqualTo(1L);
@@ -420,7 +439,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     String sort = "codigo,desc";
-    String filter = "titulo=ke=00";
+    String filter = "titulo.value=ke=00";
 
     // when: find Convocatoria
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_RESTRINGIDOS)
@@ -463,7 +482,7 @@ class ConvocatoriaIT extends BaseIT {
 
     HttpEntity<Convocatoria> request = new HttpEntity<>(null, headers);
     String sort = "codigo,desc";
-    String filter = "titulo=ke=00";
+    String filter = "titulo.value=ke=00";
 
     // when: find Convocatoria
     URI uri = UriComponentsBuilder
@@ -501,7 +520,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     String sort = "codigo,desc";
-    String filter = "titulo=ke=00";
+    String filter = "titulo.value=ke=00";
 
     URI uri = UriComponentsBuilder
         .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_TODOS + PATH_PARAMETER_RESTRINGIDOS).queryParam("s", sort)
@@ -745,7 +764,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "observaciones=ke=-00";
+    String filter = "observaciones.value=ke=-00";
 
     Long convocatoriaId = 1L;
 
@@ -764,12 +783,15 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(convocatoriasDocumentos.get(0).getObservaciones()).as("get(0).getObservaciones()")
-        .isEqualTo("observaciones-" + String.format("%03d", 3));
-    Assertions.assertThat(convocatoriasDocumentos.get(1).getObservaciones()).as("get(1).getObservaciones())")
-        .isEqualTo("observaciones-" + String.format("%03d", 2));
-    Assertions.assertThat(convocatoriasDocumentos.get(2).getObservaciones()).as("get(2).getObservaciones()")
-        .isEqualTo("observaciones-" + String.format("%03d", 1));
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriasDocumentos.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()").isEqualTo("observaciones-" + String.format("%03d", 3));
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriasDocumentos.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())").isEqualTo("observaciones-" + String.format("%03d", 2));
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriasDocumentos.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones()").isEqualTo("observaciones-" + String.format("%03d", 1));
   }
 
   /**
@@ -788,7 +810,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "descripcion=ke=-00";
+    String filter = "descripcion.value=ke=-00";
 
     Long convocatoriaId = 1L;
 
@@ -807,11 +829,14 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(convocatoriasEnlaces.get(0).getDescripcion()).as("get(0).getDescripcion()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasEnlaces.get(0).getDescripcion(), Language.ES))
+        .as("get(0).getDescripcion()")
         .isEqualTo("descripcion-" + String.format("%03d", 3));
-    Assertions.assertThat(convocatoriasEnlaces.get(1).getDescripcion()).as("get(1).getDescripcion())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasEnlaces.get(1).getDescripcion(), Language.ES))
+        .as("get(1).getDescripcion())")
         .isEqualTo("descripcion-" + String.format("%03d", 2));
-    Assertions.assertThat(convocatoriasEnlaces.get(2).getDescripcion()).as("get(2).getDescripcion()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasEnlaces.get(2).getDescripcion(), Language.ES))
+        .as("get(2).getDescripcion()")
         .isEqualTo("descripcion-" + String.format("%03d", 1));
   }
 
@@ -867,10 +892,13 @@ class ConvocatoriaIT extends BaseIT {
     TipoEnlace tipoEnlace = new TipoEnlace();
     tipoEnlace.setId(1L);
 
+    Set<ConvocatoriaEnlaceDescripcion> descripcionConvocatoriaEnlace = new HashSet<>();
+    descripcionConvocatoriaEnlace.add(new ConvocatoriaEnlaceDescripcion(Language.ES, "descripcion-" + id));
+
     ConvocatoriaEnlace convocatoriaEnlace = new ConvocatoriaEnlace();
     convocatoriaEnlace.setId(id);
     convocatoriaEnlace.setUrl(url);
-    convocatoriaEnlace.setDescripcion("descripcion-" + id);
+    convocatoriaEnlace.setDescripcion(descripcionConvocatoriaEnlace);
     convocatoriaEnlace.setTipoEnlace(tipoEnlace);
 
     return convocatoriaEnlace;
@@ -890,7 +918,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "observaciones=ke=-00";
+    String filter = "observaciones.value=ke=-00";
 
     Long convocatoriaId = 1L;
 
@@ -904,11 +932,14 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     final List<ConvocatoriaFaseOutput> convocatoriasFases = response.getBody();
     Assertions.assertThat(convocatoriasFases).hasSize(3);
-    Assertions.assertThat(convocatoriasFases.get(0).getObservaciones()).as("get(0).getObservaciones()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasFases.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()")
         .isEqualTo("observaciones-" + String.format("%03d", 3));
-    Assertions.assertThat(convocatoriasFases.get(1).getObservaciones()).as("get(1).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasFases.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())")
         .isEqualTo("observaciones-" + String.format("%03d", 2));
-    Assertions.assertThat(convocatoriasFases.get(2).getObservaciones()).as("get(2).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasFases.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones())")
         .isEqualTo("observaciones-" + String.format("%03d", 1));
 
   }
@@ -926,7 +957,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "comentario=ke=-00";
+    String filter = "comentario.value=ke=-00";
 
     Long convocatoriaId = 1L;
 
@@ -945,11 +976,14 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
-    Assertions.assertThat(convocatoriasHitos.get(0).getComentario()).as("get(0).getComentario()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasHitos.get(0).getComentario(), Language.ES))
+        .as("get(0).getComentario()")
         .isEqualTo("comentario-" + String.format("%03d", 3));
-    Assertions.assertThat(convocatoriasHitos.get(1).getComentario()).as("get(1).getComentario())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasHitos.get(1).getComentario(), Language.ES))
+        .as("get(1).getComentario())")
         .isEqualTo("comentario-" + String.format("%03d", 2));
-    Assertions.assertThat(convocatoriasHitos.get(2).getComentario()).as("get(2).getComentario()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasHitos.get(2).getComentario(), Language.ES))
+        .as("get(2).getComentario()")
         .isEqualTo("comentario-" + String.format("%03d", 1));
 
   }
@@ -970,7 +1004,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "observaciones=ke=-00";
+    String filter = "observaciones.value=ke=-00";
 
     Long convocatoriaId = 1L;
 
@@ -989,12 +1023,18 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(convocatoriaPeriodoJustificaciones.get(0).getObservaciones()).as("get(0).getObservaciones()")
-        .isEqualTo("observaciones-" + String.format("%03d", 3));
-    Assertions.assertThat(convocatoriaPeriodoJustificaciones.get(1).getObservaciones()).as("get(1).getObservaciones())")
-        .isEqualTo("observaciones-" + String.format("%03d", 2));
-    Assertions.assertThat(convocatoriaPeriodoJustificaciones.get(2).getObservaciones()).as("get(2).getObservaciones()")
-        .isEqualTo("observaciones-" + String.format("%03d", 1));
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(convocatoriaPeriodoJustificaciones.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()").isEqualTo("observaciones-" + String.format("%03d", 3));
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(convocatoriaPeriodoJustificaciones.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())").isEqualTo("observaciones-" + String.format("%03d", 2));
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(convocatoriaPeriodoJustificaciones.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones()").isEqualTo("observaciones-" + String.format("%03d", 1));
   }
 
   /*
@@ -1013,7 +1053,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "numPeriodo,desc";
-    String filter = "observaciones=ke=-00";
+    String filter = "observaciones.value=ke=-00";
 
     Long convocatoriaId = 1L;
 
@@ -1027,27 +1067,33 @@ class ConvocatoriaIT extends BaseIT {
         });
 
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-    final List<ConvocatoriaPeriodoSeguimientoCientifico> convocatoriaPeriodoSeguimientoCientificoes = response
+    final List<ConvocatoriaPeriodoSeguimientoCientifico> convocatoriaPeriodoSeguimientoCientificos = response
         .getBody();
-    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificoes).hasSize(3);
+    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificos).hasSize(3);
     HttpHeaders responseHeaders = response.getHeaders();
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificoes.get(0).getObservaciones())
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(
+            convocatoriaPeriodoSeguimientoCientificos.get(0).getObservaciones(), Language.ES))
         .as("get(0).getObservaciones()").isEqualTo("observaciones-" + String.format("%03d", 3));
-    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificoes.get(0).getTipoSeguimiento())
+    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificos.get(0).getTipoSeguimiento())
         .as("get(0).getTipoSeguimiento")
         .isIn(TipoSeguimiento.FINAL, TipoSeguimiento.INTERMEDIO, TipoSeguimiento.PERIODICO);
-    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificoes.get(1).getObservaciones())
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriaPeriodoSeguimientoCientificos.get(1).getObservaciones(),
+            Language.ES))
         .as("get(1).getObservaciones())").isEqualTo("observaciones-" + String.format("%03d", 2));
-    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificoes.get(1).getTipoSeguimiento())
+    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificos.get(1).getTipoSeguimiento())
         .as("get(1).getTipoSeguimiento()")
         .isIn(TipoSeguimiento.FINAL, TipoSeguimiento.INTERMEDIO, TipoSeguimiento.PERIODICO);
-    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificoes.get(2).getObservaciones())
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriaPeriodoSeguimientoCientificos.get(2).getObservaciones(),
+            Language.ES))
         .as("get(2).getObservaciones()").isEqualTo("observaciones-" + String.format("%03d", 1));
-    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificoes.get(2).getTipoSeguimiento())
+    Assertions.assertThat(convocatoriaPeriodoSeguimientoCientificos.get(2).getTipoSeguimiento())
         .as("get(2).getTipoSeguimiento")
         .isIn(TipoSeguimiento.FINAL, TipoSeguimiento.INTERMEDIO, TipoSeguimiento.PERIODICO);
   }
@@ -1068,7 +1114,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "obs=ke=-00";
+    String filter = "obs.value=ke=-00";
 
     Long convocatoriaId = 1L;
 
@@ -1088,11 +1134,17 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(convocatoriaConceptoGastos.get(0).getObservaciones()).as("get(0).getObservaciones()")
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriaConceptoGastos.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()")
         .isEqualTo("obs-" + String.format("%03d", 3));
-    Assertions.assertThat(convocatoriaConceptoGastos.get(1).getObservaciones()).as("get(1).getObservaciones())")
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriaConceptoGastos.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())")
         .isEqualTo("obs-" + String.format("%03d", 2));
-    Assertions.assertThat(convocatoriaConceptoGastos.get(2).getObservaciones()).as("get(2).getObservaciones()")
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriaConceptoGastos.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones()")
         .isEqualTo("obs-" + String.format("%03d", 1));
   }
 
@@ -1106,7 +1158,7 @@ class ConvocatoriaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "obs=ke=-00";
+    String filter = "obs.value=ke=-00";
 
     Long convocatoriaId = 1L;
 
@@ -1126,11 +1178,17 @@ class ConvocatoriaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(convocatoriaConceptoGastos.get(0).getObservaciones()).as("get(0).getObservaciones()")
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriaConceptoGastos.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()")
         .isEqualTo("obs-" + String.format("%03d", 6));
-    Assertions.assertThat(convocatoriaConceptoGastos.get(1).getObservaciones()).as("get(1).getObservaciones())")
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriaConceptoGastos.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())")
         .isEqualTo("obs-" + String.format("%03d", 5));
-    Assertions.assertThat(convocatoriaConceptoGastos.get(2).getObservaciones()).as("get(2).getObservaciones()")
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(convocatoriaConceptoGastos.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones()")
         .isEqualTo("obs-" + String.format("%03d", 4));
   }
 
@@ -1809,18 +1867,25 @@ class ConvocatoriaIT extends BaseIT {
   private Convocatoria generarMockConvocatoria(Long convocatoriaId, Long unidadGestionId, Long modeloEjecucionId,
       Long modeloTipoFinalidadId, Long tipoRegimenConcurrenciaId, Long tipoAmbitoGeogragicoId, Boolean activo) {
 
-    // @formatter:off
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(
+        new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId)));
+
     ModeloEjecucion modeloEjecucion = (modeloEjecucionId == null) ? null
         : ModeloEjecucion.builder()
             .id(modeloEjecucionId)
-            .nombre("nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId))
+            .nombre(nombreModeloEjecucion)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(
+        new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId)));
 
     TipoFinalidad tipoFinalidad = (modeloTipoFinalidadId == null) ? null
         : TipoFinalidad.builder()
             .id(modeloTipoFinalidadId)
-            .nombre("nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId))
+            .nombre(nombreTipoFinalidad)
             .activo(Boolean.TRUE)
             .build();
 
@@ -1832,21 +1897,39 @@ class ConvocatoriaIT extends BaseIT {
             .activo(Boolean.TRUE)
             .build();
 
+    Set<TipoRegimenConcurrenciaNombre> tipoRegimenConcurrenciaNombre = new HashSet<>();
+    tipoRegimenConcurrenciaNombre.add(new TipoRegimenConcurrenciaNombre(Language.ES,
+        "nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId)));
+
     TipoRegimenConcurrencia tipoRegimenConcurrencia = (tipoRegimenConcurrenciaId == null) ? null
         : TipoRegimenConcurrencia.builder()
             .id(tipoRegimenConcurrenciaId)
-            .nombre("nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId))
+            .nombre(tipoRegimenConcurrenciaNombre)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoAmbitoGeograficoNombre> nombre = new HashSet<>();
+    nombre.add(new TipoAmbitoGeograficoNombre(Language.ES,
+        "nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId)));
 
     TipoAmbitoGeografico tipoAmbitoGeografico = (tipoAmbitoGeogragicoId == null) ? null
         : TipoAmbitoGeografico.builder()
             .id(tipoAmbitoGeogragicoId)
-            .nombre("nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId))
+            .nombre(nombre)
             .activo(Boolean.TRUE)
             .build();
 
-    Convocatoria convocatoria = Convocatoria.builder()
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObjeto> convocatoriaObjeto = new HashSet<>();
+    convocatoriaObjeto.add(new ConvocatoriaObjeto(Language.ES, "objeto-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones
+        .add(new ConvocatoriaObservaciones(Language.ES, "observaciones-" + String.format("%03d", convocatoriaId)));
+
+    return Convocatoria.builder()
         .id(convocatoriaId)
         .unidadGestionRef((unidadGestionId == null) ? null : "2")
         .modeloEjecucion(modeloEjecucion)
@@ -1854,9 +1937,9 @@ class ConvocatoriaIT extends BaseIT {
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaProvisional(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaConcesion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo-" + String.format("%03d", convocatoriaId))
-        .objeto("objeto-" + String.format("%03d", convocatoriaId))
-        .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
+        .titulo(convocatoriaTitulo)
+        .objeto(convocatoriaObjeto)
+        .observaciones(convocatoriaObservaciones)
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .formularioSolicitud(FormularioSolicitud.PROYECTO)
         .regimenConcurrencia(tipoRegimenConcurrencia)
@@ -1866,9 +1949,6 @@ class ConvocatoriaIT extends BaseIT {
         .clasificacionCVN(ClasificacionCVN.AYUDAS)
         .activo(activo)
         .build();
-    // @formatter:on
-
-    return convocatoria;
 
   }
 

@@ -63,12 +63,21 @@ export class EmpresaExplotacionResultadosListadoComponent
     private readonly translate: TranslateService,
     private empresaService: EmpresaService
   ) {
-    super();
+    super(translate);
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'nombreRazonSocial') {
+        return 'nombreRazonSocial.value';
+      } else if (column === 'objetoSocial') {
+        return 'objetoSocial.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.buildFormGroup();
     this.filter = this.createFilter();
     this.isInvestigador = this.authService.hasAnyAuthority(['EER-AUT-INV-VR']);
@@ -128,9 +137,9 @@ export class EmpresaExplotacionResultadosListadoComponent
 
   protected createFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
-    const rsqlFilter = new RSQLSgiRestFilter('nombreRazonSocial', SgiRestFilterOperator.LIKE_ICASE, controls.nombreRazonSocial.value)
+    const rsqlFilter = new RSQLSgiRestFilter('nombreRazonSocial.value', SgiRestFilterOperator.LIKE_ICASE, controls.nombreRazonSocial.value)
       .and('entidadRef', SgiRestFilterOperator.LIKE_ICASE, controls.entidad.value?.id)
-      .and('objetoSocial', SgiRestFilterOperator.LIKE_ICASE, controls.objetoSocial.value)
+      .and('objetoSocial.value', SgiRestFilterOperator.LIKE_ICASE, controls.objetoSocial.value)
       .and('fechaConstitucion', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaConstitucionDesde.value))
       .and('fechaConstitucion', SgiRestFilterOperator.LOWER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaConstitucionHasta.value))
       .and('fechaIncorporacion', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaIncorporacionDesde.value))
@@ -177,7 +186,7 @@ export class EmpresaExplotacionResultadosListadoComponent
     });
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       EMPRESA_ENTIDAD_KEY,

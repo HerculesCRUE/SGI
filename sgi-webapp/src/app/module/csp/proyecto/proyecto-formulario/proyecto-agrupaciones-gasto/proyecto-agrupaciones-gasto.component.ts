@@ -55,13 +55,13 @@ export class ProyectoAgrupacionesGastoComponent extends FragmentComponent implem
     private matDialog: MatDialog,
     private dialogService: DialogService,
   ) {
-    super(actionService.FRAGMENT.AGRUPACIONES_GASTO, actionService);
+    super(actionService.FRAGMENT.AGRUPACIONES_GASTO, actionService, translate);
     this.formPart = this.fragment as ProyectoAgrupacionGastoFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -79,7 +79,7 @@ export class ProyectoAgrupacionesGastoComponent extends FragmentComponent implem
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_AGRUPACIONES_GASTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

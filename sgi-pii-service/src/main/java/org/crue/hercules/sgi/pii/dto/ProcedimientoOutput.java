@@ -1,6 +1,12 @@
 package org.crue.hercules.sgi.pii.dto;
 
 import java.time.Instant;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.pii.model.ProcedimientoAccionATomar;
+import org.crue.hercules.sgi.pii.model.ProcedimientoComentarios;
+import org.crue.hercules.sgi.pii.model.TipoProcedimientoDescripcion;
+import org.crue.hercules.sgi.pii.model.TipoProcedimientoNombre;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,10 +25,10 @@ public class ProcedimientoOutput {
   private Instant fecha;
   private TipoProcedimiento tipoProcedimiento;
   private Long solicitudProteccionId;
-  private String accionATomar;
+  private Collection<ProcedimientoAccionATomar> accionATomar;
   private Instant fechaLimiteAccion;
   private Boolean generarAviso;
-  private String comentarios;
+  private Collection<ProcedimientoComentarios> comentarios;
 
   @Data
   @EqualsAndHashCode(callSuper = false)
@@ -31,8 +37,8 @@ public class ProcedimientoOutput {
   @Builder
   public static class TipoProcedimiento {
     private Long id;
-    private String nombre;
-    private String descripcion;
+    private Collection<TipoProcedimientoNombre> nombre;
+    private Collection<TipoProcedimientoDescripcion> descripcion;
   }
 
 }

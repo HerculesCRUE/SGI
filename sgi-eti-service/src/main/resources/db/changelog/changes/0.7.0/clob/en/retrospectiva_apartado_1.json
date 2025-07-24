@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap1_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "Objectives",
+      "expanded": true
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Please indicate whether the objectives of the research project have been achieved.</p>"
+      },
+      {
+        "key": "cumpleObjetivosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            },
+            {
+              "value": "parcialmente",
+              "label": "Partially"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>Please justify your answer:</p>"
+      },
+      {
+        "key": "justificar",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Supporting evidence",
+          "label": "Supporting evidence",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "20"
+        }
+      }
+    ]
+  }
+]

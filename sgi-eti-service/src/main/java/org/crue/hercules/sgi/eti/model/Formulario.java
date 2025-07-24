@@ -2,12 +2,13 @@ package org.crue.hercules.sgi.eti.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.Objects;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,37 +28,24 @@ import lombok.NoArgsConstructor;
 public class Formulario extends BaseEntity {
 
   public enum Tipo {
-    /** M10 <code>1L</code> */
-    M10(1L),
-    /** M20 <code>2L</code> */
-    M20(2L),
-    /** M30 <code>3L</code> */
-    M30(3L),
-    /** Seguimiento Anual <code>4L</code> */
-    SEGUIMIENTO_ANUAL(4L),
-    /** Seguimiento Final <code>5L</code> */
-    SEGUIMIENTO_FINAL(5L),
-    /** Retrospectiva <code>6L</code> */
-    RETROSPECTIVA(6L);
+    /** Memoria */
+    MEMORIA,
+    /** Seguimiento Anual */
+    SEGUIMIENTO_ANUAL,
+    /** Seguimiento Final */
+    SEGUIMIENTO_FINAL,
+    /** Retrospectiva */
+    RETROSPECTIVA;
+  }
 
-    private final Long id;
-
-    private Tipo(Long id) {
-      this.id = id;
-    }
-
-    public Long getId() {
-      return this.id;
-    }
-
-    public static Tipo fromId(Long id) {
-      for (Tipo tipo : Tipo.values()) {
-        if (Objects.equals(tipo.id, id)) {
-          return tipo;
-        }
-      }
-      return null;
-    }
+  /** Titulo de la documentación de Seguimiento Anual */
+  public enum SeguimientoAnualDocumentacionTitle {
+    /** Memoria */
+    TITULO_1,
+    /** Seguimiento Anual */
+    TITULO_2,
+    /** Seguimiento Final */
+    TITULO_3;
   }
 
   /**
@@ -67,20 +55,23 @@ public class Formulario extends BaseEntity {
 
   /** Id. */
   @Id
-  @Column(name = "id", nullable = false)
+  @Column(name = "id", length = 28, nullable = false)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "formulario_seq")
+  @SequenceGenerator(name = "formulario_seq", sequenceName = "formulario_seq", allocationSize = 1)
   private Long id;
 
-  /** Nombre. */
-  @Column(name = "nombre", length = 50, nullable = false)
-  private String nombre;
+  /** Tipo */
+  @Column(name = "tipo", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Tipo tipo;
 
-  /** Descripción. */
-  @Column(name = "descripcion", length = 250, nullable = false)
-  private String descripcion;
+  /** Codigo */
+  @Column(name = "codigo", nullable = false, unique = true, length = 50)
+  private String codigo;
 
-  @JsonIgnore
-  @Transient()
-  public Tipo getTipo() {
-    return Tipo.fromId(this.id);
-  }
+  /** Titulo de la documentación del seguimiento anual */
+  @Column(name = "seguimiento_anual_documentacion_title", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private SeguimientoAnualDocumentacionTitle seguimientoAnualDocumentacionTitle;
+
 }

@@ -4,7 +4,7 @@ import { IConvocatoria } from '@core/models/csp/convocatoria';
 import { IConvocatoriaEntidadConvocante } from '@core/models/csp/convocatoria-entidad-convocante';
 import { Estado } from '@core/models/csp/estado-solicitud';
 import { IPrograma } from '@core/models/csp/programa';
-import { ISolicitud, TipoSolicitudGrupo } from '@core/models/csp/solicitud';
+import { ISolicitud, OrigenSolicitud, TipoSolicitudGrupo } from '@core/models/csp/solicitud';
 import { ISolicitudGrupo } from '@core/models/csp/solicitud-grupo';
 import { ISolicitudModalidad } from '@core/models/csp/solicitud-modalidad';
 import { IPersona } from '@core/models/sgp/persona';
@@ -18,11 +18,12 @@ import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service'
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { IsEntityValidator } from '@core/validators/is-entity-validador';
+import { anioValidator } from '@core/validators/anio-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, EMPTY, from, merge, Observable, of, Subject } from 'rxjs';
-import { catchError, filter, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, Subject, from, merge, of } from 'rxjs';
+import { catchError, filter, map, mergeMap, pairwise, startWith, switchMap, takeLast, tap } from 'rxjs/operators';
 
 export interface SolicitudModalidadEntidadConvocanteListado {
   entidadConvocante: IConvocatoriaEntidadConvocante;
@@ -43,17 +44,38 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
   entidadesConvocantes = [] as IConvocatoriaEntidadConvocante[];
 
   entidadesConvocantesModalidad$ = new BehaviorSubject<SolicitudModalidadEntidadConvocanteListado[]>([]);
+  origenSolicitud$ = new BehaviorSubject<OrigenSolicitud>(null);
+  hasDocumentosOrHitos$ = new Subject<boolean>();
 
   public showComentariosEstado$ = new BehaviorSubject<boolean>(false);
   public convocatoria$: Subject<IConvocatoria> = new BehaviorSubject(null);
 
-  convocatoriaRequired = false;
-  convocatoriaExternaRequired = false;
   tipoFormularioSolicitud: FormularioSolicitud;
+  hasDocumentosOrHitos: boolean;
+  hasEstadoUnidadGestionModificable: boolean;
+  showInfoUnidadGestionDisabledByEstadoUO: boolean;
 
   get isSolicitanteRequired(): boolean {
     return [FormularioSolicitud.GRUPO, FormularioSolicitud.PROYECTO].includes(this.tipoFormularioSolicitud);
   }
+
+  private get isOrigenSolicitudConvocatoriaSGI(): boolean {
+    if (this.isInvestigador) {
+      return !!this.getFormGroup().controls.convocatoria?.value;
+    }
+    return this.getFormGroup().controls.origenSolicitud.value === OrigenSolicitud.CONVOCATORIA_SGI;
+  }
+
+  private get isOrigenSolicitudSinConvocatoria(): boolean {
+    if (this.isInvestigador) {
+      return !this.getFormGroup().controls.convocatoria?.value && !this.getFormGroup().controls.codigoExterno?.value;
+    }
+    return this.getFormGroup().controls.origenSolicitud.value === OrigenSolicitud.SIN_CONVOCATORIA;
+  }
+
+  isOrigenSolicitudSinConvocatoria$ = new BehaviorSubject<boolean>(false);
+  isOrigenSolicitudConvocatoriaNoSGI$ = new BehaviorSubject<boolean>(false);
+  isOrigenSolicitudConvocatoriaSGI$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private readonly logger: NGXLogger,
@@ -72,9 +94,18 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     super(key, true);
     this.setComplete(true);
     this.solicitud = { activo: true } as ISolicitud;
+    this.hasDocumentosOrHitos = false;
   }
 
   protected initializer(key: number): Observable<SolicitudDatosGenerales> {
+
+    this.subscriptions.push(
+      this.hasDocumentosOrHitos$.subscribe(hasDocumentosOrHitos => {
+        this.hasDocumentosOrHitos = hasDocumentosOrHitos;
+        this.updateDisabledControlsWhenHasDocumentosOrHitos();
+      })
+    );
+
     return this.service.findById(key).pipe(
       map(solicitud => {
         return solicitud as SolicitudDatosGenerales;
@@ -131,7 +162,16 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
           return of(solicitud);
         }
       }),
+      switchMap((solicitud) => {
+        return this.service.hasDocumentosOrHitos(solicitud.id).pipe(
+          map(hasDocumentosOrHitos => {
+            this.hasDocumentosOrHitos = hasDocumentosOrHitos;
+            return solicitud;
+          })
+        );
+      }),
       map((solicitud) => {
+        this.origenSolicitud$.next(solicitud.origenSolicitud);
         this.showComentariosEstado$.next(solicitud.estado.comentario != null && solicitud.estado.comentario.length > 0);
         return solicitud;
       }),
@@ -144,43 +184,53 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
 
   protected buildFormGroup(): FormGroup {
     let form: FormGroup;
+    this.tipoFormularioSolicitud = FormularioSolicitud.PROYECTO;
+
     if (this.isInvestigador) {
       form = new FormGroup({
         estado: new FormControl({ value: Estado.BORRADOR, disabled: true }),
-        titulo: new FormControl({ value: '', disabled: this.isEdit() }, [Validators.maxLength(250)]),
+        titulo: new FormControl({ value: [], disabled: this.isEdit() }, [I18nValidators.maxLength(250)]),
         convocatoria: new FormControl({ value: '', disabled: true }),
         codigoRegistro: new FormControl({ value: '', disabled: true }),
         codigoExterno: new FormControl('', Validators.maxLength(50)),
-        observaciones: new FormControl({ value: '', disabled: this.isEdit() }, Validators.maxLength(2000)),
-        comentariosEstado: new FormControl({ value: '', disabled: true }),
+        observaciones: new FormControl({ value: [], disabled: this.isEdit() }, I18nValidators.maxLength(2000)),
+        comentariosEstado: new FormControl({ value: [], disabled: true }),
         tipoSolicitudGrupo: new FormControl({ value: null, disabled: true }, Validators.required),
         grupo: new FormControl({ value: null, disabled: true }, Validators.required),
+        formularioSolicitud: new FormControl({ value: this.tipoFormularioSolicitud, disabled: true }, Validators.required),
+        unidadGestion: new FormControl(null, Validators.required),
+        modeloEjecucion: new FormControl(null),
+        finalidad: new FormControl(null),
       });
 
-      this.initValueChangesSubscriptionsInvestigador(form);
-    } else {
-      this.tipoFormularioSolicitud = FormularioSolicitud.PROYECTO;
+      if (!this.readonly) {
+        this.initValueChangesSubscriptionsInvestigador(form);
+      }
 
+    } else {
       form = new FormGroup({
         estado: new FormControl({ value: Estado.BORRADOR, disabled: true }),
-        titulo: new FormControl('', [Validators.maxLength(250)]),
+        titulo: new FormControl([], [I18nValidators.maxLength(250)]),
         solicitante: new FormControl('', Validators.required),
         convocatoria: new FormControl({ value: '', disabled: this.isEdit() }),
-        comentariosEstado: new FormControl({ value: '', disabled: true }),
+        comentariosEstado: new FormControl({ value: [], disabled: true }),
         convocatoriaExterna: new FormControl(''),
-        formularioSolicitud: new FormControl({ value: this.tipoFormularioSolicitud, disabled: this.isEdit() }),
+        formularioSolicitud: new FormControl({ value: this.tipoFormularioSolicitud, disabled: this.isEdit() }, Validators.required),
         tipoSolicitudGrupo: new FormControl({ value: null, disabled: true }, Validators.required),
         grupo: new FormControl({ value: null, disabled: true }, Validators.required),
         unidadGestion: new FormControl(null, Validators.required),
         codigoExterno: new FormControl('', Validators.maxLength(50)),
         codigoRegistro: new FormControl({ value: '', disabled: true }),
-        observaciones: new FormControl('', Validators.maxLength(2000))
+        observaciones: new FormControl([], I18nValidators.maxLength(2000)),
+        anio: new FormControl(this.isEdit() ? null : this.getCurrentYear(), anioValidator()),
+        modeloEjecucion: new FormControl(null),
+        finalidad: new FormControl(null),
+        origenSolicitud: new FormControl({ value: this.isEdit() ? null : OrigenSolicitud.CONVOCATORIA_SGI, disabled: this.isEdit() }, Validators.required)
       });
-      // Se setean los validaores condicionales y se hace una subscripcion a los campos que provocan
-      // cambios en los validadores del formulario
-      this.setConditionalValidators(form);
 
-      this.initValueChangesSubscriptionsUO(form);
+      if (!this.readonly) {
+        this.initValueChangesSubscriptionsUO(form);
+      }
     }
 
     if (this.readonly) {
@@ -196,23 +246,27 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
 
     let formValues: { [key: string]: any } = {
       estado: solicitud?.estado?.estado,
-      titulo: solicitud?.titulo ?? '',
+      titulo: solicitud?.titulo ?? [],
       convocatoria: solicitud?.convocatoria,
       codigoRegistro: solicitud.codigoRegistroInterno,
       codigoExterno: solicitud?.codigoExterno,
-      observaciones: solicitud?.observaciones ?? '',
+      observaciones: solicitud?.observaciones ?? [],
       comentariosEstado: solicitud?.estado?.comentario,
       tipoSolicitudGrupo: solicitud.tipoSolicitudGrupo,
       grupo: this.solicitudGrupo?.grupo,
+      anio: this.isEdit() ? solicitud?.anio : solicitud?.convocatoria?.anio,
+      formularioSolicitud: solicitud.formularioSolicitud,
+      unidadGestion: solicitud.unidadGestion,
+      modeloEjecucion: solicitud.modeloEjecucion,
+      finalidad: solicitud.tipoFinalidad
     };
 
     if (!this.isInvestigador) {
       formValues = {
         ...formValues,
+        origenSolicitud: solicitud.origenSolicitud,
         convocatoriaExterna: solicitud.convocatoriaExterna,
-        formularioSolicitud: solicitud.formularioSolicitud,
-        solicitante: solicitud.solicitante,
-        unidadGestion: solicitud.unidadGestion
+        solicitante: solicitud.solicitante
       };
 
       if (!this.isSolicitanteRequired) {
@@ -228,6 +282,11 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       if (solicitud.tipoSolicitudGrupo === TipoSolicitudGrupo.MODIFICACION) {
         this.getFormGroup().controls.grupo.enable();
       }
+    } else if (!this.readonly && solicitud?.estado?.estado === Estado.RECHAZADA
+      || (!this.readonly && solicitud?.estado?.estado === Estado.SUBSANACION
+        && solicitud.origenSolicitud === OrigenSolicitud.SIN_CONVOCATORIA
+        && solicitud.formularioSolicitud === FormularioSolicitud.PROYECTO)) {
+      this.getFormGroup().controls.observaciones.enable();
     }
 
     return formValues;
@@ -238,7 +297,7 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     if (this.isInvestigador) {
       if (!this.solicitud.solicitante) {
         this.solicitud.solicitante = {
-          id: this.solicitanteRef
+          id: this.solicitanteRef ?? this.authService.authStatus$?.getValue()?.userRefId
         } as IPersona;
       }
 
@@ -246,6 +305,17 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       this.solicitud.observaciones = form.observaciones.value;
       this.solicitud.codigoExterno = form.codigoExterno.value;
       this.solicitud.tipoSolicitudGrupo = form.tipoSolicitudGrupo.value;
+      this.solicitud.anio = this.getCurrentYear();
+      if (this.isOrigenSolicitudSinConvocatoria) {
+        this.solicitud.formularioSolicitud = FormularioSolicitud.PROYECTO;
+        this.solicitud.origenSolicitud = OrigenSolicitud.SIN_CONVOCATORIA;
+      } else if (this.isOrigenSolicitudConvocatoriaSGI) {
+        this.solicitud.formularioSolicitud = form.formularioSolicitud.value;
+        this.solicitud.origenSolicitud = OrigenSolicitud.CONVOCATORIA_SGI;
+      }
+      this.solicitud.unidadGestion = form.unidadGestion.value;
+      this.solicitud.modeloEjecucion = form.modeloEjecucion.value;
+      this.solicitud.tipoFinalidad = form.finalidad.value;
     } else {
       this.solicitud.solicitante = form.solicitante.value;
       this.solicitud.titulo = form.titulo.value;
@@ -256,6 +326,10 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       this.solicitud.unidadGestion = form.unidadGestion.value;
       this.solicitud.codigoExterno = form.codigoExterno.value;
       this.solicitud.observaciones = form.observaciones.value;
+      this.solicitud.anio = form.anio.value;
+      this.solicitud.origenSolicitud = form.origenSolicitud.value;
+      this.solicitud.modeloEjecucion = form.modeloEjecucion.value;
+      this.solicitud.tipoFinalidad = form.finalidad.value;
     }
 
     return this.solicitud;
@@ -309,22 +383,11 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     }
   }
 
+  setOrigenSolicitud(origenSolicitud: OrigenSolicitud): void {
+    this.origenSolicitud$.next(origenSolicitud);
+  }
+
   setDatosConvocatoria(convocatoria: IConvocatoria) {
-    this.subscriptions.push(
-      this.unidadGestionService.findById(convocatoria.unidadGestion.id).subscribe(unidadGestion => {
-        this.solicitud.unidadGestion = unidadGestion;
-      })
-    );
-
-    this.subscriptions.push(
-      this.convocatoriaService.getFormularioSolicitud(convocatoria.id).subscribe(formularioSolicitud => {
-        this.solicitud.formularioSolicitud = formularioSolicitud;
-        if (formularioSolicitud === FormularioSolicitud.GRUPO) {
-          this.getFormGroup().controls.tipoSolicitudGrupo.enable();
-        }
-      })
-    );
-
     this.subscriptions.push(
       this.loadEntidadesConvocantesModalidad(this.getValue().id, convocatoria.id).subscribe(entidadesConvocantes => {
         this.entidadesConvocantesModalidad$.next(entidadesConvocantes);
@@ -332,14 +395,26 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
     );
 
     this.solicitud.convocatoriaId = convocatoria.id;
+    this.solicitud.origenSolicitud = OrigenSolicitud.CONVOCATORIA_SGI;
     this.tipoFormularioSolicitud = convocatoria.formularioSolicitud;
+    this.solicitud.convocatoriaExterna = convocatoria.codigo;
     this.solicitanteRef = this.authService.authStatus$?.getValue()?.userRefId;
     this.solicitud.solicitante = {
       id: this.solicitanteRef
     } as IPersona;
 
     this.convocatoria$.next(convocatoria);
+    this.origenSolicitud$.next(OrigenSolicitud.CONVOCATORIA_SGI);
+
     this.getFormGroup().controls.convocatoria.setValue(convocatoria);
+    this.getFormGroup().controls.unidadGestion.setValue(convocatoria.unidadGestion);
+    this.getFormGroup().controls.modeloEjecucion.setValue(convocatoria.modeloEjecucion);
+    this.getFormGroup().controls.finalidad.setValue(convocatoria.finalidad);
+    this.getFormGroup().controls.formularioSolicitud.setValue(convocatoria.formularioSolicitud);
+
+    if (this.tipoFormularioSolicitud === FormularioSolicitud.GRUPO) {
+      this.getFormGroup().controls.tipoSolicitudGrupo.enable();
+    }
   }
 
   /**
@@ -397,6 +472,16 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
 
   private initValueChangesSubscriptionsInvestigador(form: FormGroup): void {
     this.subscriptions.push(
+      this.initialized$.pipe(
+        filter(initialized => initialized),
+        switchMap(() => this.origenSolicitud$)
+      ).subscribe(origenSolicitud => {
+        this.initOrigenSolicitudSubscription(origenSolicitud);
+        this.setConditionalValidatorsInvestigador(form);
+      })
+    );
+
+    this.subscriptions.push(
       form.controls.convocatoria.valueChanges.subscribe(
         (convocatoria) => {
           this.convocatoria$.next(convocatoria);
@@ -408,12 +493,28 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
   }
 
   private initValueChangesSubscriptionsUO(form: FormGroup): void {
+    const origenSolicitud = form.controls.origenSolicitud.value;
+    this.initOrigenSolicitudSubscription(origenSolicitud);
+
+    if (!this.isEdit()) {
+      this.origenSolicitud$.next(origenSolicitud);
+      this.setConditionalValidatorsUO(form);
+      this.onOrigenSolicitudChange(origenSolicitud, form);
+    }
+
     this.subscriptions.push(
-      merge(
-        form.controls.convocatoria.valueChanges,
-        form.controls.convocatoriaExterna.valueChanges
-      ).subscribe(_ => {
-        this.setConditionalValidators(form);
+      form.controls.origenSolicitud.valueChanges.pipe(
+        startWith(origenSolicitud),
+        pairwise()
+      ).subscribe(([prevOrigenSolicitud, newOrigenSolicitud]) => {
+        if (prevOrigenSolicitud !== newOrigenSolicitud) {
+          this.origenSolicitud$.next(newOrigenSolicitud);
+          this.setConditionalValidatorsUO(form);
+
+          if (!!prevOrigenSolicitud) {
+            this.onOrigenSolicitudChange(newOrigenSolicitud, form);
+          }
+        }
       })
     );
 
@@ -487,6 +588,18 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
           }
         }
       )
+    );
+  }
+
+  private initOrigenSolicitudSubscription(initialOrigenSolicitud: OrigenSolicitud): void {
+    this.subscriptions.push(
+      this.origenSolicitud$.pipe(
+        startWith(initialOrigenSolicitud)
+      ).subscribe(origenSolicitud => {
+        this.isOrigenSolicitudSinConvocatoria$.next(origenSolicitud === OrigenSolicitud.SIN_CONVOCATORIA);
+        this.isOrigenSolicitudConvocatoriaSGI$.next(origenSolicitud === OrigenSolicitud.CONVOCATORIA_SGI);
+        this.isOrigenSolicitudConvocatoriaNoSGI$.next(origenSolicitud === OrigenSolicitud.CONVOCATORIA_NO_SGI);
+      })
     );
   }
 
@@ -592,11 +705,13 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       if (!this.isInvestigador) {
         this.getFormGroup().controls.convocatoriaExterna.setValue('', { emitEvent: false });
       }
-      this.subscriptions.push(
-        this.unidadGestionService.findById(convocatoria.unidadGestion.id).subscribe(unidadGestion => {
-          this.getFormGroup().controls.unidadGestion.setValue(unidadGestion);
-        })
-      );
+
+      if (this.isOrigenSolicitudConvocatoriaSGI) {
+        this.getFormGroup().controls.unidadGestion.setValue(convocatoria.unidadGestion);
+        this.getFormGroup().controls.modeloEjecucion.setValue(convocatoria.modeloEjecucion);
+        this.getFormGroup().controls.finalidad.setValue(convocatoria.finalidad);
+        this.getFormGroup().controls.convocatoriaExterna.setValue(convocatoria.codigo);
+      }
 
       this.subscriptions.push(
         this.convocatoriaService.getFormularioSolicitud(convocatoria.id).subscribe(formularioSolicitud => {
@@ -610,6 +725,10 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
             this.entidadesConvocantesModalidad$.next(entidadesConvocantes)
           )
       );
+
+      if (!this.isEdit() && convocatoria.anio) {
+        this.getFormGroup().controls.anio.setValue(convocatoria.anio);
+      }
     } else if (!this.isEdit()) {
       // Clean dependencies
       this.getFormGroup().controls.unidadGestion.setValue(null);
@@ -620,6 +739,7 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
       this.getFormGroup().controls.convocatoriaExterna.enable();
       this.getFormGroup().controls.unidadGestion.enable();
       this.getFormGroup().controls.formularioSolicitud.enable();
+      this.getFormGroup().controls.anio.setValue(this.getCurrentYear());
     }
   }
 
@@ -678,7 +798,10 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
                 element.plan = this.getPlan(element.entidadConvocante.programa);
                 return element;
               }),
-              catchError(() => of(element))
+              catchError((err) => {
+                this.logger.error(err);
+                return of(element)
+              })
             );
           }),
           takeLast(1),
@@ -743,51 +866,294 @@ export class SolicitudDatosGeneralesFragment extends FormFragment<ISolicitud> {
    * @param solicitud datos de la solicitud utilizados para determinar los validadores que hay que añadir.
    *  Si no se indica la evaluacion se hace con los datos rellenos en el formulario.
    */
-  private setConditionalValidators(form: FormGroup): void {
+  private setConditionalValidatorsUO(form: FormGroup): void {
     const convocatoriaControl = form.controls.convocatoria;
     const convocatoriaExternaControl = form.controls.convocatoriaExterna;
     const formularioSolicitudControl = form.controls.formularioSolicitud;
     const unidadGestionControl = form.controls.unidadGestion;
+    const modeloEjecucionControl = form.controls.modeloEjecucion;
+    const finalidadControl = form.controls.finalidad;
+    const origenSolictudControl = form.controls.origenSolicitud;
 
-    const convocatoriaSolicitud = convocatoriaControl.value;
-    const convocatoriaExternaSolicitud = convocatoriaExternaControl.value;
-
-    if (!this.isEdit()) {
-      if (!convocatoriaSolicitud && !convocatoriaExternaSolicitud) {
-        convocatoriaControl.setValidators([Validators.required]);
-        convocatoriaExternaControl.setValidators([Validators.required, Validators.maxLength(50)]);
-      }
-      else if (!convocatoriaSolicitud) {
-        convocatoriaControl.setValidators(null);
-        convocatoriaExternaControl.setValidators([Validators.required, Validators.maxLength(50)]);
-        formularioSolicitudControl.setValidators([Validators.required]);
-        unidadGestionControl.setValidators([Validators.required, IsEntityValidator.isValid()]);
-      } else {
-        convocatoriaControl.setValidators([Validators.required]);
+    switch (origenSolictudControl.value) {
+      case OrigenSolicitud.CONVOCATORIA_SGI:
         convocatoriaExternaControl.setValidators(null);
-        formularioSolicitudControl.setValidators(null);
-        unidadGestionControl.setValidators(null);
+        finalidadControl.setValidators([Validators.required]);
+        modeloEjecucionControl.setValidators([Validators.required]);
+        unidadGestionControl.setValidators([Validators.required]);
 
         convocatoriaExternaControl.disable({ emitEvent: false });
+        finalidadControl.disable({ emitEvent: false });
         formularioSolicitudControl.disable({ emitEvent: false });
+        modeloEjecucionControl.disable({ emitEvent: false });
         unidadGestionControl.disable({ emitEvent: false });
-      }
+        break;
+      case OrigenSolicitud.CONVOCATORIA_NO_SGI:
+        convocatoriaControl.setValidators(null);
+        convocatoriaExternaControl.setValidators([Validators.required]);
+        finalidadControl.setValidators(null);
+        modeloEjecucionControl.setValidators(null);
+        unidadGestionControl.setValidators([Validators.required]);
 
-      convocatoriaControl.updateValueAndValidity({ emitEvent: false });
-      convocatoriaExternaControl.updateValueAndValidity({ emitEvent: false });
-      formularioSolicitudControl.updateValueAndValidity({ emitEvent: false });
-      unidadGestionControl.updateValueAndValidity({ emitEvent: false });
-    } else if (!this.readonly && convocatoriaSolicitud) {
-      unidadGestionControl.disable({ emitEvent: false });
-      unidadGestionControl.updateValueAndValidity({ emitEvent: false });
-      convocatoriaControl.disable({ emitEvent: false });
-      convocatoriaControl.updateValueAndValidity({ emitEvent: false });
-      convocatoriaExternaControl.disable({ emitEvent: false });
-      convocatoriaExternaControl.updateValueAndValidity({ emitEvent: false });
+        convocatoriaExternaControl.enable({ emitEvent: false });
+        finalidadControl.enable({ emitEvent: false });
+
+        if (this.isEdit()) {
+          formularioSolicitudControl.disable({ emitEvent: false });
+
+          // Unidad gestion
+          const unidadGestionModificableEstado = [Estado.BORRADOR, Estado.SOLICITADA].includes(this.solicitud.estado.estado);
+          if (!unidadGestionModificableEstado || this.hasDocumentosOrHitos) {
+            this.showInfoUnidadGestionDisabledByEstadoUO = !unidadGestionModificableEstado;
+            unidadGestionControl.disable({ emitEvent: false });
+          } else {
+            unidadGestionControl.enable({ emitEvent: false });
+          }
+
+          // Modelo ejecucion
+          if (this.hasDocumentosOrHitos) {
+            modeloEjecucionControl.disable({ emitEvent: false });
+          } else {
+            modeloEjecucionControl.enable({ emitEvent: false });
+          }
+        } else {
+          formularioSolicitudControl.enable({ emitEvent: false });
+          modeloEjecucionControl.enable({ emitEvent: false });
+          unidadGestionControl.enable({ emitEvent: false });
+        }
+
+        break;
+      case OrigenSolicitud.SIN_CONVOCATORIA:
+        convocatoriaControl.setValidators(null);
+        convocatoriaExternaControl.setValidators(null);
+        finalidadControl.setValidators([Validators.required]);
+        modeloEjecucionControl.setValidators([Validators.required]);
+        unidadGestionControl.setValidators([Validators.required]);
+
+        finalidadControl.enable({ emitEvent: false });
+
+        if (this.isEdit()) {
+          formularioSolicitudControl.disable({ emitEvent: false });
+
+          // Unidad gestion
+          const unidadGestionModificableEstado = [Estado.BORRADOR, Estado.SOLICITADA].includes(this.solicitud.estado.estado);
+          if (!unidadGestionModificableEstado || this.hasDocumentosOrHitos) {
+            this.showInfoUnidadGestionDisabledByEstadoUO = !unidadGestionModificableEstado;
+            unidadGestionControl.disable({ emitEvent: false });
+          } else {
+            unidadGestionControl.enable({ emitEvent: false });
+          }
+
+          // Modelo ejecucion
+          if (this.hasDocumentosOrHitos) {
+            modeloEjecucionControl.disable({ emitEvent: false });
+          } else {
+            modeloEjecucionControl.enable({ emitEvent: false });
+          }
+        } else {
+          formularioSolicitudControl.enable({ emitEvent: false });
+          modeloEjecucionControl.enable({ emitEvent: false });
+          unidadGestionControl.enable({ emitEvent: false });
+        }
+
+        break;
+      default:
+        break;
     }
 
-    this.convocatoriaRequired = !convocatoriaExternaSolicitud;
-    this.convocatoriaExternaRequired = !convocatoriaSolicitud;
+    convocatoriaControl.updateValueAndValidity({ emitEvent: false });
+    convocatoriaExternaControl.updateValueAndValidity({ emitEvent: false });
+    finalidadControl.updateValueAndValidity({ emitEvent: false });
+    modeloEjecucionControl.updateValueAndValidity({ emitEvent: false });
+    unidadGestionControl.updateValueAndValidity({ emitEvent: false });
   }
 
+  /**
+   * Añade/elimina los validadores del formulario que solo son necesarios si se cumplen ciertas condiciones.
+   *
+   * @param form el formulario
+   */
+  private setConditionalValidatorsInvestigador(form: FormGroup): void {
+    const convocatoriaControl = form.controls.convocatoria;
+    const formularioSolicitudControl = form.controls.formularioSolicitud;
+    const unidadGestionControl = form.controls.unidadGestion;
+    const modeloEjecucionControl = form.controls.modeloEjecucion;
+    const finalidadControl = form.controls.finalidad;
+
+    switch (this.solicitud.origenSolicitud) {
+      case OrigenSolicitud.CONVOCATORIA_SGI:
+        finalidadControl.setValidators([Validators.required]);
+        modeloEjecucionControl.setValidators([Validators.required]);
+        unidadGestionControl.setValidators([Validators.required]);
+
+        finalidadControl.disable({ emitEvent: false });
+        formularioSolicitudControl.disable({ emitEvent: false });
+        modeloEjecucionControl.disable({ emitEvent: false });
+        unidadGestionControl.disable({ emitEvent: false });
+        break;
+      case OrigenSolicitud.CONVOCATORIA_NO_SGI:
+        convocatoriaControl.setValidators(null);
+        finalidadControl.setValidators(null);
+        modeloEjecucionControl.setValidators(null);
+        unidadGestionControl.setValidators([Validators.required]);
+
+        finalidadControl.enable({ emitEvent: false });
+
+        if (this.isEdit()) {
+          formularioSolicitudControl.disable({ emitEvent: false });
+
+          // Unidad gestion
+          if (this.solicitud.estado.estado !== Estado.BORRADOR || this.hasDocumentosOrHitos) {
+            unidadGestionControl.disable({ emitEvent: false });
+          } else {
+            unidadGestionControl.enable({ emitEvent: false });
+          }
+
+          // Modelo ejecucion
+          if (![Estado.BORRADOR, Estado.RECHAZADA, Estado.SUBSANACION].includes(this.solicitud.estado.estado) || this.hasDocumentosOrHitos) {
+            modeloEjecucionControl.disable({ emitEvent: false });
+          } else {
+            modeloEjecucionControl.enable({ emitEvent: false });
+          }
+
+          // Finalidad
+          if (![Estado.BORRADOR, Estado.RECHAZADA, Estado.SUBSANACION].includes(this.solicitud.estado.estado)) {
+            finalidadControl.disable({ emitEvent: false });
+          } else {
+            finalidadControl.enable({ emitEvent: false });
+          }
+        } else {
+          formularioSolicitudControl.enable({ emitEvent: false });
+          modeloEjecucionControl.enable({ emitEvent: false });
+          unidadGestionControl.enable({ emitEvent: false });
+        }
+
+        break;
+      case OrigenSolicitud.SIN_CONVOCATORIA:
+        convocatoriaControl.setValidators(null);
+        finalidadControl.setValidators([Validators.required]);
+        modeloEjecucionControl.setValidators([Validators.required]);
+        unidadGestionControl.setValidators([Validators.required]);
+
+        finalidadControl.enable({ emitEvent: false });
+
+        if (this.isEdit()) {
+          formularioSolicitudControl.disable({ emitEvent: false });
+
+          // Unidad gestion
+          if (this.solicitud.estado.estado !== Estado.BORRADOR || this.hasDocumentosOrHitos) {
+            unidadGestionControl.disable({ emitEvent: false });
+          } else {
+            unidadGestionControl.enable({ emitEvent: false });
+          }
+
+          // Modelo ejecucion
+          if (![Estado.BORRADOR, Estado.RECHAZADA, Estado.SUBSANACION].includes(this.solicitud.estado.estado) || this.hasDocumentosOrHitos) {
+            modeloEjecucionControl.disable({ emitEvent: false });
+          } else {
+            modeloEjecucionControl.enable({ emitEvent: false });
+          }
+
+          // Finalidad
+          if (![Estado.BORRADOR, Estado.RECHAZADA, Estado.SUBSANACION].includes(this.solicitud.estado.estado)) {
+            finalidadControl.disable({ emitEvent: false });
+          } else {
+            finalidadControl.enable({ emitEvent: false });
+          }
+
+        } else {
+          formularioSolicitudControl.enable({ emitEvent: false });
+          modeloEjecucionControl.enable({ emitEvent: false });
+          unidadGestionControl.enable({ emitEvent: false });
+        }
+
+        break;
+      default:
+        break;
+    }
+
+    convocatoriaControl.updateValueAndValidity({ emitEvent: false });
+    finalidadControl.updateValueAndValidity({ emitEvent: false });
+    modeloEjecucionControl.updateValueAndValidity({ emitEvent: false });
+    unidadGestionControl.updateValueAndValidity({ emitEvent: false });
+  }
+
+  private getCurrentYear(): number {
+    const today = new Date();
+    return today.getFullYear();
+  }
+
+  /**
+   * Setea la convocatoria seleccionada en el formulario y los campos que dependende de esta (tipo formulario, unidad gestión y modalidades)
+   *
+   * @param origenSolicitud origen de la solicitud
+   * @param form el formulario
+   */
+  private onOrigenSolicitudChange(origenSolicitud: OrigenSolicitud, form: FormGroup): void {
+    switch (origenSolicitud) {
+      case OrigenSolicitud.CONVOCATORIA_NO_SGI:
+        form.controls.convocatoria.setValue('', { emitEvent: false });
+        form.controls.convocatoriaExterna.setValue('', { emitEvent: false });
+        this.entidadesConvocantesModalidad$.next([]);
+        break;
+      case OrigenSolicitud.CONVOCATORIA_SGI:
+        form.controls.convocatoriaExterna.setValue('', { emitEvent: false });
+        break;
+      case OrigenSolicitud.SIN_CONVOCATORIA:
+        form.controls.convocatoria.setValue('', { emitEvent: false });
+        form.controls.convocatoriaExterna.setValue('', { emitEvent: false });
+        this.entidadesConvocantesModalidad$.next([]);
+        break;
+      default:
+        break;
+    }
+
+    form.controls.formularioSolicitud.setValue(null);
+    form.controls.convocatoria.setValue('', { emitEvent: false });
+    form.controls.finalidad.setValue(null);
+    form.controls.modeloEjecucion.setValue(null);
+    form.controls.unidadGestion.setValue(null);
+  }
+
+  private updateDisabledControlsWhenHasDocumentosOrHitos(origenSolicitud?: OrigenSolicitud) {
+    const unidadGestionControl = this.getFormGroup().controls.unidadGestion;
+    const modeloEjecucionControl = this.getFormGroup().controls.modeloEjecucion;
+
+    if (!origenSolicitud) {
+      const origenSolictudControl = this.getFormGroup().controls.origenSolicitud;
+      origenSolicitud = origenSolictudControl ? origenSolictudControl.value : this.solicitud.origenSolicitud;
+    }
+
+    if ([OrigenSolicitud.CONVOCATORIA_NO_SGI, OrigenSolicitud.SIN_CONVOCATORIA].includes(origenSolicitud)) {
+      if (this.isInvestigador) {
+        // Unidad gestion
+        if (this.solicitud.estado.estado !== Estado.BORRADOR || this.hasDocumentosOrHitos) {
+          unidadGestionControl.disable({ emitEvent: false });
+        } else {
+          unidadGestionControl.enable({ emitEvent: false });
+        }
+
+        // Modelo ejecucion
+        if (![Estado.BORRADOR, Estado.RECHAZADA, Estado.SUBSANACION].includes(this.solicitud.estado.estado) || this.hasDocumentosOrHitos) {
+          modeloEjecucionControl.disable({ emitEvent: false });
+        } else {
+          modeloEjecucionControl.enable({ emitEvent: false });
+        }
+      } else {
+        // Unidad gestion
+        if (![Estado.BORRADOR, Estado.SOLICITADA].includes(this.solicitud.estado.estado) || this.hasDocumentosOrHitos) {
+          unidadGestionControl.disable({ emitEvent: false });
+        } else {
+          unidadGestionControl.enable({ emitEvent: false });
+        }
+
+        // Modelo ejecucion
+        if (this.hasDocumentosOrHitos) {
+          modeloEjecucionControl.disable({ emitEvent: false });
+        } else {
+          modeloEjecucionControl.enable({ emitEvent: false });
+        }
+      }
+    }
+  }
 }

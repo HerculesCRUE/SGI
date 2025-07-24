@@ -5,7 +5,6 @@ import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoAnualidad } from '@core/models/csp/proyecto-anualidad';
 import { IProyectoAnualidadResumen } from '@core/models/csp/proyecto-anualidad-resumen';
-import { SnackBarService } from '@core/services/snack-bar.service';
 import { NumberValidator } from '@core/validators/number-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -34,10 +33,9 @@ export class ProyectoAnualidadDatosGeneralesComponent extends FormFragmentCompon
 
   constructor(private readonly logger: NGXLogger,
     protected actionService: ProyectoAnualidadActionService,
-    private snackBarService: SnackBarService,
     private readonly translate: TranslateService) {
 
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.formPart = this.fragment as ProyectoAnualidadDatosGeneralesFragment;
   }
 
@@ -60,13 +58,15 @@ export class ProyectoAnualidadDatosGeneralesComponent extends FormFragmentCompon
   ngOnInit(): void {
     super.ngOnInit();
 
-    this.setupI18N();
-
     if (!this.formPart.isAnualidadGenerica && !this.formPart.isEdit()) {
+      let validatorPattern = Validators.pattern('^[1-9][0-9]{3}');
+      if (!this.formPart.isFormatoAnio) {
+        validatorPattern = Validators.pattern('^[1-9][0-9]*$');
+      }
       this.formGroup.controls.anualidad.setValidators(
         [
           Validators.required,
-          Validators.pattern('^[1-9][0-9]{3}'),
+          validatorPattern,
           NumberValidator.isInteger(),
           ProyectoAnualidadDatosGeneralesComponent.isDuplicated(this.actionService.anualidades)
         ]
@@ -74,7 +74,7 @@ export class ProyectoAnualidadDatosGeneralesComponent extends FormFragmentCompon
     }
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_ANUALIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

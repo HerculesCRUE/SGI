@@ -3,8 +3,13 @@ package org.crue.hercules.sgi.csp.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
 
+import org.crue.hercules.sgi.csp.model.ConceptoGastoDescripcion;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoNombre;
+import org.crue.hercules.sgi.csp.model.EstadoGastoProyectoComentario;
 import org.crue.hercules.sgi.csp.model.EstadoGastoProyecto.TipoEstadoGasto;
+import org.crue.hercules.sgi.csp.model.GastoProyectoObservaciones;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,7 +30,7 @@ public class GastoProyectoOutput implements Serializable {
   private EstadoGastoProyecto estado;
   private Instant fechaCongreso;
   private BigDecimal importeInscripcion;
-  private String observaciones;
+  private Collection<GastoProyectoObservaciones> observaciones;
 
   @Data
   @EqualsAndHashCode(callSuper = false)
@@ -34,8 +39,8 @@ public class GastoProyectoOutput implements Serializable {
   @Builder
   public static class ConceptoGasto implements Serializable {
     private Long id;
-    private String nombre;
-    private String descripcion;
+    private Collection<ConceptoGastoNombre> nombre;
+    private Collection<ConceptoGastoDescripcion> descripcion;
   }
 
   @Data
@@ -47,6 +52,6 @@ public class GastoProyectoOutput implements Serializable {
     private Long id;
     private TipoEstadoGasto estado;
     private Instant fechaEstado;
-    private String comentario;
+    private Collection<EstadoGastoProyectoComentario> comentario;
   }
 }

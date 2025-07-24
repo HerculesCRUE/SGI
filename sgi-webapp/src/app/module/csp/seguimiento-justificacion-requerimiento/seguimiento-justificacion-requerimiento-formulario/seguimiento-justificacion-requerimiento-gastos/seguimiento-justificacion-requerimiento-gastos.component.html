@@ -1,5 +1,5 @@
-<sgi-fragment title="{{ 'csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos' | translate }}: {{ 
-    formPart.currentRequerimientoJustificacion?.tipoRequerimiento?.nombre }}">
+<sgi-fragment
+  [titleArray]="['csp.ejecucion-economica.seguimiento-justificacion.requerimiento.gastos' | translate, ':', formPart.currentRequerimientoJustificacion?.tipoRequerimiento?.nombre]">
   <div class="mat-elevation-z4">
     <mat-table [dataSource]="dataSource" matSort matSortActive="justificacionId" matSortDirection="asc">
 
@@ -24,7 +24,8 @@
       </ng-container>
 
       <!-- Columnas dinamicas -->
-      <ng-container *ngFor="let column of formPart.columns" [matColumnDef]="column.id">
+      <ng-container *ngFor="let column of formPart.columns$ | async; trackBy: formPart.trackByColumnId"
+        [matColumnDef]="column.id">
         <mat-header-cell *matHeaderCellDef [class.computed]="column.compute" mat-sort-header>
           {{column.name}}
         </mat-header-cell>

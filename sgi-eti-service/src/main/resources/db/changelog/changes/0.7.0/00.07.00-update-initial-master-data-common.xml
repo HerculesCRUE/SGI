@@ -1,0 +1,1886 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <property name="defaultLang" value="es" />
+
+  <property name="formularioM10Code" value="M10/2024/002" global="false" />
+  <property name="formularioM20Code" value="M20/2024/002" global="false" />
+  <property name="formularioM30Code" value="M30/2024/002" global="false" />
+  <property name="formularioSeguimientoAnualCode" value="SA/2024/002" global="false" />
+  <property name="formularioSeguimientoFinalCode" value="SF/2024/002" global="false" />
+  <property name="formularioRestrospectivaCode" value="R/2024/002" global="false" />
+
+  <!-- FORMULARIO M10 -->
+  <changeSet context="!test" author="master" id="00.07.00-formulario-m10">
+    <insert tableName="formulario">
+      <column name="id" valueSequenceNext="formulario_seq" />
+      <column name="tipo" value="MEMORIA" />
+      <column name="codigo" value="${formularioM10Code}" />
+      <column name="seguimiento_anual_documentacion_title" value="TITULO_1" />
+    </insert>
+
+    <!-- Bloques -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM10Code}')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM10Code}')" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM10Code}')" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM10Code}')" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM10Code}')" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+
+    <!-- Apartados -->
+    <!-- 1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 1.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 2.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '2' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 3.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 3.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 3.4.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.4.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 3.4.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 3.4.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 3.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 3.5.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 5 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.5.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 5 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 3.6 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+    </insert>
+    <!-- 4.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.1.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.1.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.1.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 4.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 4.4.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.4.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 4.5.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 5 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.5.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 5 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.5.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 5 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.6 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+    </insert>
+    <!-- 4.6.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.6.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.6.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.6.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 4.6.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 4.6.6 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="6" />
+    </insert>
+    <!-- 4.6.7 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="7" />
+    </insert>
+    <!-- 5.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 5.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 5.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 5.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 5.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 5.6 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+    </insert>
+    <!-- 5.7 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="7" />
+    </insert>
+    <!-- 5.8 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="8" />
+    </insert>
+    <!-- 5.9 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="9" />
+    </insert>
+
+    <!-- Tipos de documento -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="CONSENTIMIENTO" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="CESION_DATOS" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="AUTORIZACION" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="ACEPTACION_COLABORACION" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="INFORME_GARANTIAS" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="ACUERDO_TRANSFERENCIA" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="INFORME_EXTERNO" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="ADICIONAL" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM10Code}')" />
+      <column name="adicional" valueBoolean="true" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+
+    <!-- Establece formulario por defecto -->
+    <update tableName="comite">
+      <column name="formulario_memoria_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM10Code}')" />
+      <where>id=1</where>
+    </update>
+
+    <!-- Asociamos el report antiguo al formulario preexistente-->
+    <insert tableName="formulario_report">
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='M10/2024/001')" />
+      <column name="lang" value="${defaultLang}" />
+      <column name="value_" valueBlobFile="blob/rep-eti-mxx.docx" />
+    </insert>
+  </changeSet>
+
+  <!-- FORMULARIO M20 -->
+  <changeSet context="!test" author="master" id="00.07.00-formulario-m20">
+    <insert tableName="formulario">
+      <column name="id" valueSequenceNext="formulario_seq" />
+      <column name="tipo" value="MEMORIA" />
+      <column name="codigo" value="${formularioM20Code}" />
+      <column name="seguimiento_anual_documentacion_title" value="TITULO_2" />
+    </insert>
+
+    <!-- Bloques -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM20Code}')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM20Code}')" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM20Code}')" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM20Code}')" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM20Code}')" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+
+    <!-- Apartados -->
+    <!-- 1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 1.1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 1.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 2.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '2' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 3.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 3.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 3.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 3.6 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+    </insert>
+    <!-- 3.6.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.6.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 3.6.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 3.6.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 3.6.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 6 and padre_id is null)" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 3.7 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="7" />
+    </insert>
+    <!-- 3.7.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.7.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 3.7.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 3.7.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 3.7.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 3.7.6 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="6" />
+    </insert>
+    <!-- 3.7.7 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="7" />
+    </insert>
+    <!-- 3.7.8 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="8" />
+    </insert>
+    <!-- 3.7.9 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="9" />
+    </insert>
+    <!-- 3.7.10 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="10" />
+    </insert>
+    <!-- 3.7.11 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="11" />
+    </insert>
+    <!-- 3.7.12 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="12" />
+    </insert>
+    <!-- 3.7.13 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="13" />
+    </insert>
+    <!-- 3.7.14 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 7 and padre_id is null)" />
+      <column name="orden" valueNumeric="14" />
+    </insert>
+    <!-- 4.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.1.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.1.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.2.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 2 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.2.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 2 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.2.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 2 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.2.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 2 and padre_id is null)" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 4.2.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 2 and padre_id is null)" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 4.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.3.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 3 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.3.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 3 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.3.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')) and orden = 3 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 5.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 5.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 5.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 5.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 5.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 5.6 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+    </insert>
+    <!-- 5.7 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where  codigo = '${formularioM20Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="7" />
+    </insert>
+
+    <!-- Tipos de documento -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="ACREDITACIONES" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="INFORME_VETERINARIO" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="SOLICITUD_RAZONADA" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="RESUMEN_RNT" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="ADICIONAL" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM20Code}')" />
+      <column name="adicional" valueBoolean="true" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+
+    <!-- Se establece el formulario por defecto -->
+    <update tableName="comite">
+      <column name="formulario_memoria_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM20Code}')" />
+      <where>id=2</where>
+    </update>
+
+    <!-- Asociamos el report antiguo al formulario preexistente-->
+    <insert tableName="formulario_report">
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='M20/2024/001')" />
+      <column name="lang" value="${defaultLang}" />
+      <column name="value_" valueBlobFile="blob/rep-eti-mxx.docx" />
+    </insert>
+  </changeSet>
+
+  <!-- FORMULARIO M30 -->
+  <changeSet context="!test" author="master" id="00.07.00-formulario-m30">
+    <insert tableName="formulario">
+      <column name="id" valueSequenceNext="formulario_seq" />
+      <column name="tipo" value="MEMORIA" />
+      <column name="codigo" value="${formularioM30Code}" />
+      <column name="seguimiento_anual_documentacion_title" value="TITULO_3" />
+    </insert>
+
+    <!-- Bloques -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM30Code}')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM30Code}')" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM30Code}')" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM30Code}')" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM30Code}')" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+
+    <!-- Apartados -->
+    <!-- 1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 1.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 2.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '2' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 3.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 3.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 3.4.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.4.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 3.4.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 3.4.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 3.4.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 4 and padre_id is null)" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 3.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 3.5.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 5 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 3.5.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 5 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 3.5.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 5 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 3.5.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 5 and padre_id is null)" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 3.6 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+    </insert>
+    <!-- 3.7 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '3' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="7" />
+    </insert>
+    <!-- 4.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.1.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.1.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.1.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 4.1.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 1 and padre_id is null)" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 4.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.2.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.2.1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 1 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.2.1.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 1 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.2.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.2.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null)" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.2.3.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 3 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.2.3.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 3 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 4.2.3.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 3 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.2.3.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 3 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 4.2.3.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 3 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 4.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 4.3.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 3 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 4.3.2  -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '4' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 3 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 5.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 5.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 5.2.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null)" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 5.2.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null)" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!--5.2.2.1-->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!--5.2.2.2-->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!--5.2.2.3-->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!--5.2.2.4-->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null))" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 5.2.2.4.1 -->
+    <insert
+      tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 4 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null)))" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 5.2.2.4.2 -->
+    <insert
+      tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 4 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null)))" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 5.2.2.4.3 -->
+    <insert
+      tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 4 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null)))" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 5.2.2.4.4 -->
+    <insert
+      tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id"
+        valueComputed="(select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 4 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id = (select id from ${schemaPrefix}apartado where bloque_id = (select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')) and orden = 2 and padre_id is null)))" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 5.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 5.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 5.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+    <!-- 5.6 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '5' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="6" />
+    </insert>
+
+    <!-- Tipos de documento -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="ACREDITACIONES" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="USO_AGENTES" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="SEGURO_RESPONSABILIDAD" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="PROTOCOLO_ACTUACION" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="AUTORIZACION_CONFINADA" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')" />
+      <column name="adicional" valueBoolean="false" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="ADICIONAL" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioM30Code}')" />
+      <column name="adicional" valueBoolean="true" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+
+    <!-- Se establece el formulario por defecto -->
+    <update tableName="comite">
+      <column name="formulario_memoria_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioM30Code}')" />
+      <where>id=3</where>
+    </update>
+
+    <!-- Asociamos el report antiguo al formulario preexistente-->
+    <insert tableName="formulario_report">
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='M30/2024/001')" />
+      <column name="lang" value="${defaultLang}" />
+      <column name="value_" valueBlobFile="blob/rep-eti-mxx.docx" />
+    </insert>
+  </changeSet>
+
+  <!-- Formulario Seguimiento Anual -->
+  <changeSet context="!test" author="master" id="00.07.00-formulario-seguimiento-anual">
+    <insert tableName="formulario">
+      <column name="id" valueSequenceNext="formulario_seq" />
+      <column name="tipo" value="SEGUIMIENTO_ANUAL" />
+      <column name="codigo" value="${formularioSeguimientoAnualCode}" />
+    </insert>
+
+    <!-- Bloques -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioSeguimientoAnualCode}')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+
+    <!-- Apartados -->
+    <!-- 1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioSeguimientoAnualCode}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 1.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioSeguimientoAnualCode}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 1.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioSeguimientoAnualCode}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 1.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioSeguimientoAnualCode}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+    <!-- 1.5 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioSeguimientoAnualCode}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="5" />
+    </insert>
+
+    <!-- Tipos de documento -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="ADICIONAL" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioSeguimientoAnualCode}')" />
+      <column name="adicional" valueBoolean="true" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+
+    <!-- Se establece el formulario por defecto -->
+    <update tableName="comite">
+      <column name="formulario_seguimiento_anual_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioSeguimientoAnualCode}')" />
+    </update>
+
+    <!-- Asociamos el report antiguo al formulario preexistente-->
+    <insert tableName="formulario_report">
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='SA/2024/001')" />
+      <column name="lang" value="${defaultLang}" />
+      <column name="value_" valueBlobFile="blob/rep-eti-mxx.docx" />
+    </insert>
+  </changeSet>
+
+  <!-- Formulario Seguimiento Final -->
+  <changeSet context="!test" author="master" id="00.07.00-formulario-seguimiento-final">
+    <insert tableName="formulario">
+      <column name="id" valueSequenceNext="formulario_seq" />
+      <column name="tipo" value="SEGUIMIENTO_FINAL" />
+      <column name="codigo" value="${formularioSeguimientoFinalCode}" />
+    </insert>
+
+    <!-- Bloques -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioSeguimientoFinalCode}')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+
+    <!-- Apartados -->
+    <!-- 1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioSeguimientoFinalCode}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+
+    <!-- Tipos de documento -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="ADICIONAL" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioSeguimientoFinalCode}')" />
+      <column name="adicional" valueBoolean="true" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+
+    <!-- Se establece el formulario por defecto -->
+    <update tableName="comite">
+      <column name="formulario_seguimiento_final_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioSeguimientoFinalCode}')" />
+    </update>
+
+    <!-- Asociamos el report antiguo al formulario preexistente-->
+    <insert tableName="formulario_report">
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='SF/2024/001')" />
+      <column name="lang" value="${defaultLang}" />
+      <column name="value_" valueBlobFile="blob/rep-eti-mxx.docx" />
+    </insert>
+  </changeSet>
+
+  <!-- Formulario Retrospectiva -->
+  <changeSet context="!test" author="master" id="00.07.00-formulario-retrospectiva">
+    <insert tableName="formulario">
+      <column name="id" valueSequenceNext="formulario_seq" />
+      <column name="tipo" value="RETROSPECTIVA" />
+      <column name="codigo" value="${formularioRestrospectivaCode}" />
+    </insert>
+
+    <!-- Bloques -->
+    <insert tableName="bloque">
+      <column name="id" valueSequenceNext="bloque_seq" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioRestrospectivaCode}')" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+
+    <!-- Apartados -->
+    <!-- 1.1 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioRestrospectivaCode}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="1" />
+    </insert>
+    <!-- 1.2 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioRestrospectivaCode}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="2" />
+    </insert>
+    <!-- 1.3 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioRestrospectivaCode}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="3" />
+    </insert>
+    <!-- 1.4 -->
+    <insert tableName="apartado">
+      <column name="id" valueSequenceNext="apartado_seq" />
+      <column name="bloque_id"
+        valueComputed="(select id from ${schemaPrefix}bloque where orden = '1' and formulario_id = (select id from ${schemaPrefix}formulario where codigo = '${formularioRestrospectivaCode}'))" />
+      <column name="padre_id" />
+      <column name="orden" valueNumeric="4" />
+    </insert>
+
+    <!-- Tipos de documento -->
+    <insert tableName="tipo_documento">
+      <column name="id" valueSequenceNext="tipo_documento_seq" />
+      <column name="codigo" value="ADICIONAL" />
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo = '${formularioRestrospectivaCode}')" />
+      <column name="adicional" valueBoolean="true" />
+      <column name="activo" valueBoolean="true" />
+    </insert>
+
+    <!-- Se establece el formulario por defecto -->
+    <update tableName="comite">
+      <column name="formulario_retrospectiva_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='${formularioRestrospectivaCode}')" />
+      <where>requiere_retrospectiva = :value</where>
+      <whereParams>
+        <param valueBoolean="true" />
+      </whereParams>
+    </update>
+
+    <!-- Asociamos el report antiguo al formulario preexistente-->
+    <insert tableName="formulario_report">
+      <column name="formulario_id"
+        valueComputed="(select id from ${schemaPrefix}formulario where codigo='R/2024/001')" />
+      <column name="lang" value="${defaultLang}" />
+      <column name="value_" valueBlobFile="blob/rep-eti-mxx.docx" />
+    </insert>
+  </changeSet>
+
+  <!-- Corrección de attributos en formularios antiguos antiguos -->
+  <changeSet context="!test" author="master" id="00.07.00-formulario-fix">
+    <sql>UPDATE ${schemaPrefix}apartado_definicion SET esquema = REPLACE(esquema,
+      'formState.tareas[$1].tarea', 'formState.tareas[$1].nombre')</sql>
+    <sql>UPDATE ${schemaPrefix}apartado_definicion SET esquema = REPLACE(esquema,
+      'formState.memoria.tipoMemoria.id === 3', 'formState.memoria.tipo === ''RATIFICACION''')</sql>
+    <sql>UPDATE ${schemaPrefix}apartado_definicion SET esquema = REPLACE(esquema,
+      'formState.memoria.tipoMemoria.id !== 3', 'formState.memoria.tipo !== ''RATIFICACION''')</sql>
+  </changeSet>
+
+</databaseChangeLog>

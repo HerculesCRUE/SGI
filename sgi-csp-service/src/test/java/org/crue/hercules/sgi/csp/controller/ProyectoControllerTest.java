@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.converter.ProyectoFaseConverter;
@@ -17,19 +19,28 @@ import org.crue.hercules.sgi.csp.dto.ProyectoFaseOutput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
+import org.crue.hercules.sgi.csp.model.EstadoProyectoComentario;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
 import org.crue.hercules.sgi.csp.model.ProyectoFaseAviso;
+import org.crue.hercules.sgi.csp.model.ProyectoFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
 import org.crue.hercules.sgi.csp.model.ProyectoHitoAviso;
+import org.crue.hercules.sgi.csp.model.ProyectoHitoComentario;
+import org.crue.hercules.sgi.csp.model.ProyectoObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
+import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajoDescripcion;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
+import org.crue.hercules.sgi.csp.model.ProyectoProrrogaObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
+import org.crue.hercules.sgi.csp.model.ProyectoTitulo;
 import org.crue.hercules.sgi.csp.model.RequerimientoJustificacion;
+import org.crue.hercules.sgi.csp.model.RequerimientoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.model.RolSocio;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
@@ -69,6 +80,8 @@ import org.crue.hercules.sgi.csp.service.ProyectoService;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioPeriodoJustificacionDocumentoService;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioService;
 import org.crue.hercules.sgi.csp.service.RequerimientoJustificacionService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -229,7 +242,8 @@ class ProyectoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
         .andExpect(MockMvcResultMatchers.jsonPath("estado.id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(proyecto.getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(proyecto.getObservaciones(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("unidadGestionRef").value(proyecto.getUnidadGestionRef()));
   }
 
@@ -257,7 +271,10 @@ class ProyectoControllerTest extends BaseControllerTest {
     // given: Existing Proyecto to be updated
     Proyecto proyectoExistente = generarMockProyecto(1L);
     Proyecto proyecto = generarMockProyecto(1L);
-    proyecto.setObservaciones("observaciones actualizadas");
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones actualizadas"));
+    proyecto.setObservaciones(observacionesProyecto);
 
     BDDMockito.given(service.update(ArgumentMatchers.<Proyecto>any()))
         .willAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -272,7 +289,8 @@ class ProyectoControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(proyectoExistente.getId()))
         .andExpect(MockMvcResultMatchers.jsonPath("estado.id").value(proyectoExistente.getEstado().getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value(proyecto.getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(proyecto.getObservaciones(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("unidadGestionRef").value(proyectoExistente.getUnidadGestionRef()));
   }
 
@@ -397,7 +415,7 @@ class ProyectoControllerTest extends BaseControllerTest {
         // and the requested Proyecto is resturned as JSON object
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("estado.id").value(1L))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value("observaciones-001"))
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value").value("observaciones-001"))
         .andExpect(MockMvcResultMatchers.jsonPath("unidadGestionRef").value("2"));
   }
 
@@ -437,8 +455,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           int toIndex = fromIndex + size;
           toIndex = toIndex > proyectos.size() ? proyectos.size() : toIndex;
           List<Proyecto> content = proyectos.subList(fromIndex, toIndex);
-          Page<Proyecto> pageResponse = new PageImpl<>(content, pageable, proyectos.size());
-          return pageResponse;
+          return new PageImpl<>(content, pageable, proyectos.size());
         });
 
     // when: Get page=3 with pagesize=10
@@ -459,7 +476,8 @@ class ProyectoControllerTest extends BaseControllerTest {
         });
     for (int i = 31; i <= 37; i++) {
       Proyecto proyecto = proyectosResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(proyecto.getObservaciones()).isEqualTo("observaciones-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyecto.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
 
@@ -471,8 +489,7 @@ class ProyectoControllerTest extends BaseControllerTest {
         .willAnswer(new Answer<Page<Proyecto>>() {
           @Override
           public Page<Proyecto> answer(InvocationOnMock invocation) throws Throwable {
-            Page<Proyecto> page = new PageImpl<>(Collections.emptyList());
-            return page;
+            return new PageImpl<>(Collections.emptyList());
           }
         });
 
@@ -504,8 +521,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           int toIndex = fromIndex + size;
           toIndex = toIndex > proyectos.size() ? proyectos.size() : toIndex;
           List<Proyecto> content = proyectos.subList(fromIndex, toIndex);
-          Page<Proyecto> pageResponse = new PageImpl<>(content, pageable, proyectos.size());
-          return pageResponse;
+          return new PageImpl<>(content, pageable, proyectos.size());
         });
 
     // when: Get page=3 with pagesize=10
@@ -527,7 +543,8 @@ class ProyectoControllerTest extends BaseControllerTest {
         });
     for (int i = 31; i <= 37; i++) {
       Proyecto proyecto = proyectosResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(proyecto.getObservaciones()).isEqualTo("observaciones-" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyecto.getObservaciones(), Language.ES))
+          .isEqualTo("observaciones-" + String.format("%03d", i));
     }
   }
 
@@ -539,8 +556,7 @@ class ProyectoControllerTest extends BaseControllerTest {
         .willAnswer(new Answer<Page<Proyecto>>() {
           @Override
           public Page<Proyecto> answer(InvocationOnMock invocation) throws Throwable {
-            Page<Proyecto> page = new PageImpl<>(Collections.emptyList());
-            return page;
+            return new PageImpl<>(Collections.emptyList());
           }
         });
 
@@ -585,8 +601,7 @@ class ProyectoControllerTest extends BaseControllerTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > proyectoHitos.size() ? proyectoHitos.size() : toIndex;
             List<ProyectoHito> content = proyectoHitos.subList(fromIndex, toIndex);
-            Page<ProyectoHito> page = new PageImpl<>(content, pageable, proyectoHitos.size());
-            return page;
+            return new PageImpl<>(content, pageable, proyectoHitos.size());
           }
         });
 
@@ -611,7 +626,7 @@ class ProyectoControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ProyectoHito proyectoHito = proyectoHitoResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(proyectoHito.getComentario())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoHito.getComentario(), Language.ES))
           .isEqualTo("comentario-proyecto-hito-" + String.format("%03d", i));
     }
   }
@@ -631,8 +646,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           @Override
           public Page<ProyectoHito> answer(InvocationOnMock invocation) throws Throwable {
             Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ProyectoHito> page = new PageImpl<>(proyectoHitos, pageable, 0);
-            return page;
+            return new PageImpl<>(proyectoHitos, pageable, 0);
           }
         });
 
@@ -681,8 +695,7 @@ class ProyectoControllerTest extends BaseControllerTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > proyectoFases.size() ? proyectoFases.size() : toIndex;
             List<ProyectoFase> content = proyectoFases.subList(fromIndex, toIndex);
-            Page<ProyectoFase> page = new PageImpl<>(content, pageable, proyectoFases.size());
-            return page;
+            return new PageImpl<>(content, pageable, proyectoFases.size());
           }
         });
 
@@ -711,7 +724,7 @@ class ProyectoControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ProyectoFase proyectoFase = proyectoFaseResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(proyectoFase.getObservaciones())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoFase.getObservaciones(), Language.ES))
           .isEqualTo("observaciones-proyecto-fase-" + String.format("%03d", i));
     }
   }
@@ -731,8 +744,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           @Override
           public Page<ProyectoFase> answer(InvocationOnMock invocation) throws Throwable {
             Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ProyectoFase> page = new PageImpl<>(proyectoFases, pageable, 0);
-            return page;
+            return new PageImpl<>(proyectoFases, pageable, 0);
           }
         });
 
@@ -779,8 +791,7 @@ class ProyectoControllerTest extends BaseControllerTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > proyectoPaqueteTrabajos.size() ? proyectoPaqueteTrabajos.size() : toIndex;
             List<ProyectoPaqueteTrabajo> content = proyectoPaqueteTrabajos.subList(fromIndex, toIndex);
-            Page<ProyectoPaqueteTrabajo> page = new PageImpl<>(content, pageable, proyectoPaqueteTrabajos.size());
-            return page;
+            return new PageImpl<>(content, pageable, proyectoPaqueteTrabajos.size());
           }
         });
 
@@ -827,8 +838,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           @Override
           public Page<ProyectoPaqueteTrabajo> answer(InvocationOnMock invocation) throws Throwable {
             Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ProyectoPaqueteTrabajo> page = new PageImpl<>(proyectoPaqueteTrabajos, pageable, 0);
-            return page;
+            return new PageImpl<>(proyectoPaqueteTrabajos, pageable, 0);
           }
         });
 
@@ -870,8 +880,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           int toIndex = fromIndex + size;
           toIndex = toIndex > proyectoSocios.size() ? proyectoSocios.size() : toIndex;
           List<ProyectoSocio> content = proyectoSocios.subList(fromIndex, toIndex);
-          Page<ProyectoSocio> pageResponse = new PageImpl<>(content, pageable, proyectoSocios.size());
-          return pageResponse;
+          return new PageImpl<>(content, pageable, proyectoSocios.size());
         });
 
     // when: get page=3 with pagesize=10
@@ -914,8 +923,7 @@ class ProyectoControllerTest extends BaseControllerTest {
         .willAnswer(new Answer<Page<ProyectoSocio>>() {
           @Override
           public Page<ProyectoSocio> answer(InvocationOnMock invocation) throws Throwable {
-            Page<ProyectoSocio> page = new PageImpl<>(Collections.emptyList());
-            return page;
+            return new PageImpl<>(Collections.emptyList());
           }
         });
 
@@ -957,8 +965,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           int toIndex = fromIndex + size;
           toIndex = toIndex > proyectoEquipos.size() ? proyectoEquipos.size() : toIndex;
           List<ProyectoEquipo> content = proyectoEquipos.subList(fromIndex, toIndex);
-          Page<ProyectoEquipo> pageResponse = new PageImpl<>(content, pageable, proyectoEquipos.size());
-          return pageResponse;
+          return new PageImpl<>(content, pageable, proyectoEquipos.size());
         });
 
     // when: get page=3 with pagesize=10
@@ -1002,8 +1009,7 @@ class ProyectoControllerTest extends BaseControllerTest {
         .willAnswer(new Answer<Page<ProyectoEquipo>>() {
           @Override
           public Page<ProyectoEquipo> answer(InvocationOnMock invocation) throws Throwable {
-            Page<ProyectoEquipo> page = new PageImpl<>(Collections.emptyList());
-            return page;
+            return new PageImpl<>(Collections.emptyList());
           }
         });
 
@@ -1050,9 +1056,7 @@ class ProyectoControllerTest extends BaseControllerTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > proyectoPeriodoSeguimientos.size() ? proyectoPeriodoSeguimientos.size() : toIndex;
             List<ProyectoPeriodoSeguimiento> content = proyectoPeriodoSeguimientos.subList(fromIndex, toIndex);
-            Page<ProyectoPeriodoSeguimiento> page = new PageImpl<>(content, pageable,
-                proyectoPeriodoSeguimientos.size());
-            return page;
+            return new PageImpl<>(content, pageable, proyectoPeriodoSeguimientos.size());
           }
         });
 
@@ -1078,7 +1082,8 @@ class ProyectoControllerTest extends BaseControllerTest {
     for (int i = 31; i <= 37; i++) {
       ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = proyectoPeriodoSeguimientoResponse
           .get(i - (page * pageSize) - 1);
-      Assertions.assertThat(proyectoPeriodoSeguimiento.getObservaciones()).isEqualTo("obs-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoPeriodoSeguimiento.getObservaciones(), Language.ES))
+          .isEqualTo("obs-" + i);
     }
   }
 
@@ -1099,8 +1104,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           @Override
           public Page<ProyectoPeriodoSeguimiento> answer(InvocationOnMock invocation) throws Throwable {
             Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ProyectoPeriodoSeguimiento> page = new PageImpl<>(proyectoPeriodoSeguimientos, pageable, 0);
-            return page;
+            return new PageImpl<>(proyectoPeriodoSeguimientos, pageable, 0);
           }
         });
 
@@ -1147,8 +1151,7 @@ class ProyectoControllerTest extends BaseControllerTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > proyectoEntidadGestoras.size() ? proyectoEntidadGestoras.size() : toIndex;
             List<ProyectoEntidadGestora> content = proyectoEntidadGestoras.subList(fromIndex, toIndex);
-            Page<ProyectoEntidadGestora> page = new PageImpl<>(content, pageable, proyectoEntidadGestoras.size());
-            return page;
+            return new PageImpl<>(content, pageable, proyectoEntidadGestoras.size());
           }
         });
 
@@ -1194,8 +1197,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           @Override
           public Page<ProyectoEntidadGestora> answer(InvocationOnMock invocation) throws Throwable {
             Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ProyectoEntidadGestora> page = new PageImpl<>(proyectoEntidadGestoras, pageable, 0);
-            return page;
+            return new PageImpl<>(proyectoEntidadGestoras, pageable, 0);
           }
         });
 
@@ -1241,8 +1243,7 @@ class ProyectoControllerTest extends BaseControllerTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > proyectoProrrogas.size() ? proyectoProrrogas.size() : toIndex;
             List<ProyectoProrroga> content = proyectoProrrogas.subList(fromIndex, toIndex);
-            Page<ProyectoProrroga> page = new PageImpl<>(content, pageable, proyectoProrrogas.size());
-            return page;
+            return new PageImpl<>(content, pageable, proyectoProrrogas.size());
           }
         });
 
@@ -1267,7 +1268,7 @@ class ProyectoControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ProyectoProrroga proyectoPeriodoSeguimiento = proyectoPeriodoSeguimientoResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(proyectoPeriodoSeguimiento.getObservaciones())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoPeriodoSeguimiento.getObservaciones(), Language.ES))
           .isEqualTo("observaciones-proyecto-prorroga-" + String.format("%03d", i));
     }
   }
@@ -1288,8 +1289,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           @Override
           public Page<ProyectoProrroga> answer(InvocationOnMock invocation) throws Throwable {
             Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<ProyectoProrroga> page = new PageImpl<>(proyectoProrrogas, pageable, 0);
-            return page;
+            return new PageImpl<>(proyectoProrrogas, pageable, 0);
           }
         });
 
@@ -1335,8 +1335,7 @@ class ProyectoControllerTest extends BaseControllerTest {
             int toIndex = fromIndex + size;
             toIndex = toIndex > requerimientos.size() ? requerimientos.size() : toIndex;
             List<RequerimientoJustificacion> content = requerimientos.subList(fromIndex, toIndex);
-            Page<RequerimientoJustificacion> page = new PageImpl<>(content, pageable, requerimientos.size());
-            return page;
+            return new PageImpl<>(content, pageable, requerimientos.size());
           }
         });
     BDDMockito
@@ -1345,12 +1344,10 @@ class ProyectoControllerTest extends BaseControllerTest {
           @Override
           public Page<RequerimientoJustificacionOutput> answer(InvocationOnMock invocation) throws Throwable {
             Page<RequerimientoJustificacion> pageInput = invocation.getArgument(0);
-            List<RequerimientoJustificacionOutput> content = pageInput.getContent().stream().map(input -> {
-              return generarMockRequerimientoJustificacionOutput(input);
-            }).collect(Collectors.toList());
-            Page<RequerimientoJustificacionOutput> pageOutput = new PageImpl<>(content, pageInput.getPageable(),
-                pageInput.getTotalElements());
-            return pageOutput;
+            List<RequerimientoJustificacionOutput> content = pageInput.getContent().stream()
+                .map(ProyectoControllerTest.this::generarMockRequerimientoJustificacionOutput)
+                .toList();
+            return new PageImpl<>(content, pageInput.getPageable(), pageInput.getTotalElements());
           }
         });
 
@@ -1377,7 +1374,7 @@ class ProyectoControllerTest extends BaseControllerTest {
     for (int i = 31; i <= 37; i++) {
       RequerimientoJustificacionOutput requerimiento = requerimientosResponse
           .get(i - (page * pageSize) - 1);
-      Assertions.assertThat(requerimiento.getObservaciones())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(requerimiento.getObservaciones(), Language.ES))
           .isEqualTo("RequerimientoJustificacion-" + String.format("%03d", i));
     }
   }
@@ -1399,8 +1396,7 @@ class ProyectoControllerTest extends BaseControllerTest {
           @Override
           public Page<RequerimientoJustificacion> answer(InvocationOnMock invocation) throws Throwable {
             Pageable pageable = invocation.getArgument(2, Pageable.class);
-            Page<RequerimientoJustificacion> page = new PageImpl<>(requerimientos, pageable, 0);
-            return page;
+            return new PageImpl<>(requerimientos, pageable, 0);
           }
         });
     BDDMockito
@@ -1408,8 +1404,7 @@ class ProyectoControllerTest extends BaseControllerTest {
         .willAnswer(new Answer<Page<RequerimientoJustificacionOutput>>() {
           @Override
           public Page<RequerimientoJustificacionOutput> answer(InvocationOnMock invocation) throws Throwable {
-            Page<RequerimientoJustificacionOutput> page = new PageImpl<>(Collections.emptyList());
-            return page;
+            return new PageImpl<>(Collections.emptyList());
           }
         });
 
@@ -1447,11 +1442,17 @@ class ProyectoControllerTest extends BaseControllerTest {
     TipoAmbitoGeografico tipoAmbitoGeografico = new TipoAmbitoGeografico();
     tipoAmbitoGeografico.setId(1L);
 
+    Set<ProyectoTitulo> tituloProyecto = new HashSet<>();
+    tituloProyecto.add(new ProyectoTitulo(Language.ES, "PRO" + (id != null ? id : 1)));
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones-" + String.format("%03d", id)));
+
     Proyecto proyecto = new Proyecto();
     proyecto.setId(id);
-    proyecto.setTitulo("PRO" + (id != null ? id : 1));
+    proyecto.setTitulo(tituloProyecto);
     proyecto.setCodigoExterno("cod-externo-" + (id != null ? String.format("%03d", id) : "001"));
-    proyecto.setObservaciones("observaciones-" + String.format("%03d", id));
+    proyecto.setObservaciones(observacionesProyecto);
     proyecto.setUnidadGestionRef("2");
     proyecto.setFechaInicio(Instant.now());
     proyecto.setFechaFin(Instant.now());
@@ -1475,9 +1476,12 @@ class ProyectoControllerTest extends BaseControllerTest {
    * @return el objeto EstadoProyecto
    */
   private EstadoProyecto generarMockEstadoProyecto(Long id) {
+    Set<EstadoProyectoComentario> estadoProyectoComentario = new HashSet<>();
+    estadoProyectoComentario.add(new EstadoProyectoComentario(Language.ES, "Estado-" + id));
+
     EstadoProyecto estadoProyecto = new EstadoProyecto();
     estadoProyecto.setId(id);
-    estadoProyecto.setComentario("Estado-" + id);
+    estadoProyecto.setComentario(estadoProyectoComentario);
     estadoProyecto.setEstado(EstadoProyecto.Estado.BORRADOR);
     estadoProyecto.setFechaEstado(Instant.now());
     estadoProyecto.setProyectoId(1L);
@@ -1496,11 +1500,15 @@ class ProyectoControllerTest extends BaseControllerTest {
     tipoHito.setId(id == null ? 1 : id);
     tipoHito.setActivo(true);
 
+    Set<ProyectoHitoComentario> proyectoHitoComentario = new HashSet<>();
+    proyectoHitoComentario
+        .add(new ProyectoHitoComentario(Language.ES, "comentario-proyecto-hito-" + String.format("%03d", id)));
+
     ProyectoHito proyectoHito = new ProyectoHito();
     proyectoHito.setId(id);
     proyectoHito.setProyectoId(id == null ? 1 : id);
     proyectoHito.setFecha(Instant.parse("2020-10-19T23:59:59Z"));
-    proyectoHito.setComentario("comentario-proyecto-hito-" + String.format("%03d", id));
+    proyectoHito.setComentario(proyectoHitoComentario);
     proyectoHito.setProyectoHitoAviso(ProyectoHitoAviso.builder().build());
     proyectoHito.setTipoHito(tipoHito);
 
@@ -1518,14 +1526,18 @@ class ProyectoControllerTest extends BaseControllerTest {
     tipoFase.setId(id == null ? 1 : id);
     tipoFase.setActivo(true);
 
+    Set<ProyectoFaseObservaciones> proyectoFaseObservaciones = new HashSet<>();
+    proyectoFaseObservaciones
+        .add(new ProyectoFaseObservaciones(Language.ES, "observaciones-proyecto-fase-" + String.format("%03d", id)));
+
     ProyectoFase proyectoFase = new ProyectoFase();
     proyectoFase.setId(id);
     proyectoFase.setProyectoId(id == null ? 1 : id);
     proyectoFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     proyectoFase.setFechaFin(Instant.parse("2020-10-20T23:59:59Z"));
-    proyectoFase.setObservaciones("observaciones-proyecto-fase-" + String.format("%03d", id));
-    proyectoFase.setProyectoFaseAviso1(buildMockProyectoFaseAviso(1L, id));
-    proyectoFase.setProyectoFaseAviso2(buildMockProyectoFaseAviso(2L, id));
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
+    proyectoFase.setProyectoFaseAviso1(buildMockProyectoFaseAviso(1L));
+    proyectoFase.setProyectoFaseAviso2(buildMockProyectoFaseAviso(2L));
     proyectoFase.setTipoFase(tipoFase);
 
     return proyectoFase;
@@ -1536,14 +1548,18 @@ class ProyectoControllerTest extends BaseControllerTest {
     tipoFase.setId(id == null ? 1 : id);
     tipoFase.setActivo(true);
 
+    Set<ProyectoFaseObservaciones> proyectoFaseObservaciones = new HashSet<>();
+    proyectoFaseObservaciones
+        .add(new ProyectoFaseObservaciones(Language.ES, "observaciones-proyecto-fase-" + String.format("%03d", id)));
+
     ProyectoFaseOutput proyectoFase = new ProyectoFaseOutput();
     proyectoFase.setId(id);
     proyectoFase.setProyectoId(id == null ? 1 : id);
     proyectoFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     proyectoFase.setFechaFin(Instant.parse("2020-10-20T23:59:59Z"));
-    proyectoFase.setObservaciones("observaciones-proyecto-fase-" + String.format("%03d", id));
-    proyectoFase.setAviso1(buildMockProyectoFaseAvisoOutput(1L, id));
-    proyectoFase.setAviso2(buildMockProyectoFaseAvisoOutput(2L, id));
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
+    proyectoFase.setAviso1(buildMockProyectoFaseAvisoOutput(1L));
+    proyectoFase.setAviso2(buildMockProyectoFaseAvisoOutput(2L));
     proyectoFase.setTipoFase(tipoFase);
 
     return proyectoFase;
@@ -1558,6 +1574,11 @@ class ProyectoControllerTest extends BaseControllerTest {
    */
   private ProyectoPaqueteTrabajo generarMockProyectoPaqueteTrabajo(Long id, Long proyectoId) {
 
+    Set<ProyectoPaqueteTrabajoDescripcion> proyectoPaqueteTrabajoDescripcion = new HashSet<>();
+    proyectoPaqueteTrabajoDescripcion.add(
+        new ProyectoPaqueteTrabajoDescripcion(Language.ES, "descripcion-proyecto-paquete-trabajo-" +
+            (id == null ? "" : String.format("%03d", id))));
+
     // @formatter:off
     return ProyectoPaqueteTrabajo.builder()
         .id(id)
@@ -1566,7 +1587,7 @@ class ProyectoControllerTest extends BaseControllerTest {
         .fechaInicio(Instant.parse("2020-01-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-01-15T23:59:59Z"))
         .personaMes(1D)
-        .descripcion("descripcion-proyecto-paquete-trabajo-" + (id == null ? "" : String.format("%03d", id)))
+        .descripcion(proyectoPaqueteTrabajoDescripcion)
         .build();
     // @formatter:on
   }
@@ -1581,8 +1602,7 @@ class ProyectoControllerTest extends BaseControllerTest {
 
     String suffix = String.format("%03d", proyectoSocioId);
 
-    // @formatter:off
-    ProyectoSocio proyectoSocio = ProyectoSocio.builder()
+    return ProyectoSocio.builder()
         .id(proyectoSocioId)
         .proyectoId(1L)
         .empresaRef("empresa-" + suffix)
@@ -1592,9 +1612,6 @@ class ProyectoControllerTest extends BaseControllerTest {
         .numInvestigadores(5)
         .importeConcedido(BigDecimal.valueOf(1000))
         .build();
-    // @formatter:on
-
-    return proyectoSocio;
   }
 
   /**
@@ -1605,12 +1622,14 @@ class ProyectoControllerTest extends BaseControllerTest {
    */
   private ProyectoEquipo generarMockProyectoEquipo(Long proyectoEquipoId) {
 
-    ProyectoEquipo proyectoEquipo = ProyectoEquipo.builder().id(proyectoEquipoId).proyectoId(1L)
-        .rolProyecto(RolProyecto.builder().id(1L).build()).fechaInicio(Instant.now()).fechaFin(Instant.now())
-        .personaRef("001").build();
-
-    return proyectoEquipo;
-
+    return ProyectoEquipo.builder()
+        .id(proyectoEquipoId)
+        .proyectoId(1L)
+        .rolProyecto(RolProyecto.builder().id(1L).build())
+        .fechaInicio(Instant.now())
+        .fechaFin(Instant.now())
+        .personaRef("001")
+        .build();
   }
 
   /*
@@ -1621,12 +1640,15 @@ class ProyectoControllerTest extends BaseControllerTest {
    * @return el objeto ProyectoPeriodoSeguimiento
    */
   private ProyectoPeriodoSeguimiento generarMockProyectoPeriodoSeguimiento(Long id) {
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "obs-" + id));
+
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = new ProyectoPeriodoSeguimiento();
     proyectoPeriodoSeguimiento.setId(id);
     proyectoPeriodoSeguimiento.setProyectoId(id == null ? 1 : id);
     proyectoPeriodoSeguimiento.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     proyectoPeriodoSeguimiento.setFechaFin(Instant.parse("2020-12-19T23:59:59Z"));
-    proyectoPeriodoSeguimiento.setObservaciones("obs-" + id);
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
 
     return proyectoPeriodoSeguimiento;
   }
@@ -1656,6 +1678,9 @@ class ProyectoControllerTest extends BaseControllerTest {
    * @return el objeto ProyectoProrroga
    */
   private ProyectoProrroga generarMockProyectoProrroga(Long id, Long proyectoId) {
+    Set<ProyectoProrrogaObservaciones> proyectoProrrogaObservaciones = new HashSet<>();
+    proyectoProrrogaObservaciones.add(new ProyectoProrrogaObservaciones(Language.ES,
+        "observaciones-proyecto-prorroga-" + (id == null ? "" : String.format("%03d", id))));
 
     // @formatter:off
     return ProyectoProrroga.builder()
@@ -1666,12 +1691,12 @@ class ProyectoControllerTest extends BaseControllerTest {
         .tipo(ProyectoProrroga.Tipo.TIEMPO_IMPORTE)
         .fechaFin(Instant.parse("2020-12-31T23:59:59Z"))
         .importe(BigDecimal.valueOf(123.45))
-        .observaciones("observaciones-proyecto-prorroga-" + (id == null ? "" : String.format("%03d", id)))
+        .observaciones(proyectoProrrogaObservaciones)
         .build();
     // @formatter:on
   }
 
-  private ProyectoFaseAviso buildMockProyectoFaseAviso(Long id, Long proyectoFaseId) {
+  private ProyectoFaseAviso buildMockProyectoFaseAviso(Long id) {
     return ProyectoFaseAviso.builder()
         .comunicadoRef("3333")
         .id(id)
@@ -1679,7 +1704,7 @@ class ProyectoControllerTest extends BaseControllerTest {
         .build();
   }
 
-  private ProyectoFaseAvisoOutput buildMockProyectoFaseAvisoOutput(Long id, Long proyectoFaseId) {
+  private ProyectoFaseAvisoOutput buildMockProyectoFaseAvisoOutput(Long id) {
     return ProyectoFaseAvisoOutput.builder()
         .comunicadoRef("3333")
         .id(id)
@@ -1695,9 +1720,13 @@ class ProyectoControllerTest extends BaseControllerTest {
 
   private RequerimientoJustificacion generarMockRequerimientoJustificacion(Long id, String observaciones,
       Long requerimientoPrevioId, TipoRequerimiento tipoRequerimiento) {
+    Set<RequerimientoJustificacionObservaciones> observacionesRequerimientoJustificacion = new HashSet<>();
+    observacionesRequerimientoJustificacion
+        .add(new RequerimientoJustificacionObservaciones(Language.ES, observaciones));
+
     return RequerimientoJustificacion.builder()
         .id(id)
-        .observaciones(observaciones)
+        .observaciones(observacionesRequerimientoJustificacion)
         .requerimientoPrevioId(requerimientoPrevioId)
         .tipoRequerimiento(tipoRequerimiento)
         .build();
@@ -1709,7 +1738,9 @@ class ProyectoControllerTest extends BaseControllerTest {
         requerimientoJustificacion.getObservaciones(), requerimientoJustificacion.getRequerimientoPrevioId());
   }
 
-  private RequerimientoJustificacionOutput generarMockRequerimientoJustificacionOutput(Long id, String observaciones,
+  private RequerimientoJustificacionOutput generarMockRequerimientoJustificacionOutput(
+      Long id,
+      Collection<RequerimientoJustificacionObservaciones> observaciones,
       Long requerimientoPrevioId) {
     return RequerimientoJustificacionOutput.builder()
         .id(id)

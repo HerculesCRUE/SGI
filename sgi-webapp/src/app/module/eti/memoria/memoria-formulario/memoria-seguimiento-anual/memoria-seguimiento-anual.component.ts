@@ -44,4 +44,5 @@ export class MemoriaSeguimientoAnualComponent extends FragmentComponent implemen
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  protected setupI18N(): void { }
 }

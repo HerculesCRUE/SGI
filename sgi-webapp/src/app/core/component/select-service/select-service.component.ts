@@ -1,6 +1,8 @@
 import { Directive, Optional, Self } from '@angular/core';
 import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
+import { LanguageService } from '@core/services/language.service';
 import { Observable } from 'rxjs';
 import { SelectCommonComponent } from '../select-common/select-common.component';
 
@@ -9,7 +11,7 @@ export interface EntityKey {
   /** ID of the entity */
   id: number | string;
   /** DisplayText of the entity */
-  nombre?: string;
+  nombre?: string | I18nFieldValue[];
 }
 
 /** Base select component for selects of SGI entities. Allow loading options from a service */
@@ -19,7 +21,9 @@ export abstract class SelectServiceComponent<T extends EntityKey> extends Select
 
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
-    @Self() @Optional() ngControl: NgControl) {
+    @Self() @Optional() ngControl: NgControl,
+    protected readonly languageService: LanguageService
+  ) {
     super(defaultErrorStateMatcher, ngControl);
 
     // Override default compareWith
@@ -31,7 +35,21 @@ export abstract class SelectServiceComponent<T extends EntityKey> extends Select
     };
 
     // Override default displayWith
-    this.displayWith = (option) => option?.nombre ?? '';
+    this.displayWith = (option) => {
+      if (option) {
+        if (Array.isArray(option.nombre)) {
+          return this.languageService.getFieldValue(option.nombre);
+        } else {
+          return option.nombre ?? '';
+        }
+      }
+      return '';
+    }
+
+    // Refresh display values on language change
+    this.subscriptions.push(this.languageService.languageChange$.subscribe(
+      () => this.refreshDisplayValue()
+    ));
   }
 
   /**

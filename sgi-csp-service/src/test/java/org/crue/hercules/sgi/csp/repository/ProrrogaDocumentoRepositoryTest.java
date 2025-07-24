@@ -2,17 +2,29 @@ package org.crue.hercules.sgi.csp.repository;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
 import org.crue.hercules.sgi.csp.model.ProrrogaDocumento;
+import org.crue.hercules.sgi.csp.model.ProrrogaDocumentoComentario;
+import org.crue.hercules.sgi.csp.model.ProrrogaDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
+import org.crue.hercules.sgi.csp.model.ProyectoProrrogaObservaciones;
+import org.crue.hercules.sgi.csp.model.ProyectoTitulo;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -27,7 +39,7 @@ class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
   private ProrrogaDocumentoRepository repository;
 
   @Test
-  void deleteByProyectoProrrogaId_ReturnsListProrrogaDocumento() throws Exception {
+  void deleteByProyectoProrrogaId_ReturnsListProrrogaDocumento() {
 
     // given: registros ProyectoProrroga con documentos asociados
     Proyecto proyecto = generarMockProyecto("-001");
@@ -48,16 +60,17 @@ class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
     List<ProrrogaDocumento> result = repository.deleteByProyectoProrrogaId(idProyectoProrroga);
 
     // then: retorna la lista de documentos eliminados
-    Assertions.assertThat(result).hasSize(2);
-    Assertions.assertThat(result.contains(prorrogaDocumento1)).isFalse();
-    Assertions.assertThat(result.contains(prorrogaDocumento2)).isFalse();
-    Assertions.assertThat(result.contains(prorrogaDocumento3)).isTrue();
-    Assertions.assertThat(result.contains(prorrogaDocumento4)).isTrue();
+    Assertions.assertThat(result)
+        .hasSize(2)
+        .doesNotContain(prorrogaDocumento1)
+        .doesNotContain(prorrogaDocumento2)
+        .contains(prorrogaDocumento3)
+        .contains(prorrogaDocumento4);
 
   }
 
   @Test
-  void deleteByProyectoProrrogaId_ReturnsEmptyList() throws Exception {
+  void deleteByProyectoProrrogaId_ReturnsEmptyList() {
 
     Proyecto proyecto = generarMockProyecto("-001");
     TipoDocumento tipoDocumento1 = generarMockTipoDocumento("-001");
@@ -75,7 +88,7 @@ class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
     List<ProrrogaDocumento> result = repository.deleteByProyectoProrrogaId(idProyectoProrroga);
 
     // then: retorna la lista de documentos eliminados
-    Assertions.assertThat(result.isEmpty()).isTrue();
+    Assertions.assertThat(result).isEmpty();
   }
 
   /**
@@ -85,24 +98,31 @@ class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
    * @return el objeto Proyecto
    */
   private Proyecto generarMockProyecto(String suffix) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion" + suffix));
 
-    // @formatter:off
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
-        .nombre("nombreModeloEjecucion" + suffix)
+        .nombre(nombreModeloEjecucion)
         .activo(Boolean.TRUE)
         .contrato(Boolean.FALSE)
         .externo(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad" + suffix));
+
     TipoFinalidad tipoFinalidad = TipoFinalidad.builder()
-        .nombre("nombreTipoFinalidad" + suffix)
+        .nombre(nombreTipoFinalidad)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(tipoFinalidad);
 
+    Set<TipoAmbitoGeograficoNombre> tipoAmbitoGeograficoNombre = new HashSet<>();
+    tipoAmbitoGeograficoNombre.add(new TipoAmbitoGeograficoNombre(Language.ES, "nombreTipoAmbitoGeografico" + suffix));
+
     TipoAmbitoGeografico tipoAmbitoGeografico = TipoAmbitoGeografico.builder()
-        .nombre("nombreTipoAmbitoGeografico" + suffix)
+        .nombre(tipoAmbitoGeograficoNombre)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(tipoAmbitoGeografico);
@@ -114,10 +134,13 @@ class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
         .build();
     entityManager.persistAndFlush(modeloUnidad);
 
+    Set<ProyectoTitulo> tituloProyecto = new HashSet<>();
+    tituloProyecto.add(new ProyectoTitulo(Language.ES, "titulo" + suffix));
+
     Proyecto proyecto = Proyecto.builder()
         .acronimo("PR" + suffix)
         .codigoExterno("COD" + suffix)
-        .titulo("titulo" + suffix)
+        .titulo(tituloProyecto)
         .unidadGestionRef("2")
         .modeloEjecucion(modeloEjecucion)
         .finalidad(tipoFinalidad)
@@ -127,7 +150,6 @@ class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
         .permitePaquetesTrabajo(Boolean.TRUE)
         .activo(Boolean.TRUE)
         .build();
-    // @formatter:on
 
     return entityManager.persistAndFlush(proyecto);
 
@@ -141,6 +163,9 @@ class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
    * @return el objeto ProyectoProrroga
    */
   private ProyectoProrroga generarMockProyectoProrroga(String suffix, Proyecto proyecto, Instant fechaConcesion) {
+    Set<ProyectoProrrogaObservaciones> proyectoProrrogaObservaciones = new HashSet<>();
+    proyectoProrrogaObservaciones
+        .add(new ProyectoProrrogaObservaciones(Language.ES, "observaciones-proyecto-prorroga" + suffix));
 
     // @formatter:off
     ProyectoProrroga proyectoProrroga = ProyectoProrroga.builder()
@@ -150,7 +175,7 @@ class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
         .tipo(ProyectoProrroga.Tipo.TIEMPO_IMPORTE)
         .fechaFin(Instant.parse("2020-12-31T23:59:59Z"))
         .importe(BigDecimal.valueOf(123.45))
-        .observaciones("observaciones-proyecto-prorroga" + suffix)
+        .observaciones(proyectoProrrogaObservaciones)
         .build();
     // @formatter:on
     return entityManager.persistAndFlush(proyectoProrroga);
@@ -166,14 +191,20 @@ class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
    */
   private ProrrogaDocumento generarMockProrrogaDocumento(String suffix, ProyectoProrroga proyectoProrroga,
       TipoDocumento tipoDocumento) {
+    Set<ProrrogaDocumentoNombre> prorrogaDocumentoNombre = new HashSet<>();
+    prorrogaDocumentoNombre.add(new ProrrogaDocumentoNombre(Language.ES, "prorroga-documento" + suffix));
+
+    Set<ProrrogaDocumentoComentario> prorrogaDocumentoComentario = new HashSet<>();
+    prorrogaDocumentoComentario
+        .add(new ProrrogaDocumentoComentario(Language.ES, "comentario-prorroga-documento" + suffix));
 
     // @formatter:off
     ProrrogaDocumento prorrogaDocumento = ProrrogaDocumento.builder()
         .proyectoProrrogaId(proyectoProrroga.getId())
-        .nombre("prorroga-documento" + suffix)
+        .nombre(prorrogaDocumentoNombre)
         .documentoRef("documentoRef" + suffix)
         .tipoDocumento(tipoDocumento)
-        .comentario("comentario-prorroga-documento" + suffix)
+        .comentario(prorrogaDocumentoComentario)
         .visible(Boolean.TRUE)
         .build();
     // @formatter:on
@@ -188,11 +219,16 @@ class ProrrogaDocumentoRepositoryTest extends BaseRepositoryTest {
    * @return el objeto ModeloTipoFase
    */
   private TipoDocumento generarMockTipoDocumento(String suffix) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, "tipo-documento-" + suffix));
+
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "descripcion-tipo-documento-" + suffix));
 
     // @formatter:off
     TipoDocumento tipoDocumento = TipoDocumento.builder()
-        .nombre("tipo-documento-" + suffix)
-        .descripcion("descripcion-tipo-documento-" + suffix)
+        .nombre(nombreTipoDocumento)
+        .descripcion(descripcionTipoDocumento)
         .activo(Boolean.TRUE)
         .build();
     // @formatter:on

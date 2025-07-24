@@ -1,11 +1,10 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { ClasificacionCVN } from '@core/enums/clasificacion-cvn';
 import { FormularioSolicitud } from '@core/enums/formulario-solicitud';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IUnidadGestion } from '../usr/unidad-gestion';
-import { ITipoAmbitoGeografico } from './tipos-configuracion';
-import { ITipoRegimenConcurrencia } from './tipos-configuracion';
-import { IModeloEjecucion, ITipoFinalidad } from './tipos-configuracion';
+import { IModeloEjecucion, ITipoAmbitoGeografico, ITipoFinalidad, ITipoRegimenConcurrencia } from './tipos-configuracion';
 
 export interface IConvocatoria {
   id: number;
@@ -15,9 +14,9 @@ export interface IConvocatoria {
   fechaPublicacion: DateTime;
   fechaProvisional: DateTime;
   fechaConcesion: DateTime;
-  titulo: string;
-  objeto: string;
-  observaciones: string;
+  titulo: I18nFieldValue[];
+  objeto: I18nFieldValue[];
+  observaciones: I18nFieldValue[];
   finalidad: ITipoFinalidad;
   regimenConcurrencia: ITipoRegimenConcurrencia;
   formularioSolicitud: FormularioSolicitud;
@@ -28,6 +27,8 @@ export interface IConvocatoria {
   clasificacionCVN: ClasificacionCVN;
   activo: boolean;
   excelencia: boolean;
+  anio: number;
+  codigoInterno: string;
 }
 
 export enum Estado {

@@ -82,9 +82,9 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.solicitud-proyecto-presupuesto.observaciones' | translate}}</mat-label>
-        <textarea matInput formControlName="observaciones" type="text"
+        <sgi-i18n-textarea formControlName="observaciones"
           placeholder="{{'csp.solicitud-proyecto-presupuesto.observaciones' | translate}}">
-                    </textarea>
+        </sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamObservacionesEntity}}
         </mat-error>
@@ -115,7 +115,7 @@
           {{'csp.partida-gasto.codigo-economico.concepto-gasto' | translate}}
         </th>
         <td mat-cell *matCellDef="let data">
-          {{data.convocatoriaConceptoGasto?.conceptoGasto.nombre}}
+          <sgi-i18n-table-field [field]="data.convocatoriaConceptoGasto?.conceptoGasto.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
       <ng-container matColumnDef="importeMaximo">
@@ -169,7 +169,7 @@
           {{'csp.partida-gasto.codigo-economico.concepto-gasto' | translate}}
         </th>
         <td mat-cell *matCellDef="let data">
-          {{data.convocatoriaConceptoGasto?.conceptoGasto.nombre}}
+          <sgi-i18n-table-field [field]="data.convocatoriaConceptoGasto?.conceptoGasto.nombre"></sgi-i18n-table-field>
         </td>
       </ng-container>
       <ng-container matColumnDef="noPermitidoDesde">

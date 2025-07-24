@@ -7,12 +7,12 @@
   <parent>
     <groupId>org.crue.hercules.sgi</groupId>
     <artifactId>sgi-starter-parent</artifactId>
-    <version>0.1.0</version>
+    <version>0.2.0</version>
   </parent>
 
   <groupId>org.crue.hercules.sgi</groupId>
   <artifactId>sgi-framework-spring</artifactId>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <packaging>jar</packaging>
   <name>sgi-framework-spring</name>
   <description>SGI Framework</description>
@@ -104,6 +104,17 @@
     <dependency>
       <groupId>org.liquibase</groupId>
       <artifactId>liquibase-core</artifactId>
+    </dependency>
+    <!--
+        Allow running scripts before liquibase. After SpringBoot 2.5 if liquibase is enabled database
+      initialization trought .sql files in resources is disabled.
+        See https://github.com/spring-projects/spring-boot/issues/22741.
+        
+        https://github.com/lbruun-net/Pre-Liquibase
+      -->
+    <dependency>
+      <groupId>net.lbruun.springboot</groupId>
+      <artifactId>preliquibase-spring-boot-starter</artifactId>
     </dependency>
     <!--
       Project Lombok - A java library that automatically plugs into your editor and build tools, spicing

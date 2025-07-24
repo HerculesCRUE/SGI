@@ -1,0 +1,91 @@
+[
+  {
+    "key": "ap5_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.3 Atzera begirako ebaluazioa"
+    },
+    "fieldGroup": [
+      {
+        "template": "Proiektuak atzera begirako ebaluazioa behar du?"
+      },
+      {
+        "key": "evaluacionRetrospectivaRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": " <p><strong>Atzera begirako ebaluazioa</strong> behar dute <strong>III. motako proiektuek</strong>. Oro  har, proiektu horiek barne hartzen dituzte honako hauek:</p><ul><li>«Larri» gisa sailkatzen diren prozedurak/esku hartzeak, zeintzuek min gogorra, sufrimendua edo estutasuna eragiten dioten animaliari; min hori iraunkorra izan daiteke, eta ezin da hobetu.</li><li>Gizakiak ez diren primateen erabilera.</li><li>5.4 ataleko eskaera behar duen salbuespen edo egoera bereziren bat.</li></ul><p>Era berean, atzera begirako ebaluazioa beharko dute “ertain” gisa sailkatutako esku hartzeak dituzten II. motako proiektuek, esku hartze horien ebaluazioak hala ezartzen badu.</p><p>Atzera begirako ebaluazioari buruzko informazio gehiagorako, kontsultatu 53/2013 EDren <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#a31'>31. artikulua</a>, <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#a35'>35. artikulua</a> eta <a target='_blank' href='http://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&amp;p=20130208&amp;tn=1#dasegunda'>Bigarren xedapen gehigarria</a>.</p>"
+      },
+      {
+        "template": "Ebaluazioaren arrazoia",
+        "hideExpression": "!model.evaluacionRetrospectivaRadio || model.evaluacionRetrospectivaRadio === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "motivoEvaluacionRetrospectivaCheck",
+        "hideExpression": "!model.evaluacionRetrospectivaRadio || model.evaluacionRetrospectivaRadio === 'no'",
+        "templateOptions": {
+          "label": "Hautatu",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "intervencionesSeveras",
+              "label": "Proiektuan esku hartze «larriak» egingo dira, hau da, animaliari min gogorra, sufrimendua edo estutasuna eragingo dioten esku hartzeak; min hori iraunkorra izan daiteke, eta ezin da hobetu. "
+            },
+            {
+              "value": "primatesNoHumanos",
+              "label": "Gizaki ez diren primateen erabilera"
+            },
+            {
+              "value": "otros",
+              "label": "Beste arrazoi batzuk"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarMotivo",
+        "type": "i18n-input",
+        "hideExpression": "!model.motivoEvaluacionRetrospectivaCheck || !model.motivoEvaluacionRetrospectivaCheck.find((m) => m === 'otros')",
+        "templateOptions": {
+          "label": "Zehaztu",
+          "required": true,
+          "placeholder": "Zehaztu"
+        }
+      },
+      {
+        "template": "Atzera begirako ebaluazioaren data (jarraipena)",
+        "hideExpression": "!model.evaluacionRetrospectivaRadio || model.evaluacionRetrospectivaRadio === 'no'"
+      },
+      {
+        "key": "fechaEvRetrospectiva",
+        "type": "datepicker",
+        "hideExpression": "!model.evaluacionRetrospectivaRadio || model.evaluacionRetrospectivaRadio === 'no'",
+        "templateOptions": {
+          "label": "Data",
+          "required": false
+        }
+      }
+    ]
+  }
+]

@@ -1,14 +1,17 @@
 package org.crue.hercules.sgi.eti.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.FormacionEspecificaNotFoundException;
 import org.crue.hercules.sgi.eti.model.FormacionEspecifica;
+import org.crue.hercules.sgi.eti.model.FormacionEspecificaNombre;
 import org.crue.hercules.sgi.eti.service.FormacionEspecificaService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -27,6 +30,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * FormacionEspecificaControllerTest
@@ -51,7 +56,7 @@ public class FormacionEspecificaControllerTest extends BaseControllerTest {
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("FormacionEspecifica1"));
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("FormacionEspecifica1"));
     ;
   }
 
@@ -66,100 +71,6 @@ public class FormacionEspecificaControllerTest extends BaseControllerTest {
         .perform(MockMvcRequestBuilders.get(FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isNotFound());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "ETI-FORMACIONESPECIFICA-EDITAR" })
-  public void newFormacionEspecifica_ReturnsFormacionEspecifica() throws Exception {
-    // given: Una formación específica nueva
-    String nuevoFormacionEspecificaJson = "{\"nombre\": \"FormacionEspecifica1\", \"activo\": \"true\"}";
-
-    FormacionEspecifica formacionEspecifica = generarMockFormacionEspecifica(1L, "FormacionEspecifica1");
-
-    BDDMockito.given(formacionEspecificaService.create(ArgumentMatchers.<FormacionEspecifica>any()))
-        .willReturn(formacionEspecifica);
-
-    // when: Creamos una formación específica
-    mockMvc
-        .perform(MockMvcRequestBuilders.post(FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(nuevoFormacionEspecificaJson))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Crea la nueva formación específica y lo devuelve
-        .andExpect(MockMvcResultMatchers.status().isCreated()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("FormacionEspecifica1"));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "ETI-FORMACIONESPECIFICA-EDITAR" })
-  public void newFormacionEspecifica_Error_Returns400() throws Exception {
-    // given: Una formación específica nueva que produce un error al crearse
-    String nuevoFormacionEspecificaJson = "{\"nombre\": \"FormacionEspecifica1\", \"activo\": \"true\"}";
-
-    BDDMockito.given(formacionEspecificaService.create(ArgumentMatchers.<FormacionEspecifica>any()))
-        .willThrow(new IllegalArgumentException());
-
-    // when: Creamos una formación específica
-    mockMvc
-        .perform(MockMvcRequestBuilders.post(FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(nuevoFormacionEspecificaJson))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Devueve un error 400
-        .andExpect(MockMvcResultMatchers.status().isBadRequest());
-
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "ETI-FORMACIONESPECIFICA-EDITAR" })
-  public void replaceFormacionEspecifica_ReturnsFormacionEspecifica() throws Exception {
-    // given: Una formación específica a modificar
-    String replaceFormacionEspecificaJson = "{\"id\": 1, \"nombre\": \"FormacionEspecifica1\", \"activo\": \"true\"}";
-
-    FormacionEspecifica formacionEspecifica = generarMockFormacionEspecifica(1L, "Replace FormacionEspecifica1");
-
-    BDDMockito.given(formacionEspecificaService.update(ArgumentMatchers.<FormacionEspecifica>any()))
-        .willReturn(formacionEspecifica);
-
-    mockMvc
-        .perform(MockMvcRequestBuilders.put(FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(replaceFormacionEspecificaJson))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: Modifica la formación específica y la devuelve
-        .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("Replace FormacionEspecifica1"));
-
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "ETI-FORMACIONESPECIFICA-EDITAR" })
-  public void replaceFormacionEspecifica_NotFound() throws Exception {
-    // given: Una formación específica a modificar
-    String replaceFormacionEspecificaJson = "{\"id\": 1, \"nombre\": \"FormacionEspecifica1\", \"activo\": \"true\"}";
-
-    BDDMockito.given(formacionEspecificaService.update(ArgumentMatchers.<FormacionEspecifica>any()))
-        .will((InvocationOnMock invocation) -> {
-          throw new FormacionEspecificaNotFoundException(((FormacionEspecifica) invocation.getArgument(0)).getId());
-        });
-    mockMvc
-        .perform(MockMvcRequestBuilders.put(FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .content(replaceFormacionEspecificaJson))
-        .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isNotFound());
-
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "ETI-FORMACIONESPECIFICA-EDITAR" })
-  public void removeFormacionEspecifica_ReturnsOk() throws Exception {
-    BDDMockito.given(formacionEspecificaService.findById(ArgumentMatchers.anyLong()))
-        .willReturn(generarMockFormacionEspecifica(1L, "FormacionEspecifica1"));
-
-    mockMvc
-        .perform(MockMvcRequestBuilders.delete(FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, 1L)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk());
   }
 
   @Test
@@ -252,7 +163,7 @@ public class FormacionEspecificaControllerTest extends BaseControllerTest {
     // containing nombre='FormacionEspecifica031' to 'FormacionEspecifica040'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       FormacionEspecifica formacionEspecifica = actual.get(i);
-      Assertions.assertThat(formacionEspecifica.getNombre())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecifica.getNombre(), Language.ES))
           .isEqualTo("FormacionEspecifica" + String.format("%03d", j));
     }
   }
@@ -266,7 +177,7 @@ public class FormacionEspecificaControllerTest extends BaseControllerTest {
       formacionEspecificas
           .add(generarMockFormacionEspecifica(Long.valueOf(i), "FormacionEspecifica" + String.format("%03d", i)));
     }
-    String query = "nombre~FormacionEspecifica%,id:5";
+    String query = "nombre.value~FormacionEspecifica%,id:5";
 
     BDDMockito
         .given(formacionEspecificaService.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
@@ -275,7 +186,8 @@ public class FormacionEspecificaControllerTest extends BaseControllerTest {
           public Page<FormacionEspecifica> answer(InvocationOnMock invocation) throws Throwable {
             List<FormacionEspecifica> content = new ArrayList<>();
             for (FormacionEspecifica formacionEspecifica : formacionEspecificas) {
-              if (formacionEspecifica.getNombre().startsWith("FormacionEspecifica")
+              if (I18nHelper.getValueForLanguage(formacionEspecifica.getNombre(), Language.ES)
+                  .startsWith("FormacionEspecifica")
                   && formacionEspecifica.getId().equals(5L)) {
                 content.add(formacionEspecifica);
               }
@@ -303,11 +215,13 @@ public class FormacionEspecificaControllerTest extends BaseControllerTest {
    * @return el objeto tipo memoria
    */
 
-  public FormacionEspecifica generarMockFormacionEspecifica(Long id, String nombre) {
+  private FormacionEspecifica generarMockFormacionEspecifica(Long id, String nombre) {
 
+    Set<FormacionEspecificaNombre> nom = new HashSet<>();
+    nom.add(new FormacionEspecificaNombre(Language.ES, nombre));
     FormacionEspecifica formacionEspecifica = new FormacionEspecifica();
     formacionEspecifica.setId(id);
-    formacionEspecifica.setNombre(nombre);
+    formacionEspecifica.setNombre(nom);
     formacionEspecifica.setActivo(Boolean.TRUE);
 
     return formacionEspecifica;

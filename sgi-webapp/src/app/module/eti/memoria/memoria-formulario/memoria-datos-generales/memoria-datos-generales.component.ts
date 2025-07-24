@@ -3,10 +3,10 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IComite } from '@core/models/eti/comite';
-import { IMemoria } from '@core/models/eti/memoria';
-import { ITipoMemoria } from '@core/models/eti/tipo-memoria';
+import { IMemoria, MEMORIA_TIPO_MAP, MemoriaTipo } from '@core/models/eti/memoria';
 import { IPersona } from '@core/models/sgp/persona';
 import { ComiteService } from '@core/services/eti/comite.service';
+import { LanguageService } from '@core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
 import { BehaviorSubject, Subject, Subscription } from 'rxjs';
 import { MemoriaActionService } from '../../memoria.action.service';
@@ -20,6 +20,7 @@ const MEMORIA_TIPO_KEY = marker('eti.memoria.tipo');
 const MEMORIA_CODIGO_ORGANO_COMPETENTE = marker('eti.memoria.codigo-organo-compentente');
 const MEMORIA_TITULO_DESCRIPTIVO = marker('eti.memoria.titulo-descriptivo');
 const INFO_TITLE_DESCRIPTIVO = marker('eti.memoria.info.titulo-descriptivo');
+const SGP_NOT_FOUND = marker("error.sgp.not-found");
 
 @Component({
   selector: 'sgi-memoria-datos-generales',
@@ -28,7 +29,7 @@ const INFO_TITLE_DESCRIPTIVO = marker('eti.memoria.info.titulo-descriptivo');
 })
 export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemoria> implements OnInit, OnDestroy {
 
-  tiposMemoria$: Subject<ITipoMemoria[]> = new BehaviorSubject<ITipoMemoria[]>([]);
+  tiposMemoria$: Subject<Map<MemoriaTipo, string>> = new BehaviorSubject<Map<MemoriaTipo, string>>(new Map<MemoriaTipo, string>());
   memorias$: Subject<IMemoria[]> = new BehaviorSubject<IMemoria[]>([]);
 
   datosGeneralesFragment: MemoriaDatosGeneralesFragment;
@@ -47,32 +48,33 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
   constructor(
     private readonly comiteService: ComiteService,
     public actionService: MemoriaActionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translate);
     this.datosGeneralesFragment = this.fragment as MemoriaDatosGeneralesFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.subscriptions.push(this.formGroup.controls.comite.valueChanges.subscribe(
-      (comite) => {
+      (comite: IComite) => {
         this.datosGeneralesFragment.onComiteChange(comite);
         if (comite) {
-          this.subscriptions.push(this.comiteService.findTipoMemoria(comite.id).subscribe(
-            (res) => {
-              this.tiposMemoria$.next(res.items);
-            }
-          ));
+          const tipos = new Map<MemoriaTipo, string>(MEMORIA_TIPO_MAP.entries());
+          if (!comite.permitirRatificacion) {
+            tipos.delete(MemoriaTipo.RATIFICACION);
+          }
+          this.tiposMemoria$.next(tipos);
         }
         else {
-          this.tiposMemoria$.next([]);
+          this.tiposMemoria$.next(new Map<MemoriaTipo, string>());
         }
       }
     ));
     this.subscriptions.push(this.formGroup.controls.tipoMemoria.valueChanges.subscribe(
-      (tipoMemoria) => {
+      (tipoMemoria: MemoriaTipo) => {
         this.datosGeneralesFragment.onTipoMemoriaChange(tipoMemoria);
         if (this.datosGeneralesFragment.showMemoriaOriginal) {
           this.comiteService.findMemoriasComitePeticionEvaluacion(
@@ -88,7 +90,7 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
     ));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MEMORIA_COMITE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -132,7 +134,13 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
   }
 
   displayerPersonaResponsable = (personaResponsable: IPersona): string => {
-    return `${personaResponsable?.nombre} ${personaResponsable?.apellidos} (${this.getEmailPrincipal(personaResponsable)})`;
+    if (personaResponsable?.nombre) {
+      return `${personaResponsable?.nombre} ${personaResponsable?.apellidos} (${this.getEmailPrincipal(personaResponsable)})`;
+    } else if (personaResponsable?.id) {
+      return this.translate.instant(SGP_NOT_FOUND, { ids: personaResponsable.id, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+    } else {
+      return null;
+    }
   }
 
   private getEmailPrincipal({ emails }: IPersona): string {
@@ -148,6 +156,7 @@ export class MemoriaDatosGeneralesComponent extends FormFragmentComponent<IMemor
   }
 
   displayerComite(comite: IComite): string {
-    return comite?.nombreInvestigacion;
+    return this.languageService.getFieldValue(comite?.nombre);
   }
+
 }

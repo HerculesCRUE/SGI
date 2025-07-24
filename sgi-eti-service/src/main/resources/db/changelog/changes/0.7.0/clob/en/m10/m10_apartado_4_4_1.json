@@ -1,0 +1,52 @@
+[
+  {
+    "key": "ap4_4_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.4.1 Type of consent"
+    },
+    "hideExpression": "!formState.mainModel.ap4_4.informacionConsentimientoRadio || formState.mainModel.ap4_4.informacionConsentimientoRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Task for which consent is requested</p>"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tipoConsentimientoCheck",
+        "templateOptions": {
+          "label": "Task",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "intervencionesInvasivas",
+              "label": "To perform invasive interventions on the participating person"
+            },
+            {
+              "value": "intervencionesNoInvasivas",
+              "label": "To perform non-invasive interventions on the participating person"
+            },
+            {
+              "value": "usoMuestrasProyectoActual",
+              "label": "For the use of samples and/or data of the person participating in the current project"
+            },
+            {
+              "value": "usoMuestrasProyectosPosteriores",
+              "label": "For storage and use of samples and/or data in subsequent projects"
+            },
+            {
+              "value": "cesion",
+              "label": "For transfer"
+            }
+          ]
+        }
+      },
+      {
+        "template": "<p>In the following sections, a review is made of the information that will be provided to the participating subject and can serve as a checklist for the responsible researcher.</p>"
+      }
+    ]
+  }
+]

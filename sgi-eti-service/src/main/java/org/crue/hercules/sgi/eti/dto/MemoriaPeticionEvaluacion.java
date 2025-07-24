@@ -2,10 +2,14 @@ package org.crue.hercules.sgi.eti.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 
 import org.crue.hercules.sgi.eti.model.Comite;
+import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.MemoriaTitulo;
 import org.crue.hercules.sgi.eti.model.Retrospectiva;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
+import org.crue.hercules.sgi.eti.repository.custom.CustomMemoriaRepositoryImpl;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,7 +31,7 @@ public class MemoriaPeticionEvaluacion implements Serializable {
 
   private String numReferencia;
 
-  private String titulo;
+  private Collection<MemoriaTitulo> titulo;
 
   private Comite comite;
 
@@ -51,26 +55,39 @@ public class MemoriaPeticionEvaluacion implements Serializable {
 
   private Integer version;
 
-  public MemoriaPeticionEvaluacion(Long id, String responsableRef, String numReferencia, String titulo, Comite comite,
-      TipoEstadoMemoria estadoActual, Instant fechaEvaluacion, Instant fechaLimite, boolean isResponsable,
-      boolean activo, boolean requiereRetrospectiva, Retrospectiva retrospectiva, String solicitanteRef,
-      String tutorRef, Integer version) {
+  /**
+   * Constructor especializado para las queries
+   * {@link CustomMemoriaRepositoryImpl#findMemoriasEvaluacion(Long, String)} y
+   * {@link CustomMemoriaRepositoryImpl#findAllMemoriasEvaluaciones(org.springframework.data.jpa.domain.Specification, org.springframework.data.domain.Pageable, String)}
+   * 
+   * @param memoria
+   * @param fechaEvaluacion
+   * @param fechaLimite
+   * @param isResponsable
+   * @param retrospectiva
+   * @param solicitanteRef
+   * @param tutorRef
+   */
+  public MemoriaPeticionEvaluacion(Memoria memoria,
+      Instant fechaEvaluacion, Instant fechaLimite, boolean isResponsable,
+      Retrospectiva retrospectiva, String solicitanteRef,
+      String tutorRef) {
 
-    this.id = id;
-    this.responsableRef = responsableRef;
-    this.numReferencia = numReferencia;
-    this.titulo = titulo;
-    this.comite = comite;
-    this.estadoActual = estadoActual;
+    this.id = memoria.getId();
+    this.responsableRef = memoria.getPersonaRef();
+    this.numReferencia = memoria.getNumReferencia();
+    this.titulo = memoria.getTitulo();
+    this.comite = memoria.getComite();
+    this.estadoActual = memoria.getEstadoActual();
     this.fechaEvaluacion = fechaEvaluacion;
     this.fechaLimite = fechaLimite;
     this.isResponsable = isResponsable;
-    this.activo = activo;
-    this.requiereRetrospectiva = requiereRetrospectiva;
+    this.activo = memoria.getActivo();
+    this.requiereRetrospectiva = memoria.getRequiereRetrospectiva();
     this.retrospectiva = retrospectiva;
     this.solicitanteRef = solicitanteRef;
     this.tutorRef = tutorRef;
-    this.version = version;
+    this.version = memoria.getVersion();
   }
 
 }

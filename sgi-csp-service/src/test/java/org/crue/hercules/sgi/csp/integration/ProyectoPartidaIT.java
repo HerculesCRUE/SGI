@@ -1,11 +1,15 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ProyectoPartidaController;
 import org.crue.hercules.sgi.csp.enums.TipoPartida;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
+import org.crue.hercules.sgi.csp.model.ProyectoPartidaDescripcion;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -98,7 +102,9 @@ class ProyectoPartidaIT extends BaseIT {
     Long proyectoPartidaId = 1L;
 
     ProyectoPartida toUpdate = buildMockProyectoPartida(1L);
-    toUpdate.setDescripcion("UU.UUUU.UUUU.UPDAT");
+    Set<ProyectoPartidaDescripcion> descripcionPartida = new HashSet<>();
+    descripcionPartida.add(new ProyectoPartidaDescripcion(Language.ES, "UU.UUUU.UUUU.UPDAT"));
+    toUpdate.setDescripcion(descripcionPartida);
 
     final ResponseEntity<ProyectoPartida> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, toUpdate, "CSP-PRO-E"),
@@ -263,11 +269,13 @@ class ProyectoPartidaIT extends BaseIT {
   }
 
   private ProyectoPartida buildMockProyectoPartida(Long proyectoPartidaId) {
+    Set<ProyectoPartidaDescripcion> descripcionPartida = new HashSet<>();
+    descripcionPartida.add(new ProyectoPartidaDescripcion(Language.ES, "Nueva Partida Creada"));
     return ProyectoPartida.builder()
         .id(proyectoPartidaId)
         .codigo("formato-partida-presupuestaria")
         .convocatoriaPartidaId(1L)
-        .descripcion("Nueva Partida Creada")
+        .descripcion(descripcionPartida)
         .proyectoId(1L)
         .tipoPartida(TipoPartida.GASTO)
         .build();

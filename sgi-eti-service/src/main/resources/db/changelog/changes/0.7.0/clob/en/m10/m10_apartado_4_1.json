@@ -1,0 +1,21 @@
+[
+  {
+    "key": "ap4_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.1 Weighting of risks or discomforts"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>The balance between risks and benefits is one of the basic questions in research ethics.</p><p>It is the responsibility of the principal investigator (PI) to carefully weigh the risk to which the participants are subjected in relation to the expected benefits for them (previously described in section 1.2 of this form).</p><p>It should be taken into account that a great benefit does not justify any risk, not even if it is accepted voluntarily. The well-being and integrity of the individual take precedence over the expected benefit.</p><p>For more information on the risk/reward balance, consult the CIOMS document <a href='https://cioms.ch/publications/product/pautas-eticas-internacionales-para-la-investigacion-relacionada-con-la-salud-con-seres-humanos/' target='_blank'>International ethical guidelines for biomedical research involving human subjects</a></p>"
+      }
+    ],
+    "hideExpression": "!formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio || formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio === 'no'"
+  }
+]

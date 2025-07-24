@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.csp.repository;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
 import org.crue.hercules.sgi.csp.model.EstadoSolicitud;
+import org.crue.hercules.sgi.csp.model.EstadoSolicitudComentario;
 import org.crue.hercules.sgi.csp.model.Solicitud;
+import org.crue.hercules.sgi.csp.model.SolicitudTitulo;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -18,7 +23,7 @@ class EstadoSolicitudRepositoryTest extends BaseRepositoryTest {
   private EstadoSolicitudRepository repository;
 
   @Test
-  void findAllBySolicitud_ReturnsPageEstadoSolicitud() throws Exception {
+  void findAllBySolicitud_ReturnsPageEstadoSolicitud() {
     // given: data EstadoSolicitud with nombre to find
     Solicitud sol1 = entityManager.persistAndFlush(generarMockSolicitud());
     Solicitud sol2 = entityManager.persistAndFlush(generarMockSolicitud());
@@ -34,9 +39,12 @@ class EstadoSolicitudRepositoryTest extends BaseRepositoryTest {
   }
 
   private Solicitud generarMockSolicitud() {
+    Set<SolicitudTitulo> solicitudTitulo = new HashSet<>();
+    solicitudTitulo.add(new SolicitudTitulo(Language.ES, "titulo"));
+
     Solicitud solicitud = new Solicitud();
     solicitud.setCreadorRef("usr-001");
-    solicitud.setTitulo("titulo");
+    solicitud.setTitulo(solicitudTitulo);
     solicitud.setSolicitanteRef("usr-002");
     solicitud.setUnidadGestionRef("2");
     solicitud.setFormularioSolicitud(FormularioSolicitud.GRUPO);
@@ -52,8 +60,15 @@ class EstadoSolicitudRepositoryTest extends BaseRepositoryTest {
    * @return EstadoSolicitud
    */
   private EstadoSolicitud generarMockEstadoSolicitud(Long id) {
-    return EstadoSolicitud.builder().estado(EstadoSolicitud.Estado.BORRADOR).solicitudId(id).fechaEstado(Instant.now())
-        .comentario("comentario").build();
+    Set<EstadoSolicitudComentario> comentarioEstadoSolicitud = new HashSet<>();
+    comentarioEstadoSolicitud.add(new EstadoSolicitudComentario(Language.ES, "comentario"));
+
+    return EstadoSolicitud.builder()
+        .estado(EstadoSolicitud.Estado.BORRADOR)
+        .solicitudId(id)
+        .fechaEstado(Instant.now())
+        .comentario(comentarioEstadoSolicitud)
+        .build();
   }
 
 }

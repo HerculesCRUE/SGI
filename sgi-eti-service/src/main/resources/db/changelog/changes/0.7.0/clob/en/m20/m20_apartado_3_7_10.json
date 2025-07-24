@@ -1,0 +1,67 @@
+[
+  {
+    "key": "ap3_7_10",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.10 Deprivation of food and/or water"
+    },
+    "fieldGroup": [
+      {
+        "template": "Is the animal going to be deprived of food and/or drink at any time?"
+      },
+      {
+        "key": "privacionRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "key": "tipoPrivacionCheck",
+        "type": "multicheckbox",
+        "hideExpression": "!model.privacionRadio || model.privacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Choose",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "privacionAlimento",
+              "label": "Deprivation of food"
+            },
+            {
+              "value": "privacionAgua",
+              "label": "Deprivation of water"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please describe below the pattern of food and/or water deprivation, indicating the start time and duration (in hours)",
+        "hideExpression": "!model.privacionRadio || model.privacionRadio === 'no'"
+      },
+      {
+        "key": "describirPrivacion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.privacionRadio || model.privacionRadio === 'no'",
+        "templateOptions": {
+          "name": "Please describe",
+          "required": true
+        }
+      }
+    ]
+  }
+]

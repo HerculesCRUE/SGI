@@ -3,12 +3,10 @@ package org.crue.hercules.sgi.csp.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.EntidadConvocanteDuplicatedException;
 import org.crue.hercules.sgi.csp.exceptions.ProgramaNotFoundException;
-import org.crue.hercules.sgi.csp.exceptions.ProyectoEntidadConvocanteNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -20,7 +18,9 @@ import org.crue.hercules.sgi.csp.repository.specification.ProyectoEntidadConvoca
 import org.crue.hercules.sgi.csp.service.ProyectoEntidadConvocanteService;
 import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,6 +37,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConvocanteService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_MODEL_PROGRAMA = "org.crue.hercules.sgi.csp.model.Programa.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
 
   private final ProyectoEntidadConvocanteRepository repository;
   private final ProyectoRepository proyectoRepository;
@@ -79,7 +83,12 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
                 .setPrograma(programaRepository.findById(entidadConvocante.getPrograma().getId())
                     .orElseThrow(
                         () -> new ProgramaNotFoundException(entidadConvocante.getPrograma().getId())));
-            Assert.isTrue(entidadConvocante.getPrograma().getActivo(), "El Programa debe estar Activo");
+            Assert.isTrue(entidadConvocante.getPrograma().getActivo(),
+                () -> ProblemMessage.builder()
+                    .key(MSG_ENTITY_INACTIVO)
+                    .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_PROGRAMA))
+                    .parameter(MSG_KEY_FIELD, entidadConvocante.getPrograma().getNombre())
+                    .build());
           }
 
           entidadConvocante.setProyectoId(proyectoId);
@@ -140,7 +149,7 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
   @Transactional
   public ProyectoEntidadConvocante create(ProyectoEntidadConvocante proyectoEntidadConvocante) {
     log.debug("create(ProyectoEntidadConvocante proyectoEntidadConvocante) - start");
-    Assert.isNull(proyectoEntidadConvocante.getId(), "ProyectoEntidadConvocante id tiene que ser null");
+    AssertHelper.idIsNull(proyectoEntidadConvocante.getId(), ProyectoEntidadConvocante.class);
     AssertHelper.idNotNull(proyectoEntidadConvocante.getProyectoId(), Proyecto.class);
     Proyecto proyecto = proyectoRepository.findById(proyectoEntidadConvocante.getProyectoId())
         .orElseThrow(() -> new ProyectoNotFoundException(proyectoEntidadConvocante.getProyectoId()));
@@ -159,74 +168,17 @@ public class ProyectoEntidadConvocanteServiceImpl implements ProyectoEntidadConv
         proyectoEntidadConvocante
             .setPrograma(programaRepository.findById(proyectoEntidadConvocante.getPrograma().getId())
                 .orElseThrow(() -> new ProgramaNotFoundException(proyectoEntidadConvocante.getPrograma().getId())));
-        Assert.isTrue(proyectoEntidadConvocante.getPrograma().getActivo(), "El Programa debe estar Activo");
+        Assert.isTrue(proyectoEntidadConvocante.getPrograma().getActivo(),
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_PROGRAMA))
+                .parameter(MSG_KEY_FIELD, proyectoEntidadConvocante.getPrograma().getNombre())
+                .build());
       }
     }
     ProyectoEntidadConvocante returnValue = repository.save(proyectoEntidadConvocante);
     log.debug("create(ProyectoEntidadConvocante proyectoEntidadConvocante) - end");
     return returnValue;
-  }
-
-  /**
-   * Establece el {@link Programa} de {@link ProyectoEntidadConvocante}.
-   *
-   * @param idProyectoEntidadConvocante el id de la entidad
-   *                                    {@link ProyectoEntidadConvocante} a
-   *                                    actualizar.
-   * @param programa                    el {@link Programa} a fijar.
-   * @return la entidad {@link ProyectoEntidadConvocante} persistida.
-   */
-  @Override
-  @Transactional
-  public ProyectoEntidadConvocante setPrograma(Long idProyectoEntidadConvocante, Programa programa) {
-    log.debug("setPrograma(Long idProyectoEntidadConvocante, Programa programa) - start");
-    Assert.notNull(idProyectoEntidadConvocante, "ProyectoEntidadConvocante id no puede ser null");
-    return repository.findById(idProyectoEntidadConvocante).map(proyectoEntidadConvocante -> {
-      Proyecto proyecto = proyectoRepository.findById(proyectoEntidadConvocante.getProyectoId())
-          .orElseThrow(() -> new ProyectoNotFoundException(proyectoEntidadConvocante.getProyectoId()));
-      proyectoHelper.checkCanAccessProyecto(proyecto);
-      if (programa == null || programa.getId() == null) {
-        proyectoEntidadConvocante.setPrograma(null);
-      } else {
-        Long idPrograma = programa.getId();
-        proyectoEntidadConvocante.setPrograma(
-            programaRepository.findById(idPrograma).orElseThrow(() -> new ProgramaNotFoundException(idPrograma)));
-        Assert.isTrue(proyectoEntidadConvocante.getPrograma().getActivo(), "El Programa debe estar Activo");
-      }
-
-      Specification<ProyectoEntidadConvocante> specs = ProyectoEntidadConvocanteSpecifications
-          .byProyectoId(proyectoEntidadConvocante.getId());
-      List<ProyectoEntidadConvocante> entidadesConvocantes = repository.findAll(specs);
-
-      checkDuplicated(proyectoEntidadConvocante, entidadesConvocantes);
-
-      ProyectoEntidadConvocante returnValue = repository.save(proyectoEntidadConvocante);
-      log.debug("setPrograma(Long idProyectoEntidadConvocante, Programa programa) - end");
-      return returnValue;
-    }).orElseThrow(() -> new ProyectoEntidadConvocanteNotFoundException(idProyectoEntidadConvocante));
-  }
-
-  /**
-   * Elimina el {@link ProyectoEntidadConvocante}.
-   *
-   * @param id Id del {@link ProyectoEntidadConvocante}.
-   */
-  @Override
-  @Transactional
-  public void delete(Long id) {
-    log.debug("delete(Long id) - start");
-    Assert.notNull(id, "ProyectoEntidadConvocante id no puede ser null");
-    Optional<ProyectoEntidadConvocante> entidadConvocante = repository.findById(id);
-    if (entidadConvocante.isPresent()) {
-      Proyecto proyecto = proyectoRepository.findById(entidadConvocante.get().getProyectoId())
-          .orElseThrow(() -> new ProyectoNotFoundException(entidadConvocante.get().getProyectoId()));
-      proyectoHelper.checkCanAccessProyecto(proyecto);
-      repository.deleteById(id);
-    } else {
-      throw new ProyectoEntidadConvocanteNotFoundException(id);
-    }
-
-    log.debug("delete(Long id) - end");
   }
 
   /**

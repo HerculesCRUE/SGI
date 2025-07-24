@@ -1,0 +1,46 @@
+[
+  {
+    "key": "ap3_7_6",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.6 Anestesia"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Prozedurak/esku hartzeak gauzatzeko anestesia orokorra edo lokala erabiliko da, baldin eta ez bada desegokitzat jotzen arrazoi hauetako batengatik:</p><ul><li>Prozedura/esku hartzea bera baino traumatikoagoa da animaliarentzat.</li><li>Bateraezina da prozeduraren/esku hartzearen helburuekin (<a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>53/13 EDren 26. art.</a>).</li></ul><p>Min handia eragin dezaketen lesio larriak dakartzaten prozedurak/esku hartzeak ezingo dira anestesiarik gabe egin (<a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>53/13 EDren 26.3 art.</a>).</p>"
+      },
+      {
+        "template": "Esperimentazio prozesuaren uneren batean anestesia erabiliko da?"
+      },
+      {
+        "key": "anestesiaRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: gogoratu salbuespen kasuetan dagokion dokumentua aurkeztu behar dela ‘5.4 Egoera bereziak’ atalean. </p>"
+      }
+    ]
+  }
+]

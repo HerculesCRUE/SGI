@@ -10,8 +10,13 @@
   */
 
 INSERT INTO test.gasto_proyecto
-(id, fecha_congreso, gasto_ref, importe_inscripcion, observaciones, proyecto_id, concepto_gasto_id, estado_gasto_proyecto_id)
+(id, fecha_congreso, gasto_ref, importe_inscripcion, proyecto_id, concepto_gasto_id, estado_gasto_proyecto_id)
 VALUES
-(1, '2021-12-09T00:00:000', '0001', 100, 'testing', 1, 1, NULL),
-(2, '2021-12-10T00:00:000', '0002', 200, 'testing', 1, 2, NULL),
-(3, '2021-12-11T00:00:000', '0003', 300, 'testing', 1, 3, NULL);
+(1, '2021-12-09T00:00:000', '0001', 100, 1, 1, NULL),
+(2, '2021-12-10T00:00:000', '0002', 200, 1, 2, NULL),
+(3, '2021-12-11T00:00:000', '0003', 300, 1, 3, NULL);
+
+-- GASTO_PROYECTO_OBSERVACIONES
+INSERT INTO test.gasto_proyecto_observaciones (gasto_proyecto_id, lang, value_) VALUES(1, 'es', 'testing');
+INSERT INTO test.gasto_proyecto_observaciones (gasto_proyecto_id, lang, value_) VALUES(2, 'es', 'testing');
+INSERT INTO test.gasto_proyecto_observaciones (gasto_proyecto_id, lang, value_) VALUES(3, 'es', 'testing');

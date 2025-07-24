@@ -1,13 +1,18 @@
 package org.crue.hercules.sgi.eti.model;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -46,10 +51,6 @@ public class Informe extends BaseEntity {
   @JoinColumn(name = "memoria_id", nullable = true, foreignKey = @ForeignKey(name = "FK_INFORME_MEMORIA"))
   private Memoria memoria;
 
-  /** Referencia documento */
-  @Column(name = "documento_ref", length = 250, nullable = false)
-  private String documentoRef;
-
   /** Version */
   @Column(name = "version", nullable = false)
   @NotNull
@@ -59,5 +60,8 @@ public class Informe extends BaseEntity {
   @ManyToOne
   @JoinColumn(name = "tipo_evaluacion_id", nullable = false, foreignKey = @ForeignKey(name = "FK_INFORME_TIPOEVALUACION"))
   private TipoEvaluacion tipoEvaluacion;
+
+  @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "informe")
+  private final List<InformeDocumento> informeDocumentos = null;
 
 }

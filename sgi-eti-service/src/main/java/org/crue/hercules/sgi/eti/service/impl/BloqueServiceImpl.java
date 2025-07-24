@@ -7,12 +7,12 @@ import org.crue.hercules.sgi.eti.repository.BloqueRepository;
 import org.crue.hercules.sgi.eti.repository.specification.BloqueSpecifications;
 import org.crue.hercules.sgi.eti.service.BloqueService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -54,7 +54,7 @@ public class BloqueServiceImpl implements BloqueService {
   }
 
   /**
-   * Obtiene una entidad {@link Bloque} por id.
+   * Obtiene una entidad {@link Bloque} por id e idioma.
    *
    * @param id el id de la entidad {@link Bloque}.
    * @return la entidad {@link Bloque}.
@@ -63,15 +63,15 @@ public class BloqueServiceImpl implements BloqueService {
    */
   @Override
   public Bloque findById(final Long id) throws BloqueNotFoundException {
-    log.debug("Petición a get Bloque : {}  - start", id);
+    log.debug("Petición a get Bloque : {} - start", id);
     final Bloque bloque = bloqueRepository.findById(id).orElseThrow(() -> new BloqueNotFoundException(id));
-    log.debug("Petición a get Bloque : {}  - end", id);
+    log.debug("Petición a get Bloque : {} - end", id);
     return bloque;
   }
 
   /**
    * Obtener todas las entidades {@link Bloque} paginadas de una
-   * {@link Formulario}.
+   * {@link Formulario} en el idioma solicitado.
    * 
    * @param id       Id del formulario
    * @param pageable la información de la paginación.
@@ -80,23 +80,23 @@ public class BloqueServiceImpl implements BloqueService {
   @Override
   public Page<Bloque> findByFormularioId(Long id, Pageable pageable) {
     log.debug("update(Bloque bloqueActualizar) - start");
-    Assert.notNull(id, "El id del formulario no puede ser null para listar sus bloques");
-    Page<Bloque> resultado = bloqueRepository.findByFormularioId(id, pageable);
+    AssertHelper.idNotNull(id, Formulario.class);
+    Page<Bloque> bloque = bloqueRepository.findByFormularioId(id, pageable);
     log.debug("update(Bloque bloqueActualizar) - start");
-    return resultado;
+    return bloque;
   }
 
   /**
-   * Obtiene el {@link Bloque} de comentarios generales.
+   * Obtiene el {@link Bloque} de comentarios generales en el idioma solicitado.
    *
    * @return la entidad {@link Bloque}.
-   * @throws BloqueNotFoundException Si no existe el {@link Bloque}
    */
   @Override
-  public Bloque getBloqueComentariosGenerales() throws BloqueNotFoundException {
-    log.debug("getBloqueComentariosGenerales() - start");
-    final Bloque bloque = bloqueRepository.findOne(BloqueSpecifications.bloqueComentarioGenerales()).orElseThrow(() -> new BloqueNotFoundException(null));
-    log.debug("getBloqueComentariosGenerales() - end");
+  public Bloque getBloqueComentariosGenerales() {
+    log.debug("getBloqueComentariosGenerales(String lang) - start");
+    final Bloque bloque = bloqueRepository.findOne(BloqueSpecifications.bloqueComentarioGenerales())
+        .orElseThrow(() -> new BloqueNotFoundException(null));
+    log.debug("getBloqueComentariosGenerales(String lang) - end");
     return bloque;
   }
 

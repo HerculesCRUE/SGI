@@ -7,6 +7,7 @@ import { ProyectoEntidadGestoraService } from '@core/services/csp/proyecto-entid
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { DatosContactoService } from '@core/services/sgemp/datos-contacto/datos-contacto.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
+import { NGXLogger } from 'ngx-logger';
 import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, filter, map, switchMap, takeLast, tap } from 'rxjs/operators';
 
@@ -20,6 +21,7 @@ export class ProyectoEntidadGestoraFragment extends FormFragment<ProyectoEntidad
   private proyectoEntidadGestora: ProyectoEntidadGestoraDetail;
 
   constructor(
+    private readonly logger: NGXLogger,
     private fb: FormBuilder,
     key: number,
     private proyectoService: ProyectoService,
@@ -46,6 +48,10 @@ export class ProyectoEntidadGestoraFragment extends FormFragment<ProyectoEntidad
                 entidadGestora.empresa = empresa;
                 return entidadGestora;
               }),
+              catchError((error) => {
+                this.logger.error(error);
+                return of(entidadGestora);
+              }),
               switchMap(entidadGestora => {
                 if (!entidadGestora.empresa.padreId) {
                   return of(entidadGestora);
@@ -56,7 +62,8 @@ export class ProyectoEntidadGestoraFragment extends FormFragment<ProyectoEntidad
                     entidadGestora.empresaPadre = empresaPadre;
                     return entidadGestora;
                   }),
-                  catchError(() => {
+                  catchError((error) => {
+                    this.logger.error(error);
                     return of(entidadGestora);
                   })
                 );
@@ -67,7 +74,8 @@ export class ProyectoEntidadGestoraFragment extends FormFragment<ProyectoEntidad
                     entidadGestora.direccion = datosContacto.direccion;
                     return entidadGestora;
                   }),
-                  catchError(() => {
+                  catchError((error) => {
+                    this.logger.error(error);
                     return of(entidadGestora);
                   })
                 )

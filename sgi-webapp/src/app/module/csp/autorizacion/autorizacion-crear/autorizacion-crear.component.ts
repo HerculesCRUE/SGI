@@ -41,15 +41,15 @@ export class AutorizacionCrearComponent extends ActionComponent implements OnIni
     dialogService: DialogService,
     private readonly translate: TranslateService) {
 
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  setupI18N() {
+  protected setupI18N() {
     this.translate.get(
       AUTORIZACION_SOLICITUD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

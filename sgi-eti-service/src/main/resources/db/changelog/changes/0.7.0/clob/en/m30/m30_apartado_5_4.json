@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap5_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.4 Protocol for action in the event of a biological accident or with hazardous chemicals"
+    },
+    "fieldGroup": [
+      {
+        "template": "Please write below a Protocol for action in the event of a biological accident or an accident with hazardous chemicals, specific to this report and provide it in the respective 'Documentation' section."
+      },
+      {
+        "key": "protocoloActuacion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": "PROTOCOLO_ACTUACION",
+              "label": "Yes"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

@@ -1,9 +1,7 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import javax.validation.Valid;
-import javax.validation.groups.Default;
 
-import org.crue.hercules.sgi.csp.model.BaseEntity.Update;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.service.ConceptoGastoService;
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
@@ -12,7 +10,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -132,8 +129,7 @@ public class ConceptoGastoController {
    */
   @PutMapping("/{id}")
   @PreAuthorize("hasAuthority('CSP-TGTO-E')")
-  public ConceptoGasto update(@Validated({ Update.class, Default.class }) @RequestBody ConceptoGasto conceptoGasto,
-      @PathVariable Long id) {
+  public ConceptoGasto update(@Valid @RequestBody ConceptoGasto conceptoGasto, @PathVariable Long id) {
     log.debug("update(ConceptoGasto conceptoGasto, Long id) - start");
     conceptoGasto.setId(id);
     ConceptoGasto returnValue = service.update(conceptoGasto);

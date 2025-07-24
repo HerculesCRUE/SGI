@@ -3,17 +3,15 @@ import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoSocio } from '@core/models/csp/proyecto-socio';
-import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
-import { LuxonDatePipe } from '@shared/luxon-date-pipe';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
@@ -38,15 +36,15 @@ const SOCIO_IMPORTE_CONCEDIDO_KEY = marker('info.csp.proyecto-socio.importe-conc
 const SOCIO_IMPORTE_CONCEDIDO_FIELD = 'importeConcedidoSocio';
 
 @Injectable()
-export class ProyectoSocioListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions>{
+export class ProyectoSocioListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    private luxonDatePipe: LuxonDatePipe,
     private readonly proyectoService: ProyectoService,
     private empresaService: EmpresaService,
     private readonly decimalPipe: DecimalPipe,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -86,39 +84,9 @@ export class ProyectoSocioListadoExportService extends AbstractTableExportFillSe
     proyectos: IProyectoReportData[],
     reportConfig: IReportConfig<IProyectoReportOptions>
   ): ISgiColumnReport[] {
-
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsSocioNotExcel();
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       return this.getColumnsSocioExcel(proyectos);
     }
-  }
-
-  private getColumnsSocioNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: SOCIO_FIELD,
-      title: this.translate.instant(SOCIO_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(SOCIO_KEY, MSG_PARAMS.CARDINALIRY.PLURAL) +
-      ' (' + this.translate.instant(SOCIO_NOMBRE_KEY) +
-      ' - ' + this.translate.instant(SOCIO_CIF_KEY) +
-      ' - ' + this.translate.instant(SOCIO_ROL_KEY) +
-      ' - ' + this.translate.instant(SOCIO_NUM_INVESTIGADORES_KEY) +
-      ' - ' + this.translate.instant(SOCIO_FECHA_INICIO_KEY) +
-      ' - ' + this.translate.instant(SOCIO_FECHA_FIN_KEY) +
-      ' - ' + this.translate.instant(SOCIO_IMPORTE_PRESUPUESTO_KEY) +
-      ' - ' + this.translate.instant(SOCIO_IMPORTE_CONCEDIDO_KEY) +
-      ')';
-    const columnSocio: ISgiColumnReport = {
-      name: SOCIO_FIELD,
-      title: titleI18n,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns
-    };
-    return [columnSocio];
   }
 
   private getColumnsSocioExcel(proyectos: IProyectoReportData[]): ISgiColumnReport[] {
@@ -191,9 +159,7 @@ export class ProyectoSocioListadoExportService extends AbstractTableExportFillSe
 
     const proyecto = proyectos[index];
     const elementsRow: any[] = [];
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      this.fillRowsSocioNotExcel(proyecto, elementsRow);
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       const maxNumSocio = Math.max(...proyectos.map(p => p.socios ? p.socios?.length : 0));
       for (let i = 0; i < maxNumSocio; i++) {
         const socio = proyecto.socios ? proyecto.socios[i] ?? null : null;
@@ -203,46 +169,11 @@ export class ProyectoSocioListadoExportService extends AbstractTableExportFillSe
     return elementsRow;
   }
 
-  private fillRowsSocioNotExcel(proyecto: IProyectoReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-
-    proyecto.socios?.forEach(socio => {
-      const socioElementsRow: any[] = [];
-
-      let socioTable = socio?.empresa?.nombre;
-      socioTable += '\n';
-      socioTable += socio?.empresa?.numeroIdentificacion ?? '';
-      socioTable += '\n';
-      socioTable += socio?.rolSocio?.nombre ?? '';
-      socioTable += '\n';
-      socioTable += socio?.numInvestigadores ?? '';
-      socioTable += '\n';
-      socioTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(socio?.fechaInicio, true), 'shortDate') ?? '';
-      socioTable += '\n';
-      socioTable += this.luxonDatePipe.transform(LuxonUtils.toBackend(socio?.fechaFin, true), 'shortDate') ?? '';
-      socioTable += '\n';
-      socioTable += socio?.importePresupuesto ?? '';
-      socioTable += '\n';
-      socioTable += socio?.importeConcedido ?? '';
-
-      socioElementsRow.push(socioTable);
-
-      const rowReport: ISgiRowReport = {
-        elements: socioElementsRow
-      };
-      rowsReport.push(rowReport);
-    });
-
-    elementsRow.push({
-      rows: rowsReport
-    });
-  }
-
   private fillRowsSocioExcel(elementsRow: any[], socio: IProyectoSocio) {
     if (socio) {
       elementsRow.push(socio.empresa?.nombre ?? '');
       elementsRow.push(socio.empresa?.numeroIdentificacion ?? '');
-      elementsRow.push(socio.rolSocio?.nombre ?? '');
+      elementsRow.push(this.languageService.getFieldValue(socio.rolSocio?.nombre));
       elementsRow.push(socio.numInvestigadores ? socio.numInvestigadores.toString() : '');
       elementsRow.push(LuxonUtils.toBackend(socio.fechaInicio) ?? '');
       elementsRow.push(LuxonUtils.toBackend(socio.fechaFin) ?? '');

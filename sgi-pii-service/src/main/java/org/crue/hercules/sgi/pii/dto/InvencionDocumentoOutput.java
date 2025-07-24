@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.pii.dto;
 
 import java.time.Instant;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.pii.model.InvencionDocumentoNombre;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,7 +20,7 @@ public class InvencionDocumentoOutput {
 
   private Long id;
   private Instant fechaAnadido;
-  private String nombre;
+  private Collection<InvencionDocumentoNombre> nombre;
   private String documentoRef;
   private Long invencionId;
 

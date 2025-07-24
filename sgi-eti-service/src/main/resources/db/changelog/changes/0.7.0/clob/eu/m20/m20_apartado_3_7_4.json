@@ -1,0 +1,34 @@
+[
+  {
+    "key": "ap3_7_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.4 Prozedura/esku hartze kirurgikoak"
+    },
+    "fieldGroup": [
+      {
+        "template": "Kirurgia egingo zaie esperimentazio prozesuaren uneren batean?"
+      },
+      {
+        "key": "intervencionQuirurgicaRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

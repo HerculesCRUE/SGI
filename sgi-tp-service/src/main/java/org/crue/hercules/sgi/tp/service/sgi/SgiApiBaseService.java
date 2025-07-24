@@ -49,6 +49,9 @@ public abstract class SgiApiBaseService {
       case REP:
         serviceURL = restApiProperties.getRepUrl();
         break;
+      case SGE:
+        serviceURL = restApiProperties.getSgeUrl();
+        break;
       case USR:
         serviceURL = restApiProperties.getUsrUrl();
         break;

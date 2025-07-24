@@ -1,13 +1,18 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.IncidenciaDocumentacionRequerimientoController;
 import org.crue.hercules.sgi.csp.dto.IncidenciaDocumentacionRequerimientoAlegacionInput;
 import org.crue.hercules.sgi.csp.dto.IncidenciaDocumentacionRequerimientoInput;
 import org.crue.hercules.sgi.csp.dto.IncidenciaDocumentacionRequerimientoOutput;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -23,7 +28,7 @@ import org.springframework.web.util.UriComponentsBuilder;
  * Test de integracion de IncidenciaDocumentacionRequerimiento.
  */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class IncidenciaDocumentacionRequerimientoIT extends BaseIT {
+class IncidenciaDocumentacionRequerimientoIT extends BaseIT {
   private static final String CONTROLLER_BASE_PATH = IncidenciaDocumentacionRequerimientoController.REQUEST_MAPPING;
   private static final String PATH_ID = IncidenciaDocumentacionRequerimientoController.PATH_ID;
   private static final String PATH_ALEGAR = IncidenciaDocumentacionRequerimientoController.PATH_ALEGAR;
@@ -37,8 +42,7 @@ public class IncidenciaDocumentacionRequerimientoIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s",
         tokenBuilder.buildToken("usr-002", roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-    return request;
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -102,10 +106,11 @@ public class IncidenciaDocumentacionRequerimientoIT extends BaseIT {
 
     IncidenciaDocumentacionRequerimientoOutput output = response.getBody();
     Assertions.assertThat(output.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(output.getIncidencia()).as("getIncidencia()")
-        .isEqualTo(input.getIncidencia());
-    Assertions.assertThat(output.getNombreDocumento()).as("getNombreDocumento()")
-        .isEqualTo(input.getNombreDocumento());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getIncidencia(), Language.ES)).as("getIncidencia()")
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getIncidencia(), Language.ES));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getNombreDocumento(), Language.ES))
+        .as("getNombreDocumento()")
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getNombreDocumento(), Language.ES));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -143,10 +148,11 @@ public class IncidenciaDocumentacionRequerimientoIT extends BaseIT {
     IncidenciaDocumentacionRequerimientoOutput output = response.getBody();
     Assertions.assertThat(output.getId()).as("getId()")
         .isEqualTo(incidenciaDocumentacionRequerimientoId);
-    Assertions.assertThat(output.getIncidencia()).as("getIncidencia()")
-        .isEqualTo(input.getIncidencia());
-    Assertions.assertThat(output.getNombreDocumento()).as("getNombreDocumento()")
-        .isEqualTo(input.getNombreDocumento());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getIncidencia(), Language.ES)).as("getIncidencia()")
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getIncidencia(), Language.ES));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getNombreDocumento(), Language.ES))
+        .as("getNombreDocumento()")
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getNombreDocumento(), Language.ES));
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -184,29 +190,32 @@ public class IncidenciaDocumentacionRequerimientoIT extends BaseIT {
     IncidenciaDocumentacionRequerimientoOutput output = response.getBody();
     Assertions.assertThat(output.getId()).as("getId()")
         .isEqualTo(incidenciaDocumentacionRequerimientoId);
-    Assertions.assertThat(output.getAlegacion()).as("getAlegacion()")
-        .isEqualTo(input.getAlegacion());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(output.getAlegacion(), Language.ES)).as("getAlegacion()")
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getAlegacion(), Language.ES));
   }
 
   private IncidenciaDocumentacionRequerimientoInput generarMockIncidenciaDocumentacionRequerimientoInput(
       String suffix) {
-    return generarMockIncidenciaDocumentacionRequerimientoInput("Incidencia-" + suffix,
-        "IncidenciaDocumentacionRequerimiento-" + suffix, 1L);
-  }
+    List<I18nFieldValueDto> nombreDocumentoIncidencia = new ArrayList<>();
+    nombreDocumentoIncidencia.add(new I18nFieldValueDto(Language.ES, "IncidenciaDocumentacionRequerimiento-" + suffix));
 
-  private IncidenciaDocumentacionRequerimientoInput generarMockIncidenciaDocumentacionRequerimientoInput(
-      String incidencia, String nombreDocumento, Long requerimientoJustificacionId) {
+    List<I18nFieldValueDto> incidenciaDocumentacion = new ArrayList<>();
+    incidenciaDocumentacion.add(new I18nFieldValueDto(Language.ES, "Incidencia-" + suffix));
+
     return IncidenciaDocumentacionRequerimientoInput.builder()
-        .incidencia(incidencia)
-        .nombreDocumento(nombreDocumento)
-        .requerimientoJustificacionId(requerimientoJustificacionId)
+        .incidencia(incidenciaDocumentacion)
+        .nombreDocumento(nombreDocumentoIncidencia)
+        .requerimientoJustificacionId(1L)
         .build();
   }
 
   private IncidenciaDocumentacionRequerimientoAlegacionInput generarMockIncidenciaDocumentacionRequerimientoAlegacionInput(
       String alegacion) {
+    List<I18nFieldValueDto> alegacionDocumentacion = new ArrayList<>();
+    alegacionDocumentacion.add(new I18nFieldValueDto(Language.ES, alegacion));
+
     return IncidenciaDocumentacionRequerimientoAlegacionInput.builder()
-        .alegacion(alegacion)
+        .alegacion(alegacionDocumentacion)
         .build();
   }
 }

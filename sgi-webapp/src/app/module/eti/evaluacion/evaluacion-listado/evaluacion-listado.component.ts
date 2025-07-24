@@ -4,8 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { DICTAMEN_MAP } from '@core/models/eti/dictamen';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
+import { MEMORIA_TIPO_MAP } from '@core/models/eti/memoria';
 import { TIPO_CONVOCATORIA_REUNION } from '@core/models/eti/tipo-convocatoria-reunion';
+import { TIPO_EVALUACION_MAP } from '@core/models/eti/tipo-evaluacion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConfigService } from '@core/services/cnf/config.service';
@@ -15,8 +18,9 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
-import { Observable, from, of } from 'rxjs';
-import { map, mergeMap, switchMap } from 'rxjs/operators';
+import { NGXLogger } from 'ngx-logger';
+import { Observable, forkJoin, from, of } from 'rxjs';
+import { catchError, map, mergeMap, switchMap } from 'rxjs/operators';
 import { TipoColectivo } from 'src/app/esb/sgp/shared/select-persona/select-persona.component';
 import { TipoComentario } from '../evaluacion-listado-export.service';
 import { EvaluacionListadoExportModalComponent, IEvaluacionListadoModalData } from '../modals/evaluacion-listado-export-modal/evaluacion-listado-export-modal.component';
@@ -50,7 +54,20 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
     return TIPO_CONVOCATORIA_REUNION;
   }
 
+  get TIPO_EVALUACION_MAP() {
+    return TIPO_EVALUACION_MAP;
+  }
+
+  get MEMORIA_TIPO_MAP() {
+    return MEMORIA_TIPO_MAP;
+  }
+
+  get DICTAMEN_MAP() {
+    return DICTAMEN_MAP;
+  }
+
   constructor(
+    private readonly logger: NGXLogger,
     private readonly evaluacionesService: EvaluacionService,
     protected readonly snackBarService: SnackBarService,
     protected readonly personaService: PersonaService,
@@ -58,7 +75,7 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
     private matDialog: MatDialog,
     private readonly cnfService: ConfigService
   ) {
-    super();
+    super(translate);
 
     this.totalElementos = 0;
 
@@ -95,12 +112,14 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
       }));
   }
 
+  protected setupI18N(): void { }
+
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<IEvaluacion>> {
     return this.evaluacionesService.findAllByMemoriaAndRetrospectivaEnEvaluacion(this.getFindOptions(reset));
   }
 
   protected initColumns(): void {
-    this.displayedColumns = ['memoria.comite.comite', 'tipoEvaluacion', 'memoria.tipoMemoria.nombre', 'fechaDictamen', 'memoria.numReferencia', 'solicitante',
+    this.displayedColumns = ['memoria.comite.codigo', 'tipoEvaluacion', 'memoria.tipo', 'fechaDictamen', 'memoria.numReferencia', 'solicitante',
       'dictamen.nombre', 'version', 'acciones'];
   }
 
@@ -123,21 +142,24 @@ export class EvaluacionListadoComponent extends AbstractTablePaginationComponent
   protected loadTable(reset?: boolean) {
     this.evaluaciones$ = this.getObservableLoadTable(reset).pipe(
       switchMap((evaluaciones) => {
-        return from(evaluaciones).pipe(
-          mergeMap(evaluacion => {
-            const personaId = evaluacion.memoria?.peticionEvaluacion?.solicitante?.id;
-            if (personaId) {
-              return this.personaService.findById(personaId).pipe(
-                map(persona => {
-                  evaluacion.memoria.peticionEvaluacion.solicitante = persona;
-                  return evaluacion;
-                })
-              );
-            }
+        const evaluacionesObservables = evaluaciones.map(evaluacion => {
+          const personaId = evaluacion.memoria?.peticionEvaluacion?.solicitante?.id;
+          if (personaId) {
+            return this.personaService.findById(personaId).pipe(
+              map(persona => {
+                evaluacion.memoria.peticionEvaluacion.solicitante = persona;
+                return evaluacion;
+              }),
+              catchError(err => {
+                this.logger.error(err);
+                return of(evaluacion);
+              })
+            );
+          } else {
             return of(evaluacion);
-          }),
-          map(() => evaluaciones)
-        );
+          }
+        });
+        return forkJoin(evaluacionesObservables);
       })
     );
   }

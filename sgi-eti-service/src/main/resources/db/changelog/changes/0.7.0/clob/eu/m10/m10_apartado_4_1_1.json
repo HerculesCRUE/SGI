@@ -1,0 +1,108 @@
+[
+  {
+    "key": "ap4_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.1.1 Arrisku edo eragozpen mota"
+    },
+    "hideExpression": "!formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio || formState.bloques[3].ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Jarraian, aipatu zer motatako arriskuak edo/eta eragozpenak eragingo zaizkion ikerketako subjektuari proiekturako egingo zaizkion esku hartzeen edo proben ondorioz.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Arrisku edo eragozpenak zentzu zabalean hartu behar dira kontuan; izan ere, osasunerako arrisku fisikoak ez ezik (proba inbaditzaileak, adibidez), kalte psikologiko posibleak (‘gai korapilatsuak’ jorratzen direnean, adibidez) ere kontuan hartu behar dira, baita aztergai den subjektuaren intimitatean sartze hutsak edo haren denbora erabiltzeak eragindako eragozpenak ere.</p>"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tipoRiesgosOMolestiasCheck",
+        "templateOptions": {
+          "label": "Aukerak",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "riesgoFisico",
+              "label": "Arrisku fisikoa"
+            },
+            {
+              "value": "riesgoPsicologico",
+              "label": "Arrisku psikologikoa"
+            },
+            {
+              "value": "intromisionIntimidad",
+              "label": "Intimitatean sartzea"
+            },
+            {
+              "value": "usoTiempo",
+              "label": "Denboraren erabilera"
+            },
+            {
+              "value": "sinRiesgoPorTratarseDeDatos",
+              "label": "Ez dago arriskurik, datu/lagin anonimoak direlako"
+            }
+          ]
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "multicheckbox-restricted",
+              "options": {
+                "message": "${option1} eta \"${option2}\" erantzunak ez dira bateragarriak",
+                "restrictions": {
+                  "notValidCombinations": [
+                    {
+                      "option": "riesgoFisico",
+                      "incompatibleOptions": [
+                        "sinRiesgoPorTratarseDeDatos"
+                      ]
+                    },
+                    {
+                      "option": "riesgoPsicologico",
+                      "incompatibleOptions": [
+                        "sinRiesgoPorTratarseDeDatos"
+                      ]
+                    },
+                    {
+                      "option": "intromisionIntimidad",
+                      "incompatibleOptions": [
+                        "sinRiesgoPorTratarseDeDatos"
+                      ]
+                    },
+                    {
+                      "option": "usoTiempo",
+                      "incompatibleOptions": [
+                        "sinRiesgoPorTratarseDeDatos"
+                      ]
+                    },
+                    {
+                      "option": "sinRiesgoPorTratarseDeDatos",
+                      "incompatibleOptions": [
+                        "riesgoFisico",
+                        "riesgoPsicologico",
+                        "intromisionIntimidad",
+                        "usoTiempo"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: kalte/eragozpen posibleak <strong>'3.4.3 Esku hartzeen edo proben deskribapena'</strong> atalean zehatz-mehatz deskribatutako esku hartzeekin lotu behar dira.</p><p>Gogoratu parte hartzaileari behar bezala jakinarazi behar zaizkiola ikerketaren eragozpenak eta arrisku zein onura posibleak, eta horien berri eman behar zaiola <strong>baimen dokumentuan</strong> ('4.4.2 Nahitaez eman beharreko gutxieneko informazioa' atala). </p><p>Eman beharreko gutxieneko informazioari buruz gehiago jakiteko, kontsultatu <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a15' target='_blank'>14/2007 IBLren 15. artikulua</a>.</p>"
+      }
+    ]
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "key": "ap3_7_5",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.5 Analgesia"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Analgesikoak edo beste metodo egoki batzuk erabili behar dira, ahal den neurrian mina, sufrimendua, estutasuna edo lesioa ahalik eta txikienak izatea bermatzeko. Erabili behar direnean, albaitari batek gainbegiratu behar du prozesua (<a target='_blank' href='https://www.boe.es/buscar/act.php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>53/13 EDren 26. art.</a>).</p><p>Prozeduraren/esku hartzearen helburuekin bateragarria bada, anestesiaren ondoren animalia batek mina izango duela aurreikusten denean, tratamendu analgesiko prebentibo eta paliatibo bat aplikatuko zaio, edo mina arintzeko beste metodo egoki bat (<a target='_blank' href='https://www.boe.es/buscar/act. php?id=BOE-A-2013-1337&p=20130208&tn=1#a26'>53/13 EDren 26. art.</a>).</p>"
+      },
+      {
+        "template": "Analgesia erabiliko da esperimentazio prozesuaren uneren batean?"
+      },
+      {
+        "key": "analgesiaRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: gogoratu salbuespen kasuetan dagokion dokumentua aurkeztu behar dela ‘5.4 Egoera bereziak’ atalean. </p>"
+      }
+    ]
+  }
+]

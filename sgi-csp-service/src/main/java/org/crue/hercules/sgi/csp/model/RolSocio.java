@@ -1,12 +1,22 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.Set;
+import java.util.HashSet;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -50,21 +60,24 @@ public class RolSocio extends BaseActivableEntity {
   private Long id;
 
   /** Abreviatura */
-  @Column(name = "abreviatura", length = ABREVIATURA_LENGTH, nullable = false)
-  @NotBlank
-  @Size(max = 5)
-  private String abreviatura;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name="rol_socio_abreviatura", joinColumns= @JoinColumn(name="rol_socio_id"))
+  @NotEmpty
+  @Valid
+  private Set<RolSocioAbreviatura> abreviatura = new HashSet<>();
 
   /** Nombre */
-  @Column(name = "nombre", length = NOMBRE_LENGTH, nullable = false)
-  @NotBlank
-  @Size(max = 50)
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name="rol_socio_nombre", joinColumns= @JoinColumn(name="rol_socio_id"))
+  @NotEmpty
+  @Valid
+  private Set<RolSocioNombre> nombre = new HashSet<>();
 
   /** Descripción */
-  @Column(name = "descripcion", length = DESCRIPCION_LENGTH, nullable = true)
-  @Size(max = 250)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name="rol_socio_descripcion", joinColumns= @JoinColumn(name="rol_socio_id"))
+  @Valid
+  private Set<RolSocioDescripcion> descripcion = new HashSet<>();
 
   /** Coordinador */
   @Column(name = "coordinador", columnDefinition = "boolean default false", nullable = true)

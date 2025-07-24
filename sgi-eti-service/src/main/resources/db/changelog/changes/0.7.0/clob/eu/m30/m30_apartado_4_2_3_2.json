@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_2_3_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.2 Esposizioa txikiagotzeko neurriak"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Aurreikusten dira agenteen eraginpean dagoen pertsona kopurua mugatzeko eta ahalik eta gehien txikiagotzeko neurriak?</p>"
+      },
+      {
+        "key": "limitarPersonasExpuestas",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Zehaztu neurriak, edo aurreikusten ez badira, justifikatu zergatik."
+      },
+      {
+        "key": "especificarLimitar",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Zehaztu:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

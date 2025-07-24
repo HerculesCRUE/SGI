@@ -15,11 +15,11 @@ public class EntidadEmpresaOrNombreRazonSocialEmpresaNotNullValidator
       return false;
     }
 
-    if (value.getEntidadRef() != null && value.getNombreRazonSocial() != null) {
+    if (value.getEntidadRef() != null && !value.getNombreRazonSocial().isEmpty()) {
       return false;
     }
 
-    return (value.getEntidadRef() != null || value.getNombreRazonSocial() != null);
+    return (value.getEntidadRef() != null || !value.getNombreRazonSocial().isEmpty());
 
   }
 

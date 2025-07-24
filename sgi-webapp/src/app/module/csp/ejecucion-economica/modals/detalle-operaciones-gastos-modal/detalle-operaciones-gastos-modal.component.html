@@ -1,0 +1,11 @@
+<sgi-dialog-header title="{{'csp.ejecucion-economica.detalle-operaciones.gastos.modal.title' | translate}}">
+</sgi-dialog-header>
+<sgi-dialog-content>
+  <sgi-ejecucion-economica-detalle-economico [detalle]="data" [rowConfig]="data.rowConfig" [showDocumentos]="false">
+  </sgi-ejecucion-economica-detalle-economico>
+</sgi-dialog-content>
+<mat-dialog-actions>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
+</mat-dialog-actions>

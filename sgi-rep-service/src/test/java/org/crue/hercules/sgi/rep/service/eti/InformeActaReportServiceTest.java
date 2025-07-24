@@ -6,11 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
-import org.crue.hercules.sgi.rep.dto.OutputType;
 import org.crue.hercules.sgi.rep.dto.eti.AsistentesDto;
 import org.crue.hercules.sgi.rep.dto.eti.EvaluadorDto;
 import org.crue.hercules.sgi.rep.dto.eti.MemoriaEvaluadaDto;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeActa;
+import org.crue.hercules.sgi.rep.service.InformeActaReportService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +50,7 @@ class InformeActaReportServiceTest extends BaseReportEtiServiceTest {
 
   @BeforeEach
   public void setUp() throws Exception {
-    informeActaReportService = new InformeActaReportService(sgiConfigProperties,
+    informeActaReportService = new InformeActaReportService(
         personaService, sgiApiConfService,
         convocatoriaReunionService, actaService, evaluacionService,
         baseApartadosRespuestasReportService);
@@ -73,10 +72,7 @@ class InformeActaReportServiceTest extends BaseReportEtiServiceTest {
     BDDMockito.given(convocatoriaReunionService
         .findAsistentesByConvocatoriaReunionId(1L)).willReturn((generarMockAsistentes("123456F")));
 
-    ReportInformeActa report = new ReportInformeActa();
-    report.setOutputType(OutputType.PDF);
-
-    byte[] reportContent = informeActaReportService.getReportInformeActa(report, idActa);
+    byte[] reportContent = informeActaReportService.getReport(idActa);
     assertNotNull(reportContent);
 
   }
@@ -85,7 +81,6 @@ class InformeActaReportServiceTest extends BaseReportEtiServiceTest {
     List<AsistentesDto> memorias = new ArrayList<>();
     memorias.add(AsistentesDto.builder()
         .evaluador(EvaluadorDto.builder().personaRef(null).build())
-        .motivo("motivo")
         .build());
     return memorias;
   }
@@ -95,9 +90,9 @@ class InformeActaReportServiceTest extends BaseReportEtiServiceTest {
     memorias.add(MemoriaEvaluadaDto.builder()
         .numReferencia("numReferencia")
         .personaRef(null)
-        .dictamen("dictamen")
+        .dictamenId(1L)
         .version(1)
-        .tipoEvaluacion("tipoEvaluacion")
+        .tipoEvaluacionId(1L)
         .build());
     return memorias;
   }

@@ -18,8 +18,11 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoEnlaceRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaEnlaceSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaEnlaceService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -37,8 +40,19 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 
 public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_MODELO = "modelo";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_KEY_URL = "convocatoriaEnlace.url";
+  private static final String MSG_MODEL_MODELO_TIPO_ENLACE = "org.crue.hercules.sgi.csp.model.ModeloTipoEnlace.message";
+  private static final String MSG_MODEL_TIPO_ENLACE = "org.crue.hercules.sgi.csp.model.TipoEnlace.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODELO_EJECUCION_INACTIVO = "org.springframework.util.Assert.entity.modeloEjecucion.inactivo.message";
+  private static final String MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.exceptions.AssignModeloEjecucion.message";
+  private static final String MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO = "org.crue.hercules.sgi.csp.model.Convocatoria.sinModeloEjecucion.message";
+  private static final String MSG_NO_DISPONIBLE_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.model.ModeloEjecucion.noDisponible.message";
 
-  private static final String TIPO_ENLACE_TEMPLATE = "TipoEnlace '";
   private final ConvocatoriaEnlaceRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
   private final ModeloTipoEnlaceRepository modeloTipoEnlaceRepository;
@@ -64,14 +78,9 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
   public ConvocatoriaEnlace create(ConvocatoriaEnlace convocatoriaEnlace) {
     log.debug("create(ConvocatoriaEnlace convocatoriaEnlace) - start");
 
-    Assert.isNull(convocatoriaEnlace.getId(),
-        "ConvocatoriaEnlace id tiene que ser null para crear un nuevo ConvocatoriaEnlace");
-
-    Assert.isTrue(convocatoriaEnlace.getConvocatoriaId() != null,
-        "Id Convocatoria no puede ser null para crear ConvocatoriaEnlace");
-
-    Assert.notNull(convocatoriaEnlace.getUrl(),
-        "ConvocatoriaEnlace url no puede ser null para crear una nueva ConvocatoriaEnlace");
+    AssertHelper.idIsNull(convocatoriaEnlace.getId(), ConvocatoriaEnlace.class);
+    AssertHelper.idNotNull(convocatoriaEnlace.getConvocatoriaId(), Convocatoria.class);
+    AssertHelper.fieldNotNull(convocatoriaEnlace.getUrl(), ConvocatoriaEnlace.class, MSG_KEY_URL);
 
     Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaEnlace.getConvocatoriaId())
         .orElseThrow(() -> new ConvocatoriaNotFoundException(convocatoriaEnlace.getConvocatoriaId()));
@@ -89,21 +98,29 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
 
         // Está asignado al ModeloEjecucion
         Assert.isTrue(modeloTipoEnlace.isPresent(),
-            TIPO_ENLACE_TEMPLATE + convocatoriaEnlace.getTipoEnlace().getNombre()
-                + "' no disponible para el ModeloEjecucion '"
-                + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
-                    : "Convocatoria sin modelo asignado")
-                + "'");
+            () -> ProblemMessage.builder()
+                .key(MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_ENLACE))
+                .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+                .parameter(MSG_KEY_MODELO, ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
+                    : ApplicationContextSupport.getMessage(MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO)))
+                .build());
 
         // La asignación al ModeloEjecucion está activa
         Assert.isTrue(modeloTipoEnlace.get().getActivo(),
-            "ModeloTipoEnlace '" + modeloTipoEnlace.get().getTipoEnlace().getNombre()
-                + "' no está activo para el ModeloEjecucion '" + modeloTipoEnlace.get().getModeloEjecucion().getNombre()
-                + "'");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_ENLACE))
+                .parameter(MSG_KEY_FIELD, modeloTipoEnlace.get().getTipoEnlace().getNombre())
+                .build());
 
         // El TipoEnlace está activo
         Assert.isTrue(modeloTipoEnlace.get().getTipoEnlace().getActivo(),
-            TIPO_ENLACE_TEMPLATE + modeloTipoEnlace.get().getTipoEnlace().getNombre() + "' no está activo");
+            () -> ProblemMessage.builder()
+                .key(MSG_ENTITY_INACTIVO)
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_ENLACE))
+                .parameter(MSG_KEY_FIELD, modeloTipoEnlace.get().getTipoEnlace().getNombre())
+                .build());
 
         convocatoriaEnlace.setTipoEnlace(modeloTipoEnlace.get().getTipoEnlace());
 
@@ -131,14 +148,9 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
   public ConvocatoriaEnlace update(ConvocatoriaEnlace convocatoriaEnlaceActualizar) {
     log.debug("update(ConvocatoriaEnlace convocatoriaEnlaceActualizar) - start");
 
-    Assert.notNull(convocatoriaEnlaceActualizar.getId(),
-        "ConvocatoriaEnlace id no puede ser null para actualizar un ConvocatoriaEnlace");
-
-    Assert.isTrue(convocatoriaEnlaceActualizar.getConvocatoriaId() != null,
-        "Id Convocatoria no puede ser null para actualizar ConvocatoriaEnlace");
-
-    Assert.notNull(convocatoriaEnlaceActualizar.getUrl(),
-        "ConvocatoriaEnlace url no puede ser null para actualizar un nuevo ConvocatoriaEnlace");
+    AssertHelper.idNotNull(convocatoriaEnlaceActualizar.getId(), ConvocatoriaEnlace.class);
+    AssertHelper.idNotNull(convocatoriaEnlaceActualizar.getConvocatoriaId(), Convocatoria.class);
+    AssertHelper.fieldNotNull(convocatoriaEnlaceActualizar.getUrl(), ConvocatoriaEnlace.class, MSG_KEY_URL);
 
     return repository.findById(convocatoriaEnlaceActualizar.getId()).map(convocatoriaEnlace -> {
       Convocatoria convocatoria = convocatoriaRepository.findById(convocatoriaEnlace.getConvocatoriaId())
@@ -157,28 +169,37 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
 
           // Está asignado al ModeloEjecucion
           Assert.isTrue(modeloTipoEnlace.isPresent(),
-              TIPO_ENLACE_TEMPLATE + convocatoriaEnlaceActualizar.getTipoEnlace().getNombre()
-                  + "' no disponible para el ModeloEjecucion '"
-                  + ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
-                      : "Convocatoria sin modelo asignado")
-                  + "'");
+              () -> ProblemMessage.builder()
+                  .key(MSG_CONVOCATORIA_ASSIGN_MODELO_EJECUCION)
+                  .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_ENLACE))
+                  .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+                  .parameter(MSG_KEY_MODELO,
+                      ((modeloEjecucionId != null) ? convocatoria.getModeloEjecucion().getNombre()
+                          : ApplicationContextSupport.getMessage(MSG_CONVOCATORIA_SIN_MODELO_ASIGNADO)))
+                  .build());
 
           // La asignación al ModeloEjecucion está activa
           Assert.isTrue(
               Objects.equals(modeloTipoEnlace.get().getTipoEnlace().getId(),
                   convocatoriaEnlaceActualizar.getTipoEnlace().getId())
                   && modeloTipoEnlace.get().getActivo(),
-              "ModeloTipoEnlace '" + modeloTipoEnlace.get().getTipoEnlace().getNombre()
-                  + "' no está activo para el ModeloEjecucion '"
-                  + modeloTipoEnlace.get().getModeloEjecucion().getNombre() + "'");
+              () -> ProblemMessage.builder()
+                  .key(MSG_MODELO_EJECUCION_INACTIVO)
+                  .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_ENLACE))
+                  .parameter(MSG_KEY_FIELD, modeloTipoEnlace.get().getTipoEnlace().getNombre())
+                  .parameter(MSG_KEY_MODELO, modeloTipoEnlace.get().getModeloEjecucion().getNombre())
+                  .build());
 
           // El TipoEnlace está activo
           Assert.isTrue(
               Objects.equals(modeloTipoEnlace.get().getTipoEnlace().getId(),
                   convocatoriaEnlaceActualizar.getTipoEnlace().getId())
                   && modeloTipoEnlace.get().getTipoEnlace().getActivo(),
-              TIPO_ENLACE_TEMPLATE + modeloTipoEnlace.get().getTipoEnlace().getNombre() + "' no está activo");
-          convocatoriaEnlaceActualizar.setTipoEnlace(modeloTipoEnlace.get().getTipoEnlace());
+              () -> ProblemMessage.builder()
+                  .key(MSG_ENTITY_INACTIVO)
+                  .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_ENLACE))
+                  .parameter(MSG_KEY_FIELD, modeloTipoEnlace.get().getTipoEnlace().getNombre())
+                  .build());
         } else {
           convocatoriaEnlaceActualizar.setTipoEnlace(null);
         }
@@ -204,7 +225,7 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ConvocatoriaEnlace id no puede ser null para eliminar un ConvocatoriaEnlace");
+    AssertHelper.idNotNull(id, ConvocatoriaEnlace.class);
     if (!repository.existsById(id)) {
       throw new ConvocatoriaEnlaceNotFoundException(id);
     }
@@ -267,8 +288,9 @@ public class ConvocatoriaEnlaceServiceImpl implements ConvocatoriaEnlaceService 
     Set<String> nonRepeatedUrls = new HashSet<>();
     convocatoriaEnlaces.stream()
         .forEach(convocatoriaEnlace -> nonRepeatedUrls.add(convocatoriaEnlace.getUrl()));
-    Assert.isTrue(convocatoriaEnlaces.size() == nonRepeatedUrls.size(),
-        "Hay una url repetida para esta Convocatoria");
+
+    AssertHelper.fieldExists(
+        convocatoriaEnlaces.size() == nonRepeatedUrls.size(), ConvocatoriaEnlace.class, MSG_KEY_URL);
 
     Specification<ConvocatoriaEnlace> specs = ConvocatoriaEnlaceSpecifications.byConvocatoriaId(
         convocatoriaId);

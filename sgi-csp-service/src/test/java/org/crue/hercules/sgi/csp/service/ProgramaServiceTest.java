@@ -2,21 +2,31 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ProgramaNotFoundException;
 import org.crue.hercules.sgi.csp.model.Programa;
+import org.crue.hercules.sgi.csp.model.ProgramaDescripcion;
+import org.crue.hercules.sgi.csp.model.ProgramaNombre;
 import org.crue.hercules.sgi.csp.repository.ProgramaRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProgramaServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,17 +36,15 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * ProgramaServiceTest
  */
+@Import({ ProgramaServiceImpl.class })
 class ProgramaServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private ProgramaRepository repository;
 
+  // This bean must be created by Spring so validations can be applied
+  @Autowired
   private ProgramaService service;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    service = new ProgramaServiceImpl(repository);
-  }
 
   @Test
   void create_ReturnsPrograma() {
@@ -102,7 +110,7 @@ class ProgramaServiceTest extends BaseServiceTest {
     // when: Creamos el Programa
     // then: Lanza una excepcion porque el Programa ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(programa)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Programa id tiene que ser null para crear un nuevo Programa");
+        .hasMessage("Identificador de Programa debe ser nulo");
   }
 
   @Test
@@ -124,17 +132,15 @@ class ProgramaServiceTest extends BaseServiceTest {
     Programa programa = generarMockPrograma(1L, "nombreRepetido", null);
 
     BDDMockito
-        .given(repository.findAll(ArgumentMatchers.<Specification<Programa>>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer((InvocationOnMock invocation) -> {
-          Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<Programa> page = new PageImpl<>(Arrays.asList(programa), pageable, 0);
-          return page;
-        });
+        .given(repository.findAll(ArgumentMatchers.<Specification<Programa>>any()))
+        .willReturn(Arrays.asList(programa));
 
     // when: Creamos el Programa
     // then: Lanza una excepcion porque hay otro Programa con ese nombre
-    Assertions.assertThatThrownBy(() -> service.create(programaNew)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un plan con el mismo nombre");
+    Assertions.assertThatThrownBy(() -> service.create(programaNew))
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un plan con el nombre '%s'",
+            I18nHelper.getValueForLanguage(programaNew.getNombre(), Language.ES));
   }
 
   @Test
@@ -145,13 +151,17 @@ class ProgramaServiceTest extends BaseServiceTest {
     Programa programaHijo = generarMockPrograma(2L, "nombreRepetido", 1L);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(programa));
-    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(ArgumentMatchers.<Long>anyList()))
-        .willReturn(Arrays.asList(programaHijo));
+    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(Collections.singletonList(1L)))
+        .willReturn(Collections.singletonList(programaHijo));
+    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(Collections.singletonList(2L)))
+        .willReturn(Collections.emptyList());
 
     // when: Creamos el Programa
     // then: Lanza una excepcion porque hay otro Programa con ese nombre
-    Assertions.assertThatThrownBy(() -> service.create(programaNew)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un programa con el mismo nombre en el plan");
+    Assertions.assertThatThrownBy(() -> service.create(programaNew))
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un programa con el nombre '%s' en el plan",
+            I18nHelper.getValueForLanguage(programaNew.getNombre(), Language.ES));
   }
 
   @Test
@@ -221,17 +231,15 @@ class ProgramaServiceTest extends BaseServiceTest {
 
     BDDMockito.given(repository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(programaActualizado));
     BDDMockito
-        .given(repository.findAll(ArgumentMatchers.<Specification<Programa>>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer((InvocationOnMock invocation) -> {
-          Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<Programa> page = new PageImpl<>(Arrays.asList(programa), pageable, 0);
-          return page;
-        });
+        .given(repository.findAll(ArgumentMatchers.<Specification<Programa>>any()))
+        .willReturn(Arrays.asList(programa));
 
     // when: Actualizamos el Programa
     // then: Lanza una excepcion porque hay otro Programa con ese nombre
     Assertions.assertThatThrownBy(() -> service.update(programaActualizado))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Ya existe un plan con el mismo nombre");
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un plan con el nombre '%s'",
+            I18nHelper.getValueForLanguage(programaActualizado.getNombre(), Language.ES));
   }
 
   @Test
@@ -243,15 +251,21 @@ class ProgramaServiceTest extends BaseServiceTest {
 
     BDDMockito.given(repository.findById(3L)).willReturn(Optional.of(programaActualizado));
     BDDMockito.given(repository.findById(1L)).willReturn(Optional.of(programa));
+    BDDMockito.given(repository.findById(2L)).willReturn(Optional.of(programaHijo));
 
-    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(ArgumentMatchers.<Long>anyList()))
-        .willReturn(Arrays.asList(programaHijo));
+    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(Collections.singletonList(1L)))
+        .willReturn(Arrays.asList(programaHijo, programaActualizado));
+    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(Collections.singletonList(2L)))
+        .willReturn(Collections.emptyList());
+    BDDMockito.given(repository.findByPadreIdInAndActivoIsTrue(Collections.singletonList(3L)))
+        .willReturn(Collections.emptyList());
 
     // when: Actualizamos el Programa
     // then: Lanza una excepcion porque hay otro Programa con ese nombre
     Assertions.assertThatThrownBy(() -> service.update(programaActualizado))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un programa con el mismo nombre en el plan");
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un programa con el nombre '%s' en el plan",
+            I18nHelper.getValueForLanguage(programaActualizado.getNombre(), Language.ES));
   }
 
   @Test
@@ -316,17 +330,15 @@ class ProgramaServiceTest extends BaseServiceTest {
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(programa));
     BDDMockito
-        .given(repository.findAll(ArgumentMatchers.<Specification<Programa>>any(), ArgumentMatchers.<Pageable>any()))
-        .willAnswer((InvocationOnMock invocation) -> {
-          Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<Programa> page = new PageImpl<>(Arrays.asList(programaRepetido), pageable, 0);
-          return page;
-        });
+        .given(repository.findAll(ArgumentMatchers.<Specification<Programa>>any()))
+        .willReturn(Arrays.asList(programaRepetido));
 
     // when: Activamos el Programa
     // then: Lanza una excepcion porque hay otro Programa con ese nombre
-    Assertions.assertThatThrownBy(() -> service.update(programa)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un plan con el mismo nombre");
+    Assertions.assertThatThrownBy(() -> service.update(programa))
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessageContaining("Ya existe un plan con el nombre '%s'",
+            I18nHelper.getValueForLanguage(programaRepetido.getNombre(), Language.ES));
   }
 
   @Test
@@ -383,7 +395,8 @@ class ProgramaServiceTest extends BaseServiceTest {
     // then: el Programa
     Assertions.assertThat(programa).as("isNotNull()").isNotNull();
     Assertions.assertThat(programa.getId()).as("getId()").isEqualTo(idBuscado);
-    Assertions.assertThat(programa.getNombre()).as("getNombre()").isEqualTo("nombre-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-1");
     Assertions.assertThat(programa.getActivo()).as("getActivo()").isTrue();
   }
 
@@ -434,7 +447,7 @@ class ProgramaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       Programa programa = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(programa.getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getNombre(), Language.ES)).isEqualTo("nombre-" + i);
     }
   }
 
@@ -474,7 +487,7 @@ class ProgramaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       Programa programa = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(programa.getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getNombre(), Language.ES)).isEqualTo("nombre-" + i);
     }
   }
 
@@ -514,7 +527,7 @@ class ProgramaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       Programa programa = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(programa.getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getNombre(), Language.ES)).isEqualTo("nombre-" + i);
     }
   }
 
@@ -555,7 +568,7 @@ class ProgramaServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       Programa programa = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(programa.getNombre()).isEqualTo("nombre-" + i);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getNombre(), Language.ES)).isEqualTo("nombre-" + i);
     }
   }
 
@@ -578,10 +591,16 @@ class ProgramaServiceTest extends BaseServiceTest {
    * @return el objeto Programa
    */
   private Programa generarMockPrograma(Long id, String nombre, Long idProgramaPadre) {
+    Set<ProgramaNombre> nombrePrograma = new HashSet<>();
+    nombrePrograma.add(new ProgramaNombre(Language.ES, nombre));
+
+    Set<ProgramaDescripcion> descripcionPrograma = new HashSet<>();
+    descripcionPrograma.add(new ProgramaDescripcion(Language.ES, "descripcion-" + id));
+
     Programa programa = new Programa();
     programa.setId(id);
-    programa.setNombre(nombre);
-    programa.setDescripcion("descripcion-" + id);
+    programa.setNombre(nombrePrograma);
+    programa.setDescripcion(descripcionPrograma);
 
     if (idProgramaPadre != null) {
       programa.setPadre(generarMockPrograma(idProgramaPadre));

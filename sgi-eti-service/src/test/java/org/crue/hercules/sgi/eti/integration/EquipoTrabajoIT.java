@@ -3,13 +3,20 @@ package org.crue.hercules.sgi.eti.integration;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -65,7 +72,7 @@ public class EquipoTrabajoIT extends BaseIT {
     final EquipoTrabajo equipoTrabajo = response.getBody();
 
     Assertions.assertThat(equipoTrabajo.getId()).isEqualTo(2L);
-    Assertions.assertThat(equipoTrabajo.getPeticionEvaluacion().getTitulo()).isEqualTo("PeticionEvaluacion2");
+    Assertions.assertThat(equipoTrabajo.getPeticionEvaluacionId()).isEqualTo(2L);
     Assertions.assertThat(equipoTrabajo.getPersonaRef()).isEqualTo("user-2");
   }
 
@@ -91,8 +98,8 @@ public class EquipoTrabajoIT extends BaseIT {
 
     // Contiene de peticionEvaluacion.tiutulo='PeticionEvaluacion7' a
     // 'PeticionEvaluacion8'
-    Assertions.assertThat(equipoTrabajos.get(0).getPeticionEvaluacion().getTitulo()).isEqualTo("PeticionEvaluacion7");
-    Assertions.assertThat(equipoTrabajos.get(1).getPeticionEvaluacion().getTitulo()).isEqualTo("PeticionEvaluacion8");
+    Assertions.assertThat(equipoTrabajos.get(0).getPeticionEvaluacionId()).isEqualTo(7L);
+    Assertions.assertThat(equipoTrabajos.get(1).getPeticionEvaluacionId()).isEqualTo(8L);
   }
 
   @Test
@@ -114,7 +121,7 @@ public class EquipoTrabajoIT extends BaseIT {
     final List<EquipoTrabajo> equipoTrabajos = response.getBody();
     Assertions.assertThat(equipoTrabajos.size()).isEqualTo(1);
     Assertions.assertThat(equipoTrabajos.get(0).getId()).isEqualTo(5L);
-    Assertions.assertThat(equipoTrabajos.get(0).getPeticionEvaluacion().getTitulo()).startsWith("PeticionEvaluacion");
+    Assertions.assertThat(equipoTrabajos.get(0).getPeticionEvaluacionId()).isEqualTo(5L);
   }
 
   @Test
@@ -138,8 +145,8 @@ public class EquipoTrabajoIT extends BaseIT {
     for (int i = 0; i < 7; i++) {
       EquipoTrabajo equipoTrabajo = equipoTrabajos.get(i);
       Assertions.assertThat(equipoTrabajo.getId()).isEqualTo(8 - i);
-      Assertions.assertThat(equipoTrabajo.getPeticionEvaluacion().getTitulo())
-          .isEqualTo("PeticionEvaluacion" + String.format("%d", 8 - i));
+      Assertions.assertThat(equipoTrabajo.getPeticionEvaluacionId())
+          .isEqualTo(8 - i);
       Assertions.assertThat(equipoTrabajo.getPersonaRef()).isEqualTo("user-" + String.format("%d", 8 - i));
     }
   }
@@ -193,19 +200,27 @@ public class EquipoTrabajoIT extends BaseIT {
     tipoActividad.setNombre("TipoActividad1");
     tipoActividad.setActivo(Boolean.TRUE);
 
+    Set<PeticionEvaluacionTitulo> tit = new HashSet<>();
+    tit.add(new PeticionEvaluacionTitulo(Language.ES, titulo));
+    Set<PeticionEvaluacionResumen> resumen = new HashSet<>();
+    resumen.add(new PeticionEvaluacionResumen(Language.ES, "Resumen" + id));
+    Set<PeticionEvaluacionObjetivos> objetivos = new HashSet<>();
+    objetivos.add(new PeticionEvaluacionObjetivos(Language.ES, "Objetivos" + id));
+    Set<PeticionEvaluacionDisMetodologico> disMetodologico = new HashSet<>();
+    disMetodologico.add(new PeticionEvaluacionDisMetodologico(Language.ES, "DiseñoMetodologico" + id));
     PeticionEvaluacion peticionEvaluacion = new PeticionEvaluacion();
     peticionEvaluacion.setId(id);
     peticionEvaluacion.setCodigo("Codigo" + id);
-    peticionEvaluacion.setDisMetodologico("DiseñoMetodologico" + id);
+    peticionEvaluacion.setDisMetodologico(disMetodologico);
     peticionEvaluacion.setFechaFin(Instant.now());
     peticionEvaluacion.setFechaInicio(Instant.now());
     peticionEvaluacion.setExisteFinanciacion(false);
-    peticionEvaluacion.setObjetivos("Objetivos" + id);
-    peticionEvaluacion.setResumen("Resumen" + id);
+    peticionEvaluacion.setObjetivos(objetivos);
+    peticionEvaluacion.setResumen(resumen);
     peticionEvaluacion.setSolicitudConvocatoriaRef("Referencia solicitud convocatoria" + id);
     peticionEvaluacion.setTieneFondosPropios(Boolean.FALSE);
     peticionEvaluacion.setTipoActividad(tipoActividad);
-    peticionEvaluacion.setTitulo(titulo);
+    peticionEvaluacion.setTitulo(tit);
     peticionEvaluacion.setPersonaRef("user-00" + id);
     peticionEvaluacion.setValorSocial(TipoValorSocial.ENSENIANZA_SUPERIOR);
     peticionEvaluacion.setActivo(Boolean.TRUE);
@@ -225,7 +240,7 @@ public class EquipoTrabajoIT extends BaseIT {
 
     EquipoTrabajo equipoTrabajo = new EquipoTrabajo();
     equipoTrabajo.setId(id);
-    equipoTrabajo.setPeticionEvaluacion(peticionEvaluacion);
+    equipoTrabajo.setPeticionEvaluacionId(peticionEvaluacion.getId());
     equipoTrabajo.setPersonaRef("user-00" + (id == null ? 1 : id));
 
     return equipoTrabajo;

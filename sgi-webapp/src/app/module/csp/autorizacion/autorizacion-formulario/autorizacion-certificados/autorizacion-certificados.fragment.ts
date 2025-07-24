@@ -4,6 +4,7 @@ import { Fragment } from '@core/services/action-service';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { CertificadoAutorizacionService } from '@core/services/csp/certificado-autorizacion/certificado-autorizacion.service';
 import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, concat, from, Observable, of } from 'rxjs';
@@ -24,7 +25,8 @@ export class AutorizacionCertificadosFragment extends Fragment {
     private service: CertificadoAutorizacionService,
     private autorizacionService: AutorizacionService,
     private estadoAutorizacionService: EstadoAutorizacionService,
-    private documentoService: DocumentoService
+    private documentoService: DocumentoService,
+    private readonly languageService: LanguageService
   ) {
     super(key);
     this.setComplete(true);
@@ -36,7 +38,7 @@ export class AutorizacionCertificadosFragment extends Fragment {
         map(response => response.items.map(certificadoAutorizacion => {
           const certificadoAutorizacionListado: CertificadoAutorizacionListado = {
             certificado: certificadoAutorizacion,
-            generadoAutomatico: null,
+            generadoAutomatico: null
           };
           return certificadoAutorizacionListado;
         })),
@@ -64,18 +66,7 @@ export class AutorizacionCertificadosFragment extends Fragment {
             );
           }
           return of(certificadoAutorizacionListado);
-        }),
-        mergeMap(certificadoAutorizacionListado => {
-          if (certificadoAutorizacionListado.certificado.documento.documentoRef) {
-            return this.documentoService.getInfoFichero(certificadoAutorizacionListado.certificado.documento.documentoRef).pipe(
-              map(documento => {
-                certificadoAutorizacionListado.certificado.documento = documento;
-                return certificadoAutorizacionListado;
-              })
-            );
-          }
-          return of(certificadoAutorizacionListado);
-        }),
+        })
       ).subscribe((certificadoAutorizacionListado) => {
         this.certificadosAutorizacion$.value.push(new StatusWrapper<CertificadoAutorizacionListado>(certificadoAutorizacionListado));
         this.certificadosAutorizacion$.next(this.certificadosAutorizacion$.value);
@@ -132,7 +123,9 @@ export class AutorizacionCertificadosFragment extends Fragment {
 
     if (index >= 0) {
       if (wrapper.created) {
-        deleteDocumento$ = this.documentoService.eliminarFichero(wrapper.value.certificado.documento.documentoRef);
+        deleteDocumento$ = from(wrapper.value.certificado.documentoRef).pipe(
+          mergeMap(documentoRef => this.documentoService.eliminarFichero(documentoRef.value))
+        );
       } else {
         this.certificadosAutorizacionEliminados.push(current[index]);
       }
@@ -158,9 +151,11 @@ export class AutorizacionCertificadosFragment extends Fragment {
         wrapper.setEdited();
       }
 
-      if (!!previousDocumentoRef && wrapper.value.certificado.documento.documentoRef !== previousDocumentoRef) {
+      if (!!previousDocumentoRef && this.languageService.getFieldValue(wrapper.value.certificado.documentoRef) !== previousDocumentoRef) {
         if (wrapper.created) {
-          this.documentoService.eliminarFichero(wrapper.value.certificado.documento.documentoRef).subscribe();
+          this.subscriptions.push(
+            this.documentoService.eliminarFichero(previousDocumentoRef).subscribe()
+          );
         } else {
           this.documentosRefUnrelated.push(previousDocumentoRef);
         }
@@ -184,7 +179,9 @@ export class AutorizacionCertificadosFragment extends Fragment {
               this.certificadosAutorizacionEliminados = this.certificadosAutorizacionEliminados.filter(deletedCertificado =>
                 deletedCertificado.value.certificado.id !== wrapped.value.certificado.id);
             }),
-            switchMap(() => this.documentoService.eliminarFichero(wrapped.value.certificado.documento.documentoRef))
+            switchMap(() => from(wrapped.value.certificado.documentoRef).pipe(
+              mergeMap(documentoRef => this.documentoService.eliminarFichero(documentoRef.value))
+            ))
           );
       })
     );

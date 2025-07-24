@@ -1,0 +1,74 @@
+[
+  {
+    "key": "ap3_4_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.2 Deliberate exposure"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>In this activity, are tasks carried out in which there is a deliberate intention to use biological agents, hazardous chemicals, radioactive substances and/or nanoparticles?</p>"
+      },
+      {
+        "key": "tareasAgentesBiologicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Type of biological agent, hazardous chemicals, radioactive substances and/or nanoparticles used",
+        "hideExpression": "!model.tareasAgentesBiologicosRadio || model.tareasAgentesBiologicosRadio === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "exposicionNointencionada",
+        "hideExpression": "!model.tareasAgentesBiologicosRadio || model.tareasAgentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Options:",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "microorganismos",
+              "label": "Microorganisms"
+            },
+            {
+              "value": "cultivoscelulares",
+              "label": "Cell cultures"
+            },
+            {
+              "value": "endoparasitos",
+              "label": "Endoparasites"
+            },
+            {
+              "value": "sustanciasquímicaspeligrosas",
+              "label": "Hazardous chemicals"
+            },
+            {
+              "value": "sustanciasradiactivas",
+              "label": "Radioactive Substances"
+            },
+            {
+              "value": "nanoparticulas",
+              "label": "Nanoparticles"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

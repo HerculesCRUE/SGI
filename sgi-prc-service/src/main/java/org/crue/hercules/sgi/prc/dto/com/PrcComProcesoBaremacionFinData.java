@@ -15,4 +15,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PrcComProcesoBaremacionFinData implements Serializable {
   private String anio;
+  private String enlaceAplicacion;
 }

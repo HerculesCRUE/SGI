@@ -10,9 +10,11 @@ import { ContextoProyectoService } from '@core/services/csp/contexto-proyecto.se
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { RolSocioService } from '@core/services/csp/rol-socio/rol-socio.service';
 import { UnidadGestionService } from '@core/services/csp/unidad-gestion.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
+import { toString } from '@core/utils/string-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
@@ -43,6 +45,7 @@ const IVA_DECUCIBLE_KEY = marker('csp.ejecucion-economica.iva-deducible');
 const PORCENTAJE_IVA_KEY = marker('csp.ejecucion-economica.iva');
 const CAUSA_EXENCION_IVA_KEY = marker('csp.proyecto.causa-exencion');
 const AREA_TEMATICA_KEY = marker('csp.area-tematica.nombre');
+const ANIO_KEY = marker('csp.proyecto.anio');
 
 @Injectable()
 export class ProyectoGeneralListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions> {
@@ -50,6 +53,7 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
+    private readonly languageService: LanguageService,
     private readonly proyectoService: ProyectoService,
     private readonly contextoProyectoService: ContextoProyectoService,
     private readonly unidadGestionService: UnidadGestionService,
@@ -187,6 +191,11 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
         type: ColumnType.STRING
       },
       {
+        title: this.translate.instant(ANIO_KEY),
+        name: 'anio',
+        type: ColumnType.STRING
+      },
+      {
         title: this.translate.instant(FECHA_INICIO_KEY),
         name: 'fechaInicio',
         type: ColumnType.DATE
@@ -257,28 +266,29 @@ export class ProyectoGeneralListadoExportService extends AbstractTableExportFill
     const elementsRow: any[] = [];
     elementsRow.push(proyecto.id);
     elementsRow.push(proyecto.proyectosSGE);
-    elementsRow.push(proyecto.titulo);
+    elementsRow.push(this.languageService.getFieldValue(proyecto.titulo));
     elementsRow.push(proyecto.acronimo);
     elementsRow.push(proyecto.codigoExterno);
     elementsRow.push(proyecto.codigoInterno);
     elementsRow.push(proyecto.estado?.estado ? this.translate.instant(ESTADO_MAP.get(proyecto.estado?.estado)) : '');
     elementsRow.push(LuxonUtils.toBackend(proyecto.estado?.fechaEstado));
-    elementsRow.push(proyecto.ambitoGeografico?.nombre);
+    elementsRow.push(this.languageService.getFieldValue(proyecto.ambitoGeografico?.nombre));
     elementsRow.push(proyecto.unidadGestion?.nombre);
-    elementsRow.push(proyecto.modeloEjecucion?.nombre);
-    elementsRow.push(proyecto.finalidad?.nombre);
+    elementsRow.push(proyecto.modeloEjecucion?.nombre ? this.languageService.getFieldValue(proyecto?.modeloEjecucion?.nombre) : '');
+    elementsRow.push(this.languageService.getFieldValue(proyecto.finalidad?.nombre));
+    elementsRow.push(toString(proyecto.anio))
     elementsRow.push(LuxonUtils.toBackend(proyecto.fechaInicio));
     elementsRow.push(LuxonUtils.toBackend(proyecto.fechaFin));
     elementsRow.push(LuxonUtils.toBackend(proyecto.fechaFinDefinitiva));
     elementsRow.push(this.notIsNullAndNotUndefined(proyecto.confidencial) ? this.getI18nBooleanYesNo(proyecto.confidencial) : '');
     elementsRow.push(proyecto.clasificacionCVN ? this.translate.instant(CLASIFICACION_CVN_MAP.get(proyecto.clasificacionCVN)) : '');
     elementsRow.push(this.notIsNullAndNotUndefined(proyecto.coordinado) ? this.getI18nBooleanYesNo(proyecto.coordinado) : '');
-    elementsRow.push(proyecto.rolUniversidad?.nombre);
+    elementsRow.push(this.languageService.getFieldValue(proyecto.rolUniversidad?.nombre));
     elementsRow.push(this.notIsNullAndNotUndefined(proyecto.colaborativo) ? this.getI18nBooleanYesNo(proyecto.colaborativo) : '');
     elementsRow.push(this.notIsNullAndNotUndefined(proyecto.ivaDeducible) ? this.getI18nBooleanYesNo(proyecto.ivaDeducible) : '');
     elementsRow.push(this.percentPipe.transform(proyecto.iva?.iva / 100));
     elementsRow.push(proyecto.causaExencion ? this.translate.instant(CAUSA_EXENCION_MAP.get(proyecto.causaExencion)) : '');
-    elementsRow.push(proyecto.contextoProyecto?.areaTematica?.nombre);
+    elementsRow.push(this.languageService.getFieldValue(proyecto.contextoProyecto?.areaTematica?.nombre));
     return elementsRow;
   }
 }

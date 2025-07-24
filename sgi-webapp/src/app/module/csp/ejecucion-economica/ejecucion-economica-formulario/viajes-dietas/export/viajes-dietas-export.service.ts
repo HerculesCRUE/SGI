@@ -4,6 +4,7 @@ import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report
 import { ISgiGroupReport } from '@core/models/rep/sgi-group.report';
 import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { IDatoEconomico } from '@core/models/sge/dato-economico';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportService, IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { ReportService } from '@core/services/rep/report.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
@@ -32,7 +33,8 @@ export class ViajesDietasExportService
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    protected reportService: ReportService
+    protected reportService: ReportService,
+    private readonly languageService: LanguageService
   ) {
     super(reportService);
   }
@@ -51,10 +53,10 @@ export class ViajesDietasExportService
       }
 
       if (reportConfig.reportOptions.rowConfig.proyectoShow) {
-        row.elements.push(item.proyecto?.titulo ?? 'Sin clasificar');
+        row.elements.push(this.languageService.getFieldValue(item.proyecto?.titulo));
       }
 
-      row.elements.push(item.conceptoGasto?.nombre ?? 'Sin clasificar');
+      row.elements.push(this.languageService.getFieldValue(item.conceptoGasto?.nombre));
 
       if (reportConfig.reportOptions.rowConfig.clasificadoAutomaticamenteShow) {
         row.elements.push(this.getI18nBooleanYesNo(item.clasificadoAutomaticamente));

@@ -3,15 +3,19 @@ package org.crue.hercules.sgi.csp.integration;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.GastoProyectoController;
 import org.crue.hercules.sgi.csp.dto.GastoProyectoInput;
-import org.crue.hercules.sgi.csp.dto.GastoProyectoInput.EstadoGastoProyecto;
 import org.crue.hercules.sgi.csp.dto.GastoProyectoOutput;
+import org.crue.hercules.sgi.csp.model.EstadoGastoProyecto;
 import org.crue.hercules.sgi.csp.model.EstadoGastoProyecto.TipoEstadoGasto;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -38,9 +42,7 @@ class GastoProyectoIT extends BaseIT {
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-
-    return request;
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -102,7 +104,7 @@ class GastoProyectoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_ReturnsGastoProyectoOutput() throws Exception {
-    GastoProyectoInput toCreate = buildMockGastoProyectoInput(null);
+    GastoProyectoInput toCreate = buildMockGastoProyectoInput();
 
     final ResponseEntity<GastoProyectoOutput> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH,
@@ -122,8 +124,9 @@ class GastoProyectoIT extends BaseIT {
         .as("getImporteInscripcion()").isEqualTo(toCreate.getImporteInscripcion());
     Assertions.assertThat(created.getConceptoGasto().getId())
         .as("getConceptoGasto().getId()").isEqualTo(toCreate.getConceptoGastoId());
-    Assertions.assertThat(created.getObservaciones())
-        .as("getObservaciones()").isEqualTo(toCreate.getObservaciones());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getObservaciones(), Language.ES))
+        .as("getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toCreate.getObservaciones(), Language.ES));
     Assertions.assertThat(created.getEstado()).isNotNull();
   }
 
@@ -193,9 +196,13 @@ class GastoProyectoIT extends BaseIT {
   void update_ReturnsGastoProyectoOutput() throws Exception {
 
     Long gastoProyectoId = 1L;
-    GastoProyectoInput toUpdate = buildMockGastoProyectoInput(gastoProyectoId);
+
+    List<I18nFieldValueDto> observacionesGastoProyecto = new ArrayList<>();
+    observacionesGastoProyecto.add(new I18nFieldValueDto(Language.ES, "ha sido actualizado"));
+
+    GastoProyectoInput toUpdate = buildMockGastoProyectoInput();
     toUpdate.setEstado(null);
-    toUpdate.setObservaciones("ha sido actualizado");
+    toUpdate.setObservaciones(observacionesGastoProyecto);
 
     final ResponseEntity<GastoProyectoOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, toUpdate, "CSP-EJEC-E"), GastoProyectoOutput.class, gastoProyectoId);
@@ -209,17 +216,23 @@ class GastoProyectoIT extends BaseIT {
 
   }
 
-  private GastoProyectoInput buildMockGastoProyectoInput(Long gastoProyectoId) {
+  private GastoProyectoInput buildMockGastoProyectoInput() {
+    List<I18nFieldValueDto> observacionesGastoProyecto = new ArrayList<>();
+    observacionesGastoProyecto.add(new I18nFieldValueDto(Language.ES, "Testing create"));
+
+    List<I18nFieldValueDto> comentarioEstadoGastoProyecto = new ArrayList<>();
+    comentarioEstadoGastoProyecto.add(new I18nFieldValueDto(Language.ES, "Testing creating new GastoProyecto"));
+
     return GastoProyectoInput.builder()
         .conceptoGastoId(1L)
         .fechaCongreso(Instant.now())
         .gastoRef("00001")
         .proyectoId(1L)
-        .observaciones("Testing create")
+        .observaciones(observacionesGastoProyecto)
         .importeInscripcion(new BigDecimal(1111))
-        .estado(EstadoGastoProyecto.builder()
+        .estado(org.crue.hercules.sgi.csp.dto.GastoProyectoInput.EstadoGastoProyecto.builder()
             .estado(TipoEstadoGasto.VALIDADO)
-            .comentario("Testing creating new GastoProyecto")
+            .comentario(comentarioEstadoGastoProyecto)
             .fechaEstado(Instant.now())
             .build())
         .build();

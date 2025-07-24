@@ -1,14 +1,12 @@
-import { IApartado } from './apartado';
-import { IMemoria } from './memoria';
 import { ITipoDocumento } from './tipo-documento';
 
 export interface IRespuesta {
   /** ID */
   id: number;
   /** Memoria */
-  memoria: IMemoria;
+  memoriaId: number;
   /** apartado */
-  apartado: IApartado;
+  apartadoId: number;
   /** respuestaDocumento */
   tipoDocumento: ITipoDocumento;
   /** valor */

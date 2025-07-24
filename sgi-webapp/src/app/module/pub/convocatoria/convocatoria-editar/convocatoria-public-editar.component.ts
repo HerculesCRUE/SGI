@@ -46,20 +46,20 @@ export class ConvocatoriaPublicEditarComponent extends ActionComponent implement
     dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
     this.disableRegistrar$.next(true);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
   saveOrUpdate(): void {
     throw new Error('Method not implemented.');
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

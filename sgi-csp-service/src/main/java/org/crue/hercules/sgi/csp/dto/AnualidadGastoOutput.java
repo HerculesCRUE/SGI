@@ -2,8 +2,11 @@ package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Collection;
 
 import javax.validation.constraints.NotNull;
+
+import org.crue.hercules.sgi.csp.model.ConceptoGastoNombre;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,6 +55,6 @@ public class AnualidadGastoOutput implements Serializable {
   @Builder
   public static class ConceptoGasto implements Serializable {
     private Long id;
-    private String nombre;
+    private Collection<ConceptoGastoNombre> nombre;
   }
 }

@@ -7,9 +7,11 @@ import java.time.Period;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.dto.ProyectoFaseAvisoInput;
@@ -17,19 +19,29 @@ import org.crue.hercules.sgi.csp.dto.ProyectoFaseInput;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoFaseNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
+import org.crue.hercules.sgi.csp.model.EstadoProyectoComentario;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
 import org.crue.hercules.sgi.csp.model.ProyectoFaseAviso;
+import org.crue.hercules.sgi.csp.model.ProyectoFaseObservaciones;
+import org.crue.hercules.sgi.csp.model.ProyectoObservaciones;
+import org.crue.hercules.sgi.csp.model.ProyectoTitulo;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFaseRepository;
 import org.crue.hercules.sgi.csp.service.impl.ProyectoFaseServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -66,7 +78,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
   private ProyectoFaseService service;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     service = new ProyectoFaseServiceImpl(repository, proyectoRepository, modeloTipoFaseRepository, tipoFaseRepository,
         proyectoFaseAvisoService);
   }
@@ -78,7 +90,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
     Proyecto proyecto = generarMockProyecto(proyectoId);
     ProyectoFase proyectoFase = this.generarMockProyectoFase(1L);
     proyectoFase.setId(1L);
-    proyectoFase.setProyectoFaseAviso1(this.buildMockProyectoFaseAviso(1L, 1L));
+    proyectoFase.setProyectoFaseAviso1(this.buildMockProyectoFaseAviso(1L));
 
     ModeloTipoFase modeloTipoFase = generarMockModeloTipoFase(1L, proyectoFase, Boolean.TRUE);
     TipoFase tipoFase = modeloTipoFase.getTipoFase();
@@ -98,8 +110,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
             repository.findAll(ArgumentMatchers.<Specification<ProyectoFase>>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<ProyectoFase> page = new PageImpl<>(new ArrayList<ProyectoFase>(), pageable, 0);
-          return page;
+          return new PageImpl<>(new ArrayList<ProyectoFase>(), pageable, 0);
         });
 
     BDDMockito.given(this.tipoFaseRepository.findById(1L)).willReturn(Optional.of(tipoFase));
@@ -163,8 +174,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
             repository.findAll(ArgumentMatchers.<Specification<ProyectoFase>>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<ProyectoFase> page = new PageImpl<>(new ArrayList<ProyectoFase>(), pageable, 0);
-          return page;
+          return new PageImpl<>(new ArrayList<ProyectoFase>(), pageable, 0);
         });
 
     BDDMockito.given(repository.save(ArgumentMatchers.<ProyectoFase>any())).willReturn(proyectoFase);
@@ -197,7 +207,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.create(input))
         // then: throw exception as ProyectoId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Proyecto no puede ser null para realizar la acción sobre ProyectoFase");
+        .hasMessage("Identificador de Proyecto no puede ser nulo");
   }
 
   @Test
@@ -211,7 +221,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.create(input))
         // then: throw exception as TipoFaseId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Tipo Fase no puede ser null para realizar la acción sobre ProyectoFase");
+        .hasMessage("Identificador de Tipo Fase no puede ser nulo");
   }
 
   @Test
@@ -237,7 +247,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
     // when: create ProyectoFase
     // then: throw exception as Inicio > fechaFin
     Assertions.assertThatThrownBy(() -> service.create(input)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La fecha de fin debe ser posterior a la fecha de inicio");
+        .hasMessage("La fecha de inicio no puede ser superior a la fecha de fin");
   }
 
   @Test
@@ -270,8 +280,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.create(input))
         // then: throw exception as ModeloEjecucion not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Tipo Fase no disponible para el ModeloEjecucion '%s'",
-            "Proyecto sin modelo asignado");
+        .hasMessage("Tipo Fase no disponible para el Modelo Ejecución Proyecto sin modelo asignado");
   }
 
   @Test
@@ -288,8 +297,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.create(input))
         // then: throw exception as ModeloTipoFase not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Tipo Fase no disponible para el ModeloEjecucion '%s'",
-            "Proyecto sin modelo asignado");
+        .hasMessage("Tipo Fase no disponible para el Modelo Ejecución Proyecto sin modelo asignado");
   }
 
   @Test
@@ -314,7 +322,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.create(input))
         // then: throw exception as ModeloTipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoFase '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Modelo Tipo Fase no está activo para el modelo ejecución %s",
             modeloTipoFase.getTipoFase().getNombre(), proyecto.getModeloEjecucion().getNombre());
   }
 
@@ -341,7 +349,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.create(input))
         // then: throw exception as TipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFase '%s' no está activo", proyectoFase.getTipoFase().getNombre());
+        .hasMessage("%s de Tipo Fase no está activo", proyectoFase.getTipoFase().getNombre());
   }
 
   @Test
@@ -372,8 +380,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
             repository.findAll(ArgumentMatchers.<Specification<ProyectoFase>>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<ProyectoFase> page = new PageImpl<>(Arrays.asList(proyectoFaseExistente), pageable, 0);
-          return page;
+          return new PageImpl<>(Arrays.asList(proyectoFaseExistente), pageable, 0);
         });
 
     Assertions.assertThatThrownBy(
@@ -381,7 +388,8 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.create(input))
         // then: throw exception as date overlaps
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un registro para la misma Fase en ese rango de fechas");
+        .hasMessage(
+            "Proyecto Fase Tipo Fase ya está presente y tiene un periodo de vigencia que se solapa con el indicado");
   }
 
   @Test
@@ -415,8 +423,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
             repository.findAll(ArgumentMatchers.<Specification<ProyectoFase>>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<ProyectoFase> page = new PageImpl<>(new ArrayList<ProyectoFase>(), pageable, 0);
-          return page;
+          return new PageImpl<>(new ArrayList<ProyectoFase>(), pageable, 0);
         });
 
     BDDMockito.given(repository.save(ArgumentMatchers.<ProyectoFase>any()))
@@ -429,8 +436,9 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
     Assertions.assertThat(updated).as("isNotNull()").isNotNull();
     Assertions.assertThat(updated.getId()).as("getId()").isEqualTo(proyectoFase.getId());
     Assertions.assertThat(updated.getProyectoId()).as("getProyectoId()").isEqualTo(proyectoFase.getProyectoId());
-    Assertions.assertThat(updated.getObservaciones()).as("getObservaciones()")
-        .isEqualTo(proyectoFaseActualizado.getObservaciones());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getObservaciones(), Language.ES))
+        .as("getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(proyectoFaseActualizado.getObservaciones(), Language.ES));
     Assertions.assertThat(updated.getTipoFase().getId()).as("getTipoFase().getId()")
         .isEqualTo(proyectoFaseActualizado.getTipoFase().getId());
     Assertions.assertThat(updated.getFechaInicio()).as("getFechaInicio()")
@@ -471,8 +479,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
             repository.findAll(ArgumentMatchers.<Specification<ProyectoFase>>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<ProyectoFase> page = new PageImpl<>(new ArrayList<ProyectoFase>(), pageable, 0);
-          return page;
+          return new PageImpl<>(new ArrayList<ProyectoFase>(), pageable, 0);
         });
 
     BDDMockito.given(repository.save(ArgumentMatchers.<ProyectoFase>any()))
@@ -485,8 +492,9 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
     Assertions.assertThat(updated).as("isNotNull()").isNotNull();
     Assertions.assertThat(updated.getId()).as("getId()").isEqualTo(proyectoFase.getId());
     Assertions.assertThat(updated.getProyectoId()).as("getProyectoId()").isEqualTo(proyectoFase.getProyectoId());
-    Assertions.assertThat(updated.getObservaciones()).as("getObservaciones()")
-        .isEqualTo(input.getObservaciones());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getObservaciones(), Language.ES))
+        .as("getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(input.getObservaciones(), Language.ES));
     Assertions.assertThat(updated.getTipoFase().getId()).as("getTipoFase().getId()")
         .isEqualTo(input.getTipoFaseId());
     Assertions.assertThat(updated.getFechaInicio()).as("getFechaInicio()")
@@ -510,7 +518,9 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
   void update_WithoutProyectoId_ThrowsIllegalArgumentException() {
     // given: a ProyectoFase without ProyectoId
     ProyectoFaseInput input = generarMockProyectoFaseInput(1L);
-    input.setObservaciones("observaciones modificado");
+    List<I18nFieldValueDto> proyectoFaseObservaciones = new ArrayList<I18nFieldValueDto>();
+    proyectoFaseObservaciones.add(new I18nFieldValueDto(Language.ES, "observaciones modificado"));
+    input.setObservaciones(proyectoFaseObservaciones);
     input.setProyectoId(null);
 
     Assertions.assertThatThrownBy(
@@ -518,14 +528,19 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, input))
         // then: throw exception as ProyectoId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Proyecto no puede ser null para realizar la acción sobre ProyectoFase");
+        .hasMessage("Identificador de Proyecto no puede ser nulo");
   }
 
   @Test
   void update_WithoutTipoFaseId_ThrowsIllegalArgumentException() {
     // given: a ProyectoFase without TipoFaseId
+    Set<ProyectoFaseObservaciones> proyectoFaseObservaciones = new HashSet<>();
+    proyectoFaseObservaciones
+        .add(new ProyectoFaseObservaciones(Language.ES,
+            "observaciones modificado"));
+
     ProyectoFase proyectoFase = generarMockProyectoFase(1L);
-    proyectoFase.setObservaciones("observaciones modificado");
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
     proyectoFase.setTipoFase(null);
 
     ProyectoFaseInput input = generarMockProyectoFaseInput(1L);
@@ -536,7 +551,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, input))
         // then: throw exception as TipoFaseId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Tipo Fase no puede ser null para realizar la acción sobre ProyectoFase");
+        .hasMessage("Identificador de Tipo Fase no puede ser nulo");
   }
 
   @Test
@@ -569,7 +584,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, input))
         // then: throw exception as Inicio > fechaFin
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("La fecha de fin debe ser posterior a la fecha de inicio");
+        .hasMessage("La fecha de inicio no puede ser superior a la fecha de fin");
   }
 
   @Test
@@ -608,8 +623,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, input))
         // then: throw exception as ModeloEjecucion not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Tipo Fase no disponible para el ModeloEjecucion '%s'",
-            "Proyecto sin modelo asignado");
+        .hasMessage("Tipo Fase no disponible para el Modelo Ejecución Proyecto sin modelo asignado");
   }
 
   @Test
@@ -629,8 +643,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, input))
         // then: throw exception as ModeloTipoFase not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Tipo Fase no disponible para el ModeloEjecucion '%s'",
-            "Proyecto sin modelo asignado");
+        .hasMessage("Tipo Fase no disponible para el Modelo Ejecución Proyecto sin modelo asignado");
   }
 
   @Test
@@ -658,18 +671,23 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, input))
         // then: throw exception as ModeloTipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoFase '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Modelo Tipo Fase no está activo para el modelo ejecución %s",
             proyectoFase.getTipoFase().getNombre(), proyecto.getModeloEjecucion().getNombre());
   }
 
   @Test
   void update_WithDisabledTipoFase_ThrowsIllegalArgumentException() {
     // given: ProyectoFase TipoFase disabled
+    Set<ProyectoFaseObservaciones> proyectoFaseObservaciones = new HashSet<>();
+    proyectoFaseObservaciones
+        .add(new ProyectoFaseObservaciones(Language.ES,
+            "observaciones modificado"));
+
     Long proyectoId = 1L;
     Proyecto proyecto = generarMockProyecto(proyectoId);
     ProyectoFase proyectoFaseOriginal = generarMockProyectoFase(1L);
     ProyectoFase proyectoFase = generarMockProyectoFase(1L);
-    proyectoFase.setObservaciones("observaciones modificado");
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
     proyectoFase.getTipoFase().setActivo(Boolean.FALSE);
 
     ModeloTipoFase modeloTipoFase = generarMockModeloTipoFase(1L, proyectoFase, Boolean.TRUE);
@@ -691,7 +709,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, input))
         // then: throw exception as TipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFase '%s' no está activo", proyectoFase.getTipoFase().getNombre());
+        .hasMessage("%s de Tipo Fase no está activo", proyectoFase.getTipoFase().getNombre());
   }
 
   @Test
@@ -703,9 +721,14 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
     proyectoFaseExistente.setFechaInicio(Instant.parse("2020-10-18T00:00:00Z"));
     proyectoFaseExistente.setFechaFin(Instant.parse("2020-10-22T23:59:59Z"));
 
+    Set<ProyectoFaseObservaciones> proyectoFaseObservaciones = new HashSet<>();
+    proyectoFaseObservaciones
+        .add(new ProyectoFaseObservaciones(Language.ES,
+            "observaciones modificado"));
+
     ProyectoFase proyectoFaseOriginal = generarMockProyectoFase(1L);
     ProyectoFase proyectoFase = generarMockProyectoFase(1L);
-    proyectoFase.setObservaciones("observaciones modificado");
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
 
     ProyectoFaseInput input = this.generarMockProyectoFaseInput(1L);
 
@@ -722,8 +745,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
             repository.findAll(ArgumentMatchers.<Specification<ProyectoFase>>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer((InvocationOnMock invocation) -> {
           Pageable pageable = invocation.getArgument(1, Pageable.class);
-          Page<ProyectoFase> page = new PageImpl<>(Arrays.asList(proyectoFaseExistente), pageable, 0);
-          return page;
+          return new PageImpl<>(Arrays.asList(proyectoFaseExistente), pageable, 0);
         });
 
     Assertions.assertThatThrownBy(
@@ -731,7 +753,8 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, input))
         // then: throw exception as date overlaps
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un registro para la misma Fase en ese rango de fechas");
+        .hasMessage(
+            "Proyecto Fase Tipo Fase ya está presente y tiene un periodo de vigencia que se solapa con el indicado");
   }
 
   @Test
@@ -751,7 +774,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Long id = 1L;
 
@@ -780,7 +803,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findById_WithIdNotExist_ThrowsProyectoFaseNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsProyectoFaseNotFoundException() {
     // given: Ningun ProyectoFase con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -810,9 +833,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
           int toIndex = fromIndex + size;
           toIndex = toIndex > proyectosEntidadesConvocantes.size() ? proyectosEntidadesConvocantes.size() : toIndex;
           List<ProyectoFase> content = proyectosEntidadesConvocantes.subList(fromIndex, toIndex);
-          Page<ProyectoFase> pageResponse = new PageImpl<>(content, pageable, proyectosEntidadesConvocantes.size());
-          return pageResponse;
-
+          return new PageImpl<>(content, pageable, proyectosEntidadesConvocantes.size());
         });
 
     // when: Get page=3 with pagesize=10
@@ -839,9 +860,12 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
   private Proyecto generarMockProyecto(Long id) {
     EstadoProyecto estadoProyecto = generarMockEstadoProyecto(1L);
 
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombre-modelo-ejecucion"));
+
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
     modeloEjecucion.setId(1L);
-    modeloEjecucion.setNombre("nombre-modelo-ejecucion");
+    modeloEjecucion.setNombre(nombreModeloEjecucion);
 
     TipoFinalidad tipoFinalidad = new TipoFinalidad();
     tipoFinalidad.setId(1L);
@@ -849,11 +873,18 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
     TipoAmbitoGeografico tipoAmbitoGeografico = new TipoAmbitoGeografico();
     tipoAmbitoGeografico.setId(1L);
 
+    Set<ProyectoTitulo> tituloProyecto = new HashSet<>();
+    tituloProyecto.add(new ProyectoTitulo(Language.ES, "PRO" + (id != null ? id : 1)));
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto
+        .add(new ProyectoObservaciones(Language.ES, "observaciones-proyecto-" + String.format("%03d", id)));
+
     Proyecto proyecto = new Proyecto();
     proyecto.setId(id);
-    proyecto.setTitulo("PRO" + (id != null ? id : 1));
+    proyecto.setTitulo(tituloProyecto);
     proyecto.setCodigoExterno("cod-externo-" + (id != null ? String.format("%03d", id) : "001"));
-    proyecto.setObservaciones("observaciones-proyecto-" + String.format("%03d", id));
+    proyecto.setObservaciones(observacionesProyecto);
     proyecto.setUnidadGestionRef("2");
     proyecto.setFechaInicio(Instant.now());
     proyecto.setFechaFin(Instant.now());
@@ -877,9 +908,12 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
    * @return el objeto EstadoProyecto
    */
   private EstadoProyecto generarMockEstadoProyecto(Long id) {
+    Set<EstadoProyectoComentario> estadoProyectoComentario = new HashSet<>();
+    estadoProyectoComentario.add(new EstadoProyectoComentario(Language.ES, "estado-proyecto-" + String.format("%03d", id)));
+
     EstadoProyecto estadoProyecto = new EstadoProyecto();
     estadoProyecto.setId(id);
-    estadoProyecto.setComentario("estado-proyecto-" + String.format("%03d", id));
+    estadoProyecto.setComentario(estadoProyectoComentario);
     estadoProyecto.setEstado(EstadoProyecto.Estado.BORRADOR);
     estadoProyecto.setFechaEstado(Instant.now());
     estadoProyecto.setProyectoId(1L);
@@ -895,11 +929,16 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
    * @return el objeto TipoFase
    */
   private TipoFase generarMockTipoFase(Long id, Boolean activo) {
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-fase-" + String.format("%03d", id)));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcion-fase-" + String.format("%03d", id)));
 
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id);
-    tipoFase.setNombre("nombre-fase-" + String.format("%03d", id));
-    tipoFase.setDescripcion("descripcion-fase-" + String.format("%03d", id));
+    tipoFase.setNombre(nombreTipoFase);
+    tipoFase.setDescripcion(descripcionTipoFase);
     tipoFase.setActivo(activo);
 
     return tipoFase;
@@ -933,15 +972,20 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
    */
   private ProyectoFase generarMockProyectoFase(Long id) {
 
+    Set<ProyectoFaseObservaciones> proyectoFaseObservaciones = new HashSet<>();
+    proyectoFaseObservaciones
+        .add(new ProyectoFaseObservaciones(Language.ES,
+            "observaciones-proyecto-fase-" + (id == null ? "" : String.format("%03d", id))));
+
     // @formatter:off
     return ProyectoFase.builder()
         .id(id)
         .proyectoId(1L)
         .fechaInicio(Instant.parse("2020-10-19T00:00:00Z"))
         .fechaFin(Instant.parse("2020-10-20T00:00:00Z"))
-        .observaciones("observaciones-proyecto-fase-" + (id == null ? "" : String.format("%03d", id)))
-        .proyectoFaseAviso1(buildMockProyectoFaseAviso(1L, id))
-        .proyectoFaseAviso2(buildMockProyectoFaseAviso(2L, id))
+        .observaciones(proyectoFaseObservaciones)
+        .proyectoFaseAviso1(buildMockProyectoFaseAviso(1L))
+        .proyectoFaseAviso2(buildMockProyectoFaseAviso(2L))
         .tipoFase(generarMockTipoFase(1L, Boolean.TRUE))
         .build();
     // @formatter:on
@@ -952,19 +996,23 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
     tipoFase.setId(id == null ? 1 : id);
     tipoFase.setActivo(true);
 
+    List<I18nFieldValueDto> proyectoFaseObservaciones = new ArrayList<I18nFieldValueDto>();
+    proyectoFaseObservaciones.add(new I18nFieldValueDto(Language.ES,
+        "observaciones-proyecto-fase-" + String.format("%03d", id)));
+
     ProyectoFaseInput proyectoFase = new ProyectoFaseInput();
     proyectoFase.setProyectoId(id == null ? 1 : id);
     proyectoFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     proyectoFase.setFechaFin(Instant.parse("2020-10-20T23:59:59Z"));
-    proyectoFase.setObservaciones("observaciones-proyecto-fase-" + String.format("%03d", id));
-    proyectoFase.setAviso1(buildMockProyectoFaseAvisoInput(id));
-    proyectoFase.setAviso2(buildMockProyectoFaseAvisoInput(id));
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
+    proyectoFase.setAviso1(buildMockProyectoFaseAvisoInput());
+    proyectoFase.setAviso2(buildMockProyectoFaseAvisoInput());
     proyectoFase.setTipoFaseId(tipoFase.getId());
 
     return proyectoFase;
   }
 
-  private ProyectoFaseAviso buildMockProyectoFaseAviso(Long id, Long proyectoFaseId) {
+  private ProyectoFaseAviso buildMockProyectoFaseAviso(Long id) {
     return ProyectoFaseAviso.builder()
         .comunicadoRef("3333")
         .id(id)
@@ -972,7 +1020,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         .build();
   }
 
-  private ProyectoFaseAvisoInput buildMockProyectoFaseAvisoInput(Long proyectoFaseId) {
+  private ProyectoFaseAvisoInput buildMockProyectoFaseAvisoInput() {
     List<ProyectoFaseAvisoInput.Destinatario> destinatarios = new LinkedList<>();
     destinatarios.add(ProyectoFaseAvisoInput.Destinatario.builder()
         .email("testing@um.com")
@@ -983,7 +1031,7 @@ class ProyectoFaseServiceTest extends BaseServiceTest {
         .asunto("asunto")
         .contenido("contenido mail")
         .destinatarios(destinatarios)
-        .incluirIpsProyecto(new Boolean(Boolean.TRUE))
+        .incluirIpsProyecto(true)
         .fechaEnvio(Instant.now().plus(15, ChronoUnit.MINUTES))
         .build();
   }

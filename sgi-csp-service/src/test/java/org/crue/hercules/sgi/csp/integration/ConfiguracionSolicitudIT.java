@@ -4,14 +4,20 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -157,7 +163,7 @@ class ConfiguracionSolicitudIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "observaciones=ke=-00";
+    String filter = "observaciones.value=ke=-00";
 
     Long convocatoriaId = 2L;
 
@@ -176,11 +182,14 @@ class ConfiguracionSolicitudIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
-    Assertions.assertThat(documentos.get(0).getObservaciones()).as("get(0).getObservaciones()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(documentos.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()")
         .isEqualTo("observaciones-" + String.format("%03d", 8));
-    Assertions.assertThat(documentos.get(1).getObservaciones()).as("get(1).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(documentos.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())")
         .isEqualTo("observaciones-" + String.format("%03d", 7));
-    Assertions.assertThat(documentos.get(2).getObservaciones()).as("get(2).getObservaciones()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(documentos.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones()")
         .isEqualTo("observaciones-" + String.format("%03d", 6));
 
   }
@@ -193,7 +202,7 @@ class ConfiguracionSolicitudIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "observaciones=ke=-00";
+    String filter = "observaciones.value=ke=-00";
 
     Long convocatoriaId = 2L;
 
@@ -243,12 +252,19 @@ class ConfiguracionSolicitudIT extends BaseIT {
    */
   private ConfiguracionSolicitud generarMockConfiguracionSolicitud(Long configuracionSolicitudId, Long convocatoriaId,
       Long convocatoriaFaseId) {
+
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-1"));
+
     // @formatter:off
     TipoFase tipoFase = TipoFase.builder()
         .id(convocatoriaFaseId)
-        .nombre("nombre-1")
+        .nombre(nombreTipoFase)
         .activo(Boolean.TRUE)
         .build();
+
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    obsConvocatoriaFase.add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones"));
 
     ConvocatoriaFase convocatoriaFase = ConvocatoriaFase.builder()
         .id(convocatoriaFaseId)
@@ -256,7 +272,7 @@ class ConfiguracionSolicitudIT extends BaseIT {
         .tipoFase(tipoFase)
         .fechaInicio(Instant.parse("2020-10-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-10-15T00:00:00Z"))
-        .observaciones("observaciones")
+        .observaciones(obsConvocatoriaFase)
         .build();
 
     ConfiguracionSolicitud configuracionSolicitud = ConfiguracionSolicitud.builder()

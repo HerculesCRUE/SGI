@@ -1,12 +1,16 @@
 package org.crue.hercules.sgi.csp.service;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.RequerimientoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.AlegacionRequerimiento;
+import org.crue.hercules.sgi.csp.model.AlegacionRequerimientoObservaciones;
 import org.crue.hercules.sgi.csp.repository.AlegacionRequerimientoRepository;
 import org.crue.hercules.sgi.csp.repository.RequerimientoJustificacionRepository;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -19,7 +23,7 @@ import org.springframework.context.annotation.Import;
  * AlegacionRequerimientoServiceTest
  */
 @Import({ AlegacionRequerimientoService.class, ApplicationContextSupport.class })
-public class AlegacionRequerimientoServiceTest extends BaseServiceTest {
+class AlegacionRequerimientoServiceTest extends BaseServiceTest {
 
   @MockBean
   private AlegacionRequerimientoRepository alegacionRequerimientoRepository;
@@ -130,7 +134,7 @@ public class AlegacionRequerimientoServiceTest extends BaseServiceTest {
   @Test
   void update_idIsNull_ThrowsIllegalArgumentException() {
     // given: Un AlegacionRequerimiento con un id null
-    AlegacionRequerimiento AlegacionRequerimientoToUpdate = generarMockAlegacionRequerimiento(
+    AlegacionRequerimiento alegacionRequerimientoToUpdate = generarMockAlegacionRequerimiento(
         null, 1L);
 
     // when: Actualizamos un AlegacionRequerimiento con id null
@@ -138,7 +142,7 @@ public class AlegacionRequerimientoServiceTest extends BaseServiceTest {
     Assertions
         .assertThatThrownBy(
             () -> alegacionRequerimientoService
-                .update(AlegacionRequerimientoToUpdate))
+                .update(alegacionRequerimientoToUpdate))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
@@ -183,10 +187,13 @@ public class AlegacionRequerimientoServiceTest extends BaseServiceTest {
 
   private AlegacionRequerimiento generarMockAlegacionRequerimiento(Long id,
       String justificanteReintegro, String observaciones, Long requerimientoJustificacionId) {
+    Set<AlegacionRequerimientoObservaciones> observacionesAlegacionRequerimiento = new HashSet<>();
+    observacionesAlegacionRequerimiento.add(new AlegacionRequerimientoObservaciones(Language.ES, observaciones));
+
     return AlegacionRequerimiento.builder()
         .id(id)
         .justificanteReintegro(justificanteReintegro)
-        .observaciones(observaciones)
+        .observaciones(observacionesAlegacionRequerimiento)
         .requerimientoJustificacionId(requerimientoJustificacionId)
         .build();
   }

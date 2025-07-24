@@ -67,12 +67,12 @@ export class ConvocatoriaBaremacionListadoComponent extends AbstractTablePaginat
     private router: Router,
     private activatedRoute: ActivatedRoute
   ) {
-    super();
+    super(translate);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.initFlexProperties();
     this.initFormGroup();
   }
@@ -170,7 +170,7 @@ export class ConvocatoriaBaremacionListadoComponent extends AbstractTablePaginat
     return isConvocatoriaBaremacionEditable(convocatoriaBaremacion);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_BAREMACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

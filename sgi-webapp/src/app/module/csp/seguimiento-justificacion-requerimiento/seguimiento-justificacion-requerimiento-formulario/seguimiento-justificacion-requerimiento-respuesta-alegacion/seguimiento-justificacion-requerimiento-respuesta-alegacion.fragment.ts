@@ -7,6 +7,7 @@ import { AlegacionRequerimientoService } from '@core/services/csp/alegacion-requ
 import { IncidenciaDocumentacionRequerimientoService } from '@core/services/csp/incidencia-documentacion-requerimiento/incidencia-documentacion-requerimiento.service';
 import { RequerimientoJustificacionService } from '@core/services/csp/requerimiento-justificacion/requerimiento-justificacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { BehaviorSubject, from, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 
@@ -33,7 +34,7 @@ export class SeguimientoJustificacionRequerimientoRespuestaAlegacionFragment ext
   private buildRequerimientoJustificacionFormGroup(): FormGroup {
     return new FormGroup({
       numRequerimiento: new FormControl({ value: '', disabled: true }),
-      tipoRequerimiento: new FormControl({ value: '', disabled: true }),
+      tipoRequerimiento: new FormControl({ value: [], disabled: true }),
     });
   }
 
@@ -64,7 +65,7 @@ export class SeguimientoJustificacionRequerimientoRespuestaAlegacionFragment ext
       interesesReintegrados: new FormControl(null),
       fechaReintegro: new FormControl(null),
       justificanteReintegro: new FormControl(null, Validators.maxLength(250)),
-      observaciones: new FormControl(null, Validators.maxLength(2000)),
+      observaciones: new FormControl([], I18nValidators.maxLength(2000)),
     });
 
     if (this.isEdit() && !this.canEdit) {

@@ -56,7 +56,7 @@ export class EvaluadorConflictosInteresListadoComponent extends FragmentComponen
     actionService: EvaluadorActionService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.CONFLICTO_INTERES, actionService);
+    super(actionService.FRAGMENT.CONFLICTO_INTERES, actionService, translate);
     this.listadoFragment = this.fragment as EvaluadorConflictosInteresFragment;
 
     this.displayedColumns = ['persona', 'nombreCompleto', 'acciones'];
@@ -65,7 +65,7 @@ export class EvaluadorConflictosInteresListadoComponent extends FragmentComponen
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.listadoFragment.conflictos$.subscribe((conflictoInteres) => {
       this.datasource.data = conflictoInteres;
@@ -87,7 +87,7 @@ export class EvaluadorConflictosInteresListadoComponent extends FragmentComponen
       };
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONFLICTO_INTERES_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

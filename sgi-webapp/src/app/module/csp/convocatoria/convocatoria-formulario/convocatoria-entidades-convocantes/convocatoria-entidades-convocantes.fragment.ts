@@ -74,6 +74,7 @@ export class ConvocatoriaEntidadesConvocantesFragment extends Fragment {
       }),
       catchError((error) => {
         this.logger.error(error);
+        data.empresa = { id: data.entidadConvocante.value.entidad.id } as IEmpresa;
         return of(data);
       })
     );

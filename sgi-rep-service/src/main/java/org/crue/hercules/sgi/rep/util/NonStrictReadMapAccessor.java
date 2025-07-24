@@ -9,8 +9,6 @@ import org.springframework.util.Assert;
 
 import com.deepoove.poi.render.compute.ReadMapAccessor;
 
-import lombok.var;
-
 /*
  * Ignores non-existing map entries and just returns null.
  * This is necessary to allow empty entries to be handled with the null-safe operator to show a default value instead.

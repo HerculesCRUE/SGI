@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap3_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.5 Data referring to biological agents, hazardous chemicals, radioactive substances and/or nanoparticles"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "The classification of the type of biological agents likely to cause any type of infection, allergy or toxicity in humans to which personnel are or may be exposed is done in accordance with the table and classification criteria contained in the <a href='https://www.boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#anii' target='_blank'>Annex II of Royal Decree 664/1997</a> and its updates. <p>If an agent is not included in the table, its risk of infection should be estimated taking into account the following definitions:</p><br><ul><li><b>Group 1:</b> one that is unlikely to cause disease in humans, animals and/or the environment.</li><li><b>Group 2:</b> one that can cause disease in humans, animals and/or the environment and may pose a danger to exposed people, but is unlikely to spread to the community and there is effective prophylaxis or treatment.</li><li><b>Group 3:</b> one that can cause serious illness in humans, animals and/or the environment and presents a serious danger to exposed people, with the risk of spreading to the community and there is effective prophylaxis or treatment.</li><li><b>Group 4:</b> one that causes a serious disease in humans, animals and/or the environment, poses a serious danger to exposed people, with a high probability of spreading to the community and without effective prophylaxis or treatment.</li></ul>In case of doubt between two groups, it should be classified in the group of <b>higher danger</b>.<p>The classification of non-zoonotic animal pathogens is done according to the criteria of the World Organisation for Animal Health (OIE, 2010a,b).</p><p>The classification of plant pathogens is made according to the criteria of Royal Decree 739/2021 on protective measures against plant pests.</p><p>OIE (WORLD ORGANISATION FOR ANIMAL HEALTH) (2010a). Handbook on Import Risk Analysis for Animals and Animal Products. Volume 1: Introduction and qualitative risk analysis, Second Edition. OIE, Paris, France.</p><p>OIE (WORLD ORGANISATION FOR ANIMAL HEALTH) (2010b). Handbook on Import Risk Analysis for Animals and Animal Products. Volume 2: Quantitative Risk Assessment, Second Edition. OIE, Paris, France.</p>"
+      }
+    ]
+  }
+]

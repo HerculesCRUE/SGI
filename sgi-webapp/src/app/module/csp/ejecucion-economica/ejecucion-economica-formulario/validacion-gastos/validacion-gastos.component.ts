@@ -15,7 +15,8 @@ import { EjecucionEconomicaActionService } from '../../ejecucion-economica.actio
 import { GastoDetalleModalData as GastoDetalleEditarModalData, ValidacionGastosEditarModalComponent } from '../../modals/validacion-gastos-editar-modal/validacion-gastos-editar-modal.component';
 import { ValidacionGastosHistoricoModalComponent } from '../../modals/validacion-gastos-historico-modal/validacion-gastos-historico-modal.component';
 import { GastoDetalleModalData, ValidacionGastosModalComponent } from '../../modals/validacion-gastos-modal/validacion-gastos-modal.component';
-import { EstadoTipo, ESTADO_TIPO_MAP, ValidacionGasto, ValidacionGastosFragment } from './validacion-gastos.fragment';
+import { ESTADO_TIPO_MAP, EstadoTipo, ValidacionGasto, ValidacionGastosFragment } from './validacion-gastos.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'sgi-validacion-gastos',
@@ -40,6 +41,7 @@ export class ValidacionGastosComponent extends FragmentComponent implements OnIn
     private matDialog: MatDialog,
     private gastoService: GastoService,
     private gastoProyectoService: GastoProyectoService,
+    private readonly languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.VALIDACION_GASTOS, actionService);
     this.formPart = this.fragment as ValidacionGastosFragment;
@@ -55,11 +57,11 @@ export class ValidacionGastosComponent extends FragmentComponent implements OnIn
         case 'anualidad':
           return gasto.anualidad;
         case 'proyecto':
-          return gasto.proyecto?.titulo;
+          return this.languageService.getFieldValue(gasto.proyecto?.titulo);
         case 'clasificacionSGE':
           return gasto.clasificacionSGE?.nombre;
         case 'conceptoGasto':
-          return gasto.conceptoGasto?.nombre;
+          return this.languageService.getFieldValue(gasto.conceptoGasto?.nombre);
         case 'aplicacionPresupuestaria':
           return gasto.partidaPresupuestaria;
         case 'codigoEconomico':
@@ -73,9 +75,13 @@ export class ValidacionGastosComponent extends FragmentComponent implements OnIn
     this.subscriptions.push(this.formPart.gastos$.subscribe(
       (data) => {
         data.sort((a, b) => {
+          const conceptoGastoA = this.languageService.getFieldValue(a.conceptoGasto?.nombre);
+          const conceptoGastoB = this.languageService.getFieldValue(b.conceptoGasto?.nombre);
+          const proyectoTituloA = this.languageService.getFieldValue(a.proyecto?.titulo);
+          const proyectoTituloB = this.languageService.getFieldValue(b.proyecto?.titulo);
           return b.anualidad.localeCompare(a.anualidad)
-            || a.proyecto?.titulo.localeCompare(b.proyecto?.titulo)
-            || a.conceptoGasto?.nombre.localeCompare(b.conceptoGasto?.nombre)
+            || proyectoTituloA.localeCompare(proyectoTituloB)
+            || conceptoGastoA.localeCompare(conceptoGastoB)
             || a.clasificacionSGE?.nombre.localeCompare(b.clasificacionSGE?.nombre)
             || a.partidaPresupuestaria.localeCompare(b.partidaPresupuestaria)
             || `${a.codigoEconomico?.id} ${a.codigoEconomico?.nombre ? '-' : ''} ${a.codigoEconomico?.nombre}`
@@ -162,5 +168,7 @@ export class ValidacionGastosComponent extends FragmentComponent implements OnIn
       fechaHasta: new FormControl()
     });
   }
+
+  protected setupI18N(): void { }
 
 }

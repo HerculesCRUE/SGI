@@ -25,6 +25,7 @@ import { concatMap, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxj
 import { CSP_ROUTE_NAMES } from '../../csp-route-names';
 import { PROYECTO_ANUALIDAD_ROUTE_NAMES } from '../../proyecto-anualidad/proyecto-anualidad-route-names';
 import { PROYECTO_ROUTE_NAMES } from '../../proyecto/proyecto-route-names';
+import { LanguageService } from '@core/services/language.service';
 
 const MSG_NOTIFICADO_SUCCESS = marker('msg.csp.notificacion-presupuesto-sge.success');
 const MSG_CONTINUE_NOTIFICACION_PRESUPUESTO_KEY = marker('msg.continue.notificacion.presupuesto');
@@ -64,7 +65,8 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
     private router: Router,
     private dialogService: DialogService,
     private route: ActivatedRoute,
-    private readonly proyectoSgeService: ProyectoSgeService
+    private readonly proyectoSgeService: ProyectoSgeService,
+    private readonly languageService: LanguageService
   ) {
     super();
     this.fxFlexProperties = new FxFlexProperties();
@@ -98,7 +100,7 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
       (element: IProyectoAnualidadNotificacionSge, property: string) => {
         switch (property) {
           case 'proyectoAnualidad.proyecto.titulo':
-            return element.proyectoTitulo;
+            return this.languageService.getFieldValue(element.proyectoTitulo);
           case 'proyectoAnualidad.proyecto.acronimo':
             return element.proyectoAcronimo;
           case 'proyectoAnualidad.proyecto.fechaInicio':
@@ -162,7 +164,7 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
     const filter = new RSQLSgiRestFilter('proyectoAnualidad.anio', SgiRestFilterOperator.EQUALS, controls.anualidad.value?.toString());
 
     filter
-      .and('proyectoAnualidad.proyecto.titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloProyecto.value)
+      .and('proyectoAnualidad.proyecto.titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.tituloProyecto.value)
       .and('proyectoAnualidad.proyecto.estado.estado', SgiRestFilterOperator.EQUALS, controls.estado.value)
       .and('proyectoSgeRef', SgiRestFilterOperator.LIKE_ICASE, controls.numeroIdentificacionSge.value)
       .and('proyectoAnualidad.proyecto.fechaInicio', SgiRestFilterOperator.GREATHER_OR_EQUAL,
@@ -335,4 +337,5 @@ export class NotificacionPresupuestoSgeListadoComponent extends AbstractTablePag
     );
   }
 
+  protected setupI18N(): void { }
 }

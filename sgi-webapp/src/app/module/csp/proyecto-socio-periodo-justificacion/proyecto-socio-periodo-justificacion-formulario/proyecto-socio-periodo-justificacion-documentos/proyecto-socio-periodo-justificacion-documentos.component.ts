@@ -5,6 +5,7 @@ import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree'
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IProyectoSocioPeriodoJustificacionDocumento } from '@core/models/csp/proyecto-socio-periodo-justificacion-documento';
 import { ITipoDocumento } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
@@ -12,9 +13,11 @@ import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-pro
 import { Group } from '@core/services/action-service';
 import { TipoDocumentoService } from '@core/services/csp/tipo-documento.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService, triggerDownloadToUser } from '@core/services/sgdoc/documento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { IsEntityValidator } from '@core/validators/is-entity-validador';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestSort, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
@@ -90,7 +93,6 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
   private transformer = (node: NodeDocumentoProyecto, level: number) => node;
 
   hasChild = (_: number, node: NodeDocumentoProyecto) => node.childs.length > 0;
-  compareTipoDocumento = (option: ITipoDocumento, value: ITipoDocumento) => option?.id === value?.id;
 
   get readonly(): boolean {
     return this.actionService.readonly;
@@ -103,9 +105,10 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
     private tipoDocumentoService: TipoDocumentoService,
     private snackBar: SnackBarService,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.DOCUMENTOS, actionService);
+    super(actionService.FRAGMENT.DOCUMENTOS, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -127,7 +130,7 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subcription = this.formPart.documentos$.subscribe(
       (documentos) => {
         this.dataSource.data = documentos;
@@ -138,10 +141,10 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
     );
     this.subscriptions.push(subcription);
     this.group.load(new FormGroup({
-      nombre: new FormControl('', Validators.required),
+      nombre: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(250)]),
       fichero: new FormControl(null, Validators.required),
       tipoDocumento: new FormControl(null, IsEntityValidator.isValid),
-      comentarios: new FormControl('', Validators.maxLength(2_000)),
+      comentarios: new FormControl([], I18nValidators.maxLength(2_000)),
       visible: new FormControl(true, [Validators.required])
     }));
     this.group.initialize();
@@ -155,7 +158,7 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
   }
 
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_SOCIO_PERIODO_JUSTIFICACION_DOCUMENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -367,6 +370,10 @@ export class ProyectoSocioPeriodoJustificacionDocumentosComponent extends Fragme
     this.viewMode = VIEW_MODE.NEW;
     this.viewingNode = newNode;
     this.loadDetails(this.viewingNode);
+  }
+
+  getI18nValue(i18nFieldValue: I18nFieldValue[]): string {
+    return this.languageService.getFieldValue(i18nFieldValue);
   }
 
 }

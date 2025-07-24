@@ -1,0 +1,109 @@
+[
+  {
+    "key": "ap3_5_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.5.2 Zelulen kultiboak"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.ap3_4_2.tareasAgentesBiologicosRadio || formState.mainModel.ap3_4.ap3_4_2.tareasAgentesBiologicosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "type": "table-crud",
+        "key": "cultivosCelularesTable",
+        "templateOptions": {
+          "entity": "zelula kultiboa",
+          "gender": "male"
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Zelula kultiboa"
+          },
+          "fieldGroup": [
+            {
+              "key": "tipoCultivo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Kultibo mota",
+                "order": 10,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "Giza edo tximino jatorriko zelula lerro ongi karakterizatuak"
+                  },
+                  {
+                    "value": "2",
+                    "label": "Giza edo tximino jatorrikoak ez diren zelula lerro ongi karakterizatuak, giza patogenoekin infekzio endogenoa izateko arrisku txikia dutenak"
+                  },
+                  {
+                    "value": "3",
+                    "label": "Erabat karakterizatu edo egiaztatu gabeko zelula lerroak edo anduiak"
+                  },
+                  {
+                    "value": "4",
+                    "label": "Patogeno endogenodun zelulak eta nahita infektatutako zelulak"
+                  },
+                  {
+                    "value": "5",
+                    "label": "Giza edo tximino jatorriko odol zelulak, linfoideak, nerbio ehuna, etab."
+                  },
+                  {
+                    "value": "6",
+                    "label": "Esperimentazio prozesuko beste substantzia bat"
+                  },
+                  {
+                    "value": "7",
+                    "label": "Giza edo tximino jatorria ez duten odol zelulak, linfoideak, nerbio ehuna, etab."
+                  }
+                ]
+              }
+            },
+            {
+              "key": "descripcionCaracteristicas",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Deskribapena/Ezaugarriak",
+                "order": 20
+              }
+            },
+            {
+              "key": "grupoRiesgo",
+              "type": "select",
+              "templateOptions": {
+                "label": "Arrisku taldea",
+                "order": 30,
+                "options": [
+                  {
+                    "value": "1",
+                    "label": "1. taldea"
+                  },
+                  {
+                    "value": "2",
+                    "label": "2. taldea"
+                  },
+                  {
+                    "value": "3",
+                    "label": "3. taldea"
+                  },
+                  {
+                    "value": "4",
+                    "label": "4. taldea"
+                  }
+                ]
+              }
+            },
+            {
+              "key": "volumenMaximo",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Aldi bakoitzean erabiltzen den gehienezko lagin bolumena edo animalia kopurua",
+                "order": 40
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

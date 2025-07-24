@@ -2,13 +2,18 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.exceptions.SolicitudProyectoSocioPeriodoJustificacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.service.ProgramaService;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoSocioPeriodoJustificacionService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -90,8 +95,9 @@ class SolicitudProyectoSocioPeriodoJustificacionControllerTest extends BaseContr
             .value(solicitudProyectoSocioPeriodoJustificaciones.get(0).getMesFinal()))
         .andExpect(MockMvcResultMatchers.jsonPath("$[0].fechaInicio").value("2020-10-10T00:00:00Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("$[0].fechaFin").value("2020-11-20T23:59:59Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$[0].observaciones")
-            .value(solicitudProyectoSocioPeriodoJustificaciones.get(0).getObservaciones()))
+        .andExpect(MockMvcResultMatchers.jsonPath("$[0].observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(
+                solicitudProyectoSocioPeriodoJustificaciones.get(0).getObservaciones(), Language.ES)))
 
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(5))
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].solicitudProyectoSocioId").value(solicitudProyectoSocioId))
@@ -103,8 +109,9 @@ class SolicitudProyectoSocioPeriodoJustificacionControllerTest extends BaseContr
             .value(solicitudProyectoSocioPeriodoJustificaciones.get(1).getMesFinal()))
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].fechaInicio").value("2020-10-10T00:00:00Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("$[1].fechaFin").value("2020-11-20T23:59:59Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("$[1].observaciones")
-            .value(solicitudProyectoSocioPeriodoJustificaciones.get(1).getObservaciones()));
+        .andExpect(MockMvcResultMatchers.jsonPath("$[1].observaciones[0].value")
+            .value(I18nHelper.getValueForLanguage(
+                solicitudProyectoSocioPeriodoJustificaciones.get(1).getObservaciones(), Language.ES)));
   }
 
   @Test
@@ -154,7 +161,7 @@ class SolicitudProyectoSocioPeriodoJustificacionControllerTest extends BaseContr
         .andExpect(MockMvcResultMatchers.jsonPath("mesFinal").value(2))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaInicio").value("2020-10-10T00:00:00Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaFin").value("2020-11-20T23:59:59Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones").value("observaciones-1"));
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value").value("observaciones-1"));
   }
 
   @Test
@@ -195,6 +202,8 @@ class SolicitudProyectoSocioPeriodoJustificacionControllerTest extends BaseContr
    */
   private SolicitudProyectoSocioPeriodoJustificacion generarMockSolicitudProyectoSocioPeriodoJustificacion(Long id,
       Integer mesInicial, Integer mesFinal, Long solicitudProyectoId) {
+    Set<SolicitudProyectoSocioPeriodoJustificacionObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new SolicitudProyectoSocioPeriodoJustificacionObservaciones(Language.ES, "observaciones-" + id));
     SolicitudProyectoSocioPeriodoJustificacion solicitudProyectoSocioPeriodoJustificacion = new SolicitudProyectoSocioPeriodoJustificacion();
     solicitudProyectoSocioPeriodoJustificacion.setId(id);
     solicitudProyectoSocioPeriodoJustificacion
@@ -204,7 +213,7 @@ class SolicitudProyectoSocioPeriodoJustificacionControllerTest extends BaseContr
     solicitudProyectoSocioPeriodoJustificacion.setMesFinal(mesFinal);
     solicitudProyectoSocioPeriodoJustificacion.setFechaInicio(Instant.parse("2020-10-10T00:00:00Z"));
     solicitudProyectoSocioPeriodoJustificacion.setFechaFin(Instant.parse("2020-11-20T23:59:59Z"));
-    solicitudProyectoSocioPeriodoJustificacion.setObservaciones("observaciones-" + id);
+    solicitudProyectoSocioPeriodoJustificacion.setObservaciones(observaciones);
 
     return solicitudProyectoSocioPeriodoJustificacion;
   }

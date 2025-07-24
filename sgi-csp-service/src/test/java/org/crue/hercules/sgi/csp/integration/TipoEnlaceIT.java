@@ -2,10 +2,16 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceNombre;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -43,9 +49,13 @@ class TipoEnlaceIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_ReturnsTipoEnlace() throws Exception {
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "nombre-1"));
 
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcion-1"));
     // given: new TipoEnlace
-    TipoEnlace data = TipoEnlace.builder().nombre("nombre-1").descripcion("descripcion-1").activo(Boolean.TRUE).build();
+    TipoEnlace data = TipoEnlace.builder().nombre(nombre).descripcion(descripcion).activo(Boolean.TRUE).build();
 
     // when: create TipoEnlace
     final ResponseEntity<TipoEnlace> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
@@ -64,9 +74,13 @@ class TipoEnlaceIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void update_ReturnsTipoEnlace() throws Exception {
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "nombre-updated"));
 
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcion-updated"));
     // given: existing TipoEnlace to be updated
-    TipoEnlace data = TipoEnlace.builder().id(1L).nombre("nombre-updated").descripcion("descripcion-updated")
+    TipoEnlace data = TipoEnlace.builder().id(1L).nombre(nombre).descripcion(descripcion)
         .activo(Boolean.TRUE).build();
 
     // when: update TipoEnlace
@@ -95,8 +109,10 @@ class TipoEnlaceIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     TipoEnlace tipoEnlaceDisabled = response.getBody();
     Assertions.assertThat(tipoEnlaceDisabled.getId()).as("getId()").isEqualTo(idTipoEnlace);
-    Assertions.assertThat(tipoEnlaceDisabled.getNombre()).as("getNombre()").isEqualTo("nombre-1");
-    Assertions.assertThat(tipoEnlaceDisabled.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoEnlaceDisabled.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoEnlaceDisabled.getDescripcion(), Language.ES))
+        .as("getDescripcion()").isEqualTo("descripcion-1");
     Assertions.assertThat(tipoEnlaceDisabled.getActivo()).as("getActivo()").isEqualTo(Boolean.TRUE);
   }
 
@@ -113,8 +129,10 @@ class TipoEnlaceIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     TipoEnlace tipoEnlaceDisabled = response.getBody();
     Assertions.assertThat(tipoEnlaceDisabled.getId()).as("getId()").isEqualTo(idTipoEnlace);
-    Assertions.assertThat(tipoEnlaceDisabled.getNombre()).as("getNombre()").isEqualTo("nombre-1");
-    Assertions.assertThat(tipoEnlaceDisabled.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoEnlaceDisabled.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoEnlaceDisabled.getDescripcion(), Language.ES))
+        .as("getDescripcion()").isEqualTo("descripcion-1");
     Assertions.assertThat(tipoEnlaceDisabled.getActivo()).as("getActivo()").isEqualTo(Boolean.FALSE);
   }
 
@@ -130,8 +148,10 @@ class TipoEnlaceIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     TipoEnlace responseData = response.getBody();
     Assertions.assertThat(responseData.getId()).as("getId()").isEqualTo(id);
-    Assertions.assertThat(responseData.getNombre()).as("getNombre()").isEqualTo("nombre-1");
-    Assertions.assertThat(responseData.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getDescripcion(), Language.ES))
+        .as("getDescripcion()").isEqualTo("descripcion-1");
     Assertions.assertThat(responseData.getActivo()).as("getActivo()").isEqualTo(Boolean.TRUE);
   }
 
@@ -147,8 +167,8 @@ class TipoEnlaceIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TENL-V")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     // when: find TipoEnlace
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
@@ -166,11 +186,14 @@ class TipoEnlaceIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(responseData.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(responseData.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(responseData.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
 
@@ -186,8 +209,8 @@ class TipoEnlaceIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TENL-V")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     // when: find TipoEnlace
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + "/todos").queryParam("s", sort)
@@ -205,11 +228,14 @@ class TipoEnlaceIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(responseData.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(responseData.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(responseData.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
 

@@ -1,14 +1,17 @@
 package org.crue.hercules.sgi.eti.dto;
 
 import java.io.Serializable;
+import java.util.Collection;
 
-import lombok.AllArgsConstructor;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
+import org.crue.hercules.sgi.eti.repository.custom.CustomActaRepositoryImpl;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-@AllArgsConstructor
 public class MemoriaEvaluada implements Serializable {
 
   /**
@@ -20,8 +23,32 @@ public class MemoriaEvaluada implements Serializable {
   private Long evaluacionId;
   private String numReferencia;
   private String personaRef;
-  private String dictamen;
+  private Long dictamenId;
   private Integer version;
-  private String tipoEvaluacion;
-  private String titulo;
+  private Long tipoEvaluacionId;
+  private Collection<PeticionEvaluacionTitulo> titulo;
+
+  /**
+   * Constructor especializado para la query
+   * {@link CustomActaRepositoryImpl#findAllMemoriasEvaluadasSinRevMinimaByActaId(Long)}
+   * 
+   * @param id
+   * @param evaluacionId
+   * @param numReferencia
+   * @param dictamenId
+   * @param version
+   * @param tipoEvaluacionId
+   * @param peticionEvaluacion
+   */
+  public MemoriaEvaluada(Long id, Long evaluacionId, String numReferencia, Long dictamenId, Integer version,
+      Long tipoEvaluacionId, PeticionEvaluacion peticionEvaluacion) {
+    this.id = id;
+    this.evaluacionId = evaluacionId;
+    this.numReferencia = numReferencia;
+    this.personaRef = peticionEvaluacion.getPersonaRef();
+    this.dictamenId = dictamenId;
+    this.version = version;
+    this.tipoEvaluacionId = tipoEvaluacionId;
+    this.titulo = peticionEvaluacion.getTitulo();
+  }
 }

@@ -8,18 +8,18 @@ import org.crue.hercules.sgi.eti.exceptions.DictamenNotFoundException;
 import org.crue.hercules.sgi.eti.exceptions.EvaluacionNotFoundException;
 import org.crue.hercules.sgi.eti.model.Dictamen;
 import org.crue.hercules.sgi.eti.model.Evaluacion;
-import org.crue.hercules.sgi.eti.model.TipoMemoria;
+import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.repository.DictamenRepository;
 import org.crue.hercules.sgi.eti.repository.EvaluacionRepository;
 import org.crue.hercules.sgi.eti.repository.specification.DictamenSpecifications;
 import org.crue.hercules.sgi.eti.service.DictamenService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +44,7 @@ public class DictamenServiceImpl implements DictamenService {
   @Transactional
   public Dictamen create(Dictamen dictamen) {
     log.debug("Petición a create Dictamen : {} - start", dictamen);
-    Assert.notNull(dictamen.getId(), "Dictamen id no puede ser null para crear un nuevo dictamen");
+    AssertHelper.idNotNull(dictamen.getId(), Dictamen.class);
 
     return dictamenRepository.save(dictamen);
   }
@@ -89,7 +89,7 @@ public class DictamenServiceImpl implements DictamenService {
   @Transactional
   public void delete(Long id) throws DictamenNotFoundException {
     log.debug("Petición a delete Dictamen : {}  - start", id);
-    Assert.notNull(id, "El id de Dictamen no puede ser null.");
+    AssertHelper.idNotNull(id, Dictamen.class);
     if (!dictamenRepository.existsById(id)) {
       throw new DictamenNotFoundException(id);
     }
@@ -122,7 +122,7 @@ public class DictamenServiceImpl implements DictamenService {
   public Dictamen update(final Dictamen dictamenActualizar) {
     log.debug("update(Dictamen dictamenActualizar) - start");
 
-    Assert.notNull(dictamenActualizar.getId(), "Dictamen id no puede ser null para actualizar un dictamen");
+    AssertHelper.idNotNull(dictamenActualizar.getId(), Dictamen.class);
 
     return dictamenRepository.findById(dictamenActualizar.getId()).map(dictamen -> {
       dictamen.setNombre(dictamenActualizar.getNombre());
@@ -206,7 +206,7 @@ public class DictamenServiceImpl implements DictamenService {
         } else {
           listaDictamenes = dictamenRepository.findByTipoEvaluacionId(evaluacion.getTipoEvaluacion().getId());
 
-          if (evaluacion.getMemoria().getTipoMemoria().getTipo().equals(TipoMemoria.Tipo.RATIFICACION)
+          if (evaluacion.getMemoria().getTipo() == Memoria.Tipo.RATIFICACION
               || evaluacion.getVersion() > 1) {
             listaDictamenes.removeIf(dictamen -> dictamen.getId().equals(Dictamen.Tipo.DESFAVORABLE.getId()));
           }

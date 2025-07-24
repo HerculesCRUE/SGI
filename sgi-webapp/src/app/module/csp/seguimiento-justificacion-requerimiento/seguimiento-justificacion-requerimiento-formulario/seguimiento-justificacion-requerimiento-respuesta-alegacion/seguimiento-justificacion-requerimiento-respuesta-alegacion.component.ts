@@ -8,6 +8,7 @@ import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IAlegacionRequerimiento } from '@core/models/csp/alegacion-requerimiento';
 import { IIncidenciaDocumentacionRequerimiento } from '@core/models/csp/incidencia-documentacion-requerimiento';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -42,14 +43,15 @@ export class SeguimientoJustificacionRequerimientoRespuestaAlegacionComponent
     readonly actionService: SeguimientoJustificacionRequerimientoActionService,
     private readonly translate: TranslateService,
     private matDialog: MatDialog,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.RESPUESTA_ALEGACION, actionService);
+    super(actionService.FRAGMENT.RESPUESTA_ALEGACION, actionService, translate);
     this.formPart = this.fragment as SeguimientoJustificacionRequerimientoRespuestaAlegacionFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.initIncidenciaDocumentacionTable();
   }
 
@@ -59,6 +61,19 @@ export class SeguimientoJustificacionRequerimientoRespuestaAlegacionComponent
 
   private initIncidenciaDocumentacionTable(): void {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sortingDataAccessor =
+      (wrapper: StatusWrapper<IIncidenciaDocumentacionRequerimiento>, property: string) => {
+        switch (property) {
+          case 'nombreDocumento':
+            return this.languageService.getFieldValue(wrapper.value.nombreDocumento);
+          case 'incidencia':
+            return this.languageService.getFieldValue(wrapper.value.incidencia);
+          case 'alegacion':
+            return this.languageService.getFieldValue(wrapper.value.alegacion);
+          default:
+            return wrapper[property];
+        }
+      };
     this.dataSource.sort = this.sort;
     this.getIncidenciaDocumentacionTableData();
   }
@@ -88,7 +103,7 @@ export class SeguimientoJustificacionRequerimientoRespuestaAlegacionComponent
     return (this.paginator.pageSize * this.paginator.pageIndex) + rowIndex;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       REQUERIMIENTO_JUSTIFICANTE_REINTEGRO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

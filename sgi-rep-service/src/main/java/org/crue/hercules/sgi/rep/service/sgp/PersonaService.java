@@ -51,7 +51,7 @@ public class PersonaService extends SgiApiBaseService {
           }, id).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     log.debug("findById({}) - end", id);
     return persona;
@@ -77,7 +77,7 @@ public class PersonaService extends SgiApiBaseService {
           }, id).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     log.debug("findByPersonaId({}) - end", id);
     return datosContacto;
@@ -103,7 +103,7 @@ public class PersonaService extends SgiApiBaseService {
           }, id).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     log.debug("getDatosAcademicos({}) - end", id);
     return datosAcademicos;
@@ -129,7 +129,7 @@ public class PersonaService extends SgiApiBaseService {
           }, id).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     log.debug("getVinculacion({}) - end", id);
     return vinculacion;

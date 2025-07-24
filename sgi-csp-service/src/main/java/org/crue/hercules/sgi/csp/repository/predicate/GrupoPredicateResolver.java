@@ -24,6 +24,7 @@ import org.crue.hercules.sgi.csp.model.GrupoPalabraClave;
 import org.crue.hercules.sgi.csp.model.GrupoResponsableEconomico;
 import org.crue.hercules.sgi.csp.model.Grupo_;
 import org.crue.hercules.sgi.csp.repository.specification.GrupoSpecifications;
+import org.crue.hercules.sgi.csp.util.GrupoAuthorityHelper;
 import org.crue.hercules.sgi.csp.util.PredicateResolverUtil;
 import org.crue.hercules.sgi.framework.data.jpa.domain.Auditable_;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLPredicateResolver;
@@ -45,7 +46,9 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
     /* Fecha modificación */
     FECHA_MODIFICACION("fechaModificacion"),
     /* Miembro equipo */
-    MIEMBRO_EQUIPO("miembroEquipo");
+    MIEMBRO_EQUIPO("miembroEquipo"),
+    /* Modulo investigador */
+    MODULO_INVESTIGADOR("isModuloInvestigador");
 
     private String code;
 
@@ -68,13 +71,16 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
   }
 
   private final SgiConfigProperties sgiConfigProperties;
+  private final GrupoAuthorityHelper authorityHelper;
 
-  private GrupoPredicateResolver(SgiConfigProperties sgiConfigProperties) {
+  private GrupoPredicateResolver(SgiConfigProperties sgiConfigProperties, GrupoAuthorityHelper authorityHelper) {
     this.sgiConfigProperties = sgiConfigProperties;
+    this.authorityHelper = authorityHelper;
   }
 
-  public static GrupoPredicateResolver getInstance(SgiConfigProperties sgiConfigProperties) {
-    return new GrupoPredicateResolver(sgiConfigProperties);
+  public static GrupoPredicateResolver getInstance(SgiConfigProperties sgiConfigProperties,
+      GrupoAuthorityHelper authorityHelper) {
+    return new GrupoPredicateResolver(sgiConfigProperties, authorityHelper);
   }
 
   @Override
@@ -102,6 +108,8 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
         return buildByFechaModificacion(node, root, criteriaBuilder);
       case MIEMBRO_EQUIPO:
         return buildByMiembroEquipo(node, root, query, criteriaBuilder);
+      case MODULO_INVESTIGADOR:
+        return buildByModuloInvestigador(node, root, query, criteriaBuilder);
       default:
         return null;
     }
@@ -184,6 +192,25 @@ public class GrupoPredicateResolver implements SgiRSQLPredicateResolver<Grupo> {
 
     List<String> personaRefs = Arrays.asList(node.getArguments().get(0).split(SPLIT_DELIMITER));
     return GrupoSpecifications.byAnyPersonaInGrupoEquipo(personaRefs).toPredicate(root, query, cb);
+  }
+
+  private Predicate buildByModuloInvestigador(ComparisonNode node, Root<Grupo> root, CriteriaQuery<?> query,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    boolean isModuloInvestigador = Boolean.parseBoolean(node.getArguments().get(0));
+
+    Predicate predicateReturn = cb.conjunction();
+    if (isModuloInvestigador) {
+      if (authorityHelper.isUserInvestigador()) {
+        predicateReturn = authorityHelper.getSpecificationsUserInvestigadorGruposCanView().toPredicate(root, query, cb);
+      } else {
+        predicateReturn = cb.disjunction();
+      }
+    }
+
+    return predicateReturn;
   }
 
 }

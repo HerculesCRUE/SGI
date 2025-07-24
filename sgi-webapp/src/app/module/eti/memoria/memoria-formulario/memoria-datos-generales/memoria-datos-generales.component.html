@@ -30,8 +30,8 @@
       <div fxFlex="15">
         <mat-form-field>
           <mat-label>{{'eti.memoria.tipo' | translate}}</mat-label>
-          <sgi-select-entity #selectTipoMemoria formControlName="tipoMemoria" required
-            [resetOnChange]="selectComite.selectionChange" [options]="tiposMemoria$ | async"></sgi-select-entity>
+          <sgi-select-enum formControlName="tipoMemoria" required [resetOnChange]="selectComite.selectionChange"
+            [enumMap]="tiposMemoria$ | async"></sgi-select-enum>
           <mat-error *ngIf="formGroup.controls.tipoMemoria.errors?.required">
             {{'error.required.entity' | translate:msgParamTipoMemoriaEntity}}
           </mat-error>
@@ -69,8 +69,8 @@
         <div fxFlex="95.5">
           <mat-form-field>
             <mat-label>{{'eti.memoria.titulo-descriptivo' | translate}}</mat-label>
-            <textarea matInput [placeholder]="'eti.memoria.titulo-descriptivo' | translate"
-              formControlName="titulo"></textarea>
+            <sgi-i18n-textarea matInput [placeholder]="'eti.memoria.titulo-descriptivo' | translate"
+              formControlName="titulo"></sgi-i18n-textarea>
             <sgi-field-info matSuffix [visible]="true" message="{{textoInfoTituloDescriptivo}}">
             </sgi-field-info>
             <mat-error *ngIf="formGroup.controls.titulo.hasError('maxlength')">
@@ -88,9 +88,8 @@
 
           <mat-form-field>
             <mat-label>{{'eti.memoria.indicar-subsanacion.comentario' | translate}}</mat-label>
-            <textarea matInput formControlName="comentarioSubsanacion" type="text" cdkTextareaAutosize
-              #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1">
-              </textarea>
+            <sgi-i18n-textarea formControlName="comentarioSubsanacion">
+            </sgi-i18n-textarea>
           </mat-form-field>
         </div>
       </ng-container>

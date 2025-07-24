@@ -1,23 +1,30 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
 
 import org.crue.hercules.sgi.csp.exceptions.TipoFinalidadNotFoundException;
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity;
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
-import org.crue.hercules.sgi.csp.model.TipoFinalidad_;
 import org.crue.hercules.sgi.csp.repository.TipoFinalidadRepository;
 import org.crue.hercules.sgi.csp.repository.specification.TipoFinalidadSpecifications;
 import org.crue.hercules.sgi.csp.service.TipoFinalidadService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -26,13 +33,12 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Validated
 public class TipoFinalidadServiceImpl implements TipoFinalidadService {
 
+  private final Validator validator;
   private final TipoFinalidadRepository repository;
-
-  public TipoFinalidadServiceImpl(TipoFinalidadRepository repository) {
-    this.repository = repository;
-  }
 
   /**
    * Guarda la entidad {@link TipoFinalidad}.
@@ -42,12 +48,11 @@ public class TipoFinalidadServiceImpl implements TipoFinalidadService {
    */
   @Override
   @Transactional
-  public TipoFinalidad create(TipoFinalidad tipoFinalidad) {
+  @Validated({ BaseEntity.Create.class })
+  public TipoFinalidad create(@Valid TipoFinalidad tipoFinalidad) {
     log.debug("create(TipoFinalidad tipoFinalidad) - start");
 
-    Assert.isNull(tipoFinalidad.getId(), "Id tiene que ser null para crear TipoFinalidad");
-    Assert.isTrue(!(repository.findByNombreAndActivoIsTrue(tipoFinalidad.getNombre()).isPresent()),
-        "Ya existe un TipoFinalidad activo con el nombre '" + tipoFinalidad.getNombre() + "'");
+    AssertHelper.idIsNull(tipoFinalidad.getId(), TipoFinalidad.class);
 
     tipoFinalidad.setActivo(Boolean.TRUE);
     TipoFinalidad returnValue = repository.save(tipoFinalidad);
@@ -65,14 +70,11 @@ public class TipoFinalidadServiceImpl implements TipoFinalidadService {
    */
   @Override
   @Transactional
-  public TipoFinalidad update(TipoFinalidad tipoFinalidad) {
+  @Validated({ BaseEntity.Update.class })
+  public TipoFinalidad update(@Valid TipoFinalidad tipoFinalidad) {
     log.debug("update(TipoFinalidad tipoFinalidad) - start");
 
-    Assert.notNull(tipoFinalidad.getId(), "Id no puede ser null para actualizar TipoFinalidad");
-    repository.findByNombreAndActivoIsTrue(tipoFinalidad.getNombre())
-        .ifPresent(tipoFinalidadExistente -> Assert.isTrue(
-            Objects.equals(tipoFinalidad.getId(), tipoFinalidadExistente.getId()),
-            "Ya existe un TipoFinalidad activo con el nombre '" + tipoFinalidadExistente.getNombre() + "'"));
+    AssertHelper.idNotNull(tipoFinalidad.getId(), TipoFinalidad.class);
 
     return repository.findById(tipoFinalidad.getId()).map(data -> {
       data.setNombre(tipoFinalidad.getNombre());
@@ -95,15 +97,20 @@ public class TipoFinalidadServiceImpl implements TipoFinalidadService {
   public TipoFinalidad enable(Long id) {
     log.debug("enable(Long id) - start");
 
-    Assert.notNull(id, "TipoFinalidad id no puede ser null para reactivar un TipoFinalidad");
+    AssertHelper.idNotNull(id, TipoFinalidad.class);
 
     return repository.findById(id).map(tipoFinalidad -> {
       if (Boolean.TRUE.equals(tipoFinalidad.getActivo())) {
         return tipoFinalidad;
       }
 
-      Assert.isTrue(!(repository.findByNombreAndActivoIsTrue(tipoFinalidad.getNombre()).isPresent()),
-          "Ya existe un TipoFinalidad activo con el nombre '" + tipoFinalidad.getNombre() + "'");
+      // Invocar validaciones asociadas a OnActivar
+      Set<ConstraintViolation<TipoFinalidad>> result = validator.validate(
+          tipoFinalidad,
+          BaseActivableEntity.OnActivar.class);
+      if (!result.isEmpty()) {
+        throw new ConstraintViolationException(result);
+      }
 
       tipoFinalidad.setActivo(true);
       TipoFinalidad returnValue = repository.save(tipoFinalidad);
@@ -123,7 +130,7 @@ public class TipoFinalidadServiceImpl implements TipoFinalidadService {
   public TipoFinalidad disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "TipoFinalidad id no puede ser null para desactivar un TipoFinalidad");
+    AssertHelper.idNotNull(id, TipoFinalidad.class);
 
     return repository.findById(id).map(tipoFinalidad -> {
       if (Boolean.FALSE.equals(tipoFinalidad.getActivo())) {
@@ -151,7 +158,7 @@ public class TipoFinalidadServiceImpl implements TipoFinalidadService {
         .and(TipoFinalidadSpecifications.activos())
         .and(SgiRSQLJPASupport.toSpecification(query));
 
-    List<TipoFinalidad> returnValue = repository.findAll(specs, Sort.by(Sort.Direction.ASC, TipoFinalidad_.NOMBRE));
+    List<TipoFinalidad> returnValue = repository.findAll(specs);
     log.debug("findAll(String query, Pageable paging) - end");
     return returnValue;
   }

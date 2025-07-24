@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { ITipoProteccion } from '@core/models/pii/tipo-proteccion';
 import { environment } from '@env';
 import {
@@ -54,8 +55,18 @@ export class TipoProteccionService extends _TipoProteccionServiceMixinBase {
     );
   }
 
-  private tiposProteccionSearchByNombre(nombre: string, padreId?: number): SgiRestFindOptions {
-    const filter = new RSQLSgiRestFilter('nombre', SgiRestFilterOperator.EQUALS, `${nombre}`);
+  private tiposProteccionSearchByNombre(nombre: I18nFieldValue[], padreId?: number): SgiRestFindOptions {
+    let filter = null;
+    nombre.forEach(n => {
+      if (filter == null) {
+        filter = new RSQLSgiRestFilter('nombre.value', SgiRestFilterOperator.EQUALS, n.value);
+        filter.and('nombre.lang', SgiRestFilterOperator.EQUALS, n.lang.code.toUpperCase());
+      } else {
+        filter.and('nombre.value', SgiRestFilterOperator.EQUALS, n.value);
+        filter.and('nombre.lang', SgiRestFilterOperator.EQUALS, n.lang.code.toUpperCase());
+      }
+    });
+
     if (padreId) {
       filter.and('padreId', SgiRestFilterOperator.EQUALS, `${padreId}`);
     }
@@ -114,28 +125,11 @@ export class TipoProteccionService extends _TipoProteccionServiceMixinBase {
    * @param nombre Nombre del {@link ITipoProteccion}
    * @returns Entidad {@link ITipoProteccion} encontrada.
    */
-  finTiposProteccionByNombre(idTipoProteccion: number, nombre: string): Observable<SgiRestListResult<ITipoProteccion>> {
+  finTiposProteccionByNombre(idTipoProteccion: number, nombre: I18nFieldValue[]): Observable<SgiRestListResult<ITipoProteccion>> {
 
     return this.find<ITipoProteccionResponse, ITipoProteccion>(
       `${this.endpointUrl}/${idTipoProteccion}/subtipos`,
       this.tiposProteccionSearchByNombre(nombre),
-      TIPO_PROTECCION_RESPONSE_CONVERTER
-    );
-  }
-
-  /**
-   * Busca los {@link ITipoProteccion} que sean Subtipos con el nombre y el padre pasados por parámetro.
-   *
-   * @param nombre Nombre del {@link ITipoProteccion}
-   * @param padreId Id del {@link ITipoProteccion} padre
-   * @returns Entidades {@link ITipoProteccion} encontradas.
-   */
-  findSubtiposProteccionByNombre(nombre: string, padreId: number):
-    Observable<SgiRestListResult<ITipoProteccion>> {
-
-    return this.find<ITipoProteccionResponse, ITipoProteccion>(
-      `${this.endpointUrl}/`,
-      this.tiposProteccionSearchByNombre(nombre, padreId),
       TIPO_PROTECCION_RESPONSE_CONVERTER
     );
   }

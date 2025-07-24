@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IGenericEmailText } from '../com/generic-email-text';
 import { ISendEmailTask } from '../tp/send-email-task';
@@ -13,7 +14,7 @@ export interface IProyectoHito {
   /** Fecha  */
   fecha: DateTime;
   /** Comentario */
-  comentario: string;
+  comentario: I18nFieldValue[];
 
   aviso: {
     email: IGenericEmailText;

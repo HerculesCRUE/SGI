@@ -1,4 +1,5 @@
 import { TipoPartida } from "@core/enums/tipo-partida";
+import { I18nFieldValueResponse } from "@core/i18n/i18n-field-response";
 
 export interface IProyectoPartidaPresupuestariaResponse {
   id: number;
@@ -6,6 +7,6 @@ export interface IProyectoPartidaPresupuestariaResponse {
   convocatoriaPartidaId: number;
   codigo: string;
   partidaRef: string;
-  descripcion: string;
+  descripcion: I18nFieldValueResponse[];
   tipoPartida: TipoPartida;
 }

@@ -8,7 +8,7 @@ export class PersonaNombreCompletoPipe implements PipeTransform {
 
   transform(personas: IPersona | IPersona[]): string {
     if (Array.isArray(personas)) {
-      return personas.map(persona => this.getNombreCompleto(persona)).join(', ');
+      return personas.map(persona => this.getNombreCompleto(persona)).filter(nombre => nombre !== '').join(', ');
     } else {
       return this.getNombreCompleto(personas);
     }

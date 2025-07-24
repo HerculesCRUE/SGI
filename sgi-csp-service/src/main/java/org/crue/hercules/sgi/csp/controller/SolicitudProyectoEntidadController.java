@@ -52,7 +52,7 @@ public class SolicitudProyectoEntidadController {
    * @return {@link SolicitudProyectoEntidad} correspondiente al id.
    */
   @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public SolicitudProyectoEntidad findById(@PathVariable Long id) {
     log.debug("findById(Long id) - start");
     SolicitudProyectoEntidad returnValue = service.findById(id);
@@ -70,7 +70,7 @@ public class SolicitudProyectoEntidadController {
    *         paginadas y filtradas.
    */
   @GetMapping("/{id}/solicitudproyectopresupuestos")
-  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<Page<SolicitudProyectoPresupuesto>> findAllBySolicitudProyectoEntidad(@PathVariable Long id,
       @RequestParam(name = "q", required = false) String query, @RequestPageable(sort = "s") Pageable paging) {
     log.debug("findAllSolicitudProyectoPresupuestoEntidad(Long id, String query, Pageable paging) - start");

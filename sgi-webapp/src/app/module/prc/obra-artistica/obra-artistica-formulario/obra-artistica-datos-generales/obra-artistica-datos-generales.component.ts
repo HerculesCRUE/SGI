@@ -160,4 +160,6 @@ export class ObraArtisticaDatosGeneralesComponent extends FragmentComponent impl
       }
     ));
   }
+
+  protected setupI18N(): void { }
 }

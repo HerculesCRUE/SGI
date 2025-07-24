@@ -22,7 +22,7 @@
                 <button mat-icon-button disabled></button>
                 <mat-checkbox class="checkbox" color="primary" [disabled]="node.disabled"
                   [checked]="node === checkedNode" (change)="onCheckNode(node, $event)">
-                  {{node.areaTematica.value.nombre}}
+                  <sgi-i18n-tree-field [field]="node.areaTematica.value.nombre"></sgi-i18n-tree-field>
                 </mat-checkbox>
               </li>
             </mat-tree-node>
@@ -37,12 +37,12 @@
                   </button>
 
                   <mat-label *ngIf="node === rootNodeConvocatoria">
-                    {{node.areaTematica.value.nombre}}
+                    <sgi-i18n-tree-field [field]="node.areaTematica.value.nombre"></sgi-i18n-tree-field>
                   </mat-label>
 
                   <mat-checkbox *ngIf="node !== rootNodeConvocatoria" class="checkbox" color="primary"
                     [disabled]="node.disabled" [checked]="node === checkedNode" (change)="onCheckNode(node, $event)">
-                    {{node.areaTematica.value.nombre}}
+                    <sgi-i18n-tree-field [field]="node.areaTematica.value.nombre"></sgi-i18n-tree-field>
                   </mat-checkbox>
                 </div>
                 <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">

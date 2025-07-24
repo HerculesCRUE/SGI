@@ -3,13 +3,18 @@ package org.crue.hercules.sgi.csp.integration;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ProyectoConceptoGastoController;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ProyectoConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoCodigoEc;
+import org.crue.hercules.sgi.csp.model.ProyectoConceptoGastoObservaciones;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -78,7 +83,8 @@ class ProyectoConceptoGastoIT extends BaseIT {
         .isNull();
     Assertions.assertThat(proyectoConceptoGasto.getImporteMaximo()).as("getImporteMaximo()")
         .isEqualTo(1000);
-    Assertions.assertThat(proyectoConceptoGasto.getObservaciones()).as("getObservaciones()").isEqualTo("testing 1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoConceptoGasto.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("testing 1");
     Assertions.assertThat(proyectoConceptoGasto.getFechaFin()).as("getFechaFin()")
         .isEqualTo(Instant.parse("2022-01-30T00:00:00Z"));
     Assertions.assertThat(proyectoConceptoGasto.getFechaInicio()).as("getFechaInicio()")
@@ -249,7 +255,10 @@ class ProyectoConceptoGastoIT extends BaseIT {
     String roles = "CSP-PRO-E";
     Long idProyectoConceptoGasto = 1L;
     ProyectoConceptoGasto toUpdate = generarMockProyectoConceptoGasto(1L);
-    toUpdate.setObservaciones("observaciones actualizadas");
+    Set<ProyectoConceptoGastoObservaciones> observacionesProyectoConceptoGasto = new HashSet<>();
+    observacionesProyectoConceptoGasto
+        .add(new ProyectoConceptoGastoObservaciones(Language.ES, "observaciones actualizadas"));
+    toUpdate.setObservaciones(observacionesProyectoConceptoGasto);
 
     final ResponseEntity<ProyectoConceptoGasto> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
@@ -426,13 +435,15 @@ class ProyectoConceptoGastoIT extends BaseIT {
   }
 
   private ProyectoConceptoGasto generarMockProyectoConceptoGasto(Long id) {
+    Set<ProyectoConceptoGastoObservaciones> observacionesProyectoConceptoGasto = new HashSet<>();
+    observacionesProyectoConceptoGasto.add(new ProyectoConceptoGastoObservaciones(Language.ES, "create test"));
     return ProyectoConceptoGasto.builder()
         .conceptoGasto(ConceptoGasto.builder().id(1L).build())
         .fechaInicio(Instant.parse("2021-11-01T00:00:00Z"))
         .fechaFin(Instant.parse("2021-12-30T23:59:59Z"))
         .id(id)
         .proyectoId(1L)
-        .observaciones("create test")
+        .observaciones(observacionesProyectoConceptoGasto)
         .build();
   }
 }

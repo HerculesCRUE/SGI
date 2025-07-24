@@ -2,8 +2,10 @@ package org.crue.hercules.sgi.csp.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 
 import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoObservaciones;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,7 +28,7 @@ public class ProyectoPeriodoJustificacionOutput implements Serializable {
   private Instant fechaInicioPresentacion;
   private Instant fechaFinPresentacion;
   private TipoJustificacion tipoJustificacion;
-  private String observaciones;
+  private Collection<ProyectoPeriodoSeguimientoObservaciones> observaciones;
   private Long convocatoriaPeriodoJustificacionId;
   private Instant fechaPresentacionJustificacion;
   private String identificadorJustificacion;

@@ -1,0 +1,130 @@
+[
+  {
+    "key": "ap4_6_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.3 Ikertzaile taldearekiko lotura akademikoa"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Parte hartuko duten ikasleek lotura akademikoa izango dute ikertzaile taldearekin?</p>"
+      },
+      {
+        "key": "vinculacionAcademicaEquipoInvestigadorRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Zehaztu zer lotura izango duten, eta justifikatu zergatik den beharrezkoa aukeraketa hori.",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "key": "especificarVinculacion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'",
+        "templateOptions": {
+          "label": "Zehaztu",
+          "placeholder": "Zehaztu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "<p>Zer neurri berezi hartuko dira, ikertzaile taldearekin lotura akademikoa duten ikasleen borondatezkotasuna babesteko?</p>",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Parte hartzaileak lortzeko unean, garrantzitsua da ahalik eta gehien txikitzea ikasleei egin dakiekeen presioa, bai irakasleek egin diezaieketena, baita taldeak egin dezakeena ere.</p><ul><li><strong>Parte hartzaileak zuzenean biltzea:</strong> irakasleak berak lortzen ditu ikasgelan edo ikasleekin hitz eginda, pizgarri akademikoak eskainiz, etab. Ez da gomendagarria, hertsadura gertatzen baita. </li><li><strong>Ikasleekin lotura akademikorik ez duen hirugarren bat tartean sartzea: </strong> parte hartzaileak zuzenean lortu behar direnean, komeni da irakaslea arduratu ordez, ikasleekin loturarik ez duen hirugarren bat arduratzea. </li><li><strong>Zeharkako bideak erabiltzea: </strong> parte hartzaileak iragarki, liburuxka eta abarren bidez lortzea. </li></ul>",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "template": "<p>Neurriak</p>",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'"
+      },
+      {
+        "key": "medidasEspecialesEquipoInvestigadorRadio",
+        "type": "radio",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si'",
+        "className": "vertical-radio",
+        "required": true,
+        "templateOptions": {
+          "label": "Aukerak:",
+          "options": [
+            {
+              "value": "reclutamientoIndirecto",
+              "label": "Parte hartzaileak zuzenean biltzea: ziurtatu 3.4.1 atalean deskribatuta dagoela"
+            },
+            {
+              "value": "interposicionTerceraPersona",
+              "label": "Hirugarren batek esku hartzea baimena lortzeko, datu pertsonalak bildu eta kodetzeko eta ikasleekin zuzeneko tratua izateko probak edo esperimentuak egitean. Haren zereginak identifikatu, eta horiek azaltzeko dokumentu bat emango zaio, eta horiek egiteko konpromisoa sinatuko du, hala badagokio. Deskribatu 3.4.1 atalean."
+            },
+            {
+              "value": "otras",
+              "label": "Beste batzuk"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Zehaztu",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si' || !model.medidasEspecialesEquipoInvestigadorRadio || model.medidasEspecialesEquipoInvestigadorRadio !== 'otras'"
+      },
+      {
+        "key": "especificarOtras",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.vinculacionAcademicaEquipoInvestigadorRadio || model.vinculacionAcademicaEquipoInvestigadorRadio !== 'si' || !model.medidasEspecialesEquipoInvestigadorRadio || model.medidasEspecialesEquipoInvestigadorRadio !== 'otras'",
+        "templateOptions": {
+          "label": "Zehaztu",
+          "placeholder": "Zehaztu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "<p>Ikertzaile taldeko kideren batek ikasleak kalifikatuko ditu?</p>"
+      },
+      {
+        "key": "calificacionEstudiantesRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

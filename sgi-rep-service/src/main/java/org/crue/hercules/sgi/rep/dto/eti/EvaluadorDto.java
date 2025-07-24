@@ -2,7 +2,9 @@ package org.crue.hercules.sgi.rep.dto.eti;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.List;
 
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.crue.hercules.sgi.rep.dto.BaseRestDto;
 
 import lombok.AllArgsConstructor;
@@ -23,7 +25,7 @@ public class EvaluadorDto extends BaseRestDto {
   private ComiteDto comite;
   private Instant fechaAlta;
   private Instant fechaBaja;
-  private String resumen;
+  private List<I18nFieldValueDto> resumen;
   private String personaRef;
   private Boolean activo;
 

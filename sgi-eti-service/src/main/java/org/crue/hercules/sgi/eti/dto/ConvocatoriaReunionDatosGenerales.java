@@ -2,10 +2,14 @@ package org.crue.hercules.sgi.eti.dto;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
 
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionLugar;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunionOrdenDia;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
+import org.crue.hercules.sgi.eti.repository.custom.CustomConvocatoriaReunionRepositoryImpl;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,10 +38,10 @@ public class ConvocatoriaReunionDatosGenerales implements Serializable {
   private Instant fechaLimite;
 
   /** Lugar. */
-  private String lugar;
+  private Collection<ConvocatoriaReunionLugar> lugar;
 
   /** Orden del día. */
-  private String ordenDia;
+  private Collection<ConvocatoriaReunionOrdenDia> ordenDia;
 
   /** Anio */
   private Integer anio;
@@ -74,6 +78,14 @@ public class ConvocatoriaReunionDatosGenerales implements Serializable {
 
   private Boolean videoconferencia;
 
+  /**
+   * Constructor especializado para la query
+   * {@link CustomConvocatoriaReunionRepositoryImpl#findByIdWithDatosGenerales(Long)}
+   * 
+   * @param convocatoriaReunion
+   * @param numEvaluaciones
+   * @param idActa
+   */
   public ConvocatoriaReunionDatosGenerales(ConvocatoriaReunion convocatoriaReunion, Long numEvaluaciones, Long idActa) {
     this.id = convocatoriaReunion.getId();
     this.comite = convocatoriaReunion.getComite();

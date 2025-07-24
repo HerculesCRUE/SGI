@@ -1,5 +1,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
 import { IProyecto } from '@core/models/csp/proyecto';
 import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
@@ -33,13 +34,13 @@ export interface ConceptoGastoListado {
   proyectoConceptoGasto: StatusWrapper<IProyectoConceptoGasto>;
   convocatoriaConceptoGasto: IConvocatoriaConceptoGasto;
   help: HelpIcon;
-  conceptoGasto: string;
-  descripcion: string;
+  conceptoGasto: I18nFieldValue[];
+  descripcion: I18nFieldValue[];
   costesIndirectos: boolean;
   importeMaximo: number;
   fechaInicio: DateTime;
   fechaFin: DateTime;
-  observaciones: string;
+  observaciones: I18nFieldValue[];
 }
 
 export class ProyectoConceptosGastoFragment extends Fragment {
@@ -56,7 +57,7 @@ export class ProyectoConceptosGastoFragment extends Fragment {
     private proyectoConceptoGastoService: ProyectoConceptoGastoService,
     private convocatoriaService: ConvocatoriaService,
     public readonly: boolean,
-    public isVisor: boolean,
+    public isVisor: boolean
   ) {
     super(key);
     this.setComplete(true);

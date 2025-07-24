@@ -227,6 +227,7 @@ export class SolicitudProyectoPresupuestoGlobalFragment extends FormFragment<ISo
       takeLast(1),
       tap(() => {
         if (this.isSaveOrUpdateComplete()) {
+          this.partidasGastos$.next(this.partidasGastos$.value);
           this.setChanges(false);
         }
       })
@@ -240,7 +241,7 @@ export class SolicitudProyectoPresupuestoGlobalFragment extends FormFragment<ISo
    */
   public deletePartidaGasto(wrapper: StatusWrapper<ISolicitudProyectoPresupuesto>): void {
     const current = this.partidasGastos$.value;
-    const index = current.findIndex((value) => value === wrapper);
+    const index = current.findIndex(currentWrapper => wrapper.value.id ? currentWrapper.value?.id === wrapper.value.id : currentWrapper.value === wrapper.value);
     if (index >= 0) {
       if (!wrapper.created) {
         this.partidasGastosEliminadas.push(current[index]);
@@ -346,7 +347,6 @@ export class SolicitudProyectoPresupuestoGlobalFragment extends FormFragment<ISo
             const solicitudProyectoPresupuestoListado = wrapped.value;
             solicitudProyectoPresupuestoListado.id = created.id;
             this.partidasGastos$.value[index] = new StatusWrapper<ISolicitudProyectoPresupuesto>(solicitudProyectoPresupuestoListado);
-            this.partidasGastos$.next(this.partidasGastos$.value);
           })
         );
       }),

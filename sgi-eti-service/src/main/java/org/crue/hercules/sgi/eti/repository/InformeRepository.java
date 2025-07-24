@@ -35,5 +35,7 @@ public interface InformeRepository extends JpaRepository<Informe, Long>, JpaSpec
    * @param idTipoEvaluacion identificador del {@link TipoEvaluacion}
    * @return el {@link Informe}
    */
-  Optional<Informe> findFirstByMemoriaIdAndTipoEvaluacionIdOrderByVersionDesc(Long idMemoria, Long idTipoEvaluacion);
+  Optional<Informe> findFirstByMemoriaIdAndTipoEvaluacionIdOrderByVersionDesc(Long idMemoria,
+      Long idTipoEvaluacion);
+
 }

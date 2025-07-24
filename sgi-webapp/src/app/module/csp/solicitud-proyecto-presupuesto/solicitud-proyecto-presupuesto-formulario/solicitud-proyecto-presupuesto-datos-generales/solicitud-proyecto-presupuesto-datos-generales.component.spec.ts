@@ -10,6 +10,7 @@ import TestUtils from '@core/utils/test-utils';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { LoggerTestingModule } from 'ngx-logger/testing';
+import { SgempSharedModule } from 'src/app/esb/sgemp/shared/sgemp-shared.module';
 import { SOLICITUD_PROYECTO_PRESUPUESTO_DATA_KEY } from '../../solicitud-proyecto-presupuesto-data.resolver';
 import { ISolicitudProyectoPresupuestoData, SolicitudProyectoPresupuestoActionService } from '../../solicitud-proyecto-presupuesto.action.service';
 import { SolicitudProyectoPresupuestoDatosGeneralesComponent } from './solicitud-proyecto-presupuesto-datos-generales.component';
@@ -41,6 +42,7 @@ describe('SolicitudProyectoPresupuestoDatosGeneralesComponent', () => {
         FormsModule,
         ReactiveFormsModule,
         RouterTestingModule,
+        SgempSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

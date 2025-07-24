@@ -47,7 +47,6 @@ import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria;
 import org.crue.hercules.sgi.eti.model.TipoEstadoMemoria_;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion;
 import org.crue.hercules.sgi.eti.repository.specification.EvaluadorSpecifications;
-import org.crue.hercules.sgi.eti.util.Constantes;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -501,7 +500,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
       Root<EquipoTrabajo> subqRootEquipoTrabajo = queryPersonaRefEquipoTrabajo.from(EquipoTrabajo.class);
 
       queryPersonaRefEquipoTrabajo.select(subqRootEquipoTrabajo.get(EquipoTrabajo_.personaRef)).where(
-          cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
+          cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacionId),
               joinMemoria.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
 
       Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
@@ -512,7 +511,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
               cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef))
                   .value(queryPersonaRefEquipoTrabajo));
 
-      Subquery<String> queryEvaluadores = cq.subquery(String.class);
+      Subquery<Long> queryEvaluadores = cq.subquery(Long.class);
       Root<Evaluador> subqRootEvaluadores = queryEvaluadores.from(Evaluador.class);
 
       Predicate predicateEvaluacion = null;
@@ -533,16 +532,16 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
             cb.not(subqRootEvaluadores.get(Evaluador_.id).in(queryConflictosInteres)));
       }
 
-      queryEvaluadores.select(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.comite)).where(predicateEvaluacion,
+      queryEvaluadores.select(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.id)).where(predicateEvaluacion,
           cb.or(cb.isNull(subqRootEvaluadores.get(Evaluador_.fechaBaja)),
               cb.greaterThan(subqRootEvaluadores.get(Evaluador_.fechaBaja), Instant.now())));
 
       listPredicates
           .add(cb.or(
               cb.in(queryEvaluadores).value(rootEvaluacion.get(Evaluacion_.evaluador1).get(Evaluador_.comite).get(
-                  Comite_.comite)),
+                  Comite_.id)),
               cb.in(queryEvaluadores).value(rootEvaluacion.get(Evaluacion_.evaluador2).get(Evaluador_.comite)
-                  .get(Comite_.comite))));
+                  .get(Comite_.id))));
     }
 
     log.debug("getPredicatesEvaluacionesEnSeguimientoAnualByEvaluadorAndEvaluacion : {} - end");
@@ -640,7 +639,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
       Root<EquipoTrabajo> subqRootEquipoTrabajo = queryPersonaRefEquipoTrabajo.from(EquipoTrabajo.class);
 
       queryPersonaRefEquipoTrabajo.select(subqRootEquipoTrabajo.get(EquipoTrabajo_.personaRef)).where(
-          cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
+          cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacionId),
               joinMemoria.get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
 
       Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
@@ -651,7 +650,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
               cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef))
                   .value(queryPersonaRefEquipoTrabajo));
 
-      Subquery<String> queryEvaluadores = cq.subquery(String.class);
+      Subquery<Long> queryEvaluadores = cq.subquery(Long.class);
       Root<Evaluador> subqRootEvaluadores = queryEvaluadores.from(Evaluador.class);
 
       Predicate predicateEvaluacion = null;
@@ -672,15 +671,15 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
             cb.not(subqRootEvaluadores.get(Evaluador_.id).in(queryConflictosInteres)));
       }
 
-      queryEvaluadores.select(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.comite)).where(predicateEvaluacion,
+      queryEvaluadores.select(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.id)).where(predicateEvaluacion,
           cb.or(cb.isNull(subqRootEvaluadores.get(Evaluador_.fechaBaja)),
               cb.greaterThan(subqRootEvaluadores.get(Evaluador_.fechaBaja), Instant.now())));
 
       listPredicates
           .add(cb.or(cb.in(queryEvaluadores).value(root.get(Evaluacion_.evaluador1).get(Evaluador_.comite).get(
-              Comite_.comite)),
+              Comite_.id)),
               cb.in(queryEvaluadores).value(root.get(Evaluacion_.evaluador2).get(Evaluador_.comite)
-                  .get(Comite_.comite))));
+                  .get(Comite_.id))));
     }
 
     log.debug("getPredicatesEvaluacionesEnSeguimientoFinalByEvaluadorAndEvaluacion : {} - end");
@@ -711,7 +710,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     Root<EquipoTrabajo> subqRootEquipoTrabajo = queryPersonaRefEquipoTrabajo.from(EquipoTrabajo.class);
 
     queryPersonaRefEquipoTrabajo.select(subqRootEquipoTrabajo.get(EquipoTrabajo_.personaRef)).where(
-        cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
+        cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacionId),
             root.get(Evaluacion_.memoria).get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
 
     Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
@@ -721,7 +720,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
         cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef))
             .value(queryPersonaRefEquipoTrabajo));
 
-    Subquery<String> queryEvaluadores = cq.subquery(String.class);
+    Subquery<Long> queryEvaluadores = cq.subquery(Long.class);
     Root<Evaluador> subqRootEvaluadores = queryEvaluadores.from(Evaluador.class);
 
     Predicate predicateEvaluacion = null;
@@ -742,7 +741,7 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
           cb.not(subqRootEvaluadores.get(Evaluador_.id).in(queryConflictosInteres)));
     }
 
-    queryEvaluadores.select(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.comite)).where(predicateEvaluacion,
+    queryEvaluadores.select(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.id)).where(predicateEvaluacion,
         cb.or(cb.isNull(subqRootEvaluadores.get(Evaluador_.fechaBaja)),
             cb.greaterThan(subqRootEvaluadores.get(Evaluador_.fechaBaja), Instant.now())));
 
@@ -755,9 +754,9 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
         cb.in(root.get(Evaluacion_.memoria).get(Memoria_.id)).value(getIdsMemoriasEvaluables(cb, cq)),
         evaluacionLastVersion,
         cb.or(
-            cb.in(queryEvaluadores).value(root.get(Evaluacion_.evaluador1).get(Evaluador_.comite).get(Comite_.comite)),
+            cb.in(queryEvaluadores).value(root.get(Evaluacion_.evaluador1).get(Evaluador_.comite).get(Comite_.id)),
             cb.in(queryEvaluadores)
-                .value(root.get(Evaluacion_.evaluador2).get(Evaluador_.comite).get(Comite_.comite))));
+                .value(root.get(Evaluacion_.evaluador2).get(Evaluador_.comite).get(Comite_.id))));
 
     // Tipo retrospectiva, memoria Requiere retrospectiva y el estado de la
     // RETROSPECTIVA es 'En evaluacion' (id = 4)
@@ -768,13 +767,14 @@ public class CustomEvaluacionRepositoryImpl implements CustomEvaluacionRepositor
     Predicate requiereRetrospectiva = cb.isTrue(subqRoot.get(Evaluacion_.memoria).get(Memoria_.requiereRetrospectiva));
     Predicate estadoRetrospectiva = cb.equal(subqRoot.get(Evaluacion_.memoria).get(Memoria_.retrospectiva)
         .get(Retrospectiva_.estadoRetrospectivaId), EstadoRetrospectiva.Tipo.EN_EVALUACION.getId());
-    Predicate comite = cb.equal(subqRoot.get(Evaluacion_.memoria).get(Memoria_.comite).get(Comite_.id),
-        Constantes.COMITE_CEEA);
+    Predicate comite = cb.equal(
+        subqRoot.get(Evaluacion_.memoria).get(Memoria_.comite).get(Comite_.requiereRetrospectiva),
+        Boolean.TRUE);
     Predicate tipoEvaluacion = cb.equal(subqRoot.get(Evaluacion_.tipoEvaluacionId),
         TipoEvaluacion.Tipo.RETROSPECTIVA.getId());
     Predicate evaluador = cb.or(
-        cb.in(queryEvaluadores).value(subqRoot.get(Evaluacion_.evaluador1).get(Evaluador_.comite).get(Comite_.comite)),
-        cb.in(queryEvaluadores).value(subqRoot.get(Evaluacion_.evaluador2).get(Evaluador_.comite).get(Comite_.comite)));
+        cb.in(queryEvaluadores).value(subqRoot.get(Evaluacion_.evaluador1).get(Evaluador_.comite).get(Comite_.id)),
+        cb.in(queryEvaluadores).value(subqRoot.get(Evaluacion_.evaluador2).get(Evaluador_.comite).get(Comite_.id)));
 
     queryRetrospectiva.select(subqRoot.get(Evaluacion_.id))
         .where(cb.and(requiereRetrospectiva, estadoRetrospectiva, comite, tipoEvaluacion,

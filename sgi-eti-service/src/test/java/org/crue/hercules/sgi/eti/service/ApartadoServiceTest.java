@@ -1,17 +1,21 @@
 package org.crue.hercules.sgi.eti.service;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.converter.ApartadoTreeConverter;
 import org.crue.hercules.sgi.eti.exceptions.ApartadoNotFoundException;
 import org.crue.hercules.sgi.eti.model.Apartado;
+import org.crue.hercules.sgi.eti.model.ApartadoDefinicion;
 import org.crue.hercules.sgi.eti.model.Bloque;
 import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.repository.ApartadoRepository;
 import org.crue.hercules.sgi.eti.service.impl.ApartadoServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -45,8 +49,8 @@ public class ApartadoServiceTest extends BaseServiceTest {
   public void find_WithExistingId_ReturnsApartado() {
 
     // given: Entidad con un determinado Id
-    Apartado response = getMockData(1L, 1L, null);
-    BDDMockito.given(repository.findById(response.getId())).willReturn(Optional.of(response));
+    Apartado response = getMockDataOutput(1L, 1L, null);
+    BDDMockito.given(repository.findById(response.getId())).willReturn(Optional.of(getMockData(1L, 1L, null)));
 
     // when: Se busca la entidad por ese Id
     Apartado result = service.findById(response.getId());
@@ -64,7 +68,8 @@ public class ApartadoServiceTest extends BaseServiceTest {
 
     // when: Se busca entidad con ese id
     // then: Se produce error porque no encuentra la entidad con ese Id
-    Assertions.assertThatThrownBy(() -> service.findById(id)).isInstanceOf(ApartadoNotFoundException.class);
+    Assertions.assertThatThrownBy(() -> service.findById(id))
+        .isInstanceOf(ApartadoNotFoundException.class);
   }
 
   @Test
@@ -155,16 +160,17 @@ public class ApartadoServiceTest extends BaseServiceTest {
   public void findByBloqueIdValidId() {
     // given: Entidad con un determinado Id
     List<Apartado> response = new LinkedList<Apartado>();
-    Apartado apartado = getMockData(1L, 1L, null);
-    Bloque Bloque = apartado.getBloque();
+    Apartado apartado = getMockDataOutput(1L, 1L, null);
+    Bloque bloque = apartado.getBloque();
     response.add(apartado);
 
     Page<Apartado> pageResponse = new PageImpl<>(response.subList(0, 1), Pageable.unpaged(), response.size());
-    BDDMockito.given(repository.findByBloqueIdAndPadreIsNull(Bloque.getId(), Pageable.unpaged()))
+    BDDMockito
+        .given(repository.findByBloqueIdAndPadreIsNull(bloque.getId(), Pageable.unpaged()))
         .willReturn(pageResponse);
 
     // when: Se busca la entidad por ese Id
-    Page<Apartado> result = service.findByBloqueId(Bloque.getId(), Pageable.unpaged());
+    Page<Apartado> result = service.findByBloqueId(bloque.getId(), Pageable.unpaged());
 
     // then: Se recuperan los datos correctamente según la paginación solicitada
     Assertions.assertThat(result).isEqualTo(pageResponse);
@@ -183,7 +189,7 @@ public class ApartadoServiceTest extends BaseServiceTest {
       // then: se debe lanzar una excepción
     } catch (IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("Id no puede ser null para buscar un apartado por el Id de su Bloque");
+          .isEqualTo("Identificador de Bloque no puede ser nulo");
     }
   }
 
@@ -192,7 +198,7 @@ public class ApartadoServiceTest extends BaseServiceTest {
     // given: Entidad con un determinado Id
     Long id = 123L;
     List<Apartado> response = new LinkedList<Apartado>();
-    Apartado apartado = getMockData(1L, 1L, null);
+    Apartado apartado = getMockDataOutput(1L, 1L, null);
     response.add(apartado);
 
     Page<Apartado> pageResponse = new PageImpl<>(response.subList(0, 1), Pageable.unpaged(), response.size());
@@ -218,7 +224,7 @@ public class ApartadoServiceTest extends BaseServiceTest {
       // then: se debe lanzar una excepción
     } catch (IllegalArgumentException e) {
       Assertions.assertThat(e.getMessage())
-          .isEqualTo("Id no puede ser null para buscar un apartado por el Id de su padre");
+          .isEqualTo("Identificador de Apartado no puede ser nulo");
     }
   }
 
@@ -233,20 +239,54 @@ public class ApartadoServiceTest extends BaseServiceTest {
    */
   private Apartado getMockData(Long id, Long bloqueId, Long padreId) {
 
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion1");
-    Bloque Bloque = new Bloque(bloqueId, formulario, "Bloque " + bloqueId, bloqueId.intValue());
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+
+    Bloque bloque = new Bloque(bloqueId, formulario, 1, null);
 
     Apartado padre = (padreId != null) ? getMockData(padreId, bloqueId, null) : null;
+
+    final Apartado data = new Apartado();
+    data.setId(id);
+    data.setBloque(bloque);
+    data.setPadre(padre);
+    data.setOrden(id.intValue());
+
+    return data;
+  }
+
+  /**
+   * Genera un objeto {@link ApartadoOutput}
+   * 
+   * @param id
+   * @param bloqueId
+   * @param componenteFormularioId
+   * @param padreId
+   * @return Apartado
+   */
+  private Apartado getMockDataOutput(Long id, Long bloqueId, Long padreId) {
+
+    Formulario formulario = new Formulario();
+    formulario.setId(1L);
+    formulario.setTipo(Formulario.Tipo.MEMORIA);
+
+    Bloque bloque = new Bloque(bloqueId, formulario, 1, null);
+
+    Apartado padre = (padreId != null) ? getMockDataOutput(padreId, bloqueId, null) : null;
 
     String txt = (id % 2 == 0) ? String.valueOf(id) : "0" + String.valueOf(id);
 
     final Apartado data = new Apartado();
     data.setId(id);
-    data.setBloque(Bloque);
-    data.setNombre("Apartado" + txt);
+    data.setBloque(bloque);
     data.setPadre(padre);
     data.setOrden(id.intValue());
-    data.setEsquema("{\"nombre\":\"EsquemaApartado" + txt + "\"}");
+
+    Set<ApartadoDefinicion> definiciones = new HashSet<>();
+    ApartadoDefinicion defi = new ApartadoDefinicion(id, Language.ES, txt, "{}");
+    definiciones.add(defi);
+    data.setDefinicion(definiciones);
 
     return data;
   }

@@ -1,0 +1,74 @@
+[
+  {
+    "key": "ap3_4_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.2 Nahitako esposizioa"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Jarduera honetan, zenbait zereginetan nahita erabiltzen dira agente biologikoak, substantzia kimiko arriskutsuak, substantzia erradioaktiboak edo/eta nanopartikulak?</p>"
+      },
+      {
+        "key": "tareasAgentesBiologicosRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Zer motatako agente biologikoak, substantzia kimiko arriskutsuak, substantzia erradioaktiboak edo/eta nanopartikulak erabiltzen diren",
+        "hideExpression": "!model.tareasAgentesBiologicosRadio || model.tareasAgentesBiologicosRadio === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "exposicionNointencionada",
+        "hideExpression": "!model.tareasAgentesBiologicosRadio || model.tareasAgentesBiologicosRadio === 'no'",
+        "templateOptions": {
+          "label": "Aukerak:",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "microorganismos",
+              "label": "Mikroorganismoak"
+            },
+            {
+              "value": "cultivoscelulares",
+              "label": "Zelulen kultiboak"
+            },
+            {
+              "value": "endoparasitos",
+              "label": "Endoparasitoak"
+            },
+            {
+              "value": "sustanciasquímicaspeligrosas",
+              "label": "Substantzia kimiko arriskutsuak"
+            },
+            {
+              "value": "sustanciasradiactivas",
+              "label": "Substantzia erradioaktiboak"
+            },
+            {
+              "value": "nanoparticulas",
+              "label": "Nanopartikulak"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

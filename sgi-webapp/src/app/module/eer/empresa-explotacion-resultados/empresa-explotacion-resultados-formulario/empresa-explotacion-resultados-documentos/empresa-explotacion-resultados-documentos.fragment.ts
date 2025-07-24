@@ -1,4 +1,5 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IEmpresaDocumento } from '@core/models/eer/empresa-documento';
 import { IEmpresaExplotacionResultados } from '@core/models/eer/empresa-explotacion-resultados';
 import { ITipoDocumento } from '@core/models/eer/tipo-documento';
@@ -14,7 +15,7 @@ import { map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 export class NodeDocumento {
   parent: NodeDocumento;
   key: string;
-  title: string;
+  title: string | I18nFieldValue[];
   documento?: StatusWrapper<IEmpresaDocumento>;
   // tslint:disable-next-line: variable-name
   private _level: number;
@@ -29,7 +30,7 @@ export class NodeDocumento {
     return this._level;
   }
 
-  constructor(key: string, title: string, level: number, documento?: StatusWrapper<IEmpresaDocumento>) {
+  constructor(key: string, title: string | I18nFieldValue[], level: number, documento?: StatusWrapper<IEmpresaDocumento>) {
     this.key = key;
     this.title = title;
     this._level = level;
@@ -122,7 +123,7 @@ export class EmpresaExplotacionResultadosDocumentosFragment extends Fragment {
 
   protected onInitialize(): void | Observable<any> {
     const findOptions: SgiRestFindOptions = {
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
+      sort: new RSQLSgiRestSort('nombre.value', SgiRestSortDirection.ASC)
     };
     return this.empresaExplotacionResultadosService.findDocumentos(this.empresa, findOptions)
       .pipe(

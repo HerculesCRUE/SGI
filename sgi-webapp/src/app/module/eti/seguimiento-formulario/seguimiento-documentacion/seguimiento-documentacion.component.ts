@@ -16,7 +16,7 @@ export class SeguimientoDocumentacionComponent extends FragmentComponent impleme
   formPart: SeguimientoDocumentacionFragment;
 
   constructor(
-    private actionService: SeguimientoFormularioActionService
+    private actionService: SeguimientoFormularioActionService,
   ) {
     super(actionService.FRAGMENT.DOCUMENTACION, actionService);
 
@@ -30,4 +30,6 @@ export class SeguimientoDocumentacionComponent extends FragmentComponent impleme
     this.actionService.getRol() === Rol.EVALUADOR ? this.documentacion.fichaEvaluador = false : this.documentacion.fichaEvaluador = true;
     this.documentacion?.ngAfterViewInit();
   }
+
+  protected setupI18N(): void { }
 }

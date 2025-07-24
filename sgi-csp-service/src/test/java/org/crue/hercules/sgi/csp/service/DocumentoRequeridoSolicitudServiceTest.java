@@ -3,8 +3,10 @@ package org.crue.hercules.sgi.csp.service;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
@@ -13,22 +15,37 @@ import org.crue.hercules.sgi.csp.exceptions.DocumentoRequeridoSolicitudNotFoundE
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObjeto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
+import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitudObservaciones;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoDocumento;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.DocumentoRequeridoSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFaseRepository;
 import org.crue.hercules.sgi.csp.service.impl.DocumentoRequeridoSolicitudServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -61,7 +78,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   private DocumentoRequeridoSolicitudService service;
 
   @BeforeEach
-  void setUp() throws Exception {
+  void setUp() {
     service = new DocumentoRequeridoSolicitudServiceImpl(documentoRequeridoSolicitudRepository,
         configuracionSolicitudRepository, modeloTipoFaseRepository, modeloTipoDocumentoRepository, convocatoriaService,
         convocatoriaRepository);
@@ -127,7 +144,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(newDocumentoRequeridoSolicitud))
         // then: throw exception as id can't be provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id tiene que ser null para crear DocumentoRequeridoSolicitud");
+        .hasMessage("Identificador de Documento Requerido Solicitud debe ser nulo");
   }
 
   @Test
@@ -141,7 +158,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(newDocumentoRequeridoSolicitud))
         // then: throw exception as ConfigracionId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ConfiguracionSolicitud no puede ser null en la DocumentoRequeridoSolicitud");
+        .hasMessage("Identificador de Configuración solicitud no puede ser nulo");
   }
 
   @Test
@@ -156,7 +173,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(newDocumentoRequeridoSolicitud))
         // then: throw exception as TipoDocumento is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoDocumento no puede ser null en la DocumentoRequeridoSolicitud");
+        .hasMessage("Tipo Documento Persona de Documento Requerido Solicitud no puede ser nulo");
   }
 
   @Test
@@ -222,8 +239,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(newDocumentoRequeridoSolicitud))
         // then: throw exception as ModeloTipoFase not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFase '%s' no disponible para el ModeloEjecucion '%s'",
-            configuracionSolicitud.getFasePresentacionSolicitudes().getTipoFase().getNombre(),
+        .hasMessage("Tipo Fase no disponible para el Modelo Ejecución %s",
             convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -252,7 +268,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(newDocumentoRequeridoSolicitud))
         // then: throw exception as ModeloTipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoFase '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Modelo Tipo Fase no está activo para el modelo ejecución %s",
             modeloTipoFase.getTipoFase().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -281,7 +297,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(newDocumentoRequeridoSolicitud))
         // then: throw exception as TipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFase '%s' no está activo", modeloTipoFase.getTipoFase().getNombre());
+        .hasMessage("%s de Tipo Fase no está activo", modeloTipoFase.getTipoFase().getNombre());
   }
 
   @Test
@@ -312,8 +328,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(newDocumentoRequeridoSolicitud))
         // then: throw exception as ModeloTipoDocumento not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoDocumento '%s' no disponible para el ModeloEjecucion '%s' y TipoFase '%s'",
-            newDocumentoRequeridoSolicitud.getTipoDocumento().getNombre(),
+        .hasMessage("Tipo Documento no disponible para el Modelo Ejecución %s",
             convocatoria.getModeloEjecucion().getNombre(), modeloTipoFase.getTipoFase().getNombre());
   }
 
@@ -348,7 +363,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(newDocumentoRequeridoSolicitud))
         // then: throw exception as ModeloTipoDocumento is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoDocumento '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Modelo Tipo Documento no está activo para el modelo ejecución %s",
             modeloTipoDocumento.getTipoDocumento().getNombre(), convocatoria.getModeloEjecucion().getNombre());
 
   }
@@ -384,7 +399,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(newDocumentoRequeridoSolicitud))
         // then: throw exception as TipoDocumento is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoDocumento '%s' no está activo", modeloTipoDocumento.getTipoDocumento().getNombre());
+        .hasMessage("%s de Tipo Documento no está activo", modeloTipoDocumento.getTipoDocumento().getNombre());
   }
 
   @Test
@@ -406,7 +421,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.create(newDocumentoRequeridoSolicitud))
         // then: throw exception as Convocatoria is not modificable
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede crear DocumentoRequeridoSolicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+            "No se puede Crear Documento Requerido Solicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test
@@ -416,7 +431,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
     updatedDocumentoRequeridoSolicitud.setTipoDocumento(generarMockTipoDocumento(2L));
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
@@ -463,7 +480,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedDocumentoRequeridoSolicitud))
         // then: throw exception as id can't be provided
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("DocumentoRequeridoSolicitud id no puede ser null para actualizar un DocumentoRequeridoSolicitud");
+        .hasMessage("Identificador de Documento Requerido Solicitud no puede ser nulo");
   }
 
   @Test
@@ -495,7 +512,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedDocumentoRequeridoSolicitud))
         // then: throw exception as ConfigracionId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ConfiguracionSolicitud no puede ser null en la DocumentoRequeridoSolicitud");
+        .hasMessage("Identificador de Configuración solicitud no puede ser nulo");
   }
 
   @Test
@@ -513,7 +530,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedDocumentoRequeridoSolicitud))
         // then: throw exception as TipoDocumento is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoDocumento no puede ser null en la DocumentoRequeridoSolicitud");
+        .hasMessage("Tipo Documento Persona de Documento Requerido Solicitud no puede ser nulo");
   }
 
   @Test
@@ -521,7 +538,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     // given: a DocumentoRequeridoSolicitud with No existing ConfiguracionSolicitud
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
 
     BDDMockito.given(documentoRequeridoSolicitudRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(originalDocumentoRequeridoSolicitud));
@@ -541,7 +560,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     configuracionSolicitud.setFasePresentacionSolicitudes(null);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
     BDDMockito.given(documentoRequeridoSolicitudRepository.findById(ArgumentMatchers.anyLong()))
@@ -567,7 +588,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
 
     BDDMockito.given(convocatoriaRepository.findById(ArgumentMatchers.anyLong())).willReturn(Optional.of(convocatoria));
     BDDMockito.given(documentoRequeridoSolicitudRepository.findById(ArgumentMatchers.anyLong()))
@@ -584,8 +607,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedDocumentoRequeridoSolicitud))
         // then: throw exception as ModeloTipoFase not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFase '%s' no disponible para el ModeloEjecucion '%s'",
-            configuracionSolicitud.getFasePresentacionSolicitudes().getTipoFase().getNombre(),
+        .hasMessage("Tipo Fase no disponible para el Modelo Ejecución %s",
             convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -597,7 +619,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
     ModeloTipoFase modeloTipoFase = generarMockModeloTipoFase(convocatoria,
         configuracionSolicitud.getFasePresentacionSolicitudes());
     modeloTipoFase.setActivo(Boolean.FALSE);
@@ -617,7 +641,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedDocumentoRequeridoSolicitud))
         // then: throw exception as ModeloTipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoFase '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Modelo Tipo Fase no está activo para el modelo ejecución %s",
             modeloTipoFase.getTipoFase().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -629,7 +653,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
     ModeloTipoFase modeloTipoFase = generarMockModeloTipoFase(convocatoria,
         configuracionSolicitud.getFasePresentacionSolicitudes());
     modeloTipoFase.getTipoFase().setActivo(Boolean.FALSE);
@@ -649,7 +675,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedDocumentoRequeridoSolicitud))
         // then: throw exception as TipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFase '%s' no está activo", modeloTipoFase.getTipoFase().getNombre());
+        .hasMessage("%s de Tipo Fase no está activo", modeloTipoFase.getTipoFase().getNombre());
   }
 
   @Test
@@ -660,7 +686,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
     ModeloTipoFase modeloTipoFase = generarMockModeloTipoFase(convocatoria,
         configuracionSolicitud.getFasePresentacionSolicitudes());
 
@@ -683,8 +711,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedDocumentoRequeridoSolicitud))
         // then: throw exception as ModeloTipoDocumento not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoDocumento '%s' no disponible para el ModeloEjecucion '%s' y TipoFase '%s'",
-            updatedDocumentoRequeridoSolicitud.getTipoDocumento().getNombre(),
+        .hasMessage("Tipo Documento no disponible para el Modelo Ejecución %s",
             convocatoria.getModeloEjecucion().getNombre(), modeloTipoFase.getTipoFase().getNombre());
   }
 
@@ -697,7 +724,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     updatedDocumentoRequeridoSolicitud.setTipoDocumento(generarMockTipoDocumento(2L));
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
     ModeloTipoFase modeloTipoFase = generarMockModeloTipoFase(convocatoria,
         configuracionSolicitud.getFasePresentacionSolicitudes());
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(updatedDocumentoRequeridoSolicitud,
@@ -723,7 +752,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedDocumentoRequeridoSolicitud))
         // then: throw exception as ModeloTipoDocumento is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoDocumento '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Modelo Tipo Documento no está activo para el modelo ejecución %s",
             modeloTipoDocumento.getTipoDocumento().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -735,7 +764,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
     ModeloTipoFase modeloTipoFase = generarMockModeloTipoFase(convocatoria,
         configuracionSolicitud.getFasePresentacionSolicitudes());
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(updatedDocumentoRequeridoSolicitud,
@@ -774,7 +805,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     updatedDocumentoRequeridoSolicitud.setTipoDocumento(generarMockTipoDocumento(2L));
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
     ModeloTipoFase modeloTipoFase = generarMockModeloTipoFase(convocatoria,
         configuracionSolicitud.getFasePresentacionSolicitudes());
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(updatedDocumentoRequeridoSolicitud,
@@ -800,7 +833,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(updatedDocumentoRequeridoSolicitud))
         // then: throw exception as TipoDocumento is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoDocumento '%s' no está activo", modeloTipoDocumento.getTipoDocumento().getNombre());
+        .hasMessage("%s de Tipo Documento no está activo", modeloTipoDocumento.getTipoDocumento().getNombre());
   }
 
   @Test
@@ -811,7 +844,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
     ConfiguracionSolicitud configuracionSolicitud = generarMockConfiguracionSolicitud(1L, convocatoria, 1L);
     DocumentoRequeridoSolicitud originalDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
     DocumentoRequeridoSolicitud updatedDocumentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L, 1L);
-    updatedDocumentoRequeridoSolicitud.setObservaciones("observaciones-modificadas");
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-modificadas"));
+    updatedDocumentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
     ModeloTipoFase modeloTipoFase = generarMockModeloTipoFase(convocatoria,
         configuracionSolicitud.getFasePresentacionSolicitudes());
     ModeloTipoDocumento modeloTipoDocumento = generarMockModeloTipoDocumento(updatedDocumentoRequeridoSolicitud,
@@ -862,7 +897,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.update(documentoRequeridoSolicitud))
         // then: throw exception as Convocatoria is not modificable
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede modificar DocumentoRequeridoSolicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+            "No se puede Modificar Documento Requerido Solicitud. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test
@@ -888,7 +923,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void delete_WithoutId_ThrowsIllegalArgumentException() throws Exception {
+  void delete_WithoutId_ThrowsIllegalArgumentException() {
     // given: no id
     Long id = null;
 
@@ -897,11 +932,11 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         () -> service.delete(id))
         // then: IllegalArgumentException is thrown
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("DocumentoRequeridoSolicitud id no puede ser null para eliminar un DocumentoRequeridoSolicitud");
+        .hasMessage("Identificador de Documento Requerido Solicitud no puede ser nulo");
   }
 
   @Test
-  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Long id = 1L;
 
@@ -916,7 +951,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findByIdConvocatoria_WithExistingId_ReturnsConfiguracionSolicitud() throws Exception {
+  void findByIdConvocatoria_WithExistingId_ReturnsConfiguracionSolicitud() {
     // given: existing ConfiguracionSolicitud
     DocumentoRequeridoSolicitud documentoRequeridoSolicitudExistente = generarMockDocumentoRequeridoSolicitud(1L, 1L);
 
@@ -939,7 +974,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findById_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void findById_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing convocatoria
     BDDMockito.given(documentoRequeridoSolicitudRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.empty());
@@ -992,7 +1027,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
       DocumentoRequeridoSolicitud DocumentoRequeridoSolicitud = page.getContent()
           .get(i - (page.getSize() * page.getNumber()) - 1);
       Assertions.assertThat(DocumentoRequeridoSolicitud.getId()).isEqualTo(Long.valueOf(i));
-      Assertions.assertThat(DocumentoRequeridoSolicitud.getObservaciones())
+      Assertions.assertThat(I18nHelper.getValueForLanguage(DocumentoRequeridoSolicitud.getObservaciones(), Language.ES))
           .isEqualTo("observacionesDocumentoRequeridoSolicitud-" + i);
     }
   }
@@ -1004,13 +1039,15 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
    * @return el objeto DocumentoRequeridoSolicitud
    */
   private DocumentoRequeridoSolicitud generarMockDocumentoRequeridoSolicitud(Long id, Long configuracionSolicitudId) {
-
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(
+        new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observacionesDocumentoRequeridoSolicitud-" + id));
     // @formatter:off
     return DocumentoRequeridoSolicitud.builder()
         .id(id)
         .configuracionSolicitudId(configuracionSolicitudId)
         .tipoDocumento(generarMockTipoDocumento(id))
-        .observaciones("observacionesDocumentoRequeridoSolicitud-" + id)
+        .observaciones(obsDocumentoRequerido)
         .build();
     // @formatter:on
   }
@@ -1066,12 +1103,17 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
    * @return el objeto TipoDocumento
    */
   private TipoDocumento generarMockTipoDocumento(Long id) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, "nombreTipoDocumento-" + id));
+
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "descripcionTipoDocumento-" + id));
 
     // @formatter:off
     return TipoDocumento.builder()
         .id(id)
-        .nombre("nombreTipoDocumento-" + id)
-        .descripcion("descripcionTipoDocumento-" + id)
+        .nombre(nombreTipoDocumento)
+        .descripcion(descripcionTipoDocumento)
         .activo(Boolean.TRUE)
         .build();
     // @formatter:on
@@ -1085,14 +1127,18 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
    */
   private TipoFase generarMockTipoFase(Long id) {
 
-    // @formatter:off
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombreTipoFase-" + id));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcionTipoFase-" + id));
+
     return TipoFase.builder()
         .id(id)
-        .nombre("nombreTipoFase-" + id)
-        .descripcion("descripcionTipoFase-" + id)
+        .nombre(nombreTipoFase)
+        .descripcion(descripcionTipoFase)
         .activo(Boolean.TRUE)
         .build();
-    // @formatter:on
   }
 
   /**
@@ -1107,6 +1153,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
       Convocatoria convocatoria, Long convocatoriaFaseId) {
     TipoFase tipoFase = generarMockTipoFase(1L);
 
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    obsConvocatoriaFase.add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones"));
+
     // @formatter:off
     ConvocatoriaFase convocatoriaFase = ConvocatoriaFase.builder()
         .id(convocatoriaFaseId)
@@ -1114,7 +1163,7 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         .tipoFase(tipoFase)
         .fechaInicio(Instant.parse("2020-10-01T00:00:00Z"))
         .fechaFin(Instant.parse("2020-10-15T00:00:00Z"))
-        .observaciones("observaciones")
+        .observaciones(obsConvocatoriaFase)
         .build();
 
     ConfiguracionSolicitud configuracionSolicitud = ConfiguracionSolicitud.builder()
@@ -1130,11 +1179,14 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   }
 
   private ModeloEjecucion generarMockModeloEjecucion(Long modeloEjecucionId) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(
+        new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId)));
     // @formatter:off
     ModeloEjecucion modeloEjecucion = (modeloEjecucionId == null) ? null
         : ModeloEjecucion.builder()
             .id(modeloEjecucionId)
-            .nombre("nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId))
+            .nombre(nombreModeloEjecucion)
             .activo(Boolean.TRUE)
             .build();
     // @formatter:on
@@ -1156,13 +1208,16 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
   private Convocatoria generarMockConvocatoria(Long convocatoriaId, Long unidadGestionId, Long modeloEjecucionId,
       Long modeloTipoFinalidadId, Long tipoRegimenConcurrenciaId, Long tipoAmbitoGeogragicoId, Boolean activo) {
 
-    // @formatter:off
     ModeloEjecucion modeloEjecucion = generarMockModeloEjecucion(modeloEjecucionId);
+
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(
+        new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId)));
 
     TipoFinalidad tipoFinalidad = (modeloTipoFinalidadId == null) ? null
         : TipoFinalidad.builder()
             .id(modeloTipoFinalidadId)
-            .nombre("nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId))
+            .nombre(nombreTipoFinalidad)
             .activo(Boolean.TRUE)
             .build();
 
@@ -1174,21 +1229,39 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
             .activo(Boolean.TRUE)
             .build();
 
+    Set<TipoRegimenConcurrenciaNombre> tipoRegimenConcurrenciaNombre = new HashSet<>();
+    tipoRegimenConcurrenciaNombre.add(new TipoRegimenConcurrenciaNombre(Language.ES,
+        "nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId)));
+
     TipoRegimenConcurrencia tipoRegimenConcurrencia = (tipoRegimenConcurrenciaId == null) ? null
         : TipoRegimenConcurrencia.builder()
             .id(tipoRegimenConcurrenciaId)
-            .nombre("nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId))
+            .nombre(tipoRegimenConcurrenciaNombre)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoAmbitoGeograficoNombre> nombre = new HashSet<>();
+    nombre.add(new TipoAmbitoGeograficoNombre(Language.ES,
+        "nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId)));
 
     TipoAmbitoGeografico tipoAmbitoGeografico = (tipoAmbitoGeogragicoId == null) ? null
         : TipoAmbitoGeografico.builder()
             .id(tipoAmbitoGeogragicoId)
-            .nombre("nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId))
+            .nombre(nombre)
             .activo(Boolean.TRUE)
             .build();
 
-    Convocatoria convocatoria = Convocatoria.builder()
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObjeto> convocatoriaObjeto = new HashSet<>();
+    convocatoriaObjeto.add(new ConvocatoriaObjeto(Language.ES, "objeto-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones
+        .add(new ConvocatoriaObservaciones(Language.ES, "observaciones-" + String.format("%03d", convocatoriaId)));
+
+    return Convocatoria.builder()
         .id(convocatoriaId)
         .unidadGestionRef((unidadGestionId == null) ? null : "unidad-" + String.format("%03d", unidadGestionId))
         .modeloEjecucion(modeloEjecucion)
@@ -1196,9 +1269,9 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaProvisional(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaConcesion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo-" + String.format("%03d", convocatoriaId))
-        .objeto("objeto-" + String.format("%03d", convocatoriaId))
-        .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
+        .titulo(convocatoriaTitulo)
+        .objeto(convocatoriaObjeto)
+        .observaciones(convocatoriaObservaciones)
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
         .estado(Convocatoria.Estado.REGISTRADA)
@@ -1207,8 +1280,5 @@ class DocumentoRequeridoSolicitudServiceTest extends BaseServiceTest {
         .clasificacionCVN(ClasificacionCVN.AYUDAS)
         .activo(activo)
         .build();
-    // @formatter:on
-
-    return convocatoria;
   }
 }

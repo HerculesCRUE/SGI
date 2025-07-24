@@ -25,8 +25,8 @@
     <!-- Título-->
     <mat-form-field class="input-form m-bottom-10">
       <mat-label>{{'eti.peticion-evaluacion.titulo' | translate}}</mat-label>
-      <textarea #titulo matInput formControlName="titulo" required></textarea>
-      <mat-hint>{{titulo.value?.length}} / 1000</mat-hint>
+      <sgi-i18n-textarea #titulo formControlName="titulo" required></sgi-i18n-textarea>
+      <mat-hint>{{titulo.editingValue?.length}} / 1000</mat-hint>
       <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
         {{'error.required.entity' | translate:msgParamTituloEntity}}
       </mat-error>
@@ -39,7 +39,8 @@
       <!-- Tipo de actividad-->
       <mat-form-field fxFlex="28%">
         <mat-label>{{'eti.peticion-evaluacion.tipo-actividad' | translate}}</mat-label>
-        <sgi-select-entity formControlName="tipoActividad" [options]="tipoActividades$ | async" required>
+        <sgi-select-entity formControlName="tipoActividad" [options]="tipoActividades$ | async"
+          [displayWith]="displayerTipoActividad" required>
         </sgi-select-entity>
         <mat-error *ngIf="formGroup.controls.tipoActividad.errors?.required">
           {{'error.required.entity' | translate:msgParamTipoActividadEntity}}
@@ -50,7 +51,7 @@
         <mat-form-field fxFlex="20%">
           <mat-label>{{'eti.peticion-evaluacion.tipo-investigacion-tutelada' | translate}}</mat-label>
           <sgi-select-entity formControlName="tipoInvestigacionTutelada" [options]="tipoInvestigacionTuteladas$ | async"
-            [required]="isInvestigacionTutelada$.getValue()">
+            [displayWith]="displayerTipoInvestigacionTutelada" [required]="isInvestigacionTutelada$.getValue()">
           </sgi-select-entity>
           <mat-error
             *ngIf="isInvestigacionTutelada$.getValue() && formGroup.controls.tipoInvestigacionTutelada.errors?.required">
@@ -81,19 +82,23 @@
       <!-- Órgano financiador-->
       <mat-form-field fxFlex="40%" *ngIf="formGroup.controls.existeFinanciacion.value">
         <mat-label>{{'eti.peticion-evaluacion.organo-financiador' | translate}}</mat-label>
-        <input #nombre matInput formControlName="financiacion" type="text"
-          [required]="FormGroupUtil.hasValidator(this.formGroup,'financiacion','required')" maxlength="100">
+        <sgi-i18n-input #nombre formControlName="financiacion" [required]="formGroup.controls.existeFinanciacion.value"
+          maxlength="250">
+        </sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.financiacion.errors?.required">
           {{'error.required.entity' | translate:msgParamFinanciacionEntity}}
+        </mat-error>
+        <mat-error *ngIf="formGroup.controls.financiacion.errors?.maxlength">
+          {{'error.maxlength.entity' | translate:msgParamFinanciacionEntity}}
         </mat-error>
       </mat-form-field>
       <!-- Importe financiación-->
       <mat-form-field fxFlex="18%" *ngIf="formGroup.controls.existeFinanciacion.value">
         <mat-label>{{'eti.peticion-evaluacion.importe-financiacion' | translate}}</mat-label>
         <input matInput formControlName="importeFinanciacion" type="text" sgiInputWithThousandSeparator
-          [required]="FormGroupUtil.hasValidator(this.formGroup,'importeFinanciacion','required')">
+          [required]="formGroup.controls.existeFinanciacion.value">
         <mat-error
-          *ngIf="FormGroupUtil.hasValidator(this.formGroup,'importeFinanciacion','required') && formGroup.controls.importeFinanciacion.errors?.required">
+          *ngIf="formGroup.controls.existeFinanciacion.value && formGroup.controls.importeFinanciacion.errors?.required">
           {{'error.required.entity' | translate:msgParamImporteFinanciacionEntity}}
         </mat-error>
         <mat-error *ngIf="formGroup.controls.importeFinanciacion.errors?.min">
@@ -107,9 +112,9 @@
       <mat-form-field fxFlex="15%" *ngIf="formGroup.controls.existeFinanciacion.value">
         <mat-label>{{'eti.peticion-evaluacion.estado-financiacion' | translate}}</mat-label>
         <sgi-select-enum formControlName="estadoFinanciacion" [enumMap]="ESTADO_FINANCIACION_MAP"
-          [required]="FormGroupUtil.hasValidator(this.formGroup,'estadoFinanciacion','required')"></sgi-select-enum>
+          [required]="formGroup.controls.existeFinanciacion.value"></sgi-select-enum>
         <mat-error
-          *ngIf="FormGroupUtil.hasValidator(this.formGroup,'estadoFinanciacion','required') && formGroup.controls.estadoFinanciacion.errors?.required">
+          *ngIf="formGroup.controls.existeFinanciacion.value && formGroup.controls.estadoFinanciacion.errors?.required">
           {{'error.required.entity' | translate:msgParamEstadoFinanciacionEntity}}
         </mat-error>
       </mat-form-field>
@@ -168,8 +173,9 @@
     <ng-container *ngIf="peticionEvaluacionFragment.mostrarCampoEspecificarValorSocial$.getValue()">
       <mat-form-field class="m-bottom-10">
         <mat-label>{{'eti.peticion-evaluacion.otro-valor-social' | translate}}</mat-label>
-        <textarea #otroValorSocial matInput formControlName="otroValorSocial" required></textarea>
-        <mat-hint *ngIf="!formGroup.controls.otroValorSocial.errors">{{otroValorSocial.value?.length}} / 2000</mat-hint>
+        <sgi-i18n-textarea #otroValorSocial formControlName="otroValorSocial" required></sgi-i18n-textarea>
+        <mat-hint *ngIf="!formGroup.controls.otroValorSocial.errors">{{otroValorSocial.editingValue?.length}} /
+          2000</mat-hint>
         <mat-error *ngIf="formGroup.controls.otroValorSocial.errors?.required">
           {{'error.required.entity' | translate:msgParamOtroValorSocialEntity}}
         </mat-error>
@@ -183,12 +189,11 @@
       <span class="ckeditor-label">{{'eti.peticion-evaluacion.resumen' | translate}}<span
           [class]="(formGroup.controls.resumen.touched && formGroup.controls.resumen.errors?.required) ? 'warn' : ''">
           *</span></span>
-      <ckeditor
+      <sgi-i18n-ckeditor #resumen
         [class]="formGroup.controls.resumen.touched && formGroup.controls.resumen.errors ? 'ck-editor-border-warn' : ''"
-        [editor]="CkEditor" [config]="configCkEditor" formControlName="resumen" required>
-      </ckeditor>
-      <span class="ckeditor-hint"
-        *ngIf="!formGroup.controls.resumen.errors">{{formGroup.controls.resumen?.value?.length}}
+        formControlName="resumen" required>
+      </sgi-i18n-ckeditor>
+      <span class="ckeditor-hint" *ngIf="!formGroup.controls.resumen.errors">{{resumen.editingValue?.length}}
         / 4000</span>
       <span class="ckeditor-error"
         *ngIf="formGroup.controls.resumen.touched && formGroup.controls.resumen.errors?.required">
@@ -205,12 +210,12 @@
         translate:msgParamObjetivoCientificoEntity}}<span
           [class]="(formGroup.controls.objetivosCientificos.touched && formGroup.controls.objetivosCientificos.errors?.required) ? 'warn' : ''">
           *</span></span>
-      <ckeditor
+      <sgi-i18n-ckeditor #objetivos
         [class]="formGroup.controls.objetivosCientificos.touched && formGroup.controls.objetivosCientificos.errors ? 'ck-editor-border-warn' : ''"
-        [editor]="CkEditor" [config]="configCkEditor" formControlName="objetivosCientificos" required>
-      </ckeditor>
+        formControlName="objetivosCientificos" required>
+      </sgi-i18n-ckeditor>
       <span *ngIf="!formGroup.controls.objetivosCientificos.errors"
-        class="ckeditor-hint">{{formGroup.controls.objetivosCientificos?.value?.length}} / 4000</span>
+        class="ckeditor-hint">{{objetivos.editingValue?.length}} / 4000</span>
       <span class="ckeditor-error"
         *ngIf="formGroup.controls.objetivosCientificos.touched && formGroup.controls.objetivosCientificos.errors?.required">
         {{'error.required.entity' | translate:msgParamObjetivoCientificoEntity}}
@@ -225,12 +230,12 @@
       <span class="ckeditor-label">{{'eti.peticion-evaluacion.disenio-metodologico' | translate}}<span
           [class]="(formGroup.controls.disenioMetodologico.touched && formGroup.controls.disenioMetodologico.errors?.required) ? 'warn' : ''">
           *</span></span>
-      <ckeditor
+      <sgi-i18n-ckeditor #disenioMetodologico
         [class]="formGroup.controls.disenioMetodologico.touched && formGroup.controls.disenioMetodologico.errors ? 'ck-editor-border-warn' : ''"
-        [editor]="CkEditor" [config]="configCkEditor" formControlName="disenioMetodologico" required>
-      </ckeditor>
+        formControlName="disenioMetodologico" required>
+      </sgi-i18n-ckeditor>
       <span *ngIf="!formGroup.controls.disenioMetodologico.errors"
-        class="ckeditor-hint">{{formGroup.controls.disenioMetodologico?.value?.length}} / 4000</span>
+        class="ckeditor-hint">{{disenioMetodologico.editingValue?.length}} / 4000</span>
       <span class="ckeditor-error"
         *ngIf="formGroup.controls.disenioMetodologico.touched && formGroup.controls.disenioMetodologico.errors?.required">
         {{'error.required.entity' | translate:msgParamDisenioMetodologicoEntity}}

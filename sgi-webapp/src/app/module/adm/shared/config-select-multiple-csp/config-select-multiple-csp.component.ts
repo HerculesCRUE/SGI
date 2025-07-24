@@ -38,8 +38,14 @@ export class ConfigSelectMultipleCspComponent extends ConfigSelectMultipleCompon
     return this.configService.findById(key);
   }
 
-  protected updateValue(key: string, newValue: string): Observable<IConfigValue> {
-    return this.configService.updateValue(key, newValue);
+  protected updateValue(key: string, newValue: string[] | string): Observable<IConfigValue> {
+    let valueToSave: string;
+    if (Array.isArray(newValue)) {
+      valueToSave = newValue?.join(',');
+    } else if (typeof newValue === 'string') {
+      valueToSave = newValue;
+    }
+    return this.configService.updateValue(key, valueToSave);
   }
 
 }

@@ -67,7 +67,7 @@ public interface InformeService {
 
   /**
    * Devuelve un listado paginado de {@link Informe} filtrado por la
-   * {@link Memoria}
+   * {@link Memoria} y en un lenguaje concreto
    * 
    * @param id       identificador de la {@link Memoria}
    * @param pageable paginación

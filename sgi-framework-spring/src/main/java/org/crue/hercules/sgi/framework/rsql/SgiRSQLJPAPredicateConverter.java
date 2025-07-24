@@ -9,25 +9,15 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import cz.jirutka.rsql.parser.ast.ComparisonNode;
-import io.github.perplexhub.rsql.RSQLJPAPredicateConverter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * Converter to build predicates from a RSQL query
  */
 @Slf4j
-public class SgiRSQLJPAPredicateConverter extends RSQLJPAPredicateConverter {
+public class SgiRSQLJPAPredicateConverter extends SgiRSQLJPAI18nPredicateConvertar {
 
   private final SgiRSQLPredicateResolver<?> specificationResolver;
-
-  /**
-   * The {@link CriteriaBuilder} used in predicate generation
-   */
-  protected CriteriaBuilder builder;
-  /**
-   * The {@link CriteriaQuery} used in predicate generation
-   */
-  protected CriteriaQuery<?> query;
 
   /**
    * @param builder           {@link CriteriaBuilder} to use in predicate
@@ -38,11 +28,9 @@ public class SgiRSQLJPAPredicateConverter extends RSQLJPAPredicateConverter {
    */
   public SgiRSQLJPAPredicateConverter(CriteriaBuilder builder, CriteriaQuery<?> query,
       SgiRSQLPredicateResolver<?> predicateResolver) {
-    super(builder, null, null);
+    super(query, builder, null, null);
     log.debug(
         "SgiRSQLJPAPredicateConverter(CriteriaBuilder builder, CriteriaQuery<?> query, SgiRSQLPredicateResolver<?> predicateResolver) - start");
-    this.builder = builder;
-    this.query = query;
     this.specificationResolver = predicateResolver;
     log.debug(
         "SgiRSQLJPAPredicateConverter(CriteriaBuilder builder, CriteriaQuery<?> query, SgiRSQLPredicateResolver<?> predicateResolver) - end");

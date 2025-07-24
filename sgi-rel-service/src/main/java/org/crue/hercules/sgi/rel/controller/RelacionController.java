@@ -1,11 +1,11 @@
 package org.crue.hercules.sgi.rel.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
 import org.crue.hercules.sgi.framework.web.bind.annotation.RequestPageable;
+import org.crue.hercules.sgi.rel.converter.RelacionConverter;
 import org.crue.hercules.sgi.rel.dto.RelacionInput;
 import org.crue.hercules.sgi.rel.dto.RelacionOutput;
 import org.crue.hercules.sgi.rel.model.Relacion;
@@ -136,24 +136,25 @@ public class RelacionController {
     log.debug("delete(Long id) - end");
   }
 
-  private RelacionOutput convert(Relacion sectorAplicacion) {
-    return modelMapper.map(sectorAplicacion, RelacionOutput.class);
+  private RelacionOutput convert(Relacion relacion) {
+    RelacionOutput relacionOutput = modelMapper.map(relacion, RelacionOutput.class);
+    relacionOutput.setObservaciones(relacion.getObservaciones());
+    return relacionOutput;
   }
 
-  private Relacion convert(RelacionInput sectorAplicacionInput) {
-    return convert(null, sectorAplicacionInput);
+  private Relacion convert(RelacionInput relacion) {
+    return convert(null, relacion);
   }
 
-  private Relacion convert(Long id, RelacionInput sectorAplicacionInput) {
-    Relacion sectorAplicacion = modelMapper.map(sectorAplicacionInput, Relacion.class);
-    sectorAplicacion.setId(id);
-    return sectorAplicacion;
+  private Relacion convert(Long id, RelacionInput relacionInput) {
+    Relacion relacion = modelMapper.map(relacionInput, Relacion.class);
+    relacion.setId(id);
+    relacion.setObservaciones(RelacionConverter.convertirObservaciones(relacionInput.getObservaciones()));
+    return relacion;
   }
 
   private Page<RelacionOutput> convert(Page<Relacion> page) {
-    List<RelacionOutput> content = page.getContent().stream().map(this::convert)
-        .collect(Collectors.toList());
-
+    List<RelacionOutput> content = page.getContent().stream().map(this::convert).toList();
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
 }

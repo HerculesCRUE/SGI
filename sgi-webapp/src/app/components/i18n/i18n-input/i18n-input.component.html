@@ -1,0 +1,15 @@
+<div class="input-multilang">
+  <mat-select matPrefix [(ngModel)]="selectedLanguage">
+    <mat-select-trigger>
+      <span>{{selectedLanguage.codeExtended}}</span>
+    </mat-select-trigger>
+    <mat-option *ngFor="let language of enabledLanguages" [value]="language">
+      <span>{{language.translateKey |
+        translate}} ({{language.codeExtended}})</span>
+    </mat-option>
+  </mat-select>
+
+  <input matInput [(ngModel)]="editingValue" [disabled]="disabled" [placeholder]="placeholder" [maxlength]="maxlength"
+    (change)="onEdit()" (focus)="onInputFocus()" (blur)="onInputBlur()">
+
+</div>

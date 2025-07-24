@@ -52,6 +52,8 @@ import { ViajesDietasExportService } from './ejecucion-economica-formulario/viaj
 import { ViajesDietasComponent } from './ejecucion-economica-formulario/viajes-dietas/viajes-dietas.component';
 import { EjecucionEconomicaListadoComponent } from './ejecucion-economica-listado/ejecucion-economica-listado.component';
 import { EjecucionEconomicaRoutingModule } from './ejecucion-economica-routing.module';
+import { DetalleOperacionesGastosModalComponent } from './modals/detalle-operaciones-gastos-modal/detalle-operaciones-gastos-modal.component';
+import { EjecucionPresupuestariaGastosModalComponent } from './modals/ejecucion-presupuestaria-gastos-modal/ejecucion-presupuestaria-gastos-modal.component';
 import { FacturasEmitidasModalComponent } from './modals/facturas-emitidas-modal/facturas-emitidas-modal.component';
 import { FacturasGastosModalComponent } from './modals/facturas-gastos-modal/facturas-gastos-modal.component';
 import { FacturasJustificantesClasificacionModal } from './modals/facturas-justificantes-clasificacion-modal/facturas-justificantes-clasificacion-modal.component';
@@ -71,12 +73,14 @@ import { RequerimientoJustificacionGeneralListadoExportService } from './requeri
 import { RequerimientoJustificacionListadoExportService } from './requerimiento-justificacion-listado-export.service';
 import { SeguimientoGastosJustificadosResumenListadoExportService } from './seguimiento-gastos-justificados-listado-export.service';
 import { SeguimientoGastosJustificadosResumenListadoGeneralExportService } from './seguimiento-gastos-justificados-listado-general-export.service';
+
 @NgModule({
   declarations: [
     ClasificacionGastosComponent,
     DetalleEconomicoComponent,
     DetalleOperacionesGastosComponent,
     DetalleOperacionesGastosExportModalComponent,
+    DetalleOperacionesGastosModalComponent,
     DetalleOperacionesIngresosComponent,
     DetalleOperacionesIngresosExportModalComponent,
     DetalleOperacionesModificacionesComponent,
@@ -87,6 +91,7 @@ import { SeguimientoGastosJustificadosResumenListadoGeneralExportService } from 
     EjecucionPresupuestariaEstadoActualExportModalComponent,
     EjecucionPresupuestariaGastosComponent,
     EjecucionPresupuestariaGastosExportModalComponent,
+    EjecucionPresupuestariaGastosModalComponent,
     EjecucionPresupuestariaIngresosComponent,
     EjecucionPresupuestariaIngresosExportModalComponent,
     FacturasEmitidasComponent,

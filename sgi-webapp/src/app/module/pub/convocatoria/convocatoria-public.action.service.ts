@@ -6,6 +6,7 @@ import { ConvocatoriaPublicService } from '@core/services/csp/convocatoria-publi
 import { ConvocatoriaRequisitoEquipoPublicService } from '@core/services/csp/convocatoria-requisito-equipo-public.service';
 import { ConvocatoriaRequisitoIPPublicService } from '@core/services/csp/convocatoria-requisito-ip-public.service';
 import { UnidadGestionPublicService } from '@core/services/csp/unidad-gestion-public.service';
+import { LanguageService } from '@core/services/language.service';
 import { PartidaPresupuestariaGastoSgePublicService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-gasto-sge-public.service';
 import { PartidaPresupuestariaIngresoSgePublicService } from '@core/services/sge/partida-presupuestaria-sge/partida-presupuestaria-ingreso-sge-public.service';
 import { EmpresaPublicService } from '@core/services/sgemp/empresa-public.service';
@@ -69,6 +70,7 @@ export class ConvocatoriaPublicActionService extends ActionService implements On
     fb: FormBuilder,
     logger: NGXLogger,
     route: ActivatedRoute,
+    languageService: LanguageService,
     categoriaProfesionaService: CategoriaProfesionalPublicService,
     convocatoriaRequisitoEquipoService: ConvocatoriaRequisitoEquipoPublicService,
     convocatoriaRequisitoIPService: ConvocatoriaRequisitoIPPublicService,
@@ -87,6 +89,7 @@ export class ConvocatoriaPublicActionService extends ActionService implements On
 
     this.datosGenerales = new ConvocatoriaDatosGeneralesPublicFragment(
       logger,
+      languageService,
       this.id,
       convocatoriaService,
       empresaService,

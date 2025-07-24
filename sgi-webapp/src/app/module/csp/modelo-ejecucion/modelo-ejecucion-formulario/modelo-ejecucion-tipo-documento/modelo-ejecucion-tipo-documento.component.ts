@@ -11,6 +11,7 @@ import { ITipoDocumento } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -52,9 +53,10 @@ export class ModeloEjecucionTipoDocumentoComponent extends FragmentComponent imp
     private dialogService: DialogService,
     private matDialog: MatDialog,
     actionService: ModeloEjecucionActionService,
+    private readonly languageService: LanguageService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.TIPO_DOCUMENTOS, actionService);
+    super(actionService.FRAGMENT.TIPO_DOCUMENTOS, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -71,7 +73,7 @@ export class ModeloEjecucionTipoDocumentoComponent extends FragmentComponent imp
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subscription = this.formPart.modeloTipoDocumento$.subscribe(
       (wrappers: StatusWrapper<IModeloTipoDocumento>[]) => {
         this.modelosTipoDocumentos.data = wrappers;
@@ -82,11 +84,11 @@ export class ModeloEjecucionTipoDocumentoComponent extends FragmentComponent imp
       (wrapper: StatusWrapper<IModeloTipoDocumento>, property: string) => {
         switch (property) {
           case 'nombre':
-            return wrapper.value.tipoDocumento.nombre;
+            return wrapper.value.tipoDocumento?.nombre ? this.languageService.getFieldValue(wrapper.value.tipoDocumento?.nombre) : '';
           case 'descripcion':
-            return wrapper.value.tipoDocumento.descripcion;
+            return wrapper.value.tipoDocumento.descripcion ? this.languageService.getFieldValue(wrapper.value.tipoDocumento?.descripcion) : '';
           case 'nombreFase':
-            return wrapper.value.modeloTipoFase?.tipoFase?.nombre;
+            return wrapper.value.modeloTipoFase?.tipoFase?.nombre ? this.languageService.getFieldValue(wrapper.value.modeloTipoFase.tipoFase.nombre) : '';
           default:
             return wrapper[property];
         }
@@ -95,7 +97,7 @@ export class ModeloEjecucionTipoDocumentoComponent extends FragmentComponent imp
     this.subscriptions.push(subscription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MODELO_EJECUCION_TIPO_DOCUMENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

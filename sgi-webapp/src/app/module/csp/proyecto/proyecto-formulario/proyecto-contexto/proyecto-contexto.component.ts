@@ -6,15 +6,17 @@ import { MatTableDataSource } from '@angular/material/table';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FormFragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { IProyectoContexto, PROPIEDAD_RESULTADOS_MAP } from '@core/models/csp/proyecto-contexto';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
+import { LanguageService } from '@core/services/language.service';
 import { TranslateService } from '@ngx-translate/core';
-import { BehaviorSubject, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ProyectoContextoModalComponent, ProyectoContextoModalData } from '../../modals/proyecto-contexto-modal/proyecto-contexto-modal.component';
 import { ProyectoActionService } from '../../proyecto.action.service';
-import { AreaTematicaProyectoData, ProyectoContextoFragment } from './proyecto-contexto.fragment';
+import { ProyectoContextoFragment } from './proyecto-contexto.fragment';
 
 const PROYECTO_CONTEXTO_INTERESES_KEY = marker('csp.proyecto.contexto.intereses');
 const PROYECTO_CONTEXTO_OBJETIVOS_KEY = marker('csp.proyecto.contexto.objetivos');
@@ -23,11 +25,9 @@ const AREA_KEY = marker('csp.area');
 const SELECCIONAR_AREA_TEMATICA_KEY = marker('csp.proyecto.select-area');
 const AREA_TEMATICA_KEY = marker('csp.area-tematica');
 
-
-
 export interface AreaTematicaListado {
   padre: IAreaTematica;
-  areasTematicasConvocatoria: string;
+  areasTematicasConvocatoria: I18nFieldValue[][];
   areaTematicaProyecto: IAreaTematica;
 }
 @Component({
@@ -66,10 +66,10 @@ export class ProyectoContextoComponent extends FormFragmentComponent<IProyectoCo
   constructor(
     protected actionService: ProyectoActionService,
     private matDialog: MatDialog,
-    private readonly translate: TranslateService
-
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.CONTEXTO_PROYECTO, actionService);
+    super(actionService.FRAGMENT.CONTEXTO_PROYECTO, actionService, translate);
     this.formPart = this.fragment as ProyectoContextoFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -87,12 +87,12 @@ export class ProyectoContextoComponent extends FormFragmentComponent<IProyectoCo
   ngOnInit(): void {
     super.ngOnInit();
 
-    this.setupI18N();
+
 
     this.loadAreaTematicas();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       AREA_KEY,
@@ -133,7 +133,7 @@ export class ProyectoContextoComponent extends FormFragmentComponent<IProyectoCo
         this.areasConvocatoria = data[0]?.areasTematicasConvocatoria;
         const listadoAreas: AreaTematicaListado = {
           padre: data[0]?.root,
-          areasTematicasConvocatoria: data[0]?.areasTematicasConvocatoria?.map(area => area.nombre).join(', '),
+          areasTematicasConvocatoria: data[0]?.areasTematicasConvocatoria?.map(area => area.nombre).sort(this.sortAreasTematicasByNombre),
           areaTematicaProyecto: data[0]?.areaTematicaProyecto
         };
         this.listadoAreaTematicas.data = [listadoAreas];
@@ -170,5 +170,11 @@ export class ProyectoContextoComponent extends FormFragmentComponent<IProyectoCo
   get PROPIEDAD_RESULTADOS_MAP() {
     return PROPIEDAD_RESULTADOS_MAP;
   }
+
+  private sortAreasTematicasByNombre: (a1: I18nFieldValue[], a2: I18nFieldValue[]) => number = (a1, a2) => {
+    const nombreA = this.languageService.getFieldValue(a1);
+    const nombreB = this.languageService.getFieldValue(a2);
+    return nombreA.localeCompare(nombreB);
+  };
 
 }

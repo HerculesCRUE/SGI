@@ -1,0 +1,54 @@
+[
+  {
+    "key": "ap3_7_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.7.3 Argitalpen zientifikoen erreferentziak"
+    },
+    "fieldGroup": [
+      {
+        "template": "Prozedurek/esku hartzeek gidalerro ofizialen bati jarraitzen diote?"
+      },
+      {
+        "key": "siguenDirectrizOficialRadio",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Hautatu aukera bat:",
+          "required": true,
+          "options": [
+            {
+              "value": "si",
+              "label": "Bai. Jarraian zehaztuta dago."
+            },
+            {
+              "value": "noConDisenioSimilar",
+              "label": "Ez, baina antzeko diseinua duten argitalpen zientifikoen erreferentziak emango dira."
+            },
+            {
+              "value": "noSinDisenioSimilar",
+              "label": "Ez. Ez dago antzeko diseinua duen argitalpenik."
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: aipatu erreferentzia aipagarrienak (gehienez 10 lerro) modu osatuan (egilea, izenburua, argitalpena, data, etab.), eta erantsi dokumentuak ‘5.6 Dokumentazio osagarria’ atalean. </p>"
+      },
+      {
+        "key": "especificarDirectriz",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.siguenDirectrizOficialRadio || model.siguenDirectrizOficialRadio === 'noSinDisenioSimilar'",
+        "templateOptions": {
+          "name": "Zehaztu",
+          "required": true
+        }
+      }
+    ]
+  }
+]

@@ -2,6 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { I18nComponentsModule } from '@components/i18n/i18n-components.module';
 import { FormlyFormsModule } from '@formly-forms/formly-forms.module';
 import { MaterialDesignModule } from '@material/material-design.module';
 import { TranslateModule } from '@ngx-translate/core';
@@ -52,6 +53,7 @@ import { SelectEntityComponent } from './select-entity/select-entity.component';
 import { SelectEnumComponent } from './select-enum/select-enum.component';
 import { SelectMultipleComponent } from './select-multiple/select-multiple.component';
 import { SelectComponent } from './select/select.component';
+import { TypeOfPipe } from './typeof-pipe';
 
 @NgModule({
   declarations: [
@@ -102,7 +104,8 @@ import { SelectComponent } from './select/select.component';
     SelectMultipleComponent,
     SgiFileUploadComponent,
     SgiInputWithThousandSeparator,
-    SgiTooltipDirective
+    SgiTooltipDirective,
+    TypeOfPipe
   ],
   imports: [
     CommonModule,
@@ -112,6 +115,7 @@ import { SelectComponent } from './select/select.component';
     FormsModule,
     ReactiveFormsModule,
     FormlyFormsModule,
+    I18nComponentsModule
   ],
   exports: [
     ActionComponent,
@@ -131,6 +135,7 @@ import { SelectComponent } from './select/select.component';
     FooterCrearComponent,
     FormAutocompleteOffDirective,
     FragmentComponent,
+    I18nComponentsModule,
     IconChangesComponent,
     IconErrorsComponent,
     IconProblemsComponent,
@@ -155,9 +160,11 @@ import { SelectComponent } from './select/select.component';
     SelectEntityComponent,
     SelectEnumComponent,
     SelectMultipleComponent,
+    SelectMultipleComponent,
     SgiFileUploadComponent,
     SgiInputWithThousandSeparator,
-    SgiTooltipDirective
+    SgiTooltipDirective,
+    TypeOfPipe
   ]
 })
 export class SharedModule { }

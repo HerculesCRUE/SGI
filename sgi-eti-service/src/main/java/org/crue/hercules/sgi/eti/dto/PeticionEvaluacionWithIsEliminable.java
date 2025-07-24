@@ -3,9 +3,15 @@ package org.crue.hercules.sgi.eti.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.Collection;
 
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionDisMetodologico;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion.TipoValorSocial;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionFuenteFinanciacion;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionObjetivos;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionResumen;
+import org.crue.hercules.sgi.eti.model.PeticionEvaluacionTitulo;
 import org.crue.hercules.sgi.eti.model.TipoActividad;
 import org.crue.hercules.sgi.eti.model.TipoInvestigacionTutelada;
 
@@ -33,7 +39,7 @@ public class PeticionEvaluacionWithIsEliminable implements Serializable {
   private String codigo;
 
   /** Título */
-  private String titulo;
+  private Collection<PeticionEvaluacionTitulo> titulo;
 
   /** Tipo Actividad */
   private TipoActividad tipoActividad;
@@ -42,7 +48,7 @@ public class PeticionEvaluacionWithIsEliminable implements Serializable {
   private TipoInvestigacionTutelada tipoInvestigacionTutelada;
 
   /** Fuente financiacion */
-  private String fuenteFinanciacion;
+  private Collection<PeticionEvaluacionFuenteFinanciacion> fuenteFinanciacion;
 
   /** Fecha Inicio. */
   private Instant fechaInicio;
@@ -51,16 +57,16 @@ public class PeticionEvaluacionWithIsEliminable implements Serializable {
   private Instant fechaFin;
 
   /** Resumen */
-  private String resumen;
+  private Collection<PeticionEvaluacionResumen> resumen;
 
   /** Valor social */
   private TipoValorSocial valorSocial;
 
   /** Objetivos */
-  private String objetivos;
+  private Collection<PeticionEvaluacionObjetivos> objetivos;
 
   /** Diseño metodológico */
-  private String disMetodologico;
+  private Collection<PeticionEvaluacionDisMetodologico> disMetodologico;
 
   /** Tiene fondos propios */
   private Boolean tieneFondosPropios;

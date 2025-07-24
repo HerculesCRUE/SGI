@@ -1,4 +1,5 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoriaDocumento } from '@core/models/csp/convocatoria-documento';
 import { IDocumento } from '@core/models/sgdoc/documento';
 import { Fragment } from '@core/services/action-service';
@@ -11,7 +12,7 @@ import { map } from 'rxjs/operators';
 export class NodeDocumento {
   parent: NodeDocumento;
   key: string;
-  title: string;
+  title: string | I18nFieldValue[];
   documento?: StatusWrapper<IConvocatoriaDocumento>;
   fichero?: IDocumento;
   // tslint:disable-next-line: variable-name
@@ -26,7 +27,7 @@ export class NodeDocumento {
     return this._level;
   }
 
-  constructor(key: string, title: string, level: number, documento?: StatusWrapper<IConvocatoriaDocumento>) {
+  constructor(key: string, title: string | I18nFieldValue[], level: number, documento?: StatusWrapper<IConvocatoriaDocumento>) {
     this.key = key;
     this.title = title;
     this._level = level;

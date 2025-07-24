@@ -18,6 +18,17 @@
           <ng-container *ngSwitchDefault></ng-container>
         </ng-container>
       </ng-container>
+      <ng-container *ngSwitchCase="ConfigType.I18N_TEXT">
+        <ng-container [ngSwitch]="config.value.module">
+          <ng-container *ngSwitchCase="ConfigModule.CNF">
+            <sgi-config-i18n-input-text-cnf [key]="config.key" [label]="config.value.label"
+              [description]="config.value.description" [required]="config.value.required"
+              (error)="handleErrors($event)">
+            </sgi-config-i18n-input-text-cnf>
+          </ng-container>
+          <ng-container *ngSwitchDefault></ng-container>
+        </ng-container>
+      </ng-container>
       <ng-container *ngSwitchCase="ConfigType.EMAILS">
         <sgi-config-input-emails [key]="config.key" [label]="config.value.label" [required]="config.value.required"
           (error)="handleErrors($event)">

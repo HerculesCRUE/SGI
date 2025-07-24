@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConvocatoriaConceptoGasto } from '@core/models/csp/convocatoria-concepto-gasto';
 import { IConvocatoriaConceptoGastoCodigoEc } from '@core/models/csp/convocatoria-concepto-gasto-codigo-ec';
 import { IProyectoConceptoGasto } from '@core/models/csp/proyecto-concepto-gasto';
@@ -11,7 +12,7 @@ export function compareConceptoGastoCodigoEc(
   return proyectoCodigoEconomico?.codigoEconomico?.id !== convocatoriaCodigoEconomico?.codigoEconomico.id
     || proyectoCodigoEconomico?.fechaInicio?.toMillis() !== convocatoriaCodigoEconomico?.fechaInicio?.toMillis()
     || proyectoCodigoEconomico?.fechaFin?.toMillis() !== convocatoriaCodigoEconomico?.fechaFin?.toMillis()
-    || (proyectoCodigoEconomico.observaciones ?? '') !== (convocatoriaCodigoEconomico?.observaciones ?? '');
+    || !isObservacionesEquals(proyectoCodigoEconomico.observaciones, convocatoriaCodigoEconomico?.observaciones);
 }
 
 export function compareConceptoGasto(
@@ -36,7 +37,7 @@ export function compareConceptoGasto(
     || proyectoConceptoGasto.importeMaximo !== convocatoriaConceptoGasto?.importeMaximo
     || proyectoConceptoGasto.fechaInicio?.toMillis() !== fechaInicioConvocatoriaConceptoGasto?.toMillis()
     || proyectoConceptoGasto.fechaFin?.toMillis() !== fechaFinConvocatoriaConceptoGasto?.toMillis()
-    || (proyectoConceptoGasto.observaciones ?? '') !== (convocatoriaConceptoGasto?.observaciones ?? '');
+    || !isObservacionesEquals(proyectoConceptoGasto.observaciones, convocatoriaConceptoGasto?.observaciones);
 }
 
 /**
@@ -87,4 +88,23 @@ export function getFechaFinConceptoGasto(
   }
 
   return fechaFinConvocatoriaConceptoGasto;
+}
+
+function isObservacionesEquals(
+  observacionesProyecto: I18nFieldValue[] = [],
+  observacionesConvocatoria: I18nFieldValue[] = []
+): boolean {
+  if (observacionesProyecto == null || observacionesConvocatoria == null) {
+    return false;
+  }
+
+  const valoresProyecto = new Set(observacionesProyecto.map(o => `${o.lang}-${o.value}`));
+  const valoresConvocatoria = new Set(observacionesConvocatoria.map(o => `${o.lang}-${o.value}`));
+
+  return isSetsEqual(valoresProyecto, valoresConvocatoria);
+}
+
+function isSetsEqual(setA: Set<string>, setB: Set<string>): boolean {
+  if (setA.size !== setB.size) return false;
+  return [...setA].every(value => setB.has(value));
 }

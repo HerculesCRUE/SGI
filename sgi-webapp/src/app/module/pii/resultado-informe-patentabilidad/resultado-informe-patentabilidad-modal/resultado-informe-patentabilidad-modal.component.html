@@ -4,8 +4,9 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'pii.resultado-informe-patentabilidad.nombre' | translate}}</mat-label>
-        <input matInput formControlName="nombre" type="text" id="nombre"
-          placeholder="{{'pii.resultado-informe-patentabilidad.nombre' | translate}}" required cdkFocusInitial>
+        <sgi-i18n-input formControlName="nombre"
+          placeholder="{{'pii.resultado-informe-patentabilidad.nombre' | translate}}" required
+          cdkFocusInitial></sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>
@@ -18,8 +19,8 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'pii.resultado-informe-patentabilidad.descripcion' | translate}}</mat-label>
-        <textarea matInput formControlName="descripcion" id="descripcion"
-          placeholder="{{'pii.resultado-informe-patentabilidad.descripcion' | translate}}" required></textarea>
+        <sgi-i18n-textarea formControlName="descripcion"
+          placeholder="{{'pii.resultado-informe-patentabilidad.descripcion' | translate}}" required></sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.controls.descripcion.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamDescripcionEntity}}
         </mat-error>

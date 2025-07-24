@@ -7,10 +7,8 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.dto.ProyectoEntidadConvocanteDto;
-import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadConvocante;
 import org.crue.hercules.sgi.csp.service.ProyectoEntidadConvocanteService;
-import org.crue.hercules.sgi.framework.exception.NotFoundException;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -18,7 +16,6 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
-import org.springframework.beans.BeanUtils;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
@@ -96,161 +93,6 @@ class ProyectoEntidadConvocanteControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.header().string("X-Page-Size", "10"))
         .andExpect(MockMvcResultMatchers.header().string("X-Total-Count", "10"))
         .andExpect(MockMvcResultMatchers.jsonPath("$", Matchers.hasSize(10)));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  void create_ReturnsProyectoEntidadConvocante() throws Exception {
-    // given: new ProyectoEntidadConvocanteDto
-    Long proyectoId = 1L;
-    ProyectoEntidadConvocanteDto entidadConvocante = ProyectoEntidadConvocanteDto.builder().entidadRef("Entidad")
-        .build();
-
-    BDDMockito.given(service.create(ArgumentMatchers.<ProyectoEntidadConvocante>any()))
-        .willAnswer(new Answer<ProyectoEntidadConvocante>() {
-          @Override
-          public ProyectoEntidadConvocante answer(InvocationOnMock invocation) throws Throwable {
-            ProyectoEntidadConvocante givenProyectoEntidadConvocante = invocation.getArgument(0,
-                ProyectoEntidadConvocante.class);
-            ProyectoEntidadConvocante newEntidadConvocante = new ProyectoEntidadConvocante();
-            BeanUtils.copyProperties(givenProyectoEntidadConvocante, newEntidadConvocante);
-            newEntidadConvocante.setProyectoId(proyectoId);
-            newEntidadConvocante.setId(1L);
-            return newEntidadConvocante;
-          }
-        });
-
-    // when: create ProyectoEntidadConvocanteDto
-    mockMvc
-        .perform(MockMvcRequestBuilders.post(ProyectoEntidadConvocanteController.REQUEST_MAPPING, proyectoId)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(entidadConvocante)))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: new ProyectoEntidadConvocanteDto is created
-        .andExpect(MockMvcResultMatchers.status().isCreated())
-        .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("entidadRef").value(entidadConvocante.getEntidadRef()));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  void create_WithId_Returns400() throws Exception {
-    // given: a ProyectoEntidadConvocanteDto with id filled
-    Long proyectoId = 1L;
-    ProyectoEntidadConvocanteDto entidadConvocante = ProyectoEntidadConvocanteDto.builder().id(1L).entidadRef("Entidad")
-        .build();
-
-    BDDMockito.given(service.create(ArgumentMatchers.<ProyectoEntidadConvocante>any()))
-        .willThrow(new IllegalArgumentException());
-
-    // when: create ProyectoEntidadConvocanteDto
-    mockMvc
-        .perform(MockMvcRequestBuilders.post(ProyectoEntidadConvocanteController.REQUEST_MAPPING, proyectoId)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(entidadConvocante)))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: 400 error
-        .andExpect(MockMvcResultMatchers.status().isBadRequest());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  void setPrograma_WithExistingId_ReturnsProyectoEntidadConvocante() throws Exception {
-    // given: existing ProyectoEntidadConvocanteDto
-    Long proyectoId = 1L;
-    Long entidadConvocanteId = 1L;
-    Programa programa = Programa.builder().id(1L).id(1L).nombre("p1").activo(Boolean.TRUE).build();
-    BDDMockito.given(service.setPrograma(ArgumentMatchers.<Long>any(), ArgumentMatchers.<Programa>any()))
-        .willAnswer(new Answer<ProyectoEntidadConvocante>() {
-          @Override
-          public ProyectoEntidadConvocante answer(InvocationOnMock invocation) throws Throwable {
-            Long givenProyectoEntidadConvocanteId = invocation.getArgument(0, Long.class);
-            Programa programa = invocation.getArgument(1, Programa.class);
-            return ProyectoEntidadConvocante.builder().id(givenProyectoEntidadConvocanteId).proyectoId(proyectoId)
-                .programa(programa).build();
-          }
-        });
-
-    // when: update ProyectoEntidadConvocanteDto
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .patch(
-                ProyectoEntidadConvocanteController.REQUEST_MAPPING
-                    + ProyectoEntidadConvocanteController.PATH_ENTIDADCONVOCANTE_PROGRAMA,
-                proyectoId, entidadConvocanteId)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(programa)))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: ProyectoEntidadConvocanteDto is updated
-        .andExpect(MockMvcResultMatchers.status().isOk())
-        .andExpect(MockMvcResultMatchers.jsonPath("id").value(entidadConvocanteId))
-        .andExpect(MockMvcResultMatchers.jsonPath("programa").exists())
-        .andExpect(MockMvcResultMatchers.jsonPath("programa.id").value(programa.getId()));
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  void setPrograma_WithNoExistingId_Returns404() throws Exception {
-    // given: a ProyectoEntidadConvocanteDto with non existing id
-    Long proyectoId = 1L;
-    ProyectoEntidadConvocanteDto entidadConvocante = ProyectoEntidadConvocanteDto.builder().id(1L).entidadRef("Entidad")
-        .build();
-
-    BDDMockito.given(service.setPrograma(ArgumentMatchers.<Long>any(), ArgumentMatchers.<Programa>any()))
-        .willThrow(new NotFoundException());
-
-    // when: create ProyectoEntidadConvocanteDto
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .patch(
-                ProyectoEntidadConvocanteController.REQUEST_MAPPING
-                    + ProyectoEntidadConvocanteController.PATH_ENTIDADCONVOCANTE_PROGRAMA,
-                proyectoId, entidadConvocante.getId())
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(entidadConvocante)))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: 404 error
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  void delete_NonExistingId_Return404() throws Exception {
-    // given: non existing id
-    Long proyectoId = 1L;
-    Long entidadConvocanteId = 1L;
-    BDDMockito.willThrow(new NotFoundException()).given(service).delete(ArgumentMatchers.<Long>any());
-
-    // when: delete by non existing id
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .delete(ProyectoEntidadConvocanteController.REQUEST_MAPPING
-                + ProyectoEntidadConvocanteController.PATH_ENTIDADCONVOCANTE, proyectoId, entidadConvocanteId)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: 404 error
-        .andExpect(MockMvcResultMatchers.status().isNotFound());
-  }
-
-  @Test
-  @WithMockUser(username = "user", authorities = { "CSP-PRO-E" })
-  void delete_WithExistingId_Return204() throws Exception {
-    // given: existing id
-    Long proyectoId = 1L;
-    Long entidadConvocanteId = 1L;
-    BDDMockito.doNothing().when(service).delete(ArgumentMatchers.anyLong());
-
-    // when: delete by id
-    mockMvc
-        .perform(MockMvcRequestBuilders
-            .delete(ProyectoEntidadConvocanteController.REQUEST_MAPPING
-                + ProyectoEntidadConvocanteController.PATH_ENTIDADCONVOCANTE, proyectoId, entidadConvocanteId)
-            .with(SecurityMockMvcRequestPostProcessors.csrf()).contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON))
-        .andDo(SgiMockMvcResultHandlers.printOnError())
-        // then: 204
-        .andExpect(MockMvcResultMatchers.status().isNoContent());
   }
 
   @Test

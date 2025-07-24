@@ -3,6 +3,7 @@ package org.crue.hercules.sgi.csp.repository;
 import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
@@ -17,8 +18,9 @@ public interface FuenteFinanciacionRepository
   /**
    * Obtiene la entidad {@link FuenteFinanciacion} activo con el nombre indicado
    *
-   * @param nombre el nombre de {@link FuenteFinanciacion}.
+   * @param nombre   el nombre de {@link FuenteFinanciacion}.
+   * @param language el lang de {@link FuenteFinanciacion}.
    * @return el {@link FuenteFinanciacion} con el nombre indicado
    */
-  Optional<FuenteFinanciacion> findByNombreAndActivoIsTrue(String nombre);
+  Optional<FuenteFinanciacion> findByNombreLangAndNombreValueAndActivoIsTrue(Language language, String nombre);
 }

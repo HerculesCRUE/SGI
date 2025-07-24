@@ -4,6 +4,7 @@ import { IPersona } from '@core/models/sgp/persona';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IEmpresaExplotacionResultadosRequest } from './empresa-explotacion-resultados-request';
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 
 class EmpresaExplotacionResultadosRequestConverter
   extends SgiBaseConverter<IEmpresaExplotacionResultadosRequest, IEmpresaExplotacionResultados> {
@@ -15,7 +16,7 @@ class EmpresaExplotacionResultadosRequestConverter
       id: undefined,
       fechaSolicitud: LuxonUtils.fromBackend(value.fechaSolicitud),
       tipoEmpresa: value.tipoEmpresa,
-      conocimientoTecnologia: value.conocimientoTecnologia,
+      conocimientoTecnologia: value.conocimientoTecnologia ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.conocimientoTecnologia) : [],
       entidad: value.entidadRef ? { id: value.entidadRef } as IEmpresa : undefined,
       estado: value.estado,
       fechaAprobacionCG: LuxonUtils.fromBackend(value.fechaAprobacionCG),
@@ -23,11 +24,11 @@ class EmpresaExplotacionResultadosRequestConverter
       fechaConstitucion: LuxonUtils.fromBackend(value.fechaConstitucion),
       fechaDesvinculacion: LuxonUtils.fromBackend(value.fechaDesvinculacion),
       fechaIncorporacion: LuxonUtils.fromBackend(value.fechaIncorporacion),
-      nombreRazonSocial: value.nombreRazonSocial,
-      notario: value.notario,
+      nombreRazonSocial: value.nombreRazonSocial ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.nombreRazonSocial) : [],
+      notario: value.notario ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.notario) : [],
       numeroProtocolo: value.numeroProtocolo,
-      objetoSocial: value.objetoSocial,
-      observaciones: value.observaciones,
+      objetoSocial: value.objetoSocial ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.objetoSocial) : [],
+      observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.observaciones) : [],
       solicitante: value.solicitanteRef ? { id: value.solicitanteRef } as IPersona : undefined,
       activo: undefined
     };
@@ -40,7 +41,7 @@ class EmpresaExplotacionResultadosRequestConverter
     return {
       fechaSolicitud: LuxonUtils.toBackend(value.fechaSolicitud),
       tipoEmpresa: value.tipoEmpresa,
-      conocimientoTecnologia: value.conocimientoTecnologia,
+      conocimientoTecnologia: value.conocimientoTecnologia ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.conocimientoTecnologia) : [],
       entidadRef: value.entidad?.id,
       estado: value.estado,
       fechaAprobacionCG: LuxonUtils.toBackend(value.fechaAprobacionCG),
@@ -48,11 +49,11 @@ class EmpresaExplotacionResultadosRequestConverter
       fechaConstitucion: LuxonUtils.toBackend(value.fechaConstitucion),
       fechaDesvinculacion: LuxonUtils.toBackend(value.fechaDesvinculacion),
       fechaIncorporacion: LuxonUtils.toBackend(value.fechaIncorporacion),
-      nombreRazonSocial: value.nombreRazonSocial,
-      notario: value.notario,
+      nombreRazonSocial: value.nombreRazonSocial ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.nombreRazonSocial) : [],
+      notario: value.notario ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.notario) : [],
       numeroProtocolo: value.numeroProtocolo,
-      objetoSocial: value.objetoSocial,
-      observaciones: value.observaciones,
+      objetoSocial: value.objetoSocial ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.objetoSocial) : [],
+      observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.observaciones) : [],
       solicitanteRef: value.solicitante?.id
     };
   }

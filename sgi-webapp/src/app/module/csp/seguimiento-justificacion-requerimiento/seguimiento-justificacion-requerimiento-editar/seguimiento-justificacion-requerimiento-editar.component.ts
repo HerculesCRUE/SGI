@@ -55,7 +55,7 @@ export class SeguimientoJustificacionRequerimientoEditarComponent extends Action
     private readonly translate: TranslateService,
     private readonly cspConfigService: ConfigService
   ) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
 
     this.subscriptions.push(
       this.cspConfigService.isGastosJustificadosSgeEnabled().subscribe(gastosJustificadosSgeEnabled => {
@@ -66,10 +66,10 @@ export class SeguimientoJustificacionRequerimientoEditarComponent extends Action
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       REQUERIMIENTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

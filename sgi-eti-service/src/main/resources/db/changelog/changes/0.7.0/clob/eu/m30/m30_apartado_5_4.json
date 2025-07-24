@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap5_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.4 Istripu biologiko bat edo substantzia kimiko arriskutsuekin istripu bat gertatuz gero jarduteko protokoloa"
+    },
+    "fieldGroup": [
+      {
+        "template": "Jarraian, istripu biologiko bat edo substantzia kimiko arriskutsuekin istripu bat gertatuz gero jarduteko protokoloa idatzi behar duzu; memoria honetarako espezifikoa izan behar du, eta 'Dokumentazioa' atalean dagokion eremuan erantsi behar duzu."
+      },
+      {
+        "key": "protocoloActuacion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": "PROTOCOLO_ACTUACION",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

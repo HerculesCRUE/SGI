@@ -6,8 +6,8 @@
       <div fxFlex fxFlex.sm="100%">
         <mat-form-field>
           <mat-label>{{'pii.solicitud-proteccion.titulo' | translate}}</mat-label>
-          <input matInput formControlName="titulo" type="text" id="titulo"
-            placeholder="{{'pii.solicitud-proteccion.titulo' | translate}}" required>
+          <sgi-i18n-input formControlName="titulo" placeholder="{{'pii.solicitud-proteccion.titulo' | translate}}"
+            required></sgi-i18n-input>
           <mat-error *ngIf="formGroup.controls.titulo.errors?.required">
             {{'error.required.entity' | translate:msgParamTituloEntity}}
           </mat-error>
@@ -220,8 +220,8 @@
     <div fxFlex="100%">
       <mat-form-field fxFill>
         <mat-label>{{'pii.solicitud-proteccion.comentarios' | translate}}</mat-label>
-        <textarea matInput formControlName="comentarios" id="comentarios"
-          placeholder="{{'pii.solicitud-proteccion.comentarios' | translate}}"></textarea>
+        <sgi-i18n-textarea formControlName="comentarios"
+          placeholder="{{'pii.solicitud-proteccion.comentarios' | translate}}"></sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
         </mat-error>

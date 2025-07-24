@@ -11,11 +11,15 @@ import org.crue.hercules.sgi.csp.exceptions.ProyectoSocioNotFoundException;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
 import org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo;
+import org.crue.hercules.sgi.csp.model.RolProyecto;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoSocioEquipoSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoSocioEquipoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -32,6 +36,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoSocioEquipoServiceImpl implements ProyectoSocioEquipoService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_MODIFICAR = "action.modificar";
+  private static final String MSG_FIELD_PERSONA_REF = "personaRef";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA = "org.springframework.util.Assert.accion.denegada.message";
+  private static final String MSG_MODEL_PROYECTO_SOCIO = "org.crue.hercules.sgi.csp.model.ProyectoSocio.message";
+  private static final String MSG_MODEL_PROYECTO_SOCIO_EQUIPO = "org.crue.hercules.sgi.csp.model.ProyectoSocioEquipo.message";
+  private static final String MSG_PROBLEM_DATE_OVERLOAP = "org.springframework.util.Assert.date.overloap.message";
 
   private final ProyectoSocioEquipoRepository repository;
 
@@ -104,22 +117,25 @@ public class ProyectoSocioEquipoServiceImpl implements ProyectoSocioEquipoServic
 
         Assert.isTrue(
             Objects.equals(periodoJustificacionBD.getProyectoSocioId(), proyectoSocioEquipo.getProyectoSocioId()),
-            "No se puede modificar el proyecto socio del ProyectoSocioEquipo");
+            () -> ProblemMessage.builder()
+                .key(MSG_PROBLEM_ACCION_DENEGADA)
+                .parameter(MSG_KEY_FIELD, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_PROYECTO_SOCIO))
+                .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_PROYECTO_SOCIO_EQUIPO))
+                .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_MODIFICAR))
+                .build());
       }
 
       // Setea el proyecto socio recuperado del proyectoSocioId
       proyectoSocioEquipo.setProyectoSocioId(proyectoSocio.getId());
 
       // Validaciones
-      Assert.notNull(proyectoSocioEquipo.getRolProyecto(),
-          "El rol de participación no puede ser null para realizar la acción sobre ProyectoSocioEquipo");
-
-      Assert.notNull(proyectoSocioEquipo.getPersonaRef(),
-          "La persona ref no puede ser null para realizar la acción sobre ProyectoSocioEquipo");
+      AssertHelper.entityNotNull(proyectoSocioEquipo.getRolProyecto(), ProyectoSocioEquipo.class, RolProyecto.class);
+      AssertHelper.fieldNotNull(proyectoSocioEquipo.getPersonaRef(), ProyectoSocioEquipo.class, MSG_FIELD_PERSONA_REF);
 
       if (proyectoSocioEquipo.getFechaInicio() != null && proyectoSocioEquipo.getFechaFin() != null) {
-        Assert.isTrue(proyectoSocioEquipo.getFechaInicio().isBefore(proyectoSocioEquipo.getFechaFin()),
-            "La fecha de fin tiene que ser posterior a la fecha de inicio");
+        AssertHelper.isBefore(proyectoSocioEquipo.getFechaInicio().isBefore(proyectoSocioEquipo.getFechaFin()));
       }
 
       Assert.isTrue(
@@ -127,7 +143,12 @@ public class ProyectoSocioEquipoServiceImpl implements ProyectoSocioEquipoServic
               && (!proyectoSocioEquipoAnterior.getPersonaRef().equals(proyectoSocioEquipo.getPersonaRef())
                   || (proyectoSocioEquipoAnterior.getPersonaRef().equals(proyectoSocioEquipo.getPersonaRef())
                       && proyectoSocioEquipo.getFechaInicio().isAfter(proyectoSocioEquipoAnterior.getFechaFin())))),
-          "El equipo se solapa con otro existente");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_DATE_OVERLOAP)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                  MSG_MODEL_PROYECTO_SOCIO_EQUIPO))
+              .parameter(MSG_KEY_FIELD, proyectoSocioEquipo.getPersonaRef())
+              .build());
 
       proyectoSocioEquipoAnterior = proyectoSocioEquipo;
 

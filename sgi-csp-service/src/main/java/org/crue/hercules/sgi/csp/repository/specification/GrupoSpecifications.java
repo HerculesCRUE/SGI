@@ -10,10 +10,11 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
-import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo;
 import org.crue.hercules.sgi.csp.model.GrupoEquipo_;
+import org.crue.hercules.sgi.csp.model.GrupoEspecialInvestigacion;
+import org.crue.hercules.sgi.csp.model.GrupoEspecialInvestigacion_;
 import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigacion;
 import org.crue.hercules.sgi.csp.model.GrupoLineaInvestigacion_;
 import org.crue.hercules.sgi.csp.model.GrupoPersonaAutorizada;
@@ -56,18 +57,6 @@ public class GrupoSpecifications {
    */
   public static Specification<Grupo> byProyectoSgeRefNotNull() {
     return (root, query, cb) -> cb.isNotNull(root.get(Grupo_.proyectoSgeRef));
-  }
-
-  /**
-   * {@link Grupo} distintos.
-   * 
-   * @return specification para obtener las entidades {@link Grupo} sin repetidos.
-   */
-  public static Specification<Grupo> distinct() {
-    return (root, query, cb) -> {
-      query.distinct(true);
-      return cb.isTrue(cb.literal(true));
-    };
   }
 
   /**
@@ -320,7 +309,7 @@ public class GrupoSpecifications {
    * 
    * @param grupoLineaInvestigacionId identificador de la
    *                                  {@link Grupo}.
-   * @return specification para obtener las {@link Convocatoria} de
+   * @return specification para obtener los {@link Grupo} de
    *         la {@link GrupoLineaInvestigacion} con el id indicado.
    */
   public static Specification<Grupo> byGrupoLineaInvestigacionId(Long grupoLineaInvestigacionId) {
@@ -333,6 +322,32 @@ public class GrupoSpecifications {
           .where(
               cb.equal(queryGrupoLineaInvestigacionRoot.get(GrupoLineaInvestigacion_.id), grupoLineaInvestigacionId));
       return root.get(Grupo_.id).in(queryGrupoLineaInvestigacion);
+    };
+  }
+
+  /**
+   * {@link Grupo} que son baremables en la fecha indicada
+   * 
+   * @param fechaBaremacion fecha para la que se hace la comprobacion
+   * @return specification para obtener los {@link Grupo} que son baremables en la
+   *         fecha indicada
+   */
+  public static Specification<Grupo> isBaremable(Instant fechaBaremacion) {
+    return (root, query, cb) -> {
+
+      Join<Grupo, GrupoEspecialInvestigacion> joinGrupoEspecialInvestigacion = root.join(Grupo_.especialInvestigacion);
+
+      Predicate predicateGrupoEspecialInvestigacionIsFalse = cb
+          .isFalse(joinGrupoEspecialInvestigacion.get(GrupoEspecialInvestigacion_.especialInvestigacion));
+
+      Predicate predicateGrupoInFechaBaremacion = cb.and(
+          cb.lessThanOrEqualTo(root.get(Grupo_.fechaInicio), fechaBaremacion),
+          cb.and(cb.or(cb.isNull(root.get(Grupo_.fechaFin)),
+              cb.greaterThanOrEqualTo(root.get(Grupo_.fechaFin), fechaBaremacion))));
+
+      return cb.and(
+          predicateGrupoEspecialInvestigacionIsFalse,
+          predicateGrupoInFechaBaremacion);
     };
   }
 

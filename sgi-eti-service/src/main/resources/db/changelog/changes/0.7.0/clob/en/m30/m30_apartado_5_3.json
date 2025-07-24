@@ -1,0 +1,16 @@
+[
+  {
+    "key": "ap5_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.3 Accident and civil liability insurance"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Taking part in a research activity that involves biological risk may mean risks to the human being and the environment. For this reason the UPV/EHU has civil liability insurance to cover damages arising from the said professional activities.</p><p>Consulte con la Secretaría Técnica del Comité de Ética la necesidad de contratación de un seguro de responsabilidad civil.</p>"
+      }
+    ]
+  }
+]

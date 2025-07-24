@@ -1,4 +1,5 @@
 import { TipoSeguimiento } from '@core/enums/tipo-seguimiento';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 
 export interface IConvocatoriaPeriodoSeguimientoCientifico {
@@ -9,6 +10,6 @@ export interface IConvocatoriaPeriodoSeguimientoCientifico {
   fechaInicioPresentacion: DateTime;
   fechaFinPresentacion: DateTime;
   tipoSeguimiento: TipoSeguimiento;
-  observaciones: string;
+  observaciones: I18nFieldValue[];
   convocatoriaId: number;
 }

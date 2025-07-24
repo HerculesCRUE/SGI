@@ -7,6 +7,7 @@ import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report
 import { IPersona } from '@core/models/sgp/persona';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -51,6 +52,7 @@ export class ProyectoGruposInvestigacionIpListadoExportService
     private readonly proyectoService: ProyectoService,
     private readonly grupoService: GrupoService,
     private readonly personaService: PersonaService,
+    private readonly languageService: LanguageService
   ) {
     super(translate);
   }
@@ -265,7 +267,7 @@ export class ProyectoGruposInvestigacionIpListadoExportService
 
         for (let k = 0; k < maxNumGruposX; k++) {
           const grupoX = participacionProyectoX?.participacionesGrupos[k];
-          elementsRow.push(grupoX?.nombre ?? '');
+          elementsRow.push(this.languageService.getFieldValue(grupoX?.nombre));
 
           const maxNumParticipacionesGruposX = Math.max(...proyectos.map(proyecto => {
             return proyecto.gruposInvestigacionIps[i]?.participacionesProyecto[j]?.participacionesGrupos[k]?.participaciones.length ?? 0;

@@ -107,7 +107,6 @@ export class SolicitudModalidadEntidadConvocantePublicModalComponent
     ).subscribe((value) => this.title = value);
   }
 
-
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
       entidadConvocante: new FormControl({ value: this.data.entidad?.nombre, disabled: true }),

@@ -2,7 +2,6 @@ package org.crue.hercules.sgi.csp.controller;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -243,7 +242,7 @@ public class NotificacionProyectoExternoCVNController {
   private Page<NotificacionProyectoExternoCVNOutput> convert(Page<NotificacionProyectoExternoCVN> page) {
     List<NotificacionProyectoExternoCVNOutput> content = page.getContent().stream()
         .map(this::convert)
-        .collect(Collectors.toList());
+        .toList();
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
@@ -290,7 +289,7 @@ public class NotificacionProyectoExternoCVNController {
   private List<NotificacionCVNEntidadFinanciadora> convert(Long notificacionId,
       List<NotificacionCVNEntidadFinanciadoraInput> inputs) {
     return inputs == null ? new LinkedList<>()
-        : inputs.stream().map(input -> convert(notificacionId, input)).collect(Collectors.toList());
+        : inputs.stream().map(input -> convert(notificacionId, input)).toList();
   }
 
   private NotificacionCVNEntidadFinanciadoraOutput convert(
@@ -300,8 +299,7 @@ public class NotificacionProyectoExternoCVNController {
 
   private Page<NotificacionCVNEntidadFinanciadoraOutput> convertPageEntidadFinancidaoraOutput(
       Page<NotificacionCVNEntidadFinanciadora> page) {
-    List<NotificacionCVNEntidadFinanciadoraOutput> content = page.getContent().stream().map(this::convert)
-        .collect(Collectors.toList());
+    List<NotificacionCVNEntidadFinanciadoraOutput> content = page.getContent().stream().map(this::convert).toList();
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

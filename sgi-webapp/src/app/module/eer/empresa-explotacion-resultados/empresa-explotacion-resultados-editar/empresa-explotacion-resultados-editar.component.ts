@@ -44,12 +44,12 @@ export class EmpresaExplotacionResultadosEditarComponent extends ActionComponent
     public actionService: EmpresaExplotacionResultadosActionService,
     dialogService: DialogService,
     private readonly translate: TranslateService) {
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
   saveOrUpdate(): void {
@@ -72,7 +72,7 @@ export class EmpresaExplotacionResultadosEditarComponent extends ActionComponent
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       EMPRESA_EXPLOTACION_RESULTADOS_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

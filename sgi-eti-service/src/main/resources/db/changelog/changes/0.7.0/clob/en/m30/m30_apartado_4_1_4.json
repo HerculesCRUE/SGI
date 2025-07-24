@@ -1,0 +1,25 @@
+[
+  {
+    "key": "ap4_1_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.4 Harmful effects that may arise from the use of biological agents and/or biological material"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Briefly describe the disease or harmful effects that may result from the use of biological agents and/or biological material.</p>"
+      },
+      {
+        "key": "efectosNocivos",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Please describe",
+          "required": true
+        }
+      }
+    ]
+  }
+]

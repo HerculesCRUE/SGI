@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
@@ -90,7 +90,7 @@ export class ModeloEjecucionTipoFaseModalComponent extends DialogFormComponent<I
     modeloTipoFase.tipoFase = this.formGroup.get('tipoFase').value;
     modeloTipoFase.convocatoria = disponible.get('convocatoria').value;
     modeloTipoFase.proyecto = disponible.get('proyecto').value;
-    modeloTipoFase.solicitud = false;
+    modeloTipoFase.solicitud = disponible.get('solicitud').value;
     return modeloTipoFase;
   }
 
@@ -102,6 +102,7 @@ export class ModeloEjecucionTipoFaseModalComponent extends DialogFormComponent<I
       }, Validators.required),
       disponible: new FormGroup({
         convocatoria: new FormControl(this.data.modeloTipoFase?.convocatoria),
+        solicitud: new FormControl(this.data.modeloTipoFase?.solicitud),
         proyecto: new FormControl(this.data.modeloTipoFase?.proyecto)
       }, [requiredChecked(1)]),
     });

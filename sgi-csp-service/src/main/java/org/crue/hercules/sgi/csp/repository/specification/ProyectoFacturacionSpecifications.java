@@ -45,4 +45,15 @@ public class ProyectoFacturacionSpecifications {
   public static Specification<ProyectoFacturacion> byFechaConformidadNotNull() {
     return (root, query, cb) -> cb.isNotNull(root.get(ProyectoFacturacion_.fechaConformidad));
   }
+
+  /**
+   * {@link ProyectoFacturacion} sin .
+   * 
+   * @return specification para obtener los {@link ProyectoFacturacion} con fecha
+   *         de conformidad.
+   */
+  public static Specification<ProyectoFacturacion> byNumeroFacturaSgeNull() {
+    return (root, query, cb) -> cb.isNull(root.get(ProyectoFacturacion_.numeroFacturaSge));
+  }
+
 }

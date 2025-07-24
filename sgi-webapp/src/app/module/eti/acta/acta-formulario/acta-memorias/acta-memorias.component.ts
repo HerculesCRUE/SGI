@@ -11,6 +11,7 @@ import { BehaviorSubject } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { ActaActionService } from '../../acta.action.service';
 import { ActaMemoriasFragment, MemoriaListado } from './acta-memorias.fragment';
+import { DICTAMEN_MAP } from '@core/models/eti/dictamen';
 @Component({
   selector: 'sgi-acta-memorias',
   templateUrl: './acta-memorias.component.html',
@@ -27,6 +28,10 @@ export class ActaMemoriasComponent extends FragmentComponent implements OnInit {
 
   get MSG_PARAMS() {
     return MSG_PARAMS;
+  }
+
+  get DICTAMEN_MAP() {
+    return DICTAMEN_MAP;
   }
 
   constructor(
@@ -70,4 +75,6 @@ export class ActaMemoriasComponent extends FragmentComponent implements OnInit {
       triggerDownloadToUser(response, documento.nombre);
     });
   }
+
+  protected setupI18N(): void { }
 }

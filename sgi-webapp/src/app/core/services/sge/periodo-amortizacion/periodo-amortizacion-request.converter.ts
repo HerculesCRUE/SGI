@@ -6,8 +6,9 @@ import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IPeriodoAmortizacionRequest } from './periodo-amortizacion-request';
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 
-class PeriodoAmortizacionRequestConverter extends SgiBaseConverter<IPeriodoAmortizacionRequest, IProyectoPeriodoAmortizacion>{
+class PeriodoAmortizacionRequestConverter extends SgiBaseConverter<IPeriodoAmortizacionRequest, IProyectoPeriodoAmortizacion> {
   toTarget(value: IPeriodoAmortizacionRequest): IProyectoPeriodoAmortizacion {
     if (!value) {
       return value as unknown as IProyectoPeriodoAmortizacion;
@@ -26,11 +27,11 @@ class PeriodoAmortizacionRequestConverter extends SgiBaseConverter<IPeriodoAmort
         },
         tipoFinanciacion: {
           id: +value.tipoFinanciacion.id,
-          nombre: value.tipoFinanciacion.nombre
+          nombre: value.tipoFinanciacion.nombre ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.tipoFinanciacion.nombre) : []
         },
         fuenteFinanciacion: {
           id: +value.fuenteFinanciacion.id,
-          nombre: value.fuenteFinanciacion.nombre
+          nombre: value.fuenteFinanciacion.nombre ? I18N_FIELD_REQUEST_CONVERTER.toTargetArray(value.fuenteFinanciacion.nombre) : []
         }
       } as IProyectoEntidadFinanciadora,
       fechaLimiteAmortizacion: LuxonUtils.fromBackend(value.fecha),
@@ -48,11 +49,11 @@ class PeriodoAmortizacionRequestConverter extends SgiBaseConverter<IPeriodoAmort
       empresaRef: value.proyectoEntidadFinanciadora.empresa.id,
       tipoFinanciacion: {
         id: value.proyectoEntidadFinanciadora?.tipoFinanciacion?.id.toString(),
-        nombre: value.proyectoEntidadFinanciadora?.tipoFinanciacion?.nombre
+        nombre: value.proyectoEntidadFinanciadora?.tipoFinanciacion?.nombre ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.proyectoEntidadFinanciadora?.tipoFinanciacion?.nombre) : []
       },
       fuenteFinanciacion: {
         id: value.proyectoEntidadFinanciadora?.fuenteFinanciacion?.id.toString(),
-        nombre: value.proyectoEntidadFinanciadora?.fuenteFinanciacion?.nombre
+        nombre: value.proyectoEntidadFinanciadora?.fuenteFinanciacion?.nombre ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.proyectoEntidadFinanciadora?.fuenteFinanciacion?.nombre) : []
       },
       fecha: LuxonUtils.toBackend(value.fechaLimiteAmortizacion),
       importe: value.importe

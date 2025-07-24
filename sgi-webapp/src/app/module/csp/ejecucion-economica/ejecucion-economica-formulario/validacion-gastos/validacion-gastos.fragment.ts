@@ -1,4 +1,5 @@
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { Language } from '@core/i18n/language';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { CardinalidadRelacionSgiSge, IConfiguracion } from '@core/models/csp/configuracion';
 import { Estado as EstadoGastoProyecto } from '@core/models/csp/estado-gasto-proyecto';
@@ -8,9 +9,10 @@ import { IProyectoSge } from '@core/models/sge/proyecto-sge';
 import { Fragment } from '@core/services/action-service';
 import { GastoProyectoService } from '@core/services/csp/gasto-proyecto/gasto-proyecto-service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { GastoService } from '@core/services/sge/gasto/gasto.service';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
-import { BehaviorSubject, Observable, from, of } from 'rxjs';
+import { BehaviorSubject, Observable, forkJoin, from, of } from 'rxjs';
 import { concatAll, concatMap, map, switchMap, tap } from 'rxjs/operators';
 import { IColumnDefinition } from '../desglose-economico.fragment';
 
@@ -34,9 +36,11 @@ export const ESTADO_TIPO_MAP: Map<EstadoTipo, string> = new Map([
 export class ValidacionGastosFragment extends Fragment {
   private proyectosMap = new Map<number, IProyecto>();
   readonly gastos$ = new BehaviorSubject<ValidacionGasto[]>([]);
+  private columnsLanguage: Map<Language, IColumnDefinition[]> = new Map();
 
   displayColumns: string[] = [];
   columns: IColumnDefinition[] = [];
+  columns$ = new BehaviorSubject<IColumnDefinition[]>([]);
 
   get ESTADO_TIPO_MAP() {
     return ESTADO_TIPO_MAP;
@@ -53,6 +57,7 @@ export class ValidacionGastosFragment extends Fragment {
     private gastoService: GastoService,
     private proyectoService: ProyectoService,
     private gastoProyectoService: GastoProyectoService,
+    private readonly languageService: LanguageService,
     private readonly config: IConfiguracion
   ) {
     super(key);
@@ -60,22 +65,20 @@ export class ValidacionGastosFragment extends Fragment {
   }
 
   protected onInitialize(): void {
-    this.subscriptions.push(this.getColumns().subscribe(
-      (columns) => {
+    this.subscriptions.push(
+      this.languageService.languageChange$.pipe(
+        switchMap(language => forkJoin({
+          columns: this.columnsLanguage.has(language) ? of(this.columnsLanguage.get(language)) : this.getColumns(),
+          language: of(language)
+        }))
+      ).subscribe(({ columns, language }) => {
         this.columns = columns;
-        this.displayColumns = [
-          'anualidad',
-          'proyecto',
-          'conceptoGasto',
-          'clasificacionSGE',
-          'aplicacionPresupuestaria',
-          'codigoEconomico',
-          'fechaDevengo',
-          ...columns.map(column => column.id),
-          'acciones'
-        ];
+        this.columnsLanguage.set(language, this.columns);
+        this.columns$.next(this.columns);
+        this.displayColumns = this.getDisplayColumns(this.columns);
       }
-    ));
+      )
+    );
   }
 
   public searchGastos(estado: EstadoTipo, fechaDesde: string, fechaHasta: string): void {
@@ -146,6 +149,10 @@ export class ValidacionGastosFragment extends Fragment {
     );
   }
 
+  public trackByColumnId(index, column: IColumnDefinition): string {
+    return column.id;
+  }
+
   private getProyecto(proyectoId: number): Observable<IProyecto> {
     const key = proyectoId;
     const existing = this.proyectosMap.get(key);
@@ -171,6 +178,20 @@ export class ValidacionGastosFragment extends Fragment {
         })
         )
       );
+  }
+
+  private getDisplayColumns(columns: IColumnDefinition[]): string[] {
+    return [
+      'anualidad',
+      'proyecto',
+      'conceptoGasto',
+      'clasificacionSGE',
+      'aplicacionPresupuestaria',
+      'codigoEconomico',
+      'fechaDevengo',
+      ...columns.map(column => column.id),
+      'acciones'
+    ];
   }
 
   saveOrUpdate(): Observable<void> {

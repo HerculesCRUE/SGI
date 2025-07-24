@@ -1,11 +1,10 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { IPersona } from '@core/models/sgp/persona';
 import { ConfigService } from '@core/services/cnf/config.service';
-import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { AreaConocimientoService } from '@core/services/sgo/area-conocimiento.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -44,7 +43,6 @@ export class PersonaFormlyModalComponent extends BaseFormlyModalComponent<IPerso
     @Inject(MAT_DIALOG_DATA) public personaData: IPersonaFormlyData,
     protected readonly translate: TranslateService,
     private readonly personaService: PersonaService,
-    private readonly empresaService: EmpresaService,
     private readonly areaConocimientoService: AreaConocimientoService,
     private configService: ConfigService
   ) {
@@ -107,13 +105,6 @@ export class PersonaFormlyModalComponent extends BaseFormlyModalComponent<IPerso
             return this.fillPersonaFormlyModelById(id, formlyData);
           }),
           switchMap((formlyData) => {
-            if (formlyData.model.empresaId || formlyData.model.entidadRef) {
-              return this.fillEmpresaFormlyModelById(formlyData);
-            } else {
-              return of(formlyData);
-            }
-          }),
-          switchMap((formlyData) => {
             if (formlyData.model.areaConocimientoId || formlyData.model.areaConocimientoRef) {
               return this.fillAreaConocimiento(formlyData);
             } else {
@@ -173,21 +164,6 @@ export class PersonaFormlyModalComponent extends BaseFormlyModalComponent<IPerso
     );
   }
 
-  private fillEmpresaFormlyModelById(formlyData: IFormlyData): Observable<IFormlyData> {
-    return this.empresaService.findById(formlyData.model.empresaId ?? formlyData.model.entidadRef).pipe(
-      map((empresa) => {
-        if (formlyData.model.empresaId) {
-          formlyData.model.empresaId = empresa;
-        } else {
-          formlyData.model.entidadRef = empresa;
-        }
-
-        return formlyData;
-      })
-    );
-  }
-
-
   private create(formlyData: IFormlyData): Observable<IPersonaFormlyResponse> {
     return this.personaService.createPersona(formlyData.model).pipe(
       switchMap(response => {
@@ -241,12 +217,6 @@ export class PersonaFormlyModalComponent extends BaseFormlyModalComponent<IPerso
   private parseFormlyToJSON() {
     FormlyUtils.convertFormlyToJSON(this.formlyData.model, this.formlyData.fields);
     delete this.formlyData.model.areaConocimiento;
-    if (this.formlyData.model.empresaId) {
-      this.formlyData.model.empresaId = this.formlyData.model.empresaId.id;
-    }
-    if (this.formlyData.model.entidadRef) {
-      this.formlyData.model.entidadRef = this.formlyData.model.entidadRef.id;
-    }
   }
 
   setDisableFields(fields: FormlyFieldConfig[], action: ACTION_MODAL_MODE): void {

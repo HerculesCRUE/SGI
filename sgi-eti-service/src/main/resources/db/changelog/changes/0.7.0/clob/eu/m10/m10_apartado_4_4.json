@@ -1,0 +1,90 @@
+[
+  {
+    "key": "ap4_4",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.4 Informazioa eta baimena"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Parte hartzailearen/iturriaren edo/eta haren legezko ordezkariaren baimena eskatzen da?</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Pertsona batek ikerketa batean subjektu gisa <strong>askatasunez eta bere borondatez</strong> parte hartzen duela esan ahal izateko, aldez aurretik informazio <strong>egokia</strong> jaso behar du ahoz, idatziz edo/eta ikus-entzunezkoren baten bidez.</p><p><strong>Informazioa eman eta baimena lortzeko prozesua orri batean dokumentatu behar da, </strong> eta bertan jaso behar dira sinadurak eta nahitaez eman beharreko gutxieneko informazioa, baina informaziorako beste material lagungarri batzuk ere erantsi daitezke (hala nola triptikoak, koadernoak, diapositibak, bideoak edo multimedia baliabideak); horien helburua parte hartzailea informatzea izango da, eta, hortaz, haren ezaugarrietara egokituko dira hizkuntzari eta formari dagokienez. </p><p>Baimena jasotzen duen dokumentuak berez ez du inongo lege baliorik, baldin eta ez bada egiaztatzen parte hartzaileari beharrezko informazioa eman zaiola. </p><p>Nahitaez eman beharreko gutxieneko informazioari buruz gehiago jakiteko, kontsultatu honako hauek:</p><ul><li>14/2007 IBLren <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a15' target='_blank'>15.</a>, <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a47' target='_blank'>47.</a>, <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a59' target='_blank'>59. eta 60.</a> artikuluak.</li></ul>"
+      },
+      {
+        "key": "informacionConsentimientoRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Hautatu aukera bat:",
+          "options": [
+            {
+              "value": "no",
+              "label": "Ez"
+            },
+            {
+              "value": "si",
+              "label": "Bai"
+            }
+          ]
+        }
+      },
+      {
+        "fieldGroup": [
+          {
+            "template": "Adierazi zergatik ez den eskatzen"
+          },
+          {
+            "key": "informacionConsentimientoMotivoRadio",
+            "type": "radio",
+            "templateOptions": {
+              "required": true,
+              "label": "Hautatu aukera bat:",
+              "options": [
+                {
+                  "value": "anonimizados",
+                  "label": "Lagin/datu anonimoak"
+                },
+                {
+                  "value": "otros",
+                  "label": "Beste batzuk"
+                }
+              ]
+            }
+          }
+        ],
+        "hideExpression": "!model.informacionConsentimientoRadio || model.informacionConsentimientoRadio === 'si'"
+      },
+      {
+        "template": "<p>Zehaztu edo justifikatu</p>",
+        "hideExpression": "!((model.informacionConsentimientoRadio && model.informacionConsentimientoRadio === 'no') && (model.informacionConsentimientoMotivoRadio && model.informacionConsentimientoMotivoRadio === 'otros'))"
+      },
+      {
+        "key": "informacionConsentimientoMotivoTexto",
+        "type": "i18n-textarea",
+        "hideExpression": "!((model.informacionConsentimientoRadio && model.informacionConsentimientoRadio === 'no') && (model.informacionConsentimientoMotivoRadio && model.informacionConsentimientoMotivoRadio === 'otros'))",
+        "templateOptions": {
+          "label": "Zehaztu edo justifikatu",
+          "placeholder": "Zehaztu edo justifikatu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: erantsi baimen orria eta prestatutako informazio material lagungarri guztia '5.1 Baimen dokumentua’ atalean. </p>"
+      }
+    ]
+  }
+]

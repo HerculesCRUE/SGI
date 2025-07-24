@@ -1,1 +1,8 @@
-<h2><span *ngIf="routeTitle" class="route">{{routeTitle.key | translate:routeTitle.params}}</span>{{title}}</h2>
+<h2><span *ngIf="routeTitle" class="route">{{routeTitle.key | translate:routeTitle.params}}</span><span
+    *ngIf="title; else titleCompound">{{title}}</span></h2>
+<ng-template #titleCompound>
+  <ng-container *ngFor="let titleElement of titleArray">
+    <ng-container *ngIf="(titleElement | typeof) === 'string'; else titleElementI18n">{{titleElement}}</ng-container>
+    <ng-template #titleElementI18n><sgi-i18n-title-field [field]="titleElement"></sgi-i18n-title-field></ng-template>
+  </ng-container>
+</ng-template>

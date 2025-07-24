@@ -1,0 +1,81 @@
+[
+  {
+    "key": "ap5_2_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.2 Pregunta 2"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "¿La instalación dispone de autorización para el uso confinado de organismos modificados genéticamente?"
+      },
+      {
+        "key": "pregunta2OMGRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Sí"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Se debe de enviar un correo electrónico a la Secretaría Técnica del Comité de Ética  solicitando el inicio de los trámites para la autorización/comunicación de primer uso de la actividad de uso confinado de OMG.",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'si'"
+      },
+      {
+        "key": "referenciaAutorizacionOMG",
+        "type": "i18n-input",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "label": "Referencia de autorización de la autoridad competente",
+          "required": true,
+          "placeholder": "Referencia"
+        }
+      },
+      {
+        "key": "fechaFirmaOMG",
+        "type": "datepicker",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "label": "Fecha de firma del informe favorable de la autoridad competente",
+          "required": true,
+          "type": "text"
+        }
+      },
+      {
+        "key": "referenciaOMG",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "name": "Referencia y localización del local o locales en el o en los que se manipulan y/o almacenan los OMG",
+          "required": true
+        }
+      },
+      {
+        "key": "nivelRiesgoOMG",
+        "type": "i18n-input",
+        "hideExpression": "!model.pregunta2OMGRadio || model.pregunta2OMGRadio === 'no'",
+        "templateOptions": {
+          "label": "Nivel de riesgo del OMG",
+          "required": true,
+          "placeholder": "Nivel de riesgo del OMG"
+        }
+      }
+    ]
+  }
+]

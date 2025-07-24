@@ -2,10 +2,16 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.Programa;
+import org.crue.hercules.sgi.csp.model.ProgramaDescripcion;
+import org.crue.hercules.sgi.csp.model.ProgramaNombre;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -98,8 +104,10 @@ class ProgramaIT extends BaseIT {
 
     Programa programa = response.getBody();
     Assertions.assertThat(programa.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(programa.getNombre()).as("getNombre()").isEqualTo("nombre-001");
-    Assertions.assertThat(programa.getDescripcion()).as("descripcion-001").isEqualTo(programa.getDescripcion());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getDescripcion(), Language.ES)).as("descripcion-001")
+        .isEqualTo("descripcion-001");
     Assertions.assertThat(programa.getActivo()).as("getActivo()").isFalse();
   }
 
@@ -117,8 +125,10 @@ class ProgramaIT extends BaseIT {
 
     Programa programa = response.getBody();
     Assertions.assertThat(programa.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(programa.getNombre()).as("getNombre()").isEqualTo("nombre-001");
-    Assertions.assertThat(programa.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getDescripcion(), Language.ES)).as("getDescripcion()")
+        .isEqualTo("descripcion-001");
     Assertions.assertThat(programa.getActivo()).as("getActivo()").isTrue();
   }
 
@@ -134,8 +144,10 @@ class ProgramaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     Programa programa = response.getBody();
     Assertions.assertThat(programa.getId()).as("getId()").isEqualTo(idPrograma);
-    Assertions.assertThat(programa.getNombre()).as("getNombre()").isEqualTo("nombre-001");
-    Assertions.assertThat(programa.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programa.getDescripcion(), Language.ES)).as("getDescripcion()")
+        .isEqualTo("descripcion-001");
     Assertions.assertThat(programa.getActivo()).as("getActivo()").isTrue();
   }
 
@@ -147,8 +159,8 @@ class ProgramaIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TDOC-V")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + "/plan").queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -165,11 +177,14 @@ class ProgramaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(programas.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programas.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(programas.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programas.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(programas.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programas.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
 
@@ -181,8 +196,8 @@ class ProgramaIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-TDOC-V")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + "/plan/todos").queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -199,11 +214,14 @@ class ProgramaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(programas.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programas.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(programas.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programas.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(programas.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programas.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
 
@@ -215,8 +233,8 @@ class ProgramaIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-ME-V")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     Long programaId = 1L;
 
@@ -235,11 +253,14 @@ class ProgramaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(programas.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programas.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 4));
-    Assertions.assertThat(programas.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programas.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(programas.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(programas.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 2));
   }
 
@@ -262,10 +283,16 @@ class ProgramaIT extends BaseIT {
    * @return el objeto Programa
    */
   private Programa generarMockPrograma(Long id, String nombre, Long idProgramaPadre) {
+    Set<ProgramaNombre> nombrePrograma = new HashSet<>();
+    nombrePrograma.add(new ProgramaNombre(Language.ES, nombre));
+
+    Set<ProgramaDescripcion> descripcionPrograma = new HashSet<>();
+    descripcionPrograma.add(new ProgramaDescripcion(Language.ES, "descripcion-" + String.format("%03d", id)));
+
     Programa programa = new Programa();
     programa.setId(id);
-    programa.setNombre(nombre);
-    programa.setDescripcion("descripcion-" + String.format("%03d", id));
+    programa.setNombre(nombrePrograma);
+    programa.setDescripcion(descripcionPrograma);
 
     if (idProgramaPadre != null) {
       programa.setPadre(generarMockPrograma(idProgramaPadre));

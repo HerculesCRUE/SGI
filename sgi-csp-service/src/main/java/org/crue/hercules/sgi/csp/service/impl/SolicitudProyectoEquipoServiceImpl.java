@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -25,19 +24,19 @@ import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.SolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudProyectoEquipoSpecifications;
 import org.crue.hercules.sgi.csp.service.SolicitudProyectoEquipoService;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
-import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.validation.annotation.Validated;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -46,6 +45,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 @Validated
 public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEquipoService {
 
@@ -57,13 +57,7 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
 
   private final SolicitudRepository solicitudRepository;
 
-  public SolicitudProyectoEquipoServiceImpl(Validator validator, SolicitudProyectoEquipoRepository repository,
-      RolProyectoRepository rolProyectoRepository, SolicitudRepository solicitudRepository) {
-    this.validator = validator;
-    this.repository = repository;
-    this.rolProyectoRepository = rolProyectoRepository;
-    this.solicitudRepository = solicitudRepository;
-  }
+  private final SolicitudAuthorityHelper solicitudAuthorityHelper;
 
   /**
    * Obtiene una entidad {@link SolicitudProyectoEquipo} por id.
@@ -96,7 +90,8 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
 
     Solicitud solicitud = solicitudRepository.findById(solicitudId)
         .orElseThrow(() -> new SolicitudNotFoundException(solicitudId));
-    if (!(hasAuthorityViewInvestigador(solicitud) || hasAuthorityViewUnidadGestion(solicitud))) {
+    if (!(solicitudAuthorityHelper.hasAuthorityViewInvestigador(solicitud)
+        || solicitudAuthorityHelper.hasAuthorityViewUnidadGestion(solicitud))) {
       throw new UserNotAuthorizedToAccessSolicitudException();
     }
 
@@ -154,7 +149,7 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
     List<SolicitudProyectoEquipo> solicitudProyectoEquipoEliminar = solicitudProyectoEquiposBD.stream()
         .filter(solProyEquip -> solicitudProyectoEquipos.stream().map(SolicitudProyectoEquipo::getId)
             .noneMatch(id -> Objects.equals(id, solProyEquip.getId())))
-        .collect(Collectors.toList());
+        .toList();
 
     if (!solicitudProyectoEquipoEliminar.isEmpty()) {
       repository.deleteAll(solicitudProyectoEquipoEliminar);
@@ -188,13 +183,13 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
     boolean hasSolicitanteInvestigadorPrincipal = false;
 
     List<String> personasRef = solicitudProyectoEquipos.stream().map(SolicitudProyectoEquipo::getPersonaRef).distinct()
-        .collect(Collectors.toList());
+        .toList();
 
     for (String personaRef : personasRef) {
       SolicitudProyectoEquipo solicitudProyectoEquipoAnterior = null;
 
       List<SolicitudProyectoEquipo> miembrosPersonaRef = solicitudProyectoEquipos.stream()
-          .filter(solProyecEquip -> solProyecEquip.getPersonaRef().equals(personaRef)).collect(Collectors.toList());
+          .filter(solProyecEquip -> solProyecEquip.getPersonaRef().equals(personaRef)).toList();
 
       for (SolicitudProyectoEquipo solicitudProyectoEquipo : miembrosPersonaRef) {
         Assert.notNull(solicitudProyectoEquipo.getPersonaRef(),
@@ -236,17 +231,4 @@ public class SolicitudProyectoEquipoServiceImpl implements SolicitudProyectoEqui
 
   }
 
-  private boolean hasAuthorityViewInvestigador(Solicitud solicitud) {
-    return SgiSecurityContextHolder.hasAuthorityForAnyUO("CSP-SOL-INV-ER")
-        && solicitud.getSolicitanteRef().equals(getAuthenticationPersonaRef());
-  }
-
-  private String getAuthenticationPersonaRef() {
-    return SecurityContextHolder.getContext().getAuthentication().getName();
-  }
-
-  private boolean hasAuthorityViewUnidadGestion(Solicitud solicitud) {
-    return SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-E", solicitud.getUnidadGestionRef())
-        || SgiSecurityContextHolder.hasAuthorityForUO("CSP-SOL-V", solicitud.getUnidadGestionRef());
-  }
 }

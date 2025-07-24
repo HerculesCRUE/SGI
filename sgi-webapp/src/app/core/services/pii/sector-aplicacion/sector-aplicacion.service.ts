@@ -6,20 +6,25 @@ import { environment } from '@env';
 import { CreateCtor, FindAllCtor, mixinCreate, mixinFindAll, mixinUpdate, SgiRestBaseService, SgiRestFindOptions, SgiRestListResult, UpdateCtor } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { SECTOR_APLICACION_REQUEST_CONVERTER } from './sector-aplicacion-request.converter';
+import { ISectorAplicacionResponse } from './sector-aplicacion-response';
+import { SECTOR_APLICACION_RESPONSE_CONVERTER } from './sector-aplicacion-response.converter';
 
 // tslint:disable-next-line: variable-name
 const _SectorAplicacionServiceMixinBase:
-  FindAllCtor<ISectorAplicacion, ISectorAplicacion> &
-  CreateCtor<ISectorAplicacion, ISectorAplicacion, IFuenteFinanciacionRequest, ISectorAplicacion> &
-  UpdateCtor<number, ISectorAplicacion, ISectorAplicacion, IFuenteFinanciacionRequest, ISectorAplicacion> &
+  FindAllCtor<ISectorAplicacion, ISectorAplicacionResponse> &
+  CreateCtor<ISectorAplicacion, ISectorAplicacion, IFuenteFinanciacionRequest, ISectorAplicacionResponse> &
+  UpdateCtor<number, ISectorAplicacion, ISectorAplicacion, IFuenteFinanciacionRequest, ISectorAplicacionResponse> &
   typeof SgiRestBaseService = mixinFindAll(
     mixinUpdate(
       mixinCreate(
         SgiRestBaseService,
         SECTOR_APLICACION_REQUEST_CONVERTER,
+        SECTOR_APLICACION_RESPONSE_CONVERTER
       ),
-      SECTOR_APLICACION_REQUEST_CONVERTER
-    )
+      SECTOR_APLICACION_REQUEST_CONVERTER,
+      SECTOR_APLICACION_RESPONSE_CONVERTER
+    ),
+    SECTOR_APLICACION_RESPONSE_CONVERTER
   );
 
 @Injectable({
@@ -41,9 +46,10 @@ export class SectorAplicacionService extends _SectorAplicacionServiceMixinBase {
  * @param options opciones de búsqueda.
  */
   findTodos(options?: SgiRestFindOptions): Observable<SgiRestListResult<ISectorAplicacion>> {
-    return this.find<ISectorAplicacion, ISectorAplicacion>(
+    return this.find<ISectorAplicacionResponse, ISectorAplicacion>(
       `${this.endpointUrl}/todos`,
-      options);
+      options,
+      SECTOR_APLICACION_RESPONSE_CONVERTER);
   }
 
   /**

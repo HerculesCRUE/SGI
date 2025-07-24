@@ -34,4 +34,9 @@ export abstract class SgiResolverResolver<T> implements Resolve<T> {
   }
 
   protected abstract resolveEntity(route: ActivatedRouteSnapshot): Observable<T>;
+
+  protected setErrorMessage(message: string): void {
+    this.errorMsg = message;
+  }
+
 }

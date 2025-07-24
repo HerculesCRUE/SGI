@@ -1,0 +1,21 @@
+[
+  {
+    "key": "ap4_3_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.1 Lagin tamainaren justifikazioa eta erabilera estatistikoa"
+    },
+    "fieldGroup": [
+      {
+        "key": "justificacionMuestraEstadistica",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Justifikazioa",
+          "required": true
+        }
+      }
+    ]
+  }
+]

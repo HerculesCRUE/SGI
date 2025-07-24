@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { FieldType } from '@ngx-formly/material/form-field';
-import { SgiCkEditorConfig } from '@shared/sgi-ckeditor-config';
+import { CKEDITOR_CONFIG, CkEditorConfig } from '@shared/sgi-ckeditor-config';
 import Editor from 'ckeditor5-custom-build/build/ckeditor';
 
 @Component({
@@ -15,6 +15,10 @@ import Editor from 'ckeditor5-custom-build/build/ckeditor';
   `})
 export class CKEditorTemplate extends FieldType {
   public CkEditor = Editor;
-  public readonly configCkEditor = SgiCkEditorConfig.defaultConfig;
 
+  constructor(
+    @Inject(CKEDITOR_CONFIG) public readonly configCkEditor: CkEditorConfig
+  ) {
+    super();
+  }
 }

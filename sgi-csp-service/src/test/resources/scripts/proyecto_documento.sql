@@ -14,8 +14,18 @@
  }
 */
 
-INSERT INTO test.proyecto_documento (id, comentario, documento_ref, nombre, proyecto_id, visible, tipo_documento_id, tipo_fase_id)
-VALUES(1, 'comentario-001', 'documento-ref-001', 'nombre-001', 1, true, 1, 1);
+INSERT INTO test.proyecto_documento (id, documento_ref, proyecto_id, visible, tipo_documento_id, tipo_fase_id)
+VALUES(1, 'documento-ref-001', 1, true, 1, 1);
 
-INSERT INTO test.proyecto_documento(id, comentario, documento_ref, nombre, proyecto_id, visible, tipo_documento_id, tipo_fase_id)
-VALUES(2, 'comentario-002', 'documento-ref-002', 'nombre-002', 1, true, 1, 1);
+INSERT INTO test.proyecto_documento(id, documento_ref, proyecto_id, visible, tipo_documento_id, tipo_fase_id)
+VALUES(2, 'documento-ref-002', 1, true, 1, 1);
+
+INSERT INTO test.proyecto_documento_nombre (proyecto_documento_id, lang, value_)
+VALUES(1, 'es', 'nombre-001');
+INSERT INTO test.proyecto_documento_nombre (proyecto_documento_id, lang, value_)
+VALUES(2, 'es', 'nombre-002');
+
+INSERT INTO test.proyecto_documento_comentario (proyecto_documento_id, lang, value_)
+VALUES(1, 'es', 'comentario-001');
+INSERT INTO test.proyecto_documento_comentario (proyecto_documento_id, lang, value_)
+VALUES(2, 'es', 'comentario-002');

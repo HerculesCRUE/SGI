@@ -2,6 +2,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ISolicitudRrhhMemoria } from '@core/models/csp/solicitud-rrhh-memoria';
 import { FormFragment } from '@core/services/action-service';
 import { SolicitudRrhhService } from '@core/services/csp/solicitud-rrhh/solicitud-rrhh.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NGXLogger } from 'ngx-logger';
 import { EMPTY, Observable, of } from 'rxjs';
 import { catchError, switchMap, take } from 'rxjs/operators';
@@ -45,9 +46,9 @@ export class SolicitudRrhhMemoriaFragment extends FormFragment<ISolicitudRrhhMem
 
   protected buildFormGroup(): FormGroup {
     const formGroup = new FormGroup({
-      tituloTrabajo: new FormControl(null, [Validators.required, Validators.maxLength(1000)]),
-      resumen: new FormControl(null, [Validators.required, Validators.maxLength(4000)]),
-      observaciones: new FormControl(null, Validators.maxLength(4000))
+      tituloTrabajo: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(1000)]),
+      resumen: new FormControl([], [I18nValidators.required, I18nValidators.maxLength(4000)]),
+      observaciones: new FormControl([], I18nValidators.maxLength(4000))
     });
 
     if (this.readonly) {

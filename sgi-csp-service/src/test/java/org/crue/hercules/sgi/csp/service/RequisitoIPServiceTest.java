@@ -63,7 +63,7 @@ class RequisitoIPServiceTest extends BaseServiceTest {
     // when: Creamos el RequisitoIP
     // then: Lanza una excepcion porque la convocatoria es null
     Assertions.assertThatThrownBy(() -> service.create(requisitoIP)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("The Identifier from Principal Researcher Requirement can't be null");
+        .hasMessage("Identificador de Requisito Investigador Principal no puede ser nulo");
   }
 
   @Test
@@ -78,7 +78,7 @@ class RequisitoIPServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque la convocatoria ya tiene un RequisitoIP
     Assertions.assertThatThrownBy(() -> service.create(requisitoIPExistente))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("There is already a Principal Researcher Requirement related with the Call");
+        .hasMessage("Ya existe un/a Requisito Investigador Principal relacionado/a con el/la Convocatoria");
   }
 
   @Test

@@ -3,8 +3,7 @@ package org.crue.hercules.sgi.rep.service.eti;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
-import org.crue.hercules.sgi.rep.dto.OutputType;
-import org.crue.hercules.sgi.rep.dto.eti.ReportInformeFavorableModificacion;
+import org.crue.hercules.sgi.rep.service.InformeEvaluacionFavorableModificacionReportService;
 import org.crue.hercules.sgi.rep.service.sgi.SgiApiConfService;
 import org.crue.hercules.sgi.rep.service.sgp.PersonaService;
 import org.junit.jupiter.api.BeforeEach;
@@ -19,7 +18,7 @@ import org.springframework.security.test.context.support.WithMockUser;
  */
 class InformeFavorableModificacionReportServiceTest extends BaseReportEtiServiceTest {
 
-  private InformeFavorableModificacionReportService informeFavorableModificacionReportService;
+  private InformeEvaluacionFavorableModificacionReportService informeFavorableModificacionReportService;
 
   @Autowired
   private SgiConfigProperties sgiConfigProperties;
@@ -38,8 +37,8 @@ class InformeFavorableModificacionReportServiceTest extends BaseReportEtiService
 
   @BeforeEach
   public void setUp() throws Exception {
-    informeFavorableModificacionReportService = new InformeFavorableModificacionReportService(
-        sgiConfigProperties, sgiApiConfService, personaService, evaluacionService, convocatoriaReunionService);
+    informeFavorableModificacionReportService = new InformeEvaluacionFavorableModificacionReportService(
+        sgiApiConfService, personaService, evaluacionService, convocatoriaReunionService);
   }
 
   @WithMockUser(username = "user", authorities = { "ETI-EVC-EVAL", "ETI-EVC-INV-EVALR" })
@@ -55,10 +54,7 @@ class InformeFavorableModificacionReportServiceTest extends BaseReportEtiService
         .willReturn(getResource("eti/docx/rep-eti-evaluacion-favorable-memoria-modificacion.docx"));
     BDDMockito.given(sgiApiConfService.getServiceBaseURL()).willReturn("");
 
-    ReportInformeFavorableModificacion report = new ReportInformeFavorableModificacion();
-    report.setOutputType(OutputType.PDF);
-
-    byte[] reportContent = informeFavorableModificacionReportService.getReportInformeFavorableModificacion(report,
+    byte[] reportContent = informeFavorableModificacionReportService.getReport(
         idEvaluacion);
     assertNotNull(reportContent);
 

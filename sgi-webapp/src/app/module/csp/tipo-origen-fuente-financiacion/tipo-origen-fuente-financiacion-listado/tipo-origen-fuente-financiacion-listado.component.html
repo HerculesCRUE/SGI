@@ -51,7 +51,9 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-origen-fuente-financiacion.nombre' |
           translate}}
         </th>
-        <td mat-cell *matCellDef="let tipoOrigenFuenteFinanciacion">{{tipoOrigenFuenteFinanciacion.nombre}}</td>
+        <td mat-cell *matCellDef="let tipoOrigenFuenteFinanciacion">
+          <sgi-i18n-table-field [field]="tipoOrigenFuenteFinanciacion.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Activo -->

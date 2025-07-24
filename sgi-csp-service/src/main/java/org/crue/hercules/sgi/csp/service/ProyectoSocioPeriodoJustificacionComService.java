@@ -6,9 +6,6 @@ import java.time.LocalTime;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.com.CspComPeriodoJustificacionSocioData;
@@ -27,6 +24,8 @@ import org.crue.hercules.sgi.csp.service.sgi.SgiApiCnfService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgempService;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -122,6 +121,7 @@ public class ProyectoSocioPeriodoJustificacionComService {
         .nombreEntidad(empresa == null ? "" : empresa.getNombre())
         .numPeriodo(periodo.getNumPeriodo())
         .titulo(proyecto.getTitulo())
+        .enlaceAplicacion(sgiConfigProperties.getWebUrl())
         .build();
   }
 
@@ -140,7 +140,7 @@ public class ProyectoSocioPeriodoJustificacionComService {
 
     return destinatarios.stream()
         .map(destinatario -> Recipient.builder().name(destinatario).address(destinatario).build())
-        .collect(Collectors.toList());
+        .toList();
   }
 
   /**
@@ -166,9 +166,7 @@ public class ProyectoSocioPeriodoJustificacionComService {
         dates.add(saturday.toInstant());
         dates.add(sunday.toInstant());
         break;
-      case WEDNESDAY:
-      case THURSDAY:
-      case FRIDAY:
+      case WEDNESDAY, THURSDAY, FRIDAY:
         dates.add(now.plusDays(5).toInstant());
         break;
       default:

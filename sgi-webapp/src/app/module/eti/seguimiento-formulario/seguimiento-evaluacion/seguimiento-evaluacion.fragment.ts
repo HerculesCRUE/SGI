@@ -8,6 +8,7 @@ import { PersonaService } from '@core/services/sgp/persona.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NullIdValidador } from '@core/validators/null-id-validador';
+import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
@@ -19,6 +20,7 @@ export class SeguimientoEvaluacionFragment extends FormFragment<IMemoria> {
   comentarios$: BehaviorSubject<StatusWrapper<IComentario>[]> = new BehaviorSubject<StatusWrapper<IComentario>[]>([]);
 
   constructor(
+    private readonly logger: NGXLogger,
     private fb: FormBuilder,
     key: number,
     protected readonly snackBarService: SnackBarService,
@@ -30,10 +32,10 @@ export class SeguimientoEvaluacionFragment extends FormFragment<IMemoria> {
 
   protected buildFormGroup(): FormGroup {
     return this.fb.group({
-      comite: [{ value: '', disabled: true }],
+      comite: [{ value: null, disabled: true }],
       fechaEvaluacion: [{ value: null, disabled: true }],
       referenciaMemoria: [{ value: '', disabled: true }],
-      solicitante: [{ value: '', disabled: true }],
+      solicitante: [{ value: null, disabled: true }],
       version: [{ value: '', disabled: true }],
       dictamen: [null, [Validators.required, new NullIdValidador().isValid()]]
     });
@@ -42,7 +44,7 @@ export class SeguimientoEvaluacionFragment extends FormFragment<IMemoria> {
   protected initializer(key: number): Observable<IMemoria> {
     return this.service.findById(key).pipe(
       map((evaluacion) => {
-        this.memoria = evaluacion.memoria as IMemoria;
+        this.memoria = evaluacion.memoria;
         this.evaluacion$.next(evaluacion);
         this.evaluacion = evaluacion;
         return this.memoria;
@@ -54,7 +56,10 @@ export class SeguimientoEvaluacionFragment extends FormFragment<IMemoria> {
               memoria.peticionEvaluacion.solicitante = persona;
               return memoria;
             }),
-            catchError((e) => of(memoria)),
+            catchError((e) => {
+              this.logger.error(e);
+              return of(memoria);
+            }),
           );
         }
         else {
@@ -66,11 +71,11 @@ export class SeguimientoEvaluacionFragment extends FormFragment<IMemoria> {
 
   buildPatch(value: IMemoria): { [key: string]: any } {
     return {
-      comite: value.comite.comite,
+      comite: value.comite,
       fechaEvaluacion: value.fechaEnvioSecretaria,
       referenciaMemoria: value.numReferencia,
       version: value.version,
-      solicitante: `${value?.peticionEvaluacion?.solicitante?.nombre} ${value?.peticionEvaluacion?.solicitante?.apellidos}`,
+      solicitante: value.peticionEvaluacion?.solicitante,
       dictamen: this.evaluacion.dictamen
     };
   }

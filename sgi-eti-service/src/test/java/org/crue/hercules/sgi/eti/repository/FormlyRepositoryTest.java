@@ -1,7 +1,11 @@
 package org.crue.hercules.sgi.eti.repository;
 
+import java.util.Optional;
+
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.Formly;
+import org.crue.hercules.sgi.eti.model.FormlyDefinicion;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,22 +19,24 @@ public class FormlyRepositoryTest extends BaseRepositoryTest {
   @Test
   public void findFirstByNombreOrderByVersionDesc_ReturnsLatestWithGivenName() throws Exception {
     // given: two Formly, with three versions each
-    final int N_DOCS = 2;
     final int N_VERS = 3;
-    for (int i = 1; i <= N_DOCS; i++) {
-      for (int j = 1; j <= N_VERS; j++) {
-        Formly formly = entityManager
-            .persistAndFlush(Formly.builder().nombre("FRM" + i).esquema("{}").version(j).build());
-        formly = entityManager.persistAndFlush(formly);
-      }
+    for (int j = 1; j <= N_VERS; j++) {
+      Formly formly = entityManager
+          .persistAndFlush(Formly.builder().version(j).nombre("FRM" + j).build());
+      formly = entityManager.persistAndFlush(formly);
+
+      FormlyDefinicion formlyNombre = entityManager
+          .persistAndFlush(
+              FormlyDefinicion.builder().formlyId(formly.getId()).esquema("{}")
+                  .lang(Language.ES).build());
+      formlyNombre = entityManager.persistAndFlush(formlyNombre);
     }
 
     // when: find latest formly version named 'FRM1'
-    Formly dataFound = repository.findFirstByNombreOrderByVersionDesc("FRM1").get();
+    Optional<Formly> dataFound = repository.findFirstByNombreOrderByVersionDesc("FRM3");
 
     // then: latest formly version is returned
-    Assertions.assertThat(dataFound).isNotNull();
-    Assertions.assertThat(dataFound.getNombre()).isEqualTo("FRM1");
-    Assertions.assertThat(dataFound.getVersion()).isEqualTo(N_VERS);
+    Assertions.assertThat(dataFound).isPresent();
+    Assertions.assertThat(dataFound.get().getVersion()).isEqualTo(N_VERS);
   }
 }

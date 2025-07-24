@@ -9,14 +9,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Stream;
 
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.crue.hercules.sgi.rep.config.SgiConfigProperties;
 import org.crue.hercules.sgi.rep.dto.eti.ApartadoOutput;
 import org.crue.hercules.sgi.rep.dto.eti.ElementOutput;
+import org.crue.hercules.sgi.rep.util.SgiReportContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.jayway.jsonpath.JsonPath;
 
 import lombok.AllArgsConstructor;
@@ -82,22 +87,29 @@ public class SgiFormlyService {
 
       StringBuilder apartadoTitlePdf = new StringBuilder();
 
-      String apartadoTitle = JsonPath.parse(apartadoJson)
-          .read("$[0]." + TEMPLATE_OPTIONS_PROPERTY + "." + LABEL_PROPERTY).toString();
-      apartadoTitlePdf.append(apartadoTitle);
+      JsonArray apartadoJsonArray = new Gson().fromJson(apartadoOutput.getEsquema(), JsonArray.class);
+      if (!ObjectUtils.isEmpty(apartadoJsonArray)
+          && !ObjectUtils.isEmpty(apartadoJsonArray.get(0).getAsJsonObject().get("key"))) {
 
-      JSONArray fieldGroup = (JSONArray) JsonPath.parse(apartadoJson).read("$[0]." + FIELD_GROUP_PROPERTY);
+        String apartadoTitle = JsonPath.parse(apartadoJson)
+            .read("$[0]." + TEMPLATE_OPTIONS_PROPERTY + "." + LABEL_PROPERTY).toString();
+        apartadoTitlePdf.append(apartadoTitle);
 
-      apartadoOutput.setElementos(new ArrayList<>());
+        JSONArray fieldGroup = (JSONArray) JsonPath.parse(apartadoJson).read("$[0]." + FIELD_GROUP_PROPERTY);
 
-      parseComentarios(apartadoOutput);
+        apartadoOutput.setElementos(new ArrayList<>());
 
-      if (null != apartadoOutput.getMostrarContenidoApartado() && apartadoOutput.getMostrarContenidoApartado()) {
-        evaluateFieldGroup(apartadoOutput.getElementos(), respuestaJson, fieldGroup);
+        parseComentarios(apartadoOutput);
+
+        if (null != apartadoOutput.getMostrarContenidoApartado() && apartadoOutput.getMostrarContenidoApartado()) {
+          evaluateFieldGroup(apartadoOutput.getElementos(), respuestaJson, fieldGroup);
+        } else {
+          log.debug(String.format("%d [%s] no mostrarContenidoApartado ", apartadoOutput.getId(), apartadoTitle));
+        }
+        apartadoOutput.setTitulo(apartadoTitle);
       } else {
-        log.debug(String.format("%d [%s] no mostrarContenidoApartado ", apartadoOutput.getId(), apartadoTitle));
+        throw new IllegalArgumentException();
       }
-      apartadoOutput.setTitulo(apartadoTitle);
     } catch (Exception e) {
       log.error(String.format("Error en apartado %d. %s", apartadoOutput.getId(), e.getMessage()));
       throw e;
@@ -107,7 +119,9 @@ public class SgiFormlyService {
   private void parseComentarios(ApartadoOutput apartadoOutput) {
     if (null != apartadoOutput.getComentarios() && !apartadoOutput.getComentarios().isEmpty()) {
       apartadoOutput.getComentarios().stream().forEach(c -> apartadoOutput.getElementos()
-          .add(ElementOutput.builder().content(c.getTexto()).tipo(COMMENT_TYPE).nombre("").build()));
+          .add(ElementOutput.builder()
+              .content(I18nHelper.getFieldValue(c.getTexto(), SgiReportContextHolder.getLanguage())).tipo(COMMENT_TYPE)
+              .nombre("").build()));
     }
   }
 

@@ -44,7 +44,7 @@ public class MemoriaService extends SgiApiBaseService {
           }, id).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     log.debug("findById({}) - end", id);
     return memoria;
@@ -65,7 +65,7 @@ public class MemoriaService extends SgiApiBaseService {
           }, id).getBody();
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     log.debug("getRespuestas({}) - end", id);

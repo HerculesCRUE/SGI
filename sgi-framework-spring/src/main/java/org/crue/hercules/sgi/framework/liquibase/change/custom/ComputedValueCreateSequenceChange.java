@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import liquibase.Scope;
 import liquibase.change.core.CreateSequenceChange;
 import liquibase.change.custom.CustomTaskChange;
 import liquibase.database.Database;
@@ -14,6 +15,7 @@ import liquibase.exception.CustomChangeException;
 import liquibase.exception.DatabaseException;
 import liquibase.exception.SetupException;
 import liquibase.exception.UnexpectedLiquibaseException;
+import liquibase.executor.Executor;
 import liquibase.executor.ExecutorService;
 import liquibase.resource.ResourceAccessor;
 import liquibase.statement.SqlStatement;
@@ -121,7 +123,8 @@ public class ComputedValueCreateSequenceChange extends CreateSequenceChange impl
     SqlStatement[] statements = generateStatements(database);
     for (SqlStatement statement : statements) {
       try {
-        ExecutorService.getInstance().getExecutor(database).execute(statement);
+        Executor executor = Scope.getCurrentScope().getSingleton(ExecutorService.class).getExecutor("jdbc", database);
+        executor.execute(statement);
       } catch (DatabaseException e) {
         throw new UnexpectedLiquibaseException(e);
       }

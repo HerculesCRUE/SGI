@@ -1,0 +1,75 @@
+[
+  {
+    "key": "ap4_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6 Students as research subjects"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Do University students participate as research subjects?</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>The particular teacher-student relationship makes it necessary to take special care with issues such as voluntary nature, privacy, confidentiality, incentives and use of teaching time.</p>"
+      },
+      {
+        "key": "estudiantesSujetosInvestigacionRadio",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please specify which students participate (faculty, course, etc.)",
+        "hideExpression": "!model.estudiantesSujetosInvestigacionRadio || model.estudiantesSujetosInvestigacionRadio === 'no'"
+      },
+      {
+        "key": "especificarEstudiantesSujetosInvestigacion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.estudiantesSujetosInvestigacionRadio || model.estudiantesSujetosInvestigacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Please specify",
+          "placeholder": "Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "Justify",
+        "hideExpression": "!model.estudiantesSujetosInvestigacionRadio || model.estudiantesSujetosInvestigacionRadio === 'no'"
+      },
+      {
+        "key": "justificarEstudiantesSujetosInvestigacion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.estudiantesSujetosInvestigacionRadio || model.estudiantesSujetosInvestigacionRadio === 'no'",
+        "templateOptions": {
+          "label": "Justify",
+          "placeholder": "Justify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

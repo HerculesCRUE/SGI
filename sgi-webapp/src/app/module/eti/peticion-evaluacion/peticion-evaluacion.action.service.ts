@@ -1,15 +1,17 @@
 import { ComponentFactoryResolver, Injectable, Injector } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { IChecklist } from '@core/models/eti/checklist';
 import { IEquipoTrabajo } from '@core/models/eti/equipo-trabajo';
 import { IPeticionEvaluacion } from '@core/models/eti/peticion-evaluacion';
-import { IPersona } from '@core/models/sgp/persona';
+import { Module } from '@core/module';
 import { ActionService, IFragment } from '@core/services/action-service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
+import { DialogService } from '@core/services/dialog.service';
 import { ApartadoService } from '@core/services/eti/apartado.service';
 import { BloqueService } from '@core/services/eti/bloque.service';
 import { ChecklistService } from '@core/services/eti/checklist/checklist.service';
+import { ConfiguracionService } from '@core/services/eti/configuracion.service';
 import { EquipoTrabajoService } from '@core/services/eti/equipo-trabajo.service';
 import { EvaluacionService } from '@core/services/eti/evaluacion.service';
 import { FormularioService } from '@core/services/eti/formulario.service';
@@ -17,11 +19,14 @@ import { MemoriaService } from '@core/services/eti/memoria.service';
 import { PeticionEvaluacionService } from '@core/services/eti/peticion-evaluacion.service';
 import { RespuestaService } from '@core/services/eti/respuesta.service';
 import { TareaService } from '@core/services/eti/tarea.service';
+import { TipoDocumentoService } from '@core/services/eti/tipo-documento.service';
+import { LanguageService } from '@core/services/language.service';
 import { DatosAcademicosService } from '@core/services/sgp/datos-academicos.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { VinculacionService } from '@core/services/sgp/vinculacion/vinculacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { FormlyConfig, FormlyFormBuilder } from '@ngx-formly/core';
+import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth/';
 import { NGXLogger } from 'ngx-logger';
 import { from, Observable, of, throwError } from 'rxjs';
@@ -31,8 +36,6 @@ import { EquipoInvestigadorListadoFragment } from './peticion-evaluacion-formula
 import { MemoriasListadoFragment } from './peticion-evaluacion-formulario/memorias-listado/memorias-listado.fragment';
 import { PeticionEvaluacionDatosGeneralesFragment } from './peticion-evaluacion-formulario/peticion-evaluacion-datos-generales/peticion-evaluacion-datos-generales.fragment';
 import { PeticionEvaluacionTareasFragment } from './peticion-evaluacion-formulario/peticion-evaluacion-tareas/peticion-evaluacion-tareas-listado/peticion-evaluacion-tareas-listado.fragment';
-import { ConfiguracionService } from '@core/services/eti/configuracion.service';
-import { Module } from '@core/module';
 
 @Injectable()
 export class PeticionEvaluacionActionService extends ActionService {
@@ -81,6 +84,11 @@ export class PeticionEvaluacionActionService extends ActionService {
     componentFactoryResolver: ComponentFactoryResolver,
     injector: Injector,
     protected readonly configuracionService: ConfiguracionService,
+    protected readonly translateService: TranslateService,
+    protected readonly dialogService: DialogService,
+    protected readonly router: Router,
+    protected readonly languageService: LanguageService,
+    protected readonly tipoDocumentoService: TipoDocumentoService
   ) {
     super();
 
@@ -115,14 +123,14 @@ export class PeticionEvaluacionActionService extends ActionService {
       this.configuracionService,
       this.readonly
     );
-    this.equipoInvestigadorListado = new EquipoInvestigadorListadoFragment(
+    this.equipoInvestigadorListado = new EquipoInvestigadorListadoFragment(logger,
       this.peticionEvaluacion?.id, personaService, peticionEvaluacionService, sgiAuthService, datosAcademicosService, vinculacionService);
     this.memoriasListado = new MemoriasListadoFragment(
       this.peticionEvaluacion?.id,
       peticionEvaluacionService,
       memoriaService,
       this.isInvestigador);
-    this.tareas = new PeticionEvaluacionTareasFragment(this.peticionEvaluacion?.id, personaService, tareaService,
+    this.tareas = new PeticionEvaluacionTareasFragment(logger, this.peticionEvaluacion?.id, personaService, tareaService,
       peticionEvaluacionService, this.equipoInvestigadorListado, this.memoriasListado);
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);
@@ -229,7 +237,12 @@ export class PeticionEvaluacionActionService extends ActionService {
               this.datosAcademicosService,
               this.personaService,
               this.memoriaService,
-              this.evaluacionService
+              this.evaluacionService,
+              this.translateService,
+              this.dialogService,
+              this.router,
+              this.languageService,
+              this.tipoDocumentoService
             );
             fragment.initialize();
             return fragment.initialized$.pipe(filter((value) => value), take(1), map((v) => fragment));

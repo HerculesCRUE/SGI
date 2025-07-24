@@ -324,7 +324,7 @@
       <!-- Referencia convocatoria Column -->
       <ng-container matColumnDef="referencia">
         <th mat-header-cell *matHeaderCellDef>
-          {{'csp.solicitud.referencia-convocatoria' | translate}}
+          {{'csp.solicitud.convocatoria-externa' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
           {{ element.convocatoria ? element.convocatoria.codigo : element.convocatoriaExterna}}
@@ -358,7 +358,7 @@
           {{'csp.solicitud.titulo-listado' | translate}}
         </th>
         <td mat-cell *matCellDef="let element">
-          {{ element.titulo}}
+          <sgi-i18n-table-field [field]="element.titulo"></sgi-i18n-table-field>
         </td>
       </ng-container>
 

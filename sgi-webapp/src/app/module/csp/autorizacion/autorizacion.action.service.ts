@@ -11,6 +11,7 @@ import { CertificadoAutorizacionService } from '@core/services/csp/certificado-a
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { DocumentoService } from '@core/services/sgdoc/documento.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
@@ -95,7 +96,7 @@ export class AutorizacionActionService extends
     public authService: SgiAuthService,
     public dialogService: DialogService,
     private matDialog: MatDialog,
-
+    private readonly languageService: LanguageService,
     protected readonly snackBarService: SnackBarService,
   ) {
     super();
@@ -123,7 +124,8 @@ export class AutorizacionActionService extends
       certificadoAutorizacionService,
       autorizacionService,
       estadoAutorizacionService,
-      documentoService
+      documentoService,
+      languageService
     );
 
     this.addFragment(this.FRAGMENT.DATOS_GENERALES, this.datosGenerales);

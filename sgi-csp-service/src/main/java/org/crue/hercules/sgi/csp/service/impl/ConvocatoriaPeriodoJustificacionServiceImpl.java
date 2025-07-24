@@ -77,7 +77,7 @@ public class ConvocatoriaPeriodoJustificacionServiceImpl implements Convocatoria
 
     if (periodos.isEmpty()) {
       // Fast check
-      repository.deleteInBulkByConvocatoriaId(convocatoriaId);
+      repository.deleteByConvocatoriaId(convocatoriaId);
       return new ArrayList<>();
     }
 

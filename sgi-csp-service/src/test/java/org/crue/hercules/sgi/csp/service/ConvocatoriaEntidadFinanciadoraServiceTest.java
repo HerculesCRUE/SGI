@@ -2,8 +2,10 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.enums.FormularioSolicitud;
@@ -14,8 +16,10 @@ import org.crue.hercules.sgi.csp.exceptions.TipoFinanciacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
+import org.crue.hercules.sgi.csp.model.FuenteFinanciacionNombre;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
+import org.crue.hercules.sgi.csp.model.TipoFinanciacionNombre;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaEntidadFinanciadoraRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
@@ -23,6 +27,7 @@ import org.crue.hercules.sgi.csp.repository.FuenteFinanciacionRepository;
 import org.crue.hercules.sgi.csp.repository.TipoFinanciacionRepository;
 import org.crue.hercules.sgi.csp.service.impl.ConvocatoriaEntidadFinanciadoraServiceImpl;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -119,7 +124,7 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
     // id
     Assertions.assertThatThrownBy(() -> service.create(convocatoriaEntidadFinanciadora))
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "ConvocatoriaEntidadFinanciadora id tiene que ser null para crear un nuevo ConvocatoriaEntidadFinanciadora");
+            "Identificador de Convocatoria Entidad Financiadora debe ser nulo");
   }
 
   @Test
@@ -133,7 +138,7 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
     // when: Creamos el ConvocatoriaEntidadFinanciadora
     // then: Lanza una excepcion porque el PorcentajeFinanciacion es negativo
     Assertions.assertThatThrownBy(() -> service.create(convocatoriaEntidadFinanciadora))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("PorcentajeFinanciacion no puede ser negativo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Porcentaje Financiación no puede ser negativo");
   }
 
   @Test
@@ -147,7 +152,7 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
         () -> service.create(convocatoriaEntidadFinanciadora))
         // then: throw exception as ConvocatoriaId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Convocatoria no puede ser null para crear ConvocatoriaEntidadFinanciadora");
+        .hasMessage("Identificador de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -205,7 +210,8 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
         // when: create ConvocatoriaEntidadFinanciadora
         () -> service.create(convocatoriaEntidadFinanciadora))
         // then: throw exception as FuenteFinanciacion is not activo
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("La FuenteFinanciacion debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("%s de Fuente de Financiación no está activo",
+            convocatoriaEntidadFinanciadora.getFuenteFinanciacion().getNombre());
   }
 
   @Test
@@ -251,7 +257,8 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
         // when: create ConvocatoriaEntidadFinanciadora
         () -> service.create(convocatoriaEntidadFinanciadora))
         // then: throw exception as TipoFinanciacion is not activo
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El TipoFinanciacion debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("%s de Fuente de Financiación no está activo",
+            convocatoriaEntidadFinanciadora.getFuenteFinanciacion().getNombre());
   }
 
   @Test
@@ -273,7 +280,7 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
         () -> service.create(newConvocatoriaEntidadFinanciadora))
         // then: throw exception as Convocatoria is not modificable
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede crear ConvocatoriaEntidadFinanciadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+            "No se puede Crear Convocatoria Entidad Financiadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test
@@ -332,7 +339,7 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
     // when: Actualizamos el ConvocatoriaEntidadFinanciadora
     // then: Lanza una excepcion porque el PorcentajeFinanciacion es negativo
     Assertions.assertThatThrownBy(() -> service.update(convocatoriaEntidadFinanciadora))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("PorcentajeFinanciacion no puede ser negativo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Porcentaje Financiación no puede ser negativo");
   }
 
   @Test
@@ -413,7 +420,8 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
         // when: update ConvocatoriaEntidadFinanciadora
         () -> service.update(convocatoriaEntidadFinanciadoraActualizada))
         // then: throw exception as FuenteFinanciacion is not activo
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("La FuenteFinanciacion debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("%s de Fuente de Financiación no está activo",
+            convocatoriaEntidadFinanciadoraActualizada.getFuenteFinanciacion().getNombre());
   }
 
   @Test
@@ -439,7 +447,8 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
         // when: update ConvocatoriaEntidadFinanciadora
         () -> service.update(convocatoriaEntidadFinanciadoraActualizada))
         // then: throw exception as TipoFinanciacion is not activo
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El TipoFinanciacion debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("%s de Tipo Financiación no está activo",
+            convocatoriaEntidadFinanciadoraActualizada.getTipoFinanciacion().getNombre());
   }
 
   @Test
@@ -466,7 +475,7 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
         () -> service.update(convocatoriaEntidadFinanciadora))
         // then: throw exception as Convocatoria is not modificable
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede modificar ConvocatoriaEntidadFinanciadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+            "No se puede Modificar Convocatoria Entidad Financiadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test
@@ -519,7 +528,7 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
         () -> service.delete(id))
         // then: throw exception as Convocatoria is not modificable
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede eliminar ConvocatoriaEntidadFinanciadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+            "No se puede Eliminar Convocatoria Entidad Financiadora. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test
@@ -613,12 +622,20 @@ class ConvocatoriaEntidadFinanciadoraServiceTest extends BaseServiceTest {
    * @return el objeto ConvocatoriaEntidadFinanciadora
    */
   private ConvocatoriaEntidadFinanciadora generarMockConvocatoriaEntidadFinanciadora(Long id, Long convocatoriaId) {
+    Set<FuenteFinanciacionNombre> tipoFinanciacionNombre = new HashSet<>();
+    tipoFinanciacionNombre.add(new FuenteFinanciacionNombre(Language.ES, "nombreFuenteFinanciacion"));
+
     FuenteFinanciacion fuenteFinanciacion = new FuenteFinanciacion();
     fuenteFinanciacion.setId(id == null ? 1 : id);
+    fuenteFinanciacion.setNombre(tipoFinanciacionNombre);
     fuenteFinanciacion.setActivo(true);
+
+    Set<TipoFinanciacionNombre> nombre = new HashSet<>();
+    nombre.add(new TipoFinanciacionNombre(Language.ES, "nombreTipoFinanciacion"));
 
     TipoFinanciacion tipoFinanciacion = new TipoFinanciacion();
     tipoFinanciacion.setId(id == null ? 1 : id);
+    tipoFinanciacion.setNombre(nombre);
     tipoFinanciacion.setActivo(true);
 
     Programa programa = new Programa();

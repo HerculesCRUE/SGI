@@ -28,41 +28,6 @@ public interface ConvocatoriaEntidadConvocanteService {
       List<ConvocatoriaEntidadConvocante> entidadesConvocantes);
 
   /**
-   * Guardar un nuevo {@link ConvocatoriaEntidadConvocante}.
-   *
-   * @param convocatoriaEntidadConvocante la entidad
-   *                                      {@link ConvocatoriaEntidadConvocante} a
-   *                                      guardar.
-   * @return la entidad {@link ConvocatoriaEntidadConvocante} persistida.
-   */
-  ConvocatoriaEntidadConvocante create(ConvocatoriaEntidadConvocante convocatoriaEntidadConvocante);
-
-  /**
-   * Actualizar {@link ConvocatoriaEntidadConvocante}.
-   *
-   * @param convocatoriaEntidadConvocanteActualizar la entidad
-   *                                                {@link ConvocatoriaEntidadConvocante}
-   *                                                a actualizar.
-   * @return la entidad {@link ConvocatoriaEntidadConvocante} persistida.
-   */
-  ConvocatoriaEntidadConvocante update(ConvocatoriaEntidadConvocante convocatoriaEntidadConvocanteActualizar);
-
-  /**
-   * Elimina el {@link ConvocatoriaEntidadConvocante}.
-   *
-   * @param id Id del {@link ConvocatoriaEntidadConvocante}.
-   */
-  void delete(Long id);
-
-  /**
-   * Obtiene {@link ConvocatoriaEntidadConvocante} por su id.
-   *
-   * @param id el id de la entidad {@link ConvocatoriaEntidadConvocante}.
-   * @return la entidad {@link ConvocatoriaEntidadConvocante}.
-   */
-  ConvocatoriaEntidadConvocante findById(Long id);
-
-  /**
    * Obtiene las {@link ConvocatoriaEntidadConvocante} para una
    * {@link Convocatoria}.
    *

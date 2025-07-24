@@ -1,6 +1,7 @@
 import { IAreaTematica } from '@core/models/csp/area-tematica';
 import { Fragment } from '@core/services/action-service';
 import { AreaTematicaService } from '@core/services/csp/area-tematica.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
@@ -20,10 +21,13 @@ export class NodeArea implements INodeArea {
   get childs(): NodeArea[] {
     return this._childs;
   }
+  // tslint:disable-next-line: variable-name
+  _sortChildsWith: (a1: NodeArea, a2: NodeArea) => number;
 
-  constructor(area: StatusWrapper<IAreaTematica>) {
+  constructor(area: StatusWrapper<IAreaTematica>, sortChildsWith: (a1: NodeArea, a2: NodeArea) => number) {
     this.area = area;
     this._childs = [];
+    this._sortChildsWith = sortChildsWith;
   }
 
   addChild(child: NodeArea) {
@@ -39,30 +43,29 @@ export class NodeArea implements INodeArea {
   }
 
   sortChildsByName(): void {
-    this._childs = sortByName(this._childs);
+    this._childs = sortNodes(this._childs, this._sortChildsWith);
   }
 }
 
-function sortByName(nodes: NodeArea[]): NodeArea[] {
-  return nodes.sort((a, b) => {
-    if (a.area.value.nombre < b.area.value.nombre) {
-      return -1;
-    }
-    if (a.area.value.nombre > b.area.value.nombre) {
-      return 1;
-    }
-    return 0;
-  });
+function sortNodes(nodes: NodeArea[], sortWith: (a1: NodeArea, a2: NodeArea) => number): NodeArea[] {
+  return nodes.sort(sortWith);
 }
 
 export class AreaTematicaArbolFragment extends Fragment {
   areas$ = new BehaviorSubject<NodeArea[]>([]);
   private areasEliminados: IAreaTematica[] = [];
 
+  private sortNodesByAreaNombre: (a1: NodeArea, a2: NodeArea) => number = (a1, a2) => {
+    const nombreA = this.languageService.getFieldValue(a1.area?.value?.nombre);
+    const nombreB = this.languageService.getFieldValue(a2.area?.value?.nombre);
+    return nombreA.localeCompare(nombreB);
+  };
+
   constructor(
     private readonly logger: NGXLogger,
     key: number,
-    private areaTematicaService: AreaTematicaService
+    private areaTematicaService: AreaTematicaService,
+    private languageService: LanguageService
   ) {
     super(key);
     this.setComplete(true);
@@ -74,7 +77,7 @@ export class AreaTematicaArbolFragment extends Fragment {
         switchMap(response => {
           return from(response.items).pipe(
             mergeMap((area) => {
-              const node = new NodeArea(new StatusWrapper<IAreaTematica>(area));
+              const node = new NodeArea(new StatusWrapper<IAreaTematica>(area), this.sortNodesByAreaNombre);
               return this.getChilds(node).pipe(map(() => node));
             })
           );
@@ -94,8 +97,17 @@ export class AreaTematicaArbolFragment extends Fragment {
 
   publishNodes(rootNodes?: NodeArea[]) {
     let nodes = rootNodes ? rootNodes : this.areas$.value;
-    nodes = sortByName(nodes);
+    nodes = sortNodes(nodes, this.sortNodesByAreaNombre);
     this.areas$.next(nodes);
+  }
+
+  createEmptyNode(): NodeArea {
+    return new NodeArea(
+      new StatusWrapper<IAreaTematica>({
+        padre: {} as IAreaTematica
+      } as IAreaTematica),
+      this.sortNodesByAreaNombre
+    );
   }
 
   private getChilds(parent: NodeArea): Observable<NodeArea[]> {
@@ -103,7 +115,7 @@ export class AreaTematicaArbolFragment extends Fragment {
       map((result) => {
         const childs: NodeArea[] = result.items.map(
           (area) => {
-            const child = new NodeArea(new StatusWrapper<IAreaTematica>(area));
+            const child = new NodeArea(new StatusWrapper<IAreaTematica>(area), this.sortNodesByAreaNombre);
             child.parent = parent;
             return child;
           });

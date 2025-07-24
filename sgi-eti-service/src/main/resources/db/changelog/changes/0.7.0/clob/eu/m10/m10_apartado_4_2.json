@@ -1,0 +1,31 @@
+[
+  {
+    "key": "ap4_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.2 Laginaren hautaketa ekitatiboa"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Justifikatu azterketarako laginaren hautaketa, eta deskribatu parte hartzaileak biltzeko prozesuan ekitatea bermatzen duten neurriak.<p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Ez dira nahasi behar subjektuen <strong>hautaketa ekitatiboa</strong> eta metodologiaren atalean deskribatutako <strong>hautaketa irizpideak</strong>.</p><p>Laginaren hautaketa ekitatiboak lotura du ikerketako etikaren oinarrizko printzipioetako batekin: <strong>justiziarekin</strong>.</p><p>Hautaketan ekitatez aritzeak esan nahi du subjektuak biltzeko prozesuan ikerketako galdera zientifikoekin zerikusia duten arrazoiak aintzat hartzen direla eta ez dagoela zientifikoa ez den bestelako interes edo arrazoirik, adibidez: eskuragarritasuna, hurbiltasuna, laguntasuna, baimena lortzeko erraztasuna, baimenik behar ez izatea, arrisku handieneko ikerketak kolektibo baztertuentzat gordetzea, etab. </p><p>Ekitateak hiru oinarri hauek izan behar ditu: </p><ul><li>Ikerketak onura potentzialak ekarri behar dizkie hautatutako subjektuei edo populazioari. </li><li>Subjektu edo populazio potentzialki onuradunak ez dira hautaketatik baztertu behar, horretarako arrazoi zientifikorik ez badago. </li><li>Kargen eta onuren banaketak bidezkoa izan behar du, arriskua dakarten ikerketak ez dakizkien egokitu subjektu edo populazio diskriminatu edo zaurgarriei, eta onurak, berriz, beste batzuei. </li></ul><p>Laginaren hautaketa ekitatiboari buruzko informazio gehiagorako, kontsultatu hauek: </p><ul><li><a href='http://www.bioeticayderecho.ub.edu/archivos/norm/InformeBelmont.pdf' target='_blank'>Belmont txostena</a></li><li><a href='https://www.unesco.org/en/ethics-science-technology/bioethics-and-human-rights' target='_blank'>Gizakiei lotutako Bioetikari eta Giza Eskubideei buruzko Adierazpen Unibertsala (UNESCO)</a></li><li>CIOMSen dokumentu hau: '<a href='https://cioms.ch/publications/product/pautas-eticas-internacionales-para-la-investigacion-relacionada-con-la-salud-con-seres-humanos/' target='_blank'>Gizakien ikerketa biomedikorako nazioarteko jarraibide etikoak</a>' (12. jarraibidea)</li></ul>"
+      },
+      {
+        "key": "equitativaMuestra",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Justifikazioa",
+          "required": true
+        }
+      }
+    ]
+  }
+]

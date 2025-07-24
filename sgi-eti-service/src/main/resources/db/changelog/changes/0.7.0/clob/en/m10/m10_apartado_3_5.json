@@ -1,0 +1,90 @@
+[
+  {
+    "key": "ap3_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.5 Biological samples of human origin"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Are biological samples of human origin used in this activity?</p>"
+      },
+      {
+        "key": "muestrasBiologicasRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "type": "multicheckbox",
+        "key": "muestrasBiologicasCheck",
+        "hideExpression": "!model.muestrasBiologicasRadio || model.muestrasBiologicasRadio === 'no'",
+        "templateOptions": {
+          "label": "Which",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "celulasgerminales",
+              "label": "Germ cells"
+            },
+            {
+              "value": "celulassomaticas",
+              "label": "Somatic cells"
+            },
+            {
+              "value": "sangre",
+              "label": "Blood"
+            },
+            {
+              "value": "fluidos",
+              "label": "Fluids"
+            },
+            {
+              "value": "organos",
+              "label": "Organs"
+            },
+            {
+              "value": "tejidos",
+              "label": "Tissues"
+            },
+            {
+              "value": "lineasCelulares",
+              "label": "Embryonic stem cell lines*"
+            },
+            {
+              "value": "celulasTejidos",
+              "label": "Cells and tissues of human embryonic origin*"
+            },
+            {
+              "value": "embrionesFetos",
+              "label": "Human embryos and foetuses*"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: Please note that the handling of human tissues/blood/fluids requires evaluation by the #nombre_comite_M30_en#.</p><p>The options marked with an asterisk (*) require a prior favourable report from the Guarantees Commission before use</p>\"",
+        "hideExpression": "!model.muestrasBiologicasRadio || model.muestrasBiologicasRadio === 'no'"
+      }
+    ]
+  }
+]

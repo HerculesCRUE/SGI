@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap3_7",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.7 Experimental process to which the animal is to be subjected"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>We refer to the 'experimental process' as the set or sequence of procedures/interventions to which the animal is subjected from the moment the preparation of the animal for use begins until 'no further observations are to be made on it' and 'it has been killed, rehomed or re-integrated into a suitable habitat or husbandry system'.</p>\""
+      }
+    ]
+  }
+]

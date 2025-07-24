@@ -7,15 +7,22 @@
 */
 
 -- ASISTENTES
-INSERT INTO test.asistentes (id, evaluador_id, convocatoria_reunion_id, motivo, asistencia)
-VALUES (2, 2, 2,  'Motivo2', true);
-INSERT INTO test.asistentes (id, evaluador_id, convocatoria_reunion_id, motivo, asistencia)
-VALUES (3, 2, 2,  'Motivo3', true);
-INSERT INTO test.asistentes (id, evaluador_id, convocatoria_reunion_id, motivo, asistencia)
-VALUES (4, 2, 2,  'Motivo4', true);
-INSERT INTO test.asistentes (id, evaluador_id, convocatoria_reunion_id, motivo, asistencia)
-VALUES (5, 2, 2,  'Motivo5', true);
-INSERT INTO test.asistentes (id, evaluador_id, convocatoria_reunion_id, motivo, asistencia)
-VALUES (6, 2, 2,  'Motivo6', true);
+INSERT INTO test.asistentes (id, evaluador_id, convocatoria_reunion_id, asistencia)
+VALUES (2, 2, 2, true);
+INSERT INTO test.asistentes (id, evaluador_id, convocatoria_reunion_id, asistencia)
+VALUES (3, 2, 2, true);
+INSERT INTO test.asistentes (id, evaluador_id, convocatoria_reunion_id, asistencia)
+VALUES (4, 2, 2, true);
+INSERT INTO test.asistentes (id, evaluador_id, convocatoria_reunion_id, asistencia)
+VALUES (5, 2, 2, true);
+INSERT INTO test.asistentes (id, evaluador_id, convocatoria_reunion_id, asistencia)
+VALUES (6, 2, 2, true);
+
+-- ASISTENTES MOTIVO
+INSERT INTO test.asistentes_motivo(asistentes_id, lang, value_) VALUES(2, 'es', 'Motivo2');
+INSERT INTO test.asistentes_motivo(asistentes_id, lang, value_) VALUES(3, 'es', 'Motivo3');
+INSERT INTO test.asistentes_motivo(asistentes_id, lang, value_) VALUES(4, 'es', 'Motivo4');
+INSERT INTO test.asistentes_motivo(asistentes_id, lang, value_) VALUES(5, 'es', 'Motivo5');
+INSERT INTO test.asistentes_motivo(asistentes_id, lang, value_) VALUES(6, 'es', 'Motivo6');
 
 ALTER SEQUENCE test.asistentes_seq RESTART WITH 7;

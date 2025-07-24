@@ -1,0 +1,32 @@
+[
+  {
+    "key": "ap4_1_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.2 Sources consulted to search for alternative methods"
+    },
+    "fieldGroup": [
+      {
+        "template": "Please describe the sources consulted and the search criteria used"
+      },
+      {
+        "key": "fuentes",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Sources consulted",
+          "required": true
+        }
+      },
+      {
+        "key": "criteriosBusqueda",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Search criteria",
+          "required": true
+        }
+      }
+    ]
+  }
+]

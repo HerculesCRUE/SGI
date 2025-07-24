@@ -6,7 +6,6 @@ import javax.persistence.criteria.Root;
 import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.eti.model.CargoComite_;
-import org.crue.hercules.sgi.eti.model.Comite_;
 import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Evaluador_;
 import org.springframework.data.jpa.domain.Specification;
@@ -63,10 +62,6 @@ public class EvaluadorSpecifications {
 
   public static Specification<Evaluador> byFechaBajaNull() {
     return (root, query, cb) -> cb.isNull(root.get(Evaluador_.fechaBaja));
-  }
-
-  public static Specification<Evaluador> byComite(String comite) {
-    return (root, query, cb) -> cb.equal(root.get(Evaluador_.comite).get(Comite_.comite), comite);
   }
 
   public static Specification<Evaluador> byComiteId(Long comiteId) {

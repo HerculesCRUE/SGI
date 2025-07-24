@@ -19,8 +19,9 @@
     <div fxLayout="row">
       <mat-form-field fxFlex>
         <mat-label>{{'pii.invencion-informe-patentabilidad.nombre' | translate}}</mat-label>
-        <input matInput formControlName="nombre" id="nombre"
+        <sgi-i18n-input formControlName="nombre"
           placeholder="{{'pii.invencion-informe-patentabilidad.nombre' | translate}}" required>
+        </sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>
@@ -100,8 +101,9 @@
     <div fxLayout="row">
       <mat-form-field fxFlex>
         <mat-label>{{'pii.invencion-informe-patentabilidad.comentarios' | translate}}</mat-label>
-        <textarea matInput formControlName="comentarios" id="comentarios"
-          placeholder="{{'pii.invencion-informe-patentabilidad.comentarios' | translate}}"></textarea>
+        <sgi-i18n-textarea formControlName="comentarios"
+          placeholder="{{'pii.invencion-informe-patentabilidad.comentarios' | translate}}">
+        </sgi-i18n-textarea>
         <mat-error *ngIf="formGroup.controls.comentarios.errors?.maxlength">
           {{'error.maxlength.entity' | translate:msgParamComentariosEntity}}
         </mat-error>

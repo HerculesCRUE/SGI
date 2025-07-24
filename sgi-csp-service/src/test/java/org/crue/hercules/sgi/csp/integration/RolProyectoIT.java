@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.RolProyecto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -54,9 +56,9 @@ class RolProyectoIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     RolProyecto responseData = response.getBody();
     Assertions.assertThat(responseData.getId()).as("getId()").isEqualTo(id);
-    Assertions.assertThat(responseData.getAbreviatura()).as("getAbreviatura()").isEqualTo("001");
-    Assertions.assertThat(responseData.getNombre()).as("getNombre()").isEqualTo("nombre-001");
-    Assertions.assertThat(responseData.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getAbreviatura(), Language.ES)).as("getAbreviatura()").isEqualTo("001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getNombre(), Language.ES)).as("getNombre()").isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getDescripcion(), Language.ES)).as("getDescripcion()").isEqualTo("descripcion-001");
     Assertions.assertThat(responseData.getRolPrincipal()).as("getRolPrincipal()").isEqualTo(Boolean.FALSE);
     Assertions.assertThat(responseData.getOrden()).as("getOrden()").isEqualTo(null);
     Assertions.assertThat(responseData.getEquipo()).as("getEquipo()").isEqualTo(RolProyecto.Equipo.INVESTIGACION);
@@ -76,7 +78,7 @@ class RolProyectoIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     String sort = "id,desc";
-    String filter = "descripcion=ke=00";
+    String filter = "descripcion.value=ke=00";
 
     // when: find RolProyecto
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
@@ -94,11 +96,11 @@ class RolProyectoIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(responseData.get(0).getDescripcion()).as("get(0).getDescripcion())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getDescripcion(), Language.ES)).as("get(0).getDescripcion())")
         .isEqualTo("descripcion-" + String.format("%03d", 3));
-    Assertions.assertThat(responseData.get(1).getDescripcion()).as("get(1).getDescripcion())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getDescripcion(), Language.ES)).as("get(1).getDescripcion())")
         .isEqualTo("descripcion-" + String.format("%03d", 2));
-    Assertions.assertThat(responseData.get(2).getDescripcion()).as("get(2).getDescripcion())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getDescripcion(), Language.ES)).as("get(2).getDescripcion())")
         .isEqualTo("descripcion-" + String.format("%03d", 1));
   }
 

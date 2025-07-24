@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap5_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2 Authorisation to carry out confined use of genetically modified organisms"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Consult the Technical Secretariat of the Ethics Committee on the procedure for reporting activities involving the confined use of genetically-modified organisms.</p>"
+      }
+    ]
+  }
+]

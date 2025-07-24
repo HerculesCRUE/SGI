@@ -1,0 +1,101 @@
+[
+  {
+    "key": "ap3_4_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "3.4.4 Hazardous chemicals"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Does this activity use Hazardous Chemicals?</p>"
+      },
+      {
+        "key": "sustanciasQuimicasPeligrosas",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Type of Hazardous Chemical used:",
+        "hideExpression": "!model.sustanciasQuimicasPeligrosas || model.sustanciasQuimicasPeligrosas === 'no'"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "tiposSustanciasQuimicas",
+        "hideExpression": "!model.sustanciasQuimicasPeligrosas || model.sustanciasQuimicasPeligrosas === 'no'",
+        "templateOptions": {
+          "label": "Options:",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "inflamable",
+              "label": "Flammable"
+            },
+            {
+              "value": "explosiva",
+              "label": "Explosive"
+            },
+            {
+              "value": "corrosiva",
+              "label": "Corrosive"
+            },
+            {
+              "value": "toxica",
+              "label": "Toxic"
+            },
+            {
+              "value": "cancerigena",
+              "label": "Carcinogenic"
+            },
+            {
+              "value": "mutagena",
+              "label": "Mutagen"
+            },
+            {
+              "value": "irritante",
+              "label": "Irritant"
+            },
+            {
+              "value": "otra",
+              "label": "Another"
+            }
+          ]
+        }
+      },
+      {
+        "key": "otraTexto",
+        "type": "i18n-textarea",
+        "hideExpression": "model.sustanciasQuimicasPeligrosas==='no' || (!model.tiposSustanciasQuimicas || !model.tiposSustanciasQuimicas.find((c) => c === 'otra'))",
+        "templateOptions": {
+          "placeholder": "Please specify",
+          "label": "Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": " Note: The Safety Data Sheet should be attached in Additional Documentation."
+      }
+    ]
+  }
+]

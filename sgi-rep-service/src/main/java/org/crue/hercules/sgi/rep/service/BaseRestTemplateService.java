@@ -76,7 +76,7 @@ public abstract class BaseRestTemplateService<T extends BaseRestDto> {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
 
     return dto;
@@ -105,7 +105,7 @@ public abstract class BaseRestTemplateService<T extends BaseRestDto> {
 
     } catch (Exception e) {
       log.error(e.getMessage(), e);
-      throw new GetDataReportException();
+      throw new GetDataReportException(e);
     }
     return result;
   }

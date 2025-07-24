@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.csp.dto;
 
+import java.util.Collection;
+
+import org.crue.hercules.sgi.csp.model.GrupoNombre;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +17,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class GrupoResumenOutput {
   private Long id;
-  private String nombre;
+  private Collection<GrupoNombre> nombre;
   private String codigo;
 }

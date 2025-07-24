@@ -1,0 +1,30 @@
+[
+  {
+    "key": "ap5_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.1 Akreditazioak"
+    },
+    "fieldGroup": [
+      {
+        "template": "Gogoratu ikertzaile taldearen akreditazio guztien kopiak aurkeztu behar dituzula, proiektuaren memoriarekin batera artxibatuta gera daitezen."
+      },
+      {
+        "key": "acreditaciones",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": "ACREDITACIONES",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

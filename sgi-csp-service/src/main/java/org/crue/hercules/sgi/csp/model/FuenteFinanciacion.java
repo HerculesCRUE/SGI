@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,6 +17,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion.OnActivar;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion.OnActualizar;
@@ -32,8 +39,6 @@ import lombok.experimental.SuperBuilder;
 @UniqueNombreFuenteFinanciacionActiva(groups = { OnActualizar.class, OnActivar.class, OnCrear.class })
 @ActivableIsActivo(entityClass = FuenteFinanciacion.class, groups = { OnActualizar.class })
 public class FuenteFinanciacion extends BaseActivableEntity {
-  public static final int NOMBRE_LENGTH = 50;
-  public static final int DESCRIPCION_LENGTH = 250;
 
   /** Id */
   @Id
@@ -43,12 +48,17 @@ public class FuenteFinanciacion extends BaseActivableEntity {
   private Long id;
 
   /** Nombre */
-  @Column(name = "nombre", length = NOMBRE_LENGTH, nullable = false)
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "fuente_financiacion_nombre", joinColumns = @JoinColumn(name = "fuente_financiacion_id"))
+  @NotEmpty
+  @Valid
+  private Set<FuenteFinanciacionNombre> nombre = new HashSet<>();
 
   /** Descripcion */
-  @Column(name = "descripcion", length = DESCRIPCION_LENGTH, nullable = true)
-  private String descripcion;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "fuente_financiacion_descripcion", joinColumns = @JoinColumn(name = "fuente_financiacion_id"))
+  @Valid
+  private Set<FuenteFinanciacionDescripcion> descripcion = new HashSet<>();
 
   /** Fondo estructural */
   @Column(name = "fondo_estructural", nullable = false)

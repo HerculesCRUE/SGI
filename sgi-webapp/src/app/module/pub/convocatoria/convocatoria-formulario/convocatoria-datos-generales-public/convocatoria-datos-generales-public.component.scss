@@ -1,9 +1,9 @@
 .areas-tematicas {
-   .mat-cell.mat-column-nombre {
-      max-width: 30vw;
-      overflow: hidden;
-      padding-right: 10px;
-      text-overflow: ellipsis; 
-      white-space: nowrap; 
-    }
+  .mat-cell.mat-column-nombre sgi-i18n-table-list-fields {
+    max-width: 30vw;
+    overflow: hidden;
+    padding-right: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }

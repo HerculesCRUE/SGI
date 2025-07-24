@@ -1,12 +1,15 @@
 package org.crue.hercules.sgi.framework.data.jpa.repository.support;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
+import org.crue.hercules.sgi.framework.data.jpa.repository.query.SgiQueryUtils;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -15,6 +18,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.convert.QueryByExamplePredicateBuilder;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.query.EscapeCharacter;
+import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.data.jpa.repository.support.JpaEntityInformation;
 import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import org.springframework.lang.Nullable;
@@ -181,6 +185,78 @@ public class SgiJpaRepository<T, I> extends SimpleJpaRepository<T, I> implements
     TypedQuery<S> returnValue = getQuery(spec, domainClass, sort);
     log.debug("getQuery(@Nullable Specification<S> spec, Class<S> domainClass, Pageable pageable) - end");
     return returnValue;
+  }
+
+  /**
+   * Creates a {@link TypedQuery} for the given {@link Specification} and
+   * {@link Sort}.
+   *
+   * @param spec        can be {@literal null}.
+   * @param domainClass must not be {@literal null}.
+   * @param sort        must not be {@literal null}.
+   */
+  @Override
+  protected <S extends T> TypedQuery<S> getQuery(@Nullable Specification<S> spec, Class<S> domainClass, Sort sort) {
+    log.debug("getQuery(@Nullable Specification<S> spec, Class<S> domainClass, Sort sort) - start");
+    CriteriaBuilder builder = em.getCriteriaBuilder();
+    CriteriaQuery<S> query = builder.createQuery(domainClass);
+
+    Root<S> root = applySpecificationToCriteria(spec, domainClass, query);
+    query.select(root);
+
+    if (sort.isSorted()) {
+      query.orderBy(SgiQueryUtils.toOrders(sort, root, builder));
+    }
+    TypedQuery<S> returnValue = applyRepositoryMethodMetadata(em.createQuery(query));
+    log.debug("getQuery(@Nullable Specification<S> spec, Class<S> domainClass, Sort sort) - end");
+    return returnValue;
+  }
+
+  /**
+   * Applies the given {@link Specification} to the given {@link CriteriaQuery}.
+   *
+   * @param spec        can be {@literal null}.
+   * @param domainClass must not be {@literal null}.
+   * @param query       must not be {@literal null}.
+   */
+  private <S, U extends T> Root<U> applySpecificationToCriteria(@Nullable Specification<U> spec, Class<U> domainClass,
+      CriteriaQuery<S> query) {
+
+    Assert.notNull(domainClass, "Domain class must not be null!");
+    Assert.notNull(query, "CriteriaQuery must not be null!");
+
+    Root<U> root = query.from(domainClass);
+
+    if (spec == null) {
+      return root;
+    }
+
+    CriteriaBuilder builder = em.getCriteriaBuilder();
+    Predicate predicate = spec.toPredicate(root, query, builder);
+
+    if (predicate != null) {
+      query.where(predicate);
+    }
+
+    return root;
+  }
+
+  private <S> TypedQuery<S> applyRepositoryMethodMetadata(TypedQuery<S> query) {
+
+    if (getRepositoryMethodMetadata() == null) {
+      return query;
+    }
+
+    LockModeType type = getRepositoryMethodMetadata().getLockModeType();
+    TypedQuery<S> toReturn = type == null ? query : query.setLockMode(type);
+
+    applyQueryHints(toReturn);
+
+    return toReturn;
+  }
+
+  private void applyQueryHints(Query query) {
+    getQueryHints().withFetchGraphs(em).forEach(query::setHint);
   }
 
   /**

@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +21,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -46,6 +52,15 @@ public class Solicitud extends BaseEntity {
     MODIFICACION,
   }
 
+  public enum OrigenSolicitud {
+    /** Convocatoria registrada en el SGI */
+    CONVOCATORIA_SGI,
+    /** Convocatoria no registrada en el SGI */
+    CONVOCATORIA_NO_SGI,
+    /** Sin convocatoria */
+    SIN_CONVOCATORIA
+  }
+
   /**
    * Serial version
    */
@@ -59,9 +74,11 @@ public class Solicitud extends BaseEntity {
   private Long id;
 
   /** Titulo */
-  @Column(name = "titulo", length = 250, nullable = true)
-  @Size(max = 250)
-  private String titulo;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "solicitud_titulo", joinColumns = @JoinColumn(name = "solicitud_id"))
+  @Valid
+  @Builder.Default
+  private Set<SolicitudTitulo> titulo = new HashSet<>();
 
   /** Convocatoria Id */
   @Column(name = "convocatoria_id", nullable = true)
@@ -93,9 +110,11 @@ public class Solicitud extends BaseEntity {
   private String solicitanteRef;
 
   /** Observaciones */
-  @Column(name = "observaciones", length = 2000, nullable = true)
-  @Size(max = 2000)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "solicitud_observaciones", joinColumns = @JoinColumn(name = "solicitud_id"))
+  @Valid
+  @Builder.Default
+  private Set<SolicitudObservaciones> observaciones = new HashSet<>();
 
   /** Convocatoria externa */
   @Column(name = "convocatoria_externa", length = 50, nullable = true)
@@ -121,6 +140,23 @@ public class Solicitud extends BaseEntity {
   /** Activo */
   @Column(name = "activo", columnDefinition = "boolean default true", nullable = false)
   private Boolean activo;
+
+  /** Año */
+  @Column(name = "anio", nullable = true)
+  private Integer anio;
+
+  /** Tipo formulario Grupo */
+  @Column(name = "origen_solicitud", length = 50, nullable = false)
+  @Enumerated(EnumType.STRING)
+  private OrigenSolicitud origenSolicitud;
+
+  /** Modelo Ejecucion */
+  @Column(name = "modelo_ejecucion_id", nullable = true)
+  private Long modeloEjecucionId;
+
+  /** Tipo finalidad */
+  @Column(name = "tipo_finalidad_id", nullable = true)
+  private Long tipoFinalidadId;
 
   // Relation mappings for JPA metamodel generation only
   @OneToOne(mappedBy = "solicitud")
@@ -178,5 +214,17 @@ public class Solicitud extends BaseEntity {
   @Getter(AccessLevel.NONE)
   @Setter(AccessLevel.NONE)
   private final SolicitudRrhh solicitudRrhh = null;
+
+  @ManyToOne
+  @JoinColumn(name = "modelo_ejecucion_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUD_MODELOEJECUCION"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final ModeloEjecucion modeloEjecucion = null;
+
+  @ManyToOne
+  @JoinColumn(name = "tipo_finalidad_id", insertable = false, updatable = false, foreignKey = @ForeignKey(name = "FK_SOLICITUD_TIPOFINALIDAD"))
+  @Getter(AccessLevel.NONE)
+  @Setter(AccessLevel.NONE)
+  private final TipoFinalidad tipoFinalidad = null;
 
 }

@@ -68,6 +68,14 @@ public class ContentTpl extends BaseEntity {
   @Column(name = "tpl_html", nullable = true, columnDefinition = "clob")
   private String tplHtml;
 
+  /** TEXT message template */
+  @Column(name = "default_tpl_text", nullable = false, columnDefinition = "clob")
+  private String defaultTplText;
+
+  /** HTML message template */
+  @Column(name = "default_tpl_html", nullable = true, columnDefinition = "clob")
+  private String defaultTplHtml;
+
   /** Template params */
   @ManyToMany
   @JoinTable(name = "contenttpl_param", joinColumns = {

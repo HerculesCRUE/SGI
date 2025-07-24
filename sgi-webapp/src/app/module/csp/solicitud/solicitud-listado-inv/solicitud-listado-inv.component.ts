@@ -10,6 +10,7 @@ import { ISolicitud } from '@core/models/csp/solicitud';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
+import { ConfigService } from '@core/services/csp/configuracion/config.service';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DialogService } from '@core/services/dialog.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
@@ -20,6 +21,7 @@ import { NGXLogger } from 'ngx-logger';
 import { forkJoin, merge, Observable, of } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
+const MSG_BUTTON_NEW = marker('btn.add.entity');
 const MSG_DEACTIVATE = marker('msg.deactivate.entity');
 const MSG_SUCCESS_DEACTIVATE = marker('msg.csp.deactivate.success');
 const MSG_ERROR_DEACTIVATE = marker('error.csp.deactivate.entity');
@@ -42,10 +44,13 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
   fxFlexProperties: FxFlexProperties;
   fxLayoutProperties: FxLayoutProperties;
   solicitudes$: Observable<SolicitudListado[]>;
+  textoCrear: string;
   textoDesactivar: string;
   textoReactivar: string;
   textoErrorDesactivar: string;
   textoSuccessDesactivar: string;
+
+  isAddSolicitudEnabled = false;
 
   msgParamConvocatoriaExternaEntity = {};
   msgParamCodigoExternoEntity = {};
@@ -66,9 +71,10 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
     protected snackBarService: SnackBarService,
     private solicitudService: SolicitudService,
     private readonly translate: TranslateService,
-    private sgiAuthService: SgiAuthService
+    private sgiAuthService: SgiAuthService,
+    private configService: ConfigService
   ) {
-    super();
+    super(translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -79,17 +85,29 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
     this.fxLayoutProperties.gap = '20px';
     this.fxLayoutProperties.layout = 'row wrap';
     this.fxLayoutProperties.xs = 'column';
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'titulo') {
+        return 'titulo.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
 
     this.formGroup = new FormGroup({
       convocatoria: new FormControl(undefined),
       estadoSolicitud: new FormControl(''),
-      tituloSolicitud: new FormControl(undefined),
+      tituloSolicitud: new FormControl([]),
     });
+
+    this.suscripciones.push(
+      this.configService.isSolicitudesSinConvocatoriaInvestigadorEnabled().subscribe(value => {
+        this.isAddSolicitudEnabled = value;
+      })
+    );
   }
 
   protected createObservable(reset?: boolean): Observable<SgiRestListResult<SolicitudListado>> {
@@ -166,7 +184,7 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
 
     return new RSQLSgiRestFilter('convocatoria.id', SgiRestFilterOperator.EQUALS, controls.convocatoria.value?.id?.toString())
       .and('estado.estado', SgiRestFilterOperator.EQUALS, controls.estadoSolicitud.value)
-      .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value);
+      .and('titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.tituloSolicitud.value);
   }
 
   /**
@@ -200,7 +218,19 @@ export class SolicitudListadoInvComponent extends AbstractTablePaginationCompone
     this.suscripciones.push(subcription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
+    this.translate.get(
+      SOLICITUD_KEY,
+      MSG_PARAMS.CARDINALIRY.SINGULAR
+    ).pipe(
+      switchMap((value) => {
+        return this.translate.get(
+          MSG_BUTTON_NEW,
+          { entity: value }
+        );
+      })
+    ).subscribe((value) => this.textoCrear = value);
+
     this.translate.get(
       SOLICITUD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

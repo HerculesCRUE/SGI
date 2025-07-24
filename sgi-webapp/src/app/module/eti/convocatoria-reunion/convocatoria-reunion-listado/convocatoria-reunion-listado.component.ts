@@ -9,6 +9,7 @@ import { IBaseExportModalData } from '@core/component/base-export/base-export-mo
 import { SgiError } from '@core/errors/sgi-error';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaReunion } from '@core/models/eti/convocatoria-reunion';
+import { TIPO_CONVOCATORIA_REUNION_MAP } from '@core/models/eti/tipo-convocatoria-reunion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ROUTE_NAMES } from '@core/route.names';
@@ -20,7 +21,7 @@ import { FormGroupUtil } from '@core/utils/form-group-util';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http';
-import { Observable, of, Subscription } from 'rxjs';
+import { Observable, Subscription, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { ConvocatoriaReunionListadoExportModalComponent } from '../modals/convocatoria-reunion-listado-export-modal/convocatoria-reunion-listado-export-modal.component';
 
@@ -66,6 +67,10 @@ export class ConvocatoriaReunionListadoComponent
 
   private limiteRegistrosExportacionExcel: string;
 
+  get TIPO_CONVOCATORIA_REUNION_MAP() {
+    return TIPO_CONVOCATORIA_REUNION_MAP;
+  }
+
   constructor(
     private readonly convocatoriaReunionService: ConvocatoriaReunionService,
     private readonly dialogService: DialogService,
@@ -75,7 +80,7 @@ export class ConvocatoriaReunionListadoComponent
     private matDialog: MatDialog,
     private readonly cnfService: ConfigService
   ) {
-    super();
+    super(translate);
 
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(25%-10px)';
@@ -89,6 +94,13 @@ export class ConvocatoriaReunionListadoComponent
     this.fxLayoutProperties.xs = 'column';
 
     this.totalElementos = 0;
+
+    this.resolveSortProperty = (column: string) => {
+      if (column == 'lugar') {
+        return 'lugar.value';
+      }
+      return column;
+    }
   }
 
 
@@ -130,7 +142,7 @@ export class ConvocatoriaReunionListadoComponent
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     // Inicializa el formulario de busqueda
     this.formGroup = this.formBuilder.group({
@@ -146,7 +158,7 @@ export class ConvocatoriaReunionListadoComponent
       }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_REUNION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

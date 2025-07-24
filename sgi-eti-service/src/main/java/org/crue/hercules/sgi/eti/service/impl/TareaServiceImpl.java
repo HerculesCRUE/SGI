@@ -12,6 +12,8 @@ import org.crue.hercules.sgi.eti.model.Tarea;
 import org.crue.hercules.sgi.eti.repository.TareaRepository;
 import org.crue.hercules.sgi.eti.service.TareaService;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
+import org.crue.hercules.sgi.framework.util.AssertHelper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class TareaServiceImpl implements TareaService {
+  private static final String MSG_MEMORIA_TAREA_ESTADO_NO_ELIMINABLE = "memoria.tarea.estadoNoEliminable";
   private final TareaRepository tareaRepository;
 
   private final static List<Long> estadosMemoriaEliminables = Arrays.asList(1L, 2L, 6L, 7L, 8L);
@@ -45,7 +48,7 @@ public class TareaServiceImpl implements TareaService {
   @Transactional
   public Tarea create(Tarea tarea) {
     log.debug("Petición a create Tarea : {} - start", tarea);
-    Assert.isNull(tarea.getId(), "Tarea id tiene que ser null para crear una nueva tarea");
+    AssertHelper.idIsNull(tarea.getId(), Tarea.class);
 
     return tareaRepository.save(tarea);
   }
@@ -90,13 +93,13 @@ public class TareaServiceImpl implements TareaService {
   @Transactional
   public void delete(Long id) throws TareaNotFoundException {
     log.debug("Petición a delete Tarea : {}  - start", id);
-    Assert.notNull(id, "El id de Tarea no puede ser null.");
+    AssertHelper.idNotNull(id, Tarea.class);
     if (!tareaRepository.existsById(id)) {
       throw new TareaNotFoundException(id);
     }
 
     Assert.isTrue(tareaRepository.existsByIdAndMemoriaEstadoActualIdIn(id, estadosMemoriaEliminables),
-        "La memoria de la tarea esta en un estado no eliminable.");
+        ApplicationContextSupport.getMessage(MSG_MEMORIA_TAREA_ESTADO_NO_ELIMINABLE));
 
     tareaRepository.deleteById(id);
     log.debug("Petición a delete Tarea : {}  - end", id);
@@ -111,13 +114,13 @@ public class TareaServiceImpl implements TareaService {
   @Transactional
   public void deleteByEquipoTrabajo(Long idEquipoTrabajo) {
     log.debug("deleteByEquipoTrabajo(Long idEquipoTrabajo) - start");
-    Assert.notNull(idEquipoTrabajo, "El id de EquipoTrabajo no puede ser null.");
+    AssertHelper.idNotNull(idEquipoTrabajo, EquipoTrabajo.class);
     tareaRepository.deleteByEquipoTrabajoId(idEquipoTrabajo);
 
     List<Tarea> tareasNoEliminables = tareaRepository
         .findAllByEquipoTrabajoIdAndMemoriaEstadoActualIdNotIn(idEquipoTrabajo, estadosMemoriaEliminables);
     Assert.isTrue(tareasNoEliminables.isEmpty(),
-        "El equipo de trabajo tiene tareas con memorias en un estado no eliminable.");
+        ApplicationContextSupport.getMessage(MSG_MEMORIA_TAREA_ESTADO_NO_ELIMINABLE));
 
     log.debug("deleteByEquipoTrabajo(Long idEquipoTrabajo) - end");
   }
@@ -135,12 +138,12 @@ public class TareaServiceImpl implements TareaService {
   public Tarea update(final Tarea tareaActualizar) {
     log.debug("update(Tarea tareaActualizar) - start");
 
-    Assert.notNull(tareaActualizar.getId(), "Tarea id no puede ser null para actualizar una tarea");
+    AssertHelper.idNotNull(tareaActualizar.getId(), Tarea.class);
 
     return tareaRepository.findById(tareaActualizar.getId()).map(tarea -> {
       tarea.setEquipoTrabajo(tareaActualizar.getEquipoTrabajo());
       tarea.setMemoria(tareaActualizar.getMemoria());
-      tarea.setTarea(tareaActualizar.getTarea());
+      tarea.setNombre(tareaActualizar.getNombre());
       tarea.setFormacion(tareaActualizar.getFormacion());
       tarea.setFormacionEspecifica(tareaActualizar.getFormacionEspecifica());
       tarea.setOrganismo(tareaActualizar.getOrganismo());

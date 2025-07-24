@@ -7,19 +7,26 @@ import org.crue.hercules.sgi.csp.exceptions.CardinalidadRelacionSgiSgeException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoAnualidadWithProyectoSgeRefEnviadoException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoHasGastosProyectoException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
+import org.crue.hercules.sgi.csp.exceptions.ProyectoProyectoSgeNoDeletableException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoProyectoSgeNotFoundException;
 import org.crue.hercules.sgi.csp.model.Configuracion;
 import org.crue.hercules.sgi.csp.model.GastoProyecto;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
+import org.crue.hercules.sgi.csp.repository.AnualidadGastoRepository;
+import org.crue.hercules.sgi.csp.repository.AnualidadIngresoRepository;
 import org.crue.hercules.sgi.csp.repository.GastoProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoFacturacionRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoProyectoSgeRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
+import org.crue.hercules.sgi.csp.repository.ProyectoSeguimientoJustificacionRepository;
+import org.crue.hercules.sgi.csp.repository.RequerimientoJustificacionRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.ProyectoProyectoSgePredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoProyectoSgeSpecifications;
 import org.crue.hercules.sgi.csp.service.ConfiguracionService;
 import org.crue.hercules.sgi.csp.service.ProyectoAnualidadService;
 import org.crue.hercules.sgi.csp.service.ProyectoProyectoSgeService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ProyectoHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
@@ -42,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeService {
+  private static final String MSG_KEY_PROYECTO_SGE_REF = "proyectoSgeRef";
 
   private final ProyectoProyectoSgeRepository repository;
   private final ProyectoRepository proyectoRepository;
@@ -50,6 +58,11 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
   private final ConfiguracionService configuracionService;
   private final ProyectoAnualidadService proyectoAnualidadService;
   private final GastoProyectoRepository gastoProyectoRepository;
+  private final AnualidadGastoRepository anualidadGastoRepository;
+  private final AnualidadIngresoRepository anualidadIngresoRepository;
+  private final ProyectoFacturacionRepository proyectoFacturacionRepository;
+  private final ProyectoSeguimientoJustificacionRepository proyectoSeguimientoJustificacionRepository;
+  private final RequerimientoJustificacionRepository requerimientoJustificacionRepository;
 
   /**
    * Guarda la entidad {@link ProyectoProyectoSge}.
@@ -61,11 +74,10 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
   @Transactional
   public ProyectoProyectoSge create(ProyectoProyectoSge proyectoProyectoSge) {
     log.debug("create(ProyectoProyectoSge proyectoProyectoSge) - start");
-    Assert.isNull(proyectoProyectoSge.getId(),
-        "ProyectoProyectoSge id tiene que ser null para crear un nuevo ProyectoProyectoSge");
-    Assert.notNull(proyectoProyectoSge.getProyectoId(), "Id Proyecto no puede ser null para crear ProyectoProyectoSge");
-    Assert.notNull(proyectoProyectoSge.getProyectoSgeRef(),
-        "Ref ProyectoSge no puede ser null para crear ProyectoProyectoSge");
+    AssertHelper.idIsNull(proyectoProyectoSge.getId(), ProyectoProyectoSge.class);
+    AssertHelper.idNotNull(proyectoProyectoSge.getProyectoId(), Proyecto.class);
+    AssertHelper.fieldNotNull(proyectoProyectoSge.getProyectoSgeRef(), ProyectoProyectoSge.class,
+        MSG_KEY_PROYECTO_SGE_REF);
 
     if (!proyectoRepository.existsById(proyectoProyectoSge.getProyectoId())) {
       throw new ProyectoNotFoundException(proyectoProyectoSge.getProyectoId());
@@ -125,10 +137,10 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ProyectoProyectoSge id no puede ser null para desactivar un ProyectoProyectoSge");
+    AssertHelper.idNotNull(id, ProyectoProyectoSge.class);
 
-    if (!repository.existsById(id)) {
-      throw new ProyectoProyectoSgeNotFoundException(id);
+    if (!isDeletableById(id)) {
+      throw new ProyectoProyectoSgeNoDeletableException();
     }
 
     repository.deleteById(id);
@@ -147,6 +159,42 @@ public class ProyectoProyectoSgeServiceImpl implements ProyectoProyectoSgeServic
     final boolean existe = repository.existsById(id);
     log.debug("existsById(final Long id)  - end", id);
     return existe;
+  }
+
+  /**
+   * Comprueba si el {@link ProyectoProyectoSge} es eliminable
+   *
+   * @param id el id de la entidad {@link ProyectoProyectoSge}.
+   * @return {@code true} si se puede eliminar, {@code false} en caso contrario.
+   */
+  @Override
+  public boolean isDeletableById(final Long id) {
+    log.debug("isDeletableById({})  - start", id);
+    ProyectoProyectoSge proyectoProyectoSge = repository.findById(id)
+        .orElseThrow(() -> new ProyectoProyectoSgeNotFoundException(id));
+
+    if (anualidadGastoRepository.existsByProyectoSgeRef(proyectoProyectoSge.getProyectoSgeRef())) {
+      return false;
+    }
+
+    if (anualidadIngresoRepository.existsByProyectoSgeRef(proyectoProyectoSge.getProyectoSgeRef())) {
+      return false;
+    }
+
+    if (proyectoFacturacionRepository.existsByProyectoSgeRef(proyectoProyectoSge.getProyectoSgeRef())) {
+      return false;
+    }
+
+    if (proyectoSeguimientoJustificacionRepository.existsByProyectoProyectoSgeId(id)) {
+      return false;
+    }
+
+    if (requerimientoJustificacionRepository.existsByProyectoProyectoSgeId(id)) {
+      return false;
+    }
+
+    log.debug("isDeletableById({})  - end", id);
+    return true;
   }
 
   /**

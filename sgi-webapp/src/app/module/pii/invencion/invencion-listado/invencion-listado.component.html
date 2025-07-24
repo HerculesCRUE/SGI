@@ -230,7 +230,8 @@
           {{'pii.invencion.titulo' | translate}}
         </th>
         <td mat-cell *matCellDef="let invencion">
-          {{invencion.titulo}}</td>
+          <sgi-i18n-table-field [field]="invencion.titulo"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!--Tipo de protección-->
@@ -239,7 +240,9 @@
           {{'pii.invencion.tipo-proteccion' | translate}}
         </th>
         <td mat-cell *matCellDef="let invencion">
-          {{invencion.tipoProteccion?.padre?.nombre || invencion.tipoProteccion?.nombre}}</td>
+          <sgi-i18n-table-field
+            [field]="invencion.tipoProteccion?.padre?.nombre || invencion.tipoProteccion?.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Acciones -->

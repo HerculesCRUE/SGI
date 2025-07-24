@@ -8,6 +8,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IProyectoFase } from '@core/models/csp/proyecto-fase';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
@@ -50,23 +51,29 @@ export class ProyectoPlazosComponent extends FragmentComponent implements OnInit
     public actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.FASES, actionService);
+    super(actionService.FRAGMENT.FASES, actionService, translate);
     this.formPart = this.fragment as ProyectoPlazosFragment;
     this.plazos$ = (this.fragment as ProyectoPlazosFragment).plazos$;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource = new MatTableDataSource<StatusWrapper<IProyectoFase>>();
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor = (wrapper, property) => {
-      if (property === 'aviso') {
-        return !!wrapper.value.aviso1 || !!wrapper.value.aviso2 ? 's' : 'n';
+      switch (property) {
+        case 'aviso':
+          return !!wrapper.value.aviso1 || !!wrapper.value.aviso2 ? 's' : 'n';
+        case 'observaciones':
+          return this.languageService.getFieldValue(wrapper.value.observaciones);
+
+        default:
+          return wrapper[property];
       }
-      return wrapper.value[property];
     }
     this.dataSource.sort = this.sort;
 
@@ -75,7 +82,7 @@ export class ProyectoPlazosComponent extends FragmentComponent implements OnInit
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_FASE_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

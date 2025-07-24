@@ -2,15 +2,23 @@ package org.crue.hercules.sgi.csp.repository;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloUnidad;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
+import org.crue.hercules.sgi.csp.model.ProyectoProrrogaObservaciones;
+import org.crue.hercules.sgi.csp.model.ProyectoTitulo;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -25,7 +33,7 @@ class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
   private ProyectoProrrogaRepository repository;
 
   @Test
-  void findFirstByProyectoIdOrderByFechaConcesionDesc_ReturnsProyectoProrroga() throws Exception {
+  void findFirstByProyectoIdOrderByFechaConcesionDesc_ReturnsProyectoProrroga() {
 
     // given: dos registros ProyectoProrroga.
     Proyecto proyecto = generarMockProyecto("-001");
@@ -40,13 +48,13 @@ class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
     Optional<ProyectoProrroga> result = repository.findFirstByProyectoIdOrderByFechaConcesionDesc(idProyectoBusqueda);
 
     // then: retorna el ProyectoProrroga con la fecha de concesión más reciente
-    Assertions.assertThat(result.isPresent()).isTrue();
+    Assertions.assertThat(result).isPresent();
     Assertions.assertThat(result.get().getId()).isEqualTo(proyectoProrroga2.getId());
 
   }
 
   @Test
-  void findFirstByProyectoIdOrderByFechaConcesionDesc_ReturnsEmpty() throws Exception {
+  void findFirstByProyectoIdOrderByFechaConcesionDesc_ReturnsEmpty() {
 
     // given: dos registros ProyectoProrroga.
     Proyecto proyecto = generarMockProyecto("-001");
@@ -64,7 +72,7 @@ class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
   }
 
   @Test
-  void findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc_ReturnsProyectoProrroga() throws Exception {
+  void findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc_ReturnsProyectoProrroga() {
 
     // given: dos registros ProyectoProrroga.
     Proyecto proyecto = generarMockProyecto("-001");
@@ -82,13 +90,13 @@ class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
         .findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc(idProyectoProrrogaExcluido, idProyectoBusqueda);
 
     // then: retorna el ProyectoProrroga con la fecha de concesión más reciente
-    Assertions.assertThat(result.isPresent()).isTrue();
+    Assertions.assertThat(result).isPresent();
     Assertions.assertThat(result.get().getId()).isEqualTo(proyectoProrroga1.getId());
 
   }
 
   @Test
-  void findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc_ReturnsEmpty() throws Exception {
+  void findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc_ReturnsEmpty() {
 
     // given: dos registros ProyectoProrroga.
     Proyecto proyecto = generarMockProyecto("-001");
@@ -104,7 +112,7 @@ class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
         .findFirstByIdNotAndProyectoIdOrderByFechaConcesionDesc(idProyectoProrrogaExcluido, idProyectoBusqueda);
 
     // then: No encuentra ProyectoProrroga buscado
-    Assertions.assertThat(result.isPresent()).isFalse();
+    Assertions.assertThat(result).isNotPresent();
   }
 
   /**
@@ -114,24 +122,31 @@ class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
    * @return el objeto Proyecto
    */
   private Proyecto generarMockProyecto(String suffix) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion" + suffix));
 
-    // @formatter:off
     ModeloEjecucion modeloEjecucion = ModeloEjecucion.builder()
-        .nombre("nombreModeloEjecucion" + suffix)
+        .nombre(nombreModeloEjecucion)
         .activo(Boolean.TRUE)
         .contrato(Boolean.FALSE)
         .externo(Boolean.FALSE)
         .build();
     entityManager.persistAndFlush(modeloEjecucion);
 
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad" + suffix));
+
     TipoFinalidad tipoFinalidad = TipoFinalidad.builder()
-        .nombre("nombreTipoFinalidad" + suffix)
+        .nombre(nombreTipoFinalidad)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(tipoFinalidad);
 
+    Set<TipoAmbitoGeograficoNombre> tipoAmbitoGeograficoNombre = new HashSet<>();
+    tipoAmbitoGeograficoNombre.add(new TipoAmbitoGeograficoNombre(Language.ES, "nombreTipoAmbitoGeografico" + suffix));
+
     TipoAmbitoGeografico tipoAmbitoGeografico = TipoAmbitoGeografico.builder()
-        .nombre("nombreTipoAmbitoGeografico" + suffix)
+        .nombre(tipoAmbitoGeograficoNombre)
         .activo(Boolean.TRUE)
         .build();
     entityManager.persistAndFlush(tipoAmbitoGeografico);
@@ -143,10 +158,13 @@ class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
         .build();
     entityManager.persistAndFlush(modeloUnidad);
 
+    Set<ProyectoTitulo> tituloProyecto = new HashSet<>();
+    tituloProyecto.add(new ProyectoTitulo(Language.ES, "titulo" + suffix));
+
     Proyecto proyecto = Proyecto.builder()
         .acronimo("PR" + suffix)
         .codigoExterno("COD" + suffix)
-        .titulo("titulo" + suffix)
+        .titulo(tituloProyecto)
         .unidadGestionRef("2")
         .modeloEjecucion(modeloEjecucion)
         .finalidad(tipoFinalidad)
@@ -156,7 +174,6 @@ class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
         .permitePaquetesTrabajo(Boolean.TRUE)
         .activo(Boolean.TRUE)
         .build();
-    // @formatter:on
 
     return entityManager.persistAndFlush(proyecto);
 
@@ -170,6 +187,9 @@ class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
    * @return el objeto ProyectoProrroga
    */
   private ProyectoProrroga generarMockProyectoProrroga(String suffix, Proyecto proyecto, Instant fechaConcesion) {
+    Set<ProyectoProrrogaObservaciones> proyectoProrrogaObservaciones = new HashSet<>();
+    proyectoProrrogaObservaciones
+        .add(new ProyectoProrrogaObservaciones(Language.ES, "observaciones-proyecto-prorroga" + suffix));
 
     // @formatter:off
     ProyectoProrroga proyectoProrroga = ProyectoProrroga.builder()
@@ -179,7 +199,7 @@ class ProyectoProrrogaRepositoryTest extends BaseRepositoryTest {
         .tipo(ProyectoProrroga.Tipo.TIEMPO_IMPORTE)
         .fechaFin(Instant.parse("2020-12-31T23:59:59Z"))
         .importe(BigDecimal.valueOf(123.45))
-        .observaciones("observaciones-proyecto-prorroga" + suffix)
+        .observaciones(proyectoProrrogaObservaciones)
         .build();
     // @formatter:on
     return entityManager.persistAndFlush(proyectoProrroga);

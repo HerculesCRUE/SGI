@@ -6,11 +6,14 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
+import org.crue.hercules.sgi.csp.converter.ConvocatoriaFaseObservacionesConverter;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseInput;
 import org.crue.hercules.sgi.csp.dto.ConvocatoriaFaseOutput;
 import org.crue.hercules.sgi.csp.enums.ClasificacionCVN;
@@ -20,13 +23,23 @@ import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConfiguracionSolicitud;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaFaseObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObjeto;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFinalidad;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
+import org.crue.hercules.sgi.csp.model.TipoAmbitoGeograficoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.csp.model.TipoFinalidadNombre;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrenciaNombre;
 import org.crue.hercules.sgi.csp.repository.ConfiguracionSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaFaseAvisoRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaFaseRepository;
@@ -39,6 +52,8 @@ import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -55,6 +70,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.test.context.support.WithMockUser;
+
+import liquibase.repackaged.org.apache.commons.lang3.ObjectUtils;
 
 /**
  * ConvocatoriaFaseServiceTest
@@ -87,6 +104,8 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
   private SgiApiTpService sgiApiTaskService;
   @Mock
   private SgiApiSgpService personaService;
+  @Mock
+  private ConvocatoriaFaseObservacionesConverter convocatoriaFaseObservacionesConverter;
 
   private ConvocatoriaAuthorityHelper authorityHelper;
   private ConvocatoriaFaseService service;
@@ -102,7 +121,8 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         emailService,
         sgiApiTaskService,
         personaService,
-        authorityHelper);
+        authorityHelper,
+        convocatoriaFaseObservacionesConverter);
   }
 
   @Test
@@ -124,6 +144,10 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         .given(modeloTipoFaseRepository.findByModeloEjecucionIdAndTipoFaseId(ArgumentMatchers.anyLong(),
             ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(generarMockModeloTipoFase(1L, convocatoria, convocatoriaFase, Boolean.TRUE)));
+
+    BDDMockito
+        .given(convocatoriaFaseObservacionesConverter.convertAll(ArgumentMatchers.<I18nFieldValueDto>anyList()))
+        .willReturn(Set.of(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones")));
 
     BDDMockito.given(repository.save(convocatoriaFase)).will((InvocationOnMock invocation) -> {
       ConvocatoriaFase convocatoriaFaseCreado = invocation.getArgument(0);
@@ -159,7 +183,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.create(modelMapper.map(convocatoriaFase, ConvocatoriaFaseInput.class)))
         // then: throw exception as ConvocatoriaId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Convocatoria no puede ser null para crear ConvocatoriaFase");
+        .hasMessage("Identificador de Convocatoria no puede ser nulo");
   }
 
   @Test
@@ -187,7 +211,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.create(modelMapper.map(convocatoriaFase, ConvocatoriaFaseInput.class)))
         // then: throw exception as tipoFaseId is null
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id Fase no puede ser null para crear ConvocatoriaFase");
+        .hasMessage("Identificador de Tipo Fase no puede ser nulo");
   }
 
   @Test
@@ -205,8 +229,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.create(modelMapper.map(convocatoriaFase, ConvocatoriaFaseInput.class)))
         // then: throw exception as ModeloEjecucion not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Tipo Fase no disponible para el ModeloEjecucion '%s'",
-            "Convocatoria sin modelo asignado");
+        .hasMessage("Tipo Fase no disponible para el Modelo Ejecución Convocatoria sin modelo asignado");
   }
 
   @Test
@@ -225,7 +248,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.create(modelMapper.map(convocatoriaFase, ConvocatoriaFaseInput.class)))
         // then: throw exception as ModeloTipoFase not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Tipo Fase no disponible para el ModeloEjecucion '%s'",
+        .hasMessage("Tipo Fase no disponible para el Modelo Ejecución %s",
             convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -247,7 +270,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.create(modelMapper.map(convocatoriaFase, ConvocatoriaFaseInput.class)))
         // then: throw exception as ModeloTipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoFase '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Modelo Tipo Fase no está activo",
             convocatoriaFase.getTipoFase().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -269,7 +292,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.create(modelMapper.map(convocatoriaFase, ConvocatoriaFaseInput.class)))
         // then: throw exception as TipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFase '%s' no está activo", modeloTipoFase.getTipoFase().getNombre());
+        .hasMessage("%s de Tipo Fase no está activo", modeloTipoFase.getTipoFase().getNombre());
   }
 
   @Test
@@ -298,7 +321,9 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         // when: create ConvocatoriaFase
         () -> service.create(modelMapper.map(convocatoriaFase, ConvocatoriaFaseInput.class)))
         // then: throw exception as TipoFase is not activo
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Ya existe una convocatoria en ese rango de fechas");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Convocatoria %s ya está presente y tiene un periodo de vigencia que se solapa con el indicado",
+            convocatoriaFase.getConvocatoriaId());
   }
 
   @Test
@@ -373,8 +398,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, modelMapper.map(convocatoriaFaseActualizado, ConvocatoriaFaseInput.class)))
         // then: throw exception as ModeloTipoFase not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Tipo Fase no disponible para el ModeloEjecucion '%s'",
-            "Convocatoria sin modelo asignado");
+        .hasMessage("Tipo Fase no disponible para el Modelo Ejecución Convocatoria sin modelo asignado");
   }
 
   @Test
@@ -396,7 +420,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, modelMapper.map(convocatoriaFaseActualizado, ConvocatoriaFaseInput.class)))
         // then: throw exception as ModeloTipoFase not found
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Tipo Fase no disponible para el ModeloEjecucion '%s'",
+        .hasMessage("Tipo Fase no disponible para el Modelo Ejecución %s",
             convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -422,7 +446,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, modelMapper.map(convocatoriaFaseActualizado, ConvocatoriaFaseInput.class)))
         // then: throw exception as ModeloTipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("ModeloTipoFase '%s' no está activo para el ModeloEjecucion '%s'",
+        .hasMessage("%s de Modelo Tipo Fase no está activo para el modelo ejecución %s",
             modeloTipoFase.getTipoFase().getNombre(), convocatoria.getModeloEjecucion().getNombre());
   }
 
@@ -445,7 +469,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, modelMapper.map(convocatoriaFaseActualizado, ConvocatoriaFaseInput.class)))
         // then: throw exception as TipoFase is disabled
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("TipoFase '%s' no está activo", convocatoriaFaseActualizado.getTipoFase().getNombre());
+        .hasMessage("%s de Tipo Fase no está activo", convocatoriaFaseActualizado.getTipoFase().getNombre());
   }
 
   @Test
@@ -475,7 +499,9 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         // when: update ConvocatoriaFase
         () -> service.update(1L, modelMapper.map(convocatoriaFaseActualizado, ConvocatoriaFaseInput.class)))
         // then: throw exception as Programa is not activo
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Ya existe una convocatoria en ese rango de fechas");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Convocatoria %s ya está presente y tiene un periodo de vigencia que se solapa con el indicado",
+            convocatoriaFaseActualizado.getConvocatoriaId());
   }
 
   @Test
@@ -497,7 +523,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.update(1L, modelMapper.map(convocatoriaFase, ConvocatoriaFaseInput.class)))
         // then: throw exception as Convocatoria is not modificable
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede modificar ConvocatoriaFase. No tiene los permisos necesarios o se encuentra asignada a la ConfiguracionSolicitud de una convocatoria que está registrada y cuenta con solicitudes o proyectos asociados");
+            "No se puede Crear Convocatoria Fase. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test
@@ -521,7 +547,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void delete_WithNoExistingId_ThrowsNotFoundException() throws Exception {
+  void delete_WithNoExistingId_ThrowsNotFoundException() {
     // given: no existing id
     Long id = 1L;
 
@@ -554,7 +580,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         () -> service.delete(id))
         // then: throw exception as Convocatoria is not modificable
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "No se puede eliminar ConvocatoriaFase. No tiene los permisos necesarios o se encuentra asignada a la ConfiguracionSolicitud de una convocatoria que está registrada y cuenta con solicitudes o proyectos asociados");
+            "No se puede Eliminar Convocatoria Fase. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
   }
 
   @Test
@@ -590,8 +616,6 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
     for (long i = 1; i <= 37; i++) {
       outputList.add(modelMapper.map(generarMockConvocatoriaFase(Long.valueOf(i)), ConvocatoriaFaseOutput.class));
     }
-    Page<ConvocatoriaFaseOutput> mockedPage = new PageImpl<>(outputList.subList(30, 37),
-        PageRequest.of(3, 10), convocatoriasEntidadesConvocantes.size());
 
     // when: Get page=3 with pagesize=10
     Pageable paging = PageRequest.of(3, 10);
@@ -624,7 +648,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findById_WithIdNotExist_ThrowsConvocatoriaFaseNotFoundException() throws Exception {
+  void findById_WithIdNotExist_ThrowsConvocatoriaFaseNotFoundException() {
     // given: Ningun ConvocatoriaFase con el id buscado
     Long idBuscado = 1L;
     BDDMockito.given(repository.findById(idBuscado)).willReturn(Optional.empty());
@@ -649,19 +673,25 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
    */
   private Convocatoria generarMockConvocatoria(Long convocatoriaId, Long unidadGestionId, Long modeloEjecucionId,
       Long modeloTipoFinalidadId, Long tipoRegimenConcurrenciaId, Long tipoAmbitoGeogragicoId, Boolean activo) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(
+        new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId)));
 
-    // @formatter:off
     ModeloEjecucion modeloEjecucion = (modeloEjecucionId == null) ? null
         : ModeloEjecucion.builder()
             .id(modeloEjecucionId)
-            .nombre("nombreModeloEjecucion-" + String.format("%03d", modeloEjecucionId))
+            .nombre(nombreModeloEjecucion)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoFinalidadNombre> nombreTipoFinalidad = new HashSet<>();
+    nombreTipoFinalidad.add(
+        new TipoFinalidadNombre(Language.ES, "nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId)));
 
     TipoFinalidad tipoFinalidad = (modeloTipoFinalidadId == null) ? null
         : TipoFinalidad.builder()
             .id(modeloTipoFinalidadId)
-            .nombre("nombreTipoFinalidad-" + String.format("%03d", modeloTipoFinalidadId))
+            .nombre(nombreTipoFinalidad)
             .activo(Boolean.TRUE)
             .build();
 
@@ -673,21 +703,39 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
             .activo(Boolean.TRUE)
             .build();
 
+    Set<TipoRegimenConcurrenciaNombre> tipoRegimenConcurrenciaNombre = new HashSet<>();
+    tipoRegimenConcurrenciaNombre.add(new TipoRegimenConcurrenciaNombre(Language.ES,
+        "nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId)));
+
     TipoRegimenConcurrencia tipoRegimenConcurrencia = (tipoRegimenConcurrenciaId == null) ? null
         : TipoRegimenConcurrencia.builder()
             .id(tipoRegimenConcurrenciaId)
-            .nombre("nombreTipoRegimenConcurrencia-" + String.format("%03d", tipoRegimenConcurrenciaId))
+            .nombre(tipoRegimenConcurrenciaNombre)
             .activo(Boolean.TRUE)
             .build();
+
+    Set<TipoAmbitoGeograficoNombre> nombre = new HashSet<>();
+    nombre.add(new TipoAmbitoGeograficoNombre(Language.ES,
+        "nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId)));
 
     TipoAmbitoGeografico tipoAmbitoGeografico = (tipoAmbitoGeogragicoId == null) ? null
         : TipoAmbitoGeografico.builder()
             .id(tipoAmbitoGeogragicoId)
-            .nombre("nombreTipoAmbitoGeografico-" + String.format("%03d", tipoAmbitoGeogragicoId))
+            .nombre(nombre)
             .activo(Boolean.TRUE)
             .build();
 
-    Convocatoria convocatoria = Convocatoria.builder()
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObjeto> convocatoriaObjeto = new HashSet<>();
+    convocatoriaObjeto.add(new ConvocatoriaObjeto(Language.ES, "objeto-" + String.format("%03d", convocatoriaId)));
+
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones
+        .add(new ConvocatoriaObservaciones(Language.ES, "observaciones-" + String.format("%03d", convocatoriaId)));
+
+    return Convocatoria.builder()
         .id(convocatoriaId)
         .unidadGestionRef((unidadGestionId == null) ? null : "unidad-" + String.format("%03d", unidadGestionId))
         .modeloEjecucion(modeloEjecucion)
@@ -695,9 +743,9 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaProvisional(Instant.parse("2021-08-01T00:00:00Z"))
         .fechaConcesion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo-" + String.format("%03d", convocatoriaId))
-        .objeto("objeto-" + String.format("%03d", convocatoriaId))
-        .observaciones("observaciones-" + String.format("%03d", convocatoriaId))
+        .titulo(convocatoriaTitulo)
+        .objeto(convocatoriaObjeto)
+        .observaciones(convocatoriaObservaciones)
         .finalidad((modeloTipoFinalidad == null) ? null : modeloTipoFinalidad.getTipoFinalidad())
         .regimenConcurrencia(tipoRegimenConcurrencia)
         .estado(Convocatoria.Estado.REGISTRADA)
@@ -706,9 +754,6 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         .clasificacionCVN(ClasificacionCVN.AYUDAS)
         .activo(activo)
         .build();
-    // @formatter:on
-
-    return convocatoria;
   }
 
   /**
@@ -719,11 +764,16 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
    * @return el objeto TipoFase
    */
   private TipoFase generarMockTipoFase(Long id, Boolean activo) {
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcion-" + id));
 
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(id);
-    tipoFase.setNombre("nombre-" + id);
-    tipoFase.setDescripcion("descripcion-" + id);
+    tipoFase.setNombre(nombreTipoFase);
+    tipoFase.setDescripcion(descripcionTipoFase);
     tipoFase.setActivo(activo);
 
     return tipoFase;
@@ -757,6 +807,14 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
    * @return el objeto ConvocatoriaFase
    */
   private ConvocatoriaFase generarMockConvocatoriaFase(Long id) {
+    Set<ConvocatoriaFaseObservaciones> obsConvocatoriaFase = new HashSet<>();
+    if (!ObjectUtils.isEmpty(id)) {
+      obsConvocatoriaFase
+          .add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones" + id));
+    } else {
+      obsConvocatoriaFase
+          .add(new ConvocatoriaFaseObservaciones(Language.ES, "observaciones"));
+    }
 
     // @formatter:off
     return ConvocatoriaFase.builder()
@@ -765,7 +823,7 @@ class ConvocatoriaFaseServiceTest extends BaseServiceTest {
         .fechaInicio(Instant.parse("2020-10-19T00:00:00Z"))
         .fechaFin(Instant.parse("2020-10-28T00:00:00Z"))
         .tipoFase(generarMockTipoFase(1L, Boolean.TRUE))
-        .observaciones("observaciones" + id)
+        .observaciones(obsConvocatoriaFase)
         .build();
     // @formatter:on
   }

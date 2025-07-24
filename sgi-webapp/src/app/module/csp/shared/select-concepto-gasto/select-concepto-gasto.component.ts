@@ -4,11 +4,13 @@ import { NgControl } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatFormFieldControl } from '@angular/material/form-field';
+import { SelectValue } from '@core/component/select-common/select-common.component';
 import { SelectServiceExtendedComponent } from '@core/component/select-service-extended/select-service-extended.component';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { ConceptoGastoService } from '@core/services/csp/concepto-gasto.service';
+import { LanguageService } from '@core/services/language.service';
 import { SgiAuthService } from '@sgi/framework/auth';
-import { RSQLSgiRestFilter, RSQLSgiRestSort, SgiRestFilterOperator, SgiRestFindOptions, SgiRestSortDirection } from '@sgi/framework/http';
+import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ConceptoGastoModalComponent } from '../../concepto-gasto/concepto-gasto-modal/concepto-gasto-modal.component';
@@ -59,20 +61,24 @@ export class SelectConceptoGastoComponent extends SelectServiceExtendedComponent
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     @Self() @Optional() ngControl: NgControl,
+    languageService: LanguageService,
     platformLocation: PlatformLocation,
     dialog: MatDialog,
     private service: ConceptoGastoService,
     private authService: SgiAuthService
   ) {
-    super(defaultErrorStateMatcher, ngControl, platformLocation, dialog);
+    super(defaultErrorStateMatcher, ngControl, languageService, platformLocation, dialog);
 
     this.addTarget = ConceptoGastoModalComponent;
+
+    this.sortWith = (o1: SelectValue<IConceptoGasto>, o2: SelectValue<IConceptoGasto>) => {
+      return o1?.displayText.localeCompare(o2?.displayText)
+    };
   }
 
   protected loadServiceOptions(): Observable<IConceptoGasto[]> {
     const findOptions: SgiRestFindOptions = {
-      filter: new RSQLSgiRestFilter('activo', SgiRestFilterOperator.EQUALS, 'true'),
-      sort: new RSQLSgiRestSort('nombre', SgiRestSortDirection.ASC)
+      filter: new RSQLSgiRestFilter('activo', SgiRestFilterOperator.EQUALS, 'true')
     };
 
     if (!!this.proyectoId && !!this.onlyPermitidosProyecto) {

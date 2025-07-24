@@ -1,8 +1,8 @@
-import { IModeloEjecucion } from '../tipos-configuracion';
+import { IModeloEjecucionResponse } from '@core/services/csp/modelo-ejecucion/modelo-ejecucion-response';
 
 export interface IModeloUnidadBackend {
   id: number;
   unidadGestionRef: string;
-  modeloEjecucion: IModeloEjecucion;
+  modeloEjecucion: IModeloEjecucionResponse;
   activo: boolean;
 }

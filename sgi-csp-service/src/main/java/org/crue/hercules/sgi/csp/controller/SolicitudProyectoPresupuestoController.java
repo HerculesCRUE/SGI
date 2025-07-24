@@ -49,7 +49,7 @@ public class SolicitudProyectoPresupuestoController {
    * @return Nuevo {@link SolicitudProyectoPresupuesto} creado.
    */
   @PostMapping
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<SolicitudProyectoPresupuesto> create(
       @Valid @RequestBody SolicitudProyectoPresupuesto solicitudProyectoPresupuesto) {
     log.debug("create(SolicitudProyectoPresupuesto solicitudProyectoPresupuesto) - start");
@@ -71,7 +71,7 @@ public class SolicitudProyectoPresupuestoController {
    *         actualizado
    */
   @PutMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public SolicitudProyectoPresupuesto update(
       @Valid @RequestBody SolicitudProyectoPresupuesto solicitudProyectoPresupuesto, @PathVariable Long id,
       Authentication authentication) {
@@ -105,7 +105,7 @@ public class SolicitudProyectoPresupuestoController {
    * @param id Identificador de {@link SolicitudProyectoPresupuesto}.
    */
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");

@@ -3,18 +3,21 @@ package org.crue.hercules.sgi.eti.integration;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.dto.ActaWithNumEvaluaciones;
 import org.crue.hercules.sgi.eti.model.Acta;
+import org.crue.hercules.sgi.eti.model.ActaResumen;
 import org.crue.hercules.sgi.eti.model.Comite;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.EstadoActa;
-import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoEstadoActa;
-import org.crue.hercules.sgi.eti.model.Comite.Genero;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -82,7 +85,8 @@ public class ActaIT extends BaseIT {
     Assertions.assertThat(acta.getMinutoInicio()).as("minutoInicio").isEqualTo(15);
     Assertions.assertThat(acta.getHoraFin()).as("horaFin").isEqualTo(12);
     Assertions.assertThat(acta.getMinutoFin()).as("minutoFin").isEqualTo(0);
-    Assertions.assertThat(acta.getResumen()).as("resumen").isEqualTo("Resumen124");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(acta.getResumen(), Language.ES)).as("resumen")
+        .isEqualTo("Resumen124");
     Assertions.assertThat(acta.getNumero()).as("numero").isEqualTo(124);
     Assertions.assertThat(acta.getEstadoActual().getId()).as("estadoActual.id").isEqualTo(1L);
     Assertions.assertThat(acta.getInactiva()).as("inactiva").isEqualTo(true);
@@ -111,7 +115,8 @@ public class ActaIT extends BaseIT {
     Assertions.assertThat(acta.getMinutoInicio()).as("minutoInicio").isEqualTo(15);
     Assertions.assertThat(acta.getHoraFin()).as("horaFin").isEqualTo(12);
     Assertions.assertThat(acta.getMinutoFin()).as("minutoFin").isEqualTo(0);
-    Assertions.assertThat(acta.getResumen()).as("resumen").isEqualTo("Resumen123");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(acta.getResumen(), Language.ES)).as("resumen")
+        .isEqualTo("Resumen123");
     Assertions.assertThat(acta.getNumero()).as("numero").isEqualTo(123);
     Assertions.assertThat(acta.getEstadoActual().getId()).as("estadoActual.id").isEqualTo(1L);
     Assertions.assertThat(acta.getInactiva()).as("inactiva").isEqualTo(true);
@@ -192,7 +197,8 @@ public class ActaIT extends BaseIT {
     Assertions.assertThat(acta.getMinutoInicio()).as("minutoInicio").isEqualTo(15);
     Assertions.assertThat(acta.getHoraFin()).as("horaFin").isEqualTo(12);
     Assertions.assertThat(acta.getMinutoFin()).as("minutoFin").isEqualTo(0);
-    Assertions.assertThat(acta.getResumen()).as("resumen").isEqualTo("Resumen456");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(acta.getResumen(), Language.ES)).as("resumen")
+        .isEqualTo("Resumen456");
     Assertions.assertThat(acta.getNumero()).as("numero").isEqualTo(456);
     Assertions.assertThat(acta.getEstadoActual().getId()).as("estadoActual.id").isEqualTo(1L);
     Assertions.assertThat(acta.getInactiva()).as("inactiva").isEqualTo(true);
@@ -315,6 +321,7 @@ public class ActaIT extends BaseIT {
     Assertions.assertThat(actas.get(1).getId()).as("1.id").isEqualTo(2);
   }
 
+  @Test
   public void finishActa_Success() throws Exception {
     // Authorization
     HttpHeaders headers = new HttpHeaders();
@@ -350,13 +357,10 @@ public class ActaIT extends BaseIT {
    * @param numero numero del acta
    * @return el objeto Acta
    */
-  public Acta generarMockActa(Long id, Integer numero) {
-    Formulario formulario = new Formulario(1L, "M10", "Descripcion");
+  private Acta generarMockActa(Long id, Integer numero) {
     Comite comite = new Comite();
     comite.setId(1L);
-    comite.setComite("CEEA");
-    comite.setGenero(Genero.F);
-    comite.setFormulario(formulario);
+    comite.setCodigo("CEEA");
     TipoConvocatoriaReunion tipoConvocatoriaReunion = new TipoConvocatoriaReunion(1L, "Ordinaria", Boolean.TRUE);
     ConvocatoriaReunion convocatoriaReunion = new ConvocatoriaReunion();
     convocatoriaReunion.setId(2L);
@@ -369,6 +373,8 @@ public class ActaIT extends BaseIT {
     tipoEstadoActa.setNombre("En elaboración");
     tipoEstadoActa.setActivo(Boolean.TRUE);
 
+    Set<ActaResumen> resumen = new HashSet<>();
+    resumen.add(new ActaResumen(Language.ES, "Resumen" + numero));
     Acta acta = new Acta();
     acta.setId(id);
     acta.setConvocatoriaReunion(convocatoriaReunion);
@@ -376,36 +382,13 @@ public class ActaIT extends BaseIT {
     acta.setMinutoInicio(15);
     acta.setHoraFin(12);
     acta.setMinutoFin(0);
-    acta.setResumen("Resumen" + numero);
+    acta.setResumen(resumen);
     acta.setNumero(numero);
     acta.setEstadoActual(tipoEstadoActa);
     acta.setInactiva(true);
     acta.setActivo(true);
 
     return acta;
-  }
-
-  /**
-   * Función que devuelve un objeto ActaWithNumEvaluaciones
-   * 
-   * @param id     id del acta
-   * @param numero numero del acta
-   * @return el objeto Acta
-   */
-  public ActaWithNumEvaluaciones generarMockActaWithNumEvaluaciones(Long id, Integer numero) {
-    Acta acta = generarMockActa(id, numero);
-
-    ActaWithNumEvaluaciones returnValue = new ActaWithNumEvaluaciones();
-    returnValue.setId(acta.getId());
-    returnValue.setComite(acta.getConvocatoriaReunion().getComite().getComite());
-    returnValue.setFechaEvaluacion(acta.getConvocatoriaReunion().getFechaEvaluacion());
-    returnValue.setNumeroActa(acta.getNumero());
-    returnValue.setConvocatoria(acta.getConvocatoriaReunion().getTipoConvocatoriaReunion().getNombre());
-    returnValue.setNumEvaluaciones(1);
-    returnValue.setNumRevisiones(2);
-    returnValue.setNumTotal(returnValue.getNumEvaluaciones() + returnValue.getNumRevisiones());
-    returnValue.setEstadoActa(acta.getEstadoActual());
-    return returnValue;
   }
 
 }

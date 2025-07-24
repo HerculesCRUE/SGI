@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IConceptoGasto } from './concepto-gasto';
 import { IEstadoGastoProyecto } from './estado-gasto-proyecto';
@@ -10,5 +11,5 @@ export interface IGastoProyecto {
   estado: IEstadoGastoProyecto;
   fechaCongreso: DateTime;
   importeInscripcion: number;
-  observaciones: string;
+  observaciones: I18nFieldValue[];
 }

@@ -1,22 +1,31 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoFinanciacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
+import org.crue.hercules.sgi.csp.model.TipoFinanciacionDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFinanciacionNombre;
 import org.crue.hercules.sgi.csp.repository.TipoFinanciacionRepository;
 import org.crue.hercules.sgi.csp.service.impl.TipoFinanciacionServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -26,17 +35,14 @@ import org.springframework.data.jpa.domain.Specification;
 /**
  * TipoFinanciacionServiceTest
  */
+@Import({ TipoFinanciacionServiceImpl.class })
 class TipoFinanciacionServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private TipoFinanciacionRepository repository;
 
+  @Autowired
   private TipoFinanciacionService service;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    service = new TipoFinanciacionServiceImpl(repository);
-  }
 
   @Test
   void findById_WithId_ReturnsTipoFinanciacion() {
@@ -46,7 +52,8 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     TipoFinanciacion tipoFinanciacion = service.findById(1L);
     Assertions.assertThat(tipoFinanciacion.getId()).isEqualTo(1L);
     Assertions.assertThat(tipoFinanciacion.getActivo()).isEqualTo(Boolean.TRUE);
-    Assertions.assertThat(tipoFinanciacion.getNombre()).isEqualTo("TipoFinanciacion1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFinanciacion.getNombre(), Language.ES))
+        .isEqualTo("TipoFinanciacion1");
 
   }
 
@@ -62,7 +69,11 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     // given: Un nuevo TipoFinanciacion
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(null);
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(tipoFinanciacion.getNombre())).willReturn(Optional.empty());
+    TipoFinanciacionNombre nombre = tipoFinanciacion.getNombre().iterator().next();
+
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(nombre.getLang(),
+        nombre.getValue()))
+        .willReturn(Optional.empty());
 
     BDDMockito.given(repository.save(tipoFinanciacion)).will((InvocationOnMock invocation) -> {
       TipoFinanciacion tipoFinanciacionCreado = invocation.getArgument(0);
@@ -76,7 +87,8 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     // then: El TipoFinanciacion se crea correctamente
     Assertions.assertThat(tipoFinanciacionCreado).as("isNotNull()").isNotNull();
     Assertions.assertThat(tipoFinanciacionCreado.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(tipoFinanciacionCreado.getNombre()).as("getNombre").isEqualTo(tipoFinanciacion.getNombre());
+    Assertions.assertThat(tipoFinanciacionCreado.getNombre())
+        .as("getNombre").isEqualTo(tipoFinanciacion.getNombre());
     Assertions.assertThat(tipoFinanciacionCreado.getActivo()).as("getActivo").isEqualTo(tipoFinanciacion.getActivo());
 
   }
@@ -97,7 +109,8 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
 
     // then: El tipo Financiacion se actualiza correctamente.
     Assertions.assertThat(tipoFinanciacionActualizado.getId()).isEqualTo(1L);
-    Assertions.assertThat(tipoFinanciacionActualizado.getNombre()).isEqualTo("TipoFinanciacion1 actualizada");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFinanciacionActualizado.getNombre(), Language.ES))
+        .isEqualTo("TipoFinanciacion1 actualizada");
 
   }
 
@@ -119,7 +132,9 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     tipoFinanciacion.setActivo(false);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(tipoFinanciacion));
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(tipoFinanciacion.getNombre())).willReturn(Optional.empty());
+    TipoFinanciacionNombre nombre = tipoFinanciacion.getNombre().iterator().next();
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        nombre.getLang(), nombre.getValue())).willReturn(Optional.empty());
     BDDMockito.given(repository.save(ArgumentMatchers.<TipoFinanciacion>any()))
         .will((InvocationOnMock invocation) -> invocation.getArgument(0));
 
@@ -129,7 +144,8 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     // then: El TipoFinanciacion se activa correctamente.
     Assertions.assertThat(tipoFinanciacionActualizado).as("isNotNull()").isNotNull();
     Assertions.assertThat(tipoFinanciacionActualizado.getId()).as("getId()").isEqualTo(tipoFinanciacion.getId());
-    Assertions.assertThat(tipoFinanciacionActualizado.getNombre()).as("getNombre()")
+    Assertions.assertThat(tipoFinanciacionActualizado.getNombre())
+        .as("getNombre()")
         .isEqualTo(tipoFinanciacion.getNombre());
     Assertions.assertThat(tipoFinanciacionActualizado.getDescripcion()).as("getDescripcion()")
         .isEqualTo(tipoFinanciacion.getDescripcion());
@@ -142,14 +158,17 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(1L, "nombreRepetido");
     tipoFinanciacion.setActivo(false);
     TipoFinanciacion tipoFinanciacionRepetido = generarMockTipoFinanciacion(2L, "nombreRepetido");
+    TipoFinanciacionNombre nombre = tipoFinanciacion.getNombre().iterator().next();
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(tipoFinanciacion.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(nombre.getLang(), nombre.getValue()))
         .willReturn(Optional.of(tipoFinanciacionRepetido));
 
     // when: Activamos el TipoFinanciacion
     // then: Lanza una excepcion porque hay otro TipoFinanciacion con ese nombre
-    Assertions.assertThatThrownBy(() -> service.update(tipoFinanciacion)).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoFinanciacion con el nombre %s", tipoFinanciacion.getNombre());
+    Assertions.assertThatThrownBy(() -> service.update(tipoFinanciacion))
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessage("update.tipoFinanciacion.Nombre: Ya existe un tipo de financiacion con el nombre 'nombreRepetido'",
+            tipoFinanciacion.getNombre());
   }
 
   @Test
@@ -178,7 +197,8 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     // then: El TipoFinanciacion se desactiva correctamente.
     Assertions.assertThat(tipoFinanciacionActualizado).as("isNotNull()").isNotNull();
     Assertions.assertThat(tipoFinanciacionActualizado.getId()).as("getId()").isEqualTo(1L);
-    Assertions.assertThat(tipoFinanciacionActualizado.getNombre()).as("getNombre()")
+    Assertions.assertThat(tipoFinanciacionActualizado.getNombre())
+        .as("getNombre()")
         .isEqualTo(tipoFinanciacion.getNombre());
     Assertions.assertThat(tipoFinanciacionActualizado.getActivo()).as("getActivo()").isFalse();
 
@@ -231,7 +251,8 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFinanciacion tipoFinanciacion = page.getContent().get(i);
-      Assertions.assertThat(tipoFinanciacion.getNombre()).isEqualTo("TipoFinanciacion" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFinanciacion.getNombre(), Language.ES))
+          .isEqualTo("TipoFinanciacion" + String.format("%03d", j));
     }
   }
 
@@ -272,7 +293,8 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoFinanciacion tipoFinanciacion = page.getContent().get(i);
-      Assertions.assertThat(tipoFinanciacion.getNombre()).isEqualTo("TipoFinanciacion" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoFinanciacion.getNombre(), Language.ES))
+          .isEqualTo("TipoFinanciacion" + String.format("%03d", j));
     }
   }
 
@@ -285,14 +307,16 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     BeanUtils.copyProperties(givenData, newTFinanciacion);
     newTFinanciacion.setId(null);
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(ArgumentMatchers.anyString()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers.any(Language.class),
+        ArgumentMatchers
+            .anyString()))
         .willReturn(Optional.of(givenData));
 
     Assertions.assertThatThrownBy(
         // when: create TipoFinanciacion
         () -> service.create(newTFinanciacion))
         // then: throw exception as Nombre already exists
-        .isInstanceOf(IllegalArgumentException.class);
+        .isInstanceOf(ConstraintViolationException.class);
   }
 
   @Test
@@ -300,15 +324,16 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
     // given: Un nuevo TipoFinanciacion con un nombre que ya existe
     TipoFinanciacion tipoFinanciacionUpdated = generarMockTipoFinanciacion(1L, "nombreRepetido");
     TipoFinanciacion tipoFinanciacion = generarMockTipoFinanciacion(2L, "nombreRepetido");
+    TipoFinanciacionNombre nombre = tipoFinanciacion.getNombre().iterator().next();
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(tipoFinanciacionUpdated.getNombre()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(nombre.getLang(), nombre.getValue()))
         .willReturn(Optional.of(tipoFinanciacion));
 
     // when: Actualizamos el TipoFinanciacion
     // then: Lanza una excepcion porque ya existe otro TipoFinanciacion con ese
     // nombre
     Assertions.assertThatThrownBy(() -> service.update(tipoFinanciacionUpdated))
-        .isInstanceOf(IllegalArgumentException.class);
+        .isInstanceOf(ConstraintViolationException.class);
   }
 
   /**
@@ -330,11 +355,17 @@ class TipoFinanciacionServiceTest extends BaseServiceTest {
    */
   TipoFinanciacion generarMockTipoFinanciacion(Long id, String nombre) {
 
+    Set<TipoFinanciacionNombre> tipoFinanciacionNombre = new HashSet<>();
+    tipoFinanciacionNombre.add(new TipoFinanciacionNombre(Language.ES, nombre));
+
+    Set<TipoFinanciacionDescripcion> tipoFinanciacionDescripcion = new HashSet<>();
+    tipoFinanciacionDescripcion.add(new TipoFinanciacionDescripcion(Language.ES, "descripcion-" + 1));
+
     TipoFinanciacion tipoFinanciacion = new TipoFinanciacion();
     tipoFinanciacion.setId(id);
     tipoFinanciacion.setActivo(true);
-    tipoFinanciacion.setNombre(nombre);
-    tipoFinanciacion.setDescripcion("descripcion-" + 1);
+    tipoFinanciacion.setNombre(tipoFinanciacionNombre);
+    tipoFinanciacion.setDescripcion(tipoFinanciacionDescripcion);
 
     return tipoFinanciacion;
   }

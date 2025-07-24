@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.model.FormacionEspecifica;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -60,66 +62,8 @@ public class FormacionEspecificaIT extends BaseIT {
     final FormacionEspecifica formacionEspecifica = response.getBody();
 
     Assertions.assertThat(formacionEspecifica.getId()).isEqualTo(1L);
-    Assertions.assertThat(formacionEspecifica.getNombre()).isEqualTo("A: Cuidado de los animales");
-  }
-
-  @Test
-  public void addFormacionEspecifica_ReturnsFormacionEspecifica() throws Exception {
-
-    FormacionEspecifica nuevoFormacionEspecifica = new FormacionEspecifica();
-    nuevoFormacionEspecifica.setId(1L);
-    nuevoFormacionEspecifica.setNombre("FormacionEspecifica1");
-    nuevoFormacionEspecifica.setActivo(Boolean.TRUE);
-
-    final ResponseEntity<FormacionEspecifica> response = restTemplate.exchange(
-        FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH, HttpMethod.POST, buildRequest(null, nuevoFormacionEspecifica),
-        FormacionEspecifica.class);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-    Assertions.assertThat(response.getBody()).isEqualTo(nuevoFormacionEspecifica);
-  }
-
-  @Test
-  public void removeFormacionEspecifica_Success() throws Exception {
-
-    // when: Delete con id existente
-    long id = 1L;
-    final ResponseEntity<FormacionEspecifica> response = restTemplate.exchange(
-        FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.DELETE, buildRequest(null, null),
-        FormacionEspecifica.class, id);
-
-    // then: 200
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-  }
-
-  @Test
-  public void removeFormacionEspecifica_DoNotGetFormacionEspecifica() throws Exception {
-
-    final ResponseEntity<FormacionEspecifica> response = restTemplate.exchange(
-        FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.DELETE, buildRequest(null, null),
-        FormacionEspecifica.class, 9L);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-
-  }
-
-  @Test
-  public void replaceFormacionEspecifica_ReturnsFormacionEspecifica() throws Exception {
-
-    FormacionEspecifica replaceFormacionEspecifica = generarMockFormacionEspecifica(1L, "FormacionEspecifica1");
-
-    final ResponseEntity<FormacionEspecifica> response = restTemplate.exchange(
-        FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.PUT,
-        buildRequest(null, replaceFormacionEspecifica), FormacionEspecifica.class, 1L);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    final FormacionEspecifica formacionEspecifica = response.getBody();
-
-    Assertions.assertThat(formacionEspecifica.getId()).isNotNull();
-    Assertions.assertThat(formacionEspecifica.getNombre()).isEqualTo(replaceFormacionEspecifica.getNombre());
-    Assertions.assertThat(formacionEspecifica.getActivo()).isEqualTo(replaceFormacionEspecifica.getActivo());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecifica.getNombre(), Language.ES))
+        .isEqualTo("A: Cuidado de los animales");
   }
 
   @Test
@@ -128,7 +72,7 @@ public class FormacionEspecificaIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "nombre,desc";
+    String sort = "nombre.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .build(false).toUri();
@@ -147,16 +91,19 @@ public class FormacionEspecificaIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("8");
 
     // Contiene de nombre= 'H: No requiere' a 'F: Veterinario designado'
-    Assertions.assertThat(formacionEspecificas.get(0).getNombre()).isEqualTo("H: No requiere");
-    Assertions.assertThat(formacionEspecificas.get(1).getNombre()).isEqualTo("G: Sin especificar");
-    Assertions.assertThat(formacionEspecificas.get(2).getNombre()).isEqualTo("F: Veterinario designado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecificas.get(0).getNombre(), Language.ES))
+        .isEqualTo("H: No requiere");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecificas.get(1).getNombre(),
+        Language.ES)).isEqualTo("G: Sin especificar");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecificas.get(2).getNombre(),
+        Language.ES)).isEqualTo("F: Veterinario designado");
   }
 
   @Test
   public void findAll_WithSearchQuery_ReturnsFilteredFormacionEspecificaList() throws Exception {
     // when: Búsqueda por nombre like e id equals
     Long id = 5L;
-    String query = "nombre=ke=animales;id==" + id;
+    String query = "nombre.value=ke=animales;id==" + id;
 
     URI uri = UriComponentsBuilder.fromUriString(FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH).queryParam("q", query)
         .build(false).toUri();
@@ -172,13 +119,14 @@ public class FormacionEspecificaIT extends BaseIT {
     final List<FormacionEspecifica> formacionEspecificas = response.getBody();
     Assertions.assertThat(formacionEspecificas.size()).isEqualTo(1);
     Assertions.assertThat(formacionEspecificas.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(formacionEspecificas.get(0).getNombre()).startsWith("E: Responsable de la");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecificas.get(0).getNombre(),
+        Language.ES)).startsWith("E: Responsable de la");
   }
 
   @Test
   public void findAll_WithSortQuery_ReturnsOrderedFormacionEspecificaList() throws Exception {
     // when: Ordenación por nombre desc
-    String query = "nombre,desc";
+    String query = "nombre.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH).queryParam("s", query)
         .build(false).toUri();
@@ -194,10 +142,12 @@ public class FormacionEspecificaIT extends BaseIT {
     final List<FormacionEspecifica> formacionEspecificas = response.getBody();
     Assertions.assertThat(formacionEspecificas.size()).isEqualTo(8);
     Assertions.assertThat(formacionEspecificas.get(0).getId()).isEqualTo(8);
-    Assertions.assertThat(formacionEspecificas.get(0).getNombre()).isEqualTo("H: No requiere");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecificas.get(0).getNombre(),
+        Language.ES)).isEqualTo("H: No requiere");
 
     Assertions.assertThat(formacionEspecificas.get(7).getId()).isEqualTo(1);
-    Assertions.assertThat(formacionEspecificas.get(7).getNombre()).isEqualTo("A: Cuidado de los animales");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecificas.get(7).getNombre(),
+        Language.ES)).isEqualTo("A: Cuidado de los animales");
 
   }
 
@@ -208,9 +158,9 @@ public class FormacionEspecificaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     // when: Ordena por nombre desc
-    String sort = "nombre,desc";
+    String sort = "nombre.value,desc";
     // when: Filtra por nombre like e id equals
-    String filter = "nombre=ke=animales";
+    String filter = "nombre.value=ke=animales";
 
     URI uri = UriComponentsBuilder.fromUriString(FORMACION_ESPECIFICA_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -232,29 +182,14 @@ public class FormacionEspecificaIT extends BaseIT {
     // Contiene nombre='E: Responsable de la supervisión <<in situ>> del bienestar y
     // cuidado de los animales', 'B: Eutanasia de los animales',
     // 'A: Cuidado de los animales'
-    Assertions.assertThat(formacionEspecificas.get(0).getNombre())
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecificas.get(0).getNombre(),
+        Language.ES))
         .isEqualTo("E: Responsable de la supervisión in situ del bienestar y cuidado de los animales");
-    Assertions.assertThat(formacionEspecificas.get(1).getNombre()).isEqualTo("B: Eutanasia de los animales");
-    Assertions.assertThat(formacionEspecificas.get(2).getNombre()).isEqualTo("A: Cuidado de los animales");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecificas.get(1).getNombre(),
+        Language.ES)).isEqualTo("B: Eutanasia de los animales");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(formacionEspecificas.get(2).getNombre(),
+        Language.ES)).isEqualTo("A: Cuidado de los animales");
 
-  }
-
-  /**
-   * Función que devuelve un objeto FormacionEspecifica
-   * 
-   * @param id     id del formacionEspecifica
-   * @param nombre la descripción del tipo de memoria
-   * @return el objeto tipo memoria
-   */
-
-  public FormacionEspecifica generarMockFormacionEspecifica(Long id, String nombre) {
-
-    FormacionEspecifica formacionEspecifica = new FormacionEspecifica();
-    formacionEspecifica.setId(id);
-    formacionEspecifica.setNombre(nombre);
-    formacionEspecifica.setActivo(Boolean.TRUE);
-
-    return formacionEspecifica;
   }
 
 }

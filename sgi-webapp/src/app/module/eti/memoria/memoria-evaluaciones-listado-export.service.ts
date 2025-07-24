@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DICTAMEN_MAP } from '@core/models/eti/dictamen';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
+import { TIPO_EVALUACION_MAP } from '@core/models/eti/tipo-evaluacion';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { MemoriaService } from '@core/services/eti/memoria.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
@@ -20,7 +22,7 @@ const EVALUACION_DICTAMEN_KEY = marker('eti.memoria.report.evaluacion.dictamen')
 
 @Injectable()
 export class MemoriaEvaluacionesListadoExportService extends
-  AbstractTableExportFillService<IMemoriaReportData, IMemoriaReportOptions>{
+  AbstractTableExportFillService<IMemoriaReportData, IMemoriaReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -108,9 +110,9 @@ export class MemoriaEvaluacionesListadoExportService extends
 
   private async fillRowsExcel(elementsRow: any[], evaluacion: IEvaluacion) {
     if (evaluacion) {
-      elementsRow.push(evaluacion.tipoEvaluacion?.nombre ?? '');
+      elementsRow.push(evaluacion.tipoEvaluacion?.id ? this.translate.instant(TIPO_EVALUACION_MAP.get(evaluacion.tipoEvaluacion?.id)) : '');
       elementsRow.push(evaluacion.version ?? '');
-      elementsRow.push(evaluacion.dictamen?.nombre ?? '');
+      elementsRow.push(evaluacion.dictamen ? this.translate.instant(DICTAMEN_MAP.get(evaluacion.dictamen.id)) ?? '' : '');
     } else {
       elementsRow.push('');
       elementsRow.push('');

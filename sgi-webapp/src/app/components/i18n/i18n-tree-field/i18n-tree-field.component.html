@@ -1,0 +1,11 @@
+<span *ngIf="!fixedValue; else fixed">
+  <sup class="prefix"
+    *ngIf="value && value.lang !== languageService.getLanguage(); else empty">{{value.lang.codeExtended}}</sup>{{value?.value}}{{appendText}}</span>
+
+<ng-template #empty>
+  <sup class="prefix">&nbsp;&nbsp;&nbsp;</sup>
+</ng-template>
+
+<ng-template #fixed>
+  <span><sup class="prefix">&nbsp;&nbsp;&nbsp;</sup>{{fixedValue | translate:params}}{{appendText}}</span>
+</ng-template>

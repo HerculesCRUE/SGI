@@ -4,10 +4,15 @@ import java.net.URI;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.SolicitudProyectoSocioPeriodoJustificacionObservaciones;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -97,8 +102,10 @@ class SolicitudProyectoSocioPeriodoJustificacionIT extends BaseIT {
     Assertions.assertThat(responseData.get(0).getFechaFin()).as("get(0).getFechaFin()")
         .isEqualTo(updatedSolicitudProyectoSocioPeriodoJustificacion.getFechaFin());
     Assertions.assertThat(responseData.get(0).getNumPeriodo()).as("get(0).getNumPeriodo()").isEqualTo(1);
-    Assertions.assertThat(responseData.get(0).getObservaciones()).as("get(0).getObservaciones()")
-        .isEqualTo(updatedSolicitudProyectoSocioPeriodoJustificacion.getObservaciones());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(updatedSolicitudProyectoSocioPeriodoJustificacion.getObservaciones(),
+            Language.ES));
 
     Assertions.assertThat(responseData.get(1).getSolicitudProyectoSocioId()).as("get(1).getSolicitudProyectoSocioId()")
         .isEqualTo(solicitudProyectoSocioId);
@@ -111,8 +118,10 @@ class SolicitudProyectoSocioPeriodoJustificacionIT extends BaseIT {
     Assertions.assertThat(responseData.get(1).getFechaFin()).as("get(1).getFechaFin()")
         .isEqualTo(newSolicitudProyectoSocioPeriodoJustificacion.getFechaFin());
     Assertions.assertThat(responseData.get(1).getNumPeriodo()).as("get(1).getNumPeriodo()").isEqualTo(2);
-    Assertions.assertThat(responseData.get(1).getObservaciones()).as("get(1).getObservaciones()")
-        .isEqualTo(newSolicitudProyectoSocioPeriodoJustificacion.getObservaciones());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones()")
+        .isEqualTo(I18nHelper.getValueForLanguage(newSolicitudProyectoSocioPeriodoJustificacion.getObservaciones(),
+            Language.ES));
 
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CENL-V")));
@@ -167,8 +176,10 @@ class SolicitudProyectoSocioPeriodoJustificacionIT extends BaseIT {
         .isEqualTo(Instant.parse("2020-11-20T23:59:59Z"));
     Assertions.assertThat(solicitudProyectoSocioPeriodoJustificacion.getNumPeriodo()).as("getNumPeriodo()")
         .isEqualTo(1);
-    Assertions.assertThat(solicitudProyectoSocioPeriodoJustificacion.getObservaciones()).as("getObservaciones()")
-        .isEqualTo("observaciones-001");
+    Assertions
+        .assertThat(
+            I18nHelper.getValueForLanguage(solicitudProyectoSocioPeriodoJustificacion.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("observaciones-001");
   }
 
   /**
@@ -182,6 +193,8 @@ class SolicitudProyectoSocioPeriodoJustificacionIT extends BaseIT {
    */
   private SolicitudProyectoSocioPeriodoJustificacion generarMockSolicitudProyectoSocioPeriodoJustificacion(Long id,
       Integer mesInicial, Integer mesFinal, Long solicitudProyectoId) {
+    Set<SolicitudProyectoSocioPeriodoJustificacionObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new SolicitudProyectoSocioPeriodoJustificacionObservaciones(Language.ES, "observaciones-" + id));
     SolicitudProyectoSocioPeriodoJustificacion solicitudProyectoSocioPeriodoJustificacion = new SolicitudProyectoSocioPeriodoJustificacion();
     solicitudProyectoSocioPeriodoJustificacion.setId(id);
     solicitudProyectoSocioPeriodoJustificacion
@@ -191,7 +204,7 @@ class SolicitudProyectoSocioPeriodoJustificacionIT extends BaseIT {
     solicitudProyectoSocioPeriodoJustificacion.setMesFinal(mesFinal);
     solicitudProyectoSocioPeriodoJustificacion.setFechaInicio(Instant.parse("2020-10-10T00:00:00Z"));
     solicitudProyectoSocioPeriodoJustificacion.setFechaFin(Instant.parse("2020-11-20T23:59:59Z"));
-    solicitudProyectoSocioPeriodoJustificacion.setObservaciones("observaciones-" + id);
+    solicitudProyectoSocioPeriodoJustificacion.setObservaciones(observaciones);
 
     return solicitudProyectoSocioPeriodoJustificacion;
   }

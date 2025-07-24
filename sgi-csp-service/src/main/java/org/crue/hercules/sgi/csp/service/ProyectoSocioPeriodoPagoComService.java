@@ -7,9 +7,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.com.CspComVencimientoPeriodoPagoSocioData;
@@ -27,7 +24,10 @@ import org.crue.hercules.sgi.csp.repository.ProyectoSocioRepository;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiCnfService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgempService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -124,10 +124,7 @@ public class ProyectoSocioPeriodoPagoComService {
         dates.add(saturday.toInstant());
         dates.add(sunday.toInstant());
         break;
-      case MONDAY:
-      case TUESDAY:
-      case THURSDAY:
-      case FRIDAY:
+      case MONDAY, TUESDAY, THURSDAY, FRIDAY:
         dates.add(now.plusDays(daysAfter).toInstant());
         break;
       default:
@@ -157,6 +154,6 @@ public class ProyectoSocioPeriodoPagoComService {
 
     return destinatarios.stream()
         .map(destinatario -> Recipient.builder().name(destinatario).address(destinatario).build())
-        .collect(Collectors.toList());
+        .toList();
   }
 }

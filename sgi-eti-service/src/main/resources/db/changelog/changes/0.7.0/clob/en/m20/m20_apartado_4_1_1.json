@@ -1,0 +1,55 @@
+[
+  {
+    "key": "ap4_1_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.1.1 Alternative methods"
+    },
+    "fieldGroup": [
+      {
+        "template": "What are the reasons why you are not considering applying alternative methods to those proposed?"
+      },
+      {
+        "key": "metodoAlternativoMotivoRadio",
+        "type": "radio",
+        "className": "vertical-radio",
+        "templateOptions": {
+          "label": "Reason",
+          "required": true,
+          "options": [
+            {
+              "value": "sonMetodosAlternativos",
+              "label": "The proposed methods are already alternative methods"
+            },
+            {
+              "value": "existen",
+              "label": "There are no alternative methods to those proposed"
+            },
+            {
+              "value": "noValidados",
+              "label": "Alternative methods exist but are not validated"
+            },
+            {
+              "value": "otros",
+              "label": "Other motives"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarMotivo",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.metodoAlternativoMotivoRadio || model.metodoAlternativoMotivoRadio === 'sonMetodosAlternativos' || model.metodoAlternativoMotivoRadio === 'existen' || model.metodoAlternativoMotivoRadio === 'noValidados'",
+        "templateOptions": {
+          "label": "Please specify",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

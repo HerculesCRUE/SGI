@@ -1,0 +1,407 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <property name="defaultLang" value="es" />
+
+  <changeSet author="master" id="0.3.0-1">
+    <createTable tableName="empresa_nombre_razon_social">
+      <column name="empresa_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="empresa_nombre_razon_social" columnNames="empresa_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="empresa_id"
+      baseTableName="empresa_nombre_razon_social"
+      constraintName="FK_EMPRESANOMBRERAZONSOCIAL_EMPRESA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="empresa" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}empresa_nombre_razon_social(empresa_id, value_, lang) SELECT id,
+      nombre_razon_social, '${defaultLang}' FROM ${schemaPrefix}empresa WHERE nombre_razon_social IS
+      NOT NULL</sql>
+
+    <dropColumn columnName="nombre_razon_social" tableName="empresa" />
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-2">
+    <createTable tableName="empresa_objeto_social">
+      <column name="empresa_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(1000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="empresa_objeto_social" columnNames="empresa_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="empresa_id"
+      baseTableName="empresa_objeto_social"
+      constraintName="FK_EMPRESAOBJETOSOCIAL_EMPRESA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="empresa" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}empresa_objeto_social(empresa_id, value_, lang) SELECT id,
+      objeto_social, '${defaultLang}' FROM ${schemaPrefix}empresa WHERE objeto_social IS NOT NULL</sql>
+
+    <dropColumn columnName="objeto_social" tableName="empresa" />
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-3">
+    <createTable tableName="empresa_conocimiento_tecnologia">
+      <column name="empresa_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(1000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="empresa_conocimiento_tecnologia" columnNames="empresa_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="empresa_id"
+      baseTableName="empresa_conocimiento_tecnologia"
+      constraintName="FK_EMPRESACONOCIMIENTOTECNOLOGIA_EMPRESA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="empresa" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}empresa_conocimiento_tecnologia(empresa_id, value_, lang) SELECT
+      id, conocimiento_tecnologia, '${defaultLang}' FROM ${schemaPrefix}empresa WHERE
+      conocimiento_tecnologia IS NOT NULL</sql>
+
+    <dropColumn columnName="conocimiento_tecnologia" tableName="empresa" />
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-4">
+    <createTable tableName="empresa_notario">
+      <column name="empresa_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="empresa_notario" columnNames="empresa_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="empresa_id"
+      baseTableName="empresa_notario"
+      constraintName="FK_EMPRESANOTARIO_EMPRESA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="empresa" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}empresa_notario(empresa_id, value_, lang) SELECT id, notario,
+      '${defaultLang}' FROM ${schemaPrefix}empresa WHERE notario IS NOT NULL</sql>
+
+    <dropColumn columnName="notario" tableName="empresa" />
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-5">
+    <createTable tableName="empresa_observaciones">
+      <column name="empresa_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="empresa_observaciones" columnNames="empresa_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="empresa_id"
+      baseTableName="empresa_observaciones"
+      constraintName="FK_EMPRESAOBSERVACIONES_EMPRESA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="empresa" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}empresa_observaciones(empresa_id, value_, lang) SELECT id,
+      observaciones, '${defaultLang}' FROM ${schemaPrefix}empresa WHERE observaciones IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="empresa" />
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-6">
+    <createTable tableName="empresa_documento_nombre">
+      <column name="empresa_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="empresa_documento_nombre" columnNames="empresa_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="empresa_documento_id"
+      baseTableName="empresa_documento_nombre"
+      constraintName="FK_EMPRESADOCUMENTONOMBRE_EMPRESA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="empresa_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}empresa_documento_nombre(empresa_documento_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}empresa_documento WHERE nombre IS NOT
+      NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="empresa_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-7">
+    <createTable tableName="empresa_documento_comentarios">
+      <column name="empresa_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="empresa_documento_comentarios"
+      columnNames="empresa_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="empresa_documento_id"
+      baseTableName="empresa_documento_comentarios"
+      constraintName="FK_EMPRESADOCUMENTOCOMENTARIOS_EMPRESA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="empresa_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}empresa_documento_comentarios(empresa_documento_id, value_,
+      lang) SELECT id, comentarios, '${defaultLang}' FROM ${schemaPrefix}empresa_documento WHERE
+      comentarios IS NOT NULL</sql>
+
+    <dropColumn columnName="comentarios" tableName="empresa_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-8">
+    <createTable tableName="tipo_documento_nombre">
+      <column name="tipo_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="tipo_documento_nombre" columnNames="tipo_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_documento_id"
+      baseTableName="tipo_documento_nombre"
+      constraintName="FK_TIPODOCUMENTONOMBRE_TIPODOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_documento_nombre(tipo_documento_id, lang, value_) SELECT
+      id, '${defaultLang}', nombre FROM ${schemaPrefix}tipo_documento WHERE nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-9">
+    <createTable tableName="tipo_documento_descripcion">
+      <column name="tipo_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+    <addPrimaryKey tableName="tipo_documento_descripcion" columnNames="tipo_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_documento_id"
+      baseTableName="tipo_documento_descripcion"
+      constraintName="FK_TIPODOCUMENTODESCRIPCION_TIPODOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_documento_descripcion(tipo_documento_id, lang, value_)
+      SELECT id, '${defaultLang}', descripcion FROM ${schemaPrefix}tipo_documento WHERE descripcion
+      IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="tipo_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-10">
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'en', 'Procedure documents' FROM ${schemaPrefix}tipo_documento_nombre WHERE
+      value_ = 'Documentos de procedimiento'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'eu', 'Prozeduraren agiriak' FROM ${schemaPrefix}tipo_documento_nombre
+      WHERE value_ = 'Documentos de procedimiento'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'en', 'Corporate documents' FROM ${schemaPrefix}tipo_documento_nombre WHERE
+      value_ = 'Documentos corporativos'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'eu', 'Agiri korporatiboak' FROM ${schemaPrefix}tipo_documento_nombre WHERE
+      value_ = 'Documentos corporativos'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'en', 'Social statutes' FROM ${schemaPrefix}tipo_documento_nombre WHERE
+      value_ = 'Estatutos sociales'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'eu', 'Estatutu sozialak' FROM ${schemaPrefix}tipo_documento_nombre WHERE
+      value_ = 'Estatutos sociales'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'en', 'Creation application' FROM ${schemaPrefix}tipo_documento_nombre
+      WHERE value_ = 'Solicitud de creación'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'eu', 'Sortzeko eskaera' FROM ${schemaPrefix}tipo_documento_nombre WHERE
+      value_ = 'Solicitud de creación'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'en', 'Membership application' FROM ${schemaPrefix}tipo_documento_nombre
+      WHERE value_ = 'Solicitud de incorporación'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'eu', 'Txertatzeko eskaera' FROM ${schemaPrefix}tipo_documento_nombre WHERE
+      value_ = 'Solicitud de incorporación'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'en', 'OTRI viability report' FROM ${schemaPrefix}tipo_documento_nombre
+      WHERE value_ = 'Informe viabilidad de la OTRI'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'eu', 'ITRBaren bideragarritasun txostena' FROM
+      ${schemaPrefix}tipo_documento_nombre WHERE value_ = 'Informe viabilidad de la OTRI'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'en', 'Annual accounts report' FROM ${schemaPrefix}tipo_documento_nombre
+      WHERE value_ = 'Informe anual de cuentas'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'eu', 'Kontuen urteko txostena' FROM ${schemaPrefix}tipo_documento_nombre
+      WHERE value_ = 'Informe anual de cuentas'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'en', 'Meeting minutes' FROM ${schemaPrefix}tipo_documento_nombre WHERE
+      value_ = 'Acta de reunión'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'eu', 'Bileraren akta' FROM ${schemaPrefix}tipo_documento_nombre WHERE
+      value_ = 'Acta de reunión'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'en', 'Change to corporate composition' FROM
+      ${schemaPrefix}tipo_documento_nombre WHERE value_ = 'Modificación composición sociedad'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_nombre (tipo_documento_id, lang, value_) SELECT
+      tipo_documento_id, 'eu', 'Sozietatearen osaketa aldatzea' FROM
+      ${schemaPrefix}tipo_documento_nombre WHERE value_ = 'Modificación composición sociedad'; </sql>
+  </changeSet>
+
+  <changeSet author="master" id="0.3.0-11">
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'en', 'Procedure documents' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Documentos de procedimiento'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'eu', 'Prozeduraren agiriak' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Documentos de procedimiento'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'en', 'Corporate documents' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Documentos corporativos'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'eu', 'Agiri korporatiboak' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Documentos corporativos'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'en', 'Social statutes' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Estatutos sociales'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'eu', 'Estatutu sozialak' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Estatutos sociales'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'en', 'Creation application' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Solicitud de creación'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'eu', 'Sortzeko eskaera' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Solicitud de creación'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'en', 'Membership application' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Solicitud de incorporación'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'eu', 'Txertatzeko eskaera' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Solicitud de incorporación'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'en', 'OTRI viability report' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Informe viabilidad de la OTRI'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'eu', 'ITRBaren bideragarritasun txostena' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Informe viabilidad de la OTRI'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'en', 'Annual accounts report' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Informe anual de cuentas'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'eu', 'Kontuen urteko txostena' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Informe anual de cuentas'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'en', 'Meeting minutes' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Acta de reunión'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'eu', 'Bileraren akta' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Acta de reunión'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'en', 'Change to corporate composition' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Modificación composición sociedad'; </sql>
+
+    <sql> INSERT INTO ${schemaPrefix}tipo_documento_descripcion (tipo_documento_id, lang, value_)
+      SELECT tipo_documento_id, 'eu', 'Sozietatearen osaketa aldatzea' FROM
+      ${schemaPrefix}tipo_documento_descripcion WHERE value_ = 'Modificación composición sociedad'; </sql>
+  </changeSet>
+
+</databaseChangeLog>

@@ -20,4 +20,9 @@ public class FormlyNotFoundException extends EtiNotFoundException {
         .parameter("entity", ApplicationContextSupport.getMessage(Formly.class))
         .parameter("field", ApplicationContextSupport.getMessage("nombre")).parameter("value", nombre).build());
   }
+
+  public FormlyNotFoundException() {
+    super(ProblemMessage.builder().key(EtiNotFoundException.class)
+        .parameter("entity", ApplicationContextSupport.getMessage(Formly.class)).build());
+  }
 }

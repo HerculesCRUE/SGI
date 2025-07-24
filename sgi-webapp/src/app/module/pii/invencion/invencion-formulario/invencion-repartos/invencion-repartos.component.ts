@@ -62,14 +62,14 @@ export class InvencionRepartosComponent extends FragmentComponent implements OnI
     private readonly snackBarService: SnackBarService,
     private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.REPARTOS, actionService);
+    super(actionService.FRAGMENT.REPARTOS, actionService, translate);
     this.formPart = this.fragment as InvencionRepartosFragment;
     this.elementosPagina = [5, 10, 25, 100];
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.totalElementos = 0;
     this.formGroup = this.buildFormGroup();
     this.initColumns();
@@ -189,7 +189,7 @@ export class InvencionRepartosComponent extends FragmentComponent implements OnI
     this.fxLayoutProperties.xs = 'column';
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       REPARTO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

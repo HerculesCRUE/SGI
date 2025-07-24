@@ -26,8 +26,8 @@ import { TranslateService } from '@ngx-translate/core';
 import { SgiAuthService } from '@sgi/framework/auth';
 import { RSQLSgiRestFilter, SgiRestFilter, SgiRestFilterOperator, SgiRestListResult } from '@sgi/framework/http/';
 import { NGXLogger } from 'ngx-logger';
-import { EMPTY, from, Observable, of } from 'rxjs';
-import { catchError, map, mergeAll, mergeMap, switchMap } from 'rxjs/operators';
+import { EMPTY, forkJoin, from, Observable, of } from 'rxjs';
+import { catchError, concatMap, map, mergeAll, mergeMap, switchMap, toArray } from 'rxjs/operators';
 import { ConvocatoriaListadoExportModalComponent } from '../modals/convocatoria-listado-export-modal/convocatoria-listado-export-modal.component';
 
 const MSG_BUTTON_ADD = marker('btn.add.entity');
@@ -107,7 +107,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
     private activatedRoute: ActivatedRoute,
     private readonly cnfService: ConfigService
   ) {
-    super();
+    super(translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -122,7 +122,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.formGroup = new FormGroup({
       codigo: new FormControl(''),
@@ -153,7 +153,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
 
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       AREA_TENATICA_KEY,
@@ -306,7 +306,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
             }
             return of(element);
           }),
-          map((convocatoriaListado) => {
+          concatMap((convocatoriaListado) => {
             return this.convocatoriaService.findEntidadesFinanciadoras(convocatoriaListado.convocatoria.id).pipe(
               map(entidadFinanciadora => {
                 if (entidadFinanciadora.items.length > 0) {
@@ -332,8 +332,8 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
                     }),
                     catchError((error) => {
                       this.logger.error(error);
-                      this.processError(error);
-                      return EMPTY;
+                      convocatoriaListado.entidadFinanciadoraEmpresa = { id: convocatoriaListado.entidadFinanciadora?.empresa?.id } as IEmpresa;
+                      return of(convocatoriaListado);
                     })
                   );
                 }
@@ -370,8 +370,8 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
                         }),
                         catchError((error) => {
                           this.logger.error(error);
-                          this.processError(error);
-                          return EMPTY;
+                          convocatoriaListado.entidadConvocanteEmpresa = { id: convocatoriaListado.entidadConvocante?.entidad?.id } as IEmpresa;
+                          return of(convocatoriaListado);
                         })
                       );
                     }
@@ -381,7 +381,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
               })
             );
           }),
-          mergeAll(),
+          toArray(),
           map(() => result)
         );
       }),
@@ -413,7 +413,7 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
     const filter = new RSQLSgiRestFilter('codigo', SgiRestFilterOperator.LIKE_ICASE, controls.codigo.value);
 
     filter
-      .and('titulo', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
+      .and('titulo.value', SgiRestFilterOperator.LIKE_ICASE, controls.titulo.value)
       .and('estado', SgiRestFilterOperator.EQUALS, controls.estado.value)
       .and('activo', SgiRestFilterOperator.EQUALS, controls.activo.value?.toString())
       .and('fechaPublicacion', SgiRestFilterOperator.GREATHER_OR_EQUAL, LuxonUtils.toBackend(controls.fechaPublicacionDesde.value))
@@ -431,22 +431,10 @@ export class ConvocatoriaListadoComponent extends AbstractTablePaginationCompone
 
     const palabrasClave = controls.palabrasClave.value as string[];
     if (Array.isArray(palabrasClave) && palabrasClave.length > 0) {
-      filter.and(this.createPalabrasClaveFilter(palabrasClave));
+      filter.and('palabrasClave', SgiRestFilterOperator.IN, palabrasClave);
     }
 
     return filter;
-  }
-
-  private createPalabrasClaveFilter(palabrasClave: string[]): SgiRestFilter {
-    let palabrasClaveFilter: SgiRestFilter;
-    palabrasClave.forEach(palabraClave => {
-      if (palabrasClaveFilter) {
-        palabrasClaveFilter.or('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
-      } else {
-        palabrasClaveFilter = new RSQLSgiRestFilter('palabrasClave.palabraClaveRef', SgiRestFilterOperator.LIKE_ICASE, palabraClave);
-      }
-    });
-    return palabrasClaveFilter;
   }
 
   resetFilters() {

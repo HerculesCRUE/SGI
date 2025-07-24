@@ -2,6 +2,7 @@ package org.crue.hercules.sgi.csp.service;
 
 import java.time.Instant;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
@@ -12,6 +13,7 @@ import org.crue.hercules.sgi.csp.exceptions.AlreadyInEstadoAutorizacionException
 import org.crue.hercules.sgi.csp.exceptions.AutorizacionNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.UserNotAuthorizedToAccessAutorizacionException;
 import org.crue.hercules.sgi.csp.model.Autorizacion;
+import org.crue.hercules.sgi.csp.model.CertificadoAutorizacionDocumentoRef;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion.Estado;
 import org.crue.hercules.sgi.csp.repository.AutorizacionRepository;
@@ -19,6 +21,8 @@ import org.crue.hercules.sgi.csp.repository.EstadoAutorizacionRepository;
 import org.crue.hercules.sgi.csp.repository.predicate.AutorizacionPredicateResolver;
 import org.crue.hercules.sgi.csp.repository.specification.AutorizacionSpecifications;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiRepService;
+import org.crue.hercules.sgi.framework.i18n.I18nConfig;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.crue.hercules.sgi.framework.security.core.context.SgiSecurityContextHolder;
@@ -36,7 +40,6 @@ import org.springframework.util.Assert;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
 
-import liquibase.util.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -106,8 +109,7 @@ public class AutorizacionService {
     repository.save(autorizacion);
 
     // Crea el estado inicial de la autorizacion
-    EstadoAutorizacion estadoAutorizacion = addEstadoAutorizacion(autorizacion, EstadoAutorizacion.Estado.BORRADOR,
-        null);
+    EstadoAutorizacion estadoAutorizacion = addEstadoAutorizacion(autorizacion, EstadoAutorizacion.Estado.BORRADOR);
 
     autorizacion.setEstado(estadoAutorizacion);
 
@@ -180,7 +182,7 @@ public class AutorizacionService {
     log.debug("findAll(String query, Pageable paging) - start");
     Specification<Autorizacion> specs = null;
     if (query != null) {
-      specs = SgiRSQLJPASupport.toSpecification(query);
+      specs = SgiRSQLJPASupport.toSpecification(query, AutorizacionPredicateResolver.getInstance());
     }
     Page<AutorizacionWithFirstEstado> returnValue = repository.findAllAutorizacionWithFirstEstado(specs, paging);
     log.debug("findAll(String query, Pageable paging) - end");
@@ -367,21 +369,19 @@ public class AutorizacionService {
   }
 
   private EstadoAutorizacion addEstadoAutorizacion(Autorizacion autorizacion,
-      EstadoAutorizacion.Estado tipoEstadoAutorizacion,
-      String comentario) {
+      EstadoAutorizacion.Estado tipoEstadoAutorizacion) {
     log.debug(
-        "addEstadoAutorizacion(Autorizacion autorizacion, EstadoAutorizacion.Estado tipoEstadoAutorizacion,String comentario) - start");
+        "addEstadoAutorizacion(Autorizacion autorizacion, EstadoAutorizacion.Estado tipoEstadoAutorizacion) - start");
 
     EstadoAutorizacion estadoAutorizacion = new EstadoAutorizacion();
     estadoAutorizacion.setEstado(tipoEstadoAutorizacion);
     estadoAutorizacion.setAutorizacionId(autorizacion.getId());
-    estadoAutorizacion.setComentario(comentario);
     estadoAutorizacion.setFecha(Instant.now());
 
     EstadoAutorizacion returnValue = estadoAutorizacionRepository.save(estadoAutorizacion);
 
     log.debug(
-        "addEstadoAutorizacion(Autorizacion autorizacion, EstadoAutorizacion.Estado tipoEstadoAutorizacion, String comentario) - end");
+        "addEstadoAutorizacion(Autorizacion autorizacion, EstadoAutorizacion.Estado tipoEstadoAutorizacion) - end");
     return returnValue;
   }
 
@@ -478,21 +478,31 @@ public class AutorizacionService {
   }
 
   /**
-   * Obtiene el informe de una {@link Autorizacion}
+   * Obtiene el informe de una {@link Autorizacion} en el idioma solicitado
    * 
    * @param idAutorizacion identificador {@link Autorizacion}
-   * @param fileName nombre del fichero
+   * @param fileName       nombre del fichero
    * @return El documento del informe de la {@link Autorizacion}
    */
-  public DocumentoOutput generarDocumentoAutorizacion(Long idAutorizacion, String fileName) {
-    Resource informePdf = reportService.getInformeAutorizacion(idAutorizacion);
-    // Se sube el informe a sgdoc
-    String pattern = "yyyyMMddHH:mm:ss";
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern)
-        .withZone(sgiConfigProperties.getTimeZone().toZoneId()).withLocale(LocaleContextHolder.getLocale());
-    if (ObjectUtils.isEmpty(fileName)) {
-      fileName = TITULO_INFORME_AUTORIZACION + idAutorizacion + formatter.format(Instant.now()) + ".pdf";
+  public List<CertificadoAutorizacionDocumentoRef> generarDocumentoAutorizacion(Long idAutorizacion, String fileName) {
+    List<CertificadoAutorizacionDocumentoRef> certificadoAutorizacionDocumentosRef = new ArrayList<>();
+
+    for (Language lang : I18nConfig.get().getEnabledLanguages()) {
+      Resource informePdf = reportService.getInformeAutorizacion(idAutorizacion, lang);
+
+      // Se sube el informe a sgdoc
+      String pattern = "yyyyMMddHH:mm:ss";
+      DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern)
+          .withZone(sgiConfigProperties.getTimeZone().toZoneId()).withLocale(LocaleContextHolder.getLocale());
+      if (ObjectUtils.isEmpty(fileName)) {
+        fileName = TITULO_INFORME_AUTORIZACION + idAutorizacion + formatter.format(Instant.now()) + lang.getCode()
+            + ".pdf";
+      }
+      DocumentoOutput documento = sgdocService.uploadInforme(fileName, informePdf);
+      certificadoAutorizacionDocumentosRef
+          .add(CertificadoAutorizacionDocumentoRef.builder().lang(lang).value(documento.getDocumentoRef()).build());
     }
-    return sgdocService.uploadInforme(fileName, informePdf);
+
+    return certificadoAutorizacionDocumentosRef;
   }
 }

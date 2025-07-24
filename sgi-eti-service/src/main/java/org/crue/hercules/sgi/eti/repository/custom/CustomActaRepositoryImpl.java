@@ -14,7 +14,6 @@ import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import org.springframework.data.domain.Sort;
 import javax.persistence.criteria.Subquery;
 
 import org.crue.hercules.sgi.eti.dto.ActaWithNumEvaluaciones;
@@ -24,6 +23,7 @@ import org.crue.hercules.sgi.eti.model.Acta_;
 import org.crue.hercules.sgi.eti.model.Comite_;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres;
 import org.crue.hercules.sgi.eti.model.ConflictoInteres_;
+import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.ConvocatoriaReunion_;
 import org.crue.hercules.sgi.eti.model.Dictamen_;
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
@@ -34,13 +34,14 @@ import org.crue.hercules.sgi.eti.model.Evaluador;
 import org.crue.hercules.sgi.eti.model.Evaluador_;
 import org.crue.hercules.sgi.eti.model.Memoria;
 import org.crue.hercules.sgi.eti.model.Memoria_;
-import org.crue.hercules.sgi.eti.model.PeticionEvaluacion;
 import org.crue.hercules.sgi.eti.model.PeticionEvaluacion_;
+import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion;
 import org.crue.hercules.sgi.eti.model.TipoConvocatoriaReunion_;
 import org.crue.hercules.sgi.eti.model.TipoEvaluacion_;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Component;
@@ -116,19 +117,22 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
 
     cq.where(listPredicates.toArray(new Predicate[] {}));
 
+    Join<Acta, ConvocatoriaReunion> convocatoriaJoin = root.join(Acta_.convocatoriaReunion);
+    Join<ConvocatoriaReunion, TipoConvocatoriaReunion> tipoConvocatoriaJoin = convocatoriaJoin
+        .join(ConvocatoriaReunion_.tipoConvocatoriaReunion);
+
     // Execute query
     cq.multiselect(root.get(Acta_.id).alias("id"),
-        root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.comite).get(Comite_.comite).alias("comite"),
-        root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.fechaEvaluacion).alias("fechaEvaluacion"),
+        convocatoriaJoin.get(ConvocatoriaReunion_.comite).get(Comite_.codigo).alias("comite"),
+        convocatoriaJoin.get(ConvocatoriaReunion_.fechaEvaluacion).alias("fechaEvaluacion"),
         root.get(Acta_.numero).alias("numeroActa"),
-        root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.tipoConvocatoriaReunion)
-            .get(TipoConvocatoriaReunion_.nombre).alias("convocatoria"),
+        tipoConvocatoriaJoin.get(TipoConvocatoriaReunion_.id).alias("tipoConvocatoriaId"),
+        tipoConvocatoriaJoin.get(TipoConvocatoriaReunion_.nombre).alias("tipoConvocatoriaNombre"),
+        tipoConvocatoriaJoin.get(TipoConvocatoriaReunion_.activo).alias("tipoConvocatoriaActivo"),
         getNumEvaluaciones(root, cb, cq, Boolean.TRUE).alias("numEvaluaciones"),
         getNumEvaluaciones(root, cb, cq, Boolean.FALSE).alias("numRevisiones"),
         getNumEvaluacionesNoEvaluadas(root, cb, cq).alias("evaluacionesEvaluadas"),
-        root.get(Acta_.estadoActual).alias("estadoActa"),
-        root.get(Acta_.documentoRef).alias("documentoRef"),
-        root.get(Acta_.transaccionRef).alias("transaccionRef"));
+        root.get(Acta_.estadoActual).alias("estadoActa"));
 
     List<Order> orders = QueryUtils.toOrders(pageable.getSort(), root, cb);
     cq.orderBy(orders);
@@ -300,16 +304,15 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
     Root<Acta> rootActa = cq.from(Acta.class);
 
     Join<Evaluacion, Memoria> joinMemoria = root.join(Evaluacion_.memoria, JoinType.LEFT);
-    Join<Memoria, PeticionEvaluacion> joinPeticionEvaluacion = joinMemoria.join(Memoria_.peticionEvaluacion,
-        JoinType.LEFT);
 
     cq.multiselect(
         joinMemoria.get(Memoria_.id),
         root.get(Evaluacion_.id),
-        joinMemoria.get(Memoria_.numReferencia), joinPeticionEvaluacion.get(PeticionEvaluacion_.personaRef),
-        root.get(Evaluacion_.dictamen).get(Dictamen_.nombre), root.get(Evaluacion_.version),
-        root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.nombre),
-        joinPeticionEvaluacion.get(PeticionEvaluacion_.titulo));
+        joinMemoria.get(Memoria_.numReferencia),
+        root.get(Evaluacion_.dictamen).get(Dictamen_.id),
+        root.get(Evaluacion_.version),
+        root.get(Evaluacion_.tipoEvaluacion).get(TipoEvaluacion_.id),
+        joinMemoria.get(Memoria_.peticionEvaluacion));
 
     // Where
     cq.where(
@@ -355,7 +358,7 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
     Root<EquipoTrabajo> subqRootEquipoTrabajo = queryPersonaRefEquipoTrabajo.from(EquipoTrabajo.class);
 
     queryPersonaRefEquipoTrabajo.select(subqRootEquipoTrabajo.get(EquipoTrabajo_.personaRef)).where(
-        cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacion).get(PeticionEvaluacion_.id),
+        cb.equal(subqRootEquipoTrabajo.get(EquipoTrabajo_.peticionEvaluacionId),
             rootEvaluacion.get(Evaluacion_.memoria).get(Memoria_.peticionEvaluacion).get(PeticionEvaluacion_.id)));
 
     Subquery<Long> queryConflictosInteres = cq.subquery(Long.class);
@@ -365,7 +368,7 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
         cb.in(subqRootConflictosInteres.get(ConflictoInteres_.personaConflictoRef))
             .value(queryPersonaRefEquipoTrabajo));
 
-    Subquery<String> queryEvaluadoresComite = cq.subquery(String.class);
+    Subquery<Long> queryEvaluadoresComite = cq.subquery(Long.class);
     Root<Evaluador> subqRootEvaluadores = queryEvaluadoresComite.from(Evaluador.class);
 
     Predicate predicateEvaluacion = cb.and(
@@ -375,7 +378,7 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
         cb.equal(subqRootEvaluadores.get(Evaluador_.activo), Boolean.TRUE),
         cb.not(subqRootEvaluadores.get(Evaluador_.id).in(queryConflictosInteres)));
 
-    queryEvaluadoresComite.select(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.comite)).where(
+    queryEvaluadoresComite.select(subqRootEvaluadores.get(Evaluador_.comite).get(Comite_.id)).where(
         predicateEvaluacion,
         cb.or(cb.isNull(subqRootEvaluadores.get(Evaluador_.fechaBaja)),
             cb.greaterThan(subqRootEvaluadores.get(Evaluador_.fechaBaja), Instant.now())));
@@ -384,7 +387,7 @@ public class CustomActaRepositoryImpl implements CustomActaRepository {
         .where(cb.and(cb.equal(root.get(Acta_.activo), Boolean.TRUE),
             cb.equal(rootEvaluacion.get(Evaluacion_.convocatoriaReunion).get(ConvocatoriaReunion_.id),
                 root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.id)),
-            cb.in(root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.comite).get(Comite_.comite))
+            cb.in(root.get(Acta_.convocatoriaReunion).get(ConvocatoriaReunion_.comite).get(Comite_.id))
                 .value(queryEvaluadoresComite)));
 
     TypedQuery<Long> typedQuery = entityManager.createQuery(cq);

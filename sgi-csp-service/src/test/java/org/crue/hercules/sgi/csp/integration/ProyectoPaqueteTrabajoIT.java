@@ -6,6 +6,8 @@ import java.util.Collections;
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -85,7 +87,8 @@ class ProyectoPaqueteTrabajoIT extends BaseIT {
     Assertions.assertThat(proyectoPaqueteTrabajo.getFechaFin()).as("getFechaFin()")
         .isEqualTo(Instant.parse("2020-01-15T23:59:59Z"));
     Assertions.assertThat(proyectoPaqueteTrabajo.getPersonaMes()).as("getPersonaMes()").isEqualTo(1D);
-    Assertions.assertThat(proyectoPaqueteTrabajo.getDescripcion()).as("getDescripcion()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoPaqueteTrabajo.getDescripcion(), Language.ES))
+        .as("getDescripcion()")
         .isEqualTo("descripcion-proyecto-equipo-trabajo-001");
 
   }

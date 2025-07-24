@@ -1,0 +1,25 @@
+[
+  {
+    "key": "ap3_6",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.6 Frequency and periodicity of use"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Please describe below the frequency of use of the specified biological agents, genetically modified organisms, that is, number of times per day or week that the sample will be accessed for manipulation, culture, etc., duration of that manipulation, and whether that action will be repeated periodically (for example, number of times per week or month, number of months per year, etc.).</p>"
+      },
+      {
+        "key": "frecuenciaPeriodicidad",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Please describe",
+          "required": true
+        }
+      }
+    ]
+  }
+]

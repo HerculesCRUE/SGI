@@ -1,32 +1,41 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validator;
+
 import org.crue.hercules.sgi.csp.exceptions.TipoFinanciacionNotFoundException;
+import org.crue.hercules.sgi.csp.model.BaseActivableEntity;
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
 import org.crue.hercules.sgi.csp.repository.TipoFinanciacionRepository;
 import org.crue.hercules.sgi.csp.repository.specification.TipoFinanciacionSpecifications;
 import org.crue.hercules.sgi.csp.service.TipoFinanciacionService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 
-import java.util.Objects;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
+@Validated
 public class TipoFinanciacionServiceImpl implements TipoFinanciacionService {
 
   private final TipoFinanciacionRepository tipoFinanciacionRepository;
 
-  public TipoFinanciacionServiceImpl(TipoFinanciacionRepository tipoFinanciacionRepository) {
-
-    this.tipoFinanciacionRepository = tipoFinanciacionRepository;
-  }
+  private final Validator validator;
 
   /**
    * Guardar {@link TipoFinanciacion}.
@@ -36,13 +45,11 @@ public class TipoFinanciacionServiceImpl implements TipoFinanciacionService {
    */
   @Override
   @Transactional
-  public TipoFinanciacion create(TipoFinanciacion tipoFinanciacion) {
+  @Validated({ BaseEntity.Create.class })
+  public TipoFinanciacion create(@Valid TipoFinanciacion tipoFinanciacion) {
     log.debug("create(TipoFinanciacion tipoFinanciacion) - start");
 
-    Assert.isNull(tipoFinanciacion.getId(),
-        "tipoFinanciacion id tiene que ser null para crear un nuevo tipoFinanciacion");
-    Assert.isTrue(!(tipoFinanciacionRepository.findByNombreAndActivoIsTrue(tipoFinanciacion.getNombre()).isPresent()),
-        "Ya existe TipoFinanciacion con el nombre " + tipoFinanciacion.getNombre());
+    AssertHelper.idIsNull(tipoFinanciacion.getId(), TipoFinanciacion.class);
 
     tipoFinanciacion.setActivo(Boolean.TRUE);
     TipoFinanciacion returnValue = tipoFinanciacionRepository.save(tipoFinanciacion);
@@ -61,14 +68,9 @@ public class TipoFinanciacionServiceImpl implements TipoFinanciacionService {
    */
   @Override
   @Transactional
-  public TipoFinanciacion update(TipoFinanciacion tipoFinanciacionActualizar) {
+  @Validated({ BaseEntity.Update.class })
+  public TipoFinanciacion update(@Valid TipoFinanciacion tipoFinanciacionActualizar) {
     log.debug("update(TipoFinanciacion tipoFinanciacionActualizar) - start");
-
-    Assert.notNull(tipoFinanciacionActualizar.getId(), "TipoFinanciacion id no puede ser null para actualizar");
-    tipoFinanciacionRepository.findByNombreAndActivoIsTrue(tipoFinanciacionActualizar.getNombre())
-        .ifPresent((tipoFinanciacionExistente) -> Assert.isTrue(
-            Objects.equals(tipoFinanciacionActualizar.getId(), tipoFinanciacionExistente.getId()),
-            "Ya existe un TipoFinanciacion con el nombre " + tipoFinanciacionExistente.getNombre()));
 
     return tipoFinanciacionRepository.findById(tipoFinanciacionActualizar.getId()).map(tipoFinanciacion -> {
       tipoFinanciacion.setNombre(tipoFinanciacionActualizar.getNombre());
@@ -148,7 +150,7 @@ public class TipoFinanciacionServiceImpl implements TipoFinanciacionService {
   public TipoFinanciacion enable(Long id) {
     log.debug("enable(Long id) - start");
 
-    Assert.notNull(id, "TipoFinanciacion id no puede ser null para reactivar un TipoFinanciacion");
+    AssertHelper.idNotNull(id, TipoFinanciacion.class);
 
     return tipoFinanciacionRepository.findById(id).map(tipoFinanciacion -> {
       if (Boolean.TRUE.equals(tipoFinanciacion.getActivo())) {
@@ -156,11 +158,13 @@ public class TipoFinanciacionServiceImpl implements TipoFinanciacionService {
         return tipoFinanciacion;
       }
 
-      tipoFinanciacionRepository.findByNombreAndActivoIsTrue(tipoFinanciacion.getNombre())
-          .ifPresent((tipoFinanciacionExistente) -> Assert.isTrue(
-              Objects.equals(tipoFinanciacion.getId(), tipoFinanciacionExistente.getId()),
-              "Ya existe un TipoFinanciacion con el nombre " + tipoFinanciacion.getNombre()));
-
+      // Invocar validaciones asociadas a OnActivar
+      Set<ConstraintViolation<TipoFinanciacion>> result = validator.validate(
+          tipoFinanciacion,
+          BaseActivableEntity.OnActivar.class);
+      if (!result.isEmpty()) {
+        throw new ConstraintViolationException(result);
+      }
       tipoFinanciacion.setActivo(true);
 
       TipoFinanciacion returnValue = tipoFinanciacionRepository.save(tipoFinanciacion);
@@ -179,7 +183,7 @@ public class TipoFinanciacionServiceImpl implements TipoFinanciacionService {
   @Transactional
   public TipoFinanciacion disable(Long id) throws TipoFinanciacionNotFoundException {
     log.debug("disable(Long id) - start");
-    Assert.notNull(id, "TipoFinanciacion id no puede ser null para reactivar un TipoFinanciacion");
+    AssertHelper.idNotNull(id, TipoFinanciacion.class);
 
     return tipoFinanciacionRepository.findById(id).map(tipoFinanciacion -> {
       if (Boolean.FALSE.equals(tipoFinanciacion.getActivo())) {

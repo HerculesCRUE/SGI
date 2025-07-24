@@ -27,7 +27,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 class ConvocatoriaConceptoGastoCodigoEcIT extends BaseIT {
 
-  private static final String PATH_PARAMETER_ID = "/{id}";
   private static final String CONTROLLER_BASE_PATH = "/convocatoriaconceptogastocodigoecs";
   private static final String PATH_PARAMETER_CONVOCATORIA_CONCEPTO_GASTO_ID = "/{convocatoriaConceptoGastoId}";
 
@@ -36,29 +35,11 @@ class ConvocatoriaConceptoGastoCodigoEcIT extends BaseIT {
     headers = (headers != null ? headers : new HttpHeaders());
     headers.setContentType(MediaType.APPLICATION_JSON);
     headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-E", "AUTH")));
+    headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-CON-E")));
 
     HttpEntity<Object> request = new HttpEntity<>(entity, headers);
     return request;
 
-  }
-
-  @Sql
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void findById_ReturnsConvocatoriaConceptoGastoCodigoEc() throws Exception {
-    Long idConvocatoriaConceptoGastoCodigoEc = 1L;
-
-    final ResponseEntity<ConvocatoriaConceptoGastoCodigoEc> response = restTemplate.exchange(
-        CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.GET, buildRequest(null, null),
-        ConvocatoriaConceptoGastoCodigoEc.class, idConvocatoriaConceptoGastoCodigoEc);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-
-    ConvocatoriaConceptoGastoCodigoEc convocatoriaConceptoGasto = response.getBody();
-    Assertions.assertThat(convocatoriaConceptoGasto.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(convocatoriaConceptoGasto.getConvocatoriaConceptoGastoId())
-        .as("getConvocatoriaConceptoGastoId()").isEqualTo(1L);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {

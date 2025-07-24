@@ -59,7 +59,7 @@ export class CongresoDatosGeneralesComponent extends FragmentComponent implement
     private readonly documentoService: DocumentoService,
     private readonly translateService: TranslateService
   ) {
-    super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
+    super(actionService.FRAGMENT.DATOS_GENERALES, actionService, translateService);
     this.formPart = this.fragment as CongresoDatosGeneralesFragment;
   }
 
@@ -198,4 +198,6 @@ export class CongresoDatosGeneralesComponent extends FragmentComponent implement
       }
     ));
   }
+
+  protected setupI18N(): void { }
 }

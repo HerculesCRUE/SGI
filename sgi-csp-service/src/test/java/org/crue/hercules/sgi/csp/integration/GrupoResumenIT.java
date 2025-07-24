@@ -16,7 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.jdbc.Sql;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class GrupoResumenIT extends BaseIT {
+class GrupoResumenIT extends BaseIT {
   private static final String CONTROLLER_BASE_PATH = GrupoResumenController.REQUEST_MAPPING;
   private static final String PATH_ID = GrupoResumenController.PATH_ID;
 
@@ -27,9 +27,7 @@ public class GrupoResumenIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s",
         tokenBuilder.buildToken("user", roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-    return request;
-
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {

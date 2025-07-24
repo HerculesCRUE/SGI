@@ -1,14 +1,20 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ConceptoGastoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoDescripcion;
+import org.crue.hercules.sgi.csp.model.ConceptoGastoNombre;
 import org.crue.hercules.sgi.csp.service.ConceptoGastoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -65,8 +71,10 @@ class ConceptoGastoControllerTest extends BaseControllerTest {
         // then: new ConceptoGasto is created
         .andExpect(MockMvcResultMatchers.status().isCreated())
         .andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(conceptoGasto.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(conceptoGasto.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(conceptoGasto.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(conceptoGasto.getActivo()));
   }
 
@@ -94,7 +102,9 @@ class ConceptoGastoControllerTest extends BaseControllerTest {
     // given: Existing ConceptoGasto to be updated
     ConceptoGasto conceptoGastoExistente = generarMockConceptoGasto(1L);
     ConceptoGasto conceptoGasto = generarMockConceptoGasto(1L);
-    conceptoGasto.setNombre("nuevo-nombre");
+    Set<ConceptoGastoNombre> nombreConceptoGasto = new HashSet<>();
+    nombreConceptoGasto.add(new ConceptoGastoNombre(Language.ES, "nuevo-nombre"));
+    conceptoGasto.setNombre(nombreConceptoGasto);
 
     BDDMockito.given(service.update(ArgumentMatchers.<ConceptoGasto>any()))
         .willAnswer((InvocationOnMock invocation) -> invocation.getArgument(0));
@@ -107,8 +117,10 @@ class ConceptoGastoControllerTest extends BaseControllerTest {
         .andDo(SgiMockMvcResultHandlers.printOnError())
         // then: ConceptoGasto is updated
         .andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.jsonPath("id").isNotEmpty())
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(conceptoGasto.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(conceptoGastoExistente.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(conceptoGastoExistente.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(conceptoGastoExistente.getActivo()));
   }
 
@@ -156,8 +168,10 @@ class ConceptoGastoControllerTest extends BaseControllerTest {
         // then: ConceptoGasto enabled
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(conceptoGasto.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(conceptoGasto.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(conceptoGasto.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(conceptoGasto.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(true));
   }
 
@@ -200,8 +214,10 @@ class ConceptoGastoControllerTest extends BaseControllerTest {
         // then: ConceptoGasto disabled
         .andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(conceptoGasto.getId()))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value(conceptoGasto.getNombre()))
-        .andExpect(MockMvcResultMatchers.jsonPath("descripcion").value(conceptoGasto.getDescripcion()))
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value")
+            .value(I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES)))
+        .andExpect(MockMvcResultMatchers.jsonPath("descripcion[0].value")
+            .value(I18nHelper.getValueForLanguage(conceptoGasto.getDescripcion(), Language.ES)))
         .andExpect(MockMvcResultMatchers.jsonPath("activo").value(false));
   }
 
@@ -269,7 +285,8 @@ class ConceptoGastoControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ConceptoGasto conceptoGasto = conceptoGastoesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(conceptoGasto.getNombre()).isEqualTo("ConceptoGasto" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES))
+          .isEqualTo("ConceptoGasto" + String.format("%03d", i));
     }
   }
 
@@ -345,7 +362,8 @@ class ConceptoGastoControllerTest extends BaseControllerTest {
 
     for (int i = 31; i <= 37; i++) {
       ConceptoGasto conceptoGasto = conceptoGastoesResponse.get(i - (page * pageSize) - 1);
-      Assertions.assertThat(conceptoGasto.getNombre()).isEqualTo("ConceptoGasto" + String.format("%03d", i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(conceptoGasto.getNombre(), Language.ES))
+          .isEqualTo("ConceptoGasto" + String.format("%03d", i));
     }
   }
 
@@ -430,11 +448,16 @@ class ConceptoGastoControllerTest extends BaseControllerTest {
    * @return el objeto ConceptoGasto
    */
   private ConceptoGasto generarMockConceptoGasto(Long id, String nombre) {
+    Set<ConceptoGastoNombre> nombreConceptoGasto = new HashSet<>();
+    nombreConceptoGasto.add(new ConceptoGastoNombre(Language.ES, nombre));
+
+    Set<ConceptoGastoDescripcion> descripcionConceptoGasto = new HashSet<>();
+    descripcionConceptoGasto.add(new ConceptoGastoDescripcion(Language.ES, "descripcion-" + id));
 
     ConceptoGasto conceptoGasto = new ConceptoGasto();
     conceptoGasto.setId(id);
-    conceptoGasto.setNombre(nombre);
-    conceptoGasto.setDescripcion("descripcion-" + id);
+    conceptoGasto.setNombre(nombreConceptoGasto);
+    conceptoGasto.setDescripcion(descripcionConceptoGasto);
     conceptoGasto.setActivo(true);
     conceptoGasto.setCostesIndirectos(true);
 

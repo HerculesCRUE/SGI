@@ -42,15 +42,15 @@ export class SolicitudPublicCrearComponent extends ActionComponent implements On
     private confirmDialogService: DialogService,
     private readonly translate: TranslateService,
   ) {
-    super(router, route, actionService, confirmDialogService);
+    super(router, route, actionService, confirmDialogService, translate);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       SOLICITUD_KEY,

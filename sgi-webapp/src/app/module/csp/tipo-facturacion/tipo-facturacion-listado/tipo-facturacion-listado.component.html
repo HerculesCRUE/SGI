@@ -49,7 +49,9 @@
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'csp.tipo-facturacion.nombre' | translate}}
         </th>
-        <td mat-cell *matCellDef="let tipoFacturacion">{{tipoFacturacion.nombre}}</td>
+        <td mat-cell *matCellDef="let tipoFacturacion">
+          <sgi-i18n-table-field [field]="tipoFacturacion.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Incluir en Comunicado -->

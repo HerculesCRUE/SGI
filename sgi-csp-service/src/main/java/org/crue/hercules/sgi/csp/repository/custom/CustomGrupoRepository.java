@@ -3,8 +3,6 @@ package org.crue.hercules.sgi.csp.repository.custom;
 import java.time.Instant;
 import java.util.List;
 
-import org.crue.hercules.sgi.csp.dto.GrupoDto;
-import org.crue.hercules.sgi.csp.dto.RelacionEjecucionEconomica;
 import org.crue.hercules.sgi.csp.model.Grupo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,33 +27,21 @@ public interface CustomGrupoRepository {
   boolean isGrupoBaremable(Long grupoRef, Instant fechaBaremacion);
 
   /**
-   * Devuelve una lista de {@link GrupoDto} pertenecientes a un determinado
-   * grupo y que estén a 31 de diciembre del año de baremación
-   *
-   * @param fechaBaremacion fecha de baremación
-   * 
-   * @return Lista de {@link GrupoDto}
-   */
-  List<GrupoDto> findAllByAnio(Instant fechaBaremacion);
-
-  /**
-   * Obtiene datos economicos de los {@link Grupo}
-   * 
-   * @param specification condiciones que deben cumplir.
-   * @param pageable      paginación.
-   * @return el listado de entidades {@link RelacionEjecucionEconomica} paginadas
-   *         y
-   *         filtradas.
-   */
-  Page<RelacionEjecucionEconomica> findRelacionesEjecucionEconomica(Specification<Grupo> specification,
-      Pageable pageable);
-
-  /**
    * Obtiene los ids de {@link Grupo} que cumplen con la specification recibida.
    * 
    * @param specification condiciones que deben cumplir.
    * @return lista de ids de {@link Grupo}.
    */
   List<Long> findIds(Specification<Grupo> specification);
+
+  /**
+   * Devuelve una lista paginada y filtrada {@link Grupo} sin duplicados y
+   * ordenable por el nombre.
+   * 
+   * @param specs    condiciones que deben cumplir.
+   * @param pageable la información de la paginación.
+   * @return la lista de {@link Grupo} paginadas y/o filtradas.
+   */
+  Page<Grupo> findAllDistinct(Specification<Grupo> specs, Pageable pageable);
 
 }

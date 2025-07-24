@@ -1,0 +1,125 @@
+[
+  {
+    "key": "ap4_3_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.3.1 Txertaketa"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Zer txerto eskaintzen zaizkie agente biologikoekin edo/eta genetikoki eraldatutako organismoekin lan egingo duten langileei?</p>"
+      },
+      {
+        "key": "vacunacionCheck",
+        "type": "multicheckbox",
+        "templateOptions": {
+          "label": "Hauetako zein?",
+          "required": true,
+          "type": "array",
+          "options": [
+            {
+              "value": "tetanos",
+              "label": "Tetanos"
+            },
+            {
+              "value": "hepatitis",
+              "label": "Hepatitis"
+            },
+            {
+              "value": "otras",
+              "label": "Beste batzuk"
+            },
+            {
+              "value": "noNecesariaVacunacion",
+              "label": "Txertaketa ez da beharrezkoa"
+            }
+          ]
+        },
+        "validators": {
+          "validation": [
+            {
+              "name": "multicheckbox-restricted",
+              "options": {
+                "message": "\"${option1}\" eta \"${option2}\" erantzunak ez dira bateragarriak",
+                "restrictions": {
+                  "notValidCombinations": [
+                    {
+                      "option": "tetanos",
+                      "incompatibleOptions": [
+                        "noNecesariaVacunacion"
+                      ]
+                    },
+                    {
+                      "option": "hepatitis",
+                      "incompatibleOptions": [
+                        "noNecesariaVacunacion"
+                      ]
+                    },
+                    {
+                      "option": "otras",
+                      "incompatibleOptions": [
+                        "noNecesariaVacunacion"
+                      ]
+                    },
+                    {
+                      "option": "noNecesariaVacunacion",
+                      "incompatibleOptions": [
+                        "tetanos",
+                        "hepatitis",
+                        "otras"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      },
+      {
+        "key": "otrasTexto",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.vacunacionCheck || !model.vacunacionCheck.some((c) => c === 'otras') || model.vacunacionCheck.some((c) => c === 'noNecesariaVacunacion')",
+        "templateOptions": {
+          "placeholder": "Zehaztu",
+          "label": "Zehaztu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "noNecesariaVacunacionTexto",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.vacunacionCheck || model.vacunacionCheck.length>1 || !model.vacunacionCheck.some((c) => c === 'noNecesariaVacunacion')",
+        "templateOptions": {
+          "placeholder": "Justifikatu",
+          "label": "Justifikatu",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "template": "Txertaketaz arduratzen den erakundea",
+        "hideExpression": "!model.vacunacionCheck || !model.vacunacionCheck.length>0 || model.vacunacionCheck.some((c) => c === 'noNecesariaVacunacion')"
+      },
+      {
+        "key": "organismoSanitario",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.vacunacionCheck || !model.vacunacionCheck.length>0 || model.vacunacionCheck.some((c) => c === 'noNecesariaVacunacion')",
+        "templateOptions": {
+          "label": "Erakundea:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

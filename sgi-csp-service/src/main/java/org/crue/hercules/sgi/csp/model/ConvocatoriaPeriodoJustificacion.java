@@ -1,11 +1,16 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,9 +19,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.hibernate.validator.constraints.ScriptAssert;
@@ -86,9 +91,11 @@ public class ConvocatoriaPeriodoJustificacion extends BaseEntity {
   private Instant fechaFinPresentacion;
 
   /** Obervaciones */
-  @Column(name = "observaciones", nullable = true)
-  @Size(max = 2000)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "convocatoria_periodo_justificacion_observaciones", joinColumns = @JoinColumn(name = "convocatoria_periodo_justificacion_id"))
+  @Valid
+  @Builder.Default
+  private Set<ConvocatoriaPeriodoJustificacionObservaciones> observaciones = new HashSet<>();
 
   /** Tipo justificacion */
   @Column(name = "tipo", length = 10)

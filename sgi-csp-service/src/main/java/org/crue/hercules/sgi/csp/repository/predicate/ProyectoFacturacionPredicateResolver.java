@@ -1,5 +1,7 @@
 package org.crue.hercules.sgi.csp.repository.predicate;
 
+import java.time.Instant;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -16,6 +18,8 @@ import io.github.perplexhub.rsql.RSQLOperators;
 public class ProyectoFacturacionPredicateResolver implements SgiRSQLPredicateResolver<ProyectoFacturacion> {
   private enum Property {
 
+    FECHA_DESDE("fechaDesde"),
+    FECHA_HASTA("fechaHasta"),
     PROYECTO_ID_SGI("proyectoIdSGI");
 
     private String code;
@@ -32,7 +36,7 @@ public class ProyectoFacturacionPredicateResolver implements SgiRSQLPredicateRes
       }
       return null;
     }
-  };
+  }
 
   private ProyectoFacturacionPredicateResolver() {
 
@@ -51,6 +55,30 @@ public class ProyectoFacturacionPredicateResolver implements SgiRSQLPredicateRes
     return cb.equal(root.get(ProyectoFacturacion_.proyectoId), proyectoId);
   }
 
+  private static Predicate buildByFechaEmisionDesde(ComparisonNode node, Root<ProyectoFacturacion> root,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.GREATER_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    Instant fechaDesde = Instant.parse(node.getArguments().get(0));
+
+    return cb.or(
+        cb.isNull(root.get(ProyectoFacturacion_.fechaEmision)),
+        cb.greaterThanOrEqualTo(root.get(ProyectoFacturacion_.fechaEmision), fechaDesde));
+  }
+
+  private static Predicate buildByFechaEmisionHasta(ComparisonNode node, Root<ProyectoFacturacion> root,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.LESS_THAN_OR_EQUAL);
+    PredicateResolverUtil.validateOperatorArgumentNumber(node, 1);
+
+    Instant fechaHasta = Instant.parse(node.getArguments().get(0));
+
+    return cb.or(
+        cb.isNull(root.get(ProyectoFacturacion_.fechaEmision)),
+        cb.lessThanOrEqualTo(root.get(ProyectoFacturacion_.fechaEmision), fechaHasta));
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -66,6 +94,10 @@ public class ProyectoFacturacionPredicateResolver implements SgiRSQLPredicateRes
     }
 
     switch (property) {
+      case FECHA_DESDE:
+        return buildByFechaEmisionDesde(node, root, criteriaBuilder);
+      case FECHA_HASTA:
+        return buildByFechaEmisionHasta(node, root, criteriaBuilder);
       case PROYECTO_ID_SGI:
         return buildByProyectoIdSGI(node, root, criteriaBuilder);
       default:

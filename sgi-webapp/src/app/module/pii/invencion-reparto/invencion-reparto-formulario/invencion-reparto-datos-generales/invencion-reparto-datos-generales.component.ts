@@ -7,6 +7,7 @@ import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IRepartoGasto } from '@core/models/pii/reparto-gasto';
 import { IRepartoIngreso } from '@core/models/pii/reparto-ingreso';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { Subscription } from 'rxjs';
 import { InvencionRepartoActionService } from '../../invencion-reparto.action.service';
@@ -37,6 +38,7 @@ export class InvencionRepartoDatosGeneralesComponent extends FragmentComponent i
   constructor(
     public actionService: InvencionRepartoActionService,
     private readonly matDialog: MatDialog,
+    private readonly languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.DATOS_GENERALES, actionService);
     this.formPart = this.fragment as InvencionRepartoDatosGeneralesFragment;
@@ -56,13 +58,13 @@ export class InvencionRepartoDatosGeneralesComponent extends FragmentComponent i
     this.gastosDataSource.sortingDataAccessor = (wrapper: StatusWrapper<IRepartoGasto>, property: string) => {
       switch (property) {
         case 'solicitudProteccion':
-          return wrapper.value.invencionGasto?.solicitudProteccion?.titulo;
+          return this.languageService.getFieldValue(wrapper.value.invencionGasto?.solicitudProteccion?.titulo);
         case 'importePendienteDeducir':
           return wrapper.value.invencionGasto?.importePendienteDeducir;
         case 'importeADeducir':
           return wrapper.value.importeADeducir;
         default:
-          const gastoColumn = this.formPart.gastosColumns.find(column => column.id === property);
+          const gastoColumn = this.formPart.columnsGastos.find(column => column.id === property);
           return gastoColumn ? wrapper.value.invencionGasto.gasto.columnas[gastoColumn.id] : wrapper.value[property];
       }
     };
@@ -80,7 +82,7 @@ export class InvencionRepartoDatosGeneralesComponent extends FragmentComponent i
         case 'importeARepartir':
           return wrapper.value.importeARepartir;
         default:
-          const gastoColumn = this.formPart.gastosColumns.find(column => column.id === property);
+          const gastoColumn = this.formPart.columnsGastos.find(column => column.id === property);
           return gastoColumn ? wrapper.value.invencionIngreso.ingreso.columnas[gastoColumn.id] : wrapper.value[property];
       }
     };
@@ -98,7 +100,7 @@ export class InvencionRepartoDatosGeneralesComponent extends FragmentComponent i
   }
 
   getTotalGastosCaptionColspan(): number {
-    return this.formPart.displayGastosColumns.length - 2;
+    return this.formPart.displayColumnsGastos.length - 2;
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -139,7 +141,7 @@ export class InvencionRepartoDatosGeneralesComponent extends FragmentComponent i
   }
 
   getTotalIngresosCaptionColspan(): number {
-    return this.formPart.displayIngresosColumns.length - 2;
+    return this.formPart.displayColumnsIngresos.length - 2;
   }
 
   /** Whether the number of selected elements matches the total number of rows. */
@@ -171,4 +173,6 @@ export class InvencionRepartoDatosGeneralesComponent extends FragmentComponent i
         }
       });
   }
+
+  protected setupI18N(): void { }
 }

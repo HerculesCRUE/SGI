@@ -1,6 +1,9 @@
 package org.crue.hercules.sgi.pii.dto.com;
 
 import java.time.Instant;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -15,6 +18,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PiiComFechaLimiteProcedimientoData {
   private Instant fechaLimite;
-  private String tipoProcedimiento;
-  private String accionATomar;
+  private Collection<? extends I18nFieldValue> tipoProcedimiento;
+  private Collection<? extends I18nFieldValue> accionATomar;
 }

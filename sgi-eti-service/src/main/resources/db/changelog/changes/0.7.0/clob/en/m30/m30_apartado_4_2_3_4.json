@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_2_3_4",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3.4 Decontamination/disinfection methods"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Are decontamination/disinfection methods for contaminated material applied or contemplated?</p>"
+      },
+      {
+        "key": "metodosDesinfeccion",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please specify the methods or justify if not"
+      },
+      {
+        "key": "especificarLimitar",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Please specify:",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

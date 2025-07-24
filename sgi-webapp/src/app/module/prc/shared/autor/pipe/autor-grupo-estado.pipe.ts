@@ -14,8 +14,9 @@ export class AutorGrupoEstadoPipe implements PipeTransform {
     if (!grupos) {
       return '';
     }
-    return grupos.map(grupo =>
+    const value = grupos.map(grupo =>
       this.translateService.instant(TIPO_ESTADO_PRODUCCION_MAP.get(grupo.estado))
-    ).join(', ');
+    );
+    return value.join(', ');
   }
 }

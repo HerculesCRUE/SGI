@@ -1,11 +1,13 @@
 package org.crue.hercules.sgi.pii.dto;
 
 import java.time.Instant;
+import java.util.List;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.crue.hercules.sgi.pii.model.SolicitudProteccion;
 
 import lombok.AllArgsConstructor;
@@ -25,8 +27,7 @@ public class SolicitudProteccionInput {
   private Long invencionId;
 
   @NotEmpty
-  @Size(max = SolicitudProteccion.TITULO_MAX_LENGTH)
-  private String titulo;
+  private List<I18nFieldValueDto> titulo;
 
   @NotNull
   private Instant fechaPrioridadSolicitud;
@@ -60,5 +61,5 @@ public class SolicitudProteccionInput {
 
   private String paisProteccionRef;
 
-  private String comentarios;
+  private List<I18nFieldValueDto> comentarios;
 }

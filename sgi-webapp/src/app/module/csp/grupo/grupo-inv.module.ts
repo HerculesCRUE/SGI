@@ -8,6 +8,7 @@ import { SharedModule } from '@shared/shared.module';
 import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 import { CspSharedModule } from '../shared/csp-shared.module';
 import { GrupoDataResolver } from './grupo-data.resolver';
+import { GrupoEquipoInvestigacionExportService } from './grupo-formulario/grupo-equipo-investigacion/grupo-equipo-investigacion-export.service';
 import { GrupoListadoInvComponent } from './grupo-listado-inv/grupo-listado-inv.component';
 import { GrupoRoutingInvModule } from './grupo-routing-inv.module';
 
@@ -28,7 +29,8 @@ import { GrupoRoutingInvModule } from './grupo-routing-inv.module';
     SgpSharedModule
   ],
   providers: [
-    GrupoDataResolver
+    GrupoDataResolver,
+    GrupoEquipoInvestigacionExportService
   ]
 })
 export class GrupoInvModule { }

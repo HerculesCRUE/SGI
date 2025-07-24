@@ -1,8 +1,10 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.ModeloEjecucionNotFoundException;
@@ -10,15 +12,22 @@ import org.crue.hercules.sgi.csp.exceptions.ModeloTipoDocumentoNotFoundException
 import org.crue.hercules.sgi.csp.exceptions.ModeloTipoFaseNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.TipoDocumentoNotFoundException;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
+import org.crue.hercules.sgi.csp.model.ModeloEjecucionNombre;
 import org.crue.hercules.sgi.csp.model.ModeloTipoDocumento;
 import org.crue.hercules.sgi.csp.model.ModeloTipoFase;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.model.TipoFase;
+import org.crue.hercules.sgi.csp.model.TipoFaseDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoFaseNombre;
 import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoDocumentoRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoFaseRepository;
 import org.crue.hercules.sgi.csp.repository.TipoDocumentoRepository;
 import org.crue.hercules.sgi.csp.service.impl.ModeloTipoDocumentoServiceImpl;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -109,7 +118,7 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque el ModeloTipoDocumento ya tiene id
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoDocumento))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id tiene que ser null para crear un modeloTipoDocumento");
+        .hasMessage("Identificador de Modelo Tipo Documento debe ser nulo");
   }
 
   @Test
@@ -123,7 +132,7 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoDocumento))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id ModeloEjecucion no puede ser null para crear un modeloTipoDocumento");
+        .hasMessage("Modelo Ejecución de Modelo Tipo Documento no puede ser nulo");
   }
 
   @Test
@@ -137,7 +146,7 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoDocumento))
         .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Id TipoDocumento no puede ser null para crear un modeloTipoDocumento");
+        .hasMessage("Tipo Documento Persona de Modelo Tipo Documento no puede ser nulo");
   }
 
   @Test
@@ -167,7 +176,8 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
     // when: Creamos el ModeloTipoDocumento
     // then: Lanza una excepcion porque el ModeleoEjecucion está inactivo
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoDocumento))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El ModeloEjecucion debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("%s de Modelo Ejecución no está activo", modeloTipoDocumento.getModeloEjecucion().getNombre());
   }
 
   @Test
@@ -203,7 +213,8 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
     // when: Creamos el modeloTipoDocumento
     // then: Lanza una excepcion porque el TipoDocumento está inactivo
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoDocumento))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El TipoDocumento debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("%s de Tipo Documento no está activo", modeloTipoDocumento.getTipoDocumento().getNombre());
   }
 
   @Test
@@ -300,7 +311,8 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
     // when: Creamos el ModeloTipoDocumento
     // then: Lanza una excepcion porque el ModeloTipoFase no esta activo
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoDocumento))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El ModeloTipoFase debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("%s de Modelo Tipo Fase no está activo",
+            modeloTipoDocumento.getModeloTipoFase().getTipoFase().getNombre());
   }
 
   @Test
@@ -322,7 +334,8 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
     // when: Creamos el ModeloTipoDocumento
     // then: Lanza una excepcion porque el ModeloTipoFase no esta activo
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoDocumento))
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("El TipoFase debe estar Activo");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("%s de Tipo Fase no está activo",
+            modeloTipoDocumento.getModeloTipoFase().getTipoFase().getNombre());
   }
 
   @Test
@@ -352,7 +365,7 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque ya existe esa relacion activa
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoDocumento))
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Ya existe una asociación activa para el ModeloEjecucion '%s' y el TipoDocumento '%s' con ModeloTipoFase de '%s'",
+            "Ya existe una asociación activa para ese ModeloEjecucion y Tipo Documento",
             modeloTipoDocumento.getModeloEjecucion().getNombre(), modeloTipoDocumento.getTipoDocumento().getNombre(),
             modeloTipoDocumento.getModeloTipoFase().getTipoFase().getNombre());
   }
@@ -383,7 +396,7 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
     // then: Lanza una excepcion porque ya existe esa relacion activa
     Assertions.assertThatThrownBy(() -> service.create(modeloTipoDocumento))
         .isInstanceOf(IllegalArgumentException.class).hasMessage(
-            "Ya existe una asociación activa para el ModeloEjecucion '%s' y el TipoDocumento '%s' con ModeloTipoFase de '%s'",
+            "Ya existe una asociación activa para ese ModeloEjecucion y Tipo Documento",
             modeloTipoDocumento.getModeloEjecucion().getNombre(), modeloTipoDocumento.getTipoDocumento().getNombre(),
             "Sin fase asignada");
   }
@@ -514,41 +527,6 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
   }
 
   @Test
-  void findById_ReturnsModeloTipoDocumento() {
-    // given: Un ModeloTipoDocumento con el id buscado
-    Long idBuscado = 1L;
-    BDDMockito.given(modeloTipoDocumentoRepository.findById(idBuscado))
-        .willReturn(Optional.of(generarMockModeloTipoDocumento(idBuscado)));
-
-    // when: Buscamos el ModeloTipoDocumento por su id
-    ModeloTipoDocumento modeloTipoDocumento = service.findById(idBuscado);
-
-    // then: el ModeloTipoDocumento
-    Assertions.assertThat(modeloTipoDocumento).as("isNotNull()").isNotNull();
-    Assertions.assertThat(modeloTipoDocumento.getId()).as("getId()").isEqualTo(idBuscado);
-    Assertions.assertThat(modeloTipoDocumento.getModeloEjecucion()).as("getModeloEjecucion()").isNotNull();
-    Assertions.assertThat(modeloTipoDocumento.getModeloEjecucion().getId()).as("getModeloEjecucion().getId()")
-        .isEqualTo(1L);
-    Assertions.assertThat(modeloTipoDocumento.getTipoDocumento()).as("getTipoDocumento()").isNotNull();
-    Assertions.assertThat(modeloTipoDocumento.getTipoDocumento().getId()).as("getTipoDocumento().getId()")
-        .isEqualTo(1L);
-    Assertions.assertThat(modeloTipoDocumento.getActivo()).as("getActivo()").isTrue();
-
-  }
-
-  @Test
-  void findById_WithIdNotExist_ThrowsModeloTipoDocumentoNotFoundException() throws Exception {
-    // given: Ningun ModeloTipoDocumento con el id buscado
-    Long idBuscado = 1L;
-    BDDMockito.given(modeloTipoDocumentoRepository.findById(idBuscado)).willReturn(Optional.empty());
-
-    // when: Buscamos el ModeloTipoDocumento por su id
-    // then: lanza un ModeloTipoDocumentoNotFoundException
-    Assertions.assertThatThrownBy(() -> service.findById(idBuscado))
-        .isInstanceOf(ModeloTipoDocumentoNotFoundException.class);
-  }
-
-  @Test
   void findAllByModeloEjecucion_ReturnsPage() {
     // given: Una lista con 37 ModeloTipoDocumento para el ModeloEjecucion
     Long idModeloEjecucion = 1L;
@@ -584,7 +562,8 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).as("getTotalElements()").isEqualTo(37);
     for (int i = 31; i <= 37; i++) {
       ModeloTipoDocumento modeloTipoDocumento = page.getContent().get(i - (page.getSize() * page.getNumber()) - 1);
-      Assertions.assertThat(modeloTipoDocumento.getTipoDocumento().getNombre())
+      Assertions
+          .assertThat(I18nHelper.getValueForLanguage(modeloTipoDocumento.getTipoDocumento().getNombre(), Language.ES))
           .isEqualTo("TipoDocumento" + String.format("%03d", i));
     }
   }
@@ -596,11 +575,16 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
    * @return el objeto TipoDocumento
    */
   private TipoDocumento generarMockTipoDocumento(Long id, String nombre) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, nombre));
+
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "descripcion-" + id));
 
     TipoDocumento tipoDocumento = new TipoDocumento();
     tipoDocumento.setId(id);
-    tipoDocumento.setNombre(nombre);
-    tipoDocumento.setDescripcion("descripcion-" + id);
+    tipoDocumento.setNombre(nombreTipoDocumento);
+    tipoDocumento.setDescripcion(descripcionTipoDocumento);
     tipoDocumento.setActivo(Boolean.TRUE);
 
     return tipoDocumento;
@@ -625,9 +609,12 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
    * @return el objeto ModeloTipoDocumento
    */
   private ModeloTipoDocumento generarMockModeloTipoDocumento(Long id, Long idTipoDocumento, Long idModeloTipoFase) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecion-1"));
+
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
     modeloEjecucion.setId(1L);
-    modeloEjecucion.setNombre("nombreModeloEjecion-1");
+    modeloEjecucion.setNombre(nombreModeloEjecucion);
     modeloEjecucion.setActivo(Boolean.TRUE);
 
     ModeloTipoDocumento modeloTipoDocumento = new ModeloTipoDocumento();
@@ -652,14 +639,23 @@ class ModeloTipoDocumentoServiceTest extends BaseServiceTest {
    * @return el objeto ModeloTipoDocumento
    */
   private ModeloTipoFase generarMockModeloTipoFase(Long id, Long idTipoFase) {
+    Set<ModeloEjecucionNombre> nombreModeloEjecucion = new HashSet<>();
+    nombreModeloEjecucion.add(new ModeloEjecucionNombre(Language.ES, "nombreModeloEjecion-1"));
+
     ModeloEjecucion modeloEjecucion = new ModeloEjecucion();
     modeloEjecucion.setId(1L);
-    modeloEjecucion.setNombre("nombreModeloEjecion-1");
+    modeloEjecucion.setNombre(nombreModeloEjecucion);
+
+    Set<TipoFaseNombre> nombreTipoFase = new HashSet<>();
+    nombreTipoFase.add(new TipoFaseNombre(Language.ES, "nombre-" + idTipoFase));
+
+    Set<TipoFaseDescripcion> descripcionTipoFase = new HashSet<>();
+    descripcionTipoFase.add(new TipoFaseDescripcion(Language.ES, "descripcion-" + id));
 
     TipoFase tipoFase = new TipoFase();
     tipoFase.setId(idTipoFase);
-    tipoFase.setNombre("nombre-" + idTipoFase);
-    tipoFase.setDescripcion("descripcion-" + idTipoFase);
+    tipoFase.setNombre(nombreTipoFase);
+    tipoFase.setDescripcion(descripcionTipoFase);
     tipoFase.setActivo(Boolean.TRUE);
 
     ModeloTipoFase modeloTipoFase = new ModeloTipoFase();

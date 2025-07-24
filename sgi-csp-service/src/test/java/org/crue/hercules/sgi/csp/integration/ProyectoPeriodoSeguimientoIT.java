@@ -2,6 +2,8 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ProyectoPeriodoSeguimientoController;
@@ -9,6 +11,9 @@ import org.crue.hercules.sgi.csp.dto.ProyectoPeriodoSeguimientoPresentacionDocum
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
+import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimientoObservaciones;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -86,7 +91,9 @@ class ProyectoPeriodoSeguimientoIT extends BaseIT {
     Long idProyectoPeriodoSeguimiento = 1L;
     ProyectoPeriodoSeguimiento proyectoPeriodoSeguimiento = generarMockProyectoPeriodoSeguimiento(
         idProyectoPeriodoSeguimiento, 1L);
-    proyectoPeriodoSeguimiento.setObservaciones("obs modificado");
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES, "obs modificado"));
+    proyectoPeriodoSeguimiento.setObservaciones(observaciones);
 
     final ResponseEntity<ProyectoPeriodoSeguimiento> response = restTemplate.exchange(
         CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.PUT, buildRequest(null, proyectoPeriodoSeguimiento),
@@ -215,8 +222,8 @@ class ProyectoPeriodoSeguimientoIT extends BaseIT {
     Assertions.assertThat(proyectoPeriodoSeguimiento.getProyectoId()).as("getProyectoId()").isEqualTo(1L);
     Assertions.assertThat(proyectoPeriodoSeguimiento.getTipoSeguimiento()).as("getTipoSeguimiento()")
         .isIn(TipoSeguimiento.FINAL, TipoSeguimiento.INTERMEDIO, TipoSeguimiento.PERIODICO);
-    Assertions.assertThat(proyectoPeriodoSeguimiento.getObservaciones()).as("getObservaciones()")
-        .isEqualTo("obs-" + String.format("%03d", idProyectoPeriodoSeguimiento));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoPeriodoSeguimiento.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("obs-" + String.format("%03d", idProyectoPeriodoSeguimiento));
 
   }
 
@@ -228,6 +235,9 @@ class ProyectoPeriodoSeguimientoIT extends BaseIT {
    * @return el objeto ProyectoPeriodoSeguimiento
    */
   private ProyectoPeriodoSeguimiento generarMockProyectoPeriodoSeguimiento(Long id, Long proyectoId) {
+    Set<ProyectoPeriodoSeguimientoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ProyectoPeriodoSeguimientoObservaciones(Language.ES,
+        "obs-" + (id == null ? "" : String.format("%03d", id))));
 
     // @formatter:off
     return ProyectoPeriodoSeguimiento.builder()
@@ -237,7 +247,7 @@ class ProyectoPeriodoSeguimientoIT extends BaseIT {
         .fechaInicio(Instant.parse("2020-10-01T00:00:00Z"))
         .tipoSeguimiento(TipoSeguimiento.PERIODICO)
         .fechaFin(Instant.parse("2020-10-04T23:59:59Z"))
-        .observaciones("obs-" + (id == null ? "" : String.format("%03d", id)))
+        .observaciones(observaciones)
         .build();
     // @formatter:on
   }

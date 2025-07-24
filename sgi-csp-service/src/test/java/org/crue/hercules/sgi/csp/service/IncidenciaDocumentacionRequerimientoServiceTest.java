@@ -1,12 +1,19 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.IncidenciaDocumentacionRequerimiento;
+import org.crue.hercules.sgi.csp.model.IncidenciaDocumentacionRequerimientoAlegacion;
+import org.crue.hercules.sgi.csp.model.IncidenciaDocumentacionRequerimientoIncidencia;
+import org.crue.hercules.sgi.csp.model.IncidenciaDocumentacionRequerimientoNombreDocumento;
 import org.crue.hercules.sgi.csp.repository.IncidenciaDocumentacionRequerimientoRepository;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -58,9 +65,7 @@ class IncidenciaDocumentacionRequerimientoServiceTest extends BaseServiceTest {
             int toIndex = fromIndex + size;
             List<IncidenciaDocumentacionRequerimiento> content = incidenciaDocumentacionRequerimientoList
                 .subList(fromIndex, toIndex);
-            Page<IncidenciaDocumentacionRequerimiento> page = new PageImpl<>(content, pageable,
-                incidenciaDocumentacionRequerimientoList.size());
-            return page;
+            return new PageImpl<>(content, pageable, incidenciaDocumentacionRequerimientoList.size());
           }
         });
 
@@ -80,7 +85,9 @@ class IncidenciaDocumentacionRequerimientoServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       IncidenciaDocumentacionRequerimiento incidenciaDocumentacionRequerimiento = page.getContent().get(i);
-      Assertions.assertThat(incidenciaDocumentacionRequerimiento.getNombreDocumento())
+      Assertions
+          .assertThat(
+              I18nHelper.getValueForLanguage(incidenciaDocumentacionRequerimiento.getNombreDocumento(), Language.ES))
           .isEqualTo("IncidenciaDocumentacionRequerimiento-" + String.format("%03d", j));
     }
   }
@@ -170,9 +177,13 @@ class IncidenciaDocumentacionRequerimientoServiceTest extends BaseServiceTest {
     String incidenciaToUpdate = "Incidencia-123";
     IncidenciaDocumentacionRequerimiento incidenciaDocumentacionRequerimientoToUpdate = generarMockIncidenciaDocumentacionRequerimiento(
         id, requerimientoJustificacionId);
+
+    Set<IncidenciaDocumentacionRequerimientoIncidencia> incidenciaDocumentacion = new HashSet<>();
+    incidenciaDocumentacion.add(new IncidenciaDocumentacionRequerimientoIncidencia(Language.ES, incidenciaToUpdate));
+
     IncidenciaDocumentacionRequerimiento incidenciaDocumentacionRequerimientoOnDB = generarMockIncidenciaDocumentacionRequerimiento(
         id, requerimientoJustificacionId);
-    incidenciaDocumentacionRequerimientoToUpdate.setIncidencia(incidenciaToUpdate);
+    incidenciaDocumentacionRequerimientoToUpdate.setIncidencia(incidenciaDocumentacion);
 
     BDDMockito.given(incidenciaDocumentacionRequerimientoRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(incidenciaDocumentacionRequerimientoOnDB));
@@ -190,7 +201,9 @@ class IncidenciaDocumentacionRequerimientoServiceTest extends BaseServiceTest {
     Assertions.assertThat(incidenciaDocumentacionRequerimiento.getId()).as("getId()").isEqualTo(id);
     Assertions.assertThat(incidenciaDocumentacionRequerimiento.getRequerimientoJustificacionId())
         .as("getRequerimientoJustificacionId()").isEqualTo(requerimientoJustificacionId);
-    Assertions.assertThat(incidenciaDocumentacionRequerimiento.getIncidencia()).as("getIncidencia()")
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(incidenciaDocumentacionRequerimiento.getIncidencia(), Language.ES))
+        .as("getIncidencia()")
         .isEqualTo(incidenciaToUpdate);
   }
 
@@ -215,11 +228,14 @@ class IncidenciaDocumentacionRequerimientoServiceTest extends BaseServiceTest {
     Long id = 123L;
     Long requerimientoJustificacionId = 1234L;
     String alegacionToUpdate = "Alegacion-123";
+    Set<IncidenciaDocumentacionRequerimientoAlegacion> alegacionDocumentacion = new HashSet<>();
+    alegacionDocumentacion.add(new IncidenciaDocumentacionRequerimientoAlegacion(Language.ES, alegacionToUpdate));
+
     IncidenciaDocumentacionRequerimiento incidenciaDocumentacionRequerimientoToUpdate = generarMockIncidenciaDocumentacionRequerimiento(
         id, requerimientoJustificacionId);
     IncidenciaDocumentacionRequerimiento incidenciaDocumentacionRequerimientoOnDB = generarMockIncidenciaDocumentacionRequerimiento(
         id, requerimientoJustificacionId);
-    incidenciaDocumentacionRequerimientoToUpdate.setAlegacion(alegacionToUpdate);
+    incidenciaDocumentacionRequerimientoToUpdate.setAlegacion(alegacionDocumentacion);
 
     BDDMockito.given(incidenciaDocumentacionRequerimientoRepository.findById(ArgumentMatchers.anyLong()))
         .willReturn(Optional.of(incidenciaDocumentacionRequerimientoOnDB));
@@ -237,7 +253,9 @@ class IncidenciaDocumentacionRequerimientoServiceTest extends BaseServiceTest {
     Assertions.assertThat(incidenciaDocumentacionRequerimiento.getId()).as("getId()").isEqualTo(id);
     Assertions.assertThat(incidenciaDocumentacionRequerimiento.getRequerimientoJustificacionId())
         .as("getRequerimientoJustificacionId()").isEqualTo(requerimientoJustificacionId);
-    Assertions.assertThat(incidenciaDocumentacionRequerimiento.getAlegacion()).as("getAlegacion()")
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(incidenciaDocumentacionRequerimiento.getAlegacion(), Language.ES))
+        .as("getAlegacion()")
         .isEqualTo(alegacionToUpdate);
   }
 
@@ -251,11 +269,21 @@ class IncidenciaDocumentacionRequerimientoServiceTest extends BaseServiceTest {
   private IncidenciaDocumentacionRequerimiento generarMockIncidenciaDocumentacionRequerimiento(Long id,
       String alegacion,
       String incidencia, String nombreDocumento, Long requerimientoJustificacionId) {
+    Set<IncidenciaDocumentacionRequerimientoNombreDocumento> nombreDocumentoIncidencia = new HashSet<>();
+    nombreDocumentoIncidencia
+        .add(new IncidenciaDocumentacionRequerimientoNombreDocumento(Language.ES, nombreDocumento));
+
+    Set<IncidenciaDocumentacionRequerimientoIncidencia> incidenciaDocumentacion = new HashSet<>();
+    incidenciaDocumentacion.add(new IncidenciaDocumentacionRequerimientoIncidencia(Language.ES, incidencia));
+
+    Set<IncidenciaDocumentacionRequerimientoAlegacion> alegacionDocumentacion = new HashSet<>();
+    alegacionDocumentacion.add(new IncidenciaDocumentacionRequerimientoAlegacion(Language.ES, alegacion));
+
     return IncidenciaDocumentacionRequerimiento.builder()
         .id(id)
-        .alegacion(alegacion)
-        .incidencia(incidencia)
-        .nombreDocumento(nombreDocumento)
+        .alegacion(alegacionDocumentacion)
+        .incidencia(incidenciaDocumentacion)
+        .nombreDocumento(nombreDocumentoIncidencia)
         .requerimientoJustificacionId(requerimientoJustificacionId)
         .build();
   }

@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,6 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -50,10 +57,12 @@ public class ProrrogaDocumento extends BaseEntity {
   private Long proyectoProrrogaId;
 
   /** Nombre */
-  @Column(name = "nombre", length = 50, nullable = false)
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "prorroga_documento_nombre", joinColumns = @JoinColumn(name = "prorroga_documento_id"))
   @NotEmpty
-  @Size(max = 50)
-  private String nombre;
+  @Valid
+  @Builder.Default
+  private Set<ProrrogaDocumentoNombre> nombre = new HashSet<>();
 
   /** Referencia documento */
   @Column(name = "documento_ref", length = 250, nullable = false)
@@ -67,9 +76,11 @@ public class ProrrogaDocumento extends BaseEntity {
   private TipoDocumento tipoDocumento;
 
   /** Comentario */
-  @Column(name = "comentario", length = 2000)
-  @Size(max = 2000)
-  private String comentario;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "prorroga_documento_comentario", joinColumns = @JoinColumn(name = "prorroga_documento_id"))
+  @Valid
+  @Builder.Default
+  private Set<ProrrogaDocumentoComentario> comentario = new HashSet<>();
 
   /** Visible */
   @Column(name = "visible", columnDefinition = "boolean default true", nullable = false)

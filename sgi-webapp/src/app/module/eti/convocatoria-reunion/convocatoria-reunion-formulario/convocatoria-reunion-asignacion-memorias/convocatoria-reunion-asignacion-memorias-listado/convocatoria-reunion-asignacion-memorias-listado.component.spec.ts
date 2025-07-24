@@ -11,6 +11,7 @@ import { LoggerTestingModule } from 'ngx-logger/testing';
 
 import { ConvocatoriaReunionActionService } from '../../../convocatoria-reunion.action.service';
 import { ConvocatoriaReunionAsignacionMemoriasListadoComponent } from './convocatoria-reunion-asignacion-memorias-listado.component';
+import { SgpSharedModule } from 'src/app/esb/sgp/shared/sgp-shared.module';
 
 describe('ConvocatoriaReunionAsignacionMemoriasListadoComponent', () => {
   let component: ConvocatoriaReunionAsignacionMemoriasListadoComponent;
@@ -28,7 +29,8 @@ describe('ConvocatoriaReunionAsignacionMemoriasListadoComponent', () => {
         HttpClientTestingModule,
         LoggerTestingModule,
         FlexModule,
-        RouterTestingModule
+        RouterTestingModule,
+        SgpSharedModule
       ],
       providers: [
         { provide: SnackBarService, useValue: TestUtils.getSnackBarServiceSpy() },

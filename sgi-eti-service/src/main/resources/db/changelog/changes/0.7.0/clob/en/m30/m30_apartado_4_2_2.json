@@ -1,0 +1,49 @@
+[
+  {
+    "key": "ap4_2_2",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.2 Replacement"
+    },
+    "fieldGroup": [
+      {
+        "template": "Could this research activity be carried out with a biological agent/material, hazardous chemicals, radioactive substances and/or nanoparticles of lower risk to health or the environment?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "When the nature of the activity allows it, the researcher, taking into account the technical and scientific information available, is to avoid the use of dangerous biological materials/agents by replacing them with other agents that, depending on the conditions of use, are not dangerous, hazardous chemicals, radioactive substances and/or nanoparticles for the safety or health of workers and the environment, or are to a lesser extent <b><a href='https://boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#a5' target='_blank'>(Article 5 RD664/1997)</a></b>."
+      },
+      {
+        "key": "realizarseInvestigacion",
+        "type": "radio",
+        "templateOptions": {
+          "label": "Choose an option:",
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarRealizarseInvestigacion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!(model.realizarseInvestigacion && model.realizarseInvestigacion === 'si')",
+        "templateOptions": {
+          "name": "Please justify:",
+          "required": true
+        }
+      }
+    ]
+  }
+]

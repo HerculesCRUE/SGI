@@ -19,10 +19,10 @@
           <mat-tree [dataSource]="dataSource" [treeControl]="treeControl" class="arbol-tree">
             <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle>
               <li class="mat-tree-node">
-                <button mat-button disabled></button>
+                <button mat-icon-button disabled></button>
                 <mat-checkbox class="checkbox" color="primary" [checked]="node.checked" [disabled]="node.disabled"
                   (change)="onCheckNode(node, $event)">
-                  {{node.areaTematica.value.nombre}}
+                  <sgi-i18n-tree-field [field]="node.areaTematica.value.nombre"></sgi-i18n-tree-field>
                 </mat-checkbox>
               </li>
             </mat-tree-node>
@@ -37,7 +37,7 @@
                   </button>
                   <mat-checkbox class="checkbox" color="primary" [checked]="node.checked" [disabled]="node.disabled"
                     (change)="onCheckNode(node, $event)">
-                    {{node.areaTematica.value.nombre}}
+                    <sgi-i18n-tree-field [field]="node.areaTematica.value.nombre"></sgi-i18n-tree-field>
                   </mat-checkbox>
                 </div>
                 <ul [class.arbol-invisible]="!treeControl.isExpanded(node)">
@@ -55,6 +55,7 @@
   <button color="accent" (click)="doAction()" [disabled]="this.actionDisabled" mat-raised-button type="submit">
     <mat-icon class="save-icon">save</mat-icon>{{textSaveOrUpdate | translate}}
   </button>
-  <button class="link-cancelar" mat-button type="button" mat-dialog-close>{{'btn.cancel' |
-    translate}}</button>
+  <button class="link-cancelar" mat-button type="button" mat-dialog-close>
+    {{'btn.cancel' | translate}}
+  </button>
 </mat-dialog-actions>

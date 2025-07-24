@@ -1,0 +1,141 @@
+[
+  {
+    "key": "ap2_1",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "2.1 Personnel who will carry out tasks with animals"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Below are all the members of the research team. Add in this section any other person who collaborates in the project by carrying out tasks related to experimental animals.<br><br>Please specify for each person<br><ul><li>Identifying data (name, email, connection and academic level)</li><li>Specific tasks that will be carried out in accordance with what is described in section '3.3 Methodological design' (design of the project and methodology, performance of each procedure/intervention and/or euthanasia, application of the supervision protocol, etc.)</li></ul></p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>The regulations regarding animal experimentation are under continuous review. Currently the training necessary for animal experimentation is specified in the ministerial Order <a href='https://www.boe.es/diario_boe/txt.php?id=BOE-A-2015-3564' target='_blank'>ECC/566/2015</a>. We no longer speak of categories A, B, C and D but of 'functions'. In a simplified way, the equivalence between the two is as follows:<br>Information about authorised training courses can be found on the websites of <a href='https://secal.es' target='_blank'>SECAL</a> and <a href='https://www.animalaria.org' target='_blank'>ANIMALARIA</a>.</div><br><ul><li>Category A: Function a and b</li><li>Category B: Function b and c</li><li>Category C: Function c and d</li><li>Category D1: Function e</li><li>Category D2: Function f and b</li></ul></p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: please remember that you need to provide a copy of all the research team's accreditations in section '5.1. Accreditations' to be archived together with the project report.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note:  In each request there should only be one person with Function 'd', who will also be the person requesting the evaluation.</p><p>The rest of the team members will have function 'b' or 'c' depending on whether they perform euthanasia ('b') or procedures/interventions ('c'), and there will be as many as there are accredited personnel. Those who have not yet completed the TBS work under supervision (required for accreditation) cannot be included as team members on that application until they have completed their TBS and obtained training.</p><p>Those who hold the old category B and C accreditations should request accreditation for the new functions from the same accreditation agency.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "This section is completed automatically based on the data entered in the section <a href='#MODULE_PATH#/peticiones-evaluacion/#PETICION_EVALUACION_ID#/tareas' target='_blank'><b>Task assignment</b></a> of the <b>Evaluation Request</b>. Access this menu item to make the necessary modifications.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "type": "table-crud",
+        "key": "equipoInvestigador",
+        "templateOptions": {
+          "entity": "research team",
+          "gender": "male",
+          "disabled": true
+        },
+        "fieldArray": {
+          "templateOptions": {
+            "text": "Research team"
+          },
+          "fieldGroup": [
+            {
+              "key": "nombre",
+              "type": "input",
+              "templateOptions": {
+                "label": "Name",
+                "order": 10,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.nombre"
+              }
+            },
+            {
+              "key": "apellidos",
+              "type": "input",
+              "templateOptions": {
+                "label": "Surname",
+                "order": 20,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.apellidos"
+              }
+            },
+            {
+              "key": "email",
+              "type": "input",
+              "templateOptions": {
+                "label": "E-mail",
+                "order": 30,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.emails?.find((e)=>e.principal)?.email"
+              }
+            },
+            {
+              "key": "vinculacion",
+              "type": "input",
+              "templateOptions": {
+                "label": "Links",
+                "order": 40,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona?.vinculacion?.categoriaProfesional?.nombre"
+              }
+            },
+            {
+              "key": "nivelAcademico",
+              "type": "input",
+              "templateOptions": {
+                "label": "Academic level",
+                "order": 50,
+                "expressionModelValue": "formState.tareas[$1].equipoTrabajo.persona.datosAcademicos?.nivelAcademico?.nombre"
+              }
+            },
+            {
+              "key": "tarea",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Task",
+                "order": 60,
+                "expressionModelValue": "formState.tareas[$1].tipoTarea?.nombre"
+              }
+            },
+            {
+              "key": "experiencia",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Specific training or experience",
+                "order": 70,
+                "expressionModelValue": "formState.tareas[$1].formacionEspecifica?.nombre"
+              }
+            },
+            {
+              "key": "organismo",
+              "type": "i18n-input",
+              "templateOptions": {
+                "label": "Accrediting agency",
+                "order": 80,
+                "expressionModelValue": "formState.tareas[$1].organismo"
+              }
+            },
+            {
+              "key": "anio",
+              "type": "input",
+              "templateOptions": {
+                "type": "number",
+                "label": "Year",
+                "order": 90,
+                "expressionModelValue": "formState.tareas[$1].anio"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

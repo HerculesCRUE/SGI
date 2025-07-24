@@ -67,8 +67,11 @@
                 <mat-label>
                   {{'csp.ejecucion-economica.facturas-justificantes.observaciones' | translate}}
                 </mat-label>
-                <textarea matInput formControlName="observaciones"
-                  placeholder="{{'csp.ejecucion-economica.facturas-justificantes.observaciones' | translate}}"></textarea>
+                <sgi-i18n-textarea #observaciones formControlName="observaciones"
+                  placeholder="{{'csp.ejecucion-economica.facturas-justificantes.observaciones' | translate}}"
+                  maxlength="2000">
+                </sgi-i18n-textarea>
+                <mat-hint>{{observaciones.editingValue.length}} / 2000</mat-hint>
               </mat-form-field>
             </div>
           </div>

@@ -1,7 +1,8 @@
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FlexModule } from '@angular/flex-layout';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { IPaisValidado } from '@core/models/pii/pais-validado';
 import TestUtils from '@core/utils/test-utils';
@@ -38,6 +39,7 @@ describe('PaisValidadoModalComponent', () => {
         FlexModule,
         FormsModule,
         ReactiveFormsModule,
+        HttpClientTestingModule
       ],
       providers: [
         { provide: MatDialogRef, useValue: TestUtils.buildDialogCommonMatDialogRef() },

@@ -54,42 +54,4 @@ public interface ModeloTipoHitoService {
    */
   Page<ModeloTipoHito> findAllByModeloEjecucion(Long idModeloEjecucion, String query, Pageable pageable);
 
-  /**
-   * Obtiene los {@link ModeloTipoHito} activos para convocatorias para un
-   * {@link ModeloEjecucion}.
-   *
-   * @param idModeloEjecucion el id de la entidad {@link ModeloEjecucion}.
-   * @param query             la información del filtro.
-   * @param pageable          la información de la paginación.
-   * @return la lista de entidades {@link ModeloTipoHito} del
-   *         {@link ModeloEjecucion} paginadas.
-   */
-  Page<ModeloTipoHito> findAllByModeloEjecucionActivosConvocatoria(Long idModeloEjecucion, String query,
-      Pageable pageable);
-
-  /**
-   * Obtiene los {@link ModeloTipoHito} activos para proyectos para un
-   * {@link ModeloEjecucion}.
-   *
-   * @param idModeloEjecucion el id de la entidad {@link ModeloEjecucion}.
-   * @param query             la información del filtro.
-   * @param pageable          la información de la paginación.
-   * @return la lista de entidades {@link ModeloTipoHito} del
-   *         {@link ModeloEjecucion} paginadas.
-   */
-  Page<ModeloTipoHito> findAllByModeloEjecucionActivosProyecto(Long idModeloEjecucion, String query, Pageable pageable);
-
-  /**
-   * Obtiene los {@link ModeloTipoHito} activos para solicitudes para un
-   * {@link ModeloEjecucion}.
-   *
-   * @param idModeloEjecucion el id de la entidad {@link ModeloEjecucion}.
-   * @param query             la información del filtro.
-   * @param pageable          la información de la paginación.
-   * @return la lista de entidades {@link ModeloTipoHito} del
-   *         {@link ModeloEjecucion} paginadas.
-   */
-  Page<ModeloTipoHito> findAllByModeloEjecucionActivosSolicitud(Long idModeloEjecucion, String query,
-      Pageable pageable);
-
 }

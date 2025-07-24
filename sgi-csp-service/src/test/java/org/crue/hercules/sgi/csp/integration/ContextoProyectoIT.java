@@ -1,9 +1,13 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ContextoProyecto;
+import org.crue.hercules.sgi.csp.model.ContextoProyectoIntereses;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpEntity;
@@ -119,10 +123,12 @@ class ContextoProyectoIT extends BaseIT {
    * @return el objeto ContextoProyecto
    */
   private ContextoProyecto generarMockContextoProyecto(Long id) {
+    Set<ContextoProyectoIntereses> interesesContextoProyecto = new HashSet<>();
+    interesesContextoProyecto.add(new ContextoProyectoIntereses(Language.ES, "intereses"));
     ContextoProyecto contextoProyecto = new ContextoProyecto();
     contextoProyecto.setId(id);
     contextoProyecto.setProyectoId(id == null ? 1L : id);
-    contextoProyecto.setIntereses("intereses");
+    contextoProyecto.setIntereses(interesesContextoProyecto);
     return contextoProyecto;
   }
 

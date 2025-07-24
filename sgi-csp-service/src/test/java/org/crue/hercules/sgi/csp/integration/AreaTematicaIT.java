@@ -2,10 +2,16 @@ package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.AreaTematica;
+import org.crue.hercules.sgi.csp.model.AreaTematicaDescripcion;
+import org.crue.hercules.sgi.csp.model.AreaTematicaNombre;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -95,8 +101,10 @@ class AreaTematicaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     AreaTematica areaTematicaDisabled = response.getBody();
     Assertions.assertThat(areaTematicaDisabled.getId()).as("getId()").isEqualTo(idAreaTematica);
-    Assertions.assertThat(areaTematicaDisabled.getNombre()).as("getNombre()").isEqualTo("nombre-001");
-    Assertions.assertThat(areaTematicaDisabled.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicaDisabled.getNombre(), Language.ES))
+        .as("getNombre()").isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicaDisabled.getDescripcion(), Language.ES))
+        .as("getDescripcion()").isEqualTo("descripcion-001");
     Assertions.assertThat(areaTematicaDisabled.getPadre()).as("getPadre()").isNull();
     Assertions.assertThat(areaTematicaDisabled.getActivo()).as("getActivo()").isEqualTo(Boolean.TRUE);
   }
@@ -114,8 +122,10 @@ class AreaTematicaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     AreaTematica areaTematicaDisabled = response.getBody();
     Assertions.assertThat(areaTematicaDisabled.getId()).as("getId()").isEqualTo(idAreaTematica);
-    Assertions.assertThat(areaTematicaDisabled.getNombre()).as("getNombre()").isEqualTo("nombre-001");
-    Assertions.assertThat(areaTematicaDisabled.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicaDisabled.getNombre(), Language.ES))
+        .as("getNombre()").isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicaDisabled.getDescripcion(), Language.ES))
+        .as("getDescripcion()").isEqualTo("descripcion-001");
     Assertions.assertThat(areaTematicaDisabled.getPadre()).as("getPadre()").isNull();
     Assertions.assertThat(areaTematicaDisabled.getActivo()).as("getActivo()").isEqualTo(Boolean.FALSE);
   }
@@ -132,8 +142,10 @@ class AreaTematicaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     AreaTematica areaTematica = response.getBody();
     Assertions.assertThat(areaTematica.getId()).as("getId()").isEqualTo(idAreaTematica);
-    Assertions.assertThat(areaTematica.getNombre()).as("getNombre()").isEqualTo("nombre-001");
-    Assertions.assertThat(areaTematica.getDescripcion()).as("getDescripcion()").isEqualTo("descripcion-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematica.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematica.getDescripcion(), Language.ES))
+        .as("getDescripcion()").isEqualTo("descripcion-001");
     Assertions.assertThat(areaTematica.getActivo()).as("getActivo()").isTrue();
   }
 
@@ -144,8 +156,8 @@ class AreaTematicaIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort).queryParam("q", filter)
         .build(false).toUri();
@@ -162,11 +174,14 @@ class AreaTematicaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(areaTematicas.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("A-" + String.format("%03d", 3));
-    Assertions.assertThat(areaTematicas.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("A-" + String.format("%03d", 2));
-    Assertions.assertThat(areaTematicas.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("A-" + String.format("%03d", 1));
   }
 
@@ -178,8 +193,8 @@ class AreaTematicaIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-ARTM-V")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + "/grupo").queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -196,11 +211,14 @@ class AreaTematicaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(areaTematicas.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(areaTematicas.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(areaTematicas.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
 
@@ -212,8 +230,8 @@ class AreaTematicaIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s", tokenBuilder.buildToken("user", "CSP-ARTM-V")));
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + "/grupo/todos").queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -230,11 +248,14 @@ class AreaTematicaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(areaTematicas.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 3));
-    Assertions.assertThat(areaTematicas.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 2));
-    Assertions.assertThat(areaTematicas.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("nombre-" + String.format("%03d", 1));
   }
 
@@ -245,8 +266,8 @@ class AreaTematicaIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
-    String sort = "nombre,desc";
-    String filter = "descripcion=ke=00";
+    String sort = "nombre.value,desc";
+    String filter = "descripcion.value=ke=00";
 
     Long areaTematicaId = 1L;
 
@@ -265,11 +286,14 @@ class AreaTematicaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(areaTematicas.get(0).getNombre()).as("get(0).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())")
         .isEqualTo("A-" + String.format("%03d", 4));
-    Assertions.assertThat(areaTematicas.get(1).getNombre()).as("get(1).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())")
         .isEqualTo("A-" + String.format("%03d", 3));
-    Assertions.assertThat(areaTematicas.get(2).getNombre()).as("get(2).getNombre())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(areaTematicas.get(2).getNombre(), Language.ES))
+        .as("get(2).getNombre())")
         .isEqualTo("A-" + String.format("%03d", 2));
   }
 
@@ -292,10 +316,16 @@ class AreaTematicaIT extends BaseIT {
    * @return el objeto AreaTematica
    */
   private AreaTematica generarMockAreaTematica(Long id, String nombre, Long idAreaTematicaPadre) {
+    Set<AreaTematicaNombre> nombreAreaTematica = new HashSet<>();
+    nombreAreaTematica.add(new AreaTematicaNombre(Language.ES, nombre));
+
+    Set<AreaTematicaDescripcion> descripcionAreaTematica = new HashSet<>();
+    descripcionAreaTematica.add(new AreaTematicaDescripcion(Language.ES, "descripcion-" + String.format("%03d", id)));
+
     AreaTematica areaTematica = new AreaTematica();
     areaTematica.setId(id);
-    areaTematica.setNombre(nombre);
-    areaTematica.setDescripcion("descripcion-" + String.format("%03d", id));
+    areaTematica.setNombre(nombreAreaTematica);
+    areaTematica.setDescripcion(descripcionAreaTematica);
 
     if (idAreaTematicaPadre != null) {
       areaTematica.setPadre(generarMockAreaTematica(idAreaTematicaPadre));

@@ -2,17 +2,22 @@ package org.crue.hercules.sgi.csp.model;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.Size;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -97,9 +102,11 @@ public class RequisitoIP extends BaseEntity {
   private Integer numMaximoNoCompetitivosActivos;
 
   /** Otros requisitos */
-  @Column(name = "otros_requisitos", length = 250, nullable = true)
-  @Size(max = 250)
-  private String otrosRequisitos;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "requisito_ip_otros_requisitos", joinColumns = @JoinColumn(name = "requisitoip_id"))
+  @Valid
+  @Builder.Default
+  private Set<RequisitoIPOtrosRequisitos> otrosRequisitos = new HashSet<>();
 
   // Relation mappings for JPA metamodel generation only
   @OneToOne

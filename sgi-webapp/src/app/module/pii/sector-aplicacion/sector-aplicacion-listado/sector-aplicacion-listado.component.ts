@@ -53,15 +53,24 @@ export class SectorAplicacionListadoComponent extends AbstractTablePaginationCom
     private readonly dialogService: DialogService,
     private readonly translate: TranslateService
   ) {
-    super();
+    super(translate);
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'nombre') {
+        return 'nombre.value';
+      } else if (column === 'descripcion') {
+        return 'descripcion.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SECTOR_APLICACION_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

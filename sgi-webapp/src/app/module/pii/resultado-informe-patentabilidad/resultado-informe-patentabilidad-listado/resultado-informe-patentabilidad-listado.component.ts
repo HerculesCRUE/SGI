@@ -54,12 +54,21 @@ export class ResultadoInformePatentabilidadListadoComponent
     public authService: SgiAuthService,
     private readonly translate: TranslateService
   ) {
-    super();
+    super(translate);
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'nombre') {
+        return 'nombre.value';
+      } else if (column === 'descripcion') {
+        return 'descripcion.value';
+      }
+      return column;
+    }
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
   /**
@@ -122,7 +131,7 @@ export class ResultadoInformePatentabilidadListadoComponent
     this.suscripciones.push(subcription);
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       RESULTADO_INFORME_PATENTABILIDAD_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

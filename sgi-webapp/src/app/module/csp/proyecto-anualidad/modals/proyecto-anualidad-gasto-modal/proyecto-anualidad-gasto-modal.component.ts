@@ -583,7 +583,7 @@ export class ProyectoAnualidadGastoModalComponent extends DialogFormComponent<Pr
   }
 
   displayerCodigoEconomico(codigoEconomico: ICodigoEconomicoGasto): string {
-    return `${codigoEconomico?.id} - ${codigoEconomico?.nombre ?? ''}` ?? '';
+    return `${codigoEconomico?.id} - ${codigoEconomico?.nombre}`;
   }
 
 }

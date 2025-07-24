@@ -1,9 +1,10 @@
+import { I18N_FIELD_REQUEST_CONVERTER } from '@core/i18n/i18n-field.converter';
 import { IRequerimientoJustificacion } from '@core/models/csp/requerimiento-justificacion';
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IRequerimientoJustificacionRequest } from './requerimiento-justificacion-request';
 
-class RequerimientoJustificacionRequestConverter extends SgiBaseConverter<IRequerimientoJustificacionRequest, IRequerimientoJustificacion>{
+class RequerimientoJustificacionRequestConverter extends SgiBaseConverter<IRequerimientoJustificacionRequest, IRequerimientoJustificacion> {
 
   toTarget(value: IRequerimientoJustificacionRequest): IRequerimientoJustificacion {
     throw new Error('Method not implemented.');
@@ -29,7 +30,7 @@ class RequerimientoJustificacionRequestConverter extends SgiBaseConverter<IReque
       importeReintegrarCd: value.importeReintegrarCd,
       importeReintegrarCi: value.importeReintegrarCi,
       interesesReintegrar: value.interesesReintegrar,
-      observaciones: value.observaciones,
+      observaciones: value.observaciones ? I18N_FIELD_REQUEST_CONVERTER.fromTargetArray(value.observaciones) : [],
       proyectoPeriodoJustificacionId: value.proyectoPeriodoJustificacion?.id,
       proyectoProyectoSgeId: value.proyectoProyectoSge?.id,
       recursoEstimado: value.recursoEstimado,

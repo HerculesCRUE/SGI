@@ -8,6 +8,7 @@ import { IAutorizacion } from '@core/models/csp/autorizacion';
 import { Estado, ESTADO_MAP, IEstadoAutorizacion } from '@core/models/csp/estado-autorizacion';
 import { AutorizacionService } from '@core/services/csp/autorizacion/autorizacion.service';
 import { EstadoAutorizacionService } from '@core/services/csp/estado-autorizacion/estado-autorizacion.service';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { TranslateService } from '@ngx-translate/core';
 import { DateTime } from 'luxon';
 import { Observable } from 'rxjs';
@@ -92,7 +93,7 @@ export class CambioEstadoModalComponent extends DialogActionComponent<IEstadoAut
       estadoActual: new FormControl({ value: this.data.estadoActual, disabled: true }),
       estadoNuevo: new FormControl(null),
       fechaEstado: new FormControl(DateTime.now(), Validators.required),
-      comentario: new FormControl('', [Validators.maxLength(2000)])
+      comentario: new FormControl([], [I18nValidators.maxLength(2000)])
     });
   }
 

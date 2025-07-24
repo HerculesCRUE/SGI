@@ -5,8 +5,9 @@ import java.util.Collections;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
-import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoDocumento;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -52,11 +53,6 @@ public class TipoDocumentoIT extends BaseIT {
   @Test
   public void getTipoDocumento_WithId_ReturnsTipoDocumento() throws Exception {
 
-    Formulario formulario = new Formulario();
-    formulario.setId(4L);
-    formulario.setNombre("Seguimiento Anual");
-    formulario.setDescripcion("Descripcion");
-
     final ResponseEntity<TipoDocumento> response = restTemplate.exchange(
         TIPO_DOCUMENTO_CONTROLLER_BASE_PATH + PATH_PARAMETER_ID, HttpMethod.GET, buildRequest(null, null),
         TipoDocumento.class, 1L);
@@ -66,8 +62,9 @@ public class TipoDocumentoIT extends BaseIT {
     final TipoDocumento tipoDocumento = response.getBody();
 
     Assertions.assertThat(tipoDocumento.getId()).isEqualTo(1L);
-    Assertions.assertThat(tipoDocumento.getNombre()).isEqualTo("TipoDocumento1");
-    Assertions.assertThat(tipoDocumento.getFormulario()).isEqualTo(formulario);
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoDocumento.getNombre(), Language.ES))
+        .isEqualTo("TipoDocumento1");
+    Assertions.assertThat(tipoDocumento.getFormularioId()).isEqualTo(4L);
   }
 
   @Test
@@ -105,16 +102,19 @@ public class TipoDocumentoIT extends BaseIT {
     Assertions.assertThat(response.getHeaders().getFirst("X-Total-Count")).isEqualTo("12");
 
     // Contiene de nombre='TipoDocumento6' a 'TipoDocumento8'
-    Assertions.assertThat(tipoDocumentos.get(0).getNombre()).isEqualTo("TipoDocumento6");
-    Assertions.assertThat(tipoDocumentos.get(1).getNombre()).isEqualTo("TipoDocumento7");
-    Assertions.assertThat(tipoDocumentos.get(2).getNombre()).isEqualTo("TipoDocumento8");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoDocumentos.get(0).getNombre(), Language.ES))
+        .isEqualTo("TipoDocumento6");
+    Assertions.assertThat(
+        I18nHelper.getValueForLanguage(tipoDocumentos.get(1).getNombre(), Language.ES)).isEqualTo("TipoDocumento7");
+    Assertions.assertThat(
+        I18nHelper.getValueForLanguage(tipoDocumentos.get(2).getNombre(), Language.ES)).isEqualTo("TipoDocumento8");
   }
 
   @Test
   public void findAll_WithSearchQuery_ReturnsFilteredTipoDocumentoList() throws Exception {
     // when: Búsqueda por nombre like e id equals
     Long id = 5L;
-    String query = "nombre=ke=TipoDocumento;id==" + id;
+    String query = "nombre.value=ke=TipoDocumento;id==" + id;
 
     URI uri = UriComponentsBuilder.fromUriString(TIPO_DOCUMENTO_CONTROLLER_BASE_PATH).queryParam("q", query)
         .build(false).toUri();
@@ -130,13 +130,14 @@ public class TipoDocumentoIT extends BaseIT {
     final List<TipoDocumento> tipoDocumentos = response.getBody();
     Assertions.assertThat(tipoDocumentos.size()).isEqualTo(1);
     Assertions.assertThat(tipoDocumentos.get(0).getId()).isEqualTo(id);
-    Assertions.assertThat(tipoDocumentos.get(0).getNombre()).startsWith("TipoDocumento");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoDocumentos.get(0).getNombre(), Language.ES))
+        .startsWith("TipoDocumento");
   }
 
   @Test
   public void findAll_WithSortQuery_ReturnsOrderedTipoDocumentoList() throws Exception {
     // when: Ordenación por nombre desc
-    String query = "nombre,desc";
+    String query = "nombre.value,desc";
 
     URI uri = UriComponentsBuilder.fromUriString(TIPO_DOCUMENTO_CONTROLLER_BASE_PATH).queryParam("s", query)
         .build(false).toUri();
@@ -154,7 +155,8 @@ public class TipoDocumentoIT extends BaseIT {
     for (int i = 0; i < 8; i++) {
       TipoDocumento tipoDocumento = tipoDocumentos.get(i);
       Assertions.assertThat(tipoDocumento.getId()).isEqualTo(9 - i);
-      Assertions.assertThat(tipoDocumento.getNombre()).isEqualTo("TipoDocumento" + String.format("%d", 9 - i));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoDocumento.getNombre(), Language.ES))
+          .isEqualTo("TipoDocumento" + String.format("%d", 9 - i));
     }
   }
 
@@ -165,9 +167,9 @@ public class TipoDocumentoIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     // when: Ordena por nombre desc
-    String sort = "nombre,desc";
+    String sort = "nombre.value,desc";
     // when: Filtra por nombre like e id equals
-    String filter = "nombre=ke=TipoDocumento";
+    String filter = "nombre.value=ke=TipoDocumento";
 
     URI uri = UriComponentsBuilder.fromUriString(TIPO_DOCUMENTO_CONTROLLER_BASE_PATH).queryParam("s", sort)
         .queryParam("q", filter).build(false).toUri();
@@ -188,34 +190,13 @@ public class TipoDocumentoIT extends BaseIT {
 
     // Contiene nombre='TipoDocumento8', 'TipoDocumento7',
     // 'TipoDocumento6'
-    Assertions.assertThat(tipoDocumentos.get(0).getNombre()).isEqualTo("TipoDocumento" + String.format("%d", 9));
-    Assertions.assertThat(tipoDocumentos.get(1).getNombre()).isEqualTo("TipoDocumento" + String.format("%d", 8));
-    Assertions.assertThat(tipoDocumentos.get(2).getNombre()).isEqualTo("TipoDocumento" + String.format("%d", 7));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoDocumentos.get(0).getNombre(), Language.ES))
+        .isEqualTo("TipoDocumento" + String.format("%d", 9));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoDocumentos.get(1).getNombre(),
+        Language.ES)).isEqualTo("TipoDocumento" + String.format("%d", 8));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(tipoDocumentos.get(2).getNombre(),
+        Language.ES)).isEqualTo("TipoDocumento" + String.format("%d", 7));
 
-  }
-
-  /**
-   * Función que devuelve un objeto TipoDocumento
-   * 
-   * @param id     id del tipoDocumento
-   * @param nombre la descripción del tipoDocumento
-   * @return el objeto tipoDocumento
-   */
-
-  public TipoDocumento generarMockTipoDocumento(Long id, String nombre) {
-
-    Formulario formulario = new Formulario();
-    formulario.setId(1L);
-    formulario.setNombre("M10");
-    formulario.setDescripcion("Formulario M10");
-
-    TipoDocumento tipoDocumento = new TipoDocumento();
-    tipoDocumento.setId(id);
-    tipoDocumento.setNombre(nombre);
-    tipoDocumento.setFormulario(formulario);
-    tipoDocumento.setActivo(Boolean.TRUE);
-
-    return tipoDocumento;
   }
 
 }

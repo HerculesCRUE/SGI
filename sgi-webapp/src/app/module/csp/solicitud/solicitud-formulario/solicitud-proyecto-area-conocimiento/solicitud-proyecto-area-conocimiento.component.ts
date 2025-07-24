@@ -48,13 +48,13 @@ export class SolicitudProyectoAreaConocimientoComponent extends FragmentComponen
     private matDialog: MatDialog,
     private dialogService: DialogService,
   ) {
-    super(actionService.FRAGMENT.PROYECTO_AREA_CONOCIMIENTO, actionService);
+    super(actionService.FRAGMENT.PROYECTO_AREA_CONOCIMIENTO, actionService, translate);
     this.formPart = this.fragment as SolicitudProyectoAreaConocimientoFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
@@ -74,7 +74,7 @@ export class SolicitudProyectoAreaConocimientoComponent extends FragmentComponen
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_PROYECTO_AREA_CONOCIMIENTO_KEY,
       MSG_PARAMS.CARDINALIRY.PLURAL

@@ -51,8 +51,9 @@
       <div class="col">
         <mat-form-field>
           <mat-label>{{'eti.acta.estado' | translate}}</mat-label>
-          <sgi-select-enum formControlName="tipoEstadoActa" [enumMap]="ESTADO_ACTA_MAP">
-          </sgi-select-enum>
+          <sgi-select-entity formControlName="tipoEstadoActa" [options]="tiposEstadoActa$ | async"
+            [displayWith]="displayerEstadoActa">
+          </sgi-select-entity>
         </mat-form-field>
       </div>
     </div>
@@ -93,7 +94,8 @@
       <!-- Convocatoria Column -->
       <ng-container matColumnDef="convocatoriaReunion.tipoConvocatoriaReunion">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.acta.convocatoria' | translate}} </th>
-        <td mat-cell *matCellDef="let acta"> {{acta.convocatoria}} </td>
+        <td mat-cell *matCellDef="let acta">
+          {{TIPO_CONVOCATORIA_REUNION_MAP.get(acta.tipoConvocatoria?.id) | translate}} </td>
       </ng-container>
 
       <!-- Numero de iniciales Column -->
@@ -117,7 +119,7 @@
       <!-- Estado Column -->
       <ng-container matColumnDef="estadoActual.nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.acta.estado' | translate}} </th>
-        <td mat-cell *matCellDef="let acta"> {{acta.estadoActa.nombre}}</td>
+        <td mat-cell *matCellDef="let acta"> {{ESTADO_ACTA_MAP.get(acta.estadoActa?.id) | translate}}</td>
       </ng-container>
 
       <!-- Enviada -->

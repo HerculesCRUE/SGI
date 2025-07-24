@@ -1,11 +1,17 @@
 package org.crue.hercules.sgi.eti.dto;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.crue.hercules.sgi.eti.model.EquipoTrabajo;
 import org.crue.hercules.sgi.eti.model.FormacionEspecifica;
 import org.crue.hercules.sgi.eti.model.Memoria;
+import org.crue.hercules.sgi.eti.model.Tarea;
+import org.crue.hercules.sgi.eti.model.TareaFormacion;
+import org.crue.hercules.sgi.eti.model.TareaNombre;
+import org.crue.hercules.sgi.eti.model.TareaOrganismo;
 import org.crue.hercules.sgi.eti.model.TipoTarea;
+import org.crue.hercules.sgi.eti.repository.custom.CustomTareaRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,36 +30,31 @@ public class TareaWithIsEliminable implements Serializable {
   private Long id;
   private EquipoTrabajo equipoTrabajo;
   private Memoria memoria;
-  private String tarea;
-  private String formacion;
+  private Set<TareaNombre> nombre;
+  private Set<TareaFormacion> formacion;
   private FormacionEspecifica formacionEspecifica;
   private TipoTarea tipoTarea;
-  private String organismo;
+  private Set<TareaOrganismo> organismo;
   private Integer anio;
   private boolean eliminable;
 
-  public TareaWithIsEliminable(Long id, EquipoTrabajo equipoTrabajo, Memoria memoria, String tarea, String formacion,
-      Long idFormacionEspecifica, String nombreFormacionEspecifica, Boolean activoFormacionEspecifica, Long idTipoTarea,
-      String nombreTipoTarea, Boolean activoTipoTarea, String organismo, Integer anio, Boolean eliminable) {
-    this.id = id;
-    this.equipoTrabajo = equipoTrabajo;
-    this.memoria = memoria;
-    this.tarea = tarea;
-    this.formacion = formacion;
-    if (idFormacionEspecifica != null) {
-      this.formacionEspecifica = new FormacionEspecifica();
-      this.formacionEspecifica.setId(idFormacionEspecifica);
-      this.formacionEspecifica.setNombre(nombreFormacionEspecifica);
-      this.formacionEspecifica.setActivo(activoFormacionEspecifica);
-    }
-    if (idTipoTarea != null) {
-      this.tipoTarea = new TipoTarea();
-      this.tipoTarea.setId(idTipoTarea);
-      this.tipoTarea.setNombre(nombreTipoTarea);
-      this.tipoTarea.setActivo(activoTipoTarea);
-    }
-    this.organismo = organismo;
-    this.anio = anio;
+  /**
+   * Constructor especifico para
+   * {@link CustomTareaRepository#findAllByPeticionEvaluacionId(Long)}
+   * 
+   * @param tarea
+   * @param eliminable
+   */
+  public TareaWithIsEliminable(Tarea tarea, Boolean eliminable) {
+    this.id = tarea.getId();
+    this.equipoTrabajo = tarea.getEquipoTrabajo();
+    this.memoria = tarea.getMemoria();
+    this.nombre = tarea.getNombre();
+    this.formacion = tarea.getFormacion();
+    this.formacionEspecifica = tarea.getFormacionEspecifica();
+    this.tipoTarea = tarea.getTipoTarea();
+    this.organismo = tarea.getOrganismo();
+    this.anio = tarea.getAnio();
     this.eliminable = eliminable;
   }
 

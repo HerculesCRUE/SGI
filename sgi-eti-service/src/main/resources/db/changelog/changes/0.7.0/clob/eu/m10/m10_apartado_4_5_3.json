@@ -1,0 +1,36 @@
+[
+  {
+    "key": "ap4_5_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.5.3 Ez diskriminatzea arrazoi genetikoengatik "
+    },
+    "hideExpression": "!formState.mainModel.ap4_5.estudiosGeneticosRadio || formState.mainModel.ap4_5.estudiosGeneticosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Zehaztu zer neurri dauden aurreikusita azterketa genetikoen emaitzetatik erator daitezkeen diskriminazioa edo kaltea eragozteko.</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p><a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=2' target='_blank'>14/2007 IBLren</a> El <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a45' target='_blank'>45. artikuluak</a> printzipio hauek ezartzen ditu azterketa genetikoetarako:</p><ul><li>Irisgarritasuna eta ekitatea</li><li>Datuen babesa</li><li>Doakotasuna</li><li>Baimena</li><li>Datuen kalitatea</li></ul><p>Horri <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a9' target='_blank'>9.</a> eta <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a6' target='_blank'>6.</a> artikuluetan ezarritakoa gehitu behar zaio.</p><ul><li>Azterketa genetikoak egiteko kontuan hartuko dira egokitasun, kalitate, ekitate eta irisgarritasun printzipioak</li><li>Diskriminaziorik eza</li></ul>"
+      },
+      {
+        "key": "noDiscriminacionMotivosGeneticos",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "label": "Neurriak",
+          "placeholder": "Neurriak",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

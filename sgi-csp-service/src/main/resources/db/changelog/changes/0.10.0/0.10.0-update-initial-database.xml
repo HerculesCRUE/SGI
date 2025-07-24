@@ -1,0 +1,3460 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+  <property name="schemaPrefix" value="" />
+  <property name="defaultLang" value="es" />
+
+  <changeSet author="master" id="0.10.0-1">
+    <addColumn tableName="convocatoria">
+      <column name="anio" type="INTEGER" />
+    </addColumn>
+
+    <addColumn tableName="convocatoria">
+      <column name="codigo_interno" type="VARCHAR(50)" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-2">
+    <addColumn tableName="solicitud">
+      <column name="anio" type="INTEGER" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-3">
+    <addColumn tableName="proyecto">
+      <column name="anio" type="INTEGER" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-4">
+    <addColumn tableName="grupo">
+      <column name="resumen" type="CLOB" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-5">
+    <addColumn tableName="modelo_ejecucion">
+      <column name="solicitud_sin_convocatoria" type="BOOLEAN" defaultValueBoolean="false" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-6">
+    <addColumn tableName="configuracion">
+      <column name="inv_solicitudes_sin_convocatoria" type="BOOLEAN" defaultValueBoolean="false" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-7">
+    <addColumn tableName="solicitud">
+      <column name="origen_solicitud" type="VARCHAR(50)" />
+    </addColumn>
+    <addColumn tableName="solicitud">
+      <column name="modelo_ejecucion_id" type="BIGINT" />
+    </addColumn>
+    <addColumn tableName="solicitud">
+      <column name="tipo_finalidad_id" type="BIGINT" />
+    </addColumn>
+
+    <addForeignKeyConstraint baseColumnNames="modelo_ejecucion_id" baseTableName="solicitud"
+      constraintName="FK_SOLICITUD_MODELOEJECUCION" deferrable="false" initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="modelo_ejecucion" validate="true" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_finalidad_id" baseTableName="solicitud"
+      constraintName="FK_SOLICITUD_TIPOFINALIDAD" deferrable="false" initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_finalidad" validate="true" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-8">
+    <addColumn tableName="solicitud_documento">
+      <column name="tipo_fase_id" type="BIGINT" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-9">
+
+    <createTable tableName="rol_proyecto_nombre">
+      <column name="rol_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="rol_proyecto_nombre" columnNames="rol_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="rol_proyecto_id" baseTableName="rol_proyecto_nombre"
+      constraintName="FK_ROLPROYECTONOMBRE_ROLPROYECTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="rol_proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}rol_proyecto_nombre(rol_proyecto_id, value_, lang) SELECT id,
+      nombre, '${defaultLang}' FROM ${schemaPrefix}rol_proyecto WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="rol_proyecto" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-10">
+
+    <createTable tableName="rol_proyecto_descripcion">
+      <column name="rol_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="rol_proyecto_descripcion" columnNames="rol_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="rol_proyecto_id"
+      baseTableName="rol_proyecto_descripcion"
+      constraintName="FK_ROLPROYECTODESCRIPCION_ROLPROYECTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="rol_proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}rol_proyecto_descripcion(rol_proyecto_id, value_, lang) SELECT
+      id, descripcion, '${defaultLang}' FROM ${schemaPrefix}rol_proyecto WHERE descripcion IS NOT
+      NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="rol_proyecto" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-11">
+
+    <createTable tableName="rol_proyecto_abreviatura">
+      <column name="rol_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(5)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="rol_proyecto_abreviatura" columnNames="rol_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="rol_proyecto_id"
+      baseTableName="rol_proyecto_abreviatura"
+      constraintName="FK_IROLPROYECTOABREVIATURA_ROLPROYECTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="rol_proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}rol_proyecto_abreviatura(rol_proyecto_id, value_, lang) SELECT
+      id, abreviatura, '${defaultLang}' FROM ${schemaPrefix}rol_proyecto WHERE abreviatura IS NOT
+      NULL AND NULLIF(TRIM(abreviatura), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="abreviatura" tableName="rol_proyecto" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-12">
+
+    <createTable tableName="rol_socio_nombre">
+      <column name="rol_socio_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="rol_socio_nombre" columnNames="rol_socio_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="rol_socio_id"
+      baseTableName="rol_socio_nombre"
+      constraintName="FK_ROLSOCIONOMBRE_ROLSOCIO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="rol_socio" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}rol_socio_nombre(rol_socio_id, value_, lang) SELECT id, nombre,
+      '${defaultLang}' FROM ${schemaPrefix}rol_socio WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="rol_socio" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-13">
+
+    <createTable tableName="rol_socio_descripcion">
+      <column name="rol_socio_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="rol_socio_descripcion" columnNames="rol_socio_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="rol_socio_id"
+      baseTableName="rol_socio_descripcion"
+      constraintName="FK_ROLSOCIODESCRIPCION_ROLSOCIO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="rol_socio" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}rol_socio_descripcion(rol_socio_id, value_, lang) SELECT id,
+      descripcion, '${defaultLang}' FROM ${schemaPrefix}rol_socio WHERE descripcion IS NOT NULL AND
+      NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="rol_socio" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-14">
+
+    <createTable tableName="rol_socio_abreviatura">
+      <column name="rol_socio_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(5)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="rol_socio_abreviatura" columnNames="rol_socio_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="rol_socio_id"
+      baseTableName="rol_socio_abreviatura"
+      constraintName="FK_ROLSOCIOABREVIATURA_ROLSOCIO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="rol_socio" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}rol_socio_abreviatura(rol_socio_id, value_, lang) SELECT id,
+      abreviatura, '${defaultLang}' FROM ${schemaPrefix}rol_socio WHERE abreviatura IS NOT NULL AND
+      NULLIF(TRIM(abreviatura), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="abreviatura" tableName="rol_socio" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-15">
+
+    <createTable tableName="tipo_ambito_geografico_nombre">
+      <column name="tipo_ambito_geografico_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_ambito_geografico_nombre"
+      columnNames="tipo_ambito_geografico_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_ambito_geografico_id"
+      baseTableName="tipo_ambito_geografico_nombre"
+      constraintName="FK_TIPOAMBITOGEOGRAFICONOMBRE_TIPOAMBITOGEOGRAFICO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_ambito_geografico" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_ambito_geografico_nombre(tipo_ambito_geografico_id, value_,
+      lang) SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}tipo_ambito_geografico WHERE
+      nombre IS NOT NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_ambito_geografico" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-16">
+
+    <createTable tableName="tipo_facturacion_nombre">
+      <column name="tipo_facturacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_facturacion_nombre"
+      columnNames="tipo_facturacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_facturacion_id"
+      baseTableName="tipo_facturacion_nombre"
+      constraintName="FK_TIPOFACTURACIONNOMBRE_TIPOFACTURACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_facturacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_facturacion_nombre(tipo_facturacion_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}tipo_facturacion WHERE nombre IS NOT
+      NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_facturacion" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-17">
+
+    <createTable tableName="tipo_origen_fuente_financiacion_nombre">
+      <column name="tipo_origen_fuente_financiacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_origen_fuente_financiacion_nombre"
+      columnNames="tipo_origen_fuente_financiacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_origen_fuente_financiacion_id"
+      baseTableName="tipo_origen_fuente_financiacion_nombre"
+      constraintName="FK_TIPOORIGENFUENTEFINANCIACIONNOMBRE_TIPOORIGENFUENTEFINANCIACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_origen_fuente_financiacion"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}tipo_origen_fuente_financiacion_nombre(tipo_origen_fuente_financiacion_id,
+      value_, lang) SELECT id, nombre, '${defaultLang}' FROM
+      ${schemaPrefix}tipo_origen_fuente_financiacion WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_origen_fuente_financiacion" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-18">
+    <createTable tableName="tipo_finalidad_nombre">
+      <column name="tipo_finalidad_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(100)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_finalidad_nombre" columnNames="tipo_finalidad_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_finalidad_id"
+      baseTableName="tipo_finalidad_nombre"
+      constraintName="FK_TIPOFINALIDADNOMBRE_TIPOFINALIDAD" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_finalidad" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_finalidad_nombre(tipo_finalidad_id, value_, lang) SELECT
+      id, nombre, '${defaultLang}' FROM ${schemaPrefix}tipo_finalidad WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_finalidad" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-19">
+    <createTable tableName="tipo_finalidad_descripcion">
+      <column name="tipo_finalidad_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_finalidad_descripcion" columnNames="tipo_finalidad_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_finalidad_id"
+      baseTableName="tipo_finalidad_descripcion"
+      constraintName="FK_TIPOFINALIDADDESCRIPCION_TIPOFINALIDAD" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_finalidad" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_finalidad_descripcion(tipo_finalidad_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}tipo_finalidad WHERE descripcion
+      IS NOT NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="tipo_finalidad" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-20">
+    <createTable tableName="tipo_fase_nombre">
+      <column name="tipo_fase_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_fase_nombre" columnNames="tipo_fase_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_fase_id"
+      baseTableName="tipo_fase_nombre"
+      constraintName="FK_TIPOFASENOMBRE_TIPOFASE" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_fase" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_fase_nombre(tipo_fase_id, value_, lang) SELECT id, nombre,
+      '${defaultLang}' FROM ${schemaPrefix}tipo_fase WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_fase" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-21">
+    <createTable tableName="tipo_fase_descripcion">
+      <column name="tipo_fase_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_fase_descripcion" columnNames="tipo_fase_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_fase_id"
+      baseTableName="tipo_fase_descripcion"
+      constraintName="FK_TIPOFASEDESCRIPCION_TIPOFASE" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_fase" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_fase_descripcion(tipo_fase_id, value_, lang) SELECT id,
+      descripcion, '${defaultLang}' FROM ${schemaPrefix}tipo_fase WHERE descripcion IS NOT NULL AND
+      NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="tipo_fase" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-22">
+
+    <createTable tableName="tipo_financiacion_nombre">
+      <column name="tipo_financiacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_financiacion_nombre"
+      columnNames="tipo_financiacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_financiacion_id"
+      baseTableName="tipo_financiacion_nombre"
+      constraintName="FK_TIPOFINANCIACIONNOMBRE_TIPOFINANCIACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_financiacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_financiacion_nombre(tipo_financiacion_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}tipo_financiacion WHERE nombre IS NOT
+      NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_financiacion" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-23">
+
+    <createTable tableName="tipo_financiacion_descripcion">
+      <column name="tipo_financiacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_financiacion_descripcion"
+      columnNames="tipo_financiacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_financiacion_id"
+      baseTableName="tipo_financiacion_descripcion"
+      constraintName="FK_TIPOFINANCIACIONDESCRIPCION_TIPOFINANCIACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_financiacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_financiacion_descripcion(tipo_financiacion_id, value_,
+      lang) SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}tipo_financiacion WHERE
+      descripcion IS NOT NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="tipo_financiacion" />
+
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-24">
+    <createTable tableName="tipo_documento_nombre">
+      <column name="tipo_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_documento_nombre" columnNames="tipo_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_documento_id"
+      baseTableName="tipo_documento_nombre"
+      constraintName="FK_TIPODOCUMENTONOMBRE_TIPODOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_documento_nombre(tipo_documento_id, value_, lang) SELECT
+      id, nombre, '${defaultLang}' FROM ${schemaPrefix}tipo_documento WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-25">
+    <createTable tableName="tipo_documento_descripcion">
+      <column name="tipo_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_documento_descripcion" columnNames="tipo_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_documento_id"
+      baseTableName="tipo_documento_descripcion"
+      constraintName="FK_TIPODOCUMENTODESCRIPCION_TIPODOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_documento_descripcion(tipo_documento_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}tipo_documento WHERE descripcion
+      IS NOT NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="tipo_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-26">
+    <createTable tableName="tipo_regimen_concurrencia_nombre">
+      <column name="tipo_regimen_concurrencia_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_regimen_concurrencia_nombre"
+      columnNames="tipo_regimen_concurrencia_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_regimen_concurrencia_id"
+      baseTableName="tipo_regimen_concurrencia_nombre"
+      constraintName="FK_TIPOREGIMENCONCURRENCIANOMBRE_TIPOREGIMENCONCURRENCIA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_regimen_concurrencia"
+      validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_regimen_concurrencia_nombre(tipo_regimen_concurrencia_id,
+      value_, lang) SELECT id, nombre, '${defaultLang}' FROM
+      ${schemaPrefix}tipo_regimen_concurrencia WHERE nombre IS NOT NULL AND NULLIF(TRIM(nombre), '')
+      IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_regimen_concurrencia" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-27">
+    <createTable tableName="tipo_hito_nombre">
+      <column name="tipo_hito_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_hito_nombre" columnNames="tipo_hito_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_hito_id"
+      baseTableName="tipo_hito_nombre"
+      constraintName="FK_TIPOHITONOMBRE_TIPOHITO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_hito" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_hito_nombre(tipo_hito_id, value_, lang) SELECT id, nombre,
+      '${defaultLang}' FROM ${schemaPrefix}tipo_hito WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_hito" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-28">
+    <createTable tableName="tipo_hito_descripcion">
+      <column name="tipo_hito_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_hito_descripcion" columnNames="tipo_hito_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_hito_id"
+      baseTableName="tipo_hito_descripcion"
+      constraintName="FK_TIPOHITODESCRIPCION_TIPOHITO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_hito" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_hito_descripcion(tipo_hito_id, value_, lang) SELECT id,
+      descripcion, '${defaultLang}' FROM ${schemaPrefix}tipo_hito WHERE descripcion IS NOT NULL AND
+      NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="tipo_hito" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-29">
+    <createTable tableName="tipo_enlace_nombre">
+      <column name="tipo_enlace_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_enlace_nombre"
+      columnNames="tipo_enlace_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_enlace_id"
+      baseTableName="tipo_enlace_nombre"
+      constraintName="FK_TIPOENLACENOMBRE_TIPOENLACE" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_enlace" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_enlace_nombre(tipo_enlace_id, value_, lang) SELECT id,
+      nombre, '${defaultLang}' FROM ${schemaPrefix}tipo_enlace WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_enlace" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-30">
+    <createTable tableName="tipo_enlace_descripcion">
+      <column name="tipo_enlace_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_enlace_descripcion"
+      columnNames="tipo_enlace_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_enlace_id"
+      baseTableName="tipo_enlace_descripcion"
+      constraintName="FK_TIPOENLACEDESCRIPCION_TIPOENLACE" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_enlace" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_enlace_descripcion(tipo_enlace_id, value_, lang) SELECT id,
+      descripcion, '${defaultLang}' FROM ${schemaPrefix}tipo_enlace WHERE descripcion IS NOT NULL
+      AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="tipo_enlace" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-31">
+    <createTable tableName="modelo_ejecucion_nombre">
+      <column name="modelo_ejecucion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="modelo_ejecucion_nombre" columnNames="modelo_ejecucion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="modelo_ejecucion_id"
+      baseTableName="modelo_ejecucion_nombre"
+      constraintName="FK_MODELOEJECUCIONNOMBRE_MODELOEJECUCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="modelo_ejecucion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}modelo_ejecucion_nombre(modelo_ejecucion_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}modelo_ejecucion WHERE nombre IS NOT
+      NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="modelo_ejecucion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-32">
+    <createTable tableName="modelo_ejecucion_descripcion">
+      <column name="modelo_ejecucion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="modelo_ejecucion_descripcion" columnNames="modelo_ejecucion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="modelo_ejecucion_id"
+      baseTableName="modelo_ejecucion_descripcion"
+      constraintName="FK_MODELOEJECUCIONDESCRIPCION_MODELOEJECUCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="modelo_ejecucion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}modelo_ejecucion_descripcion(modelo_ejecucion_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}modelo_ejecucion WHERE
+      descripcion IS NOT NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="modelo_ejecucion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-33">
+    <createTable tableName="concepto_gasto_nombre">
+      <column name="concepto_gasto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="concepto_gasto_nombre" columnNames="concepto_gasto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="concepto_gasto_id"
+      baseTableName="concepto_gasto_nombre"
+      constraintName="FK_CONCEPTOGASTONOMBRE_CONCEPTOGASTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="concepto_gasto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}concepto_gasto_nombre(concepto_gasto_id, value_, lang) SELECT
+      id, nombre, '${defaultLang}' FROM ${schemaPrefix}concepto_gasto WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="concepto_gasto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-34">
+    <createTable tableName="concepto_gasto_descripcion">
+      <column name="concepto_gasto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="concepto_gasto_descripcion" columnNames="concepto_gasto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="concepto_gasto_id"
+      baseTableName="concepto_gasto_descripcion"
+      constraintName="FK_CONCEPTOGASTODESCRIPCION_CONCEPTOGASTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="concepto_gasto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}concepto_gasto_descripcion(concepto_gasto_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}concepto_gasto WHERE descripcion
+      IS NOT NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="concepto_gasto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-35">
+    <createTable tableName="fuente_financiacion_nombre">
+      <column name="fuente_financiacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="fuente_financiacion_nombre"
+      columnNames="fuente_financiacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="fuente_financiacion_id"
+      baseTableName="fuente_financiacion_nombre"
+      constraintName="FK_FUENTEFINANCIACIONNOMBRE_FUENTEFINANCICION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="fuente_financiacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}fuente_financiacion_nombre(fuente_financiacion_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}fuente_financiacion WHERE nombre IS
+      NOT NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="fuente_financiacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-36">
+    <createTable tableName="fuente_financiacion_descripcion">
+      <column name="fuente_financiacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="fuente_financiacion_descripcion"
+      columnNames="fuente_financiacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="fuente_financiacion_id"
+      baseTableName="fuente_financiacion_descripcion"
+      constraintName="FK_FUENTEFINANCIACIONDESCRIPCION_FUENTEFINANCICION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="fuente_financiacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}fuente_financiacion_descripcion(fuente_financiacion_id, value_,
+      lang) SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}fuente_financiacion WHERE
+      descripcion IS NOT NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="fuente_financiacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-37">
+    <createTable tableName="linea_investigacion_nombre">
+      <column name="linea_investigacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(1000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="linea_investigacion_nombre" columnNames="linea_investigacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="linea_investigacion_id"
+      baseTableName="linea_investigacion_nombre"
+      constraintName="FK_LINEAINVESTIGACIONNOMBRE_LINEAINVESTIGACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="linea_investigacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}linea_investigacion_nombre(linea_investigacion_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}linea_investigacion WHERE nombre IS
+      NOT NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="linea_investigacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-38">
+    <createTable tableName="programa_nombre">
+      <column name="programa_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(200)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="programa_nombre"
+      columnNames="programa_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="programa_id"
+      baseTableName="programa_nombre"
+      constraintName="FK_PROGRAMANOMBRE_PROGRAMA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="programa" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}programa_nombre(programa_id, value_, lang) SELECT id, nombre,
+      '${defaultLang}' FROM ${schemaPrefix}programa WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="programa" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-39">
+    <createTable tableName="programa_descripcion">
+      <column name="programa_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="programa_descripcion"
+      columnNames="programa_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="programa_id"
+      baseTableName="programa_descripcion"
+      constraintName="FK_PROGRAMADESCRIPCION_PROGRAMA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="programa" validate="true" />
+
+    <sql dbms="!oracle">INSERT INTO ${schemaPrefix}programa_descripcion(programa_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}programa WHERE descripcion IS NOT
+      NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <sql dbms="oracle">INSERT INTO ${schemaPrefix}programa_descripcion(programa_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}programa WHERE descripcion IS NOT
+      NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="programa" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-40">
+    <createTable tableName="area_tematica_nombre">
+      <column name="area_tematica_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="area_tematica_nombre" columnNames="area_tematica_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="area_tematica_id"
+      baseTableName="area_tematica_nombre"
+      constraintName="FK_AREATEMATICANOMBRE_AREATEMATICA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="area_tematica" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}area_tematica_nombre(area_tematica_id, value_, lang) SELECT id,
+      nombre, '${defaultLang}' FROM ${schemaPrefix}area_tematica WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="area_tematica" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-41">
+    <createTable tableName="area_tematica_descripcion">
+      <column name="area_tematica_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="area_tematica_descripcion" columnNames="area_tematica_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="area_tematica_id"
+      baseTableName="area_tematica_descripcion"
+      constraintName="FK_AREATEMATICADESCRIPCION_AREATEMATICA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="area_tematica" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}area_tematica_descripcion(area_tematica_id, value_, lang) SELECT
+      id, descripcion, '${defaultLang}' FROM ${schemaPrefix}area_tematica WHERE descripcion IS NOT
+      NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="area_tematica" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-42">
+    <createTable tableName="convocatoria_enlace_descripcion">
+      <column name="convocatoria_enlace_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_enlace_descripcion"
+      columnNames="convocatoria_enlace_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_enlace_id"
+      baseTableName="convocatoria_enlace_descripcion"
+      constraintName="FK_CONVOCATORIAENLACEDESCRIPCION_CONVOCATORIAENLACE" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_enlace" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_enlace_descripcion(convocatoria_enlace_id, value_,
+      lang) SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}convocatoria_enlace WHERE
+      descripcion IS NOT NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="convocatoria_enlace" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-43">
+    <createTable tableName="convocatoria_fase_observaciones">
+      <column name="convocatoria_fase_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_fase_observaciones"
+      columnNames="convocatoria_fase_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_fase_id"
+      baseTableName="convocatoria_fase_observaciones"
+      constraintName="FK_CONVOCATORIAFASEOBSERVACIONES_CONVOCATORIAFASE" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_fase" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_fase_observaciones(convocatoria_fase_id, value_,
+      lang) SELECT id, observaciones, '${defaultLang}' FROM ${schemaPrefix}convocatoria_fase WHERE
+      observaciones IS NOT NULL AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="convocatoria_fase" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-44">
+    <createTable tableName="convocatoria_concepto_gasto_observaciones">
+      <column name="convocatoria_concepto_gasto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_concepto_gasto_observaciones"
+      columnNames="convocatoria_concepto_gasto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_concepto_gasto_id"
+      baseTableName="convocatoria_concepto_gasto_observaciones"
+      constraintName="FK_CONVOCATORIACONCEPTOGASTOOBSERVACIONES_CONVOCATORIACONCEPTOGASTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_concepto_gasto" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}convocatoria_concepto_gasto_observaciones(convocatoria_concepto_gasto_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}convocatoria_concepto_gasto WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="convocatoria_concepto_gasto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-45">
+    <createTable tableName="convocatoria_concepto_gasto_codigo_ec_observaciones">
+      <column name="convocatoria_concepto_gasto_codigo_ec_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_concepto_gasto_codigo_ec_observaciones"
+      columnNames="convocatoria_concepto_gasto_codigo_ec_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_concepto_gasto_codigo_ec_id"
+      baseTableName="convocatoria_concepto_gasto_codigo_ec_observaciones"
+      constraintName="FK_CONVOCATORIACONCEPTOGASTOCODGIOECOBSERVACIONES_CONVOCATORIACONCEPTOGASTOCODIGOEC"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_concepto_gasto_codigo_ec"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}convocatoria_concepto_gasto_codigo_ec_observaciones(convocatoria_concepto_gasto_codigo_ec_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}convocatoria_concepto_gasto_codigo_ec WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="convocatoria_concepto_gasto_codigo_ec" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-46">
+    <createTable tableName="convocatoria_periodo_justificacion_observaciones">
+      <column name="convocatoria_periodo_justificacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_periodo_justificacion_observaciones"
+      columnNames="convocatoria_periodo_justificacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_periodo_justificacion_id"
+      baseTableName="convocatoria_periodo_justificacion_observaciones"
+      constraintName="FK_CONVOCATORIAPERIODOJUSTIFICACIONOBSERVACIONES_CONVOCATORIAPERIODOJUSTIFICACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_periodo_justificacion"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}convocatoria_periodo_justificacion_observaciones(convocatoria_periodo_justificacion_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}convocatoria_periodo_justificacion WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="convocatoria_periodo_justificacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-47">
+    <createTable tableName="convocatoria_periodo_seguimiento_cientifico_observaciones">
+      <column name="convocatoria_periodo_seguimiento_cientifico_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_periodo_seguimiento_cientifico_observaciones"
+      columnNames="convocatoria_periodo_seguimiento_cientifico_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_periodo_seguimiento_cientifico_id"
+      baseTableName="convocatoria_periodo_seguimiento_cientifico_observaciones"
+      constraintName="FK_CONVOCATORIASEGUIMIENTOCIENTIFICOOBSERVACIONES_CONVOCATORIASEGUIMIENTOCIENTIFICO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_periodo_seguimiento_cientifico"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}convocatoria_periodo_seguimiento_cientifico_observaciones(convocatoria_periodo_seguimiento_cientifico_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}convocatoria_periodo_seguimiento_cientifico WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="convocatoria_periodo_seguimiento_cientifico" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-48">
+    <createTable tableName="convocatoria_hito_comentario">
+      <column name="convocatoria_hito_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_hito_comentario"
+      columnNames="convocatoria_hito_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_hito_id"
+      baseTableName="convocatoria_hito_comentario"
+      constraintName="FK_CONVOCATORIAHITOCOMENTARIO_CONVOCATORIAHITO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_hito" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_hito_comentario(convocatoria_hito_id, value_, lang)
+      SELECT id, comentario, '${defaultLang}' FROM ${schemaPrefix}convocatoria_hito WHERE comentario
+      IS NOT NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="convocatoria_hito" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-49">
+    <createTable tableName="convocatoria_documento_nombre">
+      <column name="convocatoria_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_documento_nombre"
+      columnNames="convocatoria_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_documento_id"
+      baseTableName="convocatoria_documento_nombre"
+      constraintName="FK_CONVOCATORIADOCUMENTONOMBRE_CONVOCATORIADOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_documento_nombre(convocatoria_documento_id, value_,
+      lang) SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}convocatoria_documento WHERE
+      nombre IS NOT NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="convocatoria_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-50">
+    <createTable tableName="convocatoria_documento_observaciones">
+      <column name="convocatoria_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_documento_observaciones"
+      columnNames="convocatoria_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_documento_id"
+      baseTableName="convocatoria_documento_observaciones"
+      constraintName="FK_CONVOCATORIADOCUMENTOOBSERVACIONES_CONVOCATORIADOCUMENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_documento_observaciones(convocatoria_documento_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}convocatoria_documento WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="convocatoria_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-51">
+    <createTable tableName="requisito_ip_otros_requisitos">
+      <column name="requisitoip_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="requisito_ip_otros_requisitos"
+      columnNames="requisitoip_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="requisitoip_id"
+      baseTableName="requisito_ip_otros_requisitos"
+      constraintName="FK_REQUISITOIPOTROSREQUISITOS_REQUISITOIP"
+      deferrable="false" initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="requisito_ip"
+      validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}requisito_ip_otros_requisitos(requisitoip_id, value_, lang)
+      SELECT id, otros_requisitos, '${defaultLang}' FROM ${schemaPrefix}requisito_ip WHERE
+      otros_requisitos IS NOT NULL AND NULLIF(TRIM(otros_requisitos), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="otros_requisitos" tableName="requisito_ip" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-52">
+    <createTable tableName="requisito_equipo_otros_requisitos">
+      <column name="requisitoequipo_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="requisito_equipo_otros_requisitos"
+      columnNames="requisitoequipo_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="requisitoequipo_id"
+      baseTableName="requisito_equipo_otros_requisitos"
+      constraintName="FK_REQUISITOEQUIPOOTROSREQUISITOS_REQUISITOEQUIPO"
+      deferrable="false" initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="requisito_equipo"
+      validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}requisito_equipo_otros_requisitos(requisitoequipo_id, value_,
+      lang) SELECT id, otros_requisitos, '${defaultLang}' FROM ${schemaPrefix}requisito_equipo WHERE
+      otros_requisitos IS NOT NULL AND NULLIF(TRIM(otros_requisitos), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="otros_requisitos" tableName="requisito_equipo" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-53">
+    <createTable tableName="convocatoria_partida_descripcion">
+      <column name="convocatoria_partida_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_partida_descripcion"
+      columnNames="convocatoria_partida_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_partida_id"
+      baseTableName="convocatoria_partida_descripcion"
+      constraintName="FK_CONVOCATORIAPARTIDADESCRIPCION_CONVOCATORIAPARTIDA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria_partida" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_partida_descripcion(convocatoria_partida_id,
+      value_, lang) SELECT id, descripcion, '${defaultLang}' FROM
+      ${schemaPrefix}convocatoria_partida WHERE descripcion IS NOT NULL AND
+      NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="convocatoria_partida" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-54">
+    <createTable tableName="documento_requerido_solicitud_observaciones">
+      <column name="documento_requerido_solicitud_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="documento_requerido_solicitud_observaciones"
+      columnNames="documento_requerido_solicitud_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="documento_requerido_solicitud_id"
+      baseTableName="documento_requerido_solicitud_observaciones"
+      constraintName="FK_DOCUMENTOREQUERIDOSOLICITUDOBSERVACIONES_DOCUMENTOREQUERIDOSOLICITUD"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="documento_requerido_solicitud" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}documento_requerido_solicitud_observaciones(documento_requerido_solicitud_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}documento_requerido_solicitud WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="documento_requerido_solicitud" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-55">
+    <createTable tableName="solicitud_titulo">
+      <column name="solicitud_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_titulo" columnNames="solicitud_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_id"
+      baseTableName="solicitud_titulo"
+      constraintName="FK_SOLICITUDTITULO_SOLICITUD" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_titulo(solicitud_id, value_, lang) SELECT id, titulo,
+      '${defaultLang}' FROM ${schemaPrefix}solicitud WHERE titulo IS NOT NULL AND
+      NULLIF(TRIM(titulo), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="titulo" tableName="solicitud" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-56">
+    <createTable tableName="solicitud_observaciones">
+      <column name="solicitud_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_observaciones"
+      columnNames="solicitud_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_id"
+      baseTableName="solicitud_observaciones"
+      constraintName="FK_SOLICITUDOBSERVACIONES_SOLICITUD"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_observaciones(solicitud_id, value_, lang) SELECT id,
+      observaciones, '${defaultLang}' FROM ${schemaPrefix}solicitud WHERE observaciones IS NOT NULL
+      AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="solicitud" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-57">
+    <createTable tableName="solicitud_proyecto_objetivos">
+      <column name="solicitud_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_proyecto_objetivos"
+      columnNames="solicitud_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_proyecto_id"
+      baseTableName="solicitud_proyecto_objetivos"
+      constraintName="FK_SOLICITUDPROYECTOOBJETIVOS_SOLICITUDPROYECTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_proyecto_objetivos(solicitud_proyecto_id, value_,
+      lang) SELECT id, objetivos, '${defaultLang}' FROM ${schemaPrefix}solicitud_proyecto WHERE
+      objetivos IS NOT NULL AND NULLIF(TRIM(objetivos), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="objetivos" tableName="solicitud_proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-58">
+    <createTable tableName="solicitud_proyecto_intereses">
+      <column name="solicitud_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_proyecto_intereses"
+      columnNames="solicitud_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_proyecto_id"
+      baseTableName="solicitud_proyecto_intereses"
+      constraintName="FK_SOLICITUDPROYECTOINTERESES_SOLICITUDPROYECTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_proyecto_intereses(solicitud_proyecto_id, value_,
+      lang) SELECT id, intereses, '${defaultLang}' FROM ${schemaPrefix}solicitud_proyecto WHERE
+      intereses IS NOT NULL AND NULLIF(TRIM(intereses), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="intereses" tableName="solicitud_proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-59">
+    <createTable tableName="solicitud_proyecto_resultados_previstos">
+      <column name="solicitud_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_proyecto_resultados_previstos"
+      columnNames="solicitud_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_proyecto_id"
+      baseTableName="solicitud_proyecto_resultados_previstos"
+      constraintName="FK_SOLICITUDPROYECTORESULTADOSPREVISTOS_SOLICITUDPROYECTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_proyecto_resultados_previstos(solicitud_proyecto_id,
+      value_, lang) SELECT id, resultados_previstos, '${defaultLang}' FROM
+      ${schemaPrefix}solicitud_proyecto WHERE resultados_previstos IS NOT NULL AND
+      NULLIF(TRIM(resultados_previstos), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="resultados_previstos" tableName="solicitud_proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-60">
+    <createTable tableName="solicitud_proyecto_socio_periodo_justificacion_observaciones">
+      <column name="solicitud_proyecto_socio_periodo_justificacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_proyecto_socio_periodo_justificacion_observaciones"
+      columnNames="solicitud_proyecto_socio_periodo_justificacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_proyecto_socio_periodo_justificacion_id"
+      baseTableName="solicitud_proyecto_socio_periodo_justificacion_observaciones"
+      constraintName="FK_SOLICITUDPROYECTOSOCIOPERIODOJUSTIFICACIONOBSERVACIONES_SOLICITUDPROYECTOSOCIOPERIODOJUSTIFICACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="solicitud_proyecto_socio_periodo_justificacion" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}solicitud_proyecto_socio_periodo_justificacion_observaciones(solicitud_proyecto_socio_periodo_justificacion_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}solicitud_proyecto_socio_periodo_justificacion WHERE observaciones IS NOT NULL
+      AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones"
+      tableName="solicitud_proyecto_socio_periodo_justificacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-61">
+    <createTable tableName="convocatoria_titulo">
+      <column name="convocatoria_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(1000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_titulo" columnNames="convocatoria_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_id"
+      baseTableName="convocatoria_titulo"
+      constraintName="FK_CONVOCATORIATITULO_CONVOCATORIA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_titulo(convocatoria_id, value_, lang) SELECT id,
+      titulo, '${defaultLang}' FROM ${schemaPrefix}convocatoria WHERE titulo IS NOT NULL AND
+      NULLIF(TRIM(titulo), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="titulo" tableName="convocatoria" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-62">
+    <createTable tableName="convocatoria_objeto">
+      <column name="convocatoria_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_objeto" columnNames="convocatoria_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_id"
+      baseTableName="convocatoria_objeto"
+      constraintName="FK_CONVOCATORIAOBJETO_CONVOCATORIA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_objeto(convocatoria_id, value_, lang) SELECT id,
+      objeto, '${defaultLang}' FROM ${schemaPrefix}convocatoria WHERE objeto IS NOT NULL AND
+      NULLIF(TRIM(objeto), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="objeto" tableName="convocatoria" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-63">
+    <createTable tableName="convocatoria_observaciones">
+      <column name="convocatoria_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="convocatoria_observaciones" columnNames="convocatoria_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="convocatoria_id"
+      baseTableName="convocatoria_observaciones"
+      constraintName="FK_CONVOCATORIAOBSERVACIONES_CONVOCATORIA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="convocatoria" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}convocatoria_observaciones(convocatoria_id, value_, lang) SELECT
+      id, observaciones, '${defaultLang}' FROM ${schemaPrefix}convocatoria WHERE observaciones IS
+      NOT NULL AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="convocatoria" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-64">
+    <createTable tableName="solicitud_hito_comentario">
+      <column name="solicitud_hito_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_hito_comentario" columnNames="solicitud_hito_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_hito_id"
+      baseTableName="solicitud_hito_comentario"
+      constraintName="FK_SolicitudHitoComentario_SOLICITUDHITO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_hito" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_hito_comentario(solicitud_hito_id, value_, lang)
+      SELECT id, comentario, '${defaultLang}' FROM ${schemaPrefix}solicitud_hito WHERE comentario IS
+      NOT NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="solicitud_hito" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-65">
+    <createTable tableName="solicitud_documento_nombre">
+      <column name="solicitud_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_documento_nombre"
+      columnNames="solicitud_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_documento_id"
+      baseTableName="solicitud_documento_nombre"
+      constraintName="FK_SOLICITUDDOCUMENTONOMBRE_SOLICITUDDOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_documento_nombre(solicitud_documento_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}solicitud_documento WHERE nombre IS
+      NOT NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="solicitud_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-66">
+    <createTable tableName="solicitud_documento_comentario">
+      <column name="solicitud_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_documento_comentario"
+      columnNames="solicitud_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_documento_id"
+      baseTableName="solicitud_documento_comentario"
+      constraintName="FK_SOLICITUDDOCUMENTOCOMENTARIO_SOLICITUDDOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_documento_comentario(solicitud_documento_id, value_,
+      lang) SELECT id, comentario, '${defaultLang}' FROM ${schemaPrefix}solicitud_documento WHERE
+      comentario IS NOT NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="solicitud_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-67">
+    <createTable tableName="proyecto_titulo">
+      <column name="proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_titulo" columnNames="proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_id"
+      baseTableName="proyecto_titulo"
+      constraintName="FK_PROYECTOTITULO_PROYECTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}proyecto_titulo(proyecto_id, value_, lang) SELECT id, titulo,
+      '${defaultLang}' FROM ${schemaPrefix}proyecto WHERE titulo IS NOT NULL AND
+      NULLIF(TRIM(titulo), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="titulo" tableName="proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-68">
+    <createTable tableName="proyecto_observaciones">
+      <column name="proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_observaciones" columnNames="proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_id"
+      baseTableName="proyecto_observaciones"
+      constraintName="FK_PROYECTOOBSERVACIONES_PROYECTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}proyecto_observaciones(proyecto_id, value_, lang) SELECT id,
+      observaciones, '${defaultLang}' FROM ${schemaPrefix}proyecto WHERE observaciones IS NOT NULL
+      AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-69">
+    <createTable tableName="estado_solicitud_comentario">
+      <column name="estado_solicitud_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="estado_solicitud_comentario"
+      columnNames="estado_solicitud_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="estado_solicitud_id"
+      baseTableName="estado_solicitud_comentario"
+      constraintName="FK_ESTADOSOLICITUDCOMENTARIO_ESTADOSOLICITUD"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="estado_solicitud" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}estado_solicitud_comentario(estado_solicitud_id, value_, lang)
+      SELECT id, comentario, '${defaultLang}' FROM ${schemaPrefix}estado_solicitud WHERE comentario
+      IS NOT NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="estado_solicitud" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-70">
+    <createTable tableName="solicitud_rrhh_titulo_trabajo">
+      <column name="solicitud_rrhh_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(1000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_rrhh_titulo_trabajo" columnNames="solicitud_rrhh_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_rrhh_id"
+      baseTableName="solicitud_rrhh_titulo_trabajo"
+      constraintName="FK_SOLICITUDRRHHTITULOTRABAJO_SOLICITUDRRHH" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_rrhh" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_rrhh_titulo_trabajo(solicitud_rrhh_id, value_, lang)
+      SELECT id, titulo_trabajo, '${defaultLang}' FROM ${schemaPrefix}solicitud_rrhh WHERE
+      titulo_trabajo IS NOT NULL AND NULLIF(TRIM(titulo_trabajo), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="titulo_trabajo" tableName="solicitud_rrhh" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-71">
+    <createTable tableName="solicitud_rrhh_resumen">
+      <column name="solicitud_rrhh_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_rrhh_resumen"
+      columnNames="solicitud_rrhh_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_rrhh_id"
+      baseTableName="solicitud_rrhh_resumen"
+      constraintName="FK_SOLICITUDRRHHRESUMEN_SOLICITUDRRHH" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_rrhh" validate="true" />
+
+    <sql dbms="!oracle">INSERT INTO ${schemaPrefix}solicitud_rrhh_resumen(solicitud_rrhh_id, value_,
+      lang) SELECT id, resumen, '${defaultLang}' FROM ${schemaPrefix}solicitud_rrhh WHERE resumen IS
+      NOT NULL AND NULLIF(TRIM(resumen), '') IS NOT NULL</sql>
+
+    <sql dbms="oracle">INSERT INTO ${schemaPrefix}solicitud_rrhh_resumen(solicitud_rrhh_id, value_,
+      lang) SELECT id, resumen, '${defaultLang}' FROM ${schemaPrefix}solicitud_rrhh WHERE resumen IS
+      NOT NULL</sql>
+
+    <dropColumn columnName="resumen" tableName="solicitud_rrhh" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-72">
+    <createTable tableName="solicitud_rrhh_observaciones">
+      <column name="solicitud_rrhh_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_rrhh_observaciones"
+      columnNames="solicitud_rrhh_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_rrhh_id"
+      baseTableName="solicitud_rrhh_observaciones"
+      constraintName="FK_SOLICITUDRRHHOBSERVACIONES_SOLICITUDRRHH" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_rrhh" validate="true" />
+
+    <sql dbms="!oracle">INSERT INTO ${schemaPrefix}solicitud_rrhh_observaciones(solicitud_rrhh_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM ${schemaPrefix}solicitud_rrhh
+      WHERE observaciones IS NOT NULL AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <sql dbms="oracle">INSERT INTO ${schemaPrefix}solicitud_rrhh_observaciones(solicitud_rrhh_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM ${schemaPrefix}solicitud_rrhh
+      WHERE observaciones IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="solicitud_rrhh" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-73">
+    <createTable tableName="proyecto_hito_comentario">
+      <column name="proyecto_hito_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_hito_comentario" columnNames="proyecto_hito_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_hito_id"
+      baseTableName="proyecto_hito_comentario"
+      constraintName="FK_ProyectoHitoComentario_PROYECTOHITO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_hito" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}proyecto_hito_comentario(proyecto_hito_id, value_, lang) SELECT
+      id, comentario, '${defaultLang}' FROM ${schemaPrefix}proyecto_hito WHERE comentario IS NOT
+      NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="proyecto_hito" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-74">
+    <createTable tableName="contexto_proyecto_objetivos">
+      <column name="contexto_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="contexto_proyecto_objetivos"
+      columnNames="contexto_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="contexto_proyecto_id"
+      baseTableName="contexto_proyecto_objetivos"
+      constraintName="FK_CONTEXTOPROYECTOOBJETIVOS_CONTEXTOPROYECTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="contexto_proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}contexto_proyecto_objetivos(contexto_proyecto_id, value_, lang)
+      SELECT id, objetivos, '${defaultLang}' FROM ${schemaPrefix}contexto_proyecto WHERE objetivos
+      IS NOT NULL AND NULLIF(TRIM(objetivos), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="objetivos" tableName="contexto_proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-75">
+    <createTable tableName="contexto_proyecto_intereses">
+      <column name="contexto_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="contexto_proyecto_intereses"
+      columnNames="contexto_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="contexto_proyecto_id"
+      baseTableName="contexto_proyecto_intereses"
+      constraintName="FK_CONTEXTOPROYECTOINTERESES_CONTEXTOPROYECTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="contexto_proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}contexto_proyecto_intereses(contexto_proyecto_id, value_, lang)
+      SELECT id, intereses, '${defaultLang}' FROM ${schemaPrefix}contexto_proyecto WHERE intereses
+      IS NOT NULL AND NULLIF(TRIM(intereses), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="intereses" tableName="contexto_proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-76">
+    <createTable tableName="contexto_proyecto_resultados_previstos">
+      <column name="contexto_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="contexto_proyecto_resultados_previstos"
+      columnNames="contexto_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="contexto_proyecto_id"
+      baseTableName="contexto_proyecto_resultados_previstos"
+      constraintName="FK_CONTEXTOPROYECTORESULTADOSPREVISTOS_CONTEXTOPROYECTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="contexto_proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}contexto_proyecto_resultados_previstos(contexto_proyecto_id,
+      value_, lang) SELECT id, resultados_previstos, '${defaultLang}' FROM
+      ${schemaPrefix}contexto_proyecto WHERE resultados_previstos IS NOT NULL AND
+      NULLIF(TRIM(resultados_previstos), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="resultados_previstos" tableName="contexto_proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-77">
+    <createTable tableName="estado_proyecto_comentario">
+      <column name="estado_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="estado_proyecto_comentario"
+      columnNames="estado_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="estado_proyecto_id"
+      baseTableName="estado_proyecto_comentario"
+      constraintName="FK_ESTADOPROYECTOCOMENTARIO_ESTADOPROYECTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="estado_proyecto" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}estado_proyecto_comentario(estado_proyecto_id, value_, lang)
+      SELECT id, comentario, '${defaultLang}' FROM ${schemaPrefix}estado_proyecto WHERE comentario
+      IS NOT NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="estado_proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-78">
+    <createTable tableName="proyecto_fase_observaciones">
+      <column name="proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_fase_observaciones"
+      columnNames="proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_id"
+      baseTableName="proyecto_fase_observaciones"
+      constraintName="FK_PROYECTOFASEOBSERVACIONES_PROYECTOFASE" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_fase" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}proyecto_fase_observaciones(proyecto_id, value_, lang) SELECT
+      id, observaciones, '${defaultLang}' FROM ${schemaPrefix}proyecto_fase WHERE observaciones IS
+      NOT NULL AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="proyecto_fase" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-79">
+    <createTable tableName="solicitud_proyecto_presupuesto_observaciones">
+      <column name="solicitud_proyecto_presupuesto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_proyecto_presupuesto_observaciones"
+      columnNames="solicitud_proyecto_presupuesto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_proyecto_presupuesto_id"
+      baseTableName="solicitud_proyecto_presupuesto_observaciones"
+      constraintName="FK_SOLICITUDPROYECTOPRESUPUESTOOBSERVACIONES_SOLICITUDPROYECTOPRESUPUESTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_proyecto_presupuesto"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}solicitud_proyecto_presupuesto_observaciones(solicitud_proyecto_presupuesto_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}solicitud_proyecto_presupuesto WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="solicitud_proyecto_presupuesto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-80">
+    <createTable tableName="grupo_nombre">
+      <column name="grupo_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="grupo_nombre" columnNames="grupo_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="grupo_id"
+      baseTableName="grupo_nombre"
+      constraintName="FK_GRUPONOMBRE_GRUPO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="grupo" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}grupo_nombre(grupo_id, value_, lang) SELECT id, nombre,
+      '${defaultLang}' FROM ${schemaPrefix}grupo WHERE nombre IS NOT NULL AND NULLIF(TRIM(nombre),
+      '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="grupo" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-81">
+    <createTable tableName="grupo_resumen">
+      <column name="grupo_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="CLOB">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="grupo_resumen" columnNames="grupo_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="grupo_id"
+      baseTableName="grupo_resumen"
+      constraintName="FK_GRUPORESUMEN_GRUPO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="grupo" validate="true" />
+
+    <sql dbms="!oracle">INSERT INTO ${schemaPrefix}grupo_resumen(grupo_id, value_, lang) SELECT id,
+      resumen, '${defaultLang}' FROM ${schemaPrefix}grupo WHERE resumen IS NOT NULL AND
+      NULLIF(TRIM(resumen), '') IS NOT NULL</sql>
+
+    <sql dbms="oracle">INSERT INTO ${schemaPrefix}grupo_resumen(grupo_id, value_, lang) SELECT id,
+      resumen, '${defaultLang}' FROM ${schemaPrefix}grupo WHERE resumen IS NOT NULL</sql>
+
+    <dropColumn columnName="resumen" tableName="grupo" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-82">
+    <createTable tableName="proyecto_concepto_gasto_observaciones">
+      <column name="proyecto_concepto_gasto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_concepto_gasto_observaciones"
+      columnNames="proyecto_concepto_gasto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_concepto_gasto_id"
+      baseTableName="proyecto_concepto_gasto_observaciones"
+      constraintName="FK_PROYECTOCONCEPTOGASTOOBSERVACIONES_PROYECTOCONCEPTOGASTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_concepto_gasto" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}proyecto_concepto_gasto_observaciones(proyecto_concepto_gasto_id, value_, lang)
+      SELECT id, observaciones, '${defaultLang}' FROM ${schemaPrefix}proyecto_concepto_gasto WHERE
+      observaciones IS NOT NULL AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="proyecto_concepto_gasto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-83">
+    <createTable tableName="proyecto_concepto_gasto_codigo_ec_observaciones">
+      <column name="proyecto_concepto_gasto_codigo_ec_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_concepto_gasto_codigo_ec_observaciones"
+      columnNames="proyecto_concepto_gasto_codigo_ec_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_concepto_gasto_codigo_ec_id"
+      baseTableName="proyecto_concepto_gasto_codigo_ec_observaciones"
+      constraintName="FK_PROYECTOCONCEPTOGASTOCODIGOECOBSERVACIONES_PROYECTOCONCEPTOGASTOCODIGOEC"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_concepto_gasto_codigo_ec"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}proyecto_concepto_gasto_codigo_ec_observaciones(proyecto_concepto_gasto_codigo_ec_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}proyecto_concepto_gasto_codigo_ec WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="proyecto_concepto_gasto_codigo_ec" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-84">
+    <createTable tableName="proyecto_partida_descripcion">
+      <column name="proyecto_partida_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_partida_descripcion" columnNames="proyecto_partida_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_partida_id"
+      baseTableName="proyecto_partida_descripcion"
+      constraintName="FK_PROYECTOPARTIDADESCRIPCION_PROYECTOPARTIDA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_partida" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}proyecto_partida_descripcion(proyecto_partida_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}proyecto_partida WHERE
+      descripcion IS NOT NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="proyecto_partida" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-85">
+    <createTable tableName="autorizacion_titulo_proyecto">
+      <column name="autorizacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="autorizacion_titulo_proyecto" columnNames="autorizacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="autorizacion_id"
+      baseTableName="autorizacion_titulo_proyecto"
+      constraintName="FK_AUTORIZACIONTITULOPROYECTO_AUTORIZACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="autorizacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}autorizacion_titulo_proyecto(autorizacion_id, value_, lang)
+      SELECT id, titulo_proyecto, '${defaultLang}' FROM ${schemaPrefix}autorizacion WHERE
+      titulo_proyecto IS NOT NULL AND NULLIF(TRIM(titulo_proyecto), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="titulo_proyecto" tableName="autorizacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-86">
+    <createTable tableName="autorizacion_datos_convocatoria">
+      <column name="autorizacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="autorizacion_datos_convocatoria" columnNames="autorizacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="autorizacion_id"
+      baseTableName="autorizacion_datos_convocatoria"
+      constraintName="FK_AUTORIZACIONDATOSCONVOCATORIA_AUTORIZACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="autorizacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}autorizacion_datos_convocatoria(autorizacion_id, value_, lang)
+      SELECT id, datos_convocatoria, '${defaultLang}' FROM ${schemaPrefix}autorizacion WHERE
+      datos_convocatoria IS NOT NULL AND NULLIF(TRIM(datos_convocatoria), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="datos_convocatoria" tableName="autorizacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-87">
+    <createTable tableName="autorizacion_observaciones">
+      <column name="autorizacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="autorizacion_observaciones" columnNames="autorizacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="autorizacion_id"
+      baseTableName="autorizacion_observaciones"
+      constraintName="FK_AUTORIZACIONOBSERVACIONES_AUTORIZACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="autorizacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}autorizacion_observaciones(autorizacion_id, value_, lang) SELECT
+      id, observaciones, '${defaultLang}' FROM ${schemaPrefix}autorizacion WHERE observaciones IS
+      NOT NULL AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="autorizacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-88">
+    <createTable tableName="estado_autorizacion_comentario">
+      <column name="estado_autorizacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="estado_autorizacion_comentario"
+      columnNames="estado_autorizacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="estado_autorizacion_id"
+      baseTableName="estado_autorizacion_comentario"
+      constraintName="FK_ESTADOAUTORIZACIONCOMENTARIO_ESTADOAUTORIZACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="estado_autorizacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}estado_autorizacion_comentario(estado_autorizacion_id, value_,
+      lang) SELECT id, comentario, '${defaultLang}' FROM ${schemaPrefix}estado_autorizacion WHERE
+      comentario IS NOT NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="estado_autorizacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-89">
+    <createTable tableName="proyecto_documento_nombre">
+      <column name="proyecto_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_documento_nombre"
+      columnNames="proyecto_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_documento_id"
+      baseTableName="proyecto_documento_nombre"
+      constraintName="FK_PROYECTODOCUMENTONOMBRE_PROYECTODOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}proyecto_documento_nombre(proyecto_documento_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}proyecto_documento WHERE nombre IS NOT
+      NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="proyecto_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-90">
+    <createTable tableName="proyecto_documento_comentario">
+      <column name="proyecto_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_documento_comentario"
+      columnNames="proyecto_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_documento_id"
+      baseTableName="proyecto_documento_comentario"
+      constraintName="FK_PROYECTODOCUMENTOCOMENTARIO_PROYECTODOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}proyecto_documento_comentario(proyecto_documento_id, value_,
+      lang) SELECT id, comentario, '${defaultLang}' FROM ${schemaPrefix}proyecto_documento WHERE
+      comentario IS NOT NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="proyecto_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-91">
+    <createTable tableName="proyecto_paquete_trabajo_descripcion">
+      <column name="proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_paquete_trabajo_descripcion" columnNames="proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_id"
+      baseTableName="proyecto_paquete_trabajo_descripcion"
+      constraintName="FK_PROYECTOPAQUETETRABAJODESCRIPCION_PROYECTOPAQUETETRABAJO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_paquete_trabajo" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}proyecto_paquete_trabajo_descripcion(proyecto_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}proyecto_paquete_trabajo WHERE
+      descripcion IS NOT NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="proyecto_paquete_trabajo" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-92">
+    <createTable tableName="certificado_autorizacion_nombre">
+      <column name="certificado_autorizacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="certificado_autorizacion_nombre"
+      columnNames="certificado_autorizacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="certificado_autorizacion_id"
+      baseTableName="certificado_autorizacion_nombre"
+      constraintName="FK_CERTIFICADOAUTORIZACIONNOMBRE_CERTIFICADOAUTORIZACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="certificado_autorizacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}certificado_autorizacion_nombre(certificado_autorizacion_id,
+      value_, lang) SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}certificado_autorizacion
+      WHERE nombre IS NOT NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="certificado_autorizacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-93">
+    <createTable tableName="certificado_autorizacion_documento_ref">
+      <column name="certificado_autorizacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="certificado_autorizacion_documento_ref"
+      columnNames="certificado_autorizacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="certificado_autorizacion_id"
+      baseTableName="certificado_autorizacion_documento_ref"
+      constraintName="FK_CERTIFICADOAUTORIZACIONDOCUMENTOREF_CERTIFICADOAUTORIZACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="certificado_autorizacion" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}certificado_autorizacion_documento_ref(certificado_autorizacion_id, value_,
+      lang) SELECT id, documento_ref, '${defaultLang}' FROM ${schemaPrefix}certificado_autorizacion
+      WHERE documento_ref IS NOT NULL AND NULLIF(TRIM(documento_ref), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="documento_ref" tableName="certificado_autorizacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-94">
+    <createTable tableName="proyecto_periodo_seguimiento_documento_nombre">
+      <column name="proyecto_periodo_seguimiento_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_periodo_seguimiento_documento_nombre"
+      columnNames="proyecto_periodo_seguimiento_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_periodo_seguimiento_documento_id"
+      baseTableName="proyecto_periodo_seguimiento_documento_nombre"
+      constraintName="FK_PROYECTOPERIODOSEGUIMIENTODOCUMENTONOMBRE_PROYECTOPERIODOSEGUIMIENTODOCUMENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="proyecto_periodo_seguimiento_documento" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}proyecto_periodo_seguimiento_documento_nombre(proyecto_periodo_seguimiento_documento_id,
+      value_, lang) SELECT id, nombre, '${defaultLang}' FROM
+      ${schemaPrefix}proyecto_periodo_seguimiento_documento WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="proyecto_periodo_seguimiento_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-95">
+    <createTable tableName="proyecto_periodo_seguimiento_documento_comentario">
+      <column name="proyecto_periodo_seguimiento_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_periodo_seguimiento_documento_comentario"
+      columnNames="proyecto_periodo_seguimiento_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_periodo_seguimiento_documento_id"
+      baseTableName="proyecto_periodo_seguimiento_documento_comentario"
+      constraintName="FK_PROYECTOPERIODOSEGUIMIENTODOCUMENTOCOMENTARIO_PROYECTOPERIODOSEGUIMIENTODOCUMENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="proyecto_periodo_seguimiento_documento" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}proyecto_periodo_seguimiento_documento_comentario(proyecto_periodo_seguimiento_documento_id,
+      value_, lang) SELECT id, comentario, '${defaultLang}' FROM
+      ${schemaPrefix}proyecto_periodo_seguimiento_documento WHERE comentario IS NOT NULL AND
+      NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="proyecto_periodo_seguimiento_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-96">
+    <createTable tableName="proyecto_periodo_seguimiento_observaciones">
+      <column name="proyecto_periodo_seguimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_periodo_seguimiento_observaciones"
+      columnNames="proyecto_periodo_seguimiento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_periodo_seguimiento_id"
+      baseTableName="proyecto_periodo_seguimiento_observaciones"
+      constraintName="FK_PROYECTOPERIODOSEGUIMIENTOOBSERVACIONES_PROYECTOPERIODOSEGUIMIENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_periodo_seguimiento"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}proyecto_periodo_seguimiento_observaciones(proyecto_periodo_seguimiento_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}proyecto_periodo_seguimiento WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="proyecto_periodo_seguimiento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-97">
+    <createTable tableName="proyecto_socio_periodo_justificacion_observaciones">
+      <column name="proyecto_socio_periodo_justificacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_socio_periodo_justificacion_observaciones"
+      columnNames="proyecto_socio_periodo_justificacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_socio_periodo_justificacion_id"
+      baseTableName="proyecto_socio_periodo_justificacion_observaciones"
+      constraintName="FK_PROYECTOSOCIOPERIODOJUSTIFICACIONOBSERVACIONES_PROYECTOSOCIOPERIODOJUSTIFICACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_socio_periodo_justificacion"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}proyecto_socio_periodo_justificacion_observaciones(proyecto_socio_periodo_justificacion_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}proyecto_socio_periodo_justificacion WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="proyecto_socio_periodo_justificacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-98">
+    <createTable tableName="proyecto_socio_periodo_justificacion_documento_nombre">
+      <column name="proyecto_socio_periodo_justificacion_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_socio_periodo_justificacion_documento_nombre"
+      columnNames="proyecto_socio_periodo_justificacion_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_socio_periodo_justificacion_documento_id"
+      baseTableName="proyecto_socio_periodo_justificacion_documento_nombre"
+      constraintName="FK_PROYECTOSOCIOPERIODOJUSTIFICACIONDOCUMENTONOMBRE_PROYECTOSOCIOPERIODOJUSTIFICACIONDOCUMENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="proyecto_socio_periodo_justificacion_documento" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}proyecto_socio_periodo_justificacion_documento_nombre(proyecto_socio_periodo_justificacion_documento_id,
+      value_, lang) SELECT id, nombre, '${defaultLang}' FROM
+      ${schemaPrefix}proyecto_socio_periodo_justificacion_documento WHERE nombre IS NOT NULL AND
+      NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="proyecto_socio_periodo_justificacion_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-99">
+    <createTable tableName="proyecto_socio_periodo_justificacion_documento_comentario">
+      <column name="proyecto_socio_periodo_justificacion_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_socio_periodo_justificacion_documento_comentario"
+      columnNames="proyecto_socio_periodo_justificacion_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_socio_periodo_justificacion_documento_id"
+      baseTableName="proyecto_socio_periodo_justificacion_documento_comentario"
+      constraintName="FK_PROYECTOSOCIOPERIODOJUSTIFICACIONDOCUMENTOCOMENTARIO_PROYECTOSOCIOPERIODOJUSTIFICACIONDOCUMENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="proyecto_socio_periodo_justificacion_documento" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}proyecto_socio_periodo_justificacion_documento_comentario(proyecto_socio_periodo_justificacion_documento_id,
+      value_, lang) SELECT id, comentario, '${defaultLang}' FROM
+      ${schemaPrefix}proyecto_socio_periodo_justificacion_documento WHERE comentario IS NOT NULL AND
+      NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="proyecto_socio_periodo_justificacion_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-100">
+    <createTable tableName="proyecto_prorroga_observaciones">
+      <column name="proyecto_prorroga_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_prorroga_observaciones"
+      columnNames="proyecto_prorroga_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_prorroga_id"
+      baseTableName="proyecto_prorroga_observaciones"
+      constraintName="FK_PROYECTOPRORROGAOBSERVACIONES_PROYECTOPRORROGA" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_prorroga" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}proyecto_prorroga_observaciones(proyecto_prorroga_id, value_,
+      lang) SELECT id, observaciones, '${defaultLang}' FROM ${schemaPrefix}proyecto_prorroga WHERE
+      observaciones IS NOT NULL AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="proyecto_prorroga" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-101">
+    <createTable tableName="prorroga_documento_nombre">
+      <column name="prorroga_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="prorroga_documento_nombre" columnNames="prorroga_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="prorroga_documento_id"
+      baseTableName="prorroga_documento_nombre"
+      constraintName="FK_PRORROGADOCUMENTONOMBRE_PRORROGADOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="prorroga_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}prorroga_documento_nombre(prorroga_documento_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}prorroga_documento WHERE nombre IS NOT
+      NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="prorroga_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-102">
+    <createTable tableName="prorroga_documento_comentario">
+      <column name="prorroga_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="prorroga_documento_comentario"
+      columnNames="prorroga_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="prorroga_documento_id"
+      baseTableName="prorroga_documento_comentario"
+      constraintName="FK_PRORROGADOCUMENTOCOMENTARIO_PRORROGADOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="prorroga_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}prorroga_documento_comentario(prorroga_documento_id, value_,
+      lang) SELECT id, comentario, '${defaultLang}' FROM ${schemaPrefix}prorroga_documento WHERE
+      comentario IS NOT NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="prorroga_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-103">
+    <createTable tableName="notificacion_proyecto_externo_cvn_titulo">
+      <column name="notificacion_proyecto_externo_cvn_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="notificacion_proyecto_externo_cvn_titulo"
+      columnNames="notificacion_proyecto_externo_cvn_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="notificacion_proyecto_externo_cvn_id"
+      baseTableName="notificacion_proyecto_externo_cvn_titulo"
+      constraintName="FK_NOTIFICACIONPROYECTOEXTERNOCVNTITULO_NOTIFICACIONPROYECTOEXTERNOCVN"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="notificacion_proyecto_externo_cvn"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}notificacion_proyecto_externo_cvn_titulo(notificacion_proyecto_externo_cvn_id,
+      value_, lang) SELECT id, titulo, '${defaultLang}' FROM
+      ${schemaPrefix}notificacion_proyecto_externo_cvn WHERE titulo IS NOT NULL AND
+      NULLIF(TRIM(titulo), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="titulo" tableName="notificacion_proyecto_externo_cvn" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-104">
+    <createTable tableName="proyecto_periodo_justificacion_observaciones">
+      <column name="proyecto_periodo_justificacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_periodo_justificacion_observaciones"
+      columnNames="proyecto_periodo_justificacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_periodo_justificacion_id"
+      baseTableName="proyecto_periodo_justificacion_observaciones"
+      constraintName="FK_PROYECTOPERIODOJUSTIFICACIONOBSERVACIONES_PROYECTOPERIODOJUSTIFICACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_periodo_justificacion"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}proyecto_periodo_justificacion_observaciones(proyecto_periodo_justificacion_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}proyecto_periodo_justificacion WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="proyecto_periodo_justificacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-105">
+    <createTable tableName="proyecto_facturacion_comentario">
+      <column name="proyecto_facturacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(1024)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="proyecto_facturacion_comentario"
+      columnNames="proyecto_facturacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="proyecto_facturacion_id"
+      baseTableName="proyecto_facturacion_comentario"
+      constraintName="FK_PROYECTOFACTURACIONCOMENTARIO_PROYECTOFACTURACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="proyecto_facturacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}proyecto_facturacion_comentario(proyecto_facturacion_id, value_,
+      lang) SELECT id, comentario, '${defaultLang}' FROM ${schemaPrefix}proyecto_facturacion WHERE
+      comentario IS NOT NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="proyecto_facturacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-106">
+    <createTable tableName="estado_validacion_ip_comentario">
+      <column name="estado_validacion_ip_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(1024)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="estado_validacion_ip_comentario"
+      columnNames="estado_validacion_ip_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="estado_validacion_ip_id"
+      baseTableName="estado_validacion_ip_comentario"
+      constraintName="FK_ESTADOVALIDACIONIPCOMENTARIO_ESTADOVALIDACIONIP"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="estado_validacion_ip" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}estado_validacion_ip_comentario(estado_validacion_ip_id, value_,
+      lang) SELECT id, comentario, '${defaultLang}' FROM ${schemaPrefix}estado_validacion_ip WHERE
+      comentario IS NOT NULL AND NULLIF(TRIM(comentario), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="estado_validacion_ip" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-107">
+    <addColumn tableName="configuracion">
+      <column name="sge_notificacion_presupuesto" type="BOOLEAN" defaultValueBoolean="false" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-108">
+    <addColumn tableName="configuracion">
+      <column name="pro_anualidad_anio_formato" type="BOOLEAN" defaultValueBoolean="true" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-109">
+    <createTable tableName="grupo_equipo_instrumental_nombre">
+      <column name="grupo_equipo_instrumental_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(100)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="grupo_equipo_instrumental_nombre"
+      columnNames="grupo_equipo_instrumental_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="grupo_equipo_instrumental_id"
+      baseTableName="grupo_equipo_instrumental_nombre"
+      constraintName="FK_GRUPOEQUIPOINSTRUMENTALNOMBRE_GRUPOEQUIPOINSTRUMENTAL"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="grupo_equipo_instrumental" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}grupo_equipo_instrumental_nombre(grupo_equipo_instrumental_id,
+      value_, lang) SELECT id, nombre, '${defaultLang}' FROM
+      ${schemaPrefix}grupo_equipo_instrumental WHERE nombre IS NOT NULL AND NULLIF(TRIM(nombre), '')
+      IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="grupo_equipo_instrumental" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-110">
+    <createTable tableName="grupo_equipo_instrumental_descripcion">
+      <column name="grupo_equipo_instrumental_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="grupo_equipo_instrumental_descripcion"
+      columnNames="grupo_equipo_instrumental_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="grupo_equipo_instrumental_id"
+      baseTableName="grupo_equipo_instrumental_descripcion"
+      constraintName="FK_GRUPOEQUIPOINSTRUMENTALDESCRIPCION_GRUPOEQUIPOINSTRUMENTAL"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="grupo_equipo_instrumental" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}grupo_equipo_instrumental_descripcion(grupo_equipo_instrumental_id, value_,
+      lang) SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}grupo_equipo_instrumental
+      WHERE descripcion IS NOT NULL AND NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="grupo_equipo_instrumental" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-111">
+    <createTable tableName="gasto_proyecto_observaciones">
+      <column name="gasto_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="gasto_proyecto_observaciones"
+      columnNames="gasto_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="gasto_proyecto_id"
+      baseTableName="gasto_proyecto_observaciones"
+      constraintName="FK_GASTOPROYECTOOBSERVACIONES_GASTOPROYECTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="gasto_proyecto"
+      validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}gasto_proyecto_observaciones(gasto_proyecto_id, value_, lang)
+      SELECT id, observaciones, '${defaultLang}' FROM ${schemaPrefix}gasto_proyecto WHERE
+      observaciones IS NOT NULL AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="gasto_proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-112">
+    <createTable tableName="estado_gasto_proyecto_comentario">
+      <column name="estado_gasto_proyecto_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="estado_gasto_proyecto_comentario"
+      columnNames="estado_gasto_proyecto_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="estado_gasto_proyecto_id"
+      baseTableName="estado_gasto_proyecto_comentario"
+      constraintName="FK_ESTADOGASTOPROYECTOCOMENTARIO_ESTADOGASTOPROYECTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="estado_gasto_proyecto"
+      validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}estado_gasto_proyecto_comentario(estado_gasto_proyecto_id,
+      value_, lang) SELECT id, comentario, '${defaultLang}' FROM
+      ${schemaPrefix}estado_gasto_proyecto WHERE comentario IS NOT NULL AND NULLIF(TRIM(comentario),
+      '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentario" tableName="estado_gasto_proyecto" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-113">
+    <createTable tableName="tipo_requerimiento_nombre">
+      <column name="tipo_requerimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_requerimiento_nombre"
+      columnNames="tipo_requerimiento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_requerimiento_id"
+      baseTableName="tipo_requerimiento_nombre"
+      constraintName="FK_TIPOREQUERIMIENTONOMBRE_TIPOREQUERIMIENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_requerimiento"
+      validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_requerimiento_nombre(tipo_requerimiento_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}tipo_requerimiento WHERE nombre IS NOT
+      NULL AND NULLIF(TRIM(nombre), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_requerimiento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-114">
+    <createTable tableName="requerimiento_justificacion_observaciones">
+      <column name="requerimiento_justificacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="requerimiento_justificacion_observaciones"
+      columnNames="requerimiento_justificacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="requerimiento_justificacion_id"
+      baseTableName="requerimiento_justificacion_observaciones"
+      constraintName="FK_REQUERIMIENTOJUSTIFICACIONOBSERVACIONES_REQUERIMIENTOJUSTIFICACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="requerimiento_justificacion" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}requerimiento_justificacion_observaciones(requerimiento_justificacion_id,
+      value_, lang) SELECT id, observaciones, '${defaultLang}' FROM
+      ${schemaPrefix}requerimiento_justificacion WHERE observaciones IS NOT NULL AND
+      NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="requerimiento_justificacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-115">
+    <createTable tableName="incidencia_documentacion_requerimiento_nombre_documento">
+      <column name="incidencia_documentacion_requerimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="incidencia_documentacion_requerimiento_nombre_documento"
+      columnNames="incidencia_documentacion_requerimiento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="incidencia_documentacion_requerimiento_id"
+      baseTableName="incidencia_documentacion_requerimiento_nombre_documento"
+      constraintName="FK_INCIDENCIADOCUMENTACIONREQUERIMIENTONOMBREDOCUMENTO_INCIDENCIADOCUMENTACIONREQUERIMIENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="incidencia_documentacion_requerimiento" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}incidencia_documentacion_requerimiento_nombre_documento(incidencia_documentacion_requerimiento_id,
+      value_, lang) SELECT id, nombre_documento, '${defaultLang}' FROM
+      ${schemaPrefix}incidencia_documentacion_requerimiento WHERE nombre_documento IS NOT NULL AND
+      NULLIF(TRIM(nombre_documento), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre_documento" tableName="incidencia_documentacion_requerimiento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-116">
+    <createTable tableName="incidencia_documentacion_requerimiento_incidencia">
+      <column name="incidencia_documentacion_requerimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="incidencia_documentacion_requerimiento_incidencia"
+      columnNames="incidencia_documentacion_requerimiento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="incidencia_documentacion_requerimiento_id"
+      baseTableName="incidencia_documentacion_requerimiento_incidencia"
+      constraintName="FK_INCIDENCIADOCUMENTACIONREQUERIMIENTOINCIDENCIA_INCIDENCIADOCUMENTACIONREQUERIMIENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="incidencia_documentacion_requerimiento" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}incidencia_documentacion_requerimiento_incidencia(incidencia_documentacion_requerimiento_id,
+      value_, lang) SELECT id, incidencia, '${defaultLang}' FROM
+      ${schemaPrefix}incidencia_documentacion_requerimiento WHERE incidencia IS NOT NULL AND
+      NULLIF(TRIM(incidencia), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="incidencia" tableName="incidencia_documentacion_requerimiento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-117">
+    <createTable tableName="incidencia_documentacion_requerimiento_alegacion">
+      <column name="incidencia_documentacion_requerimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="incidencia_documentacion_requerimiento_alegacion"
+      columnNames="incidencia_documentacion_requerimiento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="incidencia_documentacion_requerimiento_id"
+      baseTableName="incidencia_documentacion_requerimiento_alegacion"
+      constraintName="FK_INCIDENCIADOCUMENTACIONREQUERIMIENTOALEGACION_INCIDENCIADOCUMENTACIONREQUERIMIENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="incidencia_documentacion_requerimiento" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}incidencia_documentacion_requerimiento_alegacion(incidencia_documentacion_requerimiento_id,
+      value_, lang) SELECT id, alegacion, '${defaultLang}' FROM
+      ${schemaPrefix}incidencia_documentacion_requerimiento WHERE alegacion IS NOT NULL AND
+      NULLIF(TRIM(alegacion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="alegacion" tableName="incidencia_documentacion_requerimiento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-118">
+    <createTable tableName="gasto_requerimiento_justificacion_incidencia">
+      <column name="gasto_requerimiento_justificacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="gasto_requerimiento_justificacion_incidencia"
+      columnNames="gasto_requerimiento_justificacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="gasto_requerimiento_justificacion_id"
+      baseTableName="gasto_requerimiento_justificacion_incidencia"
+      constraintName="FK_GASTOREQUERIMIENTOJUSTIFICACIONINCIDENCIA_GASTOREQUERIMIENTOJUSTIFICACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="gasto_requerimiento_justificacion" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}gasto_requerimiento_justificacion_incidencia(gasto_requerimiento_justificacion_id,
+      value_, lang) SELECT id, incidencia, '${defaultLang}' FROM
+      ${schemaPrefix}gasto_requerimiento_justificacion WHERE incidencia IS NOT NULL AND
+      NULLIF(TRIM(incidencia), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="incidencia" tableName="gasto_requerimiento_justificacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-119">
+    <createTable tableName="gasto_requerimiento_justificacion_alegacion">
+      <column name="gasto_requerimiento_justificacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="gasto_requerimiento_justificacion_alegacion"
+      columnNames="gasto_requerimiento_justificacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="gasto_requerimiento_justificacion_id"
+      baseTableName="gasto_requerimiento_justificacion_alegacion"
+      constraintName="FK_GASTOREQUERIMIENTOJUSTIFICACIONALEGACION_GASTOREQUERIMIENTOJUSTIFICACION"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="gasto_requerimiento_justificacion" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}gasto_requerimiento_justificacion_alegacion(gasto_requerimiento_justificacion_id,
+      value_, lang) SELECT id, alegacion, '${defaultLang}' FROM
+      ${schemaPrefix}gasto_requerimiento_justificacion WHERE alegacion IS NOT NULL AND
+      NULLIF(TRIM(alegacion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="alegacion" tableName="gasto_requerimiento_justificacion" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-120">
+    <createTable tableName="alegacion_requerimiento_observaciones">
+      <column name="alegacion_requerimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="alegacion_requerimiento_observaciones"
+      columnNames="alegacion_requerimiento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="alegacion_requerimiento_id"
+      baseTableName="alegacion_requerimiento_observaciones"
+      constraintName="FK_ALEGACIONREQUERIMIENTOOBSERVACIONES_ALEGACIONREQUERIMIENTO"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="alegacion_requerimiento" validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}alegacion_requerimiento_observaciones(alegacion_requerimiento_id, value_, lang)
+      SELECT id, observaciones, '${defaultLang}' FROM ${schemaPrefix}alegacion_requerimiento WHERE
+      observaciones IS NOT NULL AND NULLIF(TRIM(observaciones), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="observaciones" tableName="alegacion_requerimiento" />
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-121">
+    <addColumn tableName="configuracion">
+      <column name="sge_filtro_anualidades" type="varchar(50)" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-122">
+    <addColumn tableName="configuracion">
+      <column name="sge_ejecucionpresupuestaria_gastos_detalle" type="BOOLEAN"
+        defaultValueBoolean="false" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-123">
+    <addColumn tableName="configuracion">
+      <column name="sge_detalleoperaciones_gastos_detalle" type="BOOLEAN"
+        defaultValueBoolean="false" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-124">
+    <dropColumn tableName="configuracion" columnName="sge_modificaciones" />
+
+    <addColumn tableName="configuracion">
+      <column name="sge_integraciones_ecc_habilitadas" type="varchar(1000)" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-125">
+    <addColumn tableName="configuracion">
+      <column name="sge_ejecucion_economica_filtros" type="varchar(1000)" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-126">
+    <dropColumn tableName="configuracion" columnName="sge_calendario_facturacion" />
+
+    <addColumn tableName="configuracion">
+      <column name="sge_calendario_facturacion" type="varchar(50)" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-127">
+    <addColumn tableName="proyecto_facturacion">
+      <column name="numero_factura_sge" type="varchar(50)" />
+    </addColumn>
+  </changeSet>
+
+  <changeSet author="master" id="0.10.0-128">
+    <addColumn tableName="configuracion">
+      <column name="sge_eliminar_relacion_proyecto" type="BOOLEAN" defaultValueBoolean="false" />
+    </addColumn>
+  </changeSet>
+
+</databaseChangeLog>

@@ -7,10 +7,12 @@ import java.util.List;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVN;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,9 +27,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class NotificacionProyectoExternoCVNInput implements Serializable {
 
-  @Size(max = NotificacionProyectoExternoCVN.MAX_LENGTH)
-  @NotBlank
-  private String titulo;
+  @NotEmpty
+  private List<I18nFieldValueDto> titulo;
 
   private Long autorizacionId;
 

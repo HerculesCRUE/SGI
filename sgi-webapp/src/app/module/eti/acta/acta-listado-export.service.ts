@@ -11,8 +11,8 @@ import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestSort, SgiRestSortDirection } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { concat, Observable, of, zip } from 'rxjs';
-import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concat, from, Observable, of, zip } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { MemoriaListado } from './acta-formulario/acta-memorias/acta-memorias.fragment';
 import { ActaGeneralListadoExportService } from './acta-general-listado-export.service';
 import { ActaMemoriaListadoExportService } from './acta-memoria-listado-export.service';
@@ -74,7 +74,7 @@ export class ActaListadoExportService extends AbstractTableExportService<IActaRe
     const findOptions = reportConfig.reportOptions?.findOptions;
     findOptions.page.index = 0;
     findOptions.page.size = undefined;
-    findOptions.sort = new RSQLSgiRestSort('convocatoriaReunion.comite.comite', SgiRestSortDirection.ASC).and('numero', SgiRestSortDirection.ASC);
+    findOptions.sort = new RSQLSgiRestSort('convocatoriaReunion.comite.codigo', SgiRestSortDirection.ASC).and('numero', SgiRestSortDirection.ASC);
 
     return this.actaService.findActivasWithEvaluaciones(findOptions).pipe(
       map((actas) => {
@@ -83,12 +83,19 @@ export class ActaListadoExportService extends AbstractTableExportService<IActaRe
         });
       }),
       switchMap((actasReportData) => {
-        const requestsActa: Observable<IActaReportData>[] = [];
+        const requestsActa: IActaReportData[] = [];
 
-        actasReportData.forEach(acta => {
-          requestsActa.push(this.getDataReportInner(acta, reportConfig.reportOptions));
-        });
-        return zip(...requestsActa);
+        return from(actasReportData).pipe(
+          mergeMap((acta) => {
+            return this.getDataReportInner(acta, reportConfig.reportOptions)
+          }, this.DEFAULT_CONCURRENT)
+        ).pipe(
+          map(r => {
+            requestsActa.push(r);
+            return requestsActa;
+          }),
+          takeLast(1)
+        )
       }),
       takeLast(1)
     );

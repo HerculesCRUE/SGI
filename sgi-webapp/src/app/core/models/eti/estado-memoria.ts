@@ -1,4 +1,5 @@
 
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IMemoria } from './memoria';
 import { TipoEstadoMemoria } from './tipo-estado-memoria';
@@ -13,5 +14,5 @@ export interface IEstadoMemoria {
   /** Fecha Estado */
   fechaEstado: DateTime;
   /** Comentario */
-  comentario: string;
+  comentario: I18nFieldValue[];
 }

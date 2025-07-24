@@ -11,7 +11,10 @@ import org.crue.hercules.sgi.csp.repository.ModeloTipoHitoRepository;
 import org.crue.hercules.sgi.csp.repository.TipoHitoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ModeloTipoHitoSpecifications;
 import org.crue.hercules.sgi.csp.service.ModeloTipoHitoService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -28,6 +31,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ModeloTipoHitoServiceImpl implements ModeloTipoHitoService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_MODEL_TIPO_HITO = "org.crue.hercules.sgi.csp.model.TipoHito.message";
+  private static final String MSG_MODEL_MODELO_TIPO_HITO = "org.crue.hercules.sgi.csp.model.ModeloTipoHito.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODELO_EJECUCION_EXISTS = "org.springframework.util.Assert.entity.modeloEjecucion.exists.message";
+  private static final String MSG_MODELO_TIPO_HITO_ASSIGN = "modeloTipoHito.assign";
 
   private final ModeloTipoHitoRepository modeloTipoHitoRepository;
   private final ModeloEjecucionRepository modeloEjecucionRepository;
@@ -52,20 +62,23 @@ public class ModeloTipoHitoServiceImpl implements ModeloTipoHitoService {
     log.debug("create(ModeloTipoHito modeloTipoHito) - start");
 
     // Id vacío al crear
-    Assert.isNull(modeloTipoHito.getId(), "Id tiene que ser null para crear ModeloTipoHito");
+    AssertHelper.idIsNull(modeloTipoHito.getId(), ModeloTipoHito.class);
 
     // ModeloEjecucion existe
-    Assert.notNull(modeloTipoHito.getModeloEjecucion().getId(),
-        "Id ModeloEjecucion no puede ser null para actualizar ModeloTipoHito");
+    AssertHelper.idNotNull(modeloTipoHito.getModeloEjecucion().getId(), ModeloEjecucion.class);
     modeloTipoHito.setModeloEjecucion(modeloEjecucionRepository.findById(modeloTipoHito.getModeloEjecucion().getId())
         .orElseThrow(() -> new ModeloEjecucionNotFoundException(modeloTipoHito.getModeloEjecucion().getId())));
 
     // TipoHito existe y activo
-    Assert.notNull(modeloTipoHito.getTipoHito().getId(),
-        "Id TipoHito no puede ser null para actualizar ModeloTipoHito");
+    AssertHelper.idNotNull(modeloTipoHito.getTipoHito().getId(), TipoHito.class);
     modeloTipoHito.setTipoHito(tipoHitoRepository.findById(modeloTipoHito.getTipoHito().getId())
         .orElseThrow(() -> new TipoHitoNotFoundException(modeloTipoHito.getTipoHito().getId())));
-    Assert.isTrue(modeloTipoHito.getTipoHito().getActivo(), "El TipoHito debe estar Activo");
+    Assert.isTrue(modeloTipoHito.getTipoHito().getActivo(),
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_HITO))
+            .parameter(MSG_KEY_FIELD, modeloTipoHito.getTipoHito().getNombre())
+            .build());
 
     // Comprobar si ya existe una relación activa entre Modelo y Tipo
     modeloTipoHitoRepository.findByModeloEjecucionIdAndTipoHitoId(modeloTipoHito.getModeloEjecucion().getId(),
@@ -74,7 +87,10 @@ public class ModeloTipoHitoServiceImpl implements ModeloTipoHitoService {
 
               // Si ya está activa no se podrá insertar TipoHito
               Assert.isTrue(!modeloTipoHitoExistente.getActivo(),
-                  "El TipoHito ya se encuentra asociado al  ModeloEjecucion");
+                  () -> ProblemMessage.builder()
+                      .key(MSG_MODELO_EJECUCION_EXISTS)
+                      .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_HITO))
+                      .build());
 
               // Si está desactivado se activará la relación existente
               modeloTipoHito.setId(modeloTipoHitoExistente.getId());
@@ -86,7 +102,7 @@ public class ModeloTipoHitoServiceImpl implements ModeloTipoHitoService {
 
     // Al menos un tipo seleccionado
     Assert.isTrue((modeloTipoHito.getSolicitud() || modeloTipoHito.getProyecto() || modeloTipoHito.getConvocatoria()),
-        "ModeloTipoHito debe estar asignado al menos a uno de los tipos Solicitud, Convocatoria o Proyecto");
+        ApplicationContextSupport.getMessage(MSG_MODELO_TIPO_HITO_ASSIGN));
 
     ModeloTipoHito returnValue = modeloTipoHitoRepository.save(modeloTipoHito);
     log.debug("create(ModeloTipoHito modeloTipoHito) - end");
@@ -105,14 +121,19 @@ public class ModeloTipoHitoServiceImpl implements ModeloTipoHitoService {
     log.debug("update(ModeloTipoHito modeloTipoHito) - start");
 
     // Id no vacío
-    Assert.notNull(modeloTipoHito.getId(), "Id no puede que ser null para actualizar ModeloTipoHito");
+    AssertHelper.idNotNull(modeloTipoHito.getId(), ModeloTipoHito.class);
 
     return modeloTipoHitoRepository.findById(modeloTipoHito.getId()).map(modeloTipoHitoExistente -> {
 
-      Assert.isTrue(modeloTipoHitoExistente.getActivo(), "El ModeloTipoHito debe estar activo");
+      Assert.isTrue(modeloTipoHitoExistente.getActivo(),
+          () -> ProblemMessage.builder()
+              .key(MSG_ENTITY_INACTIVO)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_HITO))
+              .parameter(MSG_KEY_FIELD, modeloTipoHitoExistente.getTipoHito().getNombre())
+              .build());
 
       Assert.isTrue((modeloTipoHito.getSolicitud() || modeloTipoHito.getProyecto() || modeloTipoHito.getConvocatoria()),
-          "ModeloTipoHito debe estar asignado al menos a uno de los tipos Solicitud, Convocatoria o Proyecto");
+          ApplicationContextSupport.getMessage(MSG_MODELO_TIPO_HITO_ASSIGN));
 
       modeloTipoHitoExistente.setSolicitud(modeloTipoHito.getSolicitud());
       modeloTipoHitoExistente.setConvocatoria(modeloTipoHito.getConvocatoria());
@@ -136,7 +157,7 @@ public class ModeloTipoHitoServiceImpl implements ModeloTipoHitoService {
   public ModeloTipoHito disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "ModeloTipoHito id no puede ser null para desactivar un ModeloTipoHito");
+    AssertHelper.idNotNull(id, ModeloTipoHito.class);
 
     return modeloTipoHitoRepository.findById(id).map(modeloTipoHito -> {
       modeloTipoHito.setActivo(false);
@@ -179,79 +200,6 @@ public class ModeloTipoHitoServiceImpl implements ModeloTipoHitoService {
 
     Page<ModeloTipoHito> returnValue = modeloTipoHitoRepository.findAll(specs, pageable);
     log.debug("findAllByModeloEjecucion(Long idModeloEjecucion, String query, Pageable pageable) - end");
-    return returnValue;
-  }
-
-  /**
-   * Obtiene los {@link ModeloTipoHito} activos para convocatorias para un
-   * {@link ModeloEjecucion}.
-   *
-   * @param idModeloEjecucion el id de la entidad {@link ModeloEjecucion}.
-   * @param query             la información del filtro.
-   * @param pageable          la información de la paginación.
-   * @return la lista de entidades {@link ModeloTipoHito} del
-   *         {@link ModeloEjecucion} paginadas.
-   */
-  @Override
-  public Page<ModeloTipoHito> findAllByModeloEjecucionActivosConvocatoria(Long idModeloEjecucion, String query,
-      Pageable pageable) {
-    log.debug(
-        "findAllByModeloEjecucionActivosConvocatoria(Long idModeloEjecucion, String query, Pageable pageable) - start");
-    Specification<ModeloTipoHito> specs = ModeloTipoHitoSpecifications.activos()
-        .and(ModeloTipoHitoSpecifications.byModeloEjecucionId(idModeloEjecucion))
-        .and(ModeloTipoHitoSpecifications.activosConvocatoria()).and(SgiRSQLJPASupport.toSpecification(query));
-
-    Page<ModeloTipoHito> returnValue = modeloTipoHitoRepository.findAll(specs, pageable);
-    log.debug(
-        "findAllByModeloEjecucionActivosConvocatoria(Long idModeloEjecucion, String query, Pageable pageable) - end");
-    return returnValue;
-  }
-
-  /**
-   * Obtiene los {@link ModeloTipoHito} activos para proyectos para un
-   * {@link ModeloEjecucion}.
-   *
-   * @param idModeloEjecucion el id de la entidad {@link ModeloEjecucion}.
-   * @param query             la información del filtro.
-   * @param pageable          la información de la paginación.
-   * @return la lista de entidades {@link ModeloTipoHito} del
-   *         {@link ModeloEjecucion} paginadas.
-   */
-  @Override
-  public Page<ModeloTipoHito> findAllByModeloEjecucionActivosProyecto(Long idModeloEjecucion, String query,
-      Pageable pageable) {
-    log.debug(
-        "findAllByModeloEjecucionActivosProyecto(Long idModeloEjecucion, String query, Pageable pageable) - start");
-    Specification<ModeloTipoHito> specs = ModeloTipoHitoSpecifications.activos()
-        .and(ModeloTipoHitoSpecifications.byModeloEjecucionId(idModeloEjecucion))
-        .and(ModeloTipoHitoSpecifications.activosProyecto()).and(SgiRSQLJPASupport.toSpecification(query));
-
-    Page<ModeloTipoHito> returnValue = modeloTipoHitoRepository.findAll(specs, pageable);
-    log.debug("findAllByModeloEjecucionActivosProyecto(Long idModeloEjecucion, String query, Pageable pageable) - end");
-    return returnValue;
-  }
-
-  /**
-   * Obtiene los {@link ModeloTipoHito} activos para solicitudes para un
-   * {@link ModeloEjecucion}.
-   *
-   * @param idModeloEjecucion el id de la entidad {@link ModeloEjecucion}.
-   * @param query             la información del filtro.
-   * @param pageable          la información de la paginación.
-   * @return la lista de entidades {@link ModeloTipoHito} del
-   *         {@link ModeloEjecucion} paginadas.
-   */
-  @Override
-  public Page<ModeloTipoHito> findAllByModeloEjecucionActivosSolicitud(Long idModeloEjecucion, String query,
-      Pageable pageable) {
-    log.debug(
-        "findAllByModeloEjecucionActivosProyecto(Long idModeloEjecucion, String query, Pageable pageable) - start");
-    Specification<ModeloTipoHito> specs = ModeloTipoHitoSpecifications.activos()
-        .and(ModeloTipoHitoSpecifications.byModeloEjecucionId(idModeloEjecucion))
-        .and(ModeloTipoHitoSpecifications.activosSolcitud()).and(SgiRSQLJPASupport.toSpecification(query));
-
-    Page<ModeloTipoHito> returnValue = modeloTipoHitoRepository.findAll(specs, pageable);
-    log.debug("findAllByModeloEjecucionActivosProyecto(Long idModeloEjecucion, String query, Pageable pageable) - end");
     return returnValue;
   }
 

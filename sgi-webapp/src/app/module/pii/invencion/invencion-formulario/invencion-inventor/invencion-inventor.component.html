@@ -8,7 +8,8 @@
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.invencion-inventor.nombre' | translate}}
         </th>
-        <td mat-cell *matCellDef="let inventor">{{inventor.value.inventor?.nombre}}</td>
+        <td mat-cell *matCellDef="let inventor" [model]="inventor.value.inventor" sgpNotFoundError>
+          {{inventor.value.inventor?.nombre}}</td>
       </ng-container>
       <!-- Apellidos -->
       <ng-container matColumnDef="apellidos">

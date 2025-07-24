@@ -2,6 +2,9 @@ package org.crue.hercules.sgi.eti.dto.com;
 
 import java.io.Serializable;
 import java.time.Instant;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +22,7 @@ public class EtiComRevisionActaData implements Serializable {
   private static final long serialVersionUID = 1L;
 
   private Instant fechaEvaluacion;
-  private String nombreInvestigacion;
+  private Collection<? extends I18nFieldValue> nombreInvestigacion;
   private String nombreComite;
   private String generoComite;
   private String enlaceAplicacion;

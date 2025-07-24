@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -21,6 +22,7 @@ import org.crue.hercules.sgi.csp.model.ModeloTipoHito;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
 import org.crue.hercules.sgi.csp.model.ProyectoHitoAviso;
+import org.crue.hercules.sgi.csp.model.ProyectoHitoComentario;
 import org.crue.hercules.sgi.csp.model.TipoHito;
 import org.crue.hercules.sgi.csp.repository.ModeloTipoHitoRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoEquipoRepository;
@@ -33,7 +35,12 @@ import org.crue.hercules.sgi.csp.service.ProyectoHitoService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -52,6 +59,20 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class ProyectoHitoServiceImpl implements ProyectoHitoService {
+  private static final String MSG_AVISO_ENVIADO = "avisoEnviado.message";
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_FIELD = "field";
+  private static final String MSG_KEY_MODELO = "modelo";
+  private static final String MSG_KEY_MSG = "msg";
+  private static final String MSG_FIELD_FECHA_ENVIO = "fechaEnvio";
+  private static final String MSG_FIELD_FECHA_ACTUAL = "fechaActual";
+  private static final String MSG_MODEL_MODELO_TIPO_HITO = "org.crue.hercules.sgi.csp.model.ModeloTipoHito.message";
+  private static final String MSG_MODEL_TIPO_HITO = "org.crue.hercules.sgi.csp.model.TipoHito.message";
+  private static final String MSG_ENTITY_INACTIVO = "org.springframework.util.Assert.inactivo.message";
+  private static final String MSG_MODELO_EJECUCION_INACTIVO = "org.springframework.util.Assert.entity.modeloEjecucion.inactivo.message";
+  private static final String MSG_PROYECTO_ASSIGN_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.exceptions.AssignModeloEjecucion.message";
+  private static final String MSG_PROYECTO_SIN_MODELO_ASIGNADO = "org.crue.hercules.sgi.csp.model.Proyecto.sinModeloEjecucion.message";
+  private static final String MSG_NO_DISPONIBLE_MODELO_EJECUCION = "org.crue.hercules.sgi.csp.model.ModeloEjecucion.noDisponible.message";
 
   private final ProyectoHitoRepository repository;
   private final ProyectoRepository proyectoRepository;
@@ -81,7 +102,9 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
         .orElseThrow(() -> new TipoHitoNotFoundException(proyectoHitoInput.getTipoHitoId()));
 
     ProyectoHito proyectoHito = repository.save(ProyectoHito.builder()
-        .comentario(proyectoHitoInput.getComentario())
+        .comentario((proyectoHitoInput.getComentario().stream()
+            .map(comentario -> new ProyectoHitoComentario(comentario.getLang(), comentario.getValue()))
+            .collect(Collectors.toSet())))
         .fecha(proyectoHitoInput.getFecha())
         .proyectoId(proyectoHitoInput.getProyectoId())
         .tipoHito(tipoHito)
@@ -109,7 +132,7 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
   public ProyectoHito update(Long proyectoHitoId, ProyectoHitoInput proyectoHitoActualizar) {
     log.debug("update(ProyectoHito ProyectoHitoActualizar) - start");
 
-    Assert.notNull(proyectoHitoId, "ProyectoHito id no puede ser null para actualizar un ProyectoHito");
+    AssertHelper.idNotNull(proyectoHitoId, ProyectoHito.class);
     this.validarRequeridosProyectoHito(proyectoHitoActualizar);
 
     TipoHito tipoHito = tipoHitoRepository.findById(proyectoHitoActualizar.getTipoHitoId())
@@ -119,8 +142,17 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
 
       validarProyectoHito(proyectoHitoActualizar, proyectoHito);
 
+      List<I18nFieldValueDto> listaComentario = proyectoHitoActualizar.getComentario();
+
+      Set<ProyectoHitoComentario> setComentario = listaComentario.stream()
+          .map(dto -> {
+            ProyectoHitoComentario comentario = new ProyectoHitoComentario(dto.getLang(), dto.getValue());
+            return comentario;
+          })
+          .collect(Collectors.toSet());
+
       proyectoHito.setFecha(proyectoHitoActualizar.getFecha());
-      proyectoHito.setComentario(proyectoHitoActualizar.getComentario());
+      proyectoHito.setComentario(setComentario);
       proyectoHito.setTipoHito(tipoHito);
 
       this.resolveProyectoHitoAviso(proyectoHitoActualizar, proyectoHito);
@@ -140,7 +172,7 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ProyectoHito id no puede ser null para eliminar un ProyectoHito");
+    AssertHelper.idNotNull(id, ProyectoHito.class);
     if (!repository.existsById(id)) {
       throw new ProyectoHitoNotFoundException(id);
     }
@@ -216,17 +248,30 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
 
     // Está asignado al ModeloEjecucion
     Assert.isTrue(modeloTipoHito.isPresent(),
-        "TipoHito '" + datosProyectoHito.getTipoHitoId() + "' no disponible para el ModeloEjecucion '"
-            + ((modeloEjecucion.isPresent()) ? modeloEjecucion.get().getNombre() : "Proyecto sin modelo asignado")
-            + "'");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROYECTO_ASSIGN_MODELO_EJECUCION)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_HITO))
+            .parameter(MSG_KEY_MSG, ApplicationContextSupport.getMessage(MSG_NO_DISPONIBLE_MODELO_EJECUCION))
+            .parameter(MSG_KEY_MODELO, ((modeloEjecucion.isPresent()) ? modeloEjecucion.get().getNombre()
+                : ApplicationContextSupport.getMessage(MSG_PROYECTO_SIN_MODELO_ASIGNADO)))
+            .build());
 
     // La asignación al ModeloEjecucion está activa
-    Assert.isTrue(modeloTipoHito.get().getActivo(), "ModeloTipoHito '" + modeloTipoHito.get().getTipoHito().getNombre()
-        + "' no está activo para el ModeloEjecucion '" + modeloTipoHito.get().getModeloEjecucion().getNombre() + "'");
+    Assert.isTrue(modeloTipoHito.get().getActivo(),
+        () -> ProblemMessage.builder()
+            .key(MSG_MODELO_EJECUCION_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_TIPO_HITO))
+            .parameter(MSG_KEY_FIELD, modeloTipoHito.get().getTipoHito().getNombre())
+            .parameter(MSG_KEY_MODELO, modeloTipoHito.get().getModeloEjecucion().getNombre())
+            .build());
 
     // El TipoHito está activo
     Assert.isTrue(modeloTipoHito.get().getTipoHito().getActivo(),
-        "TipoHito '" + modeloTipoHito.get().getTipoHito().getNombre() + "' no está activo");
+        () -> ProblemMessage.builder()
+            .key(MSG_ENTITY_INACTIVO)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_TIPO_HITO))
+            .parameter(MSG_KEY_FIELD, modeloTipoHito.get().getTipoHito().getNombre())
+            .build());
 
     datosProyectoHito.setTipoHitoId(modeloTipoHito.get().getTipoHito().getId());
 
@@ -245,8 +290,7 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
       return;
     }
 
-    Assert.isTrue(!optProyectoHito.isPresent(),
-        "Ya existe un Hito con el mismo tipo en esa fecha");
+    AssertHelper.entityExists(!optProyectoHito.isPresent(), Proyecto.class, ProyectoHito.class);
   }
 
   /**
@@ -257,13 +301,10 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
    */
   private void validarRequeridosProyectoHito(ProyectoHitoInput datosProyectoHito) {
 
-    Assert.isTrue(datosProyectoHito.getProyectoId() != null,
-        "Id Proyecto no puede ser null para realizar la acción sobre ProyectoHito");
+    AssertHelper.idNotNull(datosProyectoHito.getProyectoId(), Proyecto.class);
+    AssertHelper.idNotNull(datosProyectoHito.getTipoHitoId(), TipoHito.class);
+    AssertHelper.fieldNotNull(datosProyectoHito.getFecha(), ProyectoHito.class, AssertHelper.MESSAGE_KEY_DATE);
 
-    Assert.isTrue(datosProyectoHito.getTipoHitoId() != null,
-        "Id Tipo Hito no puede ser null para realizar la acción sobre ProyectoHito");
-
-    Assert.notNull(datosProyectoHito.getFecha(), "Fecha no puede ser null para realizar la acción sobre ProyectoHito");
   }
 
   /**
@@ -280,8 +321,7 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
 
   private ProyectoHitoAviso createAviso(Long proyectoHitoId, ProyectoHitoAvisoInput avisoInput) {
     Instant now = Instant.now();
-    Assert.isTrue(avisoInput.getFechaEnvio().isAfter(now),
-        "La fecha de envio debe ser anterior a " + now.toString());
+    AssertHelper.fieldBefore(avisoInput.getFechaEnvio().isAfter(now), MSG_FIELD_FECHA_ENVIO, MSG_FIELD_FECHA_ACTUAL);
 
     Long emailId = this.emailService.createProyectoHitoEmail(
         proyectoHitoId,
@@ -352,7 +392,8 @@ public class ProyectoHitoServiceImpl implements ProyectoHitoService {
       SgiApiInstantTaskOutput task = sgiApiTaskService
           .findInstantTaskById(Long.parseLong(proyectoHito.getProyectoHitoAviso().getTareaProgramadaRef()));
 
-      Assert.isTrue(task.getInstant().isAfter(Instant.now()), "El aviso ya se ha enviado.");
+      Assert.isTrue(task.getInstant().isAfter(Instant.now()),
+          ApplicationContextSupport.getMessage(MSG_AVISO_ENVIADO));
 
       sgiApiTaskService
           .deleteTask(Long.parseLong(proyectoHito.getProyectoHitoAviso().getTareaProgramadaRef()));

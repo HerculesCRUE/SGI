@@ -6,9 +6,10 @@
       <!-- Titulo trabajo -->
       <mat-form-field>
         <mat-label>{{'csp.solicitud.solicitud-rrhh.titulo-trabajo' | translate}}</mat-label>
-        <input matInput #titulo type="text" placeholder="{{'csp.solicitud.solicitud-rrhh.titulo-trabajo' | translate}}"
+        <sgi-i18n-input #titulo placeholder="{{'csp.solicitud.solicitud-rrhh.titulo-trabajo' | translate}}"
           formControlName="tituloTrabajo" required>
-        <mat-hint>{{titulo.value.length}} / 1000</mat-hint>
+        </sgi-i18n-input>
+        <mat-hint>{{titulo.editingValue.length}} / 1000</mat-hint>
         <mat-error *ngIf="formGroup.controls.tituloTrabajo.errors?.required">
           {{'error.required.entity' | translate:msgParamTituloTrabajoEntity}}
         </mat-error>
@@ -22,10 +23,11 @@
       <!-- Resumen -->
       <mat-form-field>
         <mat-label>{{'csp.solicitud.solicitud-rrhh.resumen' | translate}}</mat-label>
-        <textarea matInput #resumen formControlName="resumen" type="text" id="comentariosEstado"
-          placeholder="{{'csp.solicitud.solicitud-rrhh.resumen' | translate}}" cdkTextareaAutosize
-          #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" required></textarea>
-        <mat-hint>{{resumen.value.length}} / 4000</mat-hint>
+        <sgi-i18n-textarea #resumen formControlName="resumen"
+          placeholder="{{'csp.solicitud.solicitud-rrhh.resumen' | translate}}" [useAutosize]="true"
+          cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5" required>
+        </sgi-i18n-textarea>
+        <mat-hint>{{resumen.editingValue.length}} / 4000</mat-hint>
         <mat-error *ngIf="formGroup.controls.resumen.errors?.required">
           {{'error.required.entity' | translate:msgParamResumenEntity}}
         </mat-error>
@@ -39,10 +41,11 @@
       <!-- Obsrvaciones -->
       <mat-form-field>
         <mat-label>{{'csp.solicitud.solicitud-rrhh.observaciones' | translate}}</mat-label>
-        <textarea matInput #observaciones formControlName="observaciones" type="text" id="comentariosEstado"
+        <sgi-i18n-textarea #observaciones formControlName="observaciones"
           placeholder="{{'csp.solicitud.solicitud-rrhh.observaciones' | translate}}" cdkTextareaAutosize
-          #autosize="cdkTextareaAutosize" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5"></textarea>
-        <mat-hint>{{observaciones.value.length}} / 4000</mat-hint>
+          [useAutosize]="true" cdkAutosizeMinRows="1" cdkAutosizeMaxRows="5">
+        </sgi-i18n-textarea>
+        <mat-hint>{{observaciones.editingValue.length}} / 4000</mat-hint>
         <mat-error *ngIf="formGroup.controls.observaciones.errors?.maxlength">
           {{ 'error.maxlength.entity' | translate:msgParamObservacionesEntity }}
         </mat-error>

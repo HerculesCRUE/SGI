@@ -9,6 +9,7 @@ import { TIPO_SEGUIMIENTO_MAP } from '@core/enums/tipo-seguimiento';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaPeriodoSeguimientoCientifico } from '@core/models/csp/convocatoria-periodo-seguimiento-cientifico';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -48,14 +49,15 @@ export class ConvocatoriaSeguimientoCientificoComponent extends FragmentComponen
     private matDialog: MatDialog,
     private dialogService: DialogService,
     private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.SEGUIMIENTO_CIENTIFICO, actionService);
+    super(actionService.FRAGMENT.SEGUIMIENTO_CIENTIFICO, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaSeguimientoCientificoFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.dataSource.paginator = this.paginator;
     this.dataSource.sortingDataAccessor =
       (wrapper: StatusWrapper<IConvocatoriaPeriodoSeguimientoCientifico>, property: string) => {
@@ -72,6 +74,8 @@ export class ConvocatoriaSeguimientoCientificoComponent extends FragmentComponen
             return wrapper.value.fechaFinPresentacion;
           case 'tipoSeguimiento':
             return wrapper.value.tipoSeguimiento;
+          case 'observaciones':
+            return this.languageService.getFieldValue(wrapper.value.observaciones);
           default:
             return wrapper[property];
         }
@@ -83,7 +87,7 @@ export class ConvocatoriaSeguimientoCientificoComponent extends FragmentComponen
     }));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_PERIODO_SEGUIMIENTO_CIENTIFICO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

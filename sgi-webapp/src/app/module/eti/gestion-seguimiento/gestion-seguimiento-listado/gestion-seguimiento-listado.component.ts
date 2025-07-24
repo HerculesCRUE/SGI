@@ -4,7 +4,10 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { AbstractTablePaginationComponent } from '@core/component/abstract-table-pagination.component';
+import { DICTAMEN_MAP } from '@core/models/eti/dictamen';
 import { IEvaluacion } from '@core/models/eti/evaluacion';
+import { MEMORIA_TIPO_MAP } from '@core/models/eti/memoria';
+import { TIPO_EVALUACION_MAP } from '@core/models/eti/tipo-evaluacion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { ConfigService } from '@core/services/cnf/config.service';
@@ -40,6 +43,18 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
 
   get tipoColectivoSolicitante() {
     return TipoColectivo.SOLICITANTE_ETICA;
+  }
+
+  get DICTAMEN_MAP() {
+    return DICTAMEN_MAP;
+  }
+
+  get TIPO_EVALUACION_MAP() {
+    return TIPO_EVALUACION_MAP;
+  }
+
+  get MEMORIA_TIPO_MAP() {
+    return MEMORIA_TIPO_MAP;
   }
 
   constructor(
@@ -89,7 +104,7 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
   }
 
   protected initColumns(): void {
-    this.displayedColumns = ['memoria.comite.comite', 'tipoEvaluacion', 'memoria.tipoMemoria.nombre', 'fechaDictamen', 'memoria.numReferencia', 'solicitante',
+    this.displayedColumns = ['memoria.comite.codigo', 'tipoEvaluacion', 'memoria.tipo', 'fechaDictamen', 'memoria.numReferencia', 'solicitante',
       'dictamen.nombre', 'version', 'acciones'];
   }
 
@@ -126,6 +141,10 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
               map((personaInfo) => {
                 evaluacion.memoria.peticionEvaluacion.solicitante = personaInfo;
                 return evaluacion;
+              }),
+              catchError(err => {
+                this.logger.error(err);
+                return of(evaluacion);
               })
             );
             listObservables.push(evaluacion$);
@@ -170,4 +189,5 @@ export class GestionSeguimientoListadoComponent extends AbstractTablePaginationC
     this.matDialog.open(SeguimientoListadoExportModalComponent, config);
   }
 
+  protected setupI18N(): void { }
 }

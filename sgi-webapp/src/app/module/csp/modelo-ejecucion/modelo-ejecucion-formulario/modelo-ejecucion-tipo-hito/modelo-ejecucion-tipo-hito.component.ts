@@ -11,6 +11,7 @@ import { ITipoHito } from '@core/models/csp/tipos-configuracion';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -49,9 +50,10 @@ export class ModeloEjecucionTipoHitoComponent extends FragmentComponent implemen
     private readonly dialogService: DialogService,
     private matDialog: MatDialog,
     actionService: ModeloEjecucionActionService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.TIPO_HITOS, actionService);
+    super(actionService.FRAGMENT.TIPO_HITOS, actionService, translate);
     this.fxFlexProperties = new FxFlexProperties();
     this.fxFlexProperties.sm = '0 1 calc(50%-10px)';
     this.fxFlexProperties.md = '0 1 calc(33%-10px)';
@@ -67,7 +69,7 @@ export class ModeloEjecucionTipoHitoComponent extends FragmentComponent implemen
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     const subscription = this.formPart.modeloTipoHito$.subscribe(
       (wrappers: StatusWrapper<IModeloTipoHito>[]) => {
         this.modelosTipoHitos.data = wrappers;
@@ -79,9 +81,9 @@ export class ModeloEjecucionTipoHitoComponent extends FragmentComponent implemen
       (wrapper: StatusWrapper<IModeloTipoHito>, property: string) => {
         switch (property) {
           case 'nombre':
-            return wrapper.value.tipoHito.nombre;
+            return this.languageService.getFieldValue(wrapper.value.tipoHito.nombre);
           case 'descripcion':
-            return wrapper.value.tipoHito.descripcion;
+            return wrapper.value.tipoHito.descripcion ? this.languageService.getFieldValue(wrapper.value.tipoHito.descripcion) : '';
           case 'convocatorias':
             return wrapper.value.convocatoria;
           case 'solicitudes':
@@ -95,7 +97,7 @@ export class ModeloEjecucionTipoHitoComponent extends FragmentComponent implemen
     this.modelosTipoHitos.sort = this.sort;
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       MODELO_EJECUCION_TIPO_HITO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

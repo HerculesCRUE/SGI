@@ -82,8 +82,8 @@ public class RespuestaController {
       returnValue = service.create(nuevaRespuesta);
     } catch (Exception e) {
       // Se captura el error de unicidad (memoria_id, apartado_id)
-      Respuesta respuestaBD = service.findByMemoriaIdAndApartadoId(nuevaRespuesta.getMemoria().getId(),
-          nuevaRespuesta.getApartado().getId());
+      Respuesta respuestaBD = service.findByMemoriaIdAndApartadoId(nuevaRespuesta.getMemoriaId(),
+          nuevaRespuesta.getApartadoId());
       nuevaRespuesta.setId(respuestaBD.getId());
       returnValue = service.update(nuevaRespuesta);
     }

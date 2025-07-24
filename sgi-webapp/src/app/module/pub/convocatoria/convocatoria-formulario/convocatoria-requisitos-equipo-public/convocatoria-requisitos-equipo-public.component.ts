@@ -13,6 +13,7 @@ import { StatusWrapper } from '@core/utils/status-wrapper';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
 import { ConvocatoriaRequisitosEquipoPublicFragment } from './convocatoria-requisitos-equipo-public.fragment';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'sgi-convocatoria-requisitos-equipo-public',
@@ -41,9 +42,10 @@ export class ConvocatoriaRequisitosEquipoPublicComponent extends FormFragmentCom
 
   constructor(
     protected actionService: ConvocatoriaPublicActionService,
-    private readonly sexoService: SexoPublicService
+    private readonly sexoService: SexoPublicService,
+    private readonly translate: TranslateService
   ) {
-    super(actionService.FRAGMENT.REQUISITOS_EQUIPO, actionService);
+    super(actionService.FRAGMENT.REQUISITOS_EQUIPO, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaRequisitosEquipoPublicFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -104,4 +106,5 @@ export class ConvocatoriaRequisitosEquipoPublicComponent extends FormFragmentCom
     this.categoriaProfesionalDataSource.sort = this.sortCategoriaProfesional;
   }
 
+  protected setupI18N(): void { }
 }

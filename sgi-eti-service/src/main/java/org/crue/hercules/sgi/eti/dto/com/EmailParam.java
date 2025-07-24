@@ -1,9 +1,10 @@
 package org.crue.hercules.sgi.eti.dto.com;
 
 import java.io.Serializable;
+import java.util.Collection;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValue;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,8 +13,6 @@ import lombok.ToString;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @ToString
 public class EmailParam implements Serializable {
   /** Serial version */
@@ -22,5 +21,15 @@ public class EmailParam implements Serializable {
   /** Name */
   private String name;
   /** Value */
-  private String value;
+  private transient Object value;
+
+  public EmailParam(String name, String value) {
+    this.name = name;
+    this.value = value;
+  }
+
+  public EmailParam(String name, Collection<? extends I18nFieldValue> value) {
+    this.name = name;
+    this.value = value;
+  }
 }

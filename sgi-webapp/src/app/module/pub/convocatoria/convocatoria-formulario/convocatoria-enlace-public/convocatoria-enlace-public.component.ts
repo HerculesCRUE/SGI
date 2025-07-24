@@ -2,14 +2,12 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
-import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaEnlace } from '@core/models/csp/convocatoria-enlace';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
-import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
 import { ConvocatoriaEnlacePublicFragment } from './convocatoria-enlace-public.fragment';
 
@@ -34,7 +32,8 @@ export class ConvocatoriaEnlacePublicComponent extends FragmentComponent impleme
   }
 
   constructor(
-    public actionService: ConvocatoriaPublicActionService
+    public actionService: ConvocatoriaPublicActionService,
+    private languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.ENLACES, actionService);
     this.formPart = this.fragment as ConvocatoriaEnlacePublicFragment;
@@ -49,9 +48,9 @@ export class ConvocatoriaEnlacePublicComponent extends FragmentComponent impleme
           case 'url':
             return wrapper.value.url;
           case 'descripcion':
-            return wrapper.value.descripcion;
+            return this.languageService.getFieldValue(wrapper.value.descripcion);
           case 'tipoEnlace':
-            return wrapper.value.tipoEnlace.nombre;
+            return this.languageService.getFieldValue(wrapper.value.tipoEnlace?.nombre);
           default:
             return wrapper[property];
         }
@@ -66,4 +65,5 @@ export class ConvocatoriaEnlacePublicComponent extends FragmentComponent impleme
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  protected setupI18N(): void { }
 }

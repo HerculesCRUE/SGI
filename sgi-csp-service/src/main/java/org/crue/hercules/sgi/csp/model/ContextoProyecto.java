@@ -1,9 +1,15 @@
 package org.crue.hercules.sgi.csp.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,10 +20,12 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -31,6 +39,7 @@ import lombok.Setter;
 @EqualsAndHashCode(callSuper = false)
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class ContextoProyecto extends BaseEntity {
 
   /**
@@ -63,16 +72,25 @@ public class ContextoProyecto extends BaseEntity {
   private Long proyectoId;
 
   /** Objetivos */
-  @Column(name = "objetivos", length = 2000, nullable = true)
-  private String objetivos;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "contexto_proyecto_objetivos", joinColumns = @JoinColumn(name = "contexto_proyecto_id"))
+  @Valid
+  @Builder.Default
+  private Set<ContextoProyectoObjetivos> objetivos = new HashSet<>();
 
   /** Intereses */
-  @Column(name = "intereses", length = 2000, nullable = true)
-  private String intereses;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "contexto_proyecto_intereses", joinColumns = @JoinColumn(name = "contexto_proyecto_id"))
+  @Valid
+  @Builder.Default
+  private Set<ContextoProyectoIntereses> intereses = new HashSet<>();
 
   /** Resultados previstos */
-  @Column(name = "resultados_previstos", length = 2000, nullable = true)
-  private String resultadosPrevistos;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "contexto_proyecto_resultados_previstos", joinColumns = @JoinColumn(name = "contexto_proyecto_id"))
+  @Valid
+  @Builder.Default
+  private Set<ContextoProyectoResultadosPrevistos> resultadosPrevistos = new HashSet<>();
 
   /** Propiedad resultados */
   @Column(name = "propiedad_resultados", length = 25, nullable = true)

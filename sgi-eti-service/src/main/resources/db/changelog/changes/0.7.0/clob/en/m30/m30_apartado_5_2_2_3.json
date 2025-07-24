@@ -1,0 +1,90 @@
+[
+  {
+    "key": "ap5_2_2_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "5.2.2.3 Question 3"
+    },
+    "hideExpression": "!formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio || formState.mainModel.ap5_2.ap5_2_2.ap5_2_2_1.pregunta1OMGRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "Is the GMO used in the activity generated in the facility?"
+      },
+      {
+        "key": "pregunta3OMG1Radio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Is it acquired from a third party and only handled in the facility without this handling giving rise to new GMOs?"
+      },
+      {
+        "key": "pregunta3OMG2Radio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "key": "instalacionOrigenOMG",
+        "className": "descripcion",
+        "type": "i18n-ckeditor",
+        "hideExpression": "!model.pregunta3OMG2Radio || model.pregunta3OMG2Radio === 'no'",
+        "templateOptions": {
+          "name": "State the originating facility and the reference of the authorisation for first confined use of the GMOs by the competent authority in the event that it is located within Spain.",
+          "required": true
+        }
+      },
+      {
+        "template": "What is the risk level of the GMO?",
+        "hideExpression": "!model.pregunta3OMG2Radio || model.pregunta3OMG2Radio === 'no'"
+      },
+      {
+        "key": "nivelRiesgoOMGRadio",
+        "type": "radio",
+        "hideExpression": "!model.pregunta3OMG2Radio || model.pregunta3OMG2Radio === 'no'",
+        "templateOptions": {
+          "required": true,
+          "options": [
+            {
+              "value": "nivelRiesgoGrupo1",
+              "label": "Group 1"
+            },
+            {
+              "value": "nivelRiesgoGrupo2",
+              "label": "Group 2"
+            },
+            {
+              "value": "nivelRiesgoGrupo3",
+              "label": "Group 3"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

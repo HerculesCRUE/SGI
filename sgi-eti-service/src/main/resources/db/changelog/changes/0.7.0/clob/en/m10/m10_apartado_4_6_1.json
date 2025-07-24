@@ -1,0 +1,53 @@
+[
+  {
+    "key": "ap4_6_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.6.1 Justification for the use of students"
+    },
+    "hideExpression": "!formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio || formState.mainModel.ap4_6.estudiantesSujetosInvestigacionRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Are University students a specific population group necessary for the project?</p>"
+      },
+      {
+        "key": "justificacionUsoEstudiantesRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option: ",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Reasons why their replacement is not considered",
+        "hideExpression": "!model.justificacionUsoEstudiantesRadio || model.justificacionUsoEstudiantesRadio === 'si'"
+      },
+      {
+        "key": "motivosNoPlanteamientoSustitucion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.justificacionUsoEstudiantesRadio || model.justificacionUsoEstudiantesRadio === 'si'",
+        "templateOptions": {
+          "label": "Reasons",
+          "placeholder": "Reasons",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      }
+    ]
+  }
+]

@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.TipoRegimenConcurrencia;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -54,7 +56,8 @@ class TipoRegimenConcurrenciaIT extends BaseIT {
     Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
     TipoRegimenConcurrencia responseData = response.getBody();
     Assertions.assertThat(responseData.getId()).as("getId()").isEqualTo(id);
-    Assertions.assertThat(responseData.getNombre()).as("getNombre()").isEqualTo("nombre-1");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo("nombre-1");
     Assertions.assertThat(responseData.getActivo()).as("getActivo()").isEqualTo(Boolean.TRUE);
   }
 
@@ -70,7 +73,7 @@ class TipoRegimenConcurrenciaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
     String sort = "id,desc";
-    String filter = "nombre=ke=-0";
+    String filter = "nombre.value=ke=-0";
 
     // when: find TipoRegimenConcurrencia
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH).queryParam("s", sort)
@@ -89,8 +92,11 @@ class TipoRegimenConcurrenciaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(responseData.get(0).getNombre()).as("get(0).getNombre())").isEqualTo("nombre-03");
-    Assertions.assertThat(responseData.get(1).getNombre()).as("get(1).getNombre())").isEqualTo("nombre-02");
-    Assertions.assertThat(responseData.get(2).getNombre()).as("get(2).getNombre())").isEqualTo("nombre-01");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getNombre(), Language.ES))
+        .as("get(0).getNombre())").isEqualTo("nombre-03");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getNombre(), Language.ES))
+        .as("get(1).getNombre())").isEqualTo("nombre-02");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getNombre(),
+        Language.ES)).as("get(2).getNombre())").isEqualTo("nombre-01");
   }
 }

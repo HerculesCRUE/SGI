@@ -1,9 +1,13 @@
 package org.crue.hercules.sgi.csp.service;
 
+import javax.validation.Valid;
+
+import org.crue.hercules.sgi.csp.model.BaseEntity;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 
 /**
  * Service Interface para gestionar {@link TipoDocumento}.
@@ -16,7 +20,8 @@ public interface TipoDocumentoService {
    * @param tipoDocumento la entidad {@link TipoDocumento} a guardar.
    * @return la entidad {@link TipoDocumento} persistida.
    */
-  TipoDocumento create(TipoDocumento tipoDocumento);
+  @Validated({ BaseEntity.Create.class })
+  TipoDocumento create(@Valid TipoDocumento tipoDocumento);
 
   /**
    * Actualizar {@link TipoDocumento}.
@@ -24,7 +29,8 @@ public interface TipoDocumentoService {
    * @param tipoDocumentoActualizar la entidad {@link TipoDocumento} a actualizar.
    * @return la entidad {@link TipoDocumento} persistida.
    */
-  TipoDocumento update(TipoDocumento tipoDocumentoActualizar);
+  @Validated({ BaseEntity.Update.class })
+  TipoDocumento update(@Valid TipoDocumento tipoDocumentoActualizar);
 
   /**
    * Reactiva el {@link TipoDocumento}.

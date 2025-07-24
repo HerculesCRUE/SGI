@@ -15,6 +15,7 @@ import { ConfigService as ConfigCnfService } from '@core/services/cnf/config.ser
 import { GrupoEquipoService } from '@core/services/csp/grupo-equipo/grupo-equipo.service';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { PersonaService } from '@core/services/sgp/persona.service';
 import { FormGroupUtil } from '@core/utils/form-group-util';
@@ -72,7 +73,8 @@ export class MiembrosGruposInvestigacionListadoComponent extends AbstractMenuCon
     private readonly exportService: MiembrosGruposInvestigacionListadoExportService,
     private dialogService: DialogService,
     private readonly configCnfService: ConfigCnfService,
-    protected readonly translate: TranslateService
+    protected readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
     super();
     this.elementosPagina = [5, 10, 25, 100];
@@ -250,7 +252,7 @@ export class MiembrosGruposInvestigacionListadoComponent extends AbstractMenuCon
           case 'email':
             return miembroGrupoInvestigacion.persona?.emails ?? '';
           case 'grupoNombre':
-            return miembroGrupoInvestigacion.grupo?.nombre ?? '';
+            return this.languageService.getFieldValue(miembroGrupoInvestigacion.grupo?.nombre);
           case 'grupoCodigo':
             return miembroGrupoInvestigacion.grupo?.codigo ?? '';
           default:
@@ -269,7 +271,7 @@ export class MiembrosGruposInvestigacionListadoComponent extends AbstractMenuCon
   private getFilter(): SgiRestFilter {
     const controls = this.formGroup.controls;
 
-    const filters = new RSQLSgiRestFilter('grupo.nombre', SgiRestFilterOperator.LIKE_ICASE, controls.grupoNombre.value)
+    const filters = new RSQLSgiRestFilter('grupo.nombre.value', SgiRestFilterOperator.LIKE_ICASE, controls.grupoNombre.value)
       .and('grupo.codigo', SgiRestFilterOperator.LIKE_ICASE, controls.grupoCodigo.value)
       .and('grupo.proyectoSgeRef', SgiRestFilterOperator.EQUALS, controls.grupoProyectoSge.value)
       .and('personaRef', SgiRestFilterOperator.EQUALS, controls.miembroEquipo.value?.id)
@@ -298,4 +300,5 @@ export class MiembrosGruposInvestigacionListadoComponent extends AbstractMenuCon
     this.formGroup.controls.miembrosActivos.setValue('todos');
   }
 
+  protected setupI18N(): void { }
 }

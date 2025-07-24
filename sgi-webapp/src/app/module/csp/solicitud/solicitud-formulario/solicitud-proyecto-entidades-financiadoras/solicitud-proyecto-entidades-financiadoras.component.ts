@@ -8,16 +8,19 @@ import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { FragmentComponent } from '@core/component/fragment.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { IConvocatoriaEntidadFinanciadora } from '@core/models/csp/convocatoria-entidad-financiadora';
+import { OrigenSolicitud } from '@core/models/csp/solicitud';
 import { ISolicitudProyectoEntidadFinanciadoraAjena } from '@core/models/csp/solicitud-proyecto-entidad-financiadora-ajena';
 import { FxFlexProperties } from '@core/models/shared/flexLayout/fx-flex-properties';
 import { FxLayoutProperties } from '@core/models/shared/flexLayout/fx-layout-properties';
 import { SolicitudService } from '@core/services/csp/solicitud.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { EmpresaService } from '@core/services/sgemp/empresa.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
-import { from, Subscription } from 'rxjs';
-import { map, mergeAll, switchMap, take, takeLast } from 'rxjs/operators';
+import { NGXLogger } from 'ngx-logger';
+import { from, Observable, of, Subscription } from 'rxjs';
+import { catchError, concatMap, map, switchMap, take, toArray } from 'rxjs/operators';
 import { EntidadFinanciadoraDataModal, EntidadFinanciadoraModalComponent } from '../../../shared/entidad-financiadora-modal/entidad-financiadora-modal.component';
 import { SOLICITUD_ROUTE_NAMES } from '../../solicitud-route-names';
 import { SolicitudActionService } from '../../solicitud.action.service';
@@ -79,7 +82,15 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
   @ViewChild('paginatorEntidadesFinanciadorasAjenas', { static: true }) paginatorEntidadesFinanciadorasAjena: MatPaginator;
   @ViewChild('sortEntidadesFinanciadorasAjenas', { static: true }) sortEntidadesFinanciadorasAjena: MatSort;
 
+  get showEntidadesFinanciadorasConvocatoria$(): Observable<boolean> {
+    return this.actionService.origenSolicitud$.pipe(
+      map(origenSolicitud => {
+        return origenSolicitud === OrigenSolicitud.CONVOCATORIA_SGI;
+      }));
+  }
+
   constructor(
+    private readonly logger: NGXLogger,
     private actionService: SolicitudActionService,
     private router: Router,
     private route: ActivatedRoute,
@@ -87,15 +98,16 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
     private dialogService: DialogService,
     private solicitudService: SolicitudService,
     private empresaService: EmpresaService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.ENTIDADES_FINANCIADORAS, actionService);
+    super(actionService.FRAGMENT.ENTIDADES_FINANCIADORAS, actionService, translate);
     this.formPart = this.fragment as SolicitudProyectoEntidadesFinanciadorasFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.actionService.datosProyectoComplete$.pipe(
       take(1)
     ).subscribe(
@@ -106,30 +118,6 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
       }
     );
 
-    this.dataSourceEntidadesFinanciadorasConvocatoria.paginator = this.paginatorEntidadesFinanciadorasConvocatoria;
-    this.dataSourceEntidadesFinanciadorasConvocatoria.sortingDataAccessor =
-      (entidadFinanciadora: IConvocatoriaEntidadFinanciadora, property: string) => {
-        switch (property) {
-          case 'nombre':
-            return entidadFinanciadora.empresa?.nombre;
-          case 'cif':
-            return entidadFinanciadora.empresa?.numeroIdentificacion;
-          case 'fuenteFinanciacion':
-            return entidadFinanciadora.fuenteFinanciacion?.nombre;
-          case 'ambito':
-            return entidadFinanciadora.fuenteFinanciacion?.tipoAmbitoGeografico.nombre;
-          case 'tipoFinanciacion':
-            return entidadFinanciadora.tipoFinanciacion?.nombre;
-          case 'porcentajeFinanciacion':
-            return entidadFinanciadora.porcentajeFinanciacion;
-          case 'importeFinanciacion':
-            return entidadFinanciadora.importeFinanciacion;
-          default:
-            return entidadFinanciadora[property];
-        }
-      };
-    this.dataSourceEntidadesFinanciadorasConvocatoria.sort = this.sortEntidadesFinanciadorasConvocatoria;
-
     this.dataSourceEntidadesFinanciadorasAjenas.paginator = this.paginatorEntidadesFinanciadorasAjena;
     this.dataSourceEntidadesFinanciadorasAjenas.sortingDataAccessor =
       (entidadFinanciadora: StatusWrapper<SolicitudProyectoEntidadFinanciadoraAjenaData>, property: string) => {
@@ -139,11 +127,11 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
           case 'cif':
             return entidadFinanciadora.value.empresa?.numeroIdentificacion;
           case 'fuenteFinanciacion':
-            return entidadFinanciadora.value.fuenteFinanciacion?.nombre;
+            return this.languageService.getFieldValue(entidadFinanciadora.value.fuenteFinanciacion?.nombre);
           case 'ambito':
-            return entidadFinanciadora.value.fuenteFinanciacion?.tipoAmbitoGeografico.nombre;
+            return this.languageService.getFieldValue(entidadFinanciadora.value.fuenteFinanciacion?.tipoAmbitoGeografico.nombre);
           case 'tipoFinanciacion':
-            return entidadFinanciadora.value.tipoFinanciacion?.nombre;
+            return this.languageService.getFieldValue(entidadFinanciadora.value.tipoFinanciacion?.nombre);
           case 'porcentajeFinanciacion':
             return entidadFinanciadora.value.porcentajeFinanciacion;
           default:
@@ -152,44 +140,22 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
       };
     this.dataSourceEntidadesFinanciadorasAjenas.sort = this.sortEntidadesFinanciadorasAjena;
 
-    const subscriptionEntidadesFinanciadorasConvocatoria = this.solicitudService
-      .findEntidadesFinanciadorasConvocatoriaSolicitud(this.formPart.getKey() as number)
-      .pipe(
-        map(result => result.items),
-        switchMap((entidadesFinanciadoras) => {
-          return from(entidadesFinanciadoras)
-            .pipe(
-              map((entidadesFinanciadora) => {
-                return this.empresaService.findById(entidadesFinanciadora.empresa.id)
-                  .pipe(
-                    map(empresa => {
-                      entidadesFinanciadora.empresa = empresa;
-                      return entidadesFinanciadora;
-                    }),
-                  );
-
-              }),
-              mergeAll(),
-              map(() => {
-                return entidadesFinanciadoras;
-              })
-            );
-        }),
-        takeLast(1)
-      ).subscribe((result) => {
-        this.dataSourceEntidadesFinanciadorasConvocatoria.data = result;
-      });
-
-    this.subscriptions.push(subscriptionEntidadesFinanciadorasConvocatoria);
-
     const subscriptionEntidadesFinanciadorasAjenas = this.formPart.entidadesFinanciadoras$
       .subscribe((entidadesFinanciadoras) => {
         this.dataSourceEntidadesFinanciadorasAjenas.data = entidadesFinanciadoras;
       });
     this.subscriptions.push(subscriptionEntidadesFinanciadorasAjenas);
+
+    this.subscriptions.push(this.showEntidadesFinanciadorasConvocatoria$.subscribe(
+      (mostrar) => {
+        if (mostrar) {
+          this.initializeEntidadesFinanciadorasConvocatoria();
+        }
+      }
+    ));
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_PROYECTO_ENTIDAD_FINANCIADORA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
@@ -274,4 +240,59 @@ export class SolicitudProyectoEntidadesFinanciadorasComponent extends FragmentCo
       )
     );
   }
+
+  private initializeEntidadesFinanciadorasConvocatoria(): void {
+    this.dataSourceEntidadesFinanciadorasConvocatoria.paginator = this.paginatorEntidadesFinanciadorasConvocatoria;
+    this.dataSourceEntidadesFinanciadorasConvocatoria.sortingDataAccessor =
+      (entidadFinanciadora: IConvocatoriaEntidadFinanciadora, property: string) => {
+        switch (property) {
+          case 'nombre':
+            return entidadFinanciadora.empresa?.nombre;
+          case 'cif':
+            return entidadFinanciadora.empresa?.numeroIdentificacion;
+          case 'fuenteFinanciacion':
+            return this.languageService.getFieldValue(entidadFinanciadora.fuenteFinanciacion?.nombre);
+          case 'ambito':
+            return entidadFinanciadora.fuenteFinanciacion?.tipoAmbitoGeografico.nombre ? this.languageService.getFieldValue(entidadFinanciadora.fuenteFinanciacion?.tipoAmbitoGeografico.nombre) : '';
+          case 'tipoFinanciacion':
+            return entidadFinanciadora.tipoFinanciacion?.nombre ? this.languageService.getFieldValue(entidadFinanciadora.tipoFinanciacion?.nombre) : '';
+          case 'porcentajeFinanciacion':
+            return entidadFinanciadora.porcentajeFinanciacion;
+          case 'importeFinanciacion':
+            return entidadFinanciadora.importeFinanciacion;
+          default:
+            return entidadFinanciadora[property];
+        }
+      };
+    this.dataSourceEntidadesFinanciadorasConvocatoria.sort = this.sortEntidadesFinanciadorasConvocatoria;
+
+    const subscriptionEntidadesFinanciadorasConvocatoria = this.solicitudService
+      .findEntidadesFinanciadorasConvocatoriaSolicitud(this.formPart.getKey() as number)
+      .pipe(
+        map(result => result.items),
+        switchMap(entidadesFinanciadoras => {
+          return from(entidadesFinanciadoras).pipe(
+            concatMap(entidadFinanciadora =>
+              this.empresaService.findById(entidadFinanciadora.empresa.id).pipe(
+                map(empresa => {
+                  entidadFinanciadora.empresa = empresa;
+                  return entidadFinanciadora;
+                }),
+                catchError(err => {
+                  this.logger.error(err);
+                  return of(entidadFinanciadora);
+                })
+              )
+            ),
+            toArray()
+          );
+        })
+      )
+      .subscribe(result => {
+        this.dataSourceEntidadesFinanciadorasConvocatoria.data = result;
+      });
+
+    this.subscriptions.push(subscriptionEntidadesFinanciadorasConvocatoria);
+  }
+
 }

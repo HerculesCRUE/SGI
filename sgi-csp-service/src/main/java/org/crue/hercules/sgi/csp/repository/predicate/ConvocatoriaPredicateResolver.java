@@ -30,6 +30,8 @@ import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaFase_;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaHito;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPalabraClave;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPalabraClave_;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
 import org.crue.hercules.sgi.csp.model.Convocatoria_;
 import org.crue.hercules.sgi.csp.model.Programa;
@@ -60,6 +62,7 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
   private enum Property {
     FECHA_ELIMINACION("fechaEliminacion"),
     FECHA_MODIFICACION("fechaModificacion"),
+    PALABRAS_CLAVE("palabrasClave"),
     PLAN_INVESTIGACION("planInvestigacion"),
     PLAZO_PRESENTACION_SOLICITUD("abiertoPlazoPresentacionSolicitud"),
     /* REQUISITOS IP */
@@ -410,6 +413,24 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
             fechaModificacion));
   }
 
+  private static Predicate buildByPalabrasClave(ComparisonNode node, Root<Convocatoria> root, CriteriaQuery<?> query,
+      CriteriaBuilder cb) {
+    PredicateResolverUtil.validateOperatorIsSupported(node, RSQLOperators.IN);
+
+    List<String> palabrasClave = node.getArguments();
+
+    Subquery<ConvocatoriaPalabraClave> subquery = query.subquery(ConvocatoriaPalabraClave.class);
+    Root<Convocatoria> rootSubquery = subquery.from(Convocatoria.class);
+    Join<Convocatoria, ConvocatoriaPalabraClave> joinPalabrasClave = rootSubquery.join(Convocatoria_.palabrasClave);
+
+    subquery.select(joinPalabrasClave);
+    subquery.where(
+        cb.and(joinPalabrasClave.get(ConvocatoriaPalabraClave_.palabraClaveRef).in(palabrasClave)),
+        cb.equal(root, rootSubquery));
+
+    return cb.exists(subquery);
+  }
+
   @Override
   public boolean isManaged(ComparisonNode node) {
     Property property = Property.fromCode(node.getSelector());
@@ -432,6 +453,8 @@ public class ConvocatoriaPredicateResolver implements SgiRSQLPredicateResolver<C
         return buildByPlanInvestigacion(node, root, criteriaBuilder);
       case PLAZO_PRESENTACION_SOLICITUD:
         return buildInPlazoPresentacionSolicitudes(node, root, criteriaBuilder);
+      case PALABRAS_CLAVE:
+        return buildByPalabrasClave(node, root, query, criteriaBuilder);
       /* REQUISITO IP */
       case REQUISITO_SEXO_IP:
         return buildInRequisitoSexoIp(node, root, criteriaBuilder);

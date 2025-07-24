@@ -2,10 +2,9 @@ import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
 import { IGrupoEquipoInstrumental } from '@core/models/csp/grupo-equipo-instrumental';
-import { FieldOrientation } from '@core/models/rep/field-orientation.enum';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
-import { ISgiRowReport } from '@core/models/rep/sgi-row.report';
 import { GrupoService } from '@core/services/csp/grupo/grupo.service';
+import { LanguageService } from '@core/services/language.service';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
 import { TranslateService } from '@ngx-translate/core';
@@ -23,12 +22,14 @@ const EQUIPO_INSTRUMENTAL_NOMBRE_FIELD = 'equipoInstrumentalNombre';
 const EQUIPO_INSTRUMENTAL_NUM_REGISTRO_FIELD = 'equipoInstrumentalNumRegistro';
 
 @Injectable()
-export class GrupoEquipoInstrumentalListadoExportService extends AbstractTableExportFillService<IGrupoReportData, IGrupoReportOptions>{
+export class GrupoEquipoInstrumentalListadoExportService extends AbstractTableExportFillService<IGrupoReportData, IGrupoReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
     protected readonly translate: TranslateService,
-    private grupoService: GrupoService
+    private grupoService: GrupoService,
+    private readonly languageService: LanguageService
+
   ) {
     super(translate);
   }
@@ -46,33 +47,11 @@ export class GrupoEquipoInstrumentalListadoExportService extends AbstractTableEx
     grupos: IGrupoReportData[],
     reportConfig: IReportConfig<IGrupoReportOptions>
   ): ISgiColumnReport[] {
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      return this.getColumnsEquipoInstrumentalNotExcel();
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       return this.getColumnsEquipoInstrumentalExcel(grupos);
     }
   }
 
-  private getColumnsEquipoInstrumentalNotExcel(): ISgiColumnReport[] {
-    const columns: ISgiColumnReport[] = [];
-    columns.push({
-      name: EQUIPO_INSTRUMENTAL_FIELD,
-      title: this.translate.instant(EQUIPO_INSTRUMENTAL_KEY, MSG_PARAMS.CARDINALIRY.SINGULAR),
-      type: ColumnType.STRING
-    });
-    const titleI18n = this.translate.instant(EQUIPO_INSTRUMENTAL_KEY, MSG_PARAMS.CARDINALIRY.PLURAL) +
-      ' (' + this.translate.instant(EQUIPO_INSTRUMENTAL_NOMBRE_KEY)
-      + ' - ' + this.translate.instant(EQUIPO_INSTRUMENTAL_NUM_REGISTRO_KEY) +
-      ')';
-    const columnEntidad: ISgiColumnReport = {
-      name: EQUIPO_INSTRUMENTAL_FIELD,
-      title: titleI18n,
-      type: ColumnType.SUBREPORT,
-      fieldOrientation: FieldOrientation.VERTICAL,
-      columns
-    };
-    return [columnEntidad];
-  }
 
   private getColumnsEquipoInstrumentalExcel(grupos: IGrupoReportData[]): ISgiColumnReport[] {
     const columns: ISgiColumnReport[] = [];
@@ -105,9 +84,7 @@ export class GrupoEquipoInstrumentalListadoExportService extends AbstractTableEx
     const grupo = grupos[index];
 
     const elementsRow: any[] = [];
-    if (!this.isExcelOrCsv(reportConfig.outputType)) {
-      this.fillRowsEquipoInstrumentalNotExcel(grupo, elementsRow);
-    } else {
+    if (this.isExcelOrCsv(reportConfig.outputType)) {
       const maxNumEquipoInstrumentales = Math.max(...grupos.map(g => g.equiposInstrumentales ? g.equiposInstrumentales?.length : 0));
       for (let i = 0; i < maxNumEquipoInstrumentales; i++) {
         const equipoInstrumental = grupo.equiposInstrumentales ? grupo.equiposInstrumentales[i] ?? null : null;
@@ -117,32 +94,9 @@ export class GrupoEquipoInstrumentalListadoExportService extends AbstractTableEx
     return elementsRow;
   }
 
-  private fillRowsEquipoInstrumentalNotExcel(grupo: IGrupoReportData, elementsRow: any[]) {
-    const rowsReport: ISgiRowReport[] = [];
-
-    grupo.equiposInstrumentales?.forEach(grupoEquipoInstrumental => {
-      const equipoInstrumentalElementsRow: any[] = [];
-
-      let equipoInstrumentalTable = grupoEquipoInstrumental?.nombre ?? '';
-      equipoInstrumentalTable += '\n';
-      equipoInstrumentalTable += grupoEquipoInstrumental?.numRegistro ?? '';
-
-      equipoInstrumentalElementsRow.push(equipoInstrumentalTable);
-
-      const rowReport: ISgiRowReport = {
-        elements: equipoInstrumentalElementsRow
-      };
-      rowsReport.push(rowReport);
-    });
-
-    elementsRow.push({
-      rows: rowsReport
-    });
-  }
-
   private fillRowsEntidadExcel(elementsRow: any[], grupoEquipoInstrumental: IGrupoEquipoInstrumental) {
     if (grupoEquipoInstrumental) {
-      elementsRow.push(grupoEquipoInstrumental.nombre ?? '');
+      elementsRow.push(this.languageService.getFieldValue(grupoEquipoInstrumental.nombre));
       elementsRow.push(grupoEquipoInstrumental.numRegistro ?? '');
     } else {
       elementsRow.push('');

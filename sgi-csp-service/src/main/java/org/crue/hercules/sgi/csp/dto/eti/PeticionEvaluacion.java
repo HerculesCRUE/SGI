@@ -3,6 +3,9 @@ package org.crue.hercules.sgi.csp.dto.eti;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
+
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,7 +30,7 @@ public class PeticionEvaluacion implements Serializable {
   /** Código */
   private String codigo;
   /** Título */
-  private String titulo;
+  private List<I18nFieldValueDto> titulo;
   /** Tipo Actividad */
   private TipoActividad tipoActividad;
   /** Tipo Investigacion Tutelada */
@@ -35,7 +38,7 @@ public class PeticionEvaluacion implements Serializable {
   /** Existe financiacion */
   private Boolean existeFinanciacion;
   /** Fuente financiacion */
-  private String fuenteFinanciacion;
+  private List<I18nFieldValueDto> fuenteFinanciacion;
   /** Estado Financiación */
   private EstadoFinanciacion estadoFinanciacion;
   /** Importe Financiación */
@@ -45,15 +48,15 @@ public class PeticionEvaluacion implements Serializable {
   /** Fecha Fin. */
   private Instant fechaFin;
   /** Resumen */
-  private String resumen;
+  private List<I18nFieldValueDto> resumen;
   /** Valor social */
   private TipoValorSocial valorSocial;
   /** Otro valor social */
-  private String otroValorSocial;
+  private List<I18nFieldValueDto> otroValorSocial;
   /** Objetivos */
-  private String objetivos;
+  private List<I18nFieldValueDto> objetivos;
   /** Diseño metodológico */
-  private String disMetodologico;
+  private List<I18nFieldValueDto> disMetodologico;
   /** Externo */
   private Boolean externo;
   /** Tiene fondos propios */

@@ -1,7 +1,6 @@
 package org.crue.hercules.sgi.csp.controller;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -9,13 +8,13 @@ import org.crue.hercules.sgi.csp.dto.AutorizacionInput;
 import org.crue.hercules.sgi.csp.dto.AutorizacionOutput;
 import org.crue.hercules.sgi.csp.dto.AutorizacionWithFirstEstado;
 import org.crue.hercules.sgi.csp.dto.CertificadoAutorizacionOutput;
-import org.crue.hercules.sgi.csp.dto.ConvocatoriaTituloOutput;
-import org.crue.hercules.sgi.csp.dto.DocumentoOutput;
+import org.crue.hercules.sgi.csp.dto.ConvocatoriaOnlyTituloOutput;
 import org.crue.hercules.sgi.csp.dto.EstadoAutorizacionInput;
 import org.crue.hercules.sgi.csp.dto.EstadoAutorizacionOutput;
 import org.crue.hercules.sgi.csp.dto.NotificacionProyectoExternoCVNOutput;
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.CertificadoAutorizacion;
+import org.crue.hercules.sgi.csp.model.CertificadoAutorizacionDocumentoRef;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.EstadoAutorizacion;
 import org.crue.hercules.sgi.csp.model.NotificacionProyectoExternoCVN;
@@ -413,10 +412,11 @@ public class AutorizacionController {
    */
   @GetMapping("/{id}/convocatoria")
   @PreAuthorize("hasAuthorityForAnyUO('CSP-AUT-INV-ER')")
-  public ResponseEntity<ConvocatoriaTituloOutput> findConvocatoriaByAutorizacionId(@PathVariable Long id) {
+  public ResponseEntity<ConvocatoriaOnlyTituloOutput> findConvocatoriaByAutorizacionId(@PathVariable Long id) {
     log.debug("findConvocatoriaByAutorizacionId(Long id) - start");
 
-    ConvocatoriaTituloOutput returnValue = convert(convocatoriaService.findByAutorizacionIdAndUserIsSolicitante(id));
+    ConvocatoriaOnlyTituloOutput returnValue = convert(
+        convocatoriaService.findByAutorizacionIdAndUserIsSolicitante(id));
 
     if (returnValue == null) {
       log.debug("findConvocatoriaByAutorizacionId(Long id) - end");
@@ -452,10 +452,12 @@ public class AutorizacionController {
    */
   @GetMapping("/{idAutorizacion}/documento/{fileName}")
   @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-AUT-E','CSP-AUT-INV-C', 'CSP-AUT-INV-ER','CSP-AUT-V')")
-  public ResponseEntity<DocumentoOutput> documentoAutorizacion(@PathVariable Long idAutorizacion,
+  public ResponseEntity<List<CertificadoAutorizacionDocumentoRef>> documentoAutorizacion(
+      @PathVariable Long idAutorizacion,
       @PathVariable String fileName) {
     log.debug("documentoAutorizacion(@PathVariable Long idAutorizacion, @PathVariable String fileName) - start");
-    DocumentoOutput documento = service.generarDocumentoAutorizacion(idAutorizacion, fileName);
+    List<CertificadoAutorizacionDocumentoRef> documento = service.generarDocumentoAutorizacion(idAutorizacion,
+        fileName);
     log.debug("documentoAutorizacion(@PathVariable Long idAutorizacion, @PathVariable String fileName) - end");
     return new ResponseEntity<>(documento, HttpStatus.OK);
   }
@@ -476,13 +478,13 @@ public class AutorizacionController {
 
   private Page<AutorizacionOutput> convert(Page<Autorizacion> page) {
     List<AutorizacionOutput> content = page.getContent().stream()
-        .map(this::convert).collect(Collectors.toList());
+        .map(this::convert).toList();
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }
 
-  private ConvocatoriaTituloOutput convert(Convocatoria convocatoria) {
-    return modelMapper.map(convocatoria, ConvocatoriaTituloOutput.class);
+  private ConvocatoriaOnlyTituloOutput convert(Convocatoria convocatoria) {
+    return modelMapper.map(convocatoria, ConvocatoriaOnlyTituloOutput.class);
   }
 
   private CertificadoAutorizacionOutput convert(CertificadoAutorizacion certificadoAutorizacion) {
@@ -495,7 +497,7 @@ public class AutorizacionController {
 
   private Page<EstadoAutorizacionOutput> convertEstados(Page<EstadoAutorizacion> page) {
     List<EstadoAutorizacionOutput> content = page.getContent().stream()
-        .map(this::convert).collect(Collectors.toList());
+        .map(this::convert).toList();
 
     return new PageImpl<>(content, page.getPageable(), page.getTotalElements());
   }

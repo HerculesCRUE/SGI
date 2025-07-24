@@ -4,12 +4,17 @@ import java.math.BigDecimal;
 import java.net.URI;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.ProrrogaDocumento;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
+import org.crue.hercules.sgi.csp.model.ProyectoProrrogaObservaciones;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -92,7 +97,9 @@ class ProyectoProrrogaIT extends BaseIT {
   void update_ReturnsProyectoProrroga() throws Exception {
     Long idProyectoProrroga = 5L;
     ProyectoProrroga proyectoProrroga = generarMockProyectoProrroga(1L, 1L);
-    proyectoProrroga.setObservaciones("observaciones-modificadas");
+    Set<ProyectoProrrogaObservaciones> proyectoProrrogaObservaciones = new HashSet<>();
+    proyectoProrrogaObservaciones.add(new ProyectoProrrogaObservaciones(Language.ES, "observaciones-modificadas"));
+    proyectoProrroga.setObservaciones(proyectoProrrogaObservaciones);
 
     final ResponseEntity<ProyectoProrroga> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, proyectoProrroga), ProyectoProrroga.class, idProyectoProrroga);
@@ -196,8 +203,8 @@ class ProyectoProrrogaIT extends BaseIT {
         .isEqualTo(Instant.parse("2022-01-31T23:59:59Z"));
     Assertions.assertThat(proyectoProrroga.getTipo()).as("getTipo()").isEqualTo(ProyectoProrroga.Tipo.TIEMPO_IMPORTE);
     Assertions.assertThat(proyectoProrroga.getImporte()).as("getImporte()").isEqualTo(BigDecimal.valueOf(123.45));
-    Assertions.assertThat(proyectoProrroga.getObservaciones()).as("getObservaciones()")
-        .isEqualTo("observaciones-proyecto-prorroga-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoProrroga.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("observaciones-proyecto-prorroga-001");
 
   }
 
@@ -226,7 +233,7 @@ class ProyectoProrrogaIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "comentario=ke=-00";
+    String filter = "comentario.value=ke=-00";
 
     Long proyectoProrrogaId = 1L;
 
@@ -245,12 +252,12 @@ class ProyectoProrrogaIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(convocatoriasDocumentos.get(0).getComentario()).as("get(0).getComentario()")
-        .isEqualTo("comentario-prorroga-documento-" + String.format("%03d", 3));
-    Assertions.assertThat(convocatoriasDocumentos.get(1).getComentario()).as("get(1).getComentario())")
-        .isEqualTo("comentario-prorroga-documento-" + String.format("%03d", 2));
-    Assertions.assertThat(convocatoriasDocumentos.get(2).getComentario()).as("get(2).getComentario()")
-        .isEqualTo("comentario-prorroga-documento-" + String.format("%03d", 1));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasDocumentos.get(0).getComentario(), Language.ES))
+        .as("get(0).getComentario()").isEqualTo("comentario-prorroga-documento-" + String.format("%03d", 3));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasDocumentos.get(1).getComentario(), Language.ES))
+        .as("get(1).getComentario())").isEqualTo("comentario-prorroga-documento-" + String.format("%03d", 2));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(convocatoriasDocumentos.get(2).getComentario(), Language.ES))
+        .as("get(2).getComentario()").isEqualTo("comentario-prorroga-documento-" + String.format("%03d", 1));
   }
 
   /**
@@ -261,7 +268,9 @@ class ProyectoProrrogaIT extends BaseIT {
    * @return el objeto ProyectoProrroga
    */
   private ProyectoProrroga generarMockProyectoProrroga(Long id, Long proyectoId) {
-
+    Set<ProyectoProrrogaObservaciones> proyectoProrrogaObservaciones = new HashSet<>();
+    proyectoProrrogaObservaciones.add(new ProyectoProrrogaObservaciones(Language.ES,
+        "observaciones-proyecto-prorroga-" + (id == null ? "" : String.format("%03d", id))));
     // @formatter:off
     return ProyectoProrroga.builder()
         .id(id)
@@ -271,7 +280,7 @@ class ProyectoProrrogaIT extends BaseIT {
         .tipo(ProyectoProrroga.Tipo.TIEMPO_IMPORTE)
         .fechaFin(Instant.parse("2022-12-31T23:59:59Z"))
         .importe(BigDecimal.valueOf(123.45))
-        .observaciones("observaciones-proyecto-prorroga-" + (id == null ? "" : String.format("%03d", id)))
+        .observaciones(proyectoProrrogaObservaciones)
         .build();
     // @formatter:on
   }

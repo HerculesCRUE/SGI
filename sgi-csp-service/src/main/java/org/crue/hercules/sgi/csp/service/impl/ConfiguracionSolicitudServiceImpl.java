@@ -15,11 +15,11 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaRepository;
 import org.crue.hercules.sgi.csp.repository.DocumentoRequeridoSolicitudRepository;
 import org.crue.hercules.sgi.csp.repository.specification.DocumentoRequeridoSolicitudSpecifications;
 import org.crue.hercules.sgi.csp.service.ConfiguracionSolicitudService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +30,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitudService {
+  private static final String MSG_FIELD_TRAMITACION_SGI = "configuracionSolicitud.tramitacionSgi";
+  private static final String MSG_FIELD_PLAZO_PRESENTACION = "configuracionSolicitud.plazoPresentacion";
 
   private final ConfiguracionSolicitudRepository repository;
   private final ConvocatoriaRepository convocatoriaRepository;
@@ -58,13 +60,10 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
   public ConfiguracionSolicitud create(ConfiguracionSolicitud configuracionSolicitud) {
     log.debug("create(ConfiguracionSolicitud configuracionSolicitud) - start");
 
-    Assert.isNull(configuracionSolicitud.getId(), "Id tiene que ser null para crear la ConfiguracionSolicitud");
-
-    Assert.isTrue(configuracionSolicitud.getConvocatoriaId() != null,
-        "Convocatoria no puede ser null en ConfiguracionSolicitud");
-
-    Assert.isTrue(!repository.findByConvocatoriaId(configuracionSolicitud.getConvocatoriaId()).isPresent(),
-        "Ya existe ConfiguracionSolicitud para la convocatoria " + configuracionSolicitud.getConvocatoriaId());
+    AssertHelper.idIsNull(configuracionSolicitud.getId(), ConfiguracionSolicitud.class);
+    AssertHelper.idNotNull(configuracionSolicitud.getConvocatoriaId(), Convocatoria.class);
+    AssertHelper.entityExists(!repository.findByConvocatoriaId(configuracionSolicitud.getConvocatoriaId())
+        .isPresent(), Convocatoria.class, ConfiguracionSolicitud.class);
 
     configuracionSolicitud.setConvocatoriaId(configuracionSolicitud.getConvocatoriaId());
 
@@ -91,7 +90,7 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
   public ConfiguracionSolicitud update(ConfiguracionSolicitud configuracionSolicitud, Long convocatoriaId) {
     log.debug("update(ConfiguracionSolicitud configuracionSolicitud) - start");
 
-    Assert.notNull(convocatoriaId, "Convocatoria no puede ser null en ConfiguracionSolicitud");
+    AssertHelper.idNotNull(convocatoriaId, Convocatoria.class);
 
     return repository.findByConvocatoriaId(configuracionSolicitud.getConvocatoriaId()).map(data -> {
 
@@ -144,14 +143,14 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
     Convocatoria convocatoria = convocatoriaRepository.findById(datosConfiguracionSolicitud.getConvocatoriaId())
         .orElseThrow(() -> new ConvocatoriaNotFoundException(datosConfiguracionSolicitud.getConvocatoriaId()));
     if (convocatoria.getEstado() == Convocatoria.Estado.REGISTRADA) {
-      Assert.notNull(datosConfiguracionSolicitud.getTramitacionSGI(),
-          "Habilitar presentacion SGI no puede ser null para crear ConfiguracionSolicitud cuando la convocatoria está registrada");
+      AssertHelper.fieldNotNull(datosConfiguracionSolicitud.getTramitacionSGI(), ConfiguracionSolicitud.class,
+          MSG_FIELD_TRAMITACION_SGI);
     }
 
-    Assert.isTrue(
+    AssertHelper.fieldNotNull(
         !(datosConfiguracionSolicitud.getFasePresentacionSolicitudes() == null
             && datosConfiguracionSolicitud.getTramitacionSGI() == Boolean.TRUE),
-        "Plazo presentación solicitudes no puede ser null cuando se establece presentacion SGI");
+        ConfiguracionSolicitud.class, MSG_FIELD_PLAZO_PRESENTACION);
 
     // Si ya hay documentos requeridos solicitud, no se puede cambiar la fase
     if (datosOriginales != null && datosOriginales.getFasePresentacionSolicitudes() != null
@@ -162,8 +161,9 @@ public class ConfiguracionSolicitudServiceImpl implements ConfiguracionSolicitud
 
       Specification<DocumentoRequeridoSolicitud> specByConvocatoria = DocumentoRequeridoSolicitudSpecifications
           .byConvocatoriaId(datosOriginales.getConvocatoriaId());
-      Assert.isTrue(documentoRequeridoSolicitudRepository.findAll(specByConvocatoria, Pageable.unpaged()).isEmpty(),
-          "Si ya existen documentos requeridos solicitud asociados a la configuración, no se puede cambiar la fase");
+      AssertHelper.entityExists(
+          documentoRequeridoSolicitudRepository.findAll(specByConvocatoria, Pageable.unpaged()).isEmpty(),
+          ConfiguracionSolicitud.class, DocumentoRequeridoSolicitud.class);
     }
 
     // Con Convocatoria-Fase seleccionada

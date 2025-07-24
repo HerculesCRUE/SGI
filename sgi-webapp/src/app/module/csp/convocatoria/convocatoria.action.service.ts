@@ -3,24 +3,25 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { MSG_PARAMS } from '@core/i18n';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { Estado } from '@core/models/csp/convocatoria';
 import { IConvocatoriaFase } from '@core/models/csp/convocatoria-fase';
 import { IModeloEjecucion } from '@core/models/csp/tipos-configuracion';
 import { ActionService } from '@core/services/action-service';
-import { ConfigService } from '@core/services/csp/configuracion/config.service';
 import { ConfiguracionSolicitudService } from '@core/services/csp/configuracion-solicitud.service';
+import { ConfigService } from '@core/services/csp/configuracion/config.service';
 import { ConvocatoriaAreaTematicaService } from '@core/services/csp/convocatoria-area-tematica.service';
 import { ConvocatoriaConceptoGastoService } from '@core/services/csp/convocatoria-concepto-gasto.service';
-import { ConvocatoriaDocumentoService } from '@core/services/csp/convocatoria-documento.service';
+import { ConvocatoriaDocumentoService } from '@core/services/csp/convocatoria-documento/convocatoria-documento.service';
 import { ConvocatoriaEntidadFinanciadoraService } from '@core/services/csp/convocatoria-entidad-financiadora.service';
 import { ConvocatoriaEntidadGestoraService } from '@core/services/csp/convocatoria-entidad-gestora.service';
 import { ConvocatoriaFaseService } from '@core/services/csp/convocatoria-fase/convocatoria-fase.service';
 import { ConvocatoriaHitoService } from '@core/services/csp/convocatoria-hito/convocatoria-hito.service';
 import { ConvocatoriaPartidaPresupuestariaService } from '@core/services/csp/convocatoria-partida-presupuestaria/convocatoria-partida-presupuestaria.service';
-import { ConvocatoriaPeriodoJustificacionService } from '@core/services/csp/convocatoria-periodo-justificacion.service';
-import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
-import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip.service';
-import { ConvocatoriaSeguimientoCientificoService } from '@core/services/csp/convocatoria-seguimiento-cientifico.service';
+import { ConvocatoriaPeriodoJustificacionService } from '@core/services/csp/convocatoria-periodo-justificacion/convocatoria-periodo-justificacion.service';
+import { ConvocatoriaSeguimientoCientificoService } from '@core/services/csp/convocatoria-periodo-seguimiento-cientifico/convocatoria-seguimiento-cientifico.service';
+import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo/convocatoria-requisito-equipo.service';
+import { ConvocatoriaRequisitoIPService } from '@core/services/csp/convocatoria-requisito-ip/convocatoria-requisito-ip.service';
 import { ConvocatoriaService } from '@core/services/csp/convocatoria.service';
 import { DocumentoRequeridoSolicitudService } from '@core/services/csp/documento-requerido-solicitud.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
@@ -135,7 +136,7 @@ export class ConvocatoriaActionService extends ActionService implements OnDestro
     return this.datosGenerales.getValue().unidadGestion?.id;
   }
 
-  get titulo(): string {
+  get titulo(): I18nFieldValue[] {
     return this.datosGenerales.getValue().titulo;
   }
 

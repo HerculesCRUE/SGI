@@ -1,0 +1,48 @@
+[
+  {
+    "key": "ap4_2_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "label": "4.2.3 Laztasun orokorra"
+    },
+    "fieldGroup": [
+      {
+        "template": "Laztasun metatua kontuan hartuta, nola kalifikatuko zenuke prozesu osoaren laztasun orokorra?"
+      },
+      {
+        "key": "severidadGlobal",
+        "type": "select",
+        "templateOptions": {
+          "label": "Laztasuna",
+          "order": 40,
+          "options": [
+            {
+              "value": "1",
+              "label": "Suspertzeko aukerarik gabe"
+            },
+            {
+              "value": "2",
+              "label": "Arina"
+            },
+            {
+              "value": "3",
+              "label": "Ertaina"
+            },
+            {
+              "value": "4",
+              "label": "Larria"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Oharra: baloratu laztasun orokorra eskala honen arabera: 1. Suspertzeko aukerarik gabe, 2. Arina, 3. Ertaina, 4. Larria</p>"
+      }
+    ]
+  }
+]

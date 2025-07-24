@@ -30,11 +30,11 @@ export class SolicitudConsultarComponent extends AbstractMenuContentComponent im
     private solicitudService: SolicitudPublicService,
     private readonly translate: TranslateService
   ) {
-    super();
+    super(translate);
   }
 
   ngOnInit(): void {
-    this.setupI18N();
+
 
     this.formGroup = new FormGroup({
       numeroDocumento: new FormControl(undefined, Validators.required),
@@ -73,7 +73,7 @@ export class SolicitudConsultarComponent extends AbstractMenuContentComponent im
     this.formGroup.reset();
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SOLICITUD_NUM_DOCUMENTO,
       MSG_PARAMS.CARDINALIRY.SINGULAR

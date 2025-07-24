@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { DICTAMEN_MAP } from '@core/models/eti/dictamen';
+import { MEMORIA_TIPO_MAP } from '@core/models/eti/memoria';
+import { TIPO_EVALUACION_MAP } from '@core/models/eti/tipo-evaluacion';
 import { ColumnType, ISgiColumnReport } from '@core/models/rep/sgi-column-report';
 import { AbstractTableExportFillService } from '@core/services/rep/abstract-table-export-fill.service';
 import { IReportConfig } from '@core/services/rep/abstract-table-export.service';
@@ -24,7 +27,7 @@ const EVALUACION_TIPO_MEMORIA_KEY = marker('eti.evaluacion.report.tipo-memoria')
 
 @Injectable()
 export class EvaluacionGeneralListadoExportService extends
-  AbstractTableExportFillService<IEvaluacionReportData, IEvaluacionReportOptions>{
+  AbstractTableExportFillService<IEvaluacionReportData, IEvaluacionReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -105,14 +108,14 @@ export class EvaluacionGeneralListadoExportService extends
     const convocatoriaData = convocatorias[index];
 
     return [
-      convocatoriaData.memoria?.comite?.comite ?? '',
-      convocatoriaData.tipoEvaluacion?.nombre ?? '',
-      convocatoriaData.memoria?.tipoMemoria?.nombre ?? '',
+      convocatoriaData.memoria?.comite?.codigo ?? '',
+      convocatoriaData.tipoEvaluacion?.id ? this.translate.instant(TIPO_EVALUACION_MAP.get(convocatoriaData.tipoEvaluacion?.id)) : '',
+      convocatoriaData.memoria?.tipo ? this.translate.instant(MEMORIA_TIPO_MAP.get(convocatoriaData.memoria?.tipo)) : '',
       LuxonUtils.toBackend(convocatoriaData.fechaDictamen) ?? '',
       convocatoriaData.memoria?.numReferencia ?? '',
       convocatoriaData.solicitante?.nombre ?? '',
       convocatoriaData.solicitante?.apellidos ?? '',
-      convocatoriaData.dictamen?.nombre ?? '',
+      convocatoriaData.dictamen ? this.translate.instant(DICTAMEN_MAP.get(convocatoriaData.dictamen.id)) ?? '' : '',
       convocatoriaData.version ?? ''
     ];
   }

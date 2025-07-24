@@ -1,6 +1,7 @@
 package org.crue.hercules.sgi.csp.repository.specification;
 
 import org.crue.hercules.sgi.csp.model.AreaTematica;
+import org.crue.hercules.sgi.csp.model.AreaTematicaNombre_;
 import org.crue.hercules.sgi.csp.model.AreaTematica_;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -40,7 +41,7 @@ public class AreaTematicaSpecifications {
    */
   public static Specification<AreaTematica> byNombre(String nombre) {
     return (root, query, cb) -> {
-      return cb.equal(root.get(AreaTematica_.nombre), nombre);
+      return cb.equal(root.join(AreaTematica_.nombre).get(AreaTematicaNombre_.value), nombre);
     };
   }
 
@@ -84,6 +85,17 @@ public class AreaTematicaSpecifications {
         return cb.isTrue(cb.literal(true)); // always true = no filtering
       }
       return cb.equal(root.get(AreaTematica_.id), id).not();
+    };
+  }
+
+  /**
+   * {@link AreaTematica} con padre null
+   * 
+   * @return specification para obtener las areaTematica padres.
+   */
+  public static Specification<AreaTematica> padres() {
+    return (root, query, cb) -> {
+      return cb.isNull(root.get(AreaTematica_.padre));
     };
   }
 

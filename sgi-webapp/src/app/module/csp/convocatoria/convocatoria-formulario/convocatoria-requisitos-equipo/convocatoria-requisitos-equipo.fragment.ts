@@ -5,11 +5,12 @@ import { IRequisitoEquipoNivelAcademico } from '@core/models/csp/requisito-equip
 import { ICategoriaProfesional } from '@core/models/sgp/categoria-profesional';
 import { INivelAcademico } from '@core/models/sgp/nivel-academico';
 import { FormFragment } from '@core/services/action-service';
-import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo.service';
+import { ConvocatoriaRequisitoEquipoService } from '@core/services/csp/convocatoria-requisito-equipo/convocatoria-requisito-equipo.service';
 import { CategoriaProfesionalService } from '@core/services/sgp/categoria-profesional.service';
 import { NivelAcademicosService } from '@core/services/sgp/nivel-academico.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { DateValidator } from '@core/validators/date-validator';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { BehaviorSubject, Observable, of, zip } from 'rxjs';
 import { map, switchMap, takeLast, tap } from 'rxjs/operators';
 
@@ -122,7 +123,7 @@ export class ConvocatoriaRequisitosEquipoFragment extends FormFragment<IConvocat
         [Validators.min(0), Validators.max(9999)])],
       numMaximoNoCompetitivosActivos: ['', Validators.compose(
         [Validators.min(0), Validators.max(9999)])],
-      otrosRequisitos: ['']
+      otrosRequisitos: [[], I18nValidators.maxLength(2000)]
     }, {
       validators: [
         DateValidator.isAfter('fechaMinimaNivelAcademico', 'fechaMaximaNivelAcademico', false),

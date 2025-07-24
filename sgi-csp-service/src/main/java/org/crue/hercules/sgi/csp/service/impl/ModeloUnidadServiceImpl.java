@@ -9,7 +9,10 @@ import org.crue.hercules.sgi.csp.repository.ModeloEjecucionRepository;
 import org.crue.hercules.sgi.csp.repository.ModeloUnidadRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ModeloUnidadSpecifications;
 import org.crue.hercules.sgi.csp.service.ModeloUnidadService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -26,6 +29,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ModeloUnidadServiceImpl implements ModeloUnidadService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_MODELO_EJECUCION_EXISTS = "org.springframework.util.Assert.entity.modeloEjecucion.exists.message";
+  private static final String MSG_MODEL_MODELO_UNIDAD = "org.crue.hercules.sgi.csp.model.ModeloUnidad.message";
 
   private final ModeloEjecucionRepository modeloEjecucionRepository;
   private final ModeloUnidadRepository modeloUnidadRepository;
@@ -47,9 +53,8 @@ public class ModeloUnidadServiceImpl implements ModeloUnidadService {
   public ModeloUnidad create(ModeloUnidad modeloUnidad) {
     log.debug("create(ModeloUnidad modeloUnidad) - start");
 
-    Assert.isNull(modeloUnidad.getId(), "Id tiene que ser null para crear ModeloUnidad");
-    Assert.notNull(modeloUnidad.getModeloEjecucion().getId(),
-        "Id ModeloEjecucion no puede ser null para crear un ModeloUnidad");
+    AssertHelper.idIsNull(modeloUnidad.getId(), ModeloUnidad.class);
+    AssertHelper.idNotNull(modeloUnidad.getModeloEjecucion().getId(), ModeloEjecucion.class);
 
     modeloUnidad.setModeloEjecucion(modeloEjecucionRepository.findById(modeloUnidad.getModeloEjecucion().getId())
         .orElseThrow(() -> new ModeloEjecucionNotFoundException(modeloUnidad.getModeloEjecucion().getId())));
@@ -58,7 +63,10 @@ public class ModeloUnidadServiceImpl implements ModeloUnidadService {
         modeloUnidad.getUnidadGestionRef()).ifPresent(modeloUnidadExistente -> {
 
           Assert.isTrue(!modeloUnidadExistente.getActivo(),
-              "Ya existe una asociación activa para ese ModeloEjecucion y esa Unidad");
+              () -> ProblemMessage.builder()
+                  .key(MSG_MODELO_EJECUCION_EXISTS)
+                  .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_MODELO_UNIDAD))
+                  .build());
 
           modeloUnidad.setId(modeloUnidadExistente.getId());
         });
@@ -80,7 +88,7 @@ public class ModeloUnidadServiceImpl implements ModeloUnidadService {
   public ModeloUnidad disable(Long id) {
     log.debug("disable(Long id) - start");
 
-    Assert.notNull(id, "ModeloUnidad id no puede ser null para desactivar un ModeloTipoEnlace");
+    AssertHelper.idNotNull(id, ModeloUnidad.class);
 
     return modeloUnidadRepository.findById(id).map(modeloUnidad -> {
       modeloUnidad.setActivo(false);

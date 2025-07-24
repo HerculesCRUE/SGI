@@ -1,0 +1,646 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd
+                      http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-3.8.xsd
+                      http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+  <property name="schemaPrefix" value="" />
+  <property name="defaultLang" value="es" />
+
+  <changeSet author="master" id="00.06.00-1">
+    <createTable tableName="tipo_proteccion_nombre">
+      <column name="tipo_proteccion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_proteccion_nombre" columnNames="tipo_proteccion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_proteccion_id"
+      baseTableName="tipo_proteccion_nombre"
+      constraintName="FK_TIPOPROTECCIONNOMBRE_TIPOPROTECCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_proteccion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_proteccion_nombre(tipo_proteccion_id, value_, lang) SELECT
+      id, nombre, '${defaultLang}' FROM ${schemaPrefix}tipo_proteccion WHERE nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_proteccion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-2">
+    <createTable tableName="tipo_proteccion_descripcion">
+      <column name="tipo_proteccion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_proteccion_descripcion" columnNames="tipo_proteccion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_proteccion_id"
+      baseTableName="tipo_proteccion_descripcion"
+      constraintName="FK_TIPOPROTECCIONDESCRIPCION_TIPOPROTECCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_proteccion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_proteccion_descripcion(tipo_proteccion_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}tipo_proteccion WHERE descripcion
+      IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="tipo_proteccion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-3">
+    <createTable tableName="sector_aplicacion_nombre">
+      <column name="sector_aplicacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="sector_aplicacion_nombre" columnNames="sector_aplicacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="sector_aplicacion_id"
+      baseTableName="sector_aplicacion_nombre"
+      constraintName="FK_SECTORAPLICACIONNOMBRE_SECTORAPLICACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="sector_aplicacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}sector_aplicacion_nombre(sector_aplicacion_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}sector_aplicacion WHERE nombre IS NOT
+      NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="sector_aplicacion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-4">
+    <createTable tableName="sector_aplicacion_descripcion">
+      <column name="sector_aplicacion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="sector_aplicacion_descripcion"
+      columnNames="sector_aplicacion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="sector_aplicacion_id"
+      baseTableName="sector_aplicacion_descripcion"
+      constraintName="FK_SECTORAPLICACIONDESCRIPCION_SECTORAPLICACION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="sector_aplicacion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}sector_aplicacion_descripcion(sector_aplicacion_id, value_,
+      lang) SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}sector_aplicacion WHERE
+      descripcion IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="sector_aplicacion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-5">
+    <createTable tableName="resultado_informe_patentabilidad_nombre">
+      <column name="resultado_informe_patentabilidad_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="resultado_informe_patentabilidad_nombre"
+      columnNames="resultado_informe_patentabilidad_id, lang" />
+
+    <addForeignKeyConstraint
+      baseColumnNames="resultado_informe_patentabilidad_id"
+      baseTableName="resultado_informe_patentabilidad_nombre"
+      constraintName="FK_RESULTADOINFORMEPATENTABILIDADNOMBRE_RESULTADOINFORMEPATENTABILIDAD"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id"
+      referencedTableName="resultado_informe_patentabilidad"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}resultado_informe_patentabilidad_nombre(resultado_informe_patentabilidad_id,
+      value_, lang) SELECT id, nombre, '${defaultLang}' FROM
+      ${schemaPrefix}resultado_informe_patentabilidad WHERE nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="resultado_informe_patentabilidad" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-6">
+    <createTable tableName="resultado_informe_patentabilidad_descripcion">
+      <column name="resultado_informe_patentabilidad_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="resultado_informe_patentabilidad_descripcion"
+      columnNames="resultado_informe_patentabilidad_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="resultado_informe_patentabilidad_id"
+      baseTableName="resultado_informe_patentabilidad_descripcion"
+      constraintName="FK_RESULTADOINFORMEPATENTABILIDADDESCRIPCION_RESULTADOINFORMEPATENTABILIDAD"
+      deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="resultado_informe_patentabilidad"
+      validate="true" />
+
+    <sql>INSERT INTO
+      ${schemaPrefix}resultado_informe_patentabilidad_descripcion(resultado_informe_patentabilidad_id,
+      value_, lang) SELECT id, descripcion, '${defaultLang}' FROM
+      ${schemaPrefix}resultado_informe_patentabilidad WHERE descripcion IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="resultado_informe_patentabilidad" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-7">
+    <createTable tableName="tipo_procedimiento_nombre">
+      <column name="tipo_procedimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_procedimiento_nombre" columnNames="tipo_procedimiento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_procedimiento_id"
+      baseTableName="tipo_procedimiento_nombre"
+      constraintName="FK_TIPOPROCEDIMIENTONOMBRE_TIPOPROCEDIMIENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_procedimiento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_procedimiento_nombre(tipo_procedimiento_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}tipo_procedimiento WHERE nombre IS NOT
+      NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="tipo_procedimiento" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-8">
+    <createTable tableName="tipo_procedimiento_descripcion">
+      <column name="tipo_procedimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_procedimiento_descripcion"
+      columnNames="tipo_procedimiento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_procedimiento_id"
+      baseTableName="tipo_procedimiento_descripcion"
+      constraintName="FK_TIPOPROCEDIMIENTODESCRIPCION_TIPOPROCEDIMIENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_procedimiento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_procedimiento_descripcion(tipo_procedimiento_id, value_,
+      lang) SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}tipo_procedimiento WHERE
+      descripcion IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="tipo_procedimiento" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-9">
+    <createTable tableName="via_proteccion_nombre">
+      <column name="via_proteccion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="via_proteccion_nombre" columnNames="via_proteccion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="via_proteccion_id"
+      baseTableName="via_proteccion_nombre"
+      constraintName="FK_VIAPROTECCIONNOMBRE_VIAPROTECCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="via_proteccion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}via_proteccion_nombre(via_proteccion_id, value_, lang) SELECT
+      id, nombre, '${defaultLang}' FROM ${schemaPrefix}via_proteccion WHERE nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="via_proteccion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-10">
+    <createTable tableName="via_proteccion_descripcion">
+      <column name="via_proteccion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="via_proteccion_descripcion" columnNames="via_proteccion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="via_proteccion_id"
+      baseTableName="via_proteccion_descripcion"
+      constraintName="FK_VIAPROTECCIONDESCRIPCION_VIAPROTECCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="via_proteccion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}via_proteccion_descripcion(via_proteccion_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}via_proteccion WHERE descripcion
+      IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="via_proteccion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-11">
+    <createTable tableName="invencion_titulo">
+      <column name="invencion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="invencion_titulo" columnNames="invencion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="invencion_id"
+      baseTableName="invencion_titulo"
+      constraintName="FK_INVENCIONTITULO_INVENCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="invencion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}invencion_titulo(invencion_id, value_, lang) SELECT id, titulo,
+      '${defaultLang}' FROM ${schemaPrefix}invencion WHERE titulo IS NOT NULL AND
+      NULLIF(TRIM(titulo), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="titulo" tableName="invencion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-12">
+    <createTable tableName="invencion_descripcion">
+      <column name="invencion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="invencion_descripcion" columnNames="invencion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="invencion_id"
+      baseTableName="invencion_descripcion"
+      constraintName="FK_INVENCIONDESCRIPCION_INVENCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="invencion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}invencion_descripcion(invencion_id, value_, lang) SELECT id,
+      descripcion, '${defaultLang}' FROM ${schemaPrefix}invencion WHERE descripcion IS NOT NULL AND
+      NULLIF(TRIM(descripcion), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="invencion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-13">
+    <createTable tableName="invencion_comentarios">
+      <column name="invencion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="invencion_comentarios" columnNames="invencion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="invencion_id"
+      baseTableName="invencion_comentarios"
+      constraintName="FK_INVENCIONCOMENTARIOS_INVENCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="invencion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}invencion_comentarios(invencion_id, value_, lang) SELECT id,
+      comentarios, '${defaultLang}' FROM ${schemaPrefix}invencion WHERE comentarios IS NOT NULL AND
+      NULLIF(TRIM(comentarios), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentarios" tableName="invencion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-14">
+    <createTable tableName="invencion_documento_nombre">
+      <column name="invencion_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="invencion_documento_nombre" columnNames="invencion_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="invencion_documento_id"
+      baseTableName="invencion_documento_nombre"
+      constraintName="FK_INVENCIONDOCUMENTONOMBRE_INVENCIONDOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="invencion_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}invencion_documento_nombre(invencion_documento_id, value_, lang)
+      SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}invencion_documento WHERE nombre IS
+      NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="invencion_documento" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-15">
+    <createTable tableName="informe_patentabilidad_nombre">
+      <column name="informe_patentabilidad_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="informe_patentabilidad_nombre"
+      columnNames="informe_patentabilidad_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="informe_patentabilidad_id"
+      baseTableName="informe_patentabilidad_nombre"
+      constraintName="FK_INFORMEPATENTABILIDADNOMBRE_INFORMEPATENTABILIDAD" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="informe_patentabilidad" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}informe_patentabilidad_nombre(informe_patentabilidad_id, value_,
+      lang) SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}informe_patentabilidad WHERE
+      nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="informe_patentabilidad" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-16">
+    <createTable tableName="informe_patentabilidad_comentarios">
+      <column name="informe_patentabilidad_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="informe_patentabilidad_comentarios"
+      columnNames="informe_patentabilidad_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="informe_patentabilidad_id"
+      baseTableName="informe_patentabilidad_comentarios"
+      constraintName="FK_INFORMEPATENTABILIDADCOMENTARIOS_INFORMEPATENTABILIDAD" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="informe_patentabilidad" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}informe_patentabilidad_comentarios(informe_patentabilidad_id,
+      value_, lang) SELECT id, comentarios, '${defaultLang}' FROM
+      ${schemaPrefix}informe_patentabilidad WHERE comentarios IS NOT NULL</sql>
+
+    <dropColumn columnName="comentarios" tableName="informe_patentabilidad" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-17">
+    <createTable tableName="solicitud_proteccion_titulo">
+      <column name="solicitud_proteccion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_proteccion_titulo"
+      columnNames="solicitud_proteccion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_proteccion_id"
+      baseTableName="solicitud_proteccion_titulo"
+      constraintName="FK_SOLICITUDPROTECCIONTITULO_SOLICITUDPROTECCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_proteccion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_proteccion_titulo(solicitud_proteccion_id, value_,
+      lang) SELECT id, titulo, '${defaultLang}' FROM ${schemaPrefix}solicitud_proteccion WHERE
+      titulo IS NOT NULL AND NULLIF(TRIM(titulo), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="titulo" tableName="solicitud_proteccion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-18">
+    <createTable tableName="solicitud_proteccion_comentarios">
+      <column name="solicitud_proteccion_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="solicitud_proteccion_comentarios"
+      columnNames="solicitud_proteccion_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="solicitud_proteccion_id"
+      baseTableName="solicitud_proteccion_comentarios"
+      constraintName="FK_SOLICITUDPROTECCIONCOMENTARIOS_SOLICITUDPROTECCION" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="solicitud_proteccion" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}solicitud_proteccion_comentarios(solicitud_proteccion_id,
+      value_, lang) SELECT id, comentarios, '${defaultLang}' FROM
+      ${schemaPrefix}solicitud_proteccion WHERE comentarios IS NOT NULL AND
+      NULLIF(TRIM(comentarios), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentarios" tableName="solicitud_proteccion" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-19">
+    <createTable tableName="tipo_caducidad_descripcion">
+      <column name="tipo_caducidad_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="tipo_caducidad_descripcion" columnNames="tipo_caducidad_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="tipo_caducidad_id"
+      baseTableName="tipo_caducidad_descripcion"
+      constraintName="FK_TIPOCADUCIDADDESCRIPCION_TIPOCADUCIDAD" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="tipo_caducidad" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}tipo_caducidad_descripcion(tipo_caducidad_id, value_, lang)
+      SELECT id, descripcion, '${defaultLang}' FROM ${schemaPrefix}tipo_caducidad WHERE descripcion
+      IS NOT NULL</sql>
+
+    <dropColumn columnName="descripcion" tableName="tipo_caducidad" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-20">
+    <createTable tableName="procedimiento_accion_a_tomar">
+      <column name="procedimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(500)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="procedimiento_accion_a_tomar" columnNames="procedimiento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="procedimiento_id"
+      baseTableName="procedimiento_accion_a_tomar"
+      constraintName="FK_PROCEDIMIENTOACCIONATOMAR_PROCEDIMIENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="procedimiento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}procedimiento_accion_a_tomar(procedimiento_id, value_, lang)
+      SELECT id, accion_a_tomar, '${defaultLang}' FROM ${schemaPrefix}procedimiento WHERE
+      accion_a_tomar IS NOT NULL</sql>
+
+    <dropColumn columnName="accion_a_tomar" tableName="procedimiento" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-21">
+    <createTable tableName="procedimiento_comentarios">
+      <column name="procedimiento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(2000)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="procedimiento_comentarios"
+      columnNames="procedimiento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="procedimiento_id"
+      baseTableName="procedimiento_comentarios"
+      constraintName="FK_PROCEDIMIENTOCOMENTARIOS_PROCEDIMIENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="procedimiento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}procedimiento_comentarios(procedimiento_id, value_, lang) SELECT
+      id, comentarios, '${defaultLang}' FROM ${schemaPrefix}procedimiento WHERE comentarios IS NOT
+      NULL AND NULLIF(TRIM(comentarios), '') IS NOT NULL</sql>
+
+    <dropColumn columnName="comentarios" tableName="procedimiento" />
+  </changeSet>
+
+  <changeSet author="master" id="00.06.00-22">
+    <createTable tableName="procedimiento_documento_nombre">
+      <column name="procedimiento_documento_id" type="BIGINT">
+        <constraints nullable="false" />
+      </column>
+      <column name="lang" type="VARCHAR(2)">
+        <constraints nullable="false" />
+      </column>
+      <column name="value_" type="VARCHAR(250)">
+        <constraints nullable="false" />
+      </column>
+    </createTable>
+
+    <addPrimaryKey tableName="procedimiento_documento_nombre"
+      columnNames="procedimiento_documento_id, lang" />
+
+    <addForeignKeyConstraint baseColumnNames="procedimiento_documento_id"
+      baseTableName="procedimiento_documento_nombre"
+      constraintName="FK_PROCEDIMIENTODOCUMENTONOMBRE_PROCEDIMIENTODOCUMENTO" deferrable="false"
+      initiallyDeferred="false"
+      referencedColumnNames="id" referencedTableName="procedimiento_documento" validate="true" />
+
+    <sql>INSERT INTO ${schemaPrefix}procedimiento_documento_nombre(procedimiento_documento_id,
+      value_, lang) SELECT id, nombre, '${defaultLang}' FROM ${schemaPrefix}procedimiento_documento
+      WHERE nombre IS NOT NULL</sql>
+
+    <dropColumn columnName="nombre" tableName="procedimiento_documento" />
+  </changeSet>
+
+
+</databaseChangeLog>

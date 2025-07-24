@@ -36,7 +36,8 @@ export class SelectEnumComponent extends SelectCommonComponent<string> {
   constructor(
     defaultErrorStateMatcher: ErrorStateMatcher,
     private translateService: TranslateService,
-    @Self() @Optional() ngControl: NgControl) {
+    @Self() @Optional() ngControl: NgControl
+  ) {
     super(defaultErrorStateMatcher, ngControl);
 
     // Override default sort function
@@ -44,8 +45,10 @@ export class SelectEnumComponent extends SelectCommonComponent<string> {
 
     // Override default display with
     this.displayWith = (option) => {
-      return !!option ? this.translateService.instant(this.enumMap.get(option)) : '';
+      return !!option && this.enumMap.has(option) ? this.translateService.instant(this.enumMap.get(option)) : '';
     };
+
+    this.subscriptions.push(this.translateService.onLangChange.subscribe(() => this.refreshDisplayValue()));
   }
 
 }

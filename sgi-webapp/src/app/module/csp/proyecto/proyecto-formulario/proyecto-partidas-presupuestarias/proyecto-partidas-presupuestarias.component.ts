@@ -11,6 +11,7 @@ import { IConvocatoriaPartidaPresupuestaria } from '@core/models/csp/convocatori
 import { IProyectoPartida } from '@core/models/csp/proyecto-partida';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -56,15 +57,16 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
     private actionService: ProyectoActionService,
     private matDialog: MatDialog,
     private dialogService: DialogService,
-    private readonly translate: TranslateService
+    private readonly translate: TranslateService,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.PARTIDAS_PRESUPUESTARIAS, actionService);
+    super(actionService.FRAGMENT.PARTIDAS_PRESUPUESTARIAS, actionService, translate);
     this.formPart = this.fragment as ProyectoPartidasPresupuestariasFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
@@ -73,6 +75,9 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
         switch (property) {
           case 'codigo':
             return wrapper.codigo ? wrapper.codigo : wrapper.partidaSge.codigo;
+          case 'descripcion':
+            return this.languageService.getFieldValue(wrapper.partidaPresupuestaria.value.descripcion);
+
           default:
             return wrapper[property];
         }
@@ -84,7 +89,7 @@ export class ProyectoPartidasPresupuestariasComponent extends FragmentComponent 
 
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       PROYECTO_PARTIDA_PRESUPUESTARIA_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

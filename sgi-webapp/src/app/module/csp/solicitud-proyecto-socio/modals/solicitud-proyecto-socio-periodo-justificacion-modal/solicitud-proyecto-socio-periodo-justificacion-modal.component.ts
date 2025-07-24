@@ -1,12 +1,13 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { marker } from '@biesbjerg/ngx-translate-extract-marker';
 import { DialogFormComponent } from '@core/component/dialog-form.component';
 import { MSG_PARAMS } from '@core/i18n';
 import { ISolicitudProyectoSocioPeriodoJustificacion } from '@core/models/csp/solicitud-proyecto-socio-periodo-justificacion';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { GLOBAL_CONSTANTS } from '@core/utils/global-constants';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NumberValidator } from '@core/validators/number-validator';
 import { IRange, RangeValidator } from '@core/validators/range-validator';
 import { TranslateService } from '@ngx-translate/core';
@@ -75,7 +76,7 @@ export class SolicitudProyectoSocioPeriodoJustificacionModalComponent
     this.translate.get(
       PROYECTO_SOCIO_PERIODO_JUSTIFICACION_OBSERVACIONES_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR
-    ).subscribe((value) => this.msgParamObservacionesEntity = { entity: value, ...MSG_PARAMS.GENDER.MALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
+    ).subscribe((value) => this.msgParamObservacionesEntity = { entity: value, ...MSG_PARAMS.GENDER.FEMALE, ...MSG_PARAMS.CARDINALIRY.PLURAL });
 
     if (this.data.isEdit) {
       this.translate.get(
@@ -132,7 +133,7 @@ export class SolicitudProyectoSocioPeriodoJustificacionModalComponent
         ]),
         fechaInicio: new FormControl(this.data.periodoJustificacion.fechaInicio, []),
         fechaFin: new FormControl(this.data.periodoJustificacion.fechaFin, []),
-        observaciones: new FormControl(this.data.periodoJustificacion.observaciones, [Validators.maxLength(2000)]),
+        observaciones: new FormControl(this.data.periodoJustificacion.observaciones, [I18nValidators.maxLength(2000)]),
       },
       {
         validators: [

@@ -4,8 +4,8 @@
     <div fxLayout="row">
       <mat-form-field>
         <mat-label>{{'csp.tipo-ambito-geografico.nombre' | translate}}</mat-label>
-        <input matInput formControlName="nombre" type="text"
-          placeholder="{{'csp.tipo-ambito-geografico.nombre' | translate}}" required>
+        <sgi-i18n-input formControlName="nombre" type="text"
+          placeholder="{{'csp.tipo-ambito-geografico.nombre' | translate}}" required></sgi-i18n-input>
         <mat-error *ngIf="formGroup.controls.nombre.errors?.required">
           {{'error.required.entity' | translate:msgParamNombreEntity}}
         </mat-error>

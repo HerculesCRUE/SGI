@@ -5,14 +5,15 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.config.RestApiProperties;
 import org.crue.hercules.sgi.csp.dto.sgemp.EmpresaOutput;
 import org.crue.hercules.sgi.csp.enums.ServiceType;
 import org.crue.hercules.sgi.csp.exceptions.SgiApiSgempFindEmpresaIdsByPaisIdException;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
-import org.springframework.util.Assert;
 import org.springframework.web.client.RestTemplate;
 
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class SgiApiSgempService extends SgiApiBaseService {
   public EmpresaOutput findById(String id) {
     log.debug("findById({}) - start", id);
 
-    Assert.notNull(id, "ID is required");
+    AssertHelper.fieldNotNull(id, EmpresaOutput.class, AssertHelper.MESSAGE_KEY_ID);
 
     ServiceType serviceType = ServiceType.SGEMP;
     String relativeUrl = "/empresas/{id}";
@@ -58,7 +59,7 @@ public class SgiApiSgempService extends SgiApiBaseService {
   public List<String> findAllEmpresaIdsByPaisId(String paisId) {
     log.debug("findAllEmpresaIdsByPaisId({}) - start", paisId);
 
-    Assert.notNull(paisId, "paisId is required");
+    AssertHelper.fieldNotNull(paisId, EmpresaOutput.class, "paisId");
 
     ServiceType serviceType = ServiceType.SGEMP;
     String relativeUrl = "/empresas?q=paisId=={paisId}";
@@ -83,6 +84,38 @@ public class SgiApiSgempService extends SgiApiBaseService {
 
     log.debug("findAllEmpresaIdsByPaisId({}) - end", paisId);
     return empresaIds;
+  }
+
+  /**
+   * Obtienes los datos de varias entidades, de SGP, a través de sus
+   * identificadoes
+   * 
+   * @param ids Listado de identificadores de entidad
+   * @return Listado de {@link EmpresaOutput}
+   */
+  public List<EmpresaOutput> findAllByIdIn(List<String> ids) {
+    log.debug("findAllByIdIn({}) - start", ids);
+
+    if (ids == null || ids.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    String in = ids.stream()
+        .filter(StringUtils::isNotBlank)
+        .map(id -> StringUtils.wrap(id, "\""))
+        .collect(Collectors.joining(","));
+
+    ServiceType serviceType = ServiceType.SGEMP;
+    String relativeUrl = "/empresas/?q=id=in=({in})";
+    HttpMethod httpMethod = HttpMethod.GET;
+    String mergedURL = buildUri(serviceType, relativeUrl);
+
+    final List<EmpresaOutput> response = super.<List<EmpresaOutput>>callEndpoint(mergedURL, httpMethod,
+        new ParameterizedTypeReference<List<EmpresaOutput>>() {
+        }, in).getBody();
+
+    log.debug("findAllByIdIn({}) - end", ids);
+    return response;
   }
 
 }

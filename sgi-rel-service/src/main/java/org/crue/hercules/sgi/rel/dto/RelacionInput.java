@@ -1,8 +1,11 @@
 package org.crue.hercules.sgi.rel.dto;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 import org.crue.hercules.sgi.rel.model.Relacion;
 import org.crue.hercules.sgi.rel.model.Relacion.TipoEntidad;
 
@@ -34,5 +37,5 @@ public class RelacionInput {
   private String entidadDestinoRef;
 
   @Size(max = Relacion.LONG_TEXT_LENGTH)
-  private String observaciones;
+  private List<I18nFieldValueDto> observaciones;
 }

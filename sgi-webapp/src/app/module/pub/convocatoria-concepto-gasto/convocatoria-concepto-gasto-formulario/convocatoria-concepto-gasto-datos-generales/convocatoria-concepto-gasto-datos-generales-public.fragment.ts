@@ -27,7 +27,7 @@ export class ConvocatoriaConceptoGastoDatosGeneralesPublicFragment extends FormF
 
   protected buildFormGroup(): FormGroup {
     const form = new FormGroup({
-      conceptoGasto: new FormControl('', [IsEntityValidator.isValid()]),
+      conceptoGasto: new FormControl([]),
       costesIndirectos: new FormControl({ value: '', disabled: true },
         Validators.required),
       importeMaximo: new FormControl('', [Validators.compose(
@@ -50,7 +50,7 @@ export class ConvocatoriaConceptoGastoDatosGeneralesPublicFragment extends FormF
           ])
         ]
       ),
-      observaciones: new FormControl('')
+      observaciones: new FormControl([])
     });
 
     form.disable();

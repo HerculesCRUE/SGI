@@ -6,6 +6,7 @@ import { IProyectoProyectoSge } from '@core/models/csp/proyecto-proyecto-sge';
 import { environment } from '@env';
 import { RSQLSgiRestFilter, SgiMutableRestService, SgiRestFilterOperator, SgiRestFindOptions, SgiRestListResult } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -29,6 +30,18 @@ export class ProyectoProyectoSgeService
     };
 
     return this.findAll(queryOptions);
+  }
+
+  /**
+     * Comprueba si la relacion entre el proyecto y el proyecto SGE es eliminable en el SGI
+     *
+     * @param id Id del IProyectoProyectoSge
+     */
+  isEliminable(id: number): Observable<boolean> {
+    const url = `${this.endpointUrl}/${id}/eliminable`;
+    return this.http.head(url, { observe: 'response' }).pipe(
+      map(response => response.status === 200)
+    );
   }
 
 }

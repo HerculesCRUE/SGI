@@ -10,8 +10,8 @@ import { AbstractTableExportService, IReportConfig, IReportOptions } from '@core
 import { ReportService } from '@core/services/rep/report.service';
 import { SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
-import { concat, Observable, of, zip } from 'rxjs';
-import { catchError, map, switchMap, takeLast, tap } from 'rxjs/operators';
+import { concat, from, Observable, of, zip } from 'rxjs';
+import { catchError, map, mergeMap, switchMap, takeLast, tap } from 'rxjs/operators';
 import { MemoriaEvaluacionesListadoExportService } from './memoria-evaluaciones-listado-export.service';
 import { MemoriaGeneralListadoExportService } from './memoria-general-listado-export.service';
 
@@ -96,12 +96,19 @@ export class MemoriaListadoExportService extends
         return memorias.items.map((memoria) => memoria as unknown as IMemoriaReportData);
       }),
       switchMap((memoriasReportData) => {
-        const requestsMemoria: Observable<IMemoriaReportData>[] = [];
+        const requestsMemoria: IMemoriaReportData[] = [];
 
-        memoriasReportData.forEach(peticion => {
-          requestsMemoria.push(this.getDataReportInner(peticion, reportConfig.reportOptions));
-        });
-        return zip(...requestsMemoria);
+        return from(memoriasReportData).pipe(
+          mergeMap((peticion) => {
+            return this.getDataReportInner(peticion, reportConfig.reportOptions)
+          }, this.DEFAULT_CONCURRENT)
+        ).pipe(
+          map(r => {
+            requestsMemoria.push(r);
+            return requestsMemoria;
+          }),
+          takeLast(1)
+        )
       }),
       takeLast(1)
     );

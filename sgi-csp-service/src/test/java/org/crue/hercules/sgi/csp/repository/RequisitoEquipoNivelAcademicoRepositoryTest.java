@@ -1,13 +1,17 @@
 package org.crue.hercules.sgi.csp.repository;
 
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaTitulo;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipo;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipoNivelAcademico;
 import org.crue.hercules.sgi.csp.repository.specification.RequisitoEquipoNivelAcademicoSpecifications;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -21,26 +25,32 @@ class RequisitoEquipoNivelAcademicoRepositoryTest extends BaseRepositoryTest {
   @Test
   void testDeleteInBulkByRequisitoEquipoId() {
     // given: 4 RequisitoEquipoNivelAcademico de un RequisitoEquipo y 2 de otro
-    // @formatter:off
-    Convocatoria convocatoria = entityManager.persistAndFlush( 
-      Convocatoria.builder()
-        .estado(Convocatoria.Estado.BORRADOR)
-        .codigo("codigo-000")
-        .unidadGestionRef("2")
-        .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
-        .activo(Boolean.TRUE)
-        .build());
-    Convocatoria convocatoria2 = entityManager.persistAndFlush( 
-      Convocatoria.builder()
-        .estado(Convocatoria.Estado.BORRADOR)
-        .codigo("codigo-000")
-        .unidadGestionRef("2")
-        .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
-        .activo(Boolean.TRUE)
-        .build());
-    // @formatter:on
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
+    Convocatoria convocatoria = entityManager.persistAndFlush(
+        Convocatoria.builder()
+            .estado(Convocatoria.Estado.BORRADOR)
+            .codigo("codigo-000")
+            .unidadGestionRef("2")
+            .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
+            .titulo(convocatoriaTitulo)
+            .activo(Boolean.TRUE)
+            .build());
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo2 = new HashSet<>();
+    convocatoriaTitulo2.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
+    Convocatoria convocatoria2 = entityManager.persistAndFlush(
+        Convocatoria.builder()
+            .estado(Convocatoria.Estado.BORRADOR)
+            .codigo("codigo-000")
+            .unidadGestionRef("2")
+            .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
+            .titulo(convocatoriaTitulo2)
+            .activo(Boolean.TRUE)
+            .build());
 
     // @formatter:off
     RequisitoEquipo requisitoEquipo = entityManager.persistAndFlush(
@@ -79,26 +89,32 @@ class RequisitoEquipoNivelAcademicoRepositoryTest extends BaseRepositoryTest {
   @Test
   void testByRequisitoEquipoId() {
     // given: 4 RequisitoEquipoNivelAcademico de un RequisitoEquipo y 2 de otro
-    // @formatter:off
-    Convocatoria convocatoria = entityManager.persistAndFlush( 
-      Convocatoria.builder()
-        .estado(Convocatoria.Estado.BORRADOR)
-        .codigo("codigo-000")
-        .unidadGestionRef("2")
-        .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
-        .activo(Boolean.TRUE)
-        .build());
-    Convocatoria convocatoria2 = entityManager.persistAndFlush( 
-      Convocatoria.builder()
-        .estado(Convocatoria.Estado.BORRADOR)
-        .codigo("codigo-000")
-        .unidadGestionRef("2")
-        .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
-        .titulo("titulo")
-        .activo(Boolean.TRUE)
-        .build());
-    // @formatter:on
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo = new HashSet<>();
+    convocatoriaTitulo.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
+    Convocatoria convocatoria = entityManager.persistAndFlush(
+        Convocatoria.builder()
+            .estado(Convocatoria.Estado.BORRADOR)
+            .codigo("codigo-000")
+            .unidadGestionRef("2")
+            .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
+            .titulo(convocatoriaTitulo)
+            .activo(Boolean.TRUE)
+            .build());
+
+    Set<ConvocatoriaTitulo> convocatoriaTitulo2 = new HashSet<>();
+    convocatoriaTitulo2.add(new ConvocatoriaTitulo(Language.ES, "titulo"));
+
+    Convocatoria convocatoria2 = entityManager.persistAndFlush(
+        Convocatoria.builder()
+            .estado(Convocatoria.Estado.BORRADOR)
+            .codigo("codigo-000")
+            .unidadGestionRef("2")
+            .fechaPublicacion(Instant.parse("2021-08-01T00:00:00Z"))
+            .titulo(convocatoriaTitulo2)
+            .activo(Boolean.TRUE)
+            .build());
 
     // @formatter:off
     RequisitoEquipo requisitoEquipo = entityManager.persistAndFlush(

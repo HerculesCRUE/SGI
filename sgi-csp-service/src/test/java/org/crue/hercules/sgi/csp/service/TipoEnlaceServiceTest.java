@@ -1,39 +1,45 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+
+import javax.validation.ConstraintViolationException;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.exceptions.TipoEnlaceNotFoundException;
 import org.crue.hercules.sgi.csp.model.TipoEnlace;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoEnlaceNombre;
 import org.crue.hercules.sgi.csp.repository.TipoEnlaceRepository;
 import org.crue.hercules.sgi.csp.service.impl.TipoEnlaceServiceImpl;
-import org.junit.jupiter.api.BeforeEach;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
-import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 
+@Import({ TipoEnlaceServiceImpl.class })
 class TipoEnlaceServiceTest extends BaseServiceTest {
 
-  @Mock
+  @MockBean
   private TipoEnlaceRepository repository;
 
+  @Autowired
   private TipoEnlaceService service;
-
-  @BeforeEach
-  void setUp() throws Exception {
-    service = new TipoEnlaceServiceImpl(repository);
-  }
 
   @Test
   void create_ReturnsTipoEnlace() {
@@ -71,7 +77,7 @@ class TipoEnlaceServiceTest extends BaseServiceTest {
         // when: create TipoEnlace
         () -> service.create(data))
         // then: throw exception as id can't be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Id tiene que ser null para crear TipoEnlace");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Identificador de Tipo Enlace debe ser nulo");
   }
 
   @Test
@@ -83,15 +89,19 @@ class TipoEnlaceServiceTest extends BaseServiceTest {
     BeanUtils.copyProperties(givenData, newData);
     newData.setId(null);
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(ArgumentMatchers.anyString()))
+    BDDMockito
+        .given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(ArgumentMatchers
+            .<Language>any(),
+            ArgumentMatchers.anyString()))
         .willReturn(Optional.of(givenData));
 
     Assertions.assertThatThrownBy(
         // when: create TipoEnlace
         () -> service.create(newData))
         // then: throw exception as Nombre already exists
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoEnlace activo con el nombre '%s'", newData.getNombre());
+        .isInstanceOf(
+            ConstraintViolationException.class)
+        .hasMessage("create.tipoEnlace.Nombre: Ya existe un Tipo Enlace con el nombre 'nombre-1'", newData.getNombre());
   }
 
   @Test
@@ -104,8 +114,11 @@ class TipoEnlaceServiceTest extends BaseServiceTest {
     BDDMockito.given(repository.save(ArgumentMatchers.<TipoEnlace>any())).willAnswer(new Answer<TipoEnlace>() {
       @Override
       public TipoEnlace answer(InvocationOnMock invocation) throws Throwable {
+        Set<TipoEnlaceNombre> nombre = new HashSet<>();
+        nombre.add(new TipoEnlaceNombre(Language.ES, "Nombre-Modificado"));
+
         TipoEnlace givenData = invocation.getArgument(0, TipoEnlace.class);
-        givenData.setNombre("Nombre-Modificado");
+        givenData.setNombre(nombre);
         return givenData;
       }
     });
@@ -117,7 +130,8 @@ class TipoEnlaceServiceTest extends BaseServiceTest {
     Assertions.assertThat(updated).isNotNull();
     Assertions.assertThat(updated.getId()).isNotNull();
     Assertions.assertThat(updated.getId()).isEqualTo(data.getId());
-    Assertions.assertThat(updated.getNombre()).isEqualTo("Nombre-Modificado");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getNombre(), Language.ES))
+        .isEqualTo("Nombre-Modificado");
     Assertions.assertThat(updated.getDescripcion()).isEqualTo(data.getDescripcion());
     Assertions.assertThat(updated.getActivo()).isEqualTo(data.getActivo());
   }
@@ -145,7 +159,7 @@ class TipoEnlaceServiceTest extends BaseServiceTest {
         // when: update TipoEnlace
         () -> service.update(data))
         // then: throw exception as id must be provided
-        .isInstanceOf(IllegalArgumentException.class).hasMessage("Id no puede ser null para actualizar TipoEnlace");
+        .isInstanceOf(IllegalArgumentException.class).hasMessage("Identificador de Tipo Enlace no puede ser nulo");
   }
 
   @Test
@@ -156,15 +170,17 @@ class TipoEnlaceServiceTest extends BaseServiceTest {
     BeanUtils.copyProperties(givenData, data);
     data.setId(2L);
 
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(ArgumentMatchers.anyString()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        ArgumentMatchers.any(Language.class), ArgumentMatchers.anyString()))
         .willReturn(Optional.of(givenData));
 
     Assertions.assertThatThrownBy(
         // when: update TipoEnlace
         () -> service.update(data))
         // then: throw exception as Nombre already exists
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoEnlace activo con el nombre '%s'", data.getNombre());
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessage("update.tipoEnlaceActualizar.Nombre: Ya existe un Tipo Enlace con el nombre 'nombre-1'",
+            data.getNombre());
   }
 
   @Test
@@ -212,13 +228,15 @@ class TipoEnlaceServiceTest extends BaseServiceTest {
     TipoEnlace tipoEnlace = generarMockTipoEnlace(1L, Boolean.FALSE);
 
     BDDMockito.given(repository.findById(ArgumentMatchers.<Long>any())).willReturn(Optional.of(tipoEnlace));
-    BDDMockito.given(repository.findByNombreAndActivoIsTrue(ArgumentMatchers.<String>any()))
+    BDDMockito.given(repository.findByNombreLangAndNombreValueAndActivoIsTrue(
+        ArgumentMatchers.any(Language.class), ArgumentMatchers.<String>any()))
         .willReturn(Optional.of(tipoEnlaceExistente));
 
     // when: activamos el TipoEnlace
     // then: Lanza una excepcion porque el TipoEnlace no existe
-    Assertions.assertThatThrownBy(() -> service.enable(tipoEnlace.getId())).isInstanceOf(IllegalArgumentException.class)
-        .hasMessage("Ya existe un TipoEnlace activo con el nombre '%s'", tipoEnlace.getNombre());
+    Assertions.assertThatThrownBy(() -> service.enable(tipoEnlace.getId()))
+        .isInstanceOf(ConstraintViolationException.class)
+        .hasMessage("Nombre: Ya existe un Tipo Enlace con el nombre 'nombre-1'", tipoEnlace.getNombre());
 
   }
 
@@ -328,7 +346,7 @@ class TipoEnlaceServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoEnlace item = page.getContent().get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + j);
     }
   }
 
@@ -369,7 +387,7 @@ class TipoEnlaceServiceTest extends BaseServiceTest {
     Assertions.assertThat(page.getTotalElements()).isEqualTo(100);
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoEnlace item = page.getContent().get(i);
-      Assertions.assertThat(item.getNombre()).isEqualTo("nombre-" + j);
+      Assertions.assertThat(I18nHelper.getValueForLanguage(item.getNombre(), Language.ES)).isEqualTo("nombre-" + j);
     }
   }
 
@@ -381,7 +399,13 @@ class TipoEnlaceServiceTest extends BaseServiceTest {
    * @return TipoEnlace
    */
   private TipoEnlace generarMockTipoEnlace(Long id, Boolean activo) {
-    return TipoEnlace.builder().id(id).nombre("nombre-" + id).descripcion("descripcion-" + id).activo(activo).build();
+    Set<TipoEnlaceNombre> nombre = new HashSet<>();
+    nombre.add(new TipoEnlaceNombre(Language.ES, "nombre-" + id));
+
+    Set<TipoEnlaceDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new TipoEnlaceDescripcion(Language.ES, "descripcion-" + id));
+
+    return TipoEnlace.builder().id(id).nombre(nombre).descripcion(descripcion).activo(activo).build();
   }
 
 }

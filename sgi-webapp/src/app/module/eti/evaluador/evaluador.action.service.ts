@@ -33,7 +33,7 @@ export class EvaluadorActionService extends ActionService {
       this.evaluador = route.snapshot.data.evaluador;
       this.enableEdit();
     }
-    this.datosGenerales = new EvaluadorDatosGeneralesFragment(fb, this.evaluador?.id, service, personaService);
+    this.datosGenerales = new EvaluadorDatosGeneralesFragment(this.logger, fb, this.evaluador?.id, service, personaService);
     this.conflictoInteres = new EvaluadorConflictosInteresFragment(this.evaluador?.id, service,
       personaService, conflictoInteresService);
 

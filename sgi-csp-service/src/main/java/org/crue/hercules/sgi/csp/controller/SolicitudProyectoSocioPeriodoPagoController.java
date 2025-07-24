@@ -53,7 +53,7 @@ public class SolicitudProyectoSocioPeriodoPagoController {
    * @return Lista actualizada de {@link SolicitudProyectoSocioPeriodoPago}.
    */
   @PatchMapping("/{solicitudProyectoSocioId}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<List<SolicitudProyectoSocioPeriodoPago>> update(@PathVariable Long solicitudProyectoSocioId,
       @Valid @RequestBody List<SolicitudProyectoSocioPeriodoPago> solicitudPeriodoPagos) {
     log.debug(

@@ -7,29 +7,41 @@ import static org.mockito.Mockito.verify;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.crue.hercules.sgi.csp.enums.TipoJustificacion;
 import org.crue.hercules.sgi.csp.enums.TipoPartida;
 import org.crue.hercules.sgi.csp.enums.TipoSeguimiento;
 import org.crue.hercules.sgi.csp.model.AreaTematica;
+import org.crue.hercules.sgi.csp.model.AreaTematicaDescripcion;
+import org.crue.hercules.sgi.csp.model.AreaTematicaNombre;
 import org.crue.hercules.sgi.csp.model.ConceptoGasto;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaAreaTematica;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGasto;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEc;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoCodigoEcObservaciones;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaConceptoGastoObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadConvocante;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaEntidadFinanciadora;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPartida;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPartidaDescripcion;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacion;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoJustificacionObservaciones;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientifico;
+import org.crue.hercules.sgi.csp.model.ConvocatoriaPeriodoSeguimientoCientificoObservaciones;
 import org.crue.hercules.sgi.csp.model.FuenteFinanciacion;
 import org.crue.hercules.sgi.csp.model.Programa;
 import org.crue.hercules.sgi.csp.model.RequisitoEquipo;
+import org.crue.hercules.sgi.csp.model.RequisitoEquipoOtrosRequisitos;
 import org.crue.hercules.sgi.csp.model.RequisitoIP;
 import org.crue.hercules.sgi.csp.model.RequisitoIPCategoriaProfesional;
 import org.crue.hercules.sgi.csp.model.RequisitoIPNivelAcademico;
+import org.crue.hercules.sgi.csp.model.RequisitoIPOtrosRequisitos;
 import org.crue.hercules.sgi.csp.model.TipoFinanciacion;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaAreaTematicaRepository;
 import org.crue.hercules.sgi.csp.repository.ConvocatoriaConceptoGastoCodigoEcRepository;
@@ -46,6 +58,7 @@ import org.crue.hercules.sgi.csp.repository.RequisitoEquipoRepository;
 import org.crue.hercules.sgi.csp.repository.RequisitoIPCategoriaProfesionalRepository;
 import org.crue.hercules.sgi.csp.repository.RequisitoIPNivelAcademicoRepository;
 import org.crue.hercules.sgi.csp.repository.RequisitoIPRepository;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -122,8 +135,11 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
     BDDMockito.given(convocatoriaAreaTematicaRepository.save(ArgumentMatchers.<ConvocatoriaAreaTematica>any()))
         .willReturn(clonedArea);
 
+    Set<ConvocatoriaObservaciones> convocatoriaObservaciones = new HashSet<>();
+    convocatoriaObservaciones.add(new ConvocatoriaObservaciones(Language.ES, "testing clone"));
+
     service.cloneConvocatoriaAreasTematicas(1L,
-        buildMockConvocatoria(convocatoriaId, "testing clone"));
+        buildMockConvocatoria(convocatoriaId, convocatoriaObservaciones));
 
     verify(convocatoriaAreaTematicaRepository, times(1)).save(ArgumentMatchers.<ConvocatoriaAreaTematica>any());
   }
@@ -299,11 +315,17 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
   }
 
   private ConvocatoriaAreaTematica buildMockConvocatoriaAreaTematica(Long convocatoriaId) {
+    Set<AreaTematicaNombre> nombre = new HashSet<>();
+    nombre.add(new AreaTematicaNombre(Language.ES, "area-01-test"));
+
+    Set<AreaTematicaDescripcion> descripcion = new HashSet<>();
+    descripcion.add(new AreaTematicaDescripcion(Language.ES, "Testing"));
+
     return ConvocatoriaAreaTematica.builder()
         .areaTematica(AreaTematica.builder()
             .activo(Boolean.TRUE)
-            .descripcion("Testing")
-            .nombre("area-01-test")
+            .descripcion(descripcion)
+            .nombre(nombre)
             .id(1L)
             .build())
         .convocatoriaId(convocatoriaId)
@@ -311,7 +333,7 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
         .build();
   }
 
-  private Convocatoria buildMockConvocatoria(Long id, String observaciones) {
+  private Convocatoria buildMockConvocatoria(Long id, Set<ConvocatoriaObservaciones> observaciones) {
     return Convocatoria.builder()
         .id(id)
         .observaciones(observaciones)
@@ -343,6 +365,10 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
 
   private ConvocatoriaPeriodoJustificacion buildMockConvocatoriaPeriodoJustificacion(Long convocatoriaClonedId) {
     //@formatter:off
+    Set<ConvocatoriaPeriodoJustificacionObservaciones> obsConvocatoriaPeriodoJustificacion = new HashSet<>();
+    obsConvocatoriaPeriodoJustificacion
+        .add(new ConvocatoriaPeriodoJustificacionObservaciones(Language.ES, "testing"));
+
     return ConvocatoriaPeriodoJustificacion.builder()
         .convocatoriaId(convocatoriaClonedId)
         .fechaFinPresentacion(Instant.now().plusSeconds(35000000))
@@ -350,13 +376,16 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
         .fechaInicioPresentacion(Instant.now())
         .mesFinal(3)
         .mesInicial(1)
-        .observaciones("testing")
+        .observaciones(obsConvocatoriaPeriodoJustificacion)
         .tipo(TipoJustificacion.PERIODICO).build();
     //@formatter:off
   }
 
   private ConvocatoriaPeriodoSeguimientoCientifico buildMockConvocatoriaPeriodoSeguimientoCientifico(Long convocatoriaClonedId) {
     //@formatter:off
+    Set<ConvocatoriaPeriodoSeguimientoCientificoObservaciones> observaciones = new HashSet<>();
+    observaciones.add(new ConvocatoriaPeriodoSeguimientoCientificoObservaciones(Language.ES, "testing"));
+
     return ConvocatoriaPeriodoSeguimientoCientifico.builder()
     .convocatoriaId(convocatoriaClonedId)
     .fechaInicioPresentacion(Instant.now())
@@ -365,12 +394,14 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
     .mesFinal(11)
     .numPeriodo(1)
     .tipoSeguimiento(TipoSeguimiento.PERIODICO)
-    .observaciones("testing")
+    .observaciones(observaciones)
     .build();
     //@formatter:on
   }
 
   private RequisitoIP buildMockRequisitoIP(Long convocatoriaClonedId) {
+    Set<RequisitoIPOtrosRequisitos> otrosRequisitos = new HashSet<>();
+    otrosRequisitos.add(new RequisitoIPOtrosRequisitos(Language.ES, "TESTING"));
     //@formatter:off
     return RequisitoIP.builder()
         .id(convocatoriaClonedId)
@@ -382,7 +413,7 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
         .numMinimoNoCompetitivos(2)
         .numMaximoCompetitivosActivos(9)
         .numMaximoNoCompetitivosActivos(8)
-        .otrosRequisitos("TESTING").build();
+        .otrosRequisitos(otrosRequisitos).build();
     //@formatter:on    
   }
 
@@ -401,6 +432,8 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
   }
 
   private RequisitoEquipo buildMockRequisitoEquipo(Long convocatoriaClonedId) {
+    Set<RequisitoEquipoOtrosRequisitos> otrosRequisitos = new HashSet<>();
+    otrosRequisitos.add(new RequisitoEquipoOtrosRequisitos(Language.ES, "NO DEFINIDOS"));
 
     return RequisitoEquipo.builder()
         .edadMaxima(55)
@@ -411,19 +444,23 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
         .numMinimoNoCompetitivos(2)
         .numMaximoCompetitivosActivos(10)
         .numMaximoNoCompetitivosActivos(3)
-        .otrosRequisitos("NO DEFINIDOS")
+        .otrosRequisitos(otrosRequisitos)
         .id(convocatoriaClonedId)
         .build();
   }
 
   private ConvocatoriaConceptoGasto buildMockConvocatoriaConceptoGasto(Long convocatoriaClonedId) {
+    Set<ConvocatoriaConceptoGastoObservaciones> observacionesConvocatoriaConceptoGasto = new HashSet<>();
+    observacionesConvocatoriaConceptoGasto
+        .add(new ConvocatoriaConceptoGastoObservaciones(Language.ES, "testing"));
+
     return ConvocatoriaConceptoGasto.builder()
         .convocatoriaId(convocatoriaClonedId)
         .id(1L)
         .mesInicial(1)
         .mesFinal(11)
         .importeMaximo(new BigDecimal(11000000).doubleValue())
-        .observaciones("testing")
+        .observaciones(observacionesConvocatoriaConceptoGasto)
         .permitido(Boolean.TRUE)
         .conceptoGasto(ConceptoGasto.builder().build())
         .build();
@@ -431,21 +468,28 @@ class ConvocatoriaClonerServiceTest extends BaseServiceTest {
 
   private ConvocatoriaConceptoGastoCodigoEc buildMockConvocatoriaConceptoGastoCodigoEc(
       ConvocatoriaConceptoGasto clonedConvocatoriaConceptoGasto) {
+    Set<ConvocatoriaConceptoGastoCodigoEcObservaciones> observacionesConvocatoriaConceptoGastoCodigoEc = new HashSet<>();
+    observacionesConvocatoriaConceptoGastoCodigoEc
+        .add(new ConvocatoriaConceptoGastoCodigoEcObservaciones(Language.ES, "Testing"));
+
     return ConvocatoriaConceptoGastoCodigoEc.builder()
         .convocatoriaConceptoGastoId(clonedConvocatoriaConceptoGasto.getId())
         .codigoEconomicoRef("AA.AAAA.BBBB.AAAA")
         .fechaInicio(Instant.now())
         .fechaFin(Instant.now().plusSeconds(3600000))
-        .observaciones("Testing")
+        .observaciones(observacionesConvocatoriaConceptoGastoCodigoEc)
         .id(0L)
         .build();
   }
 
   private ConvocatoriaPartida buildMockConvocatoriaPartida(Long convocatoriaClonedId) {
+    Set<ConvocatoriaPartidaDescripcion> descripcionConvocatoriaPartida = new HashSet<>();
+    descripcionConvocatoriaPartida.add(new ConvocatoriaPartidaDescripcion(Language.ES, "TESTING"));
+
     return ConvocatoriaPartida.builder()
         .convocatoriaId(convocatoriaClonedId)
         .codigo("COD-001")
-        .descripcion("TESTING")
+        .descripcion(descripcionConvocatoriaPartida)
         .tipoPartida(TipoPartida.GASTO)
         .id(1L)
         .build();

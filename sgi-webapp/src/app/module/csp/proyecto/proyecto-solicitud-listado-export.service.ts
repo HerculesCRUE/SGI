@@ -17,6 +17,7 @@ import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { IProyectoReportData, IProyectoReportOptions } from './proyecto-listado-export.service';
+import { LanguageService } from '@core/services/language.service';
 
 const SOLICITUD_KEY = 'csp.solicitud';
 const SOLICITUD_TITULO_KEY = 'csp.solicitud.titulo';
@@ -33,7 +34,7 @@ const SOLICITUD_ESTADO_FIELD = 'estadoSolicitud';
 const COLUMN_VALUE_PREFIX = ': ';
 
 @Injectable()
-export class ProyectoSolicitudListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions>{
+export class ProyectoSolicitudListadoExportService extends AbstractTableExportFillService<IProyectoReportData, IProyectoReportOptions> {
 
   constructor(
     protected readonly logger: NGXLogger,
@@ -41,6 +42,7 @@ export class ProyectoSolicitudListadoExportService extends AbstractTableExportFi
     private luxonDatePipe: LuxonDatePipe,
     private readonly proyectoService: ProyectoService,
     private solicitudService: SolicitudService,
+    private languageService: LanguageService
   ) {
     super(translate);
   }
@@ -147,7 +149,7 @@ export class ProyectoSolicitudListadoExportService extends AbstractTableExportFi
       const solicitudElementsRow: any[] = [];
 
       solicitudElementsRow.push(solicitud?.codigoRegistroInterno ?? '');
-      solicitudElementsRow.push(solicitud?.titulo ?? '');
+      solicitudElementsRow.push(solicitud?.titulo ? this.languageService.getFieldValue(solicitud.titulo) : '');
       solicitudElementsRow.push(solicitud?.codigoExterno ?? '');
       solicitudElementsRow.push(solicitud?.estado?.estado ? this.translate.instant(ESTADO_MAP.get(solicitud.estado.estado)) : '');
       solicitudElementsRow.push(this.luxonDatePipe.transform(LuxonUtils.toBackend(solicitud?.estado?.fechaEstado,
@@ -166,7 +168,7 @@ export class ProyectoSolicitudListadoExportService extends AbstractTableExportFi
   private fillRowsSolicitudExcel(elementsRow: any[], solicitud: ISolicitud) {
     if (solicitud) {
       elementsRow.push(solicitud.codigoRegistroInterno ?? '');
-      elementsRow.push(solicitud.titulo ?? '');
+      elementsRow.push(solicitud.titulo ? this.languageService.getFieldValue(solicitud.titulo) : '');
       elementsRow.push(solicitud.codigoExterno ?? '');
       elementsRow.push(solicitud?.estado?.estado ? this.translate.instant(ESTADO_MAP.get(solicitud.estado.estado)) : '');
       elementsRow.push(LuxonUtils.toBackend(solicitud.estado?.fechaEstado) ?? '');

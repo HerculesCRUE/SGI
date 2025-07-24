@@ -8,8 +8,9 @@ import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.ProyectoController;
@@ -27,6 +28,7 @@ import org.crue.hercules.sgi.csp.dto.ProyectoResponsableEconomicoOutput;
 import org.crue.hercules.sgi.csp.dto.RequerimientoJustificacionOutput;
 import org.crue.hercules.sgi.csp.model.AnualidadGasto;
 import org.crue.hercules.sgi.csp.model.EstadoProyecto;
+import org.crue.hercules.sgi.csp.model.EstadoProyectoComentario;
 import org.crue.hercules.sgi.csp.model.ModeloEjecucion;
 import org.crue.hercules.sgi.csp.model.Proyecto;
 import org.crue.hercules.sgi.csp.model.ProyectoAnualidad;
@@ -38,6 +40,7 @@ import org.crue.hercules.sgi.csp.model.ProyectoEntidadFinanciadora;
 import org.crue.hercules.sgi.csp.model.ProyectoEntidadGestora;
 import org.crue.hercules.sgi.csp.model.ProyectoEquipo;
 import org.crue.hercules.sgi.csp.model.ProyectoHito;
+import org.crue.hercules.sgi.csp.model.ProyectoObservaciones;
 import org.crue.hercules.sgi.csp.model.ProyectoPaqueteTrabajo;
 import org.crue.hercules.sgi.csp.model.ProyectoPartida;
 import org.crue.hercules.sgi.csp.model.ProyectoPeriodoJustificacion;
@@ -45,8 +48,11 @@ import org.crue.hercules.sgi.csp.model.ProyectoPeriodoSeguimiento;
 import org.crue.hercules.sgi.csp.model.ProyectoProrroga;
 import org.crue.hercules.sgi.csp.model.ProyectoProyectoSge;
 import org.crue.hercules.sgi.csp.model.ProyectoSocio;
+import org.crue.hercules.sgi.csp.model.ProyectoTitulo;
 import org.crue.hercules.sgi.csp.model.TipoAmbitoGeografico;
 import org.crue.hercules.sgi.csp.model.TipoFinalidad;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -121,9 +127,7 @@ class ProyectoIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s",
         tokenBuilder.buildToken("user", roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-    return request;
-
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -160,35 +164,6 @@ class ProyectoIT extends BaseIT {
       "classpath:scripts/modelo_ejecucion.sql",
       "classpath:scripts/modelo_unidad.sql", 
       "classpath:scripts/tipo_finalidad.sql",
-      "classpath:scripts/tipo_ambito_geografico.sql"
-      // @formatter:on 
-  })
-  @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
-  @Test
-  void create_ReturnsProyectoBySolicitud() throws Exception {
-    String roles = "CSP-PRO-C";
-    Proyecto proyecto = generarMockProyecto(null);
-
-    final ResponseEntity<Proyecto> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
-        buildRequest(null, proyecto, roles), Proyecto.class);
-
-    Assertions.assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-
-    Proyecto proyectoCreado = response.getBody();
-    Assertions.assertThat(proyectoCreado.getId()).as("getId()").isNotNull();
-    Assertions.assertThat(proyectoCreado.getEstado().getId()).as("getEstado().getId()").isNotNull();
-    Assertions.assertThat(proyectoCreado.getObservaciones()).as("getObservaciones()")
-        .isEqualTo(proyecto.getObservaciones());
-    Assertions.assertThat(proyectoCreado.getUnidadGestionRef()).as("getUnidadGestionRef()")
-        .isEqualTo(proyecto.getUnidadGestionRef());
-
-  }
-
-  @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
-    // @formatter:off 
-      "classpath:scripts/modelo_ejecucion.sql",
-      "classpath:scripts/modelo_unidad.sql", 
-      "classpath:scripts/tipo_finalidad.sql",
       "classpath:scripts/tipo_ambito_geografico.sql",
       "classpath:scripts/tipo_regimen_concurrencia.sql",
       "classpath:scripts/convocatoria.sql", 
@@ -202,7 +177,10 @@ class ProyectoIT extends BaseIT {
     String roles = "CSP-PRO-E";
     Long idProyecto = 1L;
     Proyecto proyecto = generarMockProyecto(1L);
-    proyecto.setObservaciones("observaciones actualizadas");
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones actualizadas"));
+    proyecto.setObservaciones(observacionesProyecto);
 
     final ResponseEntity<Proyecto> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID,
         HttpMethod.PUT, buildRequest(null, proyecto, roles), Proyecto.class, idProyecto);
@@ -328,7 +306,8 @@ class ProyectoIT extends BaseIT {
     Proyecto proyecto = response.getBody();
     Assertions.assertThat(proyecto.getId()).as("getId()").isEqualTo(idProyecto);
     Assertions.assertThat(proyecto.getEstado().getId()).as("getEstado().getId()").isEqualTo(1);
-    Assertions.assertThat(proyecto.getObservaciones()).as("getObservaciones()").isEqualTo("observaciones-proyecto-001");
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyecto.getObservaciones(), Language.ES))
+        .as("getObservaciones()").isEqualTo("observaciones-proyecto-001");
     Assertions.assertThat(proyecto.getUnidadGestionRef()).as("getUnidadGestionRef()").isEqualTo("2");
   }
 
@@ -352,7 +331,7 @@ class ProyectoIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "observaciones,desc";
+    String sort = "titulo.value,desc";
     String filter = "unidadGestionRef==2";
 
     // when: find Convocatoria
@@ -371,11 +350,11 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
 
-    Assertions.assertThat(responseData.get(0).getObservaciones()).as("get(0).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getObservaciones(), Language.ES)).as("get(0).getObservaciones())")
         .isEqualTo("observaciones-proyecto-" + String.format("%03d", 3));
-    Assertions.assertThat(responseData.get(1).getObservaciones()).as("get(1).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getObservaciones(), Language.ES)).as("get(1).getObservaciones())")
         .isEqualTo("observaciones-proyecto-" + String.format("%03d", 2));
-    Assertions.assertThat(responseData.get(2).getObservaciones()).as("get(2).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getObservaciones(), Language.ES)).as("get(2).getObservaciones())")
         .isEqualTo("observaciones-proyecto-" + String.format("%03d", 1));
   }
 
@@ -399,7 +378,7 @@ class ProyectoIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "observaciones,desc";
+    String sort = "titulo.value,desc";
     String filter = "unidadGestionRef==2";
 
     // when: find Convocatoria
@@ -418,12 +397,15 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("4");
 
-    Assertions.assertThat(responseData.get(0).getObservaciones()).as("get(0).getObservaciones())")
-        .isEqualTo("observaciones-proyecto-" + String.format("%03d", 5));
-    Assertions.assertThat(responseData.get(1).getObservaciones()).as("get(1).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones())")
         .isEqualTo("observaciones-proyecto-" + String.format("%03d", 3));
-    Assertions.assertThat(responseData.get(2).getObservaciones()).as("get(2).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())")
         .isEqualTo("observaciones-proyecto-" + String.format("%03d", 2));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones())")
+        .isEqualTo("observaciones-proyecto-" + String.format("%03d", 1));
   }
 
   /*
@@ -453,7 +435,7 @@ class ProyectoIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "comentario=ke=-00";
+    String filter = "comentario.value=ke=-00";
 
     Long proyectoId = 1L;
 
@@ -472,11 +454,11 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
-    Assertions.assertThat(proyectosHitos.get(0).getComentario()).as("get(0).getComentario()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectosHitos.get(0).getComentario(), Language.ES))
         .isEqualTo("comentario-proyecto-hito-" + String.format("%03d", 3));
-    Assertions.assertThat(proyectosHitos.get(1).getComentario()).as("get(1).getComentario())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectosHitos.get(1).getComentario(), Language.ES))
         .isEqualTo("comentario-proyecto-hito-" + String.format("%03d", 2));
-    Assertions.assertThat(proyectosHitos.get(2).getComentario()).as("get(2).getComentario()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectosHitos.get(2).getComentario(), Language.ES))
         .isEqualTo("comentario-proyecto-hito-" + String.format("%03d", 1));
 
   }
@@ -571,7 +553,7 @@ class ProyectoIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "observaciones=ke=-00";
+    String filter = "observaciones.value=ke=-00";
 
     Long proyectoId = 1L;
 
@@ -590,13 +572,15 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
-    Assertions.assertThat(proyectosFases.get(0).getObservaciones()).as("get(0).getObservaciones()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectosFases.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()")
         .isEqualTo("observaciones-proyecto-fase-" + String.format("%03d", 3));
-    Assertions.assertThat(proyectosFases.get(1).getObservaciones()).as("get(1).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectosFases.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())")
         .isEqualTo("observaciones-proyecto-fase-" + String.format("%03d", 2));
-    Assertions.assertThat(proyectosFases.get(2).getObservaciones()).as("get(2).getObservaciones()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectosFases.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones()")
         .isEqualTo("observaciones-proyecto-fase-" + String.format("%03d", 1));
-
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -1207,7 +1191,7 @@ class ProyectoIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "observaciones=ke=-00";
+    String filter = "observaciones.value=ke=-00";
 
     Long proyectoId = 1L;
 
@@ -1226,12 +1210,12 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
-    Assertions.assertThat(proyectosProrrogas.get(0).getObservaciones()).as("get(0).getObservaciones()")
-        .isEqualTo("observaciones-proyecto-prorroga-" + String.format("%03d", 3));
-    Assertions.assertThat(proyectosProrrogas.get(1).getObservaciones()).as("get(1).getObservaciones())")
-        .isEqualTo("observaciones-proyecto-prorroga-" + String.format("%03d", 2));
-    Assertions.assertThat(proyectosProrrogas.get(2).getObservaciones()).as("get(2).getObservaciones()")
-        .isEqualTo("observaciones-proyecto-prorroga-" + String.format("%03d", 1));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectosProrrogas.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()").isEqualTo("observaciones-proyecto-prorroga-" + String.format("%03d", 3));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectosProrrogas.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())").isEqualTo("observaciones-proyecto-prorroga-" + String.format("%03d", 2));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectosProrrogas.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones()").isEqualTo("observaciones-proyecto-prorroga-" + String.format("%03d", 1));
 
   }
 
@@ -1373,7 +1357,8 @@ class ProyectoIT extends BaseIT {
         .isEqualTo(1L);
     Assertions.assertThat(estadoProyecto.get(0).getProyectoId()).as("get(0).getProyectoId()")
         .isEqualTo(1L);
-    Assertions.assertThat(estadoProyecto.get(0).getComentario()).as("get(0).getComentario()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(estadoProyecto.get(0).getComentario(), Language.ES))
+        .as("get(0).getComentario()")
         .isEqualTo("comentario-estado-proyecto-" + String.format("%03d", 1));
 
   }
@@ -1554,9 +1539,11 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
-    Assertions.assertThat(proyectoDocumento.get(0).getComentario()).as("get(0).getComentario()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoDocumento.get(0).getComentario(), Language.ES))
+        .as("get(0).getComentario()")
         .isEqualTo("comentario-" + String.format("%03d", 2));
-    Assertions.assertThat(proyectoDocumento.get(1).getComentario()).as("get(0).getComentario()")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(proyectoDocumento.get(1).getComentario(), Language.ES))
+        .as("get(0).getComentario()")
         .isEqualTo("comentario-" + String.format("%03d", 1));
 
   }
@@ -1657,7 +1644,7 @@ class ProyectoIT extends BaseIT {
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "10");
     String sort = "id,desc";
-    String filter = "observaciones=ke=-00";
+    String filter = "observaciones.value=ke=-00";
 
     Long proyectoId = 1L;
 
@@ -1676,12 +1663,15 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page")).as("X-Page").isEqualTo("0");
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("10");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("3");
-    Assertions.assertThat(proyectoPeriodoSeguimiento.get(0).getObservaciones()).as("get(0).getObservaciones()")
-        .isEqualTo("obs-" + String.format("%03d", 3));
-    Assertions.assertThat(proyectoPeriodoSeguimiento.get(1).getObservaciones()).as("get(1).getObservaciones()")
-        .isEqualTo("obs-" + String.format("%03d", 2));
-    Assertions.assertThat(proyectoPeriodoSeguimiento.get(2).getObservaciones()).as("get(2).getObservaciones()")
-        .isEqualTo("obs-" + String.format("%03d", 1));
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(proyectoPeriodoSeguimiento.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones()").isEqualTo("obs-" + String.format("%03d", 3));
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(proyectoPeriodoSeguimiento.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones()").isEqualTo("obs-" + String.format("%03d", 2));
+    Assertions
+        .assertThat(I18nHelper.getValueForLanguage(proyectoPeriodoSeguimiento.get(2).getObservaciones(), Language.ES))
+        .as("get(2).getObservaciones()").isEqualTo("obs-" + String.format("%03d", 1));
 
   }
 
@@ -2715,7 +2705,7 @@ class ProyectoIT extends BaseIT {
         return o1.getId().compareTo(o2.getId());
       }
 
-    }).collect(Collectors.toList());
+    }).toList();
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();
@@ -2766,7 +2756,7 @@ class ProyectoIT extends BaseIT {
         return o1.getId().compareTo(o2.getId());
       }
 
-    }).collect(Collectors.toList());
+    }).toList();
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();
@@ -2831,7 +2821,7 @@ class ProyectoIT extends BaseIT {
             return o1.getId().compareTo(o2.getId());
           }
         })
-        .collect(Collectors.toList());
+        .toList();
     Assertions.assertThat(responseData).hasSize(Integer.valueOf(expectedSize));
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
@@ -2894,7 +2884,7 @@ class ProyectoIT extends BaseIT {
             return o1.getId().compareTo(o2.getId());
           }
         })
-        .collect(Collectors.toList());
+        .toList();
     Assertions.assertThat(responseData).hasSize(Integer.valueOf(expectedSize));
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
@@ -2925,8 +2915,8 @@ class ProyectoIT extends BaseIT {
 
     Long proyectoId = 1L;
     List<ProyectoPalabraClaveInput> toUpdate = Arrays.asList(
-        buildMockProyectoPalabraClaveInput(1L, "updated-01", proyectoId),
-        buildMockProyectoPalabraClaveInput(2L, "updated-02", proyectoId));
+        buildMockProyectoPalabraClaveInput("updated-01", proyectoId),
+        buildMockProyectoPalabraClaveInput("updated-02", proyectoId));
 
     URI uri = UriComponentsBuilder
         .fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_PROYECTO_ID + PATH_PALABRAS_CLAVE)
@@ -2947,8 +2937,8 @@ class ProyectoIT extends BaseIT {
             return o1.getId().compareTo(o2.getId());
           }
         })
-        .collect(Collectors.toList());
-    Assertions.assertThat(responseData).hasSize(Integer.valueOf(2));
+        .toList();
+    Assertions.assertThat(responseData).hasSize(2);
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();
@@ -2998,7 +2988,7 @@ class ProyectoIT extends BaseIT {
           public int compare(NotificacionProyectoExternoCVNOutput o1, NotificacionProyectoExternoCVNOutput o2) {
             return o1.getId().compareTo(o2.getId());
           }
-        }).collect(Collectors.toList());
+        }).toList();
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();
@@ -3111,11 +3101,17 @@ class ProyectoIT extends BaseIT {
     TipoAmbitoGeografico tipoAmbitoGeografico = new TipoAmbitoGeografico();
     tipoAmbitoGeografico.setId(1L);
 
+    Set<ProyectoTitulo> tituloProyecto = new HashSet<>();
+    tituloProyecto.add(new ProyectoTitulo(Language.ES, "PRO" + (id != null ? id : 1)));
+
+    Set<ProyectoObservaciones> observacionesProyecto = new HashSet<>();
+    observacionesProyecto.add(new ProyectoObservaciones(Language.ES, "observaciones-" + String.format("%03d", id)));
+
     Proyecto proyecto = new Proyecto();
     proyecto.setId(id);
-    proyecto.setTitulo("PRO" + (id != null ? id : 1));
+    proyecto.setTitulo(tituloProyecto);
     proyecto.setCodigoExterno("cod-externo-" + (id != null ? String.format("%03d", id) : "001"));
-    proyecto.setObservaciones("observaciones-" + String.format("%03d", id));
+    proyecto.setObservaciones(observacionesProyecto);
     proyecto.setUnidadGestionRef("2");
     proyecto.setFechaInicio(Instant.now());
     proyecto.setFechaFin(Instant.from(Instant.now().atZone(ZoneOffset.UTC).plus(Period.ofMonths(3))));
@@ -3139,9 +3135,12 @@ class ProyectoIT extends BaseIT {
    * @return el objeto EstadoProyecto
    */
   private EstadoProyecto generarMockEstadoProyecto(Long id) {
+    Set<EstadoProyectoComentario> estadoProyectoComentario = new HashSet<>();
+    estadoProyectoComentario.add(new EstadoProyectoComentario(Language.ES, "Estado-" + id));
+
     EstadoProyecto estadoProyecto = new EstadoProyecto();
     estadoProyecto.setId(id);
-    estadoProyecto.setComentario("Estado-" + id);
+    estadoProyecto.setComentario(estadoProyectoComentario);
     estadoProyecto.setEstado(EstadoProyecto.Estado.BORRADOR);
     estadoProyecto.setFechaEstado(Instant.now());
     estadoProyecto.setProyectoId(1L);
@@ -3149,8 +3148,7 @@ class ProyectoIT extends BaseIT {
     return estadoProyecto;
   }
 
-  private ProyectoPalabraClaveInput buildMockProyectoPalabraClaveInput(Long id, String palabraClaveRef,
-      Long proyectoId) {
+  private ProyectoPalabraClaveInput buildMockProyectoPalabraClaveInput(String palabraClaveRef, Long proyectoId) {
     return ProyectoPalabraClaveInput.builder()
         .palabraClaveRef(palabraClaveRef)
         .proyectoId(proyectoId)
@@ -3319,7 +3317,7 @@ class ProyectoIT extends BaseIT {
     HttpHeaders headers = new HttpHeaders();
     headers.add("X-Page", "0");
     headers.add("X-Page-Size", "3");
-    String sort = "observaciones,desc";
+    String sort = "observaciones.value,desc";
 
     // when: find RequerimientoJustificacionOutput
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_REQUERIMIENTOS_JUSTIFICACION)
@@ -3339,9 +3337,11 @@ class ProyectoIT extends BaseIT {
     Assertions.assertThat(responseHeaders.getFirst("X-Page-Size")).as("X-Page-Size").isEqualTo("3");
     Assertions.assertThat(responseHeaders.getFirst("X-Total-Count")).as("X-Total-Count").isEqualTo("2");
 
-    Assertions.assertThat(responseData.get(0).getObservaciones()).as("get(0).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(0).getObservaciones(), Language.ES))
+        .as("get(0).getObservaciones())")
         .isEqualTo("obs-002");
-    Assertions.assertThat(responseData.get(1).getObservaciones()).as("get(1).getObservaciones())")
+    Assertions.assertThat(I18nHelper.getValueForLanguage(responseData.get(1).getObservaciones(), Language.ES))
+        .as("get(1).getObservaciones())")
         .isEqualTo("obs-001");
   }
 }

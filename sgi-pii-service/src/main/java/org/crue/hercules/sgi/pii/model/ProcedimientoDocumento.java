@@ -1,7 +1,13 @@
 package org.crue.hercules.sgi.pii.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -10,6 +16,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -40,8 +48,12 @@ public class ProcedimientoDocumento extends BaseEntity {
   @SequenceGenerator(name = TABLE_NAME + SEQ_SUFFIX, sequenceName = TABLE_NAME + SEQ_SUFFIX, allocationSize = 1)
   private Long id;
 
-  @Column(name = "nombre", nullable = false, length = NOMBRE_LENGTH)
-  private String nombre;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "procedimiento_documento_nombre", joinColumns = @JoinColumn(name = "procedimiento_documento_id"))
+  @NotEmpty
+  @Valid
+  @Builder.Default
+  private Set<ProcedimientoDocumentoNombre> nombre = new HashSet<>();
 
   @Column(name = "documento_ref", nullable = false, length = FICHERO_LENGTH)
   private String documentoRef;

@@ -2,6 +2,7 @@ import { AfterViewInit, Component, Input, OnDestroy, Optional } from '@angular/c
 import { RouterOutlet } from '@angular/router';
 import { FormFragmentComponent, FragmentComponent as BaseFragmentComponent } from '@core/component/fragment.component';
 import { SgiProblem } from '@core/errors/sgi-error';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IFragment } from '@core/services/action-service';
 import { Subscription } from 'rxjs';
 
@@ -14,6 +15,9 @@ export class FragmentComponent implements AfterViewInit, OnDestroy {
 
   @Input()
   title: string;
+
+  @Input()
+  titleArray: (string | I18nFieldValue)[];
 
   problems: SgiProblem[] = [];
 

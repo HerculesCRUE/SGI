@@ -70,7 +70,7 @@ export class ConvocatoriaRequisitosIPComponent extends FormFragmentComponent<ICo
     private readonly sexoService: SexoService,
     private authService: SgiAuthService
   ) {
-    super(actionService.FRAGMENT.REQUISITOS_IP, actionService);
+    super(actionService.FRAGMENT.REQUISITOS_IP, actionService, translate);
     this.formPart = this.fragment as ConvocatoriaRequisitosIPFragment;
 
     this.fxFlexProperties = new FxFlexProperties();
@@ -93,7 +93,7 @@ export class ConvocatoriaRequisitosIPComponent extends FormFragmentComponent<ICo
 
   ngOnInit() {
     super.ngOnInit();
-    this.setupI18N();
+
 
     this.subscriptions.push(this.formPart.nivelesAcademicos$.subscribe(elements => {
       this.nivelAcademicoDataSource.data = elements;
@@ -141,7 +141,7 @@ export class ConvocatoriaRequisitosIPComponent extends FormFragmentComponent<ICo
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       CONVOCATORIA_REQUISITOS_IP_MODALIDAD_CONTRATOS_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

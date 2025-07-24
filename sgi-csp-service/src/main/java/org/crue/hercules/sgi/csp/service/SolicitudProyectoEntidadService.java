@@ -7,6 +7,7 @@ import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidad;
 import org.crue.hercules.sgi.csp.model.SolicitudProyectoEntidadFinanciadoraAjena;
 import org.crue.hercules.sgi.csp.repository.SolicitudProyectoEntidadRepository;
 import org.crue.hercules.sgi.csp.repository.specification.SolicitudProyectoEntidadSpecifications;
+import org.crue.hercules.sgi.csp.util.SolicitudAuthorityHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,9 +28,13 @@ import lombok.extern.slf4j.Slf4j;
 public class SolicitudProyectoEntidadService {
 
   private final SolicitudProyectoEntidadRepository repository;
+  private final SolicitudAuthorityHelper solicitudAuthorityHelper;
 
-  public SolicitudProyectoEntidadService(SolicitudProyectoEntidadRepository repository) {
+  public SolicitudProyectoEntidadService(
+      SolicitudProyectoEntidadRepository repository,
+      SolicitudAuthorityHelper solicitudAuthorityHelper) {
     this.repository = repository;
+    this.solicitudAuthorityHelper = solicitudAuthorityHelper;
   }
 
   /**
@@ -60,6 +65,9 @@ public class SolicitudProyectoEntidadService {
   public Page<ConvocatoriaEntidadFinanciadora> findConvocatoriaEntidadFinanciadoraBySolicitud(Long solicitudId,
       String query, Pageable pageable) {
     log.debug("findConvocatoriaEntidadFinanciadoraBySolicitud(Long solicitudId, Pageable pageable) - start");
+
+    solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(solicitudId);
+
     Specification<SolicitudProyectoEntidad> specs = SolicitudProyectoEntidadSpecifications.bySolicitudId(solicitudId)
         .and(SolicitudProyectoEntidadSpecifications.isEntidadFinanciadoraConvocatoria())
         .and(SgiRSQLJPASupport.toSpecification(query));
@@ -84,6 +92,9 @@ public class SolicitudProyectoEntidadService {
   public Page<SolicitudProyectoEntidad> findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(Long solicitudId,
       String query, Pageable pageable) {
     log.debug("findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(Long solicitudId, Pageable pageable) - start");
+
+    solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(solicitudId);
+
     Specification<SolicitudProyectoEntidad> specs = SolicitudProyectoEntidadSpecifications.bySolicitudId(solicitudId)
         .and(SolicitudProyectoEntidadSpecifications.isEntidadFinanciadoraConvocatoria()
             .or(SolicitudProyectoEntidadSpecifications.isEntidadFinanciadoraAjena()))
@@ -108,6 +119,9 @@ public class SolicitudProyectoEntidadService {
   public Page<SolicitudProyectoEntidad> findSolicitudProyectoEntidadTipoPresupuestoMixto(Long solicitudId, String query,
       Pageable pageable) {
     log.debug("findSolicitudProyectoEntidadTipoPresupuestoMixto(Long solicitudId, Pageable pageable) - start");
+
+    solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(solicitudId);
+
     Specification<SolicitudProyectoEntidad> specs = SolicitudProyectoEntidadSpecifications.bySolicitudId(solicitudId)
         .and(SolicitudProyectoEntidadSpecifications.isEntidadGestora()
             .or(SolicitudProyectoEntidadSpecifications.isEntidadFinanciadoraAjena()))
@@ -128,11 +142,16 @@ public class SolicitudProyectoEntidadService {
    */
   public SolicitudProyectoEntidad findBySolicitudProyectoEntidadFinanciadoraAjena(
       Long solicitudProyectoEntidadFinanciadoraAjenaId) {
-    log.debug("findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(Long solicitudId, Pageable pageable) - start");
+    log.debug(
+        "findSolicitudProyectoEntidadTipoPresupuestoPorEntidad(Long solicitudProyectoEntidadFinanciadoraAjenaId) - start");
 
     SolicitudProyectoEntidad returnValue = repository
         .findBySolicitudProyectoEntidadFinanciadoraAjenaId(solicitudProyectoEntidadFinanciadoraAjenaId);
-    log.debug("findBySolicitudProyectoEntidadFinanciadoraAjena(Long solicitudId, Pageable pageable) - end");
+
+    solicitudAuthorityHelper.checkUserHasAuthorityViewSolicitud(returnValue.getSolicitudProyectoId());
+
+    log.debug(
+        "findBySolicitudProyectoEntidadFinanciadoraAjena(Long solicitudProyectoEntidadFinanciadoraAjenaId) - end");
     return returnValue;
   }
 

@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.crue.hercules.sgi.csp.exceptions.AreaTematicaNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ConvocatoriaAreaTematicaNotFoundException;
+import org.crue.hercules.sgi.csp.model.AreaTematica;
 import org.crue.hercules.sgi.csp.model.Convocatoria;
 import org.crue.hercules.sgi.csp.model.ConvocatoriaAreaTematica;
 import org.crue.hercules.sgi.csp.repository.AreaTematicaRepository;
@@ -11,8 +12,11 @@ import org.crue.hercules.sgi.csp.repository.ConvocatoriaAreaTematicaRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ConvocatoriaAreaTematicaSpecifications;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaAreaTematicaService;
 import org.crue.hercules.sgi.csp.service.ConvocatoriaService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.csp.util.ConvocatoriaAuthorityHelper;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,6 +33,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTematicaService {
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_ACTION = "action";
+  private static final String MSG_FIELD_ACTION_CREAR = "action.crear";
+  private static final String MSG_FIELD_ACTION_ELIMINAR = "action.eliminar";
+  private static final String MSG_MODEL_CONVOCATORIA_AREA_TEMATICA = "org.crue.hercules.sgi.csp.model.ConvocatoriaAreaTematica.message";
+  private static final String MSG_PROBLEM_ACCION_DENEGADA_PERMISOS = "org.springframework.util.Assert.accion.denegada.permisos.message";
 
   private final ConvocatoriaAreaTematicaRepository repository;
   private final AreaTematicaRepository areaTematicaRepository;
@@ -57,13 +67,9 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
   public ConvocatoriaAreaTematica create(ConvocatoriaAreaTematica convocatoriaAreaTematica) {
     log.debug("create(ConvocatoriaAreaTematica convocatoriaAreaTematica) - start");
 
-    Assert.isNull(convocatoriaAreaTematica.getId(), "Id tiene que ser null para crear ConvocatoriaAreaTematica");
-
-    Assert.notNull(convocatoriaAreaTematica.getConvocatoriaId(),
-        "Id Convocatoria no puede ser null para crear ConvocatoriaAreaTematica");
-
-    Assert.notNull(convocatoriaAreaTematica.getAreaTematica().getId(),
-        "Id AreaTematica no puede ser null para crear ConvocatoriaAreaTematica");
+    AssertHelper.idIsNull(convocatoriaAreaTematica.getId(), ConvocatoriaAreaTematica.class);
+    AssertHelper.idNotNull(convocatoriaAreaTematica.getConvocatoriaId(), Convocatoria.class);
+    AssertHelper.idNotNull(convocatoriaAreaTematica.getAreaTematica().getId(), AreaTematica.class);
 
     // comprobar si convocatoria es modificable
     Assert.isTrue(
@@ -72,16 +78,20 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
                 ConvocatoriaAuthorityHelper.CSP_CON_C,
                 ConvocatoriaAuthorityHelper.CSP_CON_E
             }),
-        "No se puede crear ConvocatoriaAreaTematica. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+        () -> ProblemMessage.builder()
+            .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+            .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA_AREA_TEMATICA))
+            .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_CREAR))
+            .build());
 
     convocatoriaAreaTematica
         .setAreaTematica(areaTematicaRepository.findById(convocatoriaAreaTematica.getAreaTematica().getId())
             .orElseThrow(() -> new AreaTematicaNotFoundException(convocatoriaAreaTematica.getAreaTematica().getId())));
 
-    Assert.isTrue(
+    AssertHelper.entityExists(
         !repository.findByConvocatoriaIdAndAreaTematicaId(convocatoriaAreaTematica.getConvocatoriaId(),
             convocatoriaAreaTematica.getAreaTematica().getId()).isPresent(),
-        "Ya existe una asociación activa para esa Convocatoria y AreaTematica");
+        Convocatoria.class, AreaTematica.class);
 
     ConvocatoriaAreaTematica returnValue = repository.save(convocatoriaAreaTematica);
 
@@ -102,8 +112,7 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
   public ConvocatoriaAreaTematica update(ConvocatoriaAreaTematica convocatoriaAreaTematicaActualizar) {
     log.debug("update(ConvocatoriaAreaTematica convocatoriaAreaTematicaActualizar) - start");
 
-    Assert.notNull(convocatoriaAreaTematicaActualizar.getId(),
-        "ConvocatoriaAreaTematica id no puede ser null para actualizar un ConvocatoriaAreaTematica");
+    AssertHelper.idNotNull(convocatoriaAreaTematicaActualizar.getId(), ConvocatoriaAreaTematica.class);
 
     return repository.findById(convocatoriaAreaTematicaActualizar.getId()).map(convocatoriaAreaTematica -> {
 
@@ -124,7 +133,7 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ConvocatoriaAreaTematica id no puede ser null para eliminar un ConvocatoriaAreaTematica");
+    AssertHelper.idNotNull(id, ConvocatoriaAreaTematica.class);
 
     Optional<ConvocatoriaAreaTematica> areaTematica = repository.findById(id);
     if (areaTematica.isPresent()) {
@@ -132,7 +141,11 @@ public class ConvocatoriaAreaTematicaServiceImpl implements ConvocatoriaAreaTema
       Assert.isTrue(
           convocatoriaService.isRegistradaConSolicitudesOProyectos(areaTematica.get().getConvocatoriaId(), null,
               new String[] { ConvocatoriaAuthorityHelper.CSP_CON_E }),
-          "No se puede eliminar ConvocatoriaAreaTematica. No tiene los permisos necesarios o la convocatoria está registrada y cuenta con solicitudes o proyectos asociados");
+          () -> ProblemMessage.builder()
+              .key(MSG_PROBLEM_ACCION_DENEGADA_PERMISOS)
+              .parameter(MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(MSG_MODEL_CONVOCATORIA_AREA_TEMATICA))
+              .parameter(MSG_KEY_ACTION, ApplicationContextSupport.getMessage(MSG_FIELD_ACTION_ELIMINAR))
+              .build());
     } else {
       throw new ConvocatoriaAreaTematicaNotFoundException(id);
     }

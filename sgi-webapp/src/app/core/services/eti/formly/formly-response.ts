@@ -4,5 +4,8 @@ export interface IFormlyResponse {
   id: number;
   nombre: string;
   version: number;
-  esquema: FormlyFieldConfig[];
+  definicion: {
+    lang: string;
+    esquema: FormlyFieldConfig[];
+  }[];
 }

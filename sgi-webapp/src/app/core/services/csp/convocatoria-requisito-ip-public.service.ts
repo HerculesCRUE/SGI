@@ -1,7 +1,5 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { CONVOCATORIA_REQUISITO_IP_CONVERTER } from '@core/converters/csp/convocatoria-requisito-ip.converter';
-import { IConvocatoriaRequisitoIPBackend } from '@core/models/csp/backend/convocatoria-requisito-ip-backend';
 import { IConvocatoriaRequisitoIP } from '@core/models/csp/convocatoria-requisito-ip';
 import { IRequisitoIPCategoriaProfesional } from '@core/models/csp/requisito-ip-categoria-profesional';
 import { IRequisitoIPNivelAcademico } from '@core/models/csp/requisito-ip-nivel-academico';
@@ -9,6 +7,8 @@ import { environment } from '@env';
 import { FindByIdCtor, mixinFindById, SgiRestBaseService } from '@sgi/framework/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { IConvocatoriaRequisitoIPResponse } from './convocatoria-requisito-ip/convocatoria-requisito-ip-response';
+import { CONVOCATORIA_REQUISITO_IP_RESPONSE_CONVERTER } from './convocatoria-requisito-ip/convocatoria-requisito-ip-response.converter';
 import { IRequisitoIPCategoriaProfesionalResponse } from './requisito-ip-categoria-profesional/requisito-ip-categoria-profesional-response';
 import { REQUISITOIP_CATEGORIA_PROFESIONAL_RESPONSE_CONVERTER } from './requisito-ip-categoria-profesional/requisito-ip-categoria-profesional-response.converter';
 import { IRequisitoIPNivelAcademicoResponse } from './requisito-ip-nivel-academico/requisito-ip-nivel-academico-response';
@@ -16,10 +16,10 @@ import { REQUISITOIP_NIVELACADEMICO_RESPONSE_CONVERTER } from './requisito-ip-ni
 
 // tslint:disable-next-line: variable-name
 const _ConvocatoriaRequisitoIPServiceMixinBase:
-  FindByIdCtor<number, IConvocatoriaRequisitoIP, IConvocatoriaRequisitoIPBackend> &
+  FindByIdCtor<number, IConvocatoriaRequisitoIP, IConvocatoriaRequisitoIPResponse> &
   typeof SgiRestBaseService = mixinFindById(
     SgiRestBaseService,
-    CONVOCATORIA_REQUISITO_IP_CONVERTER
+    CONVOCATORIA_REQUISITO_IP_RESPONSE_CONVERTER
   );
 
 @Injectable({

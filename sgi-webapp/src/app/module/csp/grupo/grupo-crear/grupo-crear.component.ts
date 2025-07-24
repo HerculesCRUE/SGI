@@ -41,12 +41,12 @@ export class GrupoCrearComponent extends ActionComponent implements OnInit {
     dialogService: DialogService,
     private readonly translate: TranslateService) {
 
-    super(router, route, actionService, dialogService);
+    super(router, route, actionService, dialogService, translate);
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
   saveOrUpdate(): void {
@@ -71,7 +71,7 @@ export class GrupoCrearComponent extends ActionComponent implements OnInit {
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       GRUPO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

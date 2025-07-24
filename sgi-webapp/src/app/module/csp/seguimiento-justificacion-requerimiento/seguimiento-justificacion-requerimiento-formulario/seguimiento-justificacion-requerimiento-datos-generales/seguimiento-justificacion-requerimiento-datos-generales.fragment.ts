@@ -5,6 +5,7 @@ import { FormFragment } from '@core/services/action-service';
 import { IncidenciaDocumentacionRequerimientoService } from '@core/services/csp/incidencia-documentacion-requerimiento/incidencia-documentacion-requerimiento.service';
 import { RequerimientoJustificacionService } from '@core/services/csp/requerimiento-justificacion/requerimiento-justificacion.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
 import { catchError, map, mergeMap, startWith, takeLast, tap } from 'rxjs/operators';
@@ -46,7 +47,7 @@ export class SeguimientoJustificacionRequerimientoDatosGeneralesFragment extends
       importeReintegrarCd: new FormControl(null),
       importeReintegrarCi: new FormControl(null),
       interesesReintegrar: new FormControl(null),
-      observaciones: new FormControl('', [Validators.maxLength(2000)]),
+      observaciones: new FormControl([], [I18nValidators.maxLength(2000)]),
       subvencionJustificada: new FormControl(null),
       defectoSubvencion: new FormControl(null),
       anticipoJustificado: new FormControl(null),

@@ -13,6 +13,7 @@ import { Subject, Subscription } from 'rxjs';
 import { CONVOCATORIA_PUBLIC_ROUTE_NAMES } from '../../convocatoria-public-route-names';
 import { ConvocatoriaPublicActionService } from '../../convocatoria-public.action.service';
 import { ConvocatoriaConceptoGastoPublicFragment } from './convocatoria-concepto-public-gasto.fragment';
+import { LanguageService } from '@core/services/language.service';
 
 @Component({
   selector: 'sgi-convocatoria-concepto-gasto-public',
@@ -57,7 +58,8 @@ export class ConvocatoriaConceptoGastoPublicComponent extends FragmentComponent 
   @ViewChild('sortNoPermitidos', { static: true }) sortNoPermitidos: MatSort;
 
   constructor(
-    protected actionService: ConvocatoriaPublicActionService
+    protected actionService: ConvocatoriaPublicActionService,
+    private readonly languageService: LanguageService
   ) {
     super(actionService.FRAGMENT.ELEGIBILIDAD, actionService);
     this.formPart = this.fragment as ConvocatoriaConceptoGastoPublicFragment;
@@ -93,6 +95,12 @@ export class ConvocatoriaConceptoGastoPublicComponent extends FragmentComponent 
     this.dataSourcePermitidos.sortingDataAccessor =
       (wrapper: StatusWrapper<IConvocatoriaConceptoGasto>, property: string) => {
         switch (property) {
+          case 'conceptoGasto.nombre':
+            return this.languageService.getFieldValue(wrapper.value.conceptoGasto?.nombre);
+          case 'conceptoGasto.descripcion':
+            return this.languageService.getFieldValue(wrapper.value.conceptoGasto?.descripcion);
+          case 'observaciones':
+            return this.languageService.getFieldValue(wrapper.value.observaciones);
           default:
             return wrapper.value[property];
         }
@@ -101,6 +109,12 @@ export class ConvocatoriaConceptoGastoPublicComponent extends FragmentComponent 
     this.dataSourceNoPermitidos.sortingDataAccessor =
       (wrapper: StatusWrapper<IConvocatoriaConceptoGasto>, property: string) => {
         switch (property) {
+          case 'conceptoGasto.nombre':
+            return this.languageService.getFieldValue(wrapper.value.conceptoGasto?.nombre);
+          case 'conceptoGasto.descripcion':
+            return this.languageService.getFieldValue(wrapper.value.conceptoGasto?.descripcion);
+          case 'observaciones':
+            return this.languageService.getFieldValue(wrapper.value.observaciones);
           default:
             return wrapper.value[property];
         }
@@ -108,7 +122,7 @@ export class ConvocatoriaConceptoGastoPublicComponent extends FragmentComponent 
   }
 
   displayerCosteIndirecto(costeIndirecto: IConvocatoriaConceptoGasto): string {
-    const nombreCosteIndirecto = costeIndirecto?.conceptoGasto?.nombre;
+    const nombreCosteIndirecto = costeIndirecto?.conceptoGasto?.nombre ? this.languageService.getFieldValue(costeIndirecto.conceptoGasto.nombre) : '';
     let mesesCosteIndirecto = '';
     if (costeIndirecto?.mesInicial) {
       mesesCosteIndirecto = ' (' + costeIndirecto.mesInicial + (costeIndirecto.mesFinal ? (' - ' + costeIndirecto.mesFinal) : '') + ')';
@@ -121,4 +135,5 @@ export class ConvocatoriaConceptoGastoPublicComponent extends FragmentComponent 
     this.subscriptions.forEach(subscription => subscription.unsubscribe());
   }
 
+  protected setupI18N(): void { }
 }

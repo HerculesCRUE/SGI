@@ -1,3 +1,5 @@
+import { I18nFieldValueRequest } from "@core/i18n/i18n-field-request";
+
 export interface IRequerimientoJustificacionRequest {
   proyectoProyectoSgeId: number;
   tipoRequerimientoId: number;
@@ -5,7 +7,7 @@ export interface IRequerimientoJustificacionRequest {
   requerimientoPrevioId: number;
   fechaNotificacion: string;
   fechaFinAlegacion: string;
-  observaciones: string;
+  observaciones: I18nFieldValueRequest[];
   importeAceptadoCd: number;
   importeAceptadoCi: number;
   importeRechazadoCd: number;

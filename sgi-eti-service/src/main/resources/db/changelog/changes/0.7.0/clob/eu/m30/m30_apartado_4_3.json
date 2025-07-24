@@ -1,0 +1,19 @@
+[
+  {
+    "key": "ap4_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "4.3. Osasuna zaintzea eta babestea"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Prebentzio Zerbitzuaren laguntzaz, ikertzaile arduradunak arrisku biologikoaren eraginpean daudenen osasuna zaintzeko politika ezarri behar du.<br>Osasun prebentziorako neurriak esposizioaren aurretik, lanak iraun bitartean eta lana amaitu ondoren eskaini beharko dira, baita arriskupean dagoen norbaitengan agente biologikoekiko esposizioak eragin dezakeen infekzio edo gaixotasun bat hautematen denean ere <a href='https://www.boe.es/buscar/act.php?id=BOE-A-1997-11144&p=19980330&tn=1#a8' target='_blank'>( 664/1997 EDren 8. artikulua)</a>.</p>"
+      }
+    ]
+  }
+]

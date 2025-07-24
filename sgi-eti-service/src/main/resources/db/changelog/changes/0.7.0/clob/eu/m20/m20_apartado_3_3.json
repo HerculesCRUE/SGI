@@ -1,0 +1,38 @@
+[
+  {
+    "key": "ap3_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.3 Izenburu deskribatzailea"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "Atal hau automatikoki betetzen da <b>Memoria</b> honetako <a href='#MODULE_PATH#/memorias/#MEMORIA_ID#/datos-generales' target='_blank'><b>Datu orokorrak</b></a> ataleko <b>Izenburu deskribatzailea</b> eremuan sartutako datuetatik abiatuta; bertan, prozedura deskribatu eta animalia espeziea idatzi behar da. Beharrezko aldaketak egiteko, joan menuko puntu horretara.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "template": "<p>Prozesu esperimentalaren izenburu deskribatzailea. </p>"
+      },
+      {
+        "key": "tituloDescriptivo",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Izenburu deskribatzailea",
+          "label": "Izenburu deskribatzailea",
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10",
+          "disabled": true,
+          "expressionModelValue": "formState.memoria.titulo"
+        }
+      }
+    ]
+  }
+]

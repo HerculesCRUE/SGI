@@ -1,5 +1,9 @@
 package org.crue.hercules.sgi.com.service;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
@@ -22,6 +26,9 @@ import org.crue.hercules.sgi.com.service.sgi.SgiApiDocumentRefsService;
 import org.crue.hercules.sgi.com.service.sgi.SgiApiEmailParamsService;
 import org.crue.hercules.sgi.com.service.sgi.SgiApiInternetAddressesService;
 import org.crue.hercules.sgi.com.service.sgi.SgiApiSgdocService;
+import org.crue.hercules.sgi.framework.i18n.I18nConfig;
+import org.crue.hercules.sgi.framework.i18n.I18nConfigProvider;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;

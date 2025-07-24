@@ -1,11 +1,11 @@
 package org.crue.hercules.sgi.pii.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 
-import org.crue.hercules.sgi.pii.model.TipoCaducidad;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +21,6 @@ import lombok.NoArgsConstructor;
 public class TipoCaducidadInput implements Serializable {
 
   @NotEmpty
-  @Size(max = TipoCaducidad.DESCRIPCION_MAX_LENGTH)
-  private String descripcion;
+  private List<I18nFieldValueDto> descripcion;
 
 }

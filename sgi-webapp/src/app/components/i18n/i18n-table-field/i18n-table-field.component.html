@@ -1,0 +1,16 @@
+<ng-container *ngIf="field; else titleCompound">
+  <span><sup class="prefix"
+      *ngIf="value && value.lang !== languageService.getLanguage(); else empty">{{value.lang.codeExtended}}</sup>{{value?.value}}</span>
+</ng-container>
+<ng-template #titleCompound>
+  <ng-container *ngFor="let value of values">
+    <ng-container *ngIf="!value?.lang; else titleElementI18n"><span>{{value}}</span></ng-container>
+    <ng-template #titleElementI18n>
+      <span><sup class="prefix"
+          *ngIf="value && value.lang !== languageService.getLanguage()">{{value.lang.codeExtended}}</sup>{{value?.value}}</span>
+    </ng-template>
+  </ng-container>
+</ng-template>
+<ng-template #empty>
+  <sup class="prefix">&nbsp;&nbsp;&nbsp;</sup>
+</ng-template>

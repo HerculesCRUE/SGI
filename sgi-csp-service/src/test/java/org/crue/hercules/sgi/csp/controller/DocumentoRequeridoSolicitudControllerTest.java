@@ -1,10 +1,18 @@
 package org.crue.hercules.sgi.csp.controller;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.crue.hercules.sgi.csp.exceptions.DocumentoRequeridoSolicitudNotFoundException;
 import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitud;
+import org.crue.hercules.sgi.csp.model.DocumentoRequeridoSolicitudObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoDocumento;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoDescripcion;
+import org.crue.hercules.sgi.csp.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.csp.service.DocumentoRequeridoSolicitudService;
 import org.crue.hercules.sgi.csp.service.ProgramaService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -64,7 +72,8 @@ class DocumentoRequeridoSolicitudControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("tipoDocumento.id")
             .value(documentoRequeridoSolicitud.getTipoDocumento().getId()))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("observaciones").value(documentoRequeridoSolicitud.getObservaciones()));
+            MockMvcResultMatchers.jsonPath("observaciones[0].value")
+                .value(I18nHelper.getValueForLanguage(documentoRequeridoSolicitud.getObservaciones(), Language.ES)));
   }
 
   @Test
@@ -90,9 +99,13 @@ class DocumentoRequeridoSolicitudControllerTest extends BaseControllerTest {
   @WithMockUser(username = "user", authorities = { "CSP-CON-E" })
   void update_ReturnsDocumentoRequeridoSolicitud() throws Exception {
     // given: Existing DocumentoRequeridoSolicitud to be updated
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(
+        new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observaciones-nuevas"));
+
     DocumentoRequeridoSolicitud documentoRequeridoSolicitudExistente = generarMockDocumentoRequeridoSolicitud(1L);
     DocumentoRequeridoSolicitud documentoRequeridoSolicitud = generarMockDocumentoRequeridoSolicitud(1L);
-    documentoRequeridoSolicitud.setObservaciones("observaciones-nuevas");
+    documentoRequeridoSolicitud.setObservaciones(obsDocumentoRequerido);
 
     BDDMockito.given(service.findById(ArgumentMatchers.<Long>any())).willReturn(documentoRequeridoSolicitudExistente);
     BDDMockito.given(service.update(ArgumentMatchers.<DocumentoRequeridoSolicitud>any()))
@@ -113,7 +126,8 @@ class DocumentoRequeridoSolicitudControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("tipoDocumento.id")
             .value(documentoRequeridoSolicitudExistente.getTipoDocumento().getId()))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("observaciones").value(documentoRequeridoSolicitud.getObservaciones()));
+            MockMvcResultMatchers.jsonPath("observaciones[0].value")
+                .value(I18nHelper.getValueForLanguage(documentoRequeridoSolicitud.getObservaciones(), Language.ES)));
   }
 
   @Test
@@ -197,7 +211,8 @@ class DocumentoRequeridoSolicitudControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("tipoDocumento.id")
             .value(documentoRequeridoSolicitud.getTipoDocumento().getId()))
         .andExpect(
-            MockMvcResultMatchers.jsonPath("observaciones").value(documentoRequeridoSolicitud.getObservaciones()));
+            MockMvcResultMatchers.jsonPath("observaciones[0].value")
+                .value(I18nHelper.getValueForLanguage(documentoRequeridoSolicitud.getObservaciones(), Language.ES)));
   }
 
   @Test
@@ -224,12 +239,17 @@ class DocumentoRequeridoSolicitudControllerTest extends BaseControllerTest {
    * @return el objeto TipoDocumento
    */
   private TipoDocumento generarMockTipoDocumento(Long id) {
+    Set<TipoDocumentoNombre> nombreTipoDocumento = new HashSet<>();
+    nombreTipoDocumento.add(new TipoDocumentoNombre(Language.ES, "nombreTipoDocumento-" + id));
+
+    Set<TipoDocumentoDescripcion> descripcionTipoDocumento = new HashSet<>();
+    descripcionTipoDocumento.add(new TipoDocumentoDescripcion(Language.ES, "descripcionTipoDocumento-" + id));
 
     // @formatter:off
     return TipoDocumento.builder()
         .id(id)
-        .nombre("nombreTipoDocumento-" + id)
-        .descripcion("descripcionTipoDocumento-" + id)
+        .nombre(nombreTipoDocumento)
+        .descripcion(descripcionTipoDocumento)
         .activo(Boolean.TRUE)
         .build();
     // @formatter:on
@@ -242,13 +262,16 @@ class DocumentoRequeridoSolicitudControllerTest extends BaseControllerTest {
    * @return el objeto DocumentoRequeridoSolicitud
    */
   private DocumentoRequeridoSolicitud generarMockDocumentoRequeridoSolicitud(Long id) {
+    Set<DocumentoRequeridoSolicitudObservaciones> obsDocumentoRequerido = new HashSet<>();
+    obsDocumentoRequerido.add(
+        new DocumentoRequeridoSolicitudObservaciones(Language.ES, "observacionesDocumentoRequeridoSolicitud-" + id));
 
     // @formatter:off
     return DocumentoRequeridoSolicitud.builder()
         .id(id)
         .configuracionSolicitudId(id)
         .tipoDocumento(generarMockTipoDocumento(id))
-        .observaciones("observacionesDocumentoRequeridoSolicitud-" + id)
+        .observaciones(obsDocumentoRequerido)
         .build();
     // @formatter:on
   }

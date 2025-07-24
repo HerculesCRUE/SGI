@@ -1,0 +1,90 @@
+[
+  {
+    "key": "ap3_5_1",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.5.1 Origin of the samples"
+    },
+    "hideExpression": "!formState.mainModel.ap3_5.muestrasBiologicasRadio || formState.mainModel.ap3_5.muestrasBiologicasRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "How were the samples obtained?"
+      },
+      {
+        "type": "multicheckbox",
+        "key": "origenMuestrasCheck",
+        "templateOptions": {
+          "label": "Origin",
+          "type": "array",
+          "required": true,
+          "options": [
+            {
+              "value": "recogidasExpresamente",
+              "label": "Collected expressly for this project with the intervention of the study subject (you need to answer affirmatively to question 3.4)"
+            },
+            {
+              "value": "recogidasApartirDeMuestras",
+              "label": "Collected from samples already obtained in another process (e.g. clinical-care, autopsy)*"
+            },
+            {
+              "value": "procedentesBiobanco",
+              "label": "From Biobank*"
+            },
+            {
+              "value": "procedentesColeccion",
+              "label": "From a collection of samples*"
+            }
+          ]
+        }
+      },
+      {
+        "key": "especificarRecogidasApartirDeMuestras",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.origenMuestrasCheck || !model.origenMuestrasCheck.some(origen => origen === 'recogidasApartirDeMuestras')",
+        "templateOptions": {
+          "label": "Please specify collections from samples already obtained",
+          "placeholder": "Please specify collections from samples already obtained",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarProcedentesBiobanco",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.origenMuestrasCheck || !model.origenMuestrasCheck.some(origen => origen === 'procedentesBiobanco')",
+        "templateOptions": {
+          "label": "Please specify from Biobanco",
+          "placeholder": "Please specify from Biobanco",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "key": "especificarProcedentesColeccion",
+        "type": "i18n-textarea",
+        "hideExpression": "!model.origenMuestrasCheck || !model.origenMuestrasCheck.some(origen => origen === 'procedentesColeccion')",
+        "templateOptions": {
+          "label": "Please specify from a sample collection",
+          "placeholder": "Please specify from a sample collection",
+          "required": true,
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10"
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: The options marked with (*) require MTA or agreement to be provided in section 5.5.</p>"
+      }
+    ]
+  }
+]

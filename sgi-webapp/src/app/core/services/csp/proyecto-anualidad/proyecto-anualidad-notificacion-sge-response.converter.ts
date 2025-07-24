@@ -3,9 +3,10 @@ import { IProyectoAnualidadNotificacionSge } from '@core/models/csp/proyecto-anu
 import { LuxonUtils } from '@core/utils/luxon-utils';
 import { SgiBaseConverter } from '@sgi/framework/core';
 import { IProyectoAnualidadNotificacionSgeResponse } from './proyecto-anualidad-notificacion-sge-response';
+import { I18N_FIELD_RESPONSE_CONVERTER } from '@core/i18n/i18n-field.converter';
 
 class ProyectoAnualidadNotificacionSgeResponseConverter
-  extends SgiBaseConverter<IProyectoAnualidadNotificacionSgeResponse, IProyectoAnualidadNotificacionSge>{
+  extends SgiBaseConverter<IProyectoAnualidadNotificacionSgeResponse, IProyectoAnualidadNotificacionSge> {
   toTarget(value: IProyectoAnualidadNotificacionSgeResponse): IProyectoAnualidadNotificacionSge {
     if (!value) {
       return value as unknown as IProyectoAnualidadNotificacionSge;
@@ -17,7 +18,7 @@ class ProyectoAnualidadNotificacionSgeResponseConverter
       proyectoFechaFin: LuxonUtils.fromBackend(value.proyectoFechaFin),
       totalGastos: value.totalGastos,
       totalIngresos: value.totalIngresos,
-      proyectoTitulo: value.proyectoTitulo,
+      proyectoTitulo: value.proyectoTitulo ? I18N_FIELD_RESPONSE_CONVERTER.toTargetArray(value.proyectoTitulo) : [],
       proyectoAcronimo: value.proyectoAcronimo,
       proyectoEstado: value.proyectoEstado?.estado,
       proyectoSgeRef: value.proyectoSgeRef,
@@ -36,7 +37,7 @@ class ProyectoAnualidadNotificacionSgeResponseConverter
       proyectoFechaFin: LuxonUtils.toBackend(value.proyectoFechaFin),
       totalGastos: value.totalGastos,
       totalIngresos: value.totalIngresos,
-      proyectoTitulo: value.proyectoTitulo,
+      proyectoTitulo: value.proyectoTitulo ? I18N_FIELD_RESPONSE_CONVERTER.fromTargetArray(value.proyectoTitulo) : [],
       proyectoAcronimo: value.proyectoAcronimo,
       proyectoEstado: { estado: value.proyectoEstado } as IEstadoProyecto,
       proyectoSgeRef: value.proyectoSgeRef,

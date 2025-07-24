@@ -1,0 +1,87 @@
+[
+  {
+    "key": "ap4_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "4.3 Protection of particularly vulnerable groups"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Are these particularly vulnerable people? (minors, legally incapacitated persons, etc.)</p>"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Particularly vulnerable persons are those who are absolutely or relatively unable to protect their own interests. It is considered that this capacity is altered when any of these circumstances occur:</p><ul><li>Their autonomy or self-management is limited by internal agents (e.g. minors, some serious mental illnesses, etc.), or external agents (institutionalized people, subordination relationships, receipt of subsidies, etc.)</li><li>Specific measures are required to guarantee their access to participate in research projects under conditions of equality and non-discrimination (e.g. people at risk of exclusion, with a disability, etc.)</li><ul><p>For more information on particularly vulnerable groups and their ethical implications, consult the CIOMS document <a href='https://cioms.ch/publications/product/pautas-eticas-internacionales-para-la-investigacion-relacionada-con-la-salud-con-seres-humanos/' target='_blank'>International ethical guidelines for biomedical research involving human subjects</a> (guideline 12)</p>"
+      },
+      {
+        "key": "gruposVulnerablesRadio",
+        "type": "radio",
+        "templateOptions": {
+          "required": true,
+          "label": "Choose an option:",
+          "options": [
+            {
+              "value": "no",
+              "label": "No"
+            },
+            {
+              "value": "si",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "template": "Please specify groups of particularly vulnerable people",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'"
+      },
+      {
+        "key": "especificarColectivoVulnerables",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Please specify",
+          "required": true
+        }
+      },
+      {
+        "template": "Please justify why the use of less vulnerable people is not considered",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'"
+      },
+      {
+        "key": "justificarPersonasMenosVulnerables",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Justify",
+          "required": true
+        }
+      },
+      {
+        "template": "<p>Please specify how the results of these investigations can benefit these people or groups.</p><p>particularly vulnerable.</p>",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'"
+      },
+      {
+        "key": "especificarBeneficiosInvestigacionVulnerables",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Please specify",
+          "required": true
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: please remember that the special condition of these people should be taken into account and requires:</p><ul><li>Take maximum care of issues such as voluntary nature, information, consent, recruitment process, etc. (see sections 3.4.1, 4.1 and 4.2).</li><li>In the case of minors under 12 years of age, the signature of both parents is to be included in the consent document, between 12 and 18 years of age the consent of the minor should also be included, and in legally incapacitated people, the signature of their legal representative should be included (see point 4.4.2 Minimum mandatory information)</li></ul><p>For more information on protection of vulnerable groups, consult the <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a20' target='_blank'>articles 20, 21</a> of LIB 14/2007.</p>",
+        "hideExpression": "!model.gruposVulnerablesRadio || model.gruposVulnerablesRadio === 'no'"
+      }
+    ]
+  }
+]

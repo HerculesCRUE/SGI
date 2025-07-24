@@ -1,0 +1,23 @@
+[
+  {
+    "key": "ap5_8",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "5.8 Clarifications to the committee"
+    },
+    "fieldGroup": [
+      {
+        "template": "Please include below any other clarification that the committee considers necessary."
+      },
+      {
+        "key": "aclaracionesComite",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Clarifications"
+        }
+      }
+    ]
+  }
+]

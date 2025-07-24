@@ -7,14 +7,18 @@
       <ng-container matColumnDef="nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.tipo-proteccion.nombre' | translate}}
         </th>
-        <td mat-cell *matCellDef="let tipoProteccion">{{tipoProteccion.value.nombre}}</td>
+        <td mat-cell *matCellDef="let tipoProteccion">
+          <sgi-i18n-table-field [field]="tipoProteccion.value.nombre"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Descripción -->
       <ng-container matColumnDef="descripcion">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'pii.tipo-proteccion.descripcion' | translate}}
         </th>
-        <td mat-cell *matCellDef="let tipoProteccion">{{tipoProteccion.value.descripcion}}</td>
+        <td mat-cell *matCellDef="let tipoProteccion">
+          <sgi-i18n-table-field [field]="tipoProteccion.value.descripcion"></sgi-i18n-table-field>
+        </td>
       </ng-container>
 
       <!-- Activo -->

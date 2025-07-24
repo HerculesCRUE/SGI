@@ -1,0 +1,35 @@
+[
+  {
+    "key": "ap5_2",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.2 Datuak lagatzeko dokumentua"
+    },
+    "fieldGroup": [
+      {
+        "template": "<p>Datuak lagatzeko dokumentuak badaude, erantsi egin behar dira. Datuak laga diezazkioke, adibidez, irakasleak ikasleari, tutoretzapeko ikerketa egiteko, edo langile klinikoek Unibertsitateko ikertzaileei, edo bio-bankuek ikertzaileei, etab.</p>"
+      },
+      {
+        "key": "documentoCesion",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Adierazi",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "Ez"
+            },
+            {
+              "value": "CESION_DATOS",
+              "label": "Bai"
+            }
+          ]
+        }
+      }
+    ]
+  }
+]

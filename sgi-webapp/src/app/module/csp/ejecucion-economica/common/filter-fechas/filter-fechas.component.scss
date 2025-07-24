@@ -1,9 +1,8 @@
-@import "typography.scss";
-
 :host {
   ::ng-deep .mat-form-field-infix {
     width: 80px;
   }
+
   mat-card {
     width: 100%;
     padding-top: 0px;
@@ -12,7 +11,13 @@
     padding-right: 10px;
 
     mat-card-title {
-      font-size: map-get($sgi-typography-size, mat-card-title);
+      font-size: 12px;
+    }
+
+    mat-form-field {
+      mat-label {
+        font-size: 10px;
+      }
     }
   }
 }

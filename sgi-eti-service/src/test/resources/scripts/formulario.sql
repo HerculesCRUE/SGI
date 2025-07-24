@@ -1,7 +1,7 @@
 -- FORMULARIO 
-INSERT INTO test.formulario (id, nombre, descripcion) VALUES (1, 'M10', 'Formulario M10');
-INSERT INTO test.formulario (id, nombre, descripcion) VALUES (2, 'M20', 'Formulario M20');
-INSERT INTO test.formulario (id, nombre, descripcion) VALUES (3, 'M30', 'Formulario M30');
-INSERT INTO test.formulario (id, nombre, descripcion) VALUES (4, 'Seguimiento Anual', 'Descripcion');
-INSERT INTO test.formulario (id, nombre, descripcion) VALUES (5, 'Seguimiento Final', 'Descripcion');
-INSERT INTO test.formulario (id, nombre, descripcion) VALUES (6, 'Retrospectiva', 'Descripcion');
+INSERT INTO test.formulario (id, tipo, codigo, seguimiento_anual_documentacion_title) VALUES (1, 'MEMORIA', 'M10/2020/001', 'TITULO_1');
+INSERT INTO test.formulario (id, tipo, codigo, seguimiento_anual_documentacion_title) VALUES (2, 'MEMORIA', 'M20/2020/001', 'TITULO_1');
+INSERT INTO test.formulario (id, tipo, codigo, seguimiento_anual_documentacion_title) VALUES (3, 'MEMORIA', 'M30/2020/001', 'TITULO_1');
+INSERT INTO test.formulario (id, tipo, codigo, seguimiento_anual_documentacion_title) VALUES (4, 'SEGUIMIENTO_ANUAL', 'SA/2020/001', NULL);
+INSERT INTO test.formulario (id, tipo, codigo, seguimiento_anual_documentacion_title) VALUES (5, 'SEGUIMIENTO_FINAL', 'SF/2020/001', NULL);
+INSERT INTO test.formulario (id, tipo, codigo, seguimiento_anual_documentacion_title) VALUES (6, 'RETROSPECTIVA', 'R/2020/001', NULL);

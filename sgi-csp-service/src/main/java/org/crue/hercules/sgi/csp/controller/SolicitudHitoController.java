@@ -58,7 +58,7 @@ public class SolicitudHitoController {
    * @return Nuevo {@link SolicitudHito} creado.
    */
   @PostMapping
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public ResponseEntity<SolicitudHitoOutput> create(@Valid @RequestBody SolicitudHitoInput solicitudHito) {
     log.debug("create(SolicitudHito solicitudHito) - start");
     SolicitudHitoOutput returnValue = this.convert(service.create(solicitudHito));
@@ -75,7 +75,7 @@ public class SolicitudHitoController {
    * @return SolicitudHito {@link SolicitudHito} actualizado
    */
   @PutMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   public SolicitudHitoOutput update(@Valid @RequestBody SolicitudHitoInput solicitudHito, @PathVariable Long id,
       Authentication authentication) {
     log.debug("update(SolicitudHito solicitudHito, Long id) - start");
@@ -86,27 +86,12 @@ public class SolicitudHitoController {
   }
 
   /**
-   * Devuelve el {@link SolicitudHito} con el id indicado.
-   * 
-   * @param id Identificador de {@link SolicitudHito}.
-   * @return SolicitudHito {@link SolicitudHito} correspondiente al id
-   */
-  @GetMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('AUTH')")
-  public SolicitudHitoOutput findById(@PathVariable Long id) {
-    log.debug("SolicitudHito findById(Long id) - start");
-    SolicitudHitoOutput returnValue = this.convert(service.findById(id));
-    log.debug("SolicitudHito findById(Long id) - end");
-    return returnValue;
-  }
-
-  /**
    * Desactiva {@link SolicitudHito} con id indicado.
    * 
    * @param id Identificador de {@link SolicitudHito}.
    */
   @DeleteMapping("/{id}")
-  @PreAuthorize("hasAuthorityForAnyUO('CSP-SOL-E')")
+  @PreAuthorize("hasAnyAuthorityForAnyUO('CSP-SOL-E', 'CSP-SOL-INV-ER')")
   @ResponseStatus(value = HttpStatus.NO_CONTENT)
   public void deleteById(@PathVariable Long id) {
     log.debug("deleteById(Long id) - start");

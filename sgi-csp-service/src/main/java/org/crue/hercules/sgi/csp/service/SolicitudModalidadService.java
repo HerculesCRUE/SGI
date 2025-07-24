@@ -35,14 +35,6 @@ public interface SolicitudModalidadService {
   void delete(Long id);
 
   /**
-   * Obtiene una entidad {@link SolicitudModalidad} por id.
-   * 
-   * @param id Identificador de la entidad {@link SolicitudModalidad}.
-   * @return solicitudModalidad la entidad {@link SolicitudModalidad}.
-   */
-  SolicitudModalidad findById(final Long id);
-
-  /**
    * Obtiene las {@link SolicitudModalidad} para una {@link Solicitud}.
    *
    * @param solicitudId el id de la {@link Solicitud}.

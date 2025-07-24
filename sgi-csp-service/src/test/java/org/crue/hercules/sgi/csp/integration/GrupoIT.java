@@ -4,11 +4,11 @@ import java.net.URI;
 import java.time.Instant;
 import java.time.Period;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.GrupoController;
@@ -18,6 +18,9 @@ import org.crue.hercules.sgi.csp.dto.GrupoOutput;
 import org.crue.hercules.sgi.csp.dto.GrupoPalabraClaveInput;
 import org.crue.hercules.sgi.csp.dto.GrupoPalabraClaveOutput;
 import org.crue.hercules.sgi.csp.model.GrupoTipo.Tipo;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -60,9 +63,7 @@ class GrupoIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s",
         tokenBuilder.buildToken("user", roles)));
 
-    HttpEntity<Object> request = new HttpEntity<>(entity, headers);
-    return request;
-
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -73,7 +74,7 @@ class GrupoIT extends BaseIT {
   @Sql(executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD, scripts = "classpath:cleanup.sql")
   @Test
   void create_ReturnsGrupo() throws Exception {
-    GrupoInput toCreate = buildMockGrupo(null);
+    GrupoInput toCreate = buildMockGrupo();
     String roles = "CSP-GIN-C";
 
     final ResponseEntity<GrupoOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH, HttpMethod.POST,
@@ -85,8 +86,8 @@ class GrupoIT extends BaseIT {
     Assertions.assertThat(created.getId()).as("getId()").isNotNull();
     Assertions.assertThat(created.getCodigo()).as("getCodigo()")
         .isEqualTo(toCreate.getCodigo());
-    Assertions.assertThat(created.getNombre()).as("getNombre()")
-        .isEqualTo(toCreate.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toCreate.getNombre(), Language.ES));
     Assertions.assertThat(created.getTipo()).as("getTipo()")
         .isEqualTo(toCreate.getTipo());
     Assertions.assertThat(created.getEspecialInvestigacion()).as("getEspecialInvestigacion()")
@@ -108,8 +109,11 @@ class GrupoIT extends BaseIT {
   void update_ReturnsGrupo() throws Exception {
     String roles = "CSP-GIN-E";
     Long grupoId = 1L;
-    GrupoInput toUpdate = buildMockGrupo(1L);
-    toUpdate.setNombre("actualizado");
+    GrupoInput toUpdate = buildMockGrupo();
+
+    List<I18nFieldValueDto> nombreGrupo = new ArrayList<>();
+    nombreGrupo.add(new I18nFieldValueDto(Language.ES, "actualizado"));
+    toUpdate.setNombre(nombreGrupo);
     toUpdate.setTipo(Tipo.PRECOMPETITIVO);
 
     final ResponseEntity<GrupoOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH + PATH_ID,
@@ -122,8 +126,8 @@ class GrupoIT extends BaseIT {
     Assertions.assertThat(updated.getId()).as("getId()").isEqualTo(grupoId);
     Assertions.assertThat(updated.getCodigo()).as("getCodigo()")
         .isEqualTo(toUpdate.getCodigo());
-    Assertions.assertThat(updated.getNombre()).as("getNombre()")
-        .isEqualTo(toUpdate.getNombre());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getNombre(), Language.ES)).as("getNombre()")
+        .isEqualTo(I18nHelper.getValueForLanguage(toUpdate.getNombre(), Language.ES));
     Assertions.assertThat(updated.getTipo()).as("getTipo()")
         .isEqualTo(toUpdate.getTipo());
     Assertions.assertThat(updated.getEspecialInvestigacion()).as("getEspecialInvestigacion()")
@@ -438,7 +442,7 @@ class GrupoIT extends BaseIT {
             return o1.getId().compareTo(o2.getId());
           }
         })
-        .collect(Collectors.toList());
+        .toList();
     Assertions.assertThat(responseData).hasSize(Integer.valueOf(expectedSize));
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
@@ -464,8 +468,8 @@ class GrupoIT extends BaseIT {
 
     Long grupoId = 1L;
     List<GrupoPalabraClaveInput> toUpdate = Arrays.asList(
-        buildMockGrupoPalabraClaveInput(1L, "updated-01"),
-        buildMockGrupoPalabraClaveInput(2L, "updated-02"));
+        buildMockGrupoPalabraClaveInput("updated-01"),
+        buildMockGrupoPalabraClaveInput("updated-02"));
 
     URI uri = UriComponentsBuilder
         .fromUriString(CONTROLLER_BASE_PATH + PATH_PALABRAS_CLAVE)
@@ -486,8 +490,8 @@ class GrupoIT extends BaseIT {
             return o1.getId().compareTo(o2.getId());
           }
         })
-        .collect(Collectors.toList());
-    Assertions.assertThat(responseData).hasSize(Integer.valueOf(2));
+        .toList();
+    Assertions.assertThat(responseData).hasSize(2);
 
     Assertions.assertThat(responseData.get(0)).isNotNull();
     Assertions.assertThat(responseData.get(1)).isNotNull();
@@ -499,19 +503,22 @@ class GrupoIT extends BaseIT {
     Assertions.assertThat(responseData.get(1).getPalabraClaveRef()).isEqualTo("updated-02");
   }
 
-  private GrupoPalabraClaveInput buildMockGrupoPalabraClaveInput(Long id, String palabraClaveRef) {
+  private GrupoPalabraClaveInput buildMockGrupoPalabraClaveInput(String palabraClaveRef) {
     return GrupoPalabraClaveInput.builder()
         .palabraClaveRef(palabraClaveRef)
         .build();
   }
 
-  private GrupoInput buildMockGrupo(Long id) {
+  private GrupoInput buildMockGrupo() {
+    List<I18nFieldValueDto> nombreGrupo = new ArrayList<>();
+    nombreGrupo.add(new I18nFieldValueDto(Language.ES, DEFAULT_NOMBRE));
+
     return GrupoInput.builder()
         .codigo(DEFAULT_CODIGO)
         .especialInvestigacion(DEFAULT_ESPECIAL_INVESTIGACION)
         .fechaInicio(DEFAULT_FECHA_INICIO)
         .fechaFin(DEFAULT_FECHA_FIN)
-        .nombre(DEFAULT_NOMBRE)
+        .nombre(nombreGrupo)
         .tipo(DEFAULT_TIPO)
         .build();
   }

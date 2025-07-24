@@ -1,6 +1,5 @@
 package org.crue.hercules.sgi.csp.service.impl;
 
-import org.apache.commons.lang3.StringUtils;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoEntidadGestoraNotFoundException;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoNotFoundException;
 import org.crue.hercules.sgi.csp.model.Proyecto;
@@ -9,13 +8,13 @@ import org.crue.hercules.sgi.csp.repository.ProyectoEntidadGestoraRepository;
 import org.crue.hercules.sgi.csp.repository.ProyectoRepository;
 import org.crue.hercules.sgi.csp.repository.specification.ProyectoEntidadGestoraSpecifications;
 import org.crue.hercules.sgi.csp.service.ProyectoEntidadGestoraService;
+import org.crue.hercules.sgi.csp.util.AssertHelper;
 import org.crue.hercules.sgi.framework.rsql.SgiRSQLJPASupport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Transactional(readOnly = true)
 public class ProyectoEntidadGestoraServiceImpl implements ProyectoEntidadGestoraService {
+  private static final String MSG_KEY_ENTIDAD_REF = "entidadRef";
 
   private final ProyectoEntidadGestoraRepository repository;
   private final ProyectoRepository proyectoRepository;
@@ -49,8 +49,7 @@ public class ProyectoEntidadGestoraServiceImpl implements ProyectoEntidadGestora
   public ProyectoEntidadGestora create(ProyectoEntidadGestora proyectoEntidadGestora) {
     log.debug("create(ProyectoEntidadGestora proyectoEntidadGestora) - start");
 
-    Assert.isNull(proyectoEntidadGestora.getId(),
-        "ProyectoEntidadGestora id tiene que ser null para crear un nuevo ProyectoEntidadGestora");
+    AssertHelper.idIsNull(proyectoEntidadGestora.getId(), ProyectoEntidadGestora.class);
 
     this.validarRequeridosProyectoEntidadGestora(proyectoEntidadGestora);
     this.validarProyectoEntidadGestora(proyectoEntidadGestora, null);
@@ -74,8 +73,7 @@ public class ProyectoEntidadGestoraServiceImpl implements ProyectoEntidadGestora
   public ProyectoEntidadGestora update(ProyectoEntidadGestora proyectoEntidadGestoraActualizar) {
     log.debug("update(ProyectoEntidadGestora proyectoEntidadGestoraActualizar) - start");
 
-    Assert.notNull(proyectoEntidadGestoraActualizar.getId(),
-        "ProyectoEntidadGestora id no puede ser null para actualizar un ProyectoEntidadGestora");
+    AssertHelper.idNotNull(proyectoEntidadGestoraActualizar.getId(), ProyectoEntidadGestora.class);
 
     this.validarRequeridosProyectoEntidadGestora(proyectoEntidadGestoraActualizar);
 
@@ -100,7 +98,7 @@ public class ProyectoEntidadGestoraServiceImpl implements ProyectoEntidadGestora
   public void delete(Long id) {
     log.debug("delete(Long id) - start");
 
-    Assert.notNull(id, "ProyectoEntidadGestora id no puede ser null para eliminar un ProyectoEntidadGestora");
+    AssertHelper.idNotNull(id, ProyectoEntidadGestora.class);
     if (!repository.existsById(id)) {
       throw new ProyectoEntidadGestoraNotFoundException(id);
     }
@@ -148,17 +146,17 @@ public class ProyectoEntidadGestoraServiceImpl implements ProyectoEntidadGestora
 
     // Comprobar si la entidad ya está asignada al proyecto
     if (datosOriginales == null) {
-      Assert.isTrue(
+      AssertHelper.fieldExists(
           !repository.existsProyectoEntidadGestoraByProyectoIdAndEntidadRef(proyectoId,
               datosProyectoEntidadGestora.getEntidadRef()),
-          "Ya existe una asociación activa para ese Proyecto y Entidad");
+          Proyecto.class, MSG_KEY_ENTIDAD_REF);
     } else {
       // Si se está modificando se excluye de la búsqueda el propio
       // ProyectoEntidadGestora
-      Assert.isTrue(
+      AssertHelper.fieldExists(
           !repository.existsProyectoEntidadGestoraByIdNotAndProyectoIdAndEntidadRef(datosOriginales.getId(), proyectoId,
               datosProyectoEntidadGestora.getEntidadRef()),
-          "Ya existe una asociación activa para ese Proyecto y Entidad");
+          Proyecto.class, MSG_KEY_ENTIDAD_REF);
     }
 
     log.debug(
@@ -174,11 +172,9 @@ public class ProyectoEntidadGestoraServiceImpl implements ProyectoEntidadGestora
   private void validarRequeridosProyectoEntidadGestora(ProyectoEntidadGestora datosProyectoEntidadGestora) {
     log.debug("validarRequeridosProyectoEntidadGestora(ProyectoEntidadGestora datosProyectoEntidadGestora) - start");
 
-    Assert.isTrue(datosProyectoEntidadGestora.getProyectoId() != null,
-        "Id Proyecto no puede ser null para realizar la acción sobre ProyectoEntidadGestora");
-
-    Assert.isTrue(StringUtils.isNotBlank(datosProyectoEntidadGestora.getEntidadRef()),
-        "EntidadRef no puede ser null para realizar la acción sobre ProyectoEntidadGestora");
+    AssertHelper.idNotNull(datosProyectoEntidadGestora.getProyectoId(), Proyecto.class);
+    AssertHelper.fieldNotNull(datosProyectoEntidadGestora.getEntidadRef(), ProyectoEntidadGestora.class,
+        MSG_KEY_ENTIDAD_REF);
 
     log.debug("validarRequeridosProyectoEntidadGestora(ProyectoEntidadGestora datosProyectoEntidadGestora) - end");
   }

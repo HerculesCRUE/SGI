@@ -1,6 +1,7 @@
 import { IPrograma } from '@core/models/csp/programa';
 import { Fragment } from '@core/services/action-service';
 import { ProgramaService } from '@core/services/csp/programa.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, from, merge, Observable, of } from 'rxjs';
@@ -20,10 +21,13 @@ export class NodePrograma implements INodePrograma {
   get childs(): NodePrograma[] {
     return this._childs;
   }
+  // tslint:disable-next-line: variable-name
+  _sortChildsWith: (a1: NodePrograma, a2: NodePrograma) => number
 
-  constructor(programa: StatusWrapper<IPrograma>) {
+  constructor(programa: StatusWrapper<IPrograma>, sortChildsWith: (a1: NodePrograma, a2: NodePrograma) => number) {
     this.programa = programa;
     this._childs = [];
+    this._sortChildsWith = sortChildsWith;
   }
 
   addChild(child: NodePrograma) {
@@ -38,30 +42,30 @@ export class NodePrograma implements INodePrograma {
   }
 
   sortChildsByName(): void {
-    this._childs = sortByName(this._childs);
+    this._childs = sortNodes(this._childs, this._sortChildsWith);
   }
 }
 
-function sortByName(nodes: NodePrograma[]): NodePrograma[] {
-  return nodes.sort((a, b) => {
-    if (a.programa.value.nombre < b.programa.value.nombre) {
-      return -1;
-    }
-    if (a.programa.value.nombre > b.programa.value.nombre) {
-      return 1;
-    }
-    return 0;
-  });
+function sortNodes(nodes: NodePrograma[], sortWith: (a1: NodePrograma, a2: NodePrograma) => number): NodePrograma[] {
+  return nodes.sort(sortWith);
 }
 
 export class PlanInvestigacionProgramaFragment extends Fragment {
   programas$ = new BehaviorSubject<NodePrograma[]>([]);
   private programasEliminados: IPrograma[] = [];
 
+  private sortNodesByAreaNombre: (a1: NodePrograma, a2: NodePrograma) => number = (a1, a2) => {
+    const nombreA = this.languageService.getFieldValue(a1.programa?.value?.nombre);
+    const nombreB = this.languageService.getFieldValue(a2.programa?.value?.nombre);
+    return nombreA.localeCompare(nombreB);
+  };
+
+
   constructor(
     private readonly logger: NGXLogger,
     key: number,
-    private programaService: ProgramaService
+    private programaService: ProgramaService,
+    private readonly languageService: LanguageService
   ) {
     super(key);
     this.setComplete(true);
@@ -73,7 +77,7 @@ export class PlanInvestigacionProgramaFragment extends Fragment {
         switchMap(response => {
           return from(response.items).pipe(
             mergeMap((programa) => {
-              const node = new NodePrograma(new StatusWrapper<IPrograma>(programa));
+              const node = new NodePrograma(new StatusWrapper<IPrograma>(programa), this.sortNodesByAreaNombre);
               return this.getChilds(node).pipe(map(() => node));
             })
           );
@@ -93,8 +97,17 @@ export class PlanInvestigacionProgramaFragment extends Fragment {
 
   publishNodes(rootNodes?: NodePrograma[]) {
     let nodes = rootNodes ? rootNodes : this.programas$.value;
-    nodes = sortByName(nodes);
+    nodes = sortNodes(nodes, this.sortNodesByAreaNombre);
     this.programas$.next(nodes);
+  }
+
+  createEmptyNode(): NodePrograma {
+    return new NodePrograma(
+      new StatusWrapper<IPrograma>({
+        padre: {} as IPrograma
+      } as IPrograma),
+      this.sortNodesByAreaNombre
+    );
   }
 
   private getChilds(parent: NodePrograma): Observable<NodePrograma[]> {
@@ -102,7 +115,7 @@ export class PlanInvestigacionProgramaFragment extends Fragment {
       map((result) => {
         const childs: NodePrograma[] = result.items.map(
           (programa) => {
-            const child = new NodePrograma(new StatusWrapper<IPrograma>(programa));
+            const child = new NodePrograma(new StatusWrapper<IPrograma>(programa), this.sortNodesByAreaNombre);
             child.parent = parent;
             return child;
           });

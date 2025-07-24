@@ -1,6 +1,10 @@
 package org.crue.hercules.sgi.pii.dto;
 
 import java.io.Serializable;
+import java.util.Collection;
+
+import org.crue.hercules.sgi.pii.model.TipoProcedimientoDescripcion;
+import org.crue.hercules.sgi.pii.model.TipoProcedimientoNombre;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,9 +21,9 @@ public class TipoProcedimientoOutput implements Serializable {
 
   private Long id;
 
-  private String nombre;
+  private Collection<TipoProcedimientoNombre> nombre;
 
-  private String descripcion;
+  private Collection<TipoProcedimientoDescripcion> descripcion;
 
   private Boolean activo;
 

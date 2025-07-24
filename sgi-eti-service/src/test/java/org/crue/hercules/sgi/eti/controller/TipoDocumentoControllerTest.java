@@ -1,15 +1,17 @@
 package org.crue.hercules.sgi.eti.controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-
-import com.fasterxml.jackson.core.type.TypeReference;
+import java.util.Set;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.eti.exceptions.TipoDocumentoNotFoundException;
-import org.crue.hercules.sgi.eti.model.Formulario;
 import org.crue.hercules.sgi.eti.model.TipoDocumento;
+import org.crue.hercules.sgi.eti.model.TipoDocumentoNombre;
 import org.crue.hercules.sgi.eti.service.TipoDocumentoService;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,8 @@ import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequ
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.fasterxml.jackson.core.type.TypeReference;
 
 /**
  * TipoDocumentoControllerTest
@@ -53,7 +57,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
             .with(SecurityMockMvcRequestPostProcessors.csrf()))
         .andDo(SgiMockMvcResultHandlers.printOnError()).andExpect(MockMvcResultMatchers.status().isOk())
         .andExpect(MockMvcResultMatchers.jsonPath("id").value(1))
-        .andExpect(MockMvcResultMatchers.jsonPath("nombre").value("TipoDocumento1"));
+        .andExpect(MockMvcResultMatchers.jsonPath("nombre[0].value").value("TipoDocumento1"));
     ;
   }
 
@@ -153,7 +157,8 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
     // containing nombre='TipoDocumento031' to 'TipoDocumento040'
     for (int i = 0, j = 31; i < 10; i++, j++) {
       TipoDocumento tipoDocumento = actual.get(i);
-      Assertions.assertThat(tipoDocumento.getNombre()).isEqualTo("TipoDocumento" + String.format("%03d", j));
+      Assertions.assertThat(I18nHelper.getValueForLanguage(tipoDocumento.getNombre(), Language.ES))
+          .isEqualTo("TipoDocumento" + String.format("%03d", j));
     }
   }
 
@@ -165,7 +170,7 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
     for (int i = 1; i <= 100; i++) {
       tipoDocumentos.add(generarMockTipoDocumento(Long.valueOf(i), "TipoDocumento" + String.format("%03d", i)));
     }
-    String query = "nombre~TipoDocumento%,id:5";
+    String query = "nombre.value~TipoDocumento%,id:5";
 
     BDDMockito.given(tipoDocumentoService.findAll(ArgumentMatchers.<String>any(), ArgumentMatchers.<Pageable>any()))
         .willAnswer(new Answer<Page<TipoDocumento>>() {
@@ -173,7 +178,8 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
           public Page<TipoDocumento> answer(InvocationOnMock invocation) throws Throwable {
             List<TipoDocumento> content = new ArrayList<>();
             for (TipoDocumento tipoDocumento : tipoDocumentos) {
-              if (tipoDocumento.getNombre().startsWith("TipoDocumento") && tipoDocumento.getId().equals(5L)) {
+              if (I18nHelper.getValueForLanguage(tipoDocumento.getNombre(), Language.ES).startsWith("TipoDocumento")
+                  && tipoDocumento.getId().equals(5L)) {
                 content.add(tipoDocumento);
               }
             }
@@ -200,17 +206,14 @@ public class TipoDocumentoControllerTest extends BaseControllerTest {
    * @return el objeto tipoDocumento
    */
 
-  public TipoDocumento generarMockTipoDocumento(Long id, String nombre) {
+  private TipoDocumento generarMockTipoDocumento(Long id, String nombre) {
 
-    Formulario formulario = new Formulario();
-    formulario.setId(1L);
-    formulario.setNombre("M10");
-    formulario.setDescripcion("Formulario M10");
-
+    Set<TipoDocumentoNombre> nom = new HashSet<>();
+    nom.add(new TipoDocumentoNombre(Language.ES, nombre));
     TipoDocumento tipoDocumento = new TipoDocumento();
     tipoDocumento.setId(id);
-    tipoDocumento.setNombre(nombre);
-    tipoDocumento.setFormulario(formulario);
+    tipoDocumento.setNombre(nom);
+    tipoDocumento.setFormularioId(1L);
     tipoDocumento.setActivo(Boolean.TRUE);
 
     return tipoDocumento;

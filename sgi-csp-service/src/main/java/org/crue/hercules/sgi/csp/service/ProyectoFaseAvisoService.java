@@ -22,6 +22,8 @@ import org.crue.hercules.sgi.csp.repository.specification.ProyectoEquipoSpecific
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiComService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiSgpService;
 import org.crue.hercules.sgi.csp.service.sgi.SgiApiTpService;
+import org.crue.hercules.sgi.framework.problem.message.ProblemMessage;
+import org.crue.hercules.sgi.framework.spring.context.support.ApplicationContextSupport;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -35,6 +37,12 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProyectoFaseAvisoService {
+
+  private static final String MSG_KEY_ENTITY = "entity";
+  private static final String MSG_KEY_DATE = "date";
+  private static final String MSG_MODEL_FECHA_ENVIO = "org.crue.hercules.sgi.csp.model.FechaEnvio.message";
+  private static final String MSG_ENTITY_FECHA_ANTERIOR = "org.springframework.util.Assert.entity.fecha.anterior.message";
+  private static final String MSG_AVISO_ENVIADO = "avisoEnviado.message";
 
   private final SgiApiComService emailService;
   private final SgiApiTpService sgiApiTaskService;
@@ -87,8 +95,17 @@ public class ProyectoFaseAvisoService {
     }
 
     Instant now = Instant.now();
+
     Assert.isTrue(avisoInput.getFechaEnvio().isAfter(now),
-        "La fecha de envio debe ser anterior a " + now.toString());
+        () -> ProblemMessage.builder().key(
+            MSG_ENTITY_FECHA_ANTERIOR)
+            .parameter(
+                MSG_KEY_ENTITY, ApplicationContextSupport.getMessage(
+                    MSG_MODEL_FECHA_ENVIO))
+            .parameter(
+                MSG_KEY_DATE, now
+                    .toString())
+            .build());
 
     Long emailId = this.emailService.createProyectoFaseEmail(
         proyectoFaseId,
@@ -130,7 +147,8 @@ public class ProyectoFaseAvisoService {
       SgiApiInstantTaskOutput task = sgiApiTaskService
           .findInstantTaskById(Long.parseLong(proyectoFaseAviso.getTareaProgramadaRef()));
 
-      Assert.isTrue(task.getInstant().isAfter(Instant.now()), "El aviso ya se ha enviado.");
+      Assert.isTrue(task.getInstant().isAfter(Instant.now()), ApplicationContextSupport.getMessage(
+          MSG_AVISO_ENVIADO));
 
       sgiApiTaskService
           .deleteTask(Long.parseLong(proyectoFaseAviso.getTareaProgramadaRef()));

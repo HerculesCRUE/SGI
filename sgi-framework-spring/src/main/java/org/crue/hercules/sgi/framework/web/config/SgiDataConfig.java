@@ -79,7 +79,6 @@ public class SgiDataConfig {
     log.debug("databaseStartupValidator(DataSource dataSource, DatabaseDriver databaseDriver) - start");
     DatabaseStartupValidator dsv = new DatabaseStartupValidator();
     dsv.setDataSource(dataSource);
-    dsv.setValidationQuery(databaseDriver.getValidationQuery());
     log.debug("databaseStartupValidator(DataSource dataSource, DatabaseDriver databaseDriver) - end");
     return dsv;
   }

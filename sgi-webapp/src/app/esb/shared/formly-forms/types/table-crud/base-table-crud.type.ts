@@ -18,6 +18,7 @@ interface FieldsToRender {
 }
 
 const BTN_ADD_ENTITY = marker('btn.add.entity');
+const LABEL_HEADER_ACCIONES = marker('label.actions');
 
 export enum TYPE_RENDER_COLUMN {
   ONE_ELEMENT = 'oneElement',
@@ -31,7 +32,7 @@ export abstract class BaseTableCRUDTypeComponent extends FieldArrayType implemen
 
   @ViewChild('formTable', { static: true }) table: MatTable<any>;
 
-  HEADER_ACCIONES = 'Acciones';
+  HEADER_ACCIONES = LABEL_HEADER_ACCIONES;
 
   TYPE_RENDER_COLUMN = TYPE_RENDER_COLUMN;
 

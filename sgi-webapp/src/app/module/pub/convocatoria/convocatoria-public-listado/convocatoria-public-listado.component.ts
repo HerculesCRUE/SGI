@@ -177,4 +177,5 @@ export class ConvocatoriaPublicListadoComponent
     return { [CONVOCATORIA_PUBLIC_ID_KEY]: idConvocatoria };
   }
 
+  protected setupI18N(): void { }
 }

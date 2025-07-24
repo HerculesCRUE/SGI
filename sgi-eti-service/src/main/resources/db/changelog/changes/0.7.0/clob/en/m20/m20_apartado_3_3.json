@@ -1,0 +1,38 @@
+[
+  {
+    "key": "ap3_3",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "label": "3.3 Descriptive title"
+    },
+    "fieldGroup": [
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "This section is completed automatically based on the data entered in the field <b>Descriptive title</b> of the section <a href='#MODULE_PATH#/memorias/#MEMORIA_ID#/datos-generales' target='_blank'><b>General data</b></a> this <b>Report</b>, where it should describe the procedure and include the animal species. Access this menu item to make the necessary modifications.",
+        "templateOptions": {
+          "replaceTemplatePlaceholders": true
+        }
+      },
+      {
+        "template": "<p>Descriptive title of the experimental process.</p>"
+      },
+      {
+        "key": "tituloDescriptivo",
+        "type": "i18n-textarea",
+        "templateOptions": {
+          "placeholder": "Descriptive title",
+          "label": "Descriptive title",
+          "autosize": true,
+          "autosizeMinRows": "1",
+          "autosizeMaxRows": "10",
+          "disabled": true,
+          "expressionModelValue": "formState.memoria.titulo"
+        }
+      }
+    ]
+  }
+]

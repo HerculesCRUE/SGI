@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
@@ -65,7 +66,7 @@ public class CustomAutorizacionRepositoryImpl implements CustomAutorizacionRepos
 
     // Crete query
     CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-    CriteriaQuery<AutorizacionWithFirstEstado> cq = cb.createQuery(AutorizacionWithFirstEstado.class);
+    CriteriaQuery<Tuple> cq = cb.createQuery(Tuple.class);
 
     // Define FROM clause
     Root<Autorizacion> root = cq.from(Autorizacion.class);
@@ -83,18 +84,8 @@ public class CustomAutorizacionRepositoryImpl implements CustomAutorizacionRepos
       listPredicatesCount.add(specification.toPredicate(rootCount, countQuery, cb));
     }
 
-    cq.multiselect(root.get(Autorizacion_.id).alias(Autorizacion_.ID),
-        root.get(Autorizacion_.observaciones).alias(Autorizacion_.OBSERVACIONES),
-        root.get(Autorizacion_.responsableRef).alias(Autorizacion_.RESPONSABLE_REF),
-        root.get(Autorizacion_.tituloProyecto).alias(Autorizacion_.TITULO_PROYECTO),
-        root.get(Autorizacion_.entidadRef).alias(Autorizacion_.ENTIDAD_REF),
-        root.get(Autorizacion_.solicitanteRef).alias(Autorizacion_.SOLICITANTE_REF),
-        root.get(Autorizacion_.horasDedicacion).alias(Autorizacion_.HORAS_DEDICACION),
-        root.get(Autorizacion_.datosResponsable).alias(Autorizacion_.DATOS_RESPONSABLE),
-        root.get(Autorizacion_.datosEntidad).alias(Autorizacion_.DATOS_ENTIDAD),
-        root.get(Autorizacion_.datosConvocatoria).alias(Autorizacion_.DATOS_CONVOCATORIA),
-        root.get(Autorizacion_.convocatoriaId).alias(Autorizacion_.CONVOCATORIA_ID),
-        root.get(Autorizacion_.estado).get(EstadoAutorizacion_.id).alias("estadoId"),
+    cq.distinct(true).multiselect(
+        root,
         getFirstEstado(root, cb, cq).alias(FECHA_FIRST_ESTADO));
 
     String[] selectionNames = new String[] { FECHA_FIRST_ESTADO };
@@ -107,8 +98,29 @@ public class CustomAutorizacionRepositoryImpl implements CustomAutorizacionRepos
     cq.where(listPredicates.toArray(new Predicate[] {}));
     Long count = entityManager.createQuery(countQuery).getSingleResult();
 
-    TypedQuery<AutorizacionWithFirstEstado> query = entityManager.createQuery(cq);
-    List<AutorizacionWithFirstEstado> results = query.getResultList();
+    TypedQuery<Tuple> query = entityManager.createQuery(cq);
+
+    List<AutorizacionWithFirstEstado> results = query.getResultList().stream()
+        .map(tuple -> {
+          Autorizacion autorizacion = (Autorizacion) tuple.get(0);
+
+          return AutorizacionWithFirstEstado.builder()
+              .id(autorizacion.getId())
+              .observaciones(autorizacion.getObservaciones())
+              .responsableRef(autorizacion.getResponsableRef())
+              .tituloProyecto(autorizacion.getTituloProyecto())
+              .entidadRef(autorizacion.getEntidadRef())
+              .solicitanteRef(autorizacion.getSolicitanteRef())
+              .horasDedicacion(autorizacion.getHorasDedicacion())
+              .datosConvocatoria(autorizacion.getDatosConvocatoria())
+              .datosEntidad(autorizacion.getDatosEntidad())
+              .datosResponsable(autorizacion.getDatosResponsable())
+              .convocatoriaId(autorizacion.getConvocatoriaId())
+              .estadoId(autorizacion.getEstado().getId())
+              .fechaFirstEstado((Instant) tuple.get(FECHA_FIRST_ESTADO))
+              .build();
+        }).toList();
+
     Page<AutorizacionWithFirstEstado> returnValue = new PageImpl<>(results, pageable, count);
 
     log.debug(
@@ -117,7 +129,7 @@ public class CustomAutorizacionRepositoryImpl implements CustomAutorizacionRepos
   }
 
   private Subquery<Instant> getFirstEstado(Root<Autorizacion> root, CriteriaBuilder cb,
-      CriteriaQuery<AutorizacionWithFirstEstado> cq) {
+      CriteriaQuery<Tuple> cq) {
 
     log.debug(
         "getFirstEstado(Root<Autorizacion> root, CriteriaBuilder cb,CriteriaQuery<AutorizacionWithFirstEstado> cq) - start");

@@ -88,10 +88,10 @@
       matSortDisableClear>
 
       <!-- Comite Column -->
-      <ng-container matColumnDef="memoria.comite.comite">
+      <ng-container matColumnDef="memoria.comite.codigo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'label.eti.comite' | translate}}
         </th>
-        <td mat-cell *matCellDef="let evaluacion"> {{evaluacion.memoria.comite.comite}} </td>
+        <td mat-cell *matCellDef="let evaluacion"> {{evaluacion.memoria.comite.codigo}} </td>
       </ng-container>
 
       <!-- Tipo de evaluación Column-->
@@ -99,16 +99,18 @@
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'eti.gestion-seguimiento.tipo-evaluacion' | translate}}
         </th>
-        <td mat-cell *matCellDef="let evaluacion">{{evaluacion.tipoEvaluacion.nombre | translate}}
+        <td mat-cell *matCellDef="let evaluacion">
+          {{TIPO_EVALUACION_MAP.get(evaluacion.tipoEvaluacion?.id) | translate}}
         </td>
       </ng-container>
 
       <!-- Tipo de Memoria Column-->
-      <ng-container matColumnDef="memoria.tipoMemoria.nombre">
+      <ng-container matColumnDef="memoria.tipo">
         <th mat-header-cell *matHeaderCellDef mat-sort-header>
           {{'eti.gestion-seguimiento.tipo-memoria' | translate}}
         </th>
-        <td mat-cell *matCellDef="let evaluacion">{{evaluacion.memoria?.tipoMemoria?.nombre}}
+        <td mat-cell *matCellDef="let evaluacion">
+          {{MEMORIA_TIPO_MAP.get(evaluacion.memoria?.tipo) | translate}}
         </td>
       </ng-container>
 
@@ -133,7 +135,8 @@
       <ng-container matColumnDef="solicitante">
         <th mat-header-cell *matHeaderCellDef>
           {{'eti.solicitante' | translate}} </th>
-        <td mat-cell *matCellDef="let evaluacion">
+        <td mat-cell *matCellDef="let evaluacion" sgpNotFoundError
+          [model]="evaluacion.memoria.peticionEvaluacion.solicitante">
           {{evaluacion.memoria.peticionEvaluacion.solicitante?.nombre}}
           {{evaluacion.memoria.peticionEvaluacion.solicitante?.apellidos}}
         </td>
@@ -143,7 +146,7 @@
       <ng-container matColumnDef="dictamen.nombre">
         <th mat-header-cell *matHeaderCellDef mat-sort-header> {{'eti.dictamen' | translate}}
         </th>
-        <td mat-cell *matCellDef="let evaluacion"> {{evaluacion.dictamen?.nombre}} </td>
+        <td mat-cell *matCellDef="let evaluacion"> {{DICTAMEN_MAP.get(evaluacion.dictamen?.id) | translate}} </td>
       </ng-container>
 
       <!-- Version Column -->

@@ -31,4 +31,13 @@ public interface SolicitudProyectoPresupuestoRepository extends JpaRepository<So
    */
   int countBySolicitudProyectoSolicitudId(Long solicitudId);
 
+  /**
+   * Comprueba si hay {@link SolicitudProyectoPresupuesto} asociados a la
+   * {@link Solicitud}.
+   * 
+   * @param solicitudId Identificador de {@link Solicitud}
+   * @return <code>true</code> si existen, <code>false</code> en otro caso
+   */
+  boolean existsBySolicitudProyectoSolicitudId(Long solicitudId);
+
 }

@@ -1,9 +1,13 @@
 package org.crue.hercules.sgi.csp.model;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
@@ -15,10 +19,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -69,9 +73,11 @@ public class ConvocatoriaConceptoGasto extends BaseEntity {
   private ConceptoGasto conceptoGasto;
 
   /** Observaciones */
-  @Column(name = "observaciones", length = 250, nullable = true)
-  @Size(max = 250)
-  private String observaciones;
+  @ElementCollection(fetch = FetchType.EAGER)
+  @CollectionTable(name = "convocatoria_concepto_gasto_observaciones", joinColumns = @JoinColumn(name = "convocatoria_concepto_gasto_id"))
+  @Valid
+  @Builder.Default
+  private Set<ConvocatoriaConceptoGastoObservaciones> observaciones = new HashSet<>();
 
   /** Importe máximo */
   @Column(name = "importe_maximo", nullable = true)

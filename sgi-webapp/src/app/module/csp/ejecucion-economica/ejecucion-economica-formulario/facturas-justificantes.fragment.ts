@@ -1,4 +1,6 @@
 import { FormControl, FormGroup } from '@angular/forms';
+import { marker } from '@biesbjerg/ngx-translate-extract-marker';
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { IConceptoGasto } from '@core/models/csp/concepto-gasto';
 import { CardinalidadRelacionSgiSge, IConfiguracion, ValidacionClasificacionGastos } from '@core/models/csp/configuracion';
 import { IGastoProyecto } from '@core/models/csp/gasto-proyecto';
@@ -13,12 +15,17 @@ import { ProyectoAnualidadService } from '@core/services/csp/proyecto-anualidad/
 import { ProyectoConceptoGastoCodigoEcService } from '@core/services/csp/proyecto-concepto-gasto-codigo-ec.service';
 import { ProyectoConceptoGastoService } from '@core/services/csp/proyecto-concepto-gasto.service';
 import { ProyectoService } from '@core/services/csp/proyecto.service';
+import { LanguageService } from '@core/services/language.service';
 import { LuxonUtils } from '@core/utils/luxon-utils';
+import { TranslateService } from '@ngx-translate/core';
 import { RSQLSgiRestFilter, SgiRestFilterOperator, SgiRestFindOptions } from '@sgi/framework/http';
 import { Observable, from, of } from 'rxjs';
 import { combineAll, concatMap, filter, map, mergeMap, switchMap, takeLast, tap, toArray } from 'rxjs/operators';
 import { IRelacionEjecucionEconomicaWithResponsables } from '../ejecucion-economica.action.service';
 import { DesgloseEconomicoFragment, IColumnDefinition, IDesgloseEconomicoExportData, IRowConfig, RowTreeDesglose } from './desglose-economico.fragment';
+
+const CONCEPTO_GASTO_SIN_CLASIFICAR = marker('csp.proyecto-consulta-presupuesto.concepto-gasto.sin-clasificar');
+const PROYECTO_SIN_CLASIFICAR = marker('csp.proyecto.titulo.sin-clasificar');
 
 export interface IDesglose extends IDatoEconomico {
   proyecto: IProyecto;
@@ -73,14 +80,16 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
     key: number,
     protected proyectoSge: IProyectoSge,
     protected relaciones: IRelacionEjecucionEconomicaWithResponsables[],
+    protected readonly languageService: LanguageService,
     protected proyectoService: ProyectoService,
     proyectoAnualidadService: ProyectoAnualidadService,
     protected gastoProyectoService: GastoProyectoService,
     private proyectoConceptoGastoCodigoEcService: ProyectoConceptoGastoCodigoEcService,
     private proyectoConceptoGastoService: ProyectoConceptoGastoService,
     private configuracion: IConfiguracion,
+    private readonly translate: TranslateService
   ) {
-    super(key, proyectoSge, relaciones, proyectoService, proyectoAnualidadService, configuracion);
+    super(key, proyectoSge, relaciones, languageService, proyectoService, proyectoAnualidadService, configuracion);
     this.setComplete(true);
   }
 
@@ -447,8 +456,8 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
       return 0;
     }
 
-    const tituloProyectoItemA = this.getItemLevel(itemA, 0)?.item?.proyecto?.titulo ?? '';
-    const tituloProyectoItemB = this.getItemLevel(itemB, 0)?.item?.proyecto?.titulo ?? '';
+    const tituloProyectoItemA = this.languageService.getFieldValue(this.getItemLevel(itemA, 0)?.item?.proyecto?.titulo);
+    const tituloProyectoItemB = this.languageService.getFieldValue(this.getItemLevel(itemB, 0)?.item?.proyecto?.titulo);
     return tituloProyectoItemA.localeCompare(tituloProyectoItemB);
   }
 
@@ -457,8 +466,8 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
       return 0;
     }
 
-    const tituloProyectoItemA = itemA?.proyecto?.titulo ?? '';
-    const tituloProyectoItemB = itemB?.proyecto?.titulo ?? '';
+    const tituloProyectoItemA = this.languageService.getFieldValue(itemA?.proyecto?.titulo);
+    const tituloProyectoItemB = this.languageService.getFieldValue(itemB?.proyecto?.titulo);
     return tituloProyectoItemA.localeCompare(tituloProyectoItemB);
   }
 
@@ -467,14 +476,14 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
       return 0;
     }
 
-    const nombreConceptoGastoItemA = this.getItemLevel(itemA, 1)?.item?.conceptoGasto?.nombre ?? '';
-    const nombreConceptoGastoItemB = this.getItemLevel(itemB, 1)?.item?.conceptoGasto?.nombre ?? '';
+    const nombreConceptoGastoItemA = this.getItemLevel(itemA, 1)?.item?.conceptoGasto?.nombre ? this.languageService.getFieldValue(this.getItemLevel(itemA, 1)?.item?.conceptoGasto?.nombre) : '';
+    const nombreConceptoGastoItemB = this.getItemLevel(itemB, 1)?.item?.conceptoGasto?.nombre ? this.languageService.getFieldValue(this.getItemLevel(itemB, 1)?.item?.conceptoGasto?.nombre) : '';
     return nombreConceptoGastoItemA.localeCompare(nombreConceptoGastoItemB);
   }
 
   protected compareConceptoGastoNombreDesglose(itemA: IDesglose, itemB: IDesglose): number {
-    const nombreConceptoGastoItemA = itemA?.conceptoGasto?.nombre ?? '';
-    const nombreConceptoGastoItemB = itemB?.conceptoGasto?.nombre ?? '';
+    const nombreConceptoGastoItemA = itemA?.conceptoGasto?.nombre ? this.languageService.getFieldValue(itemA?.conceptoGasto?.nombre) : '';
+    const nombreConceptoGastoItemB = itemB?.conceptoGasto?.nombre ? this.languageService.getFieldValue(itemB?.conceptoGasto?.nombre) : '';
     return nombreConceptoGastoItemA.localeCompare(nombreConceptoGastoItemB);
   }
 
@@ -553,8 +562,8 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
   }
 
   protected compareFechaDevengoDesglose(itemA: IDesglose, itemB: IDesglose): number {
-    const fechaDevengoInMillisItemA = itemA?.fechaDevengo.toMillis() ?? 0;
-    const fechaDevengoInMillisItemB = itemB?.fechaDevengo.toMillis() ?? 0;
+    const fechaDevengoInMillisItemA = itemA?.fechaDevengo?.toMillis() ?? 0;
+    const fechaDevengoInMillisItemB = itemB?.fechaDevengo?.toMillis() ?? 0;
     return fechaDevengoInMillisItemB - fechaDevengoInMillisItemA;
   }
 
@@ -626,8 +635,12 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
           datoEconomico.conceptoGasto = gastoProyecto.conceptoGasto;
         }
         else {
-          datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
-          datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
+          datoEconomico.proyecto = {
+            titulo: this.getTituloProyectoSinClasificar()
+          } as IProyecto;
+          datoEconomico.conceptoGasto = {
+            nombre: this.getNombreConceptoGastoSinClasificar()
+          } as IConceptoGasto;
         }
         return datoEconomico;
       }),
@@ -647,8 +660,12 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
    */
   private fillDatoEconomicoClasificacionWithElegibilidad(datoEconomico: IDesglose): Observable<IDesglose> {
     if (!datoEconomico.codigoEconomico?.id) {
-      datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
-      datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
+      datoEconomico.proyecto = {
+        titulo: this.getTituloProyectoSinClasificar()
+      } as IProyecto;
+      datoEconomico.conceptoGasto = {
+        nombre: this.getNombreConceptoGastoSinClasificar()
+      } as IConceptoGasto;
       return of(datoEconomico);
     }
 
@@ -694,8 +711,12 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
           datoEconomico.conceptoGasto = proyectoConceptoGasto.conceptoGasto;
           return of(datoEconomico);
         } else {
-          datoEconomico.proyecto = { titulo: 'Sin clasificar' } as IProyecto;
-          datoEconomico.conceptoGasto = { nombre: 'Sin clasificar' } as IConceptoGasto;
+          datoEconomico.proyecto = {
+            titulo: this.getTituloProyectoSinClasificar()
+          } as IProyecto;
+          datoEconomico.conceptoGasto = {
+            nombre: this.getNombreConceptoGastoSinClasificar()
+          } as IConceptoGasto;
           return of(datoEconomico);
         }
       })
@@ -750,6 +771,34 @@ export abstract class FacturasJustificantesFragment extends DesgloseEconomicoFra
 
   private isSaveOrUpdateComplete(): boolean {
     return this.updatedGastosProyectos.size === 0;
+  }
+
+  /**
+   * Genera el titulo sin clasificar para el proyecto en el idioma actual
+   * 
+   * @returns el titulo sin clasificar en el idioma actual
+   */
+  private getTituloProyectoSinClasificar(): I18nFieldValue[] {
+    return [
+      {
+        lang: this.languageService.getLanguage(),
+        value: this.translate.instant(PROYECTO_SIN_CLASIFICAR)
+      }
+    ];
+  }
+
+  /**
+   * Genera el nombre sin clasificar para el concepto gasto en el idioma actual
+   * 
+   * @returns el nombre sin clasificar en el idioma actual
+   */
+  private getNombreConceptoGastoSinClasificar(): I18nFieldValue[] {
+    return [
+      {
+        lang: this.languageService.getLanguage(),
+        value: this.translate.instant(CONCEPTO_GASTO_SIN_CLASIFICAR)
+      }
+    ];
   }
 
 }

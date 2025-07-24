@@ -1,5 +1,7 @@
+import { I18nFieldValueRequest } from "@core/i18n/i18n-field-request";
+
 export interface INotificacionProyectoExternoCVNRequest {
-  titulo: string;
+  titulo: I18nFieldValueRequest[];
   autorizacionId: number;
   proyectoId: number;
   ambitoGeografico: string;

@@ -32,4 +32,6 @@ export class EvaluacionDocumentacionComponent extends FragmentComponent implemen
     this.actionService.getRol() === Rol.EVALUADOR ? this.documentacion.fichaEvaluador = false : this.documentacion.fichaEvaluador = true;
     this.documentacion.ngAfterViewInit();
   }
+
+  protected setupI18N(): void { }
 }

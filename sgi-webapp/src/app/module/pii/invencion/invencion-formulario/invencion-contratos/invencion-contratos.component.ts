@@ -11,6 +11,7 @@ import { ISectorLicenciado } from '@core/models/pii/sector-licenciado';
 import { IEmpresa } from '@core/models/sgemp/empresa';
 import { IPersona } from '@core/models/sgp/persona';
 import { DialogService } from '@core/services/dialog.service';
+import { LanguageService } from '@core/services/language.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
 import { TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -24,6 +25,7 @@ const SECTOR_LICENCIADO_KEY = marker('pii.invencion-contrato.sector-licenciado')
 const MSG_PENDING_CHANGES = marker('msg.pii.sector-licenciado.unsaved');
 const MSG_BUTTON_CONTINUE = marker('btn.continue');
 const MSG_BUTTON_CANCEL = marker('btn.cancel');
+const SGEMP_NOT_FOUND = marker("error.sgemp.not-found");
 
 @Component({
   selector: 'sgi-invencion-contratos',
@@ -60,7 +62,7 @@ export class InvencionContratosComponent extends FragmentComponent implements On
           case 'pais':
             return wrapper.value.pais.nombre;
           case 'sector':
-            return wrapper.value.sectorAplicacion.nombre;
+            return this.languageService.getFieldValue(wrapper.value.sectorAplicacion.nombre);
           case 'fechaInicioLicencia':
             return wrapper.value.fechaInicioLicencia;
           case 'fechaFinLicencia':
@@ -83,14 +85,15 @@ export class InvencionContratosComponent extends FragmentComponent implements On
     private readonly translate: TranslateService,
     private readonly dialogService: DialogService,
     private readonly matDialog: MatDialog,
+    private readonly languageService: LanguageService
   ) {
-    super(actionService.FRAGMENT.CONTRATOS, actionService);
+    super(actionService.FRAGMENT.CONTRATOS, actionService, translate);
     this.formPart = this.fragment as InvencionContratosFragment;
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
     this.initContratosAsociadosTable();
     this.initSectoresLicenciadosTable();
     this.initSelectedContratoAsociado();
@@ -105,9 +108,10 @@ export class InvencionContratosComponent extends FragmentComponent implements On
   }
 
   getEntidadesFinanciadorasTooltip(entidadesFinanciadoras: IEmpresa[]): string {
-    return entidadesFinanciadoras.reduce((prev, current, index) =>
-      index === 0 ? prev + current.nombre : prev + ', ' + current.nombre
-      , '');
+    return entidadesFinanciadoras.reduce((prev, current, index) => {
+      const nombreEntidad = current.nombre ?? this.translate.instant(SGEMP_NOT_FOUND, { ids: current?.id, ...MSG_PARAMS.CARDINALIRY.SINGULAR });
+      return index === 0 ? prev + nombreEntidad : prev + ', ' + nombreEntidad;
+    }, '');
   }
 
   getInventorResponsableCompleteName(investigadorPrincipal: IPersona): string {
@@ -188,7 +192,7 @@ export class InvencionContratosComponent extends FragmentComponent implements On
           case 'fecha':
             return contratosAsociado.contrato?.fechaInicio;
           case 'nombre':
-            return contratosAsociado.contrato?.titulo;
+            return this.languageService.getFieldValue(contratosAsociado.contrato?.titulo);
           case 'entidadFinanciadora':
             return this.getFirstEntidadFinanciadora(contratosAsociado.entidadesFinanciadoras);
           case 'investigadorResponsable':
@@ -218,7 +222,7 @@ export class InvencionContratosComponent extends FragmentComponent implements On
     );
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
     this.translate.get(
       SECTOR_LICENCIADO_KEY,
       MSG_PARAMS.CARDINALIRY.SINGULAR

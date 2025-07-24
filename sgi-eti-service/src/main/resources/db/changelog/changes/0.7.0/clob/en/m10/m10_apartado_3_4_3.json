@@ -1,0 +1,32 @@
+[
+  {
+    "key": "ap3_4_3",
+    "wrappers": [
+      "title-div"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "3.4.3 Description of interventions or tests"
+    },
+    "hideExpression": "!formState.mainModel.ap3_4.intervencionesSeresHumanosRadio || formState.mainModel.ap3_4.intervencionesSeresHumanosRadio === 'no'",
+    "fieldGroup": [
+      {
+        "template": "<p>Please describe all the interventions or tests to which the study subject will be subjected to obtain their samples or data, specifying the place, person in charge of performing them, duration and frequency.</p>"
+      },
+      {
+        "key": "descripcionIntervenciones",
+        "type": "i18n-ckeditor",
+        "templateOptions": {
+          "name": "Interventions or tests",
+          "required": true
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: Please remember that the participant has the right to know all the interventions or tests that are going to be performed or that affect their participation and should be informed of this in the consent document (section '4.4.4 Information about the interventions or tests'). .</p><p>For more information on the minimum information required, consult <a href='http://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a15' target='_blank'>article 15</a> of LIB 14/2007.</p><p><b>All documents (questionnaires, interviews, surveys, etc.) that are going to be used as a data collection instrument should be added to section '5.7 Additional documentation'.</b></p>"
+      }
+    ]
+  }
+]

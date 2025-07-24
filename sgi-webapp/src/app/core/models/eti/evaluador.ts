@@ -1,3 +1,4 @@
+import { I18nFieldValue } from '@core/i18n/i18n-field';
 import { DateTime } from 'luxon';
 import { IPersona } from '../sgp/persona';
 import { CargoComite } from './cargo-comite';
@@ -11,7 +12,7 @@ export interface IEvaluador {
   /** Cargo comité */
   cargoComite: CargoComite;
   /** Resumen */
-  resumen: string;
+  resumen: I18nFieldValue[];
   /** Fecha Alta. */
   fechaAlta: DateTime;
   /** Fecha Baja. */

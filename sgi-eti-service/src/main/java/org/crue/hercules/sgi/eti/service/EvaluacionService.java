@@ -225,7 +225,7 @@ public interface EvaluacionService {
   DocumentoOutput generarDocumentoEvaluacion(Long idEvaluacion);
 
   /**
-   * Obtiene el documento de la ficha del Evaluador
+   * Obtiene el documento de la ficha del Evaluador en el idioma solicitado
    * 
    * @param idEvaluacion id {@link Evaluacion}
    * @return El documento del informe de la ficha del Evaluador

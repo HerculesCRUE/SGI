@@ -3,8 +3,11 @@ package org.crue.hercules.sgi.csp.controller;
 import static org.mockito.ArgumentMatchers.anyLong;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.crue.hercules.sgi.csp.converter.ProyectoFaseConverter;
 import org.crue.hercules.sgi.csp.dto.ProyectoFaseAvisoInput;
@@ -14,10 +17,13 @@ import org.crue.hercules.sgi.csp.dto.ProyectoFaseOutput;
 import org.crue.hercules.sgi.csp.exceptions.ProyectoFaseNotFoundException;
 import org.crue.hercules.sgi.csp.model.ProyectoFase;
 import org.crue.hercules.sgi.csp.model.ProyectoFaseAviso;
+import org.crue.hercules.sgi.csp.model.ProyectoFaseObservaciones;
 import org.crue.hercules.sgi.csp.model.TipoFase;
 import org.crue.hercules.sgi.csp.service.ProyectoFaseAvisoService;
 import org.crue.hercules.sgi.csp.service.ProyectoFaseService;
 import org.crue.hercules.sgi.csp.service.TipoFaseService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.crue.hercules.sgi.framework.test.web.servlet.result.SgiMockMvcResultHandlers;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
@@ -84,7 +90,7 @@ class ProyectoFaseControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("proyectoId").value(proyectoFase.getProyectoId()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaInicio").value("2020-10-19T00:00:00Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaFin").value("2020-10-20T23:59:59Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones")
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
             .value("observaciones-proyecto-fase-" + String.format("%03d", proyectoFase.getId())))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoFase.id").value(proyectoFase.getTipoFase().getId()));
   }
@@ -134,7 +140,7 @@ class ProyectoFaseControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("proyectoId").value(proyectoFaseExistente.getProyectoId()))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaInicio").value("2020-10-19T00:00:00Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaFin").value("2020-10-20T23:59:59Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones")
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
             .value("observaciones-proyecto-fase-" + String.format("%03d", proyectoFase.getId())))
         .andExpect(MockMvcResultMatchers.jsonPath("tipoFase.id").value(proyectoFase.getTipoFase().getId()));
   }
@@ -219,7 +225,7 @@ class ProyectoFaseControllerTest extends BaseControllerTest {
         .andExpect(MockMvcResultMatchers.jsonPath("proyectoId").value(1L))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaInicio").value("2020-10-19T00:00:00Z"))
         .andExpect(MockMvcResultMatchers.jsonPath("fechaFin").value("2020-10-20T23:59:59Z"))
-        .andExpect(MockMvcResultMatchers.jsonPath("observaciones")
+        .andExpect(MockMvcResultMatchers.jsonPath("observaciones[0].value")
             .value("observaciones-proyecto-fase-" + String.format("%03d", id)));
 
   }
@@ -255,12 +261,16 @@ class ProyectoFaseControllerTest extends BaseControllerTest {
     tipoFase.setId(id == null ? 1 : id);
     tipoFase.setActivo(true);
 
+    Set<ProyectoFaseObservaciones> proyectoFaseObservaciones = new HashSet<>();
+    proyectoFaseObservaciones
+        .add(new ProyectoFaseObservaciones(Language.ES, "observaciones-proyecto-fase-" + String.format("%03d", id)));
+
     ProyectoFase proyectoFase = new ProyectoFase();
     proyectoFase.setId(id);
     proyectoFase.setProyectoId(id == null ? 1 : id);
     proyectoFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     proyectoFase.setFechaFin(Instant.parse("2020-10-20T23:59:59Z"));
-    proyectoFase.setObservaciones("observaciones-proyecto-fase-" + String.format("%03d", id));
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
     proyectoFase.setProyectoFaseAviso1(buildMockProyectoFaseAviso(1L, id));
     proyectoFase.setProyectoFaseAviso2(buildMockProyectoFaseAviso(2L, id));
     proyectoFase.setTipoFase(tipoFase);
@@ -273,11 +283,15 @@ class ProyectoFaseControllerTest extends BaseControllerTest {
     tipoFase.setId(id == null ? 1 : id);
     tipoFase.setActivo(true);
 
+    List<I18nFieldValueDto> proyectoFaseObservaciones = new ArrayList<I18nFieldValueDto>();
+    proyectoFaseObservaciones
+        .add(new I18nFieldValueDto(Language.ES, "observaciones-proyecto-fase-" + String.format("%03d", id)));
+
     ProyectoFaseInput proyectoFase = new ProyectoFaseInput();
     proyectoFase.setProyectoId(id == null ? 1 : id);
     proyectoFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     proyectoFase.setFechaFin(Instant.parse("2020-10-20T23:59:59Z"));
-    proyectoFase.setObservaciones("observaciones-proyecto-fase-" + String.format("%03d", id));
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
     proyectoFase.setAviso1(buildMockProyectoFaseAvisoInput(id));
     proyectoFase.setAviso2(buildMockProyectoFaseAvisoInput(id));
     proyectoFase.setTipoFaseId(tipoFase.getId());
@@ -290,12 +304,16 @@ class ProyectoFaseControllerTest extends BaseControllerTest {
     tipoFase.setId(id == null ? 1 : id);
     tipoFase.setActivo(true);
 
+    Set<ProyectoFaseObservaciones> proyectoFaseObservaciones = new HashSet<>();
+    proyectoFaseObservaciones
+        .add(new ProyectoFaseObservaciones(Language.ES, "observaciones-proyecto-fase-" + String.format("%03d", id)));
+
     ProyectoFaseOutput proyectoFase = new ProyectoFaseOutput();
     proyectoFase.setId(id);
     proyectoFase.setProyectoId(id == null ? 1 : id);
     proyectoFase.setFechaInicio(Instant.parse("2020-10-19T00:00:00Z"));
     proyectoFase.setFechaFin(Instant.parse("2020-10-20T23:59:59Z"));
-    proyectoFase.setObservaciones("observaciones-proyecto-fase-" + String.format("%03d", id));
+    proyectoFase.setObservaciones(proyectoFaseObservaciones);
     proyectoFase.setAviso1(buildMockProyectoFaseAvisoOutput(1L, id));
     proyectoFase.setAviso2(buildMockProyectoFaseAvisoOutput(2L, id));
     proyectoFase.setTipoFase(tipoFase);

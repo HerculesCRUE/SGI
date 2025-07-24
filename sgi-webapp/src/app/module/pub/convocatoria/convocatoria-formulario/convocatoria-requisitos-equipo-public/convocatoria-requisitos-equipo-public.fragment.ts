@@ -7,6 +7,7 @@ import { ConvocatoriaRequisitoEquipoPublicService } from '@core/services/csp/con
 import { CategoriaProfesionalPublicService } from '@core/services/sgp/categoria-profesional-public.service';
 import { NivelAcademicoPublicService } from '@core/services/sgp/nivel-academico-public.service';
 import { StatusWrapper } from '@core/utils/status-wrapper';
+import { I18nValidators } from '@core/validators/i18n-validator';
 import { BehaviorSubject, Observable, of, zip } from 'rxjs';
 import { map, switchMap, tap } from 'rxjs/operators';
 
@@ -118,7 +119,7 @@ export class ConvocatoriaRequisitosEquipoPublicFragment extends FormFragment<ICo
         [Validators.min(0), Validators.max(9999)])],
       numMaximoNoCompetitivosActivos: ['', Validators.compose(
         [Validators.min(0), Validators.max(9999)])],
-      otrosRequisitos: ['']
+      otrosRequisitos: [[], I18nValidators.maxLength(2000)]
     });
 
     form.disable();

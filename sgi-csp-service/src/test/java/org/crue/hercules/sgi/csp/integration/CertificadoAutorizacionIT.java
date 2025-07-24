@@ -1,7 +1,9 @@
 package org.crue.hercules.sgi.csp.integration;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.assertj.core.api.Assertions;
 import org.crue.hercules.sgi.csp.controller.CertificadoAutorizacionController;
@@ -9,6 +11,9 @@ import org.crue.hercules.sgi.csp.dto.CertificadoAutorizacionInput;
 import org.crue.hercules.sgi.csp.dto.CertificadoAutorizacionOutput;
 import org.crue.hercules.sgi.csp.model.CertificadoAutorizacion;
 import org.crue.hercules.sgi.csp.service.CertificadoAutorizacionComService;
+import org.crue.hercules.sgi.framework.i18n.I18nFieldValueDto;
+import org.crue.hercules.sgi.framework.i18n.I18nHelper;
+import org.crue.hercules.sgi.framework.i18n.Language;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.mockito.BDDMockito;
@@ -32,7 +37,6 @@ class CertificadoAutorizacionIT extends BaseIT {
   @MockBean
   private CertificadoAutorizacionComService certificadoAutorizacionComService;
 
-
   private HttpEntity<CertificadoAutorizacionInput> buildRequest(HttpHeaders headers,
       CertificadoAutorizacionInput entity, String... roles) throws Exception {
     headers = (headers != null ? headers : new HttpHeaders());
@@ -41,9 +45,7 @@ class CertificadoAutorizacionIT extends BaseIT {
     headers.set("Authorization", String.format("bearer %s",
         tokenBuilder.buildToken("user", roles)));
 
-    HttpEntity<CertificadoAutorizacionInput> request = new HttpEntity<>(entity, headers);
-    return request;
-
+    return new HttpEntity<>(entity, headers);
   }
 
   @Sql(executionPhase = ExecutionPhase.BEFORE_TEST_METHOD, scripts = {
@@ -62,7 +64,9 @@ class CertificadoAutorizacionIT extends BaseIT {
     String roles = "CSP-AUT-INV-ER";
     CertificadoAutorizacionInput toCreate = buildMockCertificadoAutorizacionInput(1L, "DOC-0001", "cert-aut-new");
 
-    BDDMockito.willDoNothing().given(this.certificadoAutorizacionComService).enviarComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(ArgumentMatchers.<CertificadoAutorizacion>any());
+    BDDMockito.willDoNothing().given(this.certificadoAutorizacionComService)
+        .enviarComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(
+            ArgumentMatchers.<CertificadoAutorizacion>any());
 
     final ResponseEntity<CertificadoAutorizacionOutput> response = restTemplate.exchange(CONTROLLER_BASE_PATH,
         HttpMethod.POST, buildRequest(null, toCreate, roles), CertificadoAutorizacionOutput.class);
@@ -73,8 +77,10 @@ class CertificadoAutorizacionIT extends BaseIT {
     final CertificadoAutorizacionOutput created = response.getBody();
     Assertions.assertThat(created.getId()).isNotNull();
     Assertions.assertThat(created.getAutorizacionId()).isEqualTo(toCreate.getAutorizacionId());
-    Assertions.assertThat(created.getNombre()).isEqualTo(toCreate.getNombre());
-    Assertions.assertThat(created.getDocumentoRef()).isEqualTo(toCreate.getDocumentoRef());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getNombre(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(toCreate.getNombre(), Language.ES));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(created.getDocumentoRef(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(toCreate.getDocumentoRef(), Language.ES));
     Assertions.assertThat(created.getVisible()).isEqualTo(toCreate.getVisible());
   }
 
@@ -95,9 +101,11 @@ class CertificadoAutorizacionIT extends BaseIT {
     String roles = "CSP-AUT-E";
     CertificadoAutorizacionInput toUpdate = buildMockCertificadoAutorizacionInput(1L, "DOC-0001", "cert-aut-new");
     Long certificadoAutorizacionId = 2L;
-    
-    BDDMockito.willDoNothing().given(this.certificadoAutorizacionComService).enviarComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(ArgumentMatchers.<CertificadoAutorizacion>any());
-    
+
+    BDDMockito.willDoNothing().given(this.certificadoAutorizacionComService)
+        .enviarComunicadoAddModificarCertificadoAutorizacionParticipacionProyectoExterno(
+            ArgumentMatchers.<CertificadoAutorizacion>any());
+
     URI uri = UriComponentsBuilder.fromUriString(CONTROLLER_BASE_PATH + PATH_PARAMETER_ID).buildAndExpand(
         certificadoAutorizacionId).toUri();
 
@@ -110,8 +118,10 @@ class CertificadoAutorizacionIT extends BaseIT {
     final CertificadoAutorizacionOutput updated = response.getBody();
     Assertions.assertThat(updated.getId()).isNotNull();
     Assertions.assertThat(updated.getAutorizacionId()).isEqualTo(toUpdate.getAutorizacionId());
-    Assertions.assertThat(updated.getNombre()).isEqualTo(toUpdate.getNombre());
-    Assertions.assertThat(updated.getDocumentoRef()).isEqualTo(toUpdate.getDocumentoRef());
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getNombre(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(toUpdate.getNombre(), Language.ES));
+    Assertions.assertThat(I18nHelper.getValueForLanguage(updated.getDocumentoRef(), Language.ES))
+        .isEqualTo(I18nHelper.getValueForLanguage(toUpdate.getDocumentoRef(), Language.ES));
     Assertions.assertThat(updated.getVisible()).isEqualTo(toUpdate.getVisible());
   }
 
@@ -143,11 +153,18 @@ class CertificadoAutorizacionIT extends BaseIT {
 
   private CertificadoAutorizacionInput buildMockCertificadoAutorizacionInput(Long autorizacionId, String documentoRef,
       String nombre) {
+
+    List<I18nFieldValueDto> nombreCertificadoAutorizacion = new ArrayList<>();
+    nombreCertificadoAutorizacion.add(new I18nFieldValueDto(Language.ES, nombre));
+
+    List<I18nFieldValueDto> documentoRefCertificadoAutorizacion = new ArrayList<>();
+    documentoRefCertificadoAutorizacion.add(new I18nFieldValueDto(Language.ES, documentoRef));
+
     return CertificadoAutorizacionInput.builder()
-        .documentoRef(documentoRef)
+        .documentoRef(documentoRefCertificadoAutorizacion)
         .autorizacionId(autorizacionId)
         .visible(Boolean.TRUE)
-        .nombre(nombre)
+        .nombre(nombreCertificadoAutorizacion)
         .build();
   }
 }

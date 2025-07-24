@@ -1,0 +1,47 @@
+[
+  {
+    "key": "ap5_5",
+    "wrappers": [
+      "expansion-panel"
+    ],
+    "templateOptions": {
+      "expressionLock": "formState.memoria.tipo === 'RATIFICACION'",
+      "label": "5.5 Report of the Guarantees Commission"
+    },
+    "fieldGroup": [
+      {
+        "template": "Does your project require a prior favourable report from the Guarantees Commission?"
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Research projects that deal in whole or in part with the following subjects will require a prior favourable report from the Guarantees Commission for the Donation and Use of Human Cells and Tissues:</p><ul><li>Research with human pre-embryos for the derivation of cell lines, for embryological research and for other research uses, except those related to the development and application of assisted reproduction techniques.</li><li>Research with human embryonic stem cells.</li><li>The activation of oocytes by nuclear transfer for use for therapeutic or research purposes.</li><li>Any other technique that, using all or part of biological samples of human origin, can lead to the obtaining of stem cells.</li><li>Research with embryonic cells or tissues obtained by any of the procedures indicated in the <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a33' target='_blank'>article 33.2</a>.</li><li>Any other research line that includes cellular material of human embryonic origin or another functionally similar one.</li><li>Research with embryonic stem cell lines that come from another country, intra-community or extra-community. Such origin is to be specified in the project submitted to the report.</li></ul><p>For more information consult <a href='https://www.boe.es/buscar/act.php?id=BOE-A-2007-12945&p=20110602&tn=1#a35' target='_blank'>article 35 of LIB 14/2007</a></p>"
+      },
+      {
+        "key": "informeComisionGarantiasRadio",
+        "type": "documento",
+        "templateOptions": {
+          "label": "Please indicate",
+          "required": true,
+          "options": [
+            {
+              "value": 0,
+              "label": "No"
+            },
+            {
+              "value": "INFORME_GARANTIAS",
+              "label": "Yes"
+            }
+          ]
+        }
+      },
+      {
+        "wrappers": [
+          "info-div"
+        ],
+        "template": "<p>Note: you can only answer <b>Yes</b> if in section '3.5 Biological samples of human origin' any of the options marked with an asterisk have been selected <b>*</b>.</p>"
+      }
+    ]
+  }
+]

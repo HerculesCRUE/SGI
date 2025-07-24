@@ -10,7 +10,7 @@ import { DialogService } from '@core/services/dialog.service';
 import { TipoProcedimientoService } from '@core/services/pii/tipo-procedimiento/tipo-procedimiento.service';
 import { SnackBarService } from '@core/services/snack-bar.service';
 import { TranslateService } from '@ngx-translate/core';
-import { SgiRestListResult, SgiRestFilter } from '@sgi/framework/http';
+import { SgiRestFilter, SgiRestListResult } from '@sgi/framework/http';
 import { NGXLogger } from 'ngx-logger';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
@@ -57,10 +57,19 @@ export class TipoProcedimientoListadoComponent extends AbstractTablePaginationCo
     private dialogService: DialogService,
     private translate: TranslateService
   ) {
-    super();
+    super(translate);
+
+    this.resolveSortProperty = (column: string) => {
+      if (column === 'nombre') {
+        return 'nombre.value';
+      } else if (column === 'descripcion') {
+        return 'descripcion.value';
+      }
+      return column;
+    }
   }
 
-  private setupI18N(): void {
+  protected setupI18N(): void {
 
     this.translate.get(
       TIPO_PROCEDIMIENTO_KEY,
@@ -192,7 +201,7 @@ export class TipoProcedimientoListadoComponent extends AbstractTablePaginationCo
 
   ngOnInit(): void {
     super.ngOnInit();
-    this.setupI18N();
+
   }
 
   /**

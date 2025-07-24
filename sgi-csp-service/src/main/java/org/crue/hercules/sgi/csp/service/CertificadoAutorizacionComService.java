@@ -1,13 +1,13 @@
 package org.crue.hercules.sgi.csp.service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.crue.hercules.sgi.csp.config.SgiConfigProperties;
 import org.crue.hercules.sgi.csp.dto.com.CspComAddModCertAutorizacionPartProyectoExtData;
 import org.crue.hercules.sgi.csp.dto.com.EmailOutput;
 import org.crue.hercules.sgi.csp.dto.com.Recipient;
 import org.crue.hercules.sgi.csp.dto.sgp.PersonaOutput;
+import org.crue.hercules.sgi.csp.dto.sgp.PersonaOutput.Email;
 import org.crue.hercules.sgi.csp.exceptions.AutorizacionNotFoundException;
 import org.crue.hercules.sgi.csp.model.Autorizacion;
 import org.crue.hercules.sgi.csp.model.CertificadoAutorizacion;
@@ -55,10 +55,10 @@ public class CertificadoAutorizacionComService {
   private List<Recipient> getSolicitanteRecipients(String solicitanteRef) {
     PersonaOutput datosSolicitante = this.sgiApiSgpService.findById(solicitanteRef);
 
-    return datosSolicitante.getEmails().stream().filter(email -> email.getPrincipal())
+    return datosSolicitante.getEmails().stream().filter(Email::getPrincipal)
         .map(email -> Recipient
             .builder().name(email.getEmail()).address(email.getEmail())
             .build())
-        .collect(Collectors.toList());
+        .toList();
   }
 }
